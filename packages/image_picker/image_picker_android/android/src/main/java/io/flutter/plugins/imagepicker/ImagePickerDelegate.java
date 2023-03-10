@@ -17,11 +17,11 @@ import android.os.Build;
 import android.provider.MediaStore;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import java.io.File;
@@ -115,8 +115,9 @@ public class ImagePickerDelegate
   }
 
   private Uri pendingCameraMediaUri;
-  private MethodChannel.Result pendingResult;
-  private MethodCall methodCall;
+  private @Nullable ImageOutputOptions pendingImageOptions;
+  private @Nullable VideoOptions pendingVideoOptions;
+  private @Nullable MethodChannel.Result pendingResult;
 
   public ImagePickerDelegate(
       final Activity activity,
@@ -127,6 +128,7 @@ public class ImagePickerDelegate
         activity,
         externalFilesDirectory,
         imageResizer,
+        null,
         null,
         null,
         cache,
@@ -179,8 +181,9 @@ public class ImagePickerDelegate
       final Activity activity,
       final File externalFilesDirectory,
       final ImageResizer imageResizer,
-      final MethodChannel.Result result,
-      final MethodCall methodCall,
+      final @Nullable ImageOutputOptions pendingImageOptions,
+      final @Nullable VideoOptions pendingVideoOptions,
+      final @Nullable MethodChannel.Result result,
       final ImagePickerCache cache,
       final PermissionManager permissionManager,
       final FileUriResolver fileUriResolver,
@@ -189,8 +192,9 @@ public class ImagePickerDelegate
     this.externalFilesDirectory = externalFilesDirectory;
     this.imageResizer = imageResizer;
     this.fileProviderName = activity.getPackageName() + ".flutter.image_provider";
+    this.pendingImageOptions = pendingImageOptions;
+    this.pendingVideoOptions = pendingVideoOptions;
     this.pendingResult = result;
-    this.methodCall = methodCall;
     this.permissionManager = permissionManager;
     this.fileUriResolver = fileUriResolver;
     this.fileUtils = fileUtils;
@@ -207,18 +211,17 @@ public class ImagePickerDelegate
 
   // Save the state of the image picker so it can be retrieved with `retrieveLostImage`.
   void saveStateBeforeResult() {
-    if (methodCall == null) {
+    if (pendingResult == null) {
       return;
     }
 
-    ImageOutputOptions outputOptions =
-        new ImageOutputOptions(
-            methodCall.argument("maxWidth"),
-            methodCall.argument("maxHeight"),
-            methodCall.argument("imageQuality"));
-
-    cache.saveTypeWithMethodCallName(methodCall.method);
-    cache.saveDimensionWithOutputOptions(outputOptions);
+    cache.saveType(
+        pendingImageOptions != null
+            ? ImagePickerCache.CacheType.IMAGE
+            : ImagePickerCache.CacheType.VIDEO);
+    if (pendingImageOptions != null) {
+      cache.saveDimensionWithOutputOptions(pendingImageOptions);
+    }
     if (pendingCameraMediaUri != null) {
       cache.savePendingCameraMediaUriPath(pendingCameraMediaUri);
     }
@@ -234,10 +237,8 @@ public class ImagePickerDelegate
       for (String path : pathList) {
         Double maxWidth = (Double) resultMap.get(ImagePickerCache.MAP_KEY_MAX_WIDTH);
         Double maxHeight = (Double) resultMap.get(ImagePickerCache.MAP_KEY_MAX_HEIGHT);
-        int imageQuality =
-            resultMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY) == null
-                ? 100
-                : (int) resultMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
+        Integer boxedImageQuality = (Integer) resultMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
+        int imageQuality = boxedImageQuality == null ? 100 : boxedImageQuality;
 
         newPathList.add(imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality));
       }
@@ -252,16 +253,11 @@ public class ImagePickerDelegate
     cache.clear();
   }
 
-  public void chooseVideoFromGallery(MethodCall methodCall, MethodChannel.Result result) {
-    if (!setPendingMethodCallAndResult(methodCall, result)) {
+  public void chooseVideoFromGallery(
+      VideoOptions options, boolean usePhotoPicker, MethodChannel.Result result) {
+    if (!setPendingOptionsAndResult(null, options, result)) {
       finishWithAlreadyActiveError(result);
       return;
-    }
-
-    Boolean usePhotoPicker = methodCall.argument("useAndroidPhotoPicker");
-
-    if (usePhotoPicker == null) {
-      usePhotoPicker = false;
     }
 
     launchPickVideoFromGalleryIntent(usePhotoPicker);
@@ -285,8 +281,8 @@ public class ImagePickerDelegate
     activity.startActivityForResult(pickVideoIntent, REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY);
   }
 
-  public void takeVideoWithCamera(MethodCall methodCall, MethodChannel.Result result) {
-    if (!setPendingMethodCallAndResult(methodCall, result)) {
+  public void takeVideoWithCamera(VideoOptions options, MethodChannel.Result result) {
+    if (!setPendingOptionsAndResult(null, options, result)) {
       finishWithAlreadyActiveError(result);
       return;
     }
@@ -303,8 +299,8 @@ public class ImagePickerDelegate
 
   private void launchTakeVideoWithCameraIntent() {
     Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-    if (this.methodCall != null && this.methodCall.argument("maxDuration") != null) {
-      int maxSeconds = this.methodCall.argument("maxDuration");
+    if (this.pendingVideoOptions != null && this.pendingVideoOptions.maxDuration != null) {
+      int maxSeconds = this.pendingVideoOptions.maxDuration;
       intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxSeconds);
     }
     if (cameraDevice == CameraDevice.FRONT) {
@@ -332,31 +328,21 @@ public class ImagePickerDelegate
     }
   }
 
-  public void chooseImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
-    if (!setPendingMethodCallAndResult(methodCall, result)) {
+  public void chooseImageFromGallery(
+      @NonNull ImageOutputOptions options, boolean usePhotoPicker, MethodChannel.Result result) {
+    if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
-    }
-
-    Boolean usePhotoPicker = methodCall.argument("useAndroidPhotoPicker");
-
-    if (usePhotoPicker == null) {
-      usePhotoPicker = false;
     }
 
     launchPickImageFromGalleryIntent(usePhotoPicker);
   }
 
-  public void chooseMultiImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
-    if (!setPendingMethodCallAndResult(methodCall, result)) {
+  public void chooseMultiImageFromGallery(
+      @NonNull ImageOutputOptions options, boolean usePhotoPicker, MethodChannel.Result result) {
+    if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
-    }
-
-    Boolean usePhotoPicker = methodCall.argument("useAndroidPhotoPicker");
-
-    if (usePhotoPicker == null) {
-      usePhotoPicker = false;
     }
 
     launchMultiPickImageFromGalleryIntent(usePhotoPicker);
@@ -401,8 +387,9 @@ public class ImagePickerDelegate
         pickMultiImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
   }
 
-  public void takeImageWithCamera(MethodCall methodCall, MethodChannel.Result result) {
-    if (!setPendingMethodCallAndResult(methodCall, result)) {
+  public void takeImageWithCamera(
+      @NonNull ImageOutputOptions options, MethodChannel.Result result) {
+    if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
     }
@@ -625,10 +612,10 @@ public class ImagePickerDelegate
 
   private void handleMultiImageResult(
       ArrayList<String> paths, boolean shouldDeleteOriginalIfScaled) {
-    if (methodCall != null) {
+    if (pendingImageOptions != null) {
       ArrayList<String> finalPath = new ArrayList<>();
       for (int i = 0; i < paths.size(); i++) {
-        String finalImagePath = getResizedImagePath(paths.get(i));
+        String finalImagePath = getResizedImagePath(paths.get(i), pendingImageOptions);
 
         //delete original file if scaled
         if (finalImagePath != null
@@ -645,8 +632,8 @@ public class ImagePickerDelegate
   }
 
   private void handleImageResult(String path, boolean shouldDeleteOriginalIfScaled) {
-    if (methodCall != null) {
-      String finalImagePath = getResizedImagePath(path);
+    if (pendingImageOptions != null) {
+      String finalImagePath = getResizedImagePath(path, pendingImageOptions);
       //delete original file if scaled
       if (finalImagePath != null && !finalImagePath.equals(path) && shouldDeleteOriginalIfScaled) {
         new File(path).delete();
@@ -657,25 +644,25 @@ public class ImagePickerDelegate
     }
   }
 
-  private String getResizedImagePath(String path) {
-    Double maxWidth = methodCall.argument("maxWidth");
-    Double maxHeight = methodCall.argument("maxHeight");
-    Integer imageQuality = methodCall.argument("imageQuality");
-
-    return imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality);
+  private String getResizedImagePath(String path, @NonNull ImageOutputOptions outputOptions) {
+    return imageResizer.resizeImageIfNeeded(
+        path, outputOptions.maxWidth, outputOptions.maxHeight, outputOptions.quality);
   }
 
   private void handleVideoResult(String path) {
     finishWithSuccess(path);
   }
 
-  private boolean setPendingMethodCallAndResult(
-      MethodCall methodCall, MethodChannel.Result result) {
+  private boolean setPendingOptionsAndResult(
+      @Nullable ImageOutputOptions imageOptions,
+      @Nullable VideoOptions videoOptions,
+      @NonNull MethodChannel.Result result) {
     if (pendingResult != null) {
       return false;
     }
 
-    this.methodCall = methodCall;
+    pendingImageOptions = imageOptions;
+    pendingVideoOptions = videoOptions;
     pendingResult = result;
 
     // Clean up cache if a new image picker is launched.
@@ -699,7 +686,7 @@ public class ImagePickerDelegate
       return;
     }
     pendingResult.success(imagePath);
-    clearMethodCallAndResult();
+    clearOptionsAndResult();
   }
 
   private void finishWithListSuccess(ArrayList<String> imagePaths) {
@@ -708,7 +695,7 @@ public class ImagePickerDelegate
       return;
     }
     pendingResult.success(imagePaths);
-    clearMethodCallAndResult();
+    clearOptionsAndResult();
   }
 
   private void finishWithAlreadyActiveError(MethodChannel.Result result) {
@@ -721,11 +708,11 @@ public class ImagePickerDelegate
       return;
     }
     pendingResult.error(errorCode, errorMessage, null);
-    clearMethodCallAndResult();
+    clearOptionsAndResult();
   }
 
-  private void clearMethodCallAndResult() {
-    methodCall = null;
+  private void clearOptionsAndResult() {
+    pendingImageOptions = null;
     pendingResult = null;
   }
 

@@ -5,9 +5,9 @@ import androidx.annotation.Nullable;
 /** Stores settings for image output options. */
 public class ImageOutputOptions {
   /** The maximum width of the image, if the width should be constrained. */
-  @Nullable final Double maxWidth;
+  @Nullable public final Double maxWidth;
   /** The maximum height of the image, if the width should be constrained. */
-  @Nullable final Double maxHeight;
+  @Nullable public final Double maxHeight;
   /**
    * The output quality of the image, as a number from 0 to 100.
    *

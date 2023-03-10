@@ -48,34 +48,34 @@ public class ImageResizerTest {
   }
 
   @Test
-  public void onResizeImageIfNeeded_WhenQualityIsNull_ShoultNotResize_ReturnTheUnscaledFile() {
-    String outoutFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, null);
-    assertThat(outoutFile, equalTo(imageFile.getPath()));
+  public void onResizeImageIfNeeded_WhenQualityIsMax_ShouldNotResize_ReturnTheUnscaledFile() {
+    String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, 100);
+    assertThat(outputFile, equalTo(imageFile.getPath()));
   }
 
   @Test
-  public void onResizeImageIfNeeded_WhenQualityIsNotNull_ShoulResize_ReturnResizedFile() {
-    String outoutFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, 50);
-    assertThat(outoutFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
+  public void onResizeImageIfNeeded_WhenQualityIsNotMax_ShouldResize_ReturnResizedFile() {
+    String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, 50);
+    assertThat(outputFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
   }
 
   @Test
-  public void onResizeImageIfNeeded_WhenWidthIsNotNull_ShoulResize_ReturnResizedFile() {
-    String outoutFile = resizer.resizeImageIfNeeded(imageFile.getPath(), 50.0, null, null);
-    assertThat(outoutFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
+  public void onResizeImageIfNeeded_WhenWidthIsNotNull_ShouldResize_ReturnResizedFile() {
+    String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), 50.0, null, 100);
+    assertThat(outputFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
   }
 
   @Test
-  public void onResizeImageIfNeeded_WhenHeightIsNotNull_ShoulResize_ReturnResizedFile() {
-    String outoutFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, 50.0, null);
-    assertThat(outoutFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
+  public void onResizeImageIfNeeded_WhenHeightIsNotNull_ShouldResize_ReturnResizedFile() {
+    String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, 50.0, 100);
+    assertThat(outputFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
   }
 
   @Test
   public void onResizeImageIfNeeded_WhenParentDirectoryDoesNotExists_ShouldNotCrash() {
     File nonExistentDirectory = new File(externalDirectory, "/nonExistent");
     ImageResizer invalidResizer = new ImageResizer(nonExistentDirectory, new ExifDataCopier());
-    String outoutFile = invalidResizer.resizeImageIfNeeded(imageFile.getPath(), null, 50.0, null);
-    assertThat(outoutFile, equalTo(nonExistentDirectory.getPath() + "/scaled_pngImage.png"));
+    String outputFile = invalidResizer.resizeImageIfNeeded(imageFile.getPath(), null, 50.0, 100);
+    assertThat(outputFile, equalTo(nonExistentDirectory.getPath() + "/scaled_pngImage.png"));
   }
 }

@@ -16,6 +16,10 @@ import java.util.Map;
 import java.util.Set;
 
 class ImagePickerCache {
+  public enum CacheType {
+    IMAGE,
+    VIDEO
+  }
 
   static final String MAP_KEY_PATH = "path";
   static final String MAP_KEY_PATH_LIST = "pathList";
@@ -52,17 +56,18 @@ class ImagePickerCache {
     prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
   }
 
-  void saveTypeWithMethodCallName(String methodCallName) {
-    if (methodCallName.equals(ImagePickerPlugin.METHOD_CALL_IMAGE)
-        | methodCallName.equals(ImagePickerPlugin.METHOD_CALL_MULTI_IMAGE)) {
-      setType("image");
-    } else if (methodCallName.equals(ImagePickerPlugin.METHOD_CALL_VIDEO)) {
-      setType("video");
+  void saveType(CacheType type) {
+    switch (type) {
+      case IMAGE:
+        setType("image");
+        break;
+      case VIDEO:
+        setType("video");
+        break;
     }
   }
 
   private void setType(String type) {
-
     prefs.edit().putString(SHARED_PREFERENCE_TYPE_KEY, type).apply();
   }
 
