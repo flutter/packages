@@ -138,7 +138,7 @@ void main() {
   });
 
   testWidgets(
-      'It should navigate to the iterable route with the its default values',
+      'It should navigate to the iterable route with its default values',
       (WidgetTester tester) async {
     await tester.pumpWidget(AllTypesApp());
 
@@ -148,11 +148,71 @@ void main() {
     const IterableRouteWithDefaultValues().go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('IterableRouteWithDefaultValues'), findsOneWidget);
+    final IterablePage page =
+        tester.widget<IterablePage>(find.byType(IterablePage));
     expect(
-      find.text(
-        'Query param with default value: {intIterableField: [0], intListField: [0], intSetField: {0, 1}, doubleIterableField: [0.0, 1.0, 2.0], doubleListField: [1.0, 2.0, 3.0], doubleSetField: {}, stringIterableField: [defaultValue], stringListField: [defaultValue0, defaultValue1], stringSetField: {defaultValue}, boolIterableField: [false], boolListField: [true], boolSetField: {true, false}, enumIterableField: [SportDetails.tennis, SportDetails.hockey], enumListField: [SportDetails.football], enumSetField: {SportDetails.hockey}}',
+      page,
+      isA<IterablePage>().having(
+        (IterablePage page) => page.intIterableField,
+        'intIterableField',
+        const <int>[0],
+      ).having(
+        (IterablePage page) => page.intListField,
+        'intListField',
+        const <int>[0],
+      ).having(
+        (IterablePage page) => page.intSetField,
+        'intSetField',
+        const <int>{0, 1},
+      ).having(
+        (IterablePage page) => page.doubleIterableField,
+        'doubleIterableField',
+        const <double>[0, 1, 2],
+      ).having(
+        (IterablePage page) => page.doubleListField,
+        'doubleListField',
+        const <double>[1, 2, 3],
+      ).having(
+        (IterablePage page) => page.doubleSetField,
+        'doubleSetField',
+        const <double>{},
+      ).having(
+        (IterablePage page) => page.stringIterableField,
+        'stringIterableField',
+        const <String>['defaultValue'],
+      ).having(
+        (IterablePage page) => page.stringListField,
+        'stringListField',
+        const <String>['defaultValue0', 'defaultValue1'],
+      ).having(
+        (IterablePage page) => page.stringSetField,
+        'stringSetField',
+        const <String>{'defaultValue'},
+      ).having(
+        (IterablePage page) => page.boolIterableField,
+        'boolIterableField',
+        const <bool>[false],
+      ).having(
+        (IterablePage page) => page.boolListField,
+        'boolListField',
+        const <bool>[true],
+      ).having(
+        (IterablePage page) => page.boolSetField,
+        'boolSetField',
+        const <bool>{true, false},
+      ).having(
+        (IterablePage page) => page.enumIterableField,
+        'enumIterableField',
+        const <SportDetails>[SportDetails.tennis, SportDetails.hockey],
+      ).having(
+        (IterablePage page) => page.enumListField,
+        'enumListField',
+        const <SportDetails>[SportDetails.football],
+      ).having(
+        (IterablePage page) => page.enumSetField,
+        'enumSetField',
+        const <SportDetails>{SportDetails.hockey},
       ),
-      findsOneWidget,
     );
     expect(find.text('/iterable-route-with-default-values'), findsOneWidget);
   });

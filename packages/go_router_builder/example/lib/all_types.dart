@@ -332,9 +332,23 @@ class IterableRoute extends GoRouteData {
   final Set<SportDetails>? enumSetField;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const BasePage<String>(
+  Widget build(BuildContext context, GoRouterState state) => IterablePage(
         dataTitle: 'IterableRoute',
+        intIterableField: intIterableField,
+        doubleIterableField: doubleIterableField,
+        stringIterableField: stringIterableField,
+        boolIterableField: boolIterableField,
+        enumIterableField: enumIterableField,
+        intListField: intListField,
+        doubleListField: doubleListField,
+        stringListField: stringListField,
+        boolListField: boolListField,
+        enumListField: enumListField,
+        intSetField: intSetField,
+        doubleSetField: doubleSetField,
+        stringSetField: stringSetField,
+        boolSetField: boolSetField,
+        enumSetField: enumSetField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -387,25 +401,23 @@ class IterableRouteWithDefaultValues extends GoRouteData {
   final Set<SportDetails> enumSetField;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => BasePage<String>(
+  Widget build(BuildContext context, GoRouterState state) => IterablePage(
         dataTitle: 'IterableRouteWithDefaultValues',
-        queryParamWithDefaultValue: <String, Iterable<dynamic>>{
-          'intIterableField': intIterableField,
-          'intListField': intListField,
-          'intSetField': intSetField,
-          'doubleIterableField': doubleIterableField,
-          'doubleListField': doubleListField,
-          'doubleSetField': doubleSetField,
-          'stringIterableField': stringIterableField,
-          'stringListField': stringListField,
-          'stringSetField': stringSetField,
-          'boolIterableField': boolIterableField,
-          'boolListField': boolListField,
-          'boolSetField': boolSetField,
-          'enumIterableField': enumIterableField,
-          'enumListField': enumListField,
-          'enumSetField': enumSetField,
-        }.toString(),
+        intIterableField: intIterableField,
+        doubleIterableField: doubleIterableField,
+        stringIterableField: stringIterableField,
+        boolIterableField: boolIterableField,
+        enumIterableField: enumIterableField,
+        intListField: intListField,
+        doubleListField: doubleListField,
+        stringListField: stringListField,
+        boolListField: boolListField,
+        enumListField: enumListField,
+        intSetField: intSetField,
+        doubleSetField: doubleSetField,
+        stringSetField: stringSetField,
+        boolSetField: boolSetField,
+        enumSetField: enumSetField,
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
@@ -503,6 +515,7 @@ class BasePage<T> extends StatelessWidget {
                 SportDetails.hockey,
               },
             ).drawerTile(context),
+            const IterableRouteWithDefaultValues().drawerTile(context),
           ],
         )),
         body: Center(
@@ -540,4 +553,72 @@ class AllTypesApp extends StatelessWidget {
     routes: $appRoutes,
     initialLocation: const AllTypesBaseRoute().location,
   );
+}
+
+class IterablePage extends StatelessWidget {
+  const IterablePage({
+    required this.dataTitle,
+    this.intIterableField,
+    this.doubleIterableField,
+    this.stringIterableField,
+    this.boolIterableField,
+    this.enumIterableField,
+    this.intListField,
+    this.doubleListField,
+    this.stringListField,
+    this.boolListField,
+    this.enumListField,
+    this.intSetField,
+    this.doubleSetField,
+    this.stringSetField,
+    this.boolSetField,
+    this.enumSetField,
+    super.key,
+  });
+
+  final String dataTitle;
+
+  final Iterable<int>? intIterableField;
+  final List<int>? intListField;
+  final Set<int>? intSetField;
+
+  final Iterable<double>? doubleIterableField;
+  final List<double>? doubleListField;
+  final Set<double>? doubleSetField;
+
+  final Iterable<String>? stringIterableField;
+  final List<String>? stringListField;
+  final Set<String>? stringSetField;
+
+  final Iterable<bool>? boolIterableField;
+  final List<bool>? boolListField;
+  final Set<bool>? boolSetField;
+
+  final Iterable<SportDetails>? enumIterableField;
+  final List<SportDetails>? enumListField;
+  final Set<SportDetails>? enumSetField;
+
+  @override
+  Widget build(BuildContext context) {
+    return BasePage<String>(
+      dataTitle: dataTitle,
+      queryParamWithDefaultValue: <String, Iterable<dynamic>?>{
+        'intIterableField': intIterableField,
+        'intListField': intListField,
+        'intSetField': intSetField,
+        'doubleIterableField': doubleIterableField,
+        'doubleListField': doubleListField,
+        'doubleSetField': doubleSetField,
+        'stringIterableField': stringIterableField,
+        'stringListField': stringListField,
+        'stringSetField': stringSetField,
+        'boolIterableField': boolIterableField,
+        'boolListField': boolListField,
+        'boolSetField': boolSetField,
+        'enumIterableField': enumIterableField,
+        'enumListField': enumListField,
+        'enumSetField': enumSetField,
+      }.toString(),
+    );
+  }
 }
