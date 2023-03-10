@@ -10,6 +10,7 @@ import 'package:js/js_util.dart' as js_util;
 @JS()
 @staticInterop
 class DomDocument {}
+
 extension DomDocumentExtension on DomDocument {
   DomElement createElement(String name, [Object? options]) =>
       js_util.callMethod(this, 'createElement',
