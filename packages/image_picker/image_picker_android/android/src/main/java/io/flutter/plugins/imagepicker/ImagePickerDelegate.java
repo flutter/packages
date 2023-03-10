@@ -86,7 +86,7 @@ public class ImagePickerDelegate
   }
 
   /** Holds call state during intent handling. */
-  private class PendingCallState {
+  private static class PendingCallState {
     public final @Nullable ImageOutputOptions imageOptions;
     public final @Nullable VideoOptions videoOptions;
     public final @NonNull MethodChannel.Result result;
