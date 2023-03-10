@@ -139,12 +139,12 @@ void main() {
       expect(cameraImage.format.group, ImageFormatGroup.yuv420);
     });
 
-    test('$CameraImage has ImageFormatGroup.bgra8888 for iOS', () {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    test('$CameraImage has ImageFormatGroup.nv21 for android', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
       final CameraImage cameraImage =
           CameraImage.fromPlatformData(<dynamic, dynamic>{
-        'format': 1111970369,
+        'format': 17,
         'height': 1,
         'width': 4,
         'lensAperture': 1.8,
@@ -160,7 +160,7 @@ void main() {
           }
         ]
       });
-      expect(cameraImage.format.group, ImageFormatGroup.bgra8888);
+      expect(cameraImage.format.group, ImageFormatGroup.nv21);
     });
     test('$CameraImage has ImageFormatGroup.unknown', () {
       final CameraImage cameraImage =
