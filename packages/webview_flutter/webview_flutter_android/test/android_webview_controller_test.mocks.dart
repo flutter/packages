@@ -701,26 +701,22 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebView,
       int,
-    )?
-        onProgressChanged,
+    )? onProgressChanged,
     _i9.Future<List<String>> Function(
       _i2.WebView,
       _i2.FileChooserParams,
-    )?
-        onShowFileChooser,
+    )? onShowFileChooser,
   }) get createAndroidWebChromeClient => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebChromeClient),
         returnValue: ({
           void Function(
             _i2.WebView,
             int,
-          )?
-              onProgressChanged,
+          )? onProgressChanged,
           _i9.Future<List<String>> Function(
             _i2.WebView,
             _i2.FileChooserParams,
-          )?
-              onShowFileChooser,
+          )? onShowFileChooser,
         }) =>
             _FakeWebChromeClient_0(
           this,
@@ -730,13 +726,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             int,
-          )?
-              onProgressChanged,
+          )? onProgressChanged,
           _i9.Future<List<String>> Function(
             _i2.WebView,
             _i2.FileChooserParams,
-          )?
-              onShowFileChooser,
+          )? onShowFileChooser,
         }) =>
             _FakeWebChromeClient_0(
           this,
@@ -746,85 +740,71 @@ class MockAndroidWebViewProxy extends _i1.Mock
         void Function(
           _i2.WebView,
           int,
-        )?
-            onProgressChanged,
+        )? onProgressChanged,
         _i9.Future<List<String>> Function(
           _i2.WebView,
           _i2.FileChooserParams,
-        )?
-            onShowFileChooser,
+        )? onShowFileChooser,
       }));
   @override
   _i2.WebViewClient Function({
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageFinished,
+    )? onPageFinished,
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageStarted,
+    )? onPageStarted,
     void Function(
       _i2.WebView,
       int,
       String,
       String,
-    )?
-        onReceivedError,
+    )? onReceivedError,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
       _i2.WebResourceError,
-    )?
-        onReceivedRequestError,
+    )? onReceivedRequestError,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
-    )?
-        requestLoading,
+    )? requestLoading,
     void Function(
       _i2.WebView,
       String,
-    )?
-        urlLoading,
+    )? urlLoading,
   }) get createAndroidWebViewClient => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebViewClient),
         returnValue: ({
           void Function(
             _i2.WebView,
             String,
-          )?
-              onPageFinished,
+          )? onPageFinished,
           void Function(
             _i2.WebView,
             String,
-          )?
-              onPageStarted,
+          )? onPageStarted,
           void Function(
             _i2.WebView,
             int,
             String,
             String,
-          )?
-              onReceivedError,
+          )? onReceivedError,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
             _i2.WebResourceError,
-          )?
-              onReceivedRequestError,
+          )? onReceivedRequestError,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
-          )?
-              requestLoading,
+          )? requestLoading,
           void Function(
             _i2.WebView,
             String,
-          )?
-              urlLoading,
+          )? urlLoading,
         }) =>
             _FakeWebViewClient_1(
           this,
@@ -834,36 +814,30 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             String,
-          )?
-              onPageFinished,
+          )? onPageFinished,
           void Function(
             _i2.WebView,
             String,
-          )?
-              onPageStarted,
+          )? onPageStarted,
           void Function(
             _i2.WebView,
             int,
             String,
             String,
-          )?
-              onReceivedError,
+          )? onReceivedError,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
             _i2.WebResourceError,
-          )?
-              onReceivedRequestError,
+          )? onReceivedRequestError,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
-          )?
-              requestLoading,
+          )? requestLoading,
           void Function(
             _i2.WebView,
             String,
-          )?
-              urlLoading,
+          )? urlLoading,
         }) =>
             _FakeWebViewClient_1(
           this,
@@ -873,36 +847,30 @@ class MockAndroidWebViewProxy extends _i1.Mock
         void Function(
           _i2.WebView,
           String,
-        )?
-            onPageFinished,
+        )? onPageFinished,
         void Function(
           _i2.WebView,
           String,
-        )?
-            onPageStarted,
+        )? onPageStarted,
         void Function(
           _i2.WebView,
           int,
           String,
           String,
-        )?
-            onReceivedError,
+        )? onReceivedError,
         void Function(
           _i2.WebView,
           _i2.WebResourceRequest,
           _i2.WebResourceError,
-        )?
-            onReceivedRequestError,
+        )? onReceivedRequestError,
         void Function(
           _i2.WebView,
           _i2.WebResourceRequest,
-        )?
-            requestLoading,
+        )? requestLoading,
         void Function(
           _i2.WebView,
           String,
-        )?
-            urlLoading,
+        )? urlLoading,
       }));
   @override
   _i2.FlutterAssetManager Function() get createFlutterAssetManager =>
@@ -951,8 +919,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
         String,
         String,
         int,
-      )
-          onDownloadStart}) get createDownloadListener => (super.noSuchMethod(
+      ) onDownloadStart}) get createDownloadListener => (super.noSuchMethod(
         Invocation.getter(#createDownloadListener),
         returnValue: (
                 {required void Function(
@@ -961,8 +928,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
                   String,
                   String,
                   int,
-                )
-                    onDownloadStart}) =>
+                ) onDownloadStart}) =>
             _FakeDownloadListener_2(
           this,
           Invocation.getter(#createDownloadListener),
@@ -974,8 +940,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
                   String,
                   String,
                   int,
-                )
-                    onDownloadStart}) =>
+                ) onDownloadStart}) =>
             _FakeDownloadListener_2(
           this,
           Invocation.getter(#createDownloadListener),
@@ -987,8 +952,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
             String,
             String,
             int,
-          )
-              onDownloadStart}));
+          ) onDownloadStart}));
   @override
   _i9.Future<void> setWebContentsDebuggingEnabled(bool? enabled) =>
       (super.noSuchMethod(
@@ -1061,8 +1025,8 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
       (super.noSuchMethod(
         Invocation.getter(#gestureRecognizers),
         returnValue: <_i11.Factory<_i12.OneSequenceGestureRecognizer>>{},
-        returnValueForMissingStub: <
-            _i11.Factory<_i12.OneSequenceGestureRecognizer>>{},
+        returnValueForMissingStub: <_i11
+            .Factory<_i12.OneSequenceGestureRecognizer>>{},
       ) as Set<_i11.Factory<_i12.OneSequenceGestureRecognizer>>);
 }
 

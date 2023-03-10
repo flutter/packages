@@ -46,23 +46,17 @@ import androidx.annotation.Nullable;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClient.SkuType;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
-import com.android.billingclient.api.PriceChangeConfirmationListener;
-import com.android.billingclient.api.PriceChangeFlowParams;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -83,6 +77,10 @@ import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+// TODO(stuartmorgan): Migrate this code. See TODO on MethodCallHandlerImpl.querySkuDetailsAsync.
+// This is supressed at the class level since until the code is migrated, the tests will be
+// full of deprecation warnings.
+@SuppressWarnings("deprecation")
 public class MethodCallHandlerTest {
   private MethodCallHandlerImpl methodChannelHandler;
   private BillingClientFactory factory;
@@ -229,22 +227,25 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(queryCall, result);
 
     // Assert the arguments were forwarded correctly to BillingClient
-    ArgumentCaptor<SkuDetailsParams> paramCaptor = ArgumentCaptor.forClass(SkuDetailsParams.class);
-    ArgumentCaptor<SkuDetailsResponseListener> listenerCaptor =
-        ArgumentCaptor.forClass(SkuDetailsResponseListener.class);
+    ArgumentCaptor<com.android.billingclient.api.SkuDetailsParams> paramCaptor =
+        ArgumentCaptor.forClass(com.android.billingclient.api.SkuDetailsParams.class);
+    ArgumentCaptor<com.android.billingclient.api.SkuDetailsResponseListener> listenerCaptor =
+        ArgumentCaptor.forClass(com.android.billingclient.api.SkuDetailsResponseListener.class);
     verify(mockBillingClient).querySkuDetailsAsync(paramCaptor.capture(), listenerCaptor.capture());
     assertEquals(paramCaptor.getValue().getSkuType(), skuType);
     assertEquals(paramCaptor.getValue().getSkusList(), skusList);
 
     // Assert that we handed result BillingClient's response
     int responseCode = 200;
-    List<SkuDetails> skuDetailsResponse = asList(buildSkuDetails("foo"));
+    List<com.android.billingclient.api.SkuDetails> skuDetailsResponse =
+        asList(buildSkuDetails("foo"));
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
             .setDebugMessage("dummy debug message")
             .build();
     listenerCaptor.getValue().onSkuDetailsResponse(billingResult, skuDetailsResponse);
+    @SuppressWarnings("unchecked")
     ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
     verify(result).success(resultCaptor.capture());
     HashMap<String, Object> resultData = resultCaptor.getValue();
@@ -592,7 +593,7 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(new MethodCall(END_CONNECTION, null), mock(Result.class));
 
     HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("skuType", SkuType.INAPP);
+    arguments.put("skuType", BillingClient.SkuType.INAPP);
     methodChannelHandler.onMethodCall(new MethodCall(QUERY_PURCHASES_ASYNC, arguments), result);
 
     // Assert that we sent an error back.
@@ -606,7 +607,7 @@ public class MethodCallHandlerTest {
 
     CountDownLatch lock = new CountDownLatch(1);
     doAnswer(
-            new Answer() {
+            new Answer<Object>() {
               public Object answer(InvocationOnMock invocation) {
                 lock.countDown();
                 return null;
@@ -618,7 +619,7 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<PurchasesResponseListener> purchasesResponseListenerArgumentCaptor =
         ArgumentCaptor.forClass(PurchasesResponseListener.class);
     doAnswer(
-            new Answer() {
+            new Answer<Object>() {
               public Object answer(InvocationOnMock invocation) {
                 BillingResult.Builder resultBuilder =
                     BillingResult.newBuilder()
@@ -635,14 +636,15 @@ public class MethodCallHandlerTest {
             any(QueryPurchasesParams.class), purchasesResponseListenerArgumentCaptor.capture());
 
     HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("skuType", SkuType.INAPP);
+    arguments.put("skuType", BillingClient.SkuType.INAPP);
     methodChannelHandler.onMethodCall(new MethodCall(QUERY_PURCHASES_ASYNC, arguments), result);
 
     lock.await(5000, TimeUnit.MILLISECONDS);
 
     verify(result, never()).error(any(), any(), any());
 
-    ArgumentCaptor<HashMap> hashMapCaptor = ArgumentCaptor.forClass(HashMap.class);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<HashMap<String, Object>> hashMapCaptor = ArgumentCaptor.forClass(HashMap.class);
     verify(result, times(1)).success(hashMapCaptor.capture());
 
     HashMap<String, Object> map = hashMapCaptor.getValue();
@@ -656,6 +658,7 @@ public class MethodCallHandlerTest {
   public void queryPurchaseHistoryAsync() {
     // Set up an established billing client and all our mocked responses
     establishConnectedBillingClient(null, null);
+    @SuppressWarnings("unchecked")
     ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -664,7 +667,7 @@ public class MethodCallHandlerTest {
             .build();
     List<PurchaseHistoryRecord> purchasesList = asList(buildPurchaseHistoryRecord("foo"));
     HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("skuType", SkuType.INAPP);
+    arguments.put("skuType", BillingClient.SkuType.INAPP);
     ArgumentCaptor<PurchaseHistoryResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(PurchaseHistoryResponseListener.class);
 
@@ -688,7 +691,7 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(new MethodCall(END_CONNECTION, null), mock(Result.class));
 
     HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("skuType", SkuType.INAPP);
+    arguments.put("skuType", BillingClient.SkuType.INAPP);
     methodChannelHandler.onMethodCall(
         new MethodCall(QUERY_PURCHASE_HISTORY_ASYNC, arguments), result);
 
@@ -707,6 +710,7 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     List<Purchase> purchasesList = asList(buildPurchase("foo"));
+    @SuppressWarnings("unchecked")
     ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
     doNothing()
         .when(mockMethodChannel)
@@ -840,10 +844,13 @@ public class MethodCallHandlerTest {
             .build();
 
     // Set up the mock billing client
-    ArgumentCaptor<PriceChangeConfirmationListener> priceChangeConfirmationListenerArgumentCaptor =
-        ArgumentCaptor.forClass(PriceChangeConfirmationListener.class);
-    ArgumentCaptor<PriceChangeFlowParams> priceChangeFlowParamsArgumentCaptor =
-        ArgumentCaptor.forClass(PriceChangeFlowParams.class);
+    ArgumentCaptor<com.android.billingclient.api.PriceChangeConfirmationListener>
+        priceChangeConfirmationListenerArgumentCaptor =
+            ArgumentCaptor.forClass(
+                com.android.billingclient.api.PriceChangeConfirmationListener.class);
+    ArgumentCaptor<com.android.billingclient.api.PriceChangeFlowParams>
+        priceChangeFlowParamsArgumentCaptor =
+            ArgumentCaptor.forClass(com.android.billingclient.api.PriceChangeFlowParams.class);
     doNothing()
         .when(mockBillingClient)
         .launchPriceChangeConfirmationFlow(
@@ -858,17 +865,19 @@ public class MethodCallHandlerTest {
         new MethodCall(LAUNCH_PRICE_CHANGE_CONFIRMATION_FLOW, arguments), result);
 
     // Verify the price change params.
-    PriceChangeFlowParams priceChangeFlowParams = priceChangeFlowParamsArgumentCaptor.getValue();
+    com.android.billingclient.api.PriceChangeFlowParams priceChangeFlowParams =
+        priceChangeFlowParamsArgumentCaptor.getValue();
     assertEquals(skuId, priceChangeFlowParams.getSkuDetails().getSku());
 
     // Set the response in the callback
-    PriceChangeConfirmationListener priceChangeConfirmationListener =
+    com.android.billingclient.api.PriceChangeConfirmationListener priceChangeConfirmationListener =
         priceChangeConfirmationListenerArgumentCaptor.getValue();
     priceChangeConfirmationListener.onPriceChangeConfirmationResult(billingResult);
 
     // Verify we pass the response to result
     verify(result, never()).error(any(), any(), any());
-    ArgumentCaptor<HashMap> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
     verify(result, times(1)).success(resultCaptor.capture());
     assertEquals(fromBillingResult(billingResult), resultCaptor.getValue());
   }
@@ -947,7 +956,7 @@ public class MethodCallHandlerTest {
     // Set up the query method call
     establishConnectedBillingClient(/* arguments= */ null, /* result= */ null);
     HashMap<String, Object> arguments = new HashMap<>();
-    String skuType = SkuType.INAPP;
+    String skuType = BillingClient.SkuType.INAPP;
     arguments.put("skuType", skuType);
     arguments.put("skusList", skusList);
     MethodCall queryCall = new MethodCall(QUERY_SKU_DETAILS, arguments);
@@ -956,10 +965,10 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(queryCall, mock(Result.class));
 
     // Respond to the call with a matching set of Sku details.
-    ArgumentCaptor<SkuDetailsResponseListener> listenerCaptor =
-        ArgumentCaptor.forClass(SkuDetailsResponseListener.class);
+    ArgumentCaptor<com.android.billingclient.api.SkuDetailsResponseListener> listenerCaptor =
+        ArgumentCaptor.forClass(com.android.billingclient.api.SkuDetailsResponseListener.class);
     verify(mockBillingClient).querySkuDetailsAsync(any(), listenerCaptor.capture());
-    List<SkuDetails> skuDetailsResponse =
+    List<com.android.billingclient.api.SkuDetails> skuDetailsResponse =
         skusList.stream().map(this::buildSkuDetails).collect(toList());
 
     BillingResult billingResult =
@@ -970,14 +979,14 @@ public class MethodCallHandlerTest {
     listenerCaptor.getValue().onSkuDetailsResponse(billingResult, skuDetailsResponse);
   }
 
-  private SkuDetails buildSkuDetails(String id) {
+  private com.android.billingclient.api.SkuDetails buildSkuDetails(String id) {
     String json =
         String.format(
             "{\"packageName\": \"dummyPackageName\",\"productId\":\"%s\",\"type\":\"inapp\",\"price\":\"$0.99\",\"price_amount_micros\":990000,\"price_currency_code\":\"USD\",\"title\":\"Example title\",\"description\":\"Example description.\",\"original_price\":\"$0.99\",\"original_price_micros\":990000}",
             id);
-    SkuDetails details = null;
+    com.android.billingclient.api.SkuDetails details = null;
     try {
-      details = new SkuDetails(json);
+      details = new com.android.billingclient.api.SkuDetails(json);
     } catch (JSONException e) {
       fail("buildSkuDetails failed with JSONException " + e.toString());
     }
