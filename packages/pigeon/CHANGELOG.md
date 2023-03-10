@@ -1,3 +1,7 @@
+## 9.0.6
+
+* Whether current [PlatformApi] is skip in the generate hostApi
+
 ## 9.0.5
 
 * Removes the unnecessary Flutter constraint.
