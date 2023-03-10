@@ -16,7 +16,6 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.SkuDetails;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +26,10 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
+// TODO(stuartmorgan): Migrate this code. See TODO on MethodCallHandlerImpl.querySkuDetailsAsync.
+// This is supressed at the class level since until the code is migrated, the tests will be
+// full of deprecation warnings.
+@SuppressWarnings("deprecation")
 public class TranslatorTest {
   private static final String SKU_DETAIL_EXAMPLE_JSON =
       "{\"productId\":\"example\",\"type\":\"inapp\",\"price\":\"$0.99\",\"price_amount_micros\":990000,\"price_currency_code\":\"USD\",\"title\":\"Example title\",\"description\":\"Example description.\",\"original_price\":\"$0.99\",\"original_price_micros\":990000}";
@@ -41,7 +44,8 @@ public class TranslatorTest {
 
   @Test
   public void fromSkuDetail() throws JSONException {
-    final SkuDetails expected = new SkuDetails(SKU_DETAIL_EXAMPLE_JSON);
+    final com.android.billingclient.api.SkuDetails expected =
+        new com.android.billingclient.api.SkuDetails(SKU_DETAIL_EXAMPLE_JSON);
 
     Map<String, Object> serialized = Translator.fromSkuDetail(expected);
 
@@ -52,9 +56,10 @@ public class TranslatorTest {
   public void fromSkuDetailsList() throws JSONException {
     final String SKU_DETAIL_EXAMPLE_2_JSON =
         "{\"productId\":\"example2\",\"type\":\"inapp\",\"price\":\"$0.99\",\"price_amount_micros\":990000,\"price_currency_code\":\"USD\",\"title\":\"Example title\",\"description\":\"Example description.\",\"original_price\":\"$0.99\",\"original_price_micros\":990000}";
-    final List<SkuDetails> expected =
+    final List<com.android.billingclient.api.SkuDetails> expected =
         Arrays.asList(
-            new SkuDetails(SKU_DETAIL_EXAMPLE_JSON), new SkuDetails(SKU_DETAIL_EXAMPLE_2_JSON));
+            new com.android.billingclient.api.SkuDetails(SKU_DETAIL_EXAMPLE_JSON),
+            new com.android.billingclient.api.SkuDetails(SKU_DETAIL_EXAMPLE_2_JSON));
 
     final List<HashMap<String, Object>> serialized = Translator.fromSkuDetailsList(expected);
 
@@ -169,7 +174,8 @@ public class TranslatorTest {
     }
   }
 
-  private void assertSerialized(SkuDetails expected, Map<String, Object> serialized) {
+  private void assertSerialized(
+      com.android.billingclient.api.SkuDetails expected, Map<String, Object> serialized) {
     assertEquals(expected.getDescription(), serialized.get("description"));
     assertEquals(expected.getFreeTrialPeriod(), serialized.get("freeTrialPeriod"));
     assertEquals(expected.getIntroductoryPrice(), serialized.get("introductoryPrice"));
