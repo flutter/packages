@@ -77,14 +77,16 @@ class MyShellRouteScreen extends StatelessWidget {
   final Widget child;
 
   int getCurrentIndex(BuildContext context) {
-    final location = GoRouter.of(context).location;
-    if (location == '/bar') return 1;
+    final String location = GoRouter.of(context).location;
+    if (location == '/bar') {
+      return 1;
+    }
     return 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentIndex = getCurrentIndex(context);
+    final int currentIndex = getCurrentIndex(context);
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
