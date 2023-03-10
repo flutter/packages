@@ -35,6 +35,7 @@ class ShellRouteExampleApp extends StatelessWidget {
       /// Application shell
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
+        perserveState: true,
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return ScaffoldWithNavBar(child: child);
         },
@@ -261,7 +262,7 @@ class ScreenC extends StatelessWidget {
 }
 
 /// The details screen for either the A, B or C screen.
-class DetailsScreen extends StatelessWidget {
+class DetailsScreen extends StatefulWidget {
   /// Constructs a [DetailsScreen].
   const DetailsScreen({
     required this.label,
@@ -272,15 +273,35 @@ class DetailsScreen extends StatelessWidget {
   final String label;
 
   @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
+  int count = 0;
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Details Screen'),
       ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => setState(() {
+          count++;
+        }),
+      ),
       body: Center(
-        child: Text(
-          'Details for $label',
-          style: Theme.of(context).textTheme.headlineMedium,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Details for ${widget.label}',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              'Clicked $count times',
+            ),
+          ],
         ),
       ),
     );

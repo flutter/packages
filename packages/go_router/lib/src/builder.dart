@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -53,6 +54,10 @@ class RouteBuilder {
 
   final Map<Page<Object?>, RouteMatch> _routeMatchLookUp =
       <Page<Object?>, RouteMatch>{};
+
+  /// Cache to keep old pages
+  final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> _navigatorCache =
+      <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
 
   /// Looks the the [RouteMatch] for a given [Page].
   ///
@@ -130,12 +135,13 @@ class RouteBuilder {
   /// testing.
   @visibleForTesting
   List<Page<Object?>> buildPages(
-      BuildContext context,
-      RouteMatchList matchList,
-      PopPageCallback onPopPage,
-      bool routerNeglect,
-      GlobalKey<NavigatorState> navigatorKey,
-      Map<Page<Object?>, GoRouterState> registry) {
+    BuildContext context,
+    RouteMatchList matchList,
+    PopPageCallback onPopPage,
+    bool routerNeglect,
+    GlobalKey<NavigatorState> navigatorKey,
+    Map<Page<Object?>, GoRouterState> registry,
+  ) {
     final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
         <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
     try {
@@ -154,6 +160,8 @@ class RouteBuilder {
     } finally {
       /// Clean up previous cache to prevent memory leak.
       _goHeroCache.removeWhere(
+          (GlobalKey<NavigatorState> key, _) => !keyToPage.keys.contains(key));
+      _navigatorCache.removeWhere(
           (GlobalKey<NavigatorState> key, _) => !keyToPage.keys.contains(key));
     }
   }
@@ -221,11 +229,31 @@ class RouteBuilder {
       final HeroController heroController = _goHeroCache.putIfAbsent(
           shellNavigatorKey, () => _getHeroController(context));
       // Build the Navigator
+
+      List<Page<Object?>> navigatorPages = keyToPages[shellNavigatorKey]!;
+      if (route.perserveState) {
+        //if a route should be perserved add it at the top of the navigator
+        final List<Page<Object?>> cachedPages = _navigatorCache.putIfAbsent(
+            shellNavigatorKey, () => <Page<Object?>>[]);
+        cachedPages.removeWhere((Page<Object?> cachedElement) =>
+            navigatorPages.any((Page<Object?> newElement) =>
+                newElement.key == cachedElement.key));
+        final List<Page<Object?>> newPages = <Page<Object?>>[
+          ...cachedPages, //.map(_CachedPageWrapper<Object?>.new),
+          ...navigatorPages
+        ];
+        cachedPages.addAll(navigatorPages);
+        navigatorPages = newPages;
+      }
+
       final Widget child = HeroControllerScope(
         controller: heroController,
         child: _buildNavigator(
-            onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
-            observers: observers),
+          onPopPage,
+          navigatorPages,
+          shellNavigatorKey,
+          observers: observers,
+        ),
       );
 
       // Build the Page for this route

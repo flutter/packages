@@ -421,6 +421,7 @@ class ShellRoute extends RouteBase {
     this.builder,
     this.pageBuilder,
     this.observers,
+    this.perserveState = false,
     super.routes,
     GlobalKey<NavigatorState>? navigatorKey,
   })  : assert(routes.isNotEmpty),
@@ -433,6 +434,9 @@ class ShellRoute extends RouteBase {
       }
     }
   }
+
+  /// Perserves the state of subroutes
+  final bool perserveState;
 
   /// The widget builder for a shell route.
   ///
