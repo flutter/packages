@@ -131,6 +131,66 @@ void main() {
     expect(code, contains('doSomethingChannel.setMessageHandler'));
   });
 
+  test('not gen one skip host api', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'doSomething',
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
+                name: '')
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
+        ),
+        Method(
+          name: 'skipDoSomething',
+          platformApiSkip: PlatformApiSkip.IOS,
+          arguments: <NamedType>[
+            NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'Input',
+                  isNullable: false,
+                ),
+                name: '')
+          ],
+          returnType:
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'input')
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'output')
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, isNot(contains('skipDoSomething')));
+    expect(code, contains('protocol Api'));
+    expect(code, matches('func doSomething.*Input.*Output'));
+    expect(code, contains('doSomethingChannel.setMessageHandler'));
+  });
+
   test('all the simple datatypes header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
       Class(name: 'Foobar', fields: <NamedType>[

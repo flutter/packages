@@ -384,6 +384,9 @@ import FlutterMacOS
     indent.write('protocol $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
+        if (method.platformApiSkip == PlatformApiSkip.IOS) {
+          continue;
+        }
         final _SwiftFunctionComponents components =
             _SwiftFunctionComponents.fromMethod(method);
         final List<String> argSignature =
@@ -437,6 +440,10 @@ import FlutterMacOS
           'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
       indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
+          if (method.platformApiSkip == PlatformApiSkip.IOS) {
+            continue;
+          }
+
           final _SwiftFunctionComponents components =
               _SwiftFunctionComponents.fromMethod(method);
 
