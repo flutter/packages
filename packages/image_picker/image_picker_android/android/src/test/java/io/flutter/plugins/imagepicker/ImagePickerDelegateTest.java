@@ -124,7 +124,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void chooseImageFromGallery_WhenPendingResultExists_FinishesWithAlreadyActiveError() {
+  public void chooseImageFromGallery_whenPendingResultExists_finishesWithAlreadyActiveError() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
@@ -135,7 +135,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void chooseMultiImageFromGallery_WhenPendingResultExists_FinishesWithAlreadyActiveError() {
+  public void chooseMultiImageFromGallery_whenPendingResultExists_finishesWithAlreadyActiveError() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
@@ -149,7 +149,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void
-      chooseImageFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseImageFromGallery_whenHasExternalStoragePermission_launchesChooseFromGalleryIntent() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
         .thenReturn(true);
 
@@ -164,7 +164,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void
-      chooseImageFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseImageFromGallery_WithPhotoPicker_whenHasExternalStoragePermission_launchesChooseFromGalleryIntent() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
         .thenReturn(true);
 
@@ -179,7 +179,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void
-      chooseMultiImageFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseMultiImageFromGallery_whenHasExternalStoragePermission_launchesChooseFromGalleryIntent() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
         .thenReturn(true);
 
@@ -196,7 +196,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void
-      chooseMultiImageFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseMultiImageFromGallery_WithPhotoPicker_whenHasExternalStoragePermission_launchesChooseFromGalleryIntent() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
         .thenReturn(true);
 
@@ -213,7 +213,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void
-      chooseVideoFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseVideoFromGallery_whenHasExternalStoragePermission_launchesChooseFromGalleryIntent() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
         .thenReturn(true);
 
@@ -228,7 +228,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void
-      chooseVideoFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseVideoFromGallery_WithPhotoPicker_whenHasExternalStoragePermission_launchesChooseFromGalleryIntent() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
         .thenReturn(true);
 
@@ -241,7 +241,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void takeImageWithCamera_WhenPendingResultExists_FinishesWithAlreadyActiveError() {
+  public void takeImageWithCamera_whenPendingResultExists_finishesWithAlreadyActiveError() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
@@ -252,7 +252,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void takeImageWithCamera_WhenHasNoCameraPermission_RequestsForPermission() {
+  public void takeImageWithCamera_whenHasNoCameraPermission_RequestsForPermission() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(false);
     when(mockPermissionManager.needRequestCameraPermission()).thenReturn(true);
 
@@ -265,7 +265,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void takeImageWithCamera_WhenCameraPermissionNotPresent_RequestsForPermission() {
+  public void takeImageWithCamera_whenCameraPermissionNotPresent_RequestsForPermission() {
     when(mockPermissionManager.needRequestCameraPermission()).thenReturn(false);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -278,7 +278,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      takeImageWithCamera_WhenHasCameraPermission_AndAnActivityCanHandleCameraIntent_LaunchesTakeWithCameraIntent() {
+      takeImageWithCamera_whenHasCameraPermission_andAnActivityCanHandleCameraIntent_launchesTakeWithCameraIntent() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -291,7 +291,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      takeImageWithCamera_WhenHasCameraPermission_AndNoActivityToHandleCameraIntent_FinishesWithNoCamerasAvailableError() {
+      takeImageWithCamera_whenHasCameraPermission_andNoActivityToHandleCameraIntent_finishesWithNoCamerasAvailableError() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
     doThrow(ActivityNotFoundException.class)
         .when(mockActivity)
@@ -305,7 +305,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void takeImageWithCamera_WritesImageToCacheDirectory() {
+  public void takeImageWithCamera_writesImageToCacheDirectory() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -317,7 +317,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void onRequestPermissionsResult_WhenCameraPermissionDenied_FinishesWithError() {
+  public void onRequestPermissionsResult_whenCameraPermissionDenied_finishesWithError() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
@@ -332,7 +332,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      onRequestTakeVideoPermissionsResult_WhenCameraPermissionGranted_LaunchesTakeVideoWithCameraIntent() {
+      onRequestTakeVideoPermissionsResult_whenCameraPermissionGranted_launchesTakeVideoWithCameraIntent() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(null, DEFAULT_VIDEO_OPTIONS);
     delegate.onRequestPermissionsResult(
@@ -347,7 +347,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      onRequestTakeImagePermissionsResult_WhenCameraPermissionGranted_LaunchesTakeWithCameraIntent() {
+      onRequestTakeImagePermissionsResult_whenCameraPermissionGranted_launchesTakeWithCameraIntent() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
     delegate.onRequestPermissionsResult(
@@ -361,7 +361,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void onActivityResult_WhenPickFromGalleryCanceled_FinishesWithNull() {
+  public void onActivityResult_whenPickFromGalleryCanceled_finishesWithNull() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
@@ -373,7 +373,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void onActivityResult_WhenPickFromGalleryCanceled_StoresNothingInCache() {
+  public void onActivityResult_whenPickFromGalleryCanceled_storesNothingInCache() {
     ImagePickerDelegate delegate = createDelegate();
 
     delegate.onActivityResult(
@@ -384,7 +384,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      onActivityResult_WhenImagePickedFromGallery_AndNoResizeNeeded_FinishesWithImagePath() {
+      onActivityResult_whenImagePickedFromGallery_andNoResizeNeeded_finishesWithImagePath() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
@@ -396,7 +396,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void onActivityResult_WhenImagePickedFromGallery_AndNoResizeNeeded_StoresImageInCache() {
+  public void onActivityResult_whenImagePickedFromGallery_andNoResizeNeeded_StoresImageInCache() {
     ImagePickerDelegate delegate = createDelegate();
 
     delegate.onActivityResult(
@@ -410,7 +410,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      onActivityResult_WhenImagePickedFromGallery_AndResizeNeeded_FinishesWithScaledImagePath() {
+      onActivityResult_whenImagePickedFromGallery_andResizeNeeded_finishesWithScaledImagePath() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(new ImageOutputOptions(WIDTH, null, null), null);
     delegate.onActivityResult(
@@ -422,7 +422,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      onActivityResult_WhenVideoPickedFromGallery_AndResizeParametersSupplied_FinishesWithFilePath() {
+      onActivityResult_whenVideoPickedFromGallery_andResizeParametersSupplied_finishesWithFilePath() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(new ImageOutputOptions(WIDTH, null, null), null);
     delegate.onActivityResult(
@@ -433,7 +433,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void onActivityResult_WhenTakeImageWithCameraCanceled_FinishesWithNull() {
+  public void onActivityResult_whenTakeImageWithCameraCanceled_finishesWithNull() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
@@ -445,7 +445,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void onActivityResult_WhenImageTakenWithCamera_AndNoResizeNeeded_FinishesWithImagePath() {
+  public void onActivityResult_whenImageTakenWithCamera_andNoResizeNeeded_finishesWithImagePath() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
     when(cache.retrievePendingCameraMediaUriPath()).thenReturn("testString");
@@ -459,7 +459,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      onActivityResult_WhenImageTakenWithCamera_AndResizeNeeded_FinishesWithScaledImagePath() {
+      onActivityResult_whenImageTakenWithCamera_andResizeNeeded_finishesWithScaledImagePath() {
     when(cache.retrievePendingCameraMediaUriPath()).thenReturn("testString");
 
     ImagePickerDelegate delegate =
@@ -473,7 +473,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      onActivityResult_WhenVideoTakenWithCamera_AndResizeParametersSupplied_FinishesWithFilePath() {
+      onActivityResult_whenVideoTakenWithCamera_andResizeParametersSupplied_finishesWithFilePath() {
     when(cache.retrievePendingCameraMediaUriPath()).thenReturn("testString");
 
     ImagePickerDelegate delegate =
@@ -487,7 +487,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      onActivityResult_WhenVideoTakenWithCamera_AndMaxDurationParametersSupplied_FinishesWithFilePath() {
+      onActivityResult_whenVideoTakenWithCamera_andMaxDurationParametersSupplied_finishesWithFilePath() {
     when(cache.retrievePendingCameraMediaUriPath()).thenReturn("testString");
 
     ImagePickerDelegate delegate =

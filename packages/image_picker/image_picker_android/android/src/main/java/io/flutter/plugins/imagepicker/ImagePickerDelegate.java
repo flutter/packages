@@ -37,8 +37,8 @@ import java.util.UUID;
  * <p>When invoked, both the {@link #chooseImageFromGallery} and {@link #takeImageWithCamera}
  * methods go through the same steps:
  *
- * <p>1. Check for an existing {@link #pendingResult}. If a previous pendingResult exists, this
- * means that the chooseImageFromGallery() or takeImageWithCamera() method was called at least
+ * <p>1. Check for an existing {@link #pendingCallState}. If a previous pendingCallState exists,
+ * this means that the chooseImageFromGallery() or takeImageWithCamera() method was called at least
  * twice. In this case, stop executing and finish with an error.
  *
  * <p>2. Check that a required runtime permission has been granted. The takeImageWithCamera() method
@@ -85,6 +85,22 @@ public class ImagePickerDelegate
     FRONT
   }
 
+  /** Holds call state during intent handling. */
+  private class PendingCallState {
+    public final @Nullable ImageOutputOptions imageOptions;
+    public final @Nullable VideoOptions videoOptions;
+    public final @NonNull MethodChannel.Result result;
+
+    private PendingCallState(
+        @Nullable ImageOutputOptions imageOptions,
+        @Nullable VideoOptions videoOptions,
+        @NonNull MethodChannel.Result result) {
+      this.imageOptions = imageOptions;
+      this.videoOptions = videoOptions;
+      this.result = result;
+    }
+  }
+
   @VisibleForTesting final String fileProviderName;
 
   private final Activity activity;
@@ -115,9 +131,7 @@ public class ImagePickerDelegate
   }
 
   private Uri pendingCameraMediaUri;
-  private @Nullable ImageOutputOptions pendingImageOptions;
-  private @Nullable VideoOptions pendingVideoOptions;
-  private @Nullable MethodChannel.Result pendingResult;
+  private @Nullable PendingCallState pendingCallState;
 
   public ImagePickerDelegate(
       final Activity activity,
@@ -192,9 +206,10 @@ public class ImagePickerDelegate
     this.externalFilesDirectory = externalFilesDirectory;
     this.imageResizer = imageResizer;
     this.fileProviderName = activity.getPackageName() + ".flutter.image_provider";
-    this.pendingImageOptions = pendingImageOptions;
-    this.pendingVideoOptions = pendingVideoOptions;
-    this.pendingResult = result;
+    if (result != null) {
+      this.pendingCallState =
+          new PendingCallState(pendingImageOptions, pendingVideoOptions, result);
+    }
     this.permissionManager = permissionManager;
     this.fileUriResolver = fileUriResolver;
     this.fileUtils = fileUtils;
@@ -211,16 +226,16 @@ public class ImagePickerDelegate
 
   // Save the state of the image picker so it can be retrieved with `retrieveLostImage`.
   void saveStateBeforeResult() {
-    if (pendingResult == null) {
+    if (pendingCallState == null) {
       return;
     }
 
     cache.saveType(
-        pendingImageOptions != null
+        pendingCallState.imageOptions != null
             ? ImagePickerCache.CacheType.IMAGE
             : ImagePickerCache.CacheType.VIDEO);
-    if (pendingImageOptions != null) {
-      cache.saveDimensionWithOutputOptions(pendingImageOptions);
+    if (pendingCallState.imageOptions != null) {
+      cache.saveDimensionWithOutputOptions(pendingCallState.imageOptions);
     }
     if (pendingCameraMediaUri != null) {
       cache.savePendingCameraMediaUriPath(pendingCameraMediaUri);
@@ -299,8 +314,10 @@ public class ImagePickerDelegate
 
   private void launchTakeVideoWithCameraIntent() {
     Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-    if (this.pendingVideoOptions != null && this.pendingVideoOptions.maxDuration != null) {
-      int maxSeconds = this.pendingVideoOptions.maxDuration;
+    if (pendingCallState != null
+        && pendingCallState.videoOptions != null
+        && pendingCallState.videoOptions.maxDuration != null) {
+      int maxSeconds = pendingCallState.videoOptions.maxDuration;
       intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxSeconds);
     }
     if (cameraDevice == CameraDevice.FRONT) {
@@ -612,10 +629,10 @@ public class ImagePickerDelegate
 
   private void handleMultiImageResult(
       ArrayList<String> paths, boolean shouldDeleteOriginalIfScaled) {
-    if (pendingImageOptions != null) {
+    if (pendingCallState != null && pendingCallState.imageOptions != null) {
       ArrayList<String> finalPath = new ArrayList<>();
       for (int i = 0; i < paths.size(); i++) {
-        String finalImagePath = getResizedImagePath(paths.get(i), pendingImageOptions);
+        String finalImagePath = getResizedImagePath(paths.get(i), pendingCallState.imageOptions);
 
         //delete original file if scaled
         if (finalImagePath != null
@@ -632,8 +649,8 @@ public class ImagePickerDelegate
   }
 
   private void handleImageResult(String path, boolean shouldDeleteOriginalIfScaled) {
-    if (pendingImageOptions != null) {
-      String finalImagePath = getResizedImagePath(path, pendingImageOptions);
+    if (pendingCallState != null && pendingCallState.imageOptions != null) {
+      String finalImagePath = getResizedImagePath(path, pendingCallState.imageOptions);
       //delete original file if scaled
       if (finalImagePath != null && !finalImagePath.equals(path) && shouldDeleteOriginalIfScaled) {
         new File(path).delete();
@@ -657,13 +674,11 @@ public class ImagePickerDelegate
       @Nullable ImageOutputOptions imageOptions,
       @Nullable VideoOptions videoOptions,
       @NonNull MethodChannel.Result result) {
-    if (pendingResult != null) {
+    if (pendingCallState != null) {
       return false;
     }
 
-    pendingImageOptions = imageOptions;
-    pendingVideoOptions = videoOptions;
-    pendingResult = result;
+    pendingCallState = new PendingCallState(imageOptions, videoOptions, result);
 
     // Clean up cache if a new image picker is launched.
     cache.clear();
@@ -676,7 +691,7 @@ public class ImagePickerDelegate
   // A null imagePath indicates that the image picker was cancelled without
   // selection.
   private void finishWithSuccess(@Nullable String imagePath) {
-    if (pendingResult == null) {
+    if (pendingCallState == null) {
       // Only save data for later retrieval if something was actually selected.
       if (imagePath != null) {
         ArrayList<String> pathList = new ArrayList<>();
@@ -685,17 +700,17 @@ public class ImagePickerDelegate
       }
       return;
     }
-    pendingResult.success(imagePath);
-    clearOptionsAndResult();
+    pendingCallState.result.success(imagePath);
+    pendingCallState = null;
   }
 
   private void finishWithListSuccess(ArrayList<String> imagePaths) {
-    if (pendingResult == null) {
+    if (pendingCallState == null) {
       cache.saveResult(imagePaths, null, null);
       return;
     }
-    pendingResult.success(imagePaths);
-    clearOptionsAndResult();
+    pendingCallState.result.success(imagePaths);
+    pendingCallState = null;
   }
 
   private void finishWithAlreadyActiveError(MethodChannel.Result result) {
@@ -703,17 +718,12 @@ public class ImagePickerDelegate
   }
 
   private void finishWithError(String errorCode, String errorMessage) {
-    if (pendingResult == null) {
+    if (pendingCallState == null) {
       cache.saveResult(null, errorCode, errorMessage);
       return;
     }
-    pendingResult.error(errorCode, errorMessage, null);
-    clearOptionsAndResult();
-  }
-
-  private void clearOptionsAndResult() {
-    pendingImageOptions = null;
-    pendingResult = null;
+    pendingCallState.result.error(errorCode, errorMessage, null);
+    pendingCallState = null;
   }
 
   private void useFrontCamera(Intent intent) {
