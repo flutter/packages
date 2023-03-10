@@ -144,7 +144,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void
-      chooseImageFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseImageFromGallery_LaunchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseImageFromGallery(mockMethodCall, mockResult);
@@ -157,7 +157,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void
-      chooseImageFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseImageFromGallery_WithPhotoPicker_LaunchesChooseFromGalleryIntent() {
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -171,7 +171,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void
-      chooseMultiImageFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseMultiImageFromGallery_LaunchesChooseFromGalleryIntent() {
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -186,7 +186,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void
-      chooseMultiImageFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseMultiImageFromGallery_WithPhotoPicker_LaunchesChooseFromGalleryIntent() {
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -201,7 +201,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void
-      chooseVideoFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseVideoFromGallery_LaunchesChooseFromGalleryIntent() {
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -215,7 +215,7 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void
-      chooseVideoFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
+      chooseVideoFromGallery_WithPhotoPicker_LaunchesChooseFromGalleryIntent() {
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
