@@ -13,9 +13,9 @@ export 'src/configuration.dart'
         RouteBase,
         ShellRoute,
         ShellNavigatorContainerBuilder,
+        StatefulNavigationShell,
         StatefulShellBranch,
         StatefulShellRoute,
-        StatefulShellRouteController,
         StatefulShellRouteState;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';

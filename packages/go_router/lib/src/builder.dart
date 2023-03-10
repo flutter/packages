@@ -273,14 +273,16 @@ class RouteBuilder {
         );
       }
 
-      final _ShellNavigatorBuilder shellNavigatorBuilder =
-          _ShellNavigatorBuilder._(
-              this, matchList, shellNavigatorKey, buildShellNavigator);
+      final ShellRouteContext shellRouteContext = ShellRouteContext(
+        subRoute: subRoute,
+        routeMatchList: matchList,
+        navigatorBuilder: buildShellNavigator,
+      );
 
       // Build the Page for this route
       final Page<Object?> page = _buildPageForRoute(
           context, state, match, pagePopContext,
-          shellNavigatorBuilder: shellNavigatorBuilder);
+          shellRouteContext: shellRouteContext);
       registry[page] = state;
       // Place the ShellRoute's Page onto the list for the parent navigator.
       keyToPages
@@ -347,7 +349,7 @@ class RouteBuilder {
   /// Builds a [Page] for [StackedRoute]
   Page<Object?> _buildPageForRoute(BuildContext context, GoRouterState state,
       RouteMatch match, _PagePopContext pagePopContext,
-      {ShellNavigatorBuilder? shellNavigatorBuilder}) {
+      {ShellRouteContext? shellRouteContext}) {
     final RouteBase route = match.route;
     Page<Object?>? page;
 
@@ -358,9 +360,9 @@ class RouteBuilder {
         page = pageBuilder(context, state);
       }
     } else if (route is ShellRouteBase) {
-      assert(shellNavigatorBuilder != null,
-          'ShellNavigatorBuilder must be provided for ${route.runtimeType}');
-      page = route.buildPage(context, state, shellNavigatorBuilder!);
+      assert(shellRouteContext != null,
+          'ShellRouteContext must be provided for ${route.runtimeType}');
+      page = route.buildPage(context, state, shellRouteContext!);
     }
 
     if (page is NoOpPage) {
@@ -369,7 +371,7 @@ class RouteBuilder {
 
     page ??= buildPage(context, state, Builder(builder: (BuildContext context) {
       return _callRouteBuilder(context, state, match,
-          shellNavigatorBuilder: shellNavigatorBuilder);
+          shellNavigatorBuilder: shellRouteContext);
     }));
     pagePopContext._setRouteMatchForPage(page, match);
 
@@ -380,7 +382,7 @@ class RouteBuilder {
   /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
   Widget _callRouteBuilder(
       BuildContext context, GoRouterState state, RouteMatch match,
-      {ShellNavigatorBuilder? shellNavigatorBuilder}) {
+      {ShellRouteContext? shellNavigatorBuilder}) {
     final RouteBase route = match.route;
 
     if (route is GoRoute) {
@@ -393,7 +395,7 @@ class RouteBuilder {
       return builder(context, state);
     } else if (route is ShellRouteBase) {
       assert(shellNavigatorBuilder != null,
-          'ShellNavigatorBuilder must be provided for ${route.runtimeType}');
+          'ShellRouteContext must be provided for ${route.runtimeType}');
       final Widget? widget =
           route.buildWidget(context, state, shellNavigatorBuilder!);
       if (widget == null) {
@@ -613,40 +615,5 @@ class _PagePopContext {
   bool onPopPage(Route<dynamic> route, dynamic result) {
     final Page<Object?> page = route.settings as Page<Object?>;
     return routeBuilderOnPopPage(route, result, _routeMatchLookUp[page]);
-  }
-}
-
-typedef _NavigatorBuilder = Widget Function(
-    List<NavigatorObserver>? observers, String? restorationScopeId);
-
-/// Provides support for building Navigators for routes.
-class _ShellNavigatorBuilder extends ShellNavigatorBuilder {
-  _ShellNavigatorBuilder._(
-    this.routeBuilder,
-    this.routeMatchList,
-    this.navigatorKey,
-    this.navigatorBuilder,
-  );
-
-  @override
-  final RouteBuilder routeBuilder;
-
-  @override
-  final RouteMatchList routeMatchList;
-
-  @override
-  final GlobalKey<NavigatorState> navigatorKey;
-
-  final _NavigatorBuilder navigatorBuilder;
-
-  @override
-  Widget buildNavigator({
-    List<NavigatorObserver>? observers,
-    String? restorationScopeId,
-  }) {
-    return navigatorBuilder(
-      observers,
-      restorationScopeId,
-    );
   }
 }

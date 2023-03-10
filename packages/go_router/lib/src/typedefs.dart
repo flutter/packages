@@ -57,3 +57,7 @@ typedef GoRouterBuilderWithNav = Widget Function(
 /// The signature of the redirect callback.
 typedef GoRouterRedirect = FutureOr<String?> Function(
     BuildContext context, GoRouterState state);
+
+/// Signature for functions used to build Navigators
+typedef NavigatorBuilder = Widget Function(
+    List<NavigatorObserver>? observers, String? restorationScopeId);

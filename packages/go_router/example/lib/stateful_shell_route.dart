@@ -158,13 +158,13 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                   /// This nested StatefulShellRoute demonstrates the use of a
                   /// custom container (TabBarView) for the branch Navigators.
                   /// Here, the default branch Navigator container (`child`) is
-                  /// ignored, and the class StatefulShellRouteController is
+                  /// ignored, and the class StatefulNavigationShell is
                   /// instead used to provide access to the widgets representing
                   /// the branch Navigators (`List<Widget> children`).
                   ///
                   /// See TabbedRootScreen for more details on how the children
                   /// are used in the TabBarView.
-                  return StatefulShellRouteController(
+                  return StatefulNavigationShell(
                     shellRouteState: state,
                     containerBuilder: (BuildContext context,
                             StatefulShellRouteState state,
