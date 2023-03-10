@@ -434,6 +434,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.write('interface $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
+        if (method.platformApiSkip == PlatformApiSkip.Android) {
+          continue;
+        }
+
         final List<String> argSignature = <String>[];
         if (method.arguments.isNotEmpty) {
           final Iterable<String> argTypes = method.arguments
@@ -485,6 +489,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?) ');
         indent.addScoped('{', '}', () {
           for (final Method method in api.methods) {
+            if (method.platformApiSkip == PlatformApiSkip.Android) {
+              continue;
+            }
+
             indent.write('run ');
             indent.addScoped('{', '}', () {
               String? taskQueue;

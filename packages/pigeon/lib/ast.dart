@@ -19,6 +19,18 @@ enum ApiLocation {
   flutter,
 }
 
+/// Enum that represents whether current [PlatformApi] is skip, in the generate hostApi.
+enum PlatformApiSkip {
+  /// This API generate does not skip any platform.
+  None,
+
+  /// This API generate skip iOS Platform.
+  IOS,
+
+  /// This API generate skip Android Platform.
+  Android,
+}
+
 /// Superclass for all AST nodes.
 class Node {}
 
@@ -30,6 +42,7 @@ class Method extends Node {
     required this.returnType,
     required this.arguments,
     this.isAsynchronous = false,
+    this.platformApiSkip = PlatformApiSkip.None,
     this.offset,
     this.objcSelector = '',
     this.swiftFunction = '',
@@ -48,6 +61,9 @@ class Method extends Node {
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
+
+  /// Whether this method is skipped in ios or android platform.
+  PlatformApiSkip platformApiSkip;
 
   /// The offset in the source file where the field appears.
   int? offset;

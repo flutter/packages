@@ -502,6 +502,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.write('public interface ${api.name} ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
+        if (method.platformApiSkip == PlatformApiSkip.Android) {
+          continue;
+        }
+
         _writeInterfaceMethod(generatorOptions, root, indent, api, method);
       }
       indent.newln();
@@ -523,6 +527,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           'static void setup(BinaryMessenger binaryMessenger, ${api.name} api) ');
       indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
+          if (method.platformApiSkip == PlatformApiSkip.Android) {
+            continue;
+          }
+
           _writeMethodSetup(generatorOptions, root, indent, api, method);
         }
       });

@@ -1,3 +1,7 @@
+## 9.0.6
+
+* Add platformApiSkip property in Method, decide whether current api is skip in the generate hostApi.
+
 ## 9.0.5
 
 * Removes the unnecessary Flutter constraint.

@@ -278,6 +278,10 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
     indent.writeln('@protocol $apiName');
     for (final Method func in api.methods) {
+      if (func.platformApiSkip == PlatformApiSkip.IOS) {
+        continue;
+      }
+
       final _ObjcPtr returnTypeName =
           _objcTypeForDartType(generatorOptions.prefix, func.returnType);
 
@@ -501,6 +505,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
     indent.addScoped('{', '}', () {
       for (final Method func in api.methods) {
+        if (func.platformApiSkip == PlatformApiSkip.IOS) {
+          continue;
+        }
+
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
 
