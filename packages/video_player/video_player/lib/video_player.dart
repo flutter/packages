@@ -230,7 +230,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// null.
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
-  /// [httpHeaders] option allows to specify HTTP headers
+  /// [httpHeaders] option allows to specify HTTP headers.
   /// for the request to the [dataSource].
   VideoPlayerController.network(
     this.dataSource, {
@@ -246,14 +246,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
   /// This will load the file from a file:// URI constructed from [file]'s path.
+  /// [httpHeaders] option allows to specify HTTP headers, mainly used for hls files like (m3u8).
   VideoPlayerController.file(File file,
-      {Future<ClosedCaptionFile>? closedCaptionFile, this.videoPlayerOptions})
+      {Future<ClosedCaptionFile>? closedCaptionFile,
+      this.videoPlayerOptions,
+      this.httpHeaders = const <String, String>{}})
       : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
         formatHint = null,
-        httpHeaders = const <String, String>{},
         super(VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
@@ -344,6 +346,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
+          httpHeaders: httpHeaders,
         );
         break;
       case DataSourceType.contentUri:
@@ -715,7 +718,7 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
 /// Widget that displays the video controlled by [controller].
 class VideoPlayer extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {Key? key}) : super(key: key);
+  const VideoPlayer(this.controller, {super.key});
 
   /// The [VideoPlayerController] responsible for the video being rendered in
   /// this widget.
@@ -776,9 +779,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 }
 
 class _VideoPlayerWithRotation extends StatelessWidget {
-  const _VideoPlayerWithRotation(
-      {Key? key, required this.rotation, required this.child})
-      : super(key: key);
+  const _VideoPlayerWithRotation({required this.rotation, required this.child});
   final int rotation;
   final Widget child;
 
@@ -838,10 +839,10 @@ class VideoScrubber extends StatefulWidget {
   /// [controller] is the [VideoPlayerController] that will be controlled by
   /// this scrubber.
   const VideoScrubber({
-    Key? key,
+    super.key,
     required this.child,
     required this.controller,
-  }) : super(key: key);
+  });
 
   /// The widget that will be displayed inside the gesture detector.
   final Widget child;
@@ -918,11 +919,11 @@ class VideoProgressIndicator extends StatefulWidget {
   /// to `top: 5.0`.
   const VideoProgressIndicator(
     this.controller, {
-    Key? key,
+    super.key,
     this.colors = const VideoProgressColors(),
     required this.allowScrubbing,
     this.padding = const EdgeInsets.only(top: 5.0),
-  }) : super(key: key);
+  });
 
   /// The [VideoPlayerController] that actually associates a video with this
   /// widget.
@@ -1051,7 +1052,7 @@ class ClosedCaption extends StatelessWidget {
   /// [VideoPlayerValue.caption].
   ///
   /// If [text] is null or empty, nothing will be displayed.
-  const ClosedCaption({Key? key, this.text, this.textStyle}) : super(key: key);
+  const ClosedCaption({super.key, this.text, this.textStyle});
 
   /// The text that will be shown in the closed caption, or null if no caption
   /// should be shown.

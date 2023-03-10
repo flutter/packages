@@ -30,7 +30,7 @@ void main() {
 }
 
 class SignInDemo extends StatefulWidget {
-  const SignInDemo({Key? key}) : super(key: key);
+  const SignInDemo({super.key});
 
   @override
   State createState() => SignInDemoState();

@@ -1,6 +1,7 @@
 ## 2.5.0
 
 * Adds NV21 as an image stream format (suitable for Android).
+* Aligns Dart and Flutter SDK constraints.
 
 ## 2.4.1
 

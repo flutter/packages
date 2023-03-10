@@ -1,3 +1,23 @@
+## 3.4.2
+
+* Clarifies explanation of endorsement in README.
+
+## 3.4.1
+
+* Fixes a potential bug where a `WebView` that was not added to the `InstanceManager` could be
+  returned by a `WebViewClient` or `WebChromeClient`.
+
+## 3.4.0
+
+* Adds support to set text zoom of a page. See `AndroidWebViewController.setTextZoom`.
+* Aligns Dart and Flutter SDK constraints.
+
+## 3.3.2
+
+* Resolves compilations warnings.
+* Updates compileSdkVersion to 33.
+* Bumps androidx.webkit:webkit from 1.5.0 to 1.6.0.
+
 ## 3.3.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

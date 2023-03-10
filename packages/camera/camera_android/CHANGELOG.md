@@ -2,6 +2,18 @@
 
 * Adds support for NV21 as a new streaming format in Android which includes correct handling of image padding when present.
 
+## 0.10.4+3
+
+* Clarifies explanation of endorsement in README.
+
+## 0.10.4+2
+
+* Aligns Dart and Flutter SDK constraints.
+* Updates compileSdkVersion to 33.
+* Fixes false positive for CamcorderProfile deprecation warning
+  that was already fixed.
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
+
 ## 0.10.4+1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

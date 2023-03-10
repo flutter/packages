@@ -1,3 +1,9 @@
+## 2.0.24
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+* Updates compileSdkVersion to 33.
+
 ## 2.0.23
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

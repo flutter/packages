@@ -46,7 +46,7 @@ public class PigeonTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              ArrayList error = (ArrayList) codec.decodeMessage(bytes);
+              ArrayList<Object> error = (ArrayList<Object>) codec.decodeMessage(bytes);
               assertNotNull(error.get(0));
               assertNotNull(error.get(1));
               String details = (String) error.get(2);
