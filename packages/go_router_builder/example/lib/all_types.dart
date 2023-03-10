@@ -366,7 +366,7 @@ class IterableRouteWithDefaultValues extends GoRouteData {
     this.boolIterableField = const <bool>[false],
     this.enumIterableField = const <SportDetails>[
       SportDetails.tennis,
-      SportDetails.hockey
+      SportDetails.hockey,
     ],
     this.intListField = const <int>[0],
     this.doubleListField = const <double>[1, 2, 3],
