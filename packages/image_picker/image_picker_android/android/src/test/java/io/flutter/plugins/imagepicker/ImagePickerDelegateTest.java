@@ -145,8 +145,6 @@ public class ImagePickerDelegateTest {
   @Config(sdk = 30)
   public void
       chooseImageFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
-    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
-        .thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseImageFromGallery(mockMethodCall, mockResult);
@@ -160,8 +158,6 @@ public class ImagePickerDelegateTest {
   @Config(minSdk = 33)
   public void
       chooseImageFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
-    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
-        .thenReturn(true);
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -176,8 +172,6 @@ public class ImagePickerDelegateTest {
   @Config(sdk = 30)
   public void
       chooseMultiImageFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
-    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
-        .thenReturn(true);
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -193,8 +187,6 @@ public class ImagePickerDelegateTest {
   @Config(minSdk = 33)
   public void
       chooseMultiImageFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
-    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
-        .thenReturn(true);
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -210,8 +202,6 @@ public class ImagePickerDelegateTest {
   @Config(sdk = 30)
   public void
       chooseVideoFromGallery_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
-    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
-        .thenReturn(true);
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -226,8 +216,6 @@ public class ImagePickerDelegateTest {
   @Config(minSdk = 33)
   public void
       chooseVideoFromGallery_WithPhotoPicker_WhenHasExternalStoragePermission_LaunchesChooseFromGalleryIntent() {
-    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
-        .thenReturn(true);
     when(mockMethodCall.argument("useAndroidPhotoPicker")).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
