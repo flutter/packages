@@ -1,3 +1,7 @@
+## 0.8.6+9
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.8.6+8
 
 * Fixes issue with images sometimes changing to incorrect orientation.
