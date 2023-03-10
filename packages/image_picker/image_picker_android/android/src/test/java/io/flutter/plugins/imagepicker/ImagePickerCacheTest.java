@@ -101,7 +101,7 @@ public class ImagePickerCacheTest {
   }
 
   @Test
-  public void ImageCache_ShouldBeAbleToSetAndGetQuality() {
+  public void imageCache_shouldBeAbleToSetAndGetQuality() {
     final int quality = 90;
     ImagePickerCache cache = new ImagePickerCache(mockActivity);
     cache.saveDimensionWithOutputOptions(new ImageOutputOptions(null, null, quality));
