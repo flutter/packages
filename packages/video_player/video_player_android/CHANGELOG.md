@@ -1,5 +1,10 @@
+## 2.4.0
+
+* Allows setting the ExoPlayer user agent by passing a User-Agent HTTP header.
+
 ## 2.3.12
 
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 * Updates compileSdkVersion to 33.
 * Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.

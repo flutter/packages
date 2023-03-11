@@ -12,5 +12,9 @@ The arguments `source`, `preferredCameraDevice`, and `maxDuration` are not suppo
 
 ### Import the package
 
-This package is not yet [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin), which means you need to add 
-not only the `image_picker`, as well as the `image_picker_windows`.
+This package is not yet [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin),
+which means you need to [add `image_picker_windows` as a dependency](https://pub.dev/packages/image_picker_windows/install)
+in addition to `image_picker`.
+
+Once you do, you can use the `image_picker` APIs as you normally would, other
+than the limitations noted above.
