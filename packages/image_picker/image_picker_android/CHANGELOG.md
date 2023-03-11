@@ -1,3 +1,11 @@
+## 0.8.6+1
+
+* Refactors code in preparation for adopting Pigeon.
+
+## 0.8.6
+
+* Adds `usePhotoPickerAndroid` options.
+
 ## 0.8.5+10
 
 * Clarifies explanation of endorsement in README.

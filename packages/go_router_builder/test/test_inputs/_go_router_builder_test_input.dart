@@ -215,23 +215,24 @@ class NullableDefaultValueRoute extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $iterableDefaultValueRoute => GoRouteData.$route(
-      path: '/iterable-default-value-route',
-      factory: $IterableDefaultValueRouteExtension._fromState,
+GoRoute get $iterableWithEnumRoute => GoRouteData.$route(
+      path: '/iterable-with-enum',
+      factory: $IterableWithEnumRouteExtension._fromState,
     );
 
-extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
-  static IterableDefaultValueRoute _fromState(GoRouterState state) =>
-      IterableDefaultValueRoute(
-        param:
-            state.queryParametersAll['param']?.map(int.parse) ?? const <int>[0],
+extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
+  static IterableWithEnumRoute _fromState(GoRouterState state) =>
+      IterableWithEnumRoute(
+        param: state.queryParametersAll['param']
+            ?.map(_$EnumOnlyUsedInIterableEnumMap._$fromName),
       );
 
   String get location => GoRouteData.$location(
-        '/iterable-default-value-route',
+        '/iterable-with-enum',
         queryParams: {
-          if (param != const <int>[0])
-            'param': param.map((e) => e.toString()).toList(),
+          if (param != null)
+            'param':
+                param?.map((e) => _$EnumOnlyUsedInIterableEnumMap[e]).toList(),
         },
       );
 
@@ -239,6 +240,54 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
 
   void push(BuildContext context) => context.push(location);
 
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
+const _$EnumOnlyUsedInIterableEnumMap = {
+  EnumOnlyUsedInIterable.a: 'a',
+  EnumOnlyUsedInIterable.b: 'b',
+  EnumOnlyUsedInIterable.c: 'c',
+};
+
+extension<T extends Enum> on Map<T, String> {
+  T _$fromName(String value) =>
+      entries.singleWhere((element) => element.value == value).key;
+}
+''')
+@TypedGoRoute<IterableWithEnumRoute>(path: '/iterable-with-enum')
+class IterableWithEnumRoute extends GoRouteData {
+  IterableWithEnumRoute({this.param});
+
+  final Iterable<EnumOnlyUsedInIterable>? param;
+}
+
+enum EnumOnlyUsedInIterable {
+  a,
+  b,
+  c,
+}
+
+@ShouldGenerate(r'''
+GoRoute get $iterableDefaultValueRoute => GoRouteData.$route(
+      path: '/iterable-default-value-route',
+      factory: $IterableDefaultValueRouteExtension._fromState,
+    );
+extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
+  static IterableDefaultValueRoute _fromState(GoRouterState state) =>
+      IterableDefaultValueRoute(
+        param:
+            state.queryParametersAll['param']?.map(int.parse) ?? const <int>[0],
+      );
+  String get location => GoRouteData.$location(
+        '/iterable-default-value-route',
+        queryParams: {
+          if (param != const <int>[0])
+            'param': param.map((e) => e.toString()).toList(),
+        },
+      );
+  void go(BuildContext context) => context.go(location);
+  void push(BuildContext context) => context.push(location);
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 }

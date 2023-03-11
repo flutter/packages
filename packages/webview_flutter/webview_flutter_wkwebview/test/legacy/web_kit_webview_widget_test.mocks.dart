@@ -1174,8 +1174,7 @@ class MockWebViewWidgetProxy extends _i1.Mock
       String,
       _i7.NSObject,
       Map<_i7.NSKeyValueChangeKey, Object?>,
-    )?
-        observeValue,
+    )? observeValue,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1197,8 +1196,7 @@ class MockWebViewWidgetProxy extends _i1.Mock
           {required void Function(
             _i4.WKUserContentController,
             _i4.WKScriptMessage,
-          )?
-              didReceiveScriptMessage}) =>
+          )? didReceiveScriptMessage}) =>
       (super.noSuchMethod(
         Invocation.method(
           #createScriptMessageHandler,
@@ -1220,8 +1218,7 @@ class MockWebViewWidgetProxy extends _i1.Mock
             _i4.WKWebView,
             _i4.WKWebViewConfiguration,
             _i4.WKNavigationAction,
-          )?
-              onCreateWebView}) =>
+          )? onCreateWebView}) =>
       (super.noSuchMethod(
         Invocation.method(
           #createUIDelgate,
@@ -1242,28 +1239,23 @@ class MockWebViewWidgetProxy extends _i1.Mock
     void Function(
       _i4.WKWebView,
       String?,
-    )?
-        didFinishNavigation,
+    )? didFinishNavigation,
     void Function(
       _i4.WKWebView,
       String?,
-    )?
-        didStartProvisionalNavigation,
+    )? didStartProvisionalNavigation,
     _i5.Future<_i4.WKNavigationActionPolicy> Function(
       _i4.WKWebView,
       _i4.WKNavigationAction,
-    )?
-        decidePolicyForNavigationAction,
+    )? decidePolicyForNavigationAction,
     void Function(
       _i4.WKWebView,
       _i7.NSError,
-    )?
-        didFailNavigation,
+    )? didFailNavigation,
     void Function(
       _i4.WKWebView,
       _i7.NSError,
-    )?
-        didFailProvisionalNavigation,
+    )? didFailProvisionalNavigation,
     void Function(_i4.WKWebView)? webViewWebContentProcessDidTerminate,
   }) =>
       (super.noSuchMethod(

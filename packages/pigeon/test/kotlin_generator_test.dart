@@ -1095,7 +1095,7 @@ void main() {
     expect(
         code,
         contains(
-            'val fooArg = args[0].let { if (it is Int) it.toLong() else it as? Long }'));
+            'val fooArg = args[0].let { if (it is Int) it.toLong() else it as Long? }'));
   });
 
   test('nullable argument flutter', () {
