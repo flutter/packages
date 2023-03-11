@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import android.app.Application;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -75,8 +76,8 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onMethodCall_WhenActivityIsNull_FinishesWithForegroundActivityRequiredError() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_GALLERY);
+  public void onMethodCall_whenActivityIsNull_finishesWithForegroundActivityRequiredError() {
+    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_GALLERY, false);
     ImagePickerPlugin imagePickerPluginWithNullActivity =
         new ImagePickerPlugin(mockImagePickerDelegate, null);
     imagePickerPluginWithNullActivity.onMethodCall(call, mockResult);
@@ -86,7 +87,7 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onMethodCall_WhenCalledWithUnknownMethod_ThrowsException() {
+  public void onMethodCall_whenCalledWithUnknownMethod_throwsException() {
     IllegalArgumentException e =
         assertThrows(
             IllegalArgumentException.class,
@@ -97,43 +98,59 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onMethodCall_WhenCalledWithUnknownImageSource_ThrowsException() {
+  public void onMethodCall_whenCalledWithUnknownImageSource_throwsException() {
     IllegalArgumentException e =
         assertThrows(
             IllegalArgumentException.class,
-            () -> plugin.onMethodCall(buildMethodCall(PICK_IMAGE, -1), mockResult));
+            () -> plugin.onMethodCall(buildMethodCall(PICK_IMAGE, -1, false), mockResult));
     assertEquals(e.getMessage(), "Invalid image source: -1");
     verifyNoInteractions(mockImagePickerDelegate);
     verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_WhenSourceIsGallery_InvokesChooseImageFromGallery() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_GALLERY);
+  public void onMethodCall_whenSourceIsGallery_invokesChooseImageFromGallery() {
+    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_GALLERY, false);
     plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).chooseImageFromGallery(eq(call), any());
+    verify(mockImagePickerDelegate).chooseImageFromGallery(any(), eq(false), any());
     verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_InvokesChooseMultiImageFromGallery() {
+  public void onMethodCall_whenSourceIsGalleryUsingPhotoPicker_invokesChooseImageFromGallery() {
+    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_GALLERY, true);
+    plugin.onMethodCall(call, mockResult);
+    verify(mockImagePickerDelegate).chooseImageFromGallery(any(), eq(true), any());
+    verifyNoInteractions(mockResult);
+  }
+
+  @Test
+  public void onMethodCall_invokesChooseMultiImageFromGallery() {
     MethodCall call = buildMethodCall(PICK_MULTI_IMAGE);
     plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(eq(call), any());
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), any());
     verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_WhenSourceIsCamera_InvokesTakeImageWithCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
+  public void onMethodCall_usingPhotoPicker_invokesChooseMultiImageFromGallery() {
+    MethodCall call = buildMethodCall(PICK_MULTI_IMAGE, SOURCE_GALLERY, true);
     plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).takeImageWithCamera(eq(call), any());
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), any());
     verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_PickingImage_WhenSourceIsCamera_InvokesTakeImageWithCamera_RearCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
+  public void onMethodCall_whenSourceIsCamera_invokesTakeImageWithCamera() {
+    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA, null);
+    plugin.onMethodCall(call, mockResult);
+    verify(mockImagePickerDelegate).takeImageWithCamera(any(), any());
+    verifyNoInteractions(mockResult);
+  }
+
+  @Test
+  public void onMethodCall_PickingImage_whenSourceIsCamera_invokesTakeImageWithCamera_RearCamera() {
+    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA, null);
     HashMap<String, Object> arguments = getArgumentMap(call);
     arguments.put("cameraDevice", 0);
     plugin.onMethodCall(call, mockResult);
@@ -142,8 +159,8 @@ public class ImagePickerPluginTest {
 
   @Test
   public void
-      onMethodCall_PickingImage_WhenSourceIsCamera_InvokesTakeImageWithCamera_FrontCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
+      onMethodCall_PickingImage_whenSourceIsCamera_invokesTakeImageWithCamera_FrontCamera() {
+    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA, null);
     HashMap<String, Object> arguments = getArgumentMap(call);
     arguments.put("cameraDevice", 1);
     plugin.onMethodCall(call, mockResult);
@@ -151,8 +168,8 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onMethodCall_PickingVideo_WhenSourceIsCamera_InvokesTakeImageWithCamera_RearCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
+  public void onMethodCall_PickingVideo_whenSourceIsCamera_invokesTakeImageWithCamera_RearCamera() {
+    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA, null);
     HashMap<String, Object> arguments = getArgumentMap(call);
     arguments.put("cameraDevice", 0);
     plugin.onMethodCall(call, mockResult);
@@ -161,8 +178,8 @@ public class ImagePickerPluginTest {
 
   @Test
   public void
-      onMethodCall_PickingVideo_WhenSourceIsCamera_InvokesTakeImageWithCamera_FrontCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
+      onMethodCall_PickingVideo_whenSourceIsCamera_invokesTakeImageWithCamera_FrontCamera() {
+    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA, null);
     HashMap<String, Object> arguments = getArgumentMap(call);
     arguments.put("cameraDevice", 1);
     plugin.onMethodCall(call, mockResult);
@@ -170,7 +187,7 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onResiter_WhenAcitivityIsNull_ShouldNotCrash() {
+  public void onRegister_whenActivityIsNull_shouldNotCrash() {
     when(mockRegistrar.activity()).thenReturn(null);
     ImagePickerPlugin.registerWith((mockRegistrar));
     assertTrue(
@@ -178,14 +195,14 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onConstructor_WhenContextTypeIsActivity_ShouldNotCrash() {
+  public void onConstructor_whenContextTypeIsActivity_shouldNotCrash() {
     new ImagePickerPlugin(mockImagePickerDelegate, mockActivity);
     assertTrue(
         "No exception thrown when ImagePickerPlugin() ran with context instanceof Activity", true);
   }
 
   @Test
-  public void constructDelegate_ShouldUseInternalCacheDirectory() {
+  public void constructDelegate_shouldUseInternalCacheDirectory() {
     File mockDirectory = new File("/mockpath");
     when(mockActivity.getCacheDir()).thenReturn(mockDirectory);
 
@@ -199,7 +216,7 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onDetachedFromActivity_ShouldReleaseActivityState() {
+  public void onDetachedFromActivity_shouldReleaseActivityState() {
     final BinaryMessenger mockBinaryMessenger = mock(BinaryMessenger.class);
     when(mockPluginBinding.getBinaryMessenger()).thenReturn(mockBinaryMessenger);
 
@@ -217,9 +234,13 @@ public class ImagePickerPluginTest {
     assertNull(plugin.getActivityState());
   }
 
-  private MethodCall buildMethodCall(String method, final int source) {
+  private MethodCall buildMethodCall(
+      String method, final int source, @Nullable Boolean usePhotoPicker) {
     final Map<String, Object> arguments = new HashMap<>();
     arguments.put("source", source);
+    if (usePhotoPicker != null) {
+      arguments.put("useAndroidPhotoPicker", usePhotoPicker);
+    }
 
     return new MethodCall(method, arguments);
   }
