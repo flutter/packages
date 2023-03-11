@@ -24,16 +24,12 @@ import com.android.billingclient.api.BillingFlowParams.ProrationMode;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
-import com.android.billingclient.api.PriceChangeFlowParams;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.HashMap;
@@ -46,7 +42,7 @@ class MethodCallHandlerImpl
 
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_SKU_DOC_URL =
-      "https://github.com/flutter/plugins/blob/main/packages/in_app_purchase/in_app_purchase/README.md#loading-products-for-sale";
+      "https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/README.md#loading-products-for-sale";
 
   @Nullable private BillingClient billingClient;
   private final BillingClientFactory billingClientFactory;
@@ -55,7 +51,9 @@ class MethodCallHandlerImpl
   private final Context applicationContext;
   private final MethodChannel methodChannel;
 
-  private HashMap<String, SkuDetails> cachedSkus = new HashMap<>();
+  // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
+  @SuppressWarnings("deprecation")
+  private HashMap<String, com.android.billingclient.api.SkuDetails> cachedSkus = new HashMap<>();
 
   /** Constructs the MethodCallHandlerImpl */
   MethodCallHandlerImpl(
@@ -185,21 +183,29 @@ class MethodCallHandlerImpl
     result.success(billingClient.isReady());
   }
 
-  // TODO(garyq): Migrate to new subscriptions API: https://developer.android.com/google/play/billing/migrate-gpblv5
+  // TODO(stuartmorgan): Migrate to new subscriptions API. See:
+  // - https://developer.android.com/google/play/billing/migrate-gpblv5
+  // - https://github.com/flutter/flutter/issues/114265
+  // - https://github.com/flutter/flutter/issues/107370
+  @SuppressWarnings("deprecation")
   private void querySkuDetailsAsync(
       final String skuType, final List<String> skusList, final MethodChannel.Result result) {
     if (billingClientError(result)) {
       return;
     }
 
-    SkuDetailsParams params =
-        SkuDetailsParams.newBuilder().setType(skuType).setSkusList(skusList).build();
+    com.android.billingclient.api.SkuDetailsParams params =
+        com.android.billingclient.api.SkuDetailsParams.newBuilder()
+            .setType(skuType)
+            .setSkusList(skusList)
+            .build();
     billingClient.querySkuDetailsAsync(
         params,
-        new SkuDetailsResponseListener() {
+        new com.android.billingclient.api.SkuDetailsResponseListener() {
           @Override
           public void onSkuDetailsResponse(
-              BillingResult billingResult, List<SkuDetails> skuDetailsList) {
+              BillingResult billingResult,
+              List<com.android.billingclient.api.SkuDetails> skuDetailsList) {
             updateCachedSkus(skuDetailsList);
             final Map<String, Object> skuDetailsResponse = new HashMap<>();
             skuDetailsResponse.put("billingResult", Translator.fromBillingResult(billingResult));
@@ -220,7 +226,9 @@ class MethodCallHandlerImpl
     if (billingClientError(result)) {
       return;
     }
-    SkuDetails skuDetails = cachedSkus.get(sku);
+    // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
+    @SuppressWarnings("deprecation")
+    com.android.billingclient.api.SkuDetails skuDetails = cachedSkus.get(sku);
     if (skuDetails == null) {
       result.error(
           "NOT_FOUND",
@@ -258,6 +266,8 @@ class MethodCallHandlerImpl
       return;
     }
 
+    // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
+    @SuppressWarnings("deprecation")
     BillingFlowParams.Builder paramsBuilder =
         BillingFlowParams.newBuilder().setSkuDetails(skuDetails);
     if (accountId != null && !accountId.isEmpty()) {
@@ -401,16 +411,21 @@ class MethodCallHandlerImpl
         });
   }
 
-  private void updateCachedSkus(@Nullable List<SkuDetails> skuDetailsList) {
+  // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
+  @SuppressWarnings("deprecation")
+  private void updateCachedSkus(
+      @Nullable List<com.android.billingclient.api.SkuDetails> skuDetailsList) {
     if (skuDetailsList == null) {
       return;
     }
 
-    for (SkuDetails skuDetails : skuDetailsList) {
+    for (com.android.billingclient.api.SkuDetails skuDetails : skuDetailsList) {
       cachedSkus.put(skuDetails.getSku(), skuDetails);
     }
   }
 
+  // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
+  @SuppressWarnings("deprecation")
   private void launchPriceChangeConfirmationFlow(String sku, MethodChannel.Result result) {
     if (activity == null) {
       result.error(
@@ -428,7 +443,7 @@ class MethodCallHandlerImpl
     // is handled by the `billingClientError()` call.
     assert billingClient != null;
 
-    SkuDetails skuDetails = cachedSkus.get(sku);
+    com.android.billingclient.api.SkuDetails skuDetails = cachedSkus.get(sku);
     if (skuDetails == null) {
       result.error(
           "NOT_FOUND",
@@ -439,8 +454,10 @@ class MethodCallHandlerImpl
       return;
     }
 
-    PriceChangeFlowParams params =
-        new PriceChangeFlowParams.Builder().setSkuDetails(skuDetails).build();
+    com.android.billingclient.api.PriceChangeFlowParams params =
+        new com.android.billingclient.api.PriceChangeFlowParams.Builder()
+            .setSkuDetails(skuDetails)
+            .build();
     billingClient.launchPriceChangeConfirmationFlow(
         activity,
         params,

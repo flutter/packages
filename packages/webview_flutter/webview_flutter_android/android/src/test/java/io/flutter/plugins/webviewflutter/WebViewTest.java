@@ -20,6 +20,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebViewClient;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewFlutterApi;
 import io.flutter.plugins.webviewflutter.WebViewHostApiImpl.WebViewPlatformView;
 import java.util.HashMap;
 import java.util.Objects;
@@ -322,6 +323,25 @@ public class WebViewTest {
     javaObjectHostApi.dispose(0L);
 
     assertTrue(destroyCalled[0]);
+  }
+
+  @Test
+  public void flutterApiCreate() {
+    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+
+    final WebViewFlutterApiImpl flutterApiImpl =
+        new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
+
+    final WebViewFlutterApi mockFlutterApi = mock(WebViewFlutterApi.class);
+    flutterApiImpl.setApi(mockFlutterApi);
+
+    flutterApiImpl.create(mockWebView, reply -> {});
+
+    final long instanceIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
+    verify(mockFlutterApi).create(eq(instanceIdentifier), any());
+
+    instanceManager.close();
   }
 
   @Test

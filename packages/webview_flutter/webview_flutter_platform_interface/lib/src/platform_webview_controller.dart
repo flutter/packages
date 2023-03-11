@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import '../../src/platform_navigation_delegate.dart';
+import 'platform_navigation_delegate.dart';
 import 'webview_platform.dart';
 
 /// Interface for a platform implementation of a web view controller.
@@ -258,6 +258,14 @@ abstract class PlatformWebViewController extends PlatformInterface {
   Future<void> setUserAgent(String? userAgent) {
     throw UnimplementedError(
         'setUserAgent is not implemented on the current platform');
+  }
+
+  /// Toggle the listener for content offset changes. Set to null to stop listening.
+  Future<void> setOnContentOffsetChanged(
+      void Function(int left, int top, int oldLeft, int oldTop)?
+          onOffsetChange) {
+    throw UnimplementedError(
+        'setOnContentOffsetChanged is not implemented on the current platform');
   }
 }
 

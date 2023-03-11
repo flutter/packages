@@ -24,6 +24,7 @@ part 'all_types.g.dart';
       path: 'enhanced-enum-route/:requiredEnumField'),
   TypedGoRoute<StringRoute>(path: 'string-route/:requiredStringField'),
   TypedGoRoute<UriRoute>(path: 'uri-route/:requiredUriField'),
+  TypedGoRoute<IterableRoute>(path: 'iterable-route'),
 ])
 @immutable
 class AllTypesBaseRoute extends GoRouteData {
@@ -33,7 +34,6 @@ class AllTypesBaseRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) =>
       const BasePage<void>(
         dataTitle: 'Root',
-        param: null,
       );
 }
 
@@ -290,17 +290,76 @@ class UriRoute extends GoRouteData {
       );
 }
 
+class IterableRoute extends GoRouteData {
+  IterableRoute({
+    this.intIterableField,
+    this.doubleIterableField,
+    this.stringIterableField,
+    this.boolIterableField,
+    this.enumIterableField,
+    this.enumOnlyInIterableField,
+    this.intListField,
+    this.doubleListField,
+    this.stringListField,
+    this.boolListField,
+    this.enumListField,
+    this.enumOnlyInListField,
+    this.intSetField,
+    this.doubleSetField,
+    this.stringSetField,
+    this.boolSetField,
+    this.enumSetField,
+    this.enumOnlyInSetField,
+  });
+
+  final Iterable<int>? intIterableField;
+  final List<int>? intListField;
+  final Set<int>? intSetField;
+
+  final Iterable<double>? doubleIterableField;
+  final List<double>? doubleListField;
+  final Set<double>? doubleSetField;
+
+  final Iterable<String>? stringIterableField;
+  final List<String>? stringListField;
+  final Set<String>? stringSetField;
+
+  final Iterable<bool>? boolIterableField;
+  final List<bool>? boolListField;
+  final Set<bool>? boolSetField;
+
+  final Iterable<SportDetails>? enumIterableField;
+  final List<SportDetails>? enumListField;
+  final Set<SportDetails>? enumSetField;
+
+  final Iterable<CookingRecipe>? enumOnlyInIterableField;
+  final List<CookingRecipe>? enumOnlyInListField;
+  final Set<CookingRecipe>? enumOnlyInSetField;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const BasePage<String>(
+        dataTitle: 'IterableRoute',
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('IterableRoute'),
+        onTap: () => go(context),
+        selected: GoRouter.of(context).location == location,
+      );
+}
+
 class BasePage<T> extends StatelessWidget {
   const BasePage({
     required this.dataTitle,
-    required this.param,
+    this.param,
     this.queryParam,
     this.queryParamWithDefaultValue,
     super.key,
   });
 
   final String dataTitle;
-  final T param;
+  final T? param;
   final T? queryParam;
   final T? queryParamWithDefaultValue;
 
@@ -351,6 +410,32 @@ class BasePage<T> extends StatelessWidget {
             UriRoute(
               requiredUriField: Uri.parse('https://dart.dev'),
               uriField: Uri.parse('https://dart.dev'),
+            ).drawerTile(context),
+            IterableRoute(
+              intIterableField: <int>[1, 2, 3],
+              doubleIterableField: <double>[.3, .4, .5],
+              stringIterableField: <String>['quo usque tandem'],
+              boolIterableField: <bool>[true, false, false],
+              enumIterableField: <SportDetails>[
+                SportDetails.football,
+                SportDetails.hockey,
+              ],
+              intListField: <int>[1, 2, 3],
+              doubleListField: <double>[.3, .4, .5],
+              stringListField: <String>['quo usque tandem'],
+              boolListField: <bool>[true, false, false],
+              enumListField: <SportDetails>[
+                SportDetails.football,
+                SportDetails.hockey,
+              ],
+              intSetField: <int>{1, 2, 3},
+              doubleSetField: <double>{.3, .4, .5},
+              stringSetField: <String>{'quo usque tandem'},
+              boolSetField: <bool>{true, false},
+              enumSetField: <SportDetails>{
+                SportDetails.football,
+                SportDetails.hockey,
+              },
             ).drawerTile(context),
           ],
         )),

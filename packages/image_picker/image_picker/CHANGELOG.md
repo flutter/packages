@@ -1,3 +1,16 @@
+## 0.8.7
+
+* Adds `usePhotoPickerAndroid` options.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.8.6+4
+
+* Updates iOS minimum version in README.
+
+## 0.8.6+3
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.8.6+2
 
 * Updates `NSPhotoLibraryUsageDescription` description in README.

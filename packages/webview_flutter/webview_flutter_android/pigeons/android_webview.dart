@@ -193,6 +193,22 @@ abstract class WebViewHostApi {
   void enableContentOffsetChangedListener(int instanceId, bool enabled);
 }
 
+/// Flutter API for `WebView`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/WebView.
+@FlutterApi()
+abstract class WebViewFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int identifier);
+
+  void onScrollPosChange(
+      int webViewInstanceId, int x, int y, int oldX, int oldY);
+}
+
 @HostApi(dartHostTestHandler: 'TestWebSettingsHostApi')
 abstract class WebSettingsHostApi {
   void create(int instanceId, int webViewInstanceId);
@@ -220,6 +236,8 @@ abstract class WebSettingsHostApi {
   void setBuiltInZoomControls(int instanceId, bool enabled);
 
   void setAllowFileAccess(int instanceId, bool enabled);
+
+  void setTextZoom(int instanceId, int textZoom);
 }
 
 @HostApi(dartHostTestHandler: 'TestJavaScriptChannelHostApi')
@@ -287,12 +305,6 @@ abstract class DownloadListenerFlutterApi {
     String mimetype,
     int contentLength,
   );
-}
-
-@FlutterApi()
-abstract class WebViewFlutterApi {
-  void onScrollPosChange(
-      int webViewInstanceId, int x, int y, int oldX, int oldY);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebChromeClientHostApi')

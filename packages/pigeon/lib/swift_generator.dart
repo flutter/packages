@@ -171,7 +171,7 @@ import FlutterMacOS
     Set<String> customEnumNames,
   ) {
     final String className = klass.name;
-    indent.write('static func fromList(_ list: [Any?]) -> $className? ');
+    indent.write('static func fromList(_ list: [Any]) -> $className? ');
 
     indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(klass),
@@ -185,27 +185,27 @@ import FlutterMacOS
           if (!hostDatatype.isBuiltin &&
               customClassNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
-            indent.write('if let ${field.name}List = $listValue as? [Any?] ');
+            indent.write('if let ${field.name}List = $listValue as! [Any]? ');
             indent.addScoped('{', '}', () {
               indent.writeln(
-                  '${field.name} = $fieldType.fromList(${field.name}List)');
+                  '${field.name} = $fieldType.fromList(${field.name}List as [Any])');
             });
           } else if (!hostDatatype.isBuiltin &&
               customEnumNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
-            indent.write('if let ${field.name}RawValue = $listValue as? Int ');
+            indent.write('if let ${field.name}RawValue = $listValue as! Int? ');
             indent.addScoped('{', '}', () {
               indent.writeln(
                   '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
             });
           } else {
-            indent.writeln('let ${field.name} = $listValue as? $fieldType ');
+            indent.writeln('let ${field.name} = $listValue as! $fieldType? ');
           }
         } else {
           if (!hostDatatype.isBuiltin &&
               customClassNames.contains(field.type.baseName)) {
             indent.writeln(
-                'let ${field.name} = $fieldType.fromList($listValue as! [Any?])!');
+                'let ${field.name} = $fieldType.fromList($listValue as! [Any])!');
           } else if (!hostDatatype.isBuiltin &&
               customEnumNames.contains(field.type.baseName)) {
             indent.writeln(
@@ -455,7 +455,7 @@ import FlutterMacOS
             indent.addScoped('{ $messageVarName, reply in', '}', () {
               final List<String> methodArgument = <String>[];
               if (components.arguments.isNotEmpty) {
-                indent.writeln('let args = message as! [Any?]');
+                indent.writeln('let args = message as! [Any]');
                 enumerate(components.arguments,
                     (int index, _SwiftFunctionArgument arg) {
                   final String argName =
@@ -668,17 +668,17 @@ String _camelCase(String text) {
 }
 
 String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
+  final String forceUnwrap = type.isNullable ? '' : '!';
   if (isEnum(root, type)) {
-    final String forceUnwrap = type.isNullable ? '' : '!';
     final String nullableConditionPrefix =
         type.isNullable ? '$value == nil ? nil : ' : '';
     return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$forceUnwrap';
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
-    return type.isNullable ? value : '$value!';
+    return value;
   } else {
-    final String castUnwrap = type.isNullable ? '?' : '!';
-    return '$value as$castUnwrap ${_swiftTypeForDartType(type)}';
+    final String castUnwrap = type.isNullable ? '?' : '';
+    return '$value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   }
 }
 
@@ -691,9 +691,9 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
   if (type.typeArguments.isEmpty) {
     if (type.baseName == 'List') {
-      return '[Any?]';
+      return '[Any]';
     } else if (type.baseName == 'Map') {
-      return '[AnyHashable: Any?]';
+      return '[AnyHashable: Any]';
     } else {
       return 'Any';
     }

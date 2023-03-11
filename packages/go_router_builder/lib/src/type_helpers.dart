@@ -38,6 +38,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperNum(),
   _TypeHelperString(),
   _TypeHelperUri(),
+  _TypeHelperIterable(),
 ];
 
 /// Returns the decoded [String] value for [element], if its type is supported.
@@ -189,7 +190,7 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
 
   @override
   String _encode(String fieldName, DartType type) =>
-      '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]!';
+      '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]';
 
   @override
   bool _matchesType(DartType type) => type.isEnum;
@@ -231,8 +232,7 @@ class _TypeHelperString extends _TypeHelper {
       'state.${_stateValueAccess(parameterElement)}';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}';
+  String _encode(String fieldName, DartType type) => fieldName;
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreString;
@@ -251,6 +251,69 @@ class _TypeHelperUri extends _TypeHelperWithHelper {
   @override
   bool _matchesType(DartType type) =>
       const TypeChecker.fromRuntime(Uri).isAssignableFromType(type);
+}
+
+class _TypeHelperIterable extends _TypeHelper {
+  const _TypeHelperIterable();
+
+  @override
+  String _decode(ParameterElement parameterElement) {
+    if (parameterElement.type is ParameterizedType) {
+      final DartType iterableType =
+          (parameterElement.type as ParameterizedType).typeArguments.first;
+
+      // get a type converter for values in iterable
+      String entriesTypeDecoder = '(e) => e';
+      for (final _TypeHelper helper in _helpers) {
+        if (helper._matchesType(iterableType) &&
+            helper is _TypeHelperWithHelper) {
+          entriesTypeDecoder = helper.helperName(iterableType);
+        }
+      }
+
+      // get correct type for iterable
+      String iterableCaster = '';
+      if (const TypeChecker.fromRuntime(List)
+          .isAssignableFromType(parameterElement.type)) {
+        iterableCaster = '.toList()';
+      } else if (const TypeChecker.fromRuntime(Set)
+          .isAssignableFromType(parameterElement.type)) {
+        iterableCaster = '.toSet()';
+      }
+
+      return '''
+state.queryParametersAll[
+        ${escapeDartString(parameterElement.name.kebab)}]
+        ?.map($entriesTypeDecoder)$iterableCaster''';
+    }
+    return '''
+state.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
+  }
+
+  @override
+  String _encode(String fieldName, DartType type) {
+    if (type is ParameterizedType) {
+      final DartType iterableType = type.typeArguments.first;
+
+      // get a type encoder for values in iterable
+      String entriesTypeEncoder = '';
+      for (final _TypeHelper helper in _helpers) {
+        if (helper._matchesType(iterableType)) {
+          entriesTypeEncoder = '''
+?.map((e) => ${helper._encode('e', iterableType)}).toList()''';
+        }
+      }
+      return '''
+$fieldName$entriesTypeEncoder''';
+    }
+
+    return '''
+$fieldName?.map((e) => e.toString()).toList()''';
+  }
+
+  @override
+  bool _matchesType(DartType type) =>
+      const TypeChecker.fromRuntime(Iterable).isAssignableFromType(type);
 }
 
 abstract class _TypeHelperWithHelper extends _TypeHelper {
@@ -277,7 +340,9 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
   }
 }
 
-extension on DartType {
+/// Extension helpers on [DartType].
+extension DartTypeExtension on DartType {
+  /// Convenient helper for nullability checks.
   String get ensureNotNull => isNullableType ? '!' : '';
 }
 

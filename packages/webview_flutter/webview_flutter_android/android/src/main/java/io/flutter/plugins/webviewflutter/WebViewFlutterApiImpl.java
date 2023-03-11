@@ -5,35 +5,51 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.webkit.WebView;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewFlutterApi;
 
 /**
- * Flutter Api implementation for {@link ContentOffsetChangedListener}.
+ * Flutter API implementation for `WebView`.
  *
- * <p>Passes arguments of callbacks methods from a {@link ContentOffsetChangedListener} to Dart.
+ * <p>This class may handle adding native instances that are attached to a Dart instance or passing
+ * arguments of callbacks methods to a Dart instance.
  */
 public class WebViewFlutterApiImpl extends WebViewFlutterApi {
   private final InstanceManager instanceManager;
+  private WebViewFlutterApi api;
 
   /**
-   * Creates a Flutter api that sends messages to Dart.
+   * Constructs a {@link WebViewFlutterApiImpl}.
    *
-   * @param binaryMessenger handles sending messages to Dart
-   * @param instanceManager maintains instances stored to communicate with Dart objects
+   * @param binaryMessenger used to communicate with Dart over asynchronous messages
+   * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public WebViewFlutterApiImpl(BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+  public WebViewFContentOffsetChangedListener lutterApiImpl(
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     super(binaryMessenger);
     this.instanceManager = instanceManager;
+    api = new WebViewFlutterApi(binaryMessenger);
   }
 
-  /** Passes arguments from {@link ContentOffsetChangedListener#onContentOffsetChange} to Dart. */
-  public void onScrollPosChange(
-      WebView webView, long x, long y, long oldX, long oldY, Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
+  /**
+   * Stores the `WebView` instance and notifies Dart to create and store a new `WebView` instance
+   * that is attached to this one. If `instance` has already been added, this method does nothing.
+   */
+  public void create(@NonNull WebView instance, @NonNull WebViewFlutterApi.Reply<Void> callback) {
+    if (!instanceManager.containsInstance(instance)) {
+      api.create(instanceManager.addHostCreatedInstance(instance), callback);
     }
-    onScrollPosChange(webViewIdentifier, x, y, oldX, oldY, callback);
+  }
+
+  /**
+   * Sets the Flutter API used to send messages to Dart.
+   *
+   * <p>This is only visible for testing.
+   */
+  @VisibleForTesting
+  void setApi(@NonNull WebViewFlutterApi api) {
+    this.api = api;
   }
 }

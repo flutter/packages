@@ -6,9 +6,11 @@ The iOS and macOS implementation of [`in_app_purchase`][1].
 
 This package has been [endorsed][2], meaning that you only need to add `in_app_purchase`
 as a dependency in your `pubspec.yaml`. This package will be automatically included in your app
-when you do.
+when you do,
+so you do not need to add it to your `pubspec.yaml`.
 
-If you wish to use this package only, you can [add  `in_app_purchase_storekit` directly][3].
+However, if you `import` this package to use any of its APIs directly, you
+should [add it to your `pubspec.yaml` as usual][3].
 
 ## Contributing
 
@@ -21,7 +23,7 @@ editing any of the serialized data structs, rebuild the serializers by running
 watch the filesystem for changes.
 
 If you would like to contribute to the plugin, check out our
-[contribution guide](https://github.com/flutter/plugins/blob/main/CONTRIBUTING.md).
+[contribution guide](https://github.com/flutter/packages/blob/main/CONTRIBUTING.md).
 
 
 [1]: ../in_app_purchase

@@ -74,7 +74,7 @@ const String kTransparentBackgroundPage = '''
 ''';
 
 class WebViewExample extends StatefulWidget {
-  const WebViewExample({Key? key, this.cookieManager}) : super(key: key);
+  const WebViewExample({super.key, this.cookieManager});
 
   final PlatformWebViewCookieManager? cookieManager;
 
@@ -197,14 +197,13 @@ enum MenuOptions {
 
 class SampleMenu extends StatelessWidget {
   SampleMenu({
-    Key? key,
+    super.key,
     required this.webViewController,
     PlatformWebViewCookieManager? cookieManager,
-  })  : cookieManager = cookieManager ??
+  }) : cookieManager = cookieManager ??
             PlatformWebViewCookieManager(
               const PlatformWebViewCookieManagerCreationParams(),
-            ),
-        super(key: key);
+            );
 
   final PlatformWebViewController webViewController;
   late final PlatformWebViewCookieManager cookieManager;
@@ -461,8 +460,7 @@ class SampleMenu extends StatelessWidget {
 }
 
 class NavigationControls extends StatelessWidget {
-  const NavigationControls({Key? key, required this.webViewController})
-      : super(key: key);
+  const NavigationControls({super.key, required this.webViewController});
 
   final PlatformWebViewController webViewController;
 

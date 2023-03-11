@@ -359,6 +359,45 @@ class WebViewHostApiImpl extends WebViewHostApi {
   }
 }
 
+/// Flutter API implementation for [WebView].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+class WebViewFlutterApiImpl implements WebViewFlutterApi {
+  /// Constructs a [WebViewFlutterApiImpl].
+  WebViewFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(int identifier) {
+    instanceManager.addHostCreatedInstance(WebView.detached(), identifier);
+  }
+
+  @override
+  void onScrollPosChange(
+      int webViewInstanceId, int x, int y, int oldX, int oldY) {
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
+    );
+    webViewInstance!.onScrollChanged!(x, y, oldX, oldY);
+  }
+}
+
 /// Host api implementation for [WebSettings].
 class WebSettingsHostApiImpl extends WebSettingsHostApi {
   /// Constructs a [WebSettingsHostApiImpl].
@@ -445,6 +484,14 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
     bool support,
   ) {
     return setSupportZoom(instanceManager.getIdentifier(instance)!, support);
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSetTextZoomFromInstance(
+    WebSettings instance,
+    int textZoom,
+  ) {
+    return setTextZoom(instanceManager.getIdentifier(instance)!, textZoom);
   }
 
   /// Helper method to convert instances ids to objects.
@@ -916,27 +963,5 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
       ),
       instanceId,
     );
-  }
-}
-
-/// Flutter api implementation for [ScrollListenerFlutterApi].
-class WebViewFlutterApiImpl extends WebViewFlutterApi {
-  /// Constructs a [JavaScriptChannelFlutterApiImpl].
-  WebViewFlutterApiImpl({InstanceManager? instanceManager})
-      : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Maintains instances stored to communicate with java objects.
-  final InstanceManager instanceManager;
-
-  @override
-  void onScrollPosChange(
-      int webViewInstanceId, int x, int y, int oldX, int oldY) {
-    final WebView? webViewInstance = instanceManager
-        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
-    assert(
-      webViewInstance != null,
-      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
-    );
-    webViewInstance!.onScrollChanged!(x, y, oldX, oldY);
   }
 }

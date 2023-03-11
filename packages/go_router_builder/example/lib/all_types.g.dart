@@ -60,6 +60,10 @@ GoRoute get $allTypesBaseRoute => GoRouteData.$route(
           path: 'uri-route/:requiredUriField',
           factory: $UriRouteExtension._fromState,
         ),
+        GoRouteData.$route(
+          path: 'iterable-route',
+          factory: $IterableRouteExtension._fromState,
+        ),
       ],
     );
 
@@ -71,12 +75,12 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
         '/',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $BigIntRouteExtension on BigIntRoute {
@@ -93,12 +97,12 @@ extension $BigIntRouteExtension on BigIntRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $BoolRouteExtension on BoolRoute {
@@ -123,12 +127,12 @@ extension $BoolRouteExtension on BoolRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $DateTimeRouteExtension on DateTimeRoute {
@@ -147,12 +151,12 @@ extension $DateTimeRouteExtension on DateTimeRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $DoubleRouteExtension on DoubleRoute {
@@ -177,12 +181,12 @@ extension $DoubleRouteExtension on DoubleRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $IntRouteExtension on IntRoute {
@@ -203,12 +207,12 @@ extension $IntRouteExtension on IntRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $NumRouteExtension on NumRoute {
@@ -229,12 +233,12 @@ extension $NumRouteExtension on NumRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $EnumRouteExtension on EnumRoute {
@@ -254,19 +258,19 @@ extension $EnumRouteExtension on EnumRoute {
         '/enum-route/${Uri.encodeComponent(_$PersonDetailsEnumMap[requiredEnumField]!)}',
         queryParams: {
           if (enumField != null)
-            'enum-field': _$PersonDetailsEnumMap[enumField!]!,
+            'enum-field': _$PersonDetailsEnumMap[enumField!],
           if (enumFieldWithDefaultValue != PersonDetails.favoriteFood)
             'enum-field-with-default-value':
-                _$PersonDetailsEnumMap[enumFieldWithDefaultValue]!,
+                _$PersonDetailsEnumMap[enumFieldWithDefaultValue],
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
@@ -286,19 +290,19 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
         '/enhanced-enum-route/${Uri.encodeComponent(_$SportDetailsEnumMap[requiredEnumField]!)}',
         queryParams: {
           if (enumField != null)
-            'enum-field': _$SportDetailsEnumMap[enumField!]!,
+            'enum-field': _$SportDetailsEnumMap[enumField!],
           if (enumFieldWithDefaultValue != SportDetails.football)
             'enum-field-with-default-value':
-                _$SportDetailsEnumMap[enumFieldWithDefaultValue]!,
+                _$SportDetailsEnumMap[enumFieldWithDefaultValue],
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $StringRouteExtension on StringRoute {
@@ -313,18 +317,18 @@ extension $StringRouteExtension on StringRoute {
   String get location => GoRouteData.$location(
         '/string-route/${Uri.encodeComponent(requiredStringField)}',
         queryParams: {
-          if (stringField != null) 'string-field': stringField!,
+          if (stringField != null) 'string-field': stringField,
           if (stringFieldWithDefaultValue != 'defaultValue')
             'string-field-with-default-value': stringFieldWithDefaultValue,
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $UriRouteExtension on UriRoute {
@@ -340,12 +344,128 @@ extension $UriRouteExtension on UriRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
+}
+
+extension $IterableRouteExtension on IterableRoute {
+  static IterableRoute _fromState(GoRouterState state) => IterableRoute(
+        intIterableField:
+            state.queryParametersAll['int-iterable-field']?.map(int.parse),
+        doubleIterableField: state.queryParametersAll['double-iterable-field']
+            ?.map(double.parse),
+        stringIterableField:
+            state.queryParametersAll['string-iterable-field']?.map((e) => e),
+        boolIterableField: state.queryParametersAll['bool-iterable-field']
+            ?.map(_$boolConverter),
+        enumIterableField: state.queryParametersAll['enum-iterable-field']
+            ?.map(_$SportDetailsEnumMap._$fromName),
+        enumOnlyInIterableField: state
+            .queryParametersAll['enum-only-in-iterable-field']
+            ?.map(_$CookingRecipeEnumMap._$fromName),
+        intListField:
+            state.queryParametersAll['int-list-field']?.map(int.parse).toList(),
+        doubleListField: state.queryParametersAll['double-list-field']
+            ?.map(double.parse)
+            .toList(),
+        stringListField: state.queryParametersAll['string-list-field']
+            ?.map((e) => e)
+            .toList(),
+        boolListField: state.queryParametersAll['bool-list-field']
+            ?.map(_$boolConverter)
+            .toList(),
+        enumListField: state.queryParametersAll['enum-list-field']
+            ?.map(_$SportDetailsEnumMap._$fromName)
+            .toList(),
+        enumOnlyInListField: state.queryParametersAll['enum-only-in-list-field']
+            ?.map(_$CookingRecipeEnumMap._$fromName)
+            .toList(),
+        intSetField:
+            state.queryParametersAll['int-set-field']?.map(int.parse).toSet(),
+        doubleSetField: state.queryParametersAll['double-set-field']
+            ?.map(double.parse)
+            .toSet(),
+        stringSetField:
+            state.queryParametersAll['string-set-field']?.map((e) => e).toSet(),
+        boolSetField: state.queryParametersAll['bool-set-field']
+            ?.map(_$boolConverter)
+            .toSet(),
+        enumSetField: state.queryParametersAll['enum-set-field']
+            ?.map(_$SportDetailsEnumMap._$fromName)
+            .toSet(),
+        enumOnlyInSetField: state.queryParametersAll['enum-only-in-set-field']
+            ?.map(_$CookingRecipeEnumMap._$fromName)
+            .toSet(),
+      );
+
+  String get location => GoRouteData.$location(
+        '/iterable-route',
+        queryParams: {
+          if (intIterableField != null)
+            'int-iterable-field':
+                intIterableField?.map((e) => e.toString()).toList(),
+          if (doubleIterableField != null)
+            'double-iterable-field':
+                doubleIterableField?.map((e) => e.toString()).toList(),
+          if (stringIterableField != null)
+            'string-iterable-field':
+                stringIterableField?.map((e) => e).toList(),
+          if (boolIterableField != null)
+            'bool-iterable-field':
+                boolIterableField?.map((e) => e.toString()).toList(),
+          if (enumIterableField != null)
+            'enum-iterable-field': enumIterableField
+                ?.map((e) => _$SportDetailsEnumMap[e])
+                .toList(),
+          if (enumOnlyInIterableField != null)
+            'enum-only-in-iterable-field': enumOnlyInIterableField
+                ?.map((e) => _$CookingRecipeEnumMap[e])
+                .toList(),
+          if (intListField != null)
+            'int-list-field': intListField?.map((e) => e.toString()).toList(),
+          if (doubleListField != null)
+            'double-list-field':
+                doubleListField?.map((e) => e.toString()).toList(),
+          if (stringListField != null)
+            'string-list-field': stringListField?.map((e) => e).toList(),
+          if (boolListField != null)
+            'bool-list-field': boolListField?.map((e) => e.toString()).toList(),
+          if (enumListField != null)
+            'enum-list-field':
+                enumListField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
+          if (enumOnlyInListField != null)
+            'enum-only-in-list-field': enumOnlyInListField
+                ?.map((e) => _$CookingRecipeEnumMap[e])
+                .toList(),
+          if (intSetField != null)
+            'int-set-field': intSetField?.map((e) => e.toString()).toList(),
+          if (doubleSetField != null)
+            'double-set-field':
+                doubleSetField?.map((e) => e.toString()).toList(),
+          if (stringSetField != null)
+            'string-set-field': stringSetField?.map((e) => e).toList(),
+          if (boolSetField != null)
+            'bool-set-field': boolSetField?.map((e) => e.toString()).toList(),
+          if (enumSetField != null)
+            'enum-set-field':
+                enumSetField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
+          if (enumOnlyInSetField != null)
+            'enum-only-in-set-field': enumOnlyInSetField
+                ?.map((e) => _$CookingRecipeEnumMap[e])
+                .toList(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -359,6 +479,12 @@ const _$SportDetailsEnumMap = {
   SportDetails.football: 'football',
   SportDetails.tennis: 'tennis',
   SportDetails.hockey: 'hockey',
+};
+
+const _$CookingRecipeEnumMap = {
+  CookingRecipe.burger: 'burger',
+  CookingRecipe.pizza: 'pizza',
+  CookingRecipe.tacos: 'tacos',
 };
 
 T? _$convertMapValue<T>(

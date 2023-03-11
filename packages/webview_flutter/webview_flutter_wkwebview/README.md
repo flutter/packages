@@ -5,7 +5,11 @@ The Apple WKWebView implementation of [`webview_flutter`][1].
 ## Usage
 
 This package is [endorsed][2], which means you can simply use `webview_flutter`
-normally. This package will be automatically included in your app when you do.
+normally. This package will be automatically included in your app when you do,
+so you do not need to add it to your `pubspec.yaml`.
+
+However, if you `import` this package to use any of its APIs directly, you
+should add it to your `pubspec.yaml` as usual.
 
 ### External Native API
 
@@ -44,4 +48,4 @@ If you would like to contribute to the plugin, check out our [contribution guide
 [2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
 [3]: https://pub.dev/packages/pigeon
 [4]: https://pub.dev/packages/mockito
-[5]: https://github.com/flutter/plugins/blob/main/CONTRIBUTING.md
+[5]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md

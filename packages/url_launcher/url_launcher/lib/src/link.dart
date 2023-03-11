@@ -47,11 +47,11 @@ class Link extends StatelessWidget implements LinkInfo {
   /// Creates a widget that renders a real link on the web, and uses WebViews in
   /// native platforms to open links.
   const Link({
-    Key? key,
+    super.key,
     required this.uri,
     this.target = LinkTarget.defaultTarget,
     required this.builder,
-  }) : super(key: key);
+  });
 
   /// Called at build time to construct the widget tree under the link.
   @override
@@ -86,7 +86,7 @@ class Link extends StatelessWidget implements LinkInfo {
 /// event channel messages to instruct the framework to push the route name.
 class DefaultLinkDelegate extends StatelessWidget {
   /// Creates a delegate for the given [link].
-  const DefaultLinkDelegate(this.link, {Key? key}) : super(key: key);
+  const DefaultLinkDelegate(this.link, {super.key});
 
   /// Given a [link], creates an instance of [DefaultLinkDelegate].
   ///
