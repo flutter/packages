@@ -351,31 +351,49 @@ public class ImagePickerPlugin
       }
       delegate.setCameraDevice(device);
     }
+
+    Boolean usePhotoPicker = call.argument("useAndroidPhotoPicker");
+    if (usePhotoPicker == null) {
+      usePhotoPicker = false;
+    }
+
     switch (call.method) {
       case METHOD_CALL_IMAGE:
         imageSource = call.argument("source");
+        ImageOutputOptions imageOptions =
+            new ImageOutputOptions(
+                call.argument("maxWidth"),
+                call.argument("maxHeight"),
+                call.argument("imageQuality"));
         switch (imageSource) {
           case SOURCE_GALLERY:
-            delegate.chooseImageFromGallery(call, result);
+            delegate.chooseImageFromGallery(imageOptions, usePhotoPicker, result);
             break;
           case SOURCE_CAMERA:
-            delegate.takeImageWithCamera(call, result);
+            delegate.takeImageWithCamera(imageOptions, result);
             break;
           default:
             throw new IllegalArgumentException("Invalid image source: " + imageSource);
         }
         break;
       case METHOD_CALL_MULTI_IMAGE:
-        delegate.chooseMultiImageFromGallery(call, result);
+        delegate.chooseMultiImageFromGallery(
+            new ImageOutputOptions(
+                call.argument("maxWidth"),
+                call.argument("maxHeight"),
+                call.argument("imageQuality")),
+            usePhotoPicker,
+            result);
         break;
       case METHOD_CALL_VIDEO:
         imageSource = call.argument("source");
+        VideoOptions videoOptions = new VideoOptions(call.argument("maxDuration"));
         switch (imageSource) {
           case SOURCE_GALLERY:
-            delegate.chooseVideoFromGallery(call, result);
+            delegate.chooseVideoFromGallery(videoOptions, usePhotoPicker, result);
             break;
           case SOURCE_CAMERA:
-            delegate.takeVideoWithCamera(call, result);
+            delegate.takeVideoWithCamera(videoOptions, result);
             break;
           default:
             throw new IllegalArgumentException("Invalid video source: " + imageSource);
