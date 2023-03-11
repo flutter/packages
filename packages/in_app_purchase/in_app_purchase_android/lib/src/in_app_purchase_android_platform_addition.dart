@@ -26,8 +26,8 @@ class InAppPurchaseAndroidPlatformAddition
   /// See also [enablePendingPurchases] for more on pending purchases.
   @Deprecated(
       'The requirement to call `enablePendingPurchases()` has become obsolete '
-          "since Google Play no longer accepts app submissions that don't support "
-          'pending purchases.')
+      "since Google Play no longer accepts app submissions that don't support "
+      'pending purchases.')
   static bool get enablePendingPurchase => true;
 
   /// Enable the [InAppPurchaseConnection] to handle pending purchases.
@@ -36,8 +36,8 @@ class InAppPurchaseAndroidPlatformAddition
   /// [enablePendingPurchases] when initializing your application.
   @Deprecated(
       'The requirement to call `enablePendingPurchases()` has become obsolete '
-          "since Google Play no longer accepts app submissions that don't support "
-          'pending purchases.')
+      "since Google Play no longer accepts app submissions that don't support "
+      'pending purchases.')
   static void enablePendingPurchases() {
     // No-op, until it is time to completely remove this method from the API.
   }
@@ -81,10 +81,10 @@ class InAppPurchaseAndroidPlatformAddition
     try {
       responses = await Future.wait(<Future<PurchasesResultWrapper>>[
         _billingClientManager.runWithClient(
-              (BillingClient client) => client.queryPurchases(SkuType.inapp),
+          (BillingClient client) => client.queryPurchases(SkuType.inapp),
         ),
         _billingClientManager.runWithClient(
-              (BillingClient client) => client.queryPurchases(SkuType.subs),
+          (BillingClient client) => client.queryPurchases(SkuType.subs),
         ),
       ]);
     } on PlatformException catch (e) {
@@ -111,16 +111,16 @@ class InAppPurchaseAndroidPlatformAddition
 
     final Set<String> errorCodeSet = responses
         .where((PurchasesResultWrapper response) =>
-    response.responseCode != BillingResponse.ok)
+            response.responseCode != BillingResponse.ok)
         .map((PurchasesResultWrapper response) =>
-        response.responseCode.toString())
+            response.responseCode.toString())
         .toSet();
 
     final String errorMessage =
-    errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
+        errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
 
     final List<GooglePlayPurchaseDetails> pastPurchases =
-    responses.expand((PurchasesResultWrapper response) {
+        responses.expand((PurchasesResultWrapper response) {
       return response.purchasesList;
     }).map((PurchaseWrapper purchaseWrapper) {
       return GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper);

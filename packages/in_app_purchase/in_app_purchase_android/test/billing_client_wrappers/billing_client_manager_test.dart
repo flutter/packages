@@ -58,7 +58,7 @@ void main() {
         return const BillingResultWrapper(responseCode: BillingResponse.ok);
       });
       manager.runWithClientNonRetryable(
-            (BillingClient _) async => called2 = true,
+        (BillingClient _) async => called2 = true,
       );
       expect(called1, equals(false));
       expect(called2, equals(false));
@@ -78,11 +78,11 @@ void main() {
 
     test(
       're-connects when operation returns BillingResponse.serviceDisconnected',
-          () async {
+      () async {
         connectedCompleter.complete();
         int timesCalled = 0;
         final BillingResultWrapper result = await manager.runWithClient(
-              (BillingClient _) async {
+          (BillingClient _) async {
             timesCalled++;
             return BillingResultWrapper(
               responseCode: timesCalled == 1

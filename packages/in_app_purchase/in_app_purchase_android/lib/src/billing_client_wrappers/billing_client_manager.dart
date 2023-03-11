@@ -45,14 +45,13 @@ class BillingClientManager {
 
   /// [BillingClient] instance managed by this [BillingClientManager].
   ///
-  /// In order to access the [BillingClient], consider using [runWithClient]
-  /// and [runWithClientNonRetryable]
-  /// methods.
+  /// In order to access the [BillingClient], use [runWithClient]
+  /// and [runWithClientNonRetryable] methods.
   @visibleForTesting
   late final BillingClient client = BillingClient(_onPurchasesUpdated);
 
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
-  StreamController<PurchasesResultWrapper>.broadcast();
+      StreamController<PurchasesResultWrapper>.broadcast();
 
   bool _isConnecting = false;
   bool _isDisposed = false;
@@ -73,8 +72,8 @@ class BillingClientManager {
   /// See [runWithClientNonRetryable] for operations that do not return
   /// a subclass of [HasBillingResponse].
   Future<R> runWithClient<R extends HasBillingResponse>(
-      Future<R> Function(BillingClient client) action,
-      ) async {
+    Future<R> Function(BillingClient client) action,
+  ) async {
     _debugAssertNotDisposed();
     await _readyFuture;
     final R result = await action(client);
@@ -97,8 +96,8 @@ class BillingClientManager {
   /// See [runWithClient] for operations that return a subclass
   /// of [HasBillingResponse].
   Future<R> runWithClientNonRetryable<R>(
-      Future<R> Function(BillingClient client) action,
-      ) async {
+    Future<R> Function(BillingClient client) action,
+  ) async {
     _debugAssertNotDisposed();
     await _readyFuture;
     return action(client);
@@ -109,9 +108,9 @@ class BillingClientManager {
   /// Consider calling [dispose] after you no longer need the [BillingClient]
   /// API to free up the resources.
   ///
-  /// After calling [dispose] :
-  /// - Further connection attempts will not be made;
-  /// - [purchasesUpdatedStream] will be closed;
+  /// After calling [dispose]:
+  /// - Further connection attempts will not be made.
+  /// - [purchasesUpdatedStream] will be closed.
   /// - Calls to [runWithClient] and [runWithClientNonRetryable] will throw.
   void dispose() {
     _debugAssertNotDisposed();
@@ -147,9 +146,9 @@ class BillingClientManager {
 
   void _debugAssertNotDisposed() {
     assert(
-    !_isDisposed,
-    'A BillingClientManager was used after being disposed. Once you have '
-        'called dispose() on a BillingClientManager, it can no longer be used.',
+      !_isDisposed,
+      'A BillingClientManager was used after being disposed. Once you have '
+      'called dispose() on a BillingClientManager, it can no longer be used.',
     );
   }
 }
