@@ -1,6 +1,11 @@
+## 9.0.7
+
+* Use a flag(`@iosApiSkip` or `@androidApiSkip`) to determine whether the current host API will be skipped during code generation.
+
 ## 9.0.6
 
-* Whether current [PlatformApi] is skip in the generate hostApi
+* [kotlin] Removes safe casting from decode process.
+* [swift] Removes safe casting from decode process.
 
 ## 9.0.5
 
@@ -692,7 +697,7 @@ class Foo {
 
 ## 0.1.0-experimental.3
 
-* Added support for for Android Java.
+* Added support for Android Java.
 
 ## 0.1.0-experimental.2
 
