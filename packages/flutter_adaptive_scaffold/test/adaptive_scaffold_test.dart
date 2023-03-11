@@ -239,6 +239,174 @@ void main() {
       });
     },
   );
+
+  testWidgets(
+    'when destinations passed with all data, it shall not be null',
+    (WidgetTester tester) async {
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.inbox_outlined),
+          selectedIcon: Icon(Icons.inbox),
+          label: 'Inbox',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.video_call_outlined),
+          selectedIcon: Icon(Icons.video_call),
+          label: 'Video',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(size: Size(700, 900)),
+            child: AdaptiveScaffold(
+              destinations: destinations,
+            ),
+          ),
+        ),
+      );
+
+      final Finder fNavigationRail = find.descendant(
+        of: find.byType(AdaptiveScaffold),
+        matching: find.byType(NavigationRail),
+      );
+      final NavigationRail navigationRail = tester.firstWidget(fNavigationRail);
+      expect(
+        navigationRail.destinations,
+        isA<List<NavigationRailDestination>>(),
+      );
+      expect(
+        navigationRail.destinations.length,
+        destinations.length,
+      );
+
+      for (final NavigationRailDestination element
+          in navigationRail.destinations) {
+        expect(element.label, isNotNull);
+        expect(element.icon, isA<Icon>());
+        expect(element.icon, isNotNull);
+        expect(element.selectedIcon, isA<Icon?>());
+        expect(element.selectedIcon, isNotNull);
+      }
+
+      final NavigationDestination firstDestinationFromListPassed =
+          destinations.first;
+      final NavigationRailDestination firstDestinationFromFinderView =
+          navigationRail.destinations.first;
+
+      expect(firstDestinationFromListPassed, isNotNull);
+      expect(firstDestinationFromFinderView, isNotNull);
+
+      expect(
+        firstDestinationFromListPassed.icon,
+        equals(firstDestinationFromFinderView.icon),
+      );
+      expect(
+        firstDestinationFromListPassed.selectedIcon,
+        equals(firstDestinationFromFinderView.selectedIcon),
+      );
+    },
+  );
+
+  testWidgets(
+    'when tap happens on any destination, its selected icon shall be visible',
+    (WidgetTester tester) async {
+      //region Keys
+      const ValueKey<String> firstDestinationIconKey = ValueKey<String>(
+        'first-normal-icon',
+      );
+      const ValueKey<String> firstDestinationSelectedIconKey = ValueKey<String>(
+        'first-selected-icon',
+      );
+      const ValueKey<String> lastDestinationIconKey = ValueKey<String>(
+        'last-normal-icon',
+      );
+      const ValueKey<String> lastDestinationSelectedIconKey = ValueKey<String>(
+        'last-selected-icon',
+      );
+      //endregion
+
+      //region Finder for destinations as per its icon.
+      final Finder firstDestinationWithSelectedIcon = find.byKey(
+        firstDestinationSelectedIconKey,
+      );
+      final Finder lastDestinationWithIcon = find.byKey(
+        lastDestinationIconKey,
+      );
+
+      final Finder firstDestinationWithIcon = find.byKey(
+        firstDestinationIconKey,
+      );
+      final Finder lastDestinationWithSelectedIcon = find.byKey(
+        lastDestinationSelectedIconKey,
+      );
+      //endregion
+
+      int selectedDestination = 0;
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(
+            Icons.inbox_outlined,
+            key: firstDestinationIconKey,
+          ),
+          selectedIcon: Icon(
+            Icons.inbox,
+            key: firstDestinationSelectedIconKey,
+          ),
+          label: 'Inbox',
+        ),
+        NavigationDestination(
+          icon: Icon(
+            Icons.video_call_outlined,
+            key: lastDestinationIconKey,
+          ),
+          selectedIcon: Icon(
+            Icons.video_call,
+            key: lastDestinationSelectedIconKey,
+          ),
+          label: 'Video',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(700, 900)),
+            child: StatefulBuilder(
+              builder: (BuildContext context, Function(Function()) setState) {
+                return AdaptiveScaffold(
+                  destinations: destinations,
+                  selectedIndex: selectedDestination,
+                  onSelectedIndexChange: (int value) {
+                    setState(() {
+                      selectedDestination = value;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(selectedDestination, 0);
+      expect(firstDestinationWithSelectedIcon, findsOneWidget);
+      expect(lastDestinationWithIcon, findsOneWidget);
+      expect(firstDestinationWithIcon, findsNothing);
+      expect(lastDestinationWithSelectedIcon, findsNothing);
+
+      await tester.ensureVisible(lastDestinationWithIcon);
+      await tester.tap(lastDestinationWithIcon);
+      await tester.pumpAndSettle();
+      expect(selectedDestination, 1);
+
+      expect(firstDestinationWithSelectedIcon, findsNothing);
+      expect(lastDestinationWithIcon, findsNothing);
+      expect(firstDestinationWithIcon, findsOneWidget);
+      expect(lastDestinationWithSelectedIcon, findsOneWidget);
+    },
+  );
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that
