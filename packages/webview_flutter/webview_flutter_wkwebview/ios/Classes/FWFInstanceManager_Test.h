@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <webview_flutter_wkwebview/FWFInstanceManager.h>
+#import "FWFInstanceManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

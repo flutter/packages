@@ -656,7 +656,7 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
       final HostDatatype returnType = getHostDatatype(func.returnType,
           root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
 
-      // Determine the input paramater list, saved in a structured form for later
+      // Determine the input parameter list, saved in a structured form for later
       // use as platform channel call arguments.
       final Iterable<_HostNamedType> hostParameters =
           indexMap(func.arguments, (int i, NamedType arg) {
@@ -1265,7 +1265,7 @@ String _hostApiReturnType(HostDatatype type) {
   return 'ErrorOr<$valueType>';
 }
 
-/// Returns the C++ type to use for the paramer to the asyncronous "return"
+/// Returns the C++ type to use for the paramer to the asynchronous "return"
 /// callback of a Flutter API method returning [type].
 String _flutterApiReturnType(HostDatatype type) {
   if (type.datatype == 'void') {

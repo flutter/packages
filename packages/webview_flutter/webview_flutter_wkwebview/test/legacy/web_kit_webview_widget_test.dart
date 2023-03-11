@@ -221,8 +221,7 @@ void main() {
         );
 
         verify(mockWebViewConfiguration
-            .setMediaTypesRequiringUserActionForPlayback(<
-                WKAudiovisualMediaType>{
+            .setMediaTypesRequiringUserActionForPlayback(<WKAudiovisualMediaType>{
           WKAudiovisualMediaType.all,
         }));
       });
@@ -240,8 +239,7 @@ void main() {
         );
 
         verify(mockWebViewConfiguration
-            .setMediaTypesRequiringUserActionForPlayback(<
-                WKAudiovisualMediaType>{
+            .setMediaTypesRequiringUserActionForPlayback(<WKAudiovisualMediaType>{
           WKAudiovisualMediaType.none,
         }));
       });

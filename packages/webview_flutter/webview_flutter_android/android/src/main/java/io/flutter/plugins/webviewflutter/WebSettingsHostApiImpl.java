@@ -120,4 +120,10 @@ public class WebSettingsHostApiImpl implements WebSettingsHostApi {
     final WebSettings webSettings = (WebSettings) instanceManager.getInstance(instanceId);
     webSettings.setAllowFileAccess(enabled);
   }
+
+  @Override
+  public void setTextZoom(Long instanceId, Long textZoom) {
+    final WebSettings webSettings = (WebSettings) instanceManager.getInstance(instanceId);
+    webSettings.setTextZoom(textZoom.intValue());
+  }
 }
