@@ -38,12 +38,12 @@ extension $FooRouteDataExtension on FooRouteData {
         '/foo',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
 
 extension $BarRouteDataExtension on BarRouteData {
@@ -53,10 +53,10 @@ extension $BarRouteDataExtension on BarRouteData {
         '/bar',
       );
 
-  void go(BuildContext context) => context.go(location, extra: this);
+  void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location, extra: this);
+  void push(BuildContext context) => context.push(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: this);
+      context.pushReplacement(location);
 }
