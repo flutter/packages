@@ -364,6 +364,9 @@ extension $IterableRouteExtension on IterableRoute {
             ?.map(_$boolConverter),
         enumIterableField: state.queryParametersAll['enum-iterable-field']
             ?.map(_$SportDetailsEnumMap._$fromName),
+        enumOnlyInIterableField: state
+            .queryParametersAll['enum-only-in-iterable-field']
+            ?.map(_$CookingRecipeEnumMap._$fromName),
         intListField:
             state.queryParametersAll['int-list-field']?.map(int.parse).toList(),
         doubleListField: state.queryParametersAll['double-list-field']
@@ -378,6 +381,9 @@ extension $IterableRouteExtension on IterableRoute {
         enumListField: state.queryParametersAll['enum-list-field']
             ?.map(_$SportDetailsEnumMap._$fromName)
             .toList(),
+        enumOnlyInListField: state.queryParametersAll['enum-only-in-list-field']
+            ?.map(_$CookingRecipeEnumMap._$fromName)
+            .toList(),
         intSetField:
             state.queryParametersAll['int-set-field']?.map(int.parse).toSet(),
         doubleSetField: state.queryParametersAll['double-set-field']
@@ -390,6 +396,9 @@ extension $IterableRouteExtension on IterableRoute {
             .toSet(),
         enumSetField: state.queryParametersAll['enum-set-field']
             ?.map(_$SportDetailsEnumMap._$fromName)
+            .toSet(),
+        enumOnlyInSetField: state.queryParametersAll['enum-only-in-set-field']
+            ?.map(_$CookingRecipeEnumMap._$fromName)
             .toSet(),
       );
 
@@ -412,6 +421,10 @@ extension $IterableRouteExtension on IterableRoute {
             'enum-iterable-field': enumIterableField
                 ?.map((e) => _$SportDetailsEnumMap[e])
                 .toList(),
+          if (enumOnlyInIterableField != null)
+            'enum-only-in-iterable-field': enumOnlyInIterableField
+                ?.map((e) => _$CookingRecipeEnumMap[e])
+                .toList(),
           if (intListField != null)
             'int-list-field': intListField?.map((e) => e.toString()).toList(),
           if (doubleListField != null)
@@ -424,6 +437,10 @@ extension $IterableRouteExtension on IterableRoute {
           if (enumListField != null)
             'enum-list-field':
                 enumListField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
+          if (enumOnlyInListField != null)
+            'enum-only-in-list-field': enumOnlyInListField
+                ?.map((e) => _$CookingRecipeEnumMap[e])
+                .toList(),
           if (intSetField != null)
             'int-set-field': intSetField?.map((e) => e.toString()).toList(),
           if (doubleSetField != null)
@@ -436,6 +453,10 @@ extension $IterableRouteExtension on IterableRoute {
           if (enumSetField != null)
             'enum-set-field':
                 enumSetField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
+          if (enumOnlyInSetField != null)
+            'enum-only-in-set-field': enumOnlyInSetField
+                ?.map((e) => _$CookingRecipeEnumMap[e])
+                .toList(),
         },
       );
 
@@ -458,6 +479,12 @@ const _$SportDetailsEnumMap = {
   SportDetails.football: 'football',
   SportDetails.tennis: 'tennis',
   SportDetails.hockey: 'hockey',
+};
+
+const _$CookingRecipeEnumMap = {
+  CookingRecipe.burger: 'burger',
+  CookingRecipe.pizza: 'pizza',
+  CookingRecipe.tacos: 'tacos',
 };
 
 T? _$convertMapValue<T>(

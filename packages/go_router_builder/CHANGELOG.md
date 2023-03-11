@@ -1,3 +1,7 @@
+## 1.1.6
+
+* Generates the const enum map for enums used in `List`, `Set` and `Iterable`.
+
 ## 1.1.5
 
 * Replaces unnecessary Flutter SDK constraint with corresponding Dart
