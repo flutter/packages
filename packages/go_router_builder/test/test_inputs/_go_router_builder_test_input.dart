@@ -162,7 +162,7 @@ class DefaultValueRoute extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $extraValueRoute => GoRouteData.$route(
+RouteBase get $extraValueRoute => GoRouteData.$route(
       path: '/default-value-route',
       factory: $ExtraValueRouteExtension._fromState,
     );
@@ -215,7 +215,7 @@ class NullableDefaultValueRoute extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $iterableWithEnumRoute => GoRouteData.$route(
+RouteBase get $iterableWithEnumRoute => GoRouteData.$route(
       path: '/iterable-with-enum',
       factory: $IterableWithEnumRouteExtension._fromState,
     );
