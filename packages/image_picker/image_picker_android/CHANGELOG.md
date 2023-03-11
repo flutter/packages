@@ -1,6 +1,7 @@
-## NEXT
+## 0.8.5+10
 
 * Aligns Dart and Flutter SDK constraints.
+* Fixes case when file extension returned from the OS does not match its real mime type.
 
 ## 0.8.5+9
 

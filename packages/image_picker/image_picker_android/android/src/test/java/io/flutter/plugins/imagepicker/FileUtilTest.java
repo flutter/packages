@@ -85,7 +85,7 @@ public class FileUtilTest {
     shadowContentResolver.registerInputStream(
         uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
     String path = fileUtils.getPathFromUri(context, uri);
-    assertTrue(path.endsWith("png.png"));
+    assertTrue(path.endsWith("a.b.png"));
   }
 
   @Test
@@ -95,12 +95,23 @@ public class FileUtilTest {
     shadowContentResolver.registerInputStream(
         uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
     String path = fileUtils.getPathFromUri(context, uri);
-    assertTrue(path.endsWith("webp.webp"));
+    assertTrue(path.endsWith("c.d.webp"));
+  }
+
+  @Test
+  public void FileUtil_getImageName_unknownType() throws IOException {
+    Uri uri = MockContentProvider.UNKNOWN_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+            uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
+    String path = fileUtils.getPathFromUri(context, uri);
+    assertTrue(path.endsWith("e.f.g"));
   }
 
   private static class MockContentProvider extends ContentProvider {
-    public static final Uri PNG_URI = Uri.parse("content://dummy/png.png");
-    public static final Uri WEBP_URI = Uri.parse("content://dummy/webp.png");
+    public static final Uri PNG_URI = Uri.parse("content://dummy/a.b.png");
+    public static final Uri WEBP_URI = Uri.parse("content://dummy/c.d.png");
+    public static final Uri UNKNOWN_URI = Uri.parse("content://dummy/e.f.g");
 
     @Override
     public boolean onCreate() {
@@ -116,14 +127,16 @@ public class FileUtilTest {
         @Nullable String[] selectionArgs,
         @Nullable String sortOrder) {
       MatrixCursor cursor = new MatrixCursor(new String[] {MediaStore.MediaColumns.DISPLAY_NAME});
-      cursor.addRow(new Object[] {uri.equals(PNG_URI) ? "png.png" : "webp.png"});
+      cursor.addRow(new Object[] {uri.getLastPathSegment()});
       return cursor;
     }
 
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-      return uri.equals(PNG_URI) ? "image/png" : "image/webp";
+      if(uri.equals(PNG_URI)) return "image/png";
+      if(uri.equals(WEBP_URI)) return "image/webp";
+      return null;
     }
 
     @Nullable

@@ -130,6 +130,7 @@ class FileUtils {
   }
 
   private static String getBaseName(String fileName) {
-    return fileName.split("\\.")[0];
+    // Basename is everything before the last '.'.
+    return fileName.substring(0, fileName.lastIndexOf('.'));
   }
 }
