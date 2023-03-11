@@ -11,14 +11,27 @@ import 'package:source_gen/source_gen.dart';
 
 import 'route_config.dart';
 
-/// A [Generator] for classes annotated with `TypedGoRoute`.
+/// A [Generator] for classes annotated with a typed go route annotation.
 class GoRouterGenerator extends GeneratorForAnnotation<void> {
   /// Creates a new instance of [GoRouterGenerator].
-  const GoRouterGenerator();
+  const GoRouterGenerator({
+    required this.annotation,
+    required this.routeClass,
+  });
+
+  /// The typed go route annotation.
+  final String annotation;
+
+  /// The route data class.
+  final String routeClass;
 
   @override
-  TypeChecker get typeChecker => const TypeChecker.fromUrl(
-        'package:go_router/src/route_data.dart#TypedGoRoute',
+  TypeChecker get typeChecker => TypeChecker.fromUrl(
+        'package:go_router/src/route_data.dart#$annotation',
+      );
+
+  TypeChecker get _goRouteDataChecker => TypeChecker.fromUrl(
+        'package:go_router/src/route_data.dart#$routeClass',
       );
 
   @override
@@ -63,7 +76,7 @@ ${getters.map((String e) => "$e,").join('\n')}
   ) {
     if (element is! ClassElement) {
       throw InvalidGenerationSourceError(
-        'The @TypedGoRoute annotation can only be applied to classes.',
+        'The @${this.annotation} annotation can only be applied to classes.',
         element: element,
       );
     }
@@ -71,7 +84,7 @@ ${getters.map((String e) => "$e,").join('\n')}
     if (!element.allSupertypes.any((InterfaceType element) =>
         _goRouteDataChecker.isExactlyType(element))) {
       throw InvalidGenerationSourceError(
-        'The @TypedGoRoute annotation can only be applied to classes that '
+        'The @${this.annotation} annotation can only be applied to classes that '
         'extend or implement `GoRouteData`.',
         element: element,
       );
@@ -80,7 +93,3 @@ ${getters.map((String e) => "$e,").join('\n')}
     return RouteConfig.fromAnnotation(annotation, element).generateMembers();
   }
 }
-
-const TypeChecker _goRouteDataChecker = TypeChecker.fromUrl(
-  'package:go_router/src/route_data.dart#GoRouteData',
-);

@@ -16,7 +16,10 @@ Future<void> main() async {
 
   testAnnotatedElements(
     testReader,
-    const GoRouterGenerator(),
+    const GoRouterGenerator(
+      annotation: 'TypedGoRoute',
+      routeClass: 'GoRouteData',
+    ),
     expectedAnnotatedTests: _expectedAnnotatedTests,
   );
 }

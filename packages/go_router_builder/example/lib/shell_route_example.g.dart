@@ -5,7 +5,7 @@
 part of 'shell_route_example.dart';
 
 // **************************************************************************
-// GoRouterShellGenerator
+// GoRouterGenerator
 // **************************************************************************
 
 List<RouteBase> get $appRoutes => [
