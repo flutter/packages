@@ -1,7 +1,10 @@
-## 2.5.4
-
-* Aligns Dart and Flutter SDK constraints.
+## 2.6.1
 * Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
+
+## 2.6.0
+
+* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 2.5.3
 

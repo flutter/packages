@@ -76,6 +76,7 @@ public class AutoFocusFeature extends CameraFeature<FocusMode> {
             recordingVideo
                 ? CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO
                 : CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+        break;
       default:
         break;
     }

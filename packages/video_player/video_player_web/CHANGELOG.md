@@ -1,5 +1,6 @@
 ## 2.0.15
 
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 * Synchronizes `VideoPlayerValue.isPlaying` with `VideoElement`.
 
