@@ -229,8 +229,7 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
   }
 
   Future<PurchaseDetails> _maybeAutoConsumePurchase(
-    PurchaseDetails purchaseDetails,
-  ) async {
+      PurchaseDetails purchaseDetails) async {
     if (!(purchaseDetails.status == PurchaseStatus.purchased &&
         _productIdsToConsume.contains(purchaseDetails.productID))) {
       return purchaseDetails;
