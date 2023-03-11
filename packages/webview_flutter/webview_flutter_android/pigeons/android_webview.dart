@@ -189,6 +189,8 @@ abstract class WebViewHostApi {
   void setWebChromeClient(int instanceId, int? clientInstanceId);
 
   void setBackgroundColor(int instanceId, int color);
+
+  void enableContentOffsetChangedListener(int instanceId, bool enabled);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebSettingsHostApi')
@@ -285,6 +287,12 @@ abstract class DownloadListenerFlutterApi {
     String mimetype,
     int contentLength,
   );
+}
+
+@FlutterApi()
+abstract class WebViewFlutterApi {
+  void onScrollPosChange(
+      int webViewInstanceId, int x, int y, int oldX, int oldY);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebChromeClientHostApi')

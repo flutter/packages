@@ -870,6 +870,18 @@ void main() {
       verify(mockWebView.settings).called(1);
       verify(mockSettings.setUserAgentString('Test Framework')).called(1);
     });
+
+    test('setScrollListener', () async {
+      final MockWebView mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+      await controller.setOnContentOffsetChanged(
+          (int left, int top, int oldLeft, int oldTop) {});
+      verify(mockWebView.enableContentOffsetChangedListener(true)).called(1);
+      await controller.setOnContentOffsetChanged(null);
+      verify(mockWebView.enableContentOffsetChangedListener(false)).called(1);
+    });
   });
 
   test('setMediaPlaybackRequiresUserGesture', () async {

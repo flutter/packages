@@ -45,6 +45,7 @@ class AndroidWebViewFlutterApis {
     WebChromeClientFlutterApiImpl? webChromeClientFlutterApi,
     JavaScriptChannelFlutterApiImpl? javaScriptChannelFlutterApi,
     FileChooserParamsFlutterApiImpl? fileChooserParamsFlutterApi,
+    WebViewFlutterApiImpl? webViewFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -58,6 +59,7 @@ class AndroidWebViewFlutterApis {
         javaScriptChannelFlutterApi ?? JavaScriptChannelFlutterApiImpl();
     this.fileChooserParamsFlutterApi =
         fileChooserParamsFlutterApi ?? FileChooserParamsFlutterApiImpl();
+    this.webViewFlutterApi = webViewFlutterApi ?? WebViewFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -85,6 +87,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [FileChooserParams].
   late final FileChooserParamsFlutterApiImpl fileChooserParamsFlutterApi;
 
+  /// Flutter Api for [ScrollListener].
+  late final WebViewFlutterApiImpl webViewFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -94,6 +99,7 @@ class AndroidWebViewFlutterApis {
       WebChromeClientFlutterApi.setup(webChromeClientFlutterApi);
       JavaScriptChannelFlutterApi.setup(javaScriptChannelFlutterApi);
       FileChooserParamsFlutterApi.setup(fileChooserParamsFlutterApi);
+      WebViewFlutterApi.setup(webViewFlutterApi);
       _haveBeenSetUp = true;
     }
   }
@@ -343,6 +349,13 @@ class WebViewHostApiImpl extends WebViewHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> setBackgroundColorFromInstance(WebView instance, int color) {
     return setBackgroundColor(instanceManager.getIdentifier(instance)!, color);
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> enableContentOffsetChangedListenerFromInstance(
+      WebView instance, bool enabled) {
+    return enableContentOffsetChangedListener(
+        instanceManager.getIdentifier(instance)!, enabled);
   }
 }
 
@@ -903,5 +916,27 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
       ),
       instanceId,
     );
+  }
+}
+
+/// Flutter api implementation for [ScrollListenerFlutterApi].
+class WebViewFlutterApiImpl extends WebViewFlutterApi {
+  /// Constructs a [JavaScriptChannelFlutterApiImpl].
+  WebViewFlutterApiImpl({InstanceManager? instanceManager})
+      : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Maintains instances stored to communicate with java objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void onScrollPosChange(
+      int webViewInstanceId, int x, int y, int oldX, int oldY) {
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
+    );
+    webViewInstance!.onScrollChanged!(x, y, oldX, oldY);
   }
 }

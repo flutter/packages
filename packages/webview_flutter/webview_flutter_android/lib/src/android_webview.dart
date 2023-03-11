@@ -59,6 +59,10 @@ class JavaObject with Copyable {
   }
 }
 
+/// Signature for the `onScrollChanged` callback responsible for listening to scroll's offset changed events.
+typedef ScrollChangedCallback = void Function(
+    int left, int top, int oldLeft, int oldTop);
+
 /// An Android View that displays web pages.
 ///
 /// **Basic usage**
@@ -111,6 +115,9 @@ class WebView extends JavaObject {
 
   /// The [WebSettings] object used to control the settings for this WebView.
   late final WebSettings settings = WebSettings(this);
+
+  /// The [ScrollChangedCallback] object used to listen for scroll changed events.
+  late ScrollChangedCallback? onScrollChanged;
 
   /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.
   ///
@@ -395,6 +402,11 @@ class WebView extends JavaObject {
   /// Sets the background color of this WebView.
   Future<void> setBackgroundColor(Color color) {
     return api.setBackgroundColorFromInstance(this, color.value);
+  }
+
+  ///Toggle scroll listener for this WebView
+  Future<void> enableContentOffsetChangedListener(bool enabled) {
+    return api.enableContentOffsetChangedListenerFromInstance(this, enabled);
   }
 
   @override

@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewFlutterApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewHostApi;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +32,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
   // Only used with WebView using virtual displays.
   @Nullable private final View containerView;
   private final BinaryMessenger binaryMessenger;
+  private final WebViewFlutterApi webViewFlutterApi;
 
   private Context context;
 
@@ -77,9 +79,11 @@ public class WebViewHostApiImpl implements WebViewHostApi {
   }
 
   /** Implementation of {@link WebView} that can be used as a Flutter {@link PlatformView}s. */
-  public static class WebViewPlatformView extends WebView implements PlatformView {
+  public static class WebViewPlatformView extends WebView
+      implements PlatformView, WebViewExtendedApi {
     private WebViewClient currentWebViewClient;
     private WebChromeClientHostApiImpl.SecureWebChromeClient currentWebChromeClient;
+    private @Nullable ContentOffsetChangedListener contentOffsetChangedListener;
 
     /**
      * Creates a {@link WebViewPlatformView}.
@@ -129,6 +133,20 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     public WebChromeClient getWebChromeClient() {
       return currentWebChromeClient;
     }
+
+    @Override
+    protected void onScrollChanged(int l, int t, int oldL, int oldT) {
+      super.onScrollChanged(l, t, oldL, oldT);
+      if (contentOffsetChangedListener != null) {
+        contentOffsetChangedListener.onContentOffsetChange(l, t, oldL, oldT);
+      }
+    }
+
+    @Override
+    public void setContentOffsetChangedListener(
+        ContentOffsetChangedListener contentOffsetChangedListener) {
+      this.contentOffsetChangedListener = contentOffsetChangedListener;
+    }
   }
 
   /**
@@ -137,9 +155,10 @@ public class WebViewHostApiImpl implements WebViewHostApi {
    */
   @SuppressLint("ViewConstructor")
   public static class InputAwareWebViewPlatformView extends InputAwareWebView
-      implements PlatformView {
+      implements PlatformView, WebViewExtendedApi {
     private WebViewClient currentWebViewClient;
     private WebChromeClientHostApiImpl.SecureWebChromeClient currentWebChromeClient;
+    private @Nullable ContentOffsetChangedListener contentOffsetChangedListener;
 
     /**
      * Creates a {@link InputAwareWebViewPlatformView}.
@@ -206,6 +225,20 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       currentWebChromeClient = (WebChromeClientHostApiImpl.SecureWebChromeClient) client;
       currentWebChromeClient.setWebViewClient(currentWebViewClient);
     }
+
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+      super.onScrollChanged(l, t, oldl, oldt);
+      if (contentOffsetChangedListener != null) {
+        contentOffsetChangedListener.onContentOffsetChange(l, t, oldl, oldt);
+      }
+    }
+
+    @Override
+    public void setContentOffsetChangedListener(
+        ContentOffsetChangedListener contentOffsetChangedListener) {
+      this.contentOffsetChangedListener = contentOffsetChangedListener;
+    }
   }
 
   /**
@@ -221,11 +254,13 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       InstanceManager instanceManager,
       BinaryMessenger binaryMessenger,
       WebViewProxy webViewProxy,
+      WebViewFlutterApi webViewFlutterApi,
       Context context,
       @Nullable View containerView) {
     this.instanceManager = instanceManager;
     this.binaryMessenger = binaryMessenger;
     this.webViewProxy = webViewProxy;
+    this.webViewFlutterApi = webViewFlutterApi;
     this.context = context;
     this.containerView = containerView;
   }
@@ -418,6 +453,30 @@ public class WebViewHostApiImpl implements WebViewHostApi {
   public void setBackgroundColor(Long instanceId, Long color) {
     final WebView webView = (WebView) instanceManager.getInstance(instanceId);
     webView.setBackgroundColor(color.intValue());
+  }
+
+  @Override
+  public void enableContentOffsetChangedListener(
+      @NonNull Long instanceId, @NonNull Boolean enabled) {
+    final WebView webView = (WebView) instanceManager.getInstance(instanceId);
+    if (webView instanceof WebViewExtendedApi) {
+      if (enabled) {
+        ((WebViewExtendedApi) webView)
+            .setContentOffsetChangedListener(
+                (left, top, oldLeft, oldTop) -> {
+                  webViewFlutterApi.onScrollPosChange(
+                      instanceId,
+                      (long) left,
+                      (long) top,
+                      (long) oldLeft,
+                      (long) oldTop,
+                      reply -> {});
+                });
+
+      } else {
+        ((WebViewExtendedApi) webView).setContentOffsetChangedListener(null);
+      }
+    }
   }
 
   /** Maintains instances used to communicate with the corresponding WebView Dart object. */

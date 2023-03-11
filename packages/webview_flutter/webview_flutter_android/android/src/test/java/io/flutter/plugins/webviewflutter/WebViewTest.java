@@ -6,7 +6,9 @@ package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -37,6 +39,8 @@ public class WebViewTest {
 
   @Mock WebViewHostApiImpl.WebViewProxy mockWebViewProxy;
 
+  @Mock public GeneratedAndroidWebView.WebViewFlutterApi mockWebViewFlutterApi;
+
   @Mock Context mockContext;
 
   @Mock BinaryMessenger mockBinaryMessenger;
@@ -52,7 +56,12 @@ public class WebViewTest {
         .thenReturn(mockWebView);
     testHostApiImpl =
         new WebViewHostApiImpl(
-            testInstanceManager, mockBinaryMessenger, mockWebViewProxy, mockContext, null);
+            testInstanceManager,
+            mockBinaryMessenger,
+            mockWebViewProxy,
+            mockWebViewFlutterApi,
+            mockContext,
+            null);
     testHostApiImpl.create(0L, true);
   }
 
@@ -313,5 +322,22 @@ public class WebViewTest {
     javaObjectHostApi.dispose(0L);
 
     assertTrue(destroyCalled[0]);
+  }
+
+  @Test
+  public void disableContentOffsetChangedListener() {
+    testHostApiImpl.enableContentOffsetChangedListener(0L, false);
+    verify(mockWebView).setContentOffsetChangedListener(null);
+  }
+
+  @Test
+  public void enableContentOffsetChangedListener() {
+    final ArgumentCaptor<ContentOffsetChangedListener> modeCaptor =
+        ArgumentCaptor.forClass(ContentOffsetChangedListener.class);
+    testHostApiImpl.enableContentOffsetChangedListener(0L, true);
+    verify(mockWebView).setContentOffsetChangedListener(modeCaptor.capture());
+    assertNotNull(modeCaptor.getValue());
+    modeCaptor.getValue().onContentOffsetChange(0, 1, 2, 3);
+    verify(mockWebViewFlutterApi).onScrollPosChange(eq(0L), eq(0L), eq(1L), eq(2L), eq(3L), any());
   }
 }

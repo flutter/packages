@@ -128,6 +128,8 @@ abstract class TestWebViewHostApi {
 
   void setBackgroundColor(int instanceId, int color);
 
+  void enableContentOffsetChangedListener(int instanceId, bool enabled);
+
   static void setup(TestWebViewHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -685,6 +687,29 @@ abstract class TestWebViewHostApi {
           assert(arg_color != null,
               'Argument for dev.flutter.pigeon.WebViewHostApi.setBackgroundColor was null, expected non-null int.');
           api.setBackgroundColor(arg_instanceId!, arg_color!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebViewHostApi.enableContentOffsetChangedListener',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebViewHostApi.enableContentOffsetChangedListener was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.WebViewHostApi.enableContentOffsetChangedListener was null, expected non-null int.');
+          final bool? arg_enabled = (args[1] as bool?);
+          assert(arg_enabled != null,
+              'Argument for dev.flutter.pigeon.WebViewHostApi.enableContentOffsetChangedListener was null, expected non-null bool.');
+          api.enableContentOffsetChangedListener(arg_instanceId!, arg_enabled!);
           return <Object?>[];
         });
       }

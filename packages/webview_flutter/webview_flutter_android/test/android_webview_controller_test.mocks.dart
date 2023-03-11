@@ -349,6 +349,12 @@ class MockAndroidNavigationDelegate extends _i1.Mock
 class MockAndroidWebViewController extends _i1.Mock
     implements _i8.AndroidWebViewController {
   @override
+  int get webViewIdentifier => (super.noSuchMethod(
+        Invocation.getter(#webViewIdentifier),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+  @override
   _i3.PlatformWebViewControllerCreationParams get params => (super.noSuchMethod(
         Invocation.getter(#params),
         returnValue: _FakePlatformWebViewControllerCreationParams_4(
@@ -638,6 +644,23 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
+  _i9.Future<void> setOnContentOffsetChanged(
+          void Function(
+    int,
+    int,
+    int,
+    int,
+  )?
+              onOffsetChange) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnContentOffsetChanged,
+          [onOffsetChange],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
   _i9.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -650,11 +673,11 @@ class MockAndroidWebViewController extends _i1.Mock
   @override
   _i9.Future<void> setOnShowFileSelector(
           _i9.Future<List<String>> Function(_i8.FileSelectorParams)?
-              onShowFileSelectorCallback) =>
+              onShowFileSelector) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnShowFileSelector,
-          [onShowFileSelectorCallback],
+          [onShowFileSelector],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
@@ -1776,6 +1799,15 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
       ) as _i2.WebSettings);
   @override
+  set onScrollChanged(_i2.ScrollChangedCallback? _onScrollChanged) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #onScrollChanged,
+          _onScrollChanged,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   _i9.Future<void> loadData({
     required String? data,
     String? mimeType,
@@ -2059,6 +2091,16 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         Invocation.method(
           #setBackgroundColor,
           [color],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> enableContentOffsetChangedListener(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #enableContentOffsetChangedListener,
+          [enabled],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),

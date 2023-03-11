@@ -135,7 +135,11 @@ Page resource error:
       ))
       ..loadRequest(LoadRequestParams(
         uri: Uri.parse('https://flutter.dev'),
-      ));
+      ))
+      ..setOnContentOffsetChanged((int left, int top, int oldLeft, int oldTop) {
+        debugPrint(
+            'Scroll offset change to left = $left y = $top oldX = $oldLeft oldY = $oldTop');
+      });
   }
 
   @override

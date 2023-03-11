@@ -942,6 +942,30 @@ class WebViewHostApi {
       return;
     }
   }
+
+  Future<void> enableContentOffsetChangedListener(
+      int arg_instanceId, bool arg_enabled) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.WebViewHostApi.enableContentOffsetChangedListener',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_instanceId, arg_enabled]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 class WebSettingsHostApi {
@@ -1666,6 +1690,49 @@ abstract class DownloadListenerFlutterApi {
               'Argument for dev.flutter.pigeon.DownloadListenerFlutterApi.onDownloadStart was null, expected non-null int.');
           api.onDownloadStart(arg_instanceId!, arg_url!, arg_userAgent!,
               arg_contentDisposition!, arg_mimetype!, arg_contentLength!);
+          return;
+        });
+      }
+    }
+  }
+}
+
+abstract class WebViewFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void onScrollPosChange(
+      int webViewInstanceId, int x, int y, int oldX, int oldY);
+
+  static void setup(WebViewFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebViewFlutterApi.onScrollPosChange', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebViewFlutterApi.onScrollPosChange was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_webViewInstanceId = (args[0] as int?);
+          assert(arg_webViewInstanceId != null,
+              'Argument for dev.flutter.pigeon.WebViewFlutterApi.onScrollPosChange was null, expected non-null int.');
+          final int? arg_x = (args[1] as int?);
+          assert(arg_x != null,
+              'Argument for dev.flutter.pigeon.WebViewFlutterApi.onScrollPosChange was null, expected non-null int.');
+          final int? arg_y = (args[2] as int?);
+          assert(arg_y != null,
+              'Argument for dev.flutter.pigeon.WebViewFlutterApi.onScrollPosChange was null, expected non-null int.');
+          final int? arg_oldX = (args[3] as int?);
+          assert(arg_oldX != null,
+              'Argument for dev.flutter.pigeon.WebViewFlutterApi.onScrollPosChange was null, expected non-null int.');
+          final int? arg_oldY = (args[4] as int?);
+          assert(arg_oldY != null,
+              'Argument for dev.flutter.pigeon.WebViewFlutterApi.onScrollPosChange was null, expected non-null int.');
+          api.onScrollPosChange(
+              arg_webViewInstanceId!, arg_x!, arg_y!, arg_oldX!, arg_oldY!);
           return;
         });
       }

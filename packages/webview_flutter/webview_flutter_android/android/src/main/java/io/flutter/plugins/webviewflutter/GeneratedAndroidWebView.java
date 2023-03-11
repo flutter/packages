@@ -692,6 +692,8 @@ public class GeneratedAndroidWebView {
 
     void setBackgroundColor(@NonNull Long instanceId, @NonNull Long color);
 
+    void enableContentOffsetChangedListener(@NonNull Long instanceId, @NonNull Boolean enabled);
+
     /** The codec used by WebViewHostApi. */
     static MessageCodec<Object> getCodec() {
       return WebViewHostApiCodec.INSTANCE;
@@ -1547,6 +1549,40 @@ public class GeneratedAndroidWebView {
                   api.setBackgroundColor(
                       (instanceIdArg == null) ? null : instanceIdArg.longValue(),
                       (colorArg == null) ? null : colorArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.WebViewHostApi.enableContentOffsetChangedListener",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList wrapped = new ArrayList<>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  assert args != null;
+                  Number instanceIdArg = (Number) args.get(0);
+                  if (instanceIdArg == null) {
+                    throw new NullPointerException("instanceIdArg unexpectedly null.");
+                  }
+                  Boolean enabledArg = (Boolean) args.get(1);
+                  if (enabledArg == null) {
+                    throw new NullPointerException("enabledArg unexpectedly null.");
+                  }
+                  api.enableContentOffsetChangedListener(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(), enabledArg);
                   wrapped.add(0, null);
                 } catch (Error | RuntimeException exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -2433,6 +2469,41 @@ public class GeneratedAndroidWebView {
                   contentDispositionArg,
                   mimetypeArg,
                   contentLengthArg)),
+          channelReply -> {
+            callback.reply(null);
+          });
+    }
+  }
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
+  public static class WebViewFlutterApi {
+    private final BinaryMessenger binaryMessenger;
+
+    public WebViewFlutterApi(BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by WebViewFlutterApi. */
+    static MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+
+    public void onScrollPosChange(
+        @NonNull Long webViewInstanceIdArg,
+        @NonNull Long xArg,
+        @NonNull Long yArg,
+        @NonNull Long oldXArg,
+        @NonNull Long oldYArg,
+        Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.WebViewFlutterApi.onScrollPosChange",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(webViewInstanceIdArg, xArg, yArg, oldXArg, oldYArg)),
           channelReply -> {
             callback.reply(null);
           });

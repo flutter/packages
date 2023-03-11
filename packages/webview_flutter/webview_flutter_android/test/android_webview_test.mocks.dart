@@ -930,6 +930,21 @@ class MockTestWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  void enableContentOffsetChangedListener(
+    int? instanceId,
+    bool? enabled,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #enableContentOffsetChangedListener,
+          [
+            instanceId,
+            enabled,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestAssetManagerHostApi].
@@ -1014,6 +1029,15 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           Invocation.getter(#settings),
         ),
       ) as _i2.WebSettings);
+  @override
+  set onScrollChanged(_i2.ScrollChangedCallback? _onScrollChanged) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #onScrollChanged,
+          _onScrollChanged,
+        ),
+        returnValueForMissingStub: null,
+      );
   @override
   _i5.Future<void> loadData({
     required String? data,
@@ -1284,6 +1308,16 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         Invocation.method(
           #setBackgroundColor,
           [color],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> enableContentOffsetChangedListener(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #enableContentOffsetChangedListener,
+          [enabled],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
