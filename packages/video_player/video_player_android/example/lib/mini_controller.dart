@@ -249,7 +249,6 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     final Completer<void> initializingCompleter = Completer<void>();
 
     void eventListener(VideoEvent event) {
-      // ignore: missing_enum_constant_in_switch
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(
