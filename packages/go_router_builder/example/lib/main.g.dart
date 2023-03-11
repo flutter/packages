@@ -17,23 +17,17 @@ RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
       factory: $HomeRouteExtension._fromState,
       routes: [
-        ShellRouteData.$route(
+        GoRouteData.$route(
+          path: 'family/:fid',
           factory: $FamilyRouteExtension._fromState,
-          navigatorKey: FamilyRoute.$navigatorKey,
           routes: [
             GoRouteData.$route(
-              path: 'family/:fid',
-              factory: $FamilyIdRouteExtension._fromState,
+              path: 'person/:pid',
+              factory: $PersonRouteExtension._fromState,
               routes: [
                 GoRouteData.$route(
-                  path: 'person/:pid',
-                  factory: $PersonRouteExtension._fromState,
-                  routes: [
-                    GoRouteData.$route(
-                      path: 'details/:details',
-                      factory: $PersonDetailsRouteExtension._fromState,
-                    ),
-                  ],
+                  path: 'details/:details',
+                  factory: $PersonDetailsRouteExtension._fromState,
                 ),
               ],
             ),
@@ -58,11 +52,7 @@ extension $HomeRouteExtension on HomeRoute {
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
-  static FamilyRoute _fromState(GoRouterState state) => const FamilyRoute();
-}
-
-extension $FamilyIdRouteExtension on FamilyIdRoute {
-  static FamilyIdRoute _fromState(GoRouterState state) => FamilyIdRoute(
+  static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
         state.params['fid']!,
       );
 
