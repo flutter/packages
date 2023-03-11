@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Add new getter `aspectRatioOrNull` that returns `null` when video aspect ratio is not yet available
+
 ## 2.6.0
 
 * Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
