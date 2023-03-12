@@ -23,9 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 /** Generated class from Pigeon. */
-@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})
+@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class CoreTests {
-  /** An error class for passing custom error details to Flutter via a thrown PlatformException. */
+
+  /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
   public static class FlutterError extends RuntimeException {
 
     /** The error code. */

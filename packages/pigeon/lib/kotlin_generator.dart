@@ -655,7 +655,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.newln();
     indent.writeln('/**');
     indent.writeln(
-        ' * An error class for passing custom error details to Flutter via a thrown PlatformException.');
+        ' * Error class for passing custom error details to Flutter via a thrown PlatformException.');
     indent.writeln(' * @property code The error code.');
     indent.writeln(' * @property message The error message.');
     indent.writeln(

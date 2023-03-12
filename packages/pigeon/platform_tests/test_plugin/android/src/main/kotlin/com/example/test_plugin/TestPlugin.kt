@@ -47,7 +47,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     throw Exception("An error");
   }
 
-  override fun throwFlutterError(): Object? {
+  override fun throwFlutterError(): Any? {
     throw FlutterError("code", "message", "details");
   }
 

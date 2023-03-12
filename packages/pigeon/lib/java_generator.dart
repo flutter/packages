@@ -132,7 +132,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
     indent.writeln(
-        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})');
     if (generatorOptions.useGeneratedAnnotation ?? false) {
       indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
     }
@@ -759,7 +759,7 @@ Result<$returnType> $resultName =
 
   void _writeErrorClass(Indent indent) {
     indent.writeln(
-        '/** An error class for passing custom error details to Flutter via a thrown PlatformException. */');
+        '/** Error class for passing custom error details to Flutter via a thrown PlatformException. */');
     indent.write('public static class FlutterError extends RuntimeException ');
     indent.addScoped('{', '}', () {
       indent.newln();
@@ -803,7 +803,9 @@ private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
   @override
   void writeGeneralUtilities(
       JavaOptions generatorOptions, Root root, Indent indent) {
+    indent.newln();
     _writeErrorClass(indent);
+    indent.newln();
     _writeWrapError(indent);
   }
 
