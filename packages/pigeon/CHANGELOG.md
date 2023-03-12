@@ -1,9 +1,9 @@
 ## 9.0.2
 
-* [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error parameters (code, message, details).
-* [kotlin] Adds a `FlutterError` exception for passing custom error parameters (code, message, details).
-* [kotlin] Adds a `errorClassName` option in `KotlinOptions` for custom error class names.
-* [java] Removes legacy try catch in async apis.
+* [java] Adds an `GeneratedApi.FlutterError` exception for passing custom error parameters (code, message, details).
+* [kotlin] Adds an `FlutterError` exception for passing custom error parameters (code, message, details).
+* [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
+* [java] Removes legacy try catch from async apis.
 * Adds `FlutterError` handling integration tests for all platforms.
 
 ## 9.0.1

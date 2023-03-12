@@ -20,7 +20,7 @@ private fun wrapResult(result: Any?): List<Any?> {
 }
 
 private fun wrapError(exception: Throwable): List<Any?> {
-  if (exception is CoreTestsError) {
+  if (exception is FlutterError) {
     return listOf(
       exception.code,
       exception.message,
@@ -35,7 +35,13 @@ private fun wrapError(exception: Throwable): List<Any?> {
   }
 }
 
-class CoreTestsError (
+/**
+ * An error class for passing custom error details to Flutter via a thrown PlatformException.
+ * @property code The error code.
+ * @property message The error message.
+ * @property details The error details. Must be a datatype supported by the api codec.
+ */
+class FlutterError (
   val code: String,
   override val message: String? = null,
   val details: Any? = null
@@ -272,10 +278,8 @@ interface HostIntegrationCoreApi {
   fun throwError(): Any?
   /** Returns an error from a void function, to test error handling. */
   fun throwErrorFromVoid()
-  /** Returns a flutter error, to test error handling. */
+  /** Returns a Flutter error, to test error handling. */
   fun throwFlutterError(): Any?
-  /** Returns a flutter error from a void function, to test error handling. */
-  fun throwFlutterErrorFromVoid()
   /** Returns passed in int. */
   fun echoInt(anInt: Long): Long
   /** Returns passed in double. */
@@ -347,10 +351,8 @@ interface HostIntegrationCoreApi {
   fun throwAsyncError(callback: (Result<Any?>) -> Unit)
   /** Responds with an error from an async void function. */
   fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit)
-  /** Responds with a flutter error from an async function returning a value. */
+  /** Responds with a Flutter error from an async function returning a value. */
   fun throwAsyncFlutterError(callback: (Result<Any?>) -> Unit)
-  /** Responds with a flutter error from an async void function. */
-  fun throwAsyncFlutterErrorFromVoid(callback: (Result<Unit>) -> Unit)
   /** Returns the passed object, to test async serialization and deserialization. */
   fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
   /** Returns the passed object, to test serialization and deserialization. */
@@ -474,23 +476,6 @@ interface HostIntegrationCoreApi {
             var wrapped = listOf<Any?>()
             try {
               wrapped = listOf<Any?>(api.throwFlutterError())
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterErrorFromVoid", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            var wrapped = listOf<Any?>()
-            try {
-              api.throwFlutterErrorFromVoid()
-              wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -1097,24 +1082,6 @@ interface HostIntegrationCoreApi {
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterErrorFromVoid", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            var wrapped = listOf<Any?>()
-            api.throwAsyncFlutterErrorFromVoid() { result: Result<Unit> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                reply.reply(wrapResult(null))
               }
             }
           }

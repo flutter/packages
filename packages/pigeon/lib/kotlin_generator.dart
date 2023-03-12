@@ -657,6 +657,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   void _writeErrorClass(KotlinOptions generatorOptions, Indent indent) {
     indent.newln();
+    indent.writeln('/**');
+    indent.writeln(
+        ' * An error class for passing custom error details to Flutter via a thrown PlatformException.');
+    indent.writeln(' * @property code The error code.');
+    indent.writeln(' * @property message The error message.');
+    indent.writeln(
+        ' * @property details The error details. Must be a datatype supported by the api codec.');
+    indent.writeln(' */');
     indent.write('class ${generatorOptions.errorClassName ?? "FlutterError"} ');
     indent.addScoped('(', ')', () {
       indent.writeln('val code: String,');

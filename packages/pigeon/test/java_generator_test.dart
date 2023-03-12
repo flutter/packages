@@ -1354,7 +1354,7 @@ void main() {
     expect(code, contains('if (exception instanceof FlutterError)'));
     expect(code, contains('FlutterError error = (FlutterError) exception;'));
     expect(code, contains('errorList.add(error.code);'));
-    expect(code, contains('errorList.add(error.message);'));
+    expect(code, contains('errorList.add(error.getMessage());'));
     expect(code, contains('errorList.add(error.details);'));
   });
 }

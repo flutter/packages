@@ -145,7 +145,7 @@ public interface Api2Host {
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
 interface Api2Host {
-   fun calculate(value: Value, callback: (Value) -> Unit)
+   fun calculate(value: Value, callback: (Result<Value>) -> Unit)
 }
 ```
 
@@ -224,6 +224,46 @@ abstract class Api2Host {
 }
 ```
 
+### Error Handling
+
+All Host API exceptions are translated into Flutter `PlatformException`.  
+* For synchronous methods, thrown exceptions will be caught and translated.  
+* For asynchronous methods, there is no default exception handling; exceptions should be returned via the provided callback.
+
+To pass custom details into `PlatformException` for error handling, use `FlutterError` in your Host API instead.
+For example:
+
+```kotlin
+// Kotlin Host API
+class MyApi : GeneratedApi {
+  // For synchronous methods
+  override fun doSomething() {
+    throw FlutterError('error_code', 'message', 'details')
+  }
+
+  // For async methods
+  override fun doSomethingAsync(callback: (Result<Unit>) -> Unit) {
+    callback(Result.failure(FlutterError('error_code', 'message', 'details'))
+  }
+}
+```
+
+Then you can implement error handling in the Flutter side:
+
+```dart
+// Dart
+void doSomething() {
+  try {
+    myApi.doSomething()
+  } catch (PlatformException e) {
+    if (e.code == 'error_code') {
+      // Perform custom error handling
+      assert(e.message == 'message')
+      assert(e.details == 'details')
+    }
+  }
+}
+```
 
 ## Feedback
 

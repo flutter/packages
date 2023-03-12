@@ -25,15 +25,18 @@ import java.util.Map;
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})
 public class CoreTests {
+  /** An error class for passing custom error details to Flutter via a thrown PlatformException. */
   public static class FlutterError extends RuntimeException {
+
+    /** The error code. */
     public final String code;
-    public final String message;
+
+    /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
     public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
-      this.message = message;
       this.details = details;
     }
   }
@@ -44,7 +47,7 @@ public class CoreTests {
     if (exception instanceof FlutterError) {
       FlutterError error = (FlutterError) exception;
       errorList.add(error.code);
-      errorList.add(error.message);
+      errorList.add(error.getMessage());
       errorList.add(error.details);
     } else {
       errorList.add(exception.toString());
@@ -841,11 +844,9 @@ public class CoreTests {
     Object throwError();
     /** Returns an error from a void function, to test error handling. */
     void throwErrorFromVoid();
-    /** Returns a flutter error, to test error handling. */
+    /** Returns a Flutter error, to test error handling. */
     @Nullable
     Object throwFlutterError();
-    /** Returns a flutter error from a void function, to test error handling. */
-    void throwFlutterErrorFromVoid();
     /** Returns passed in int. */
     @NonNull
     Long echoInt(@NonNull Long anInt);
@@ -938,10 +939,8 @@ public class CoreTests {
     void throwAsyncError(Result<Object> result);
     /** Responds with an error from an async void function. */
     void throwAsyncErrorFromVoid(Result<Void> result);
-    /** Responds with a flutter error from an async function returning a value. */
+    /** Responds with a Flutter error from an async function returning a value. */
     void throwAsyncFlutterError(Result<Object> result);
-    /** Responds with a flutter error from an async void function. */
-    void throwAsyncFlutterErrorFromVoid(Result<Void> result);
     /** Returns the passed object, to test async serialization and deserialization. */
     void echoAsyncAllTypes(@NonNull AllTypes everything, Result<AllTypes> result);
     /** Returns the passed object, to test serialization and deserialization. */
@@ -1049,17 +1048,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 AllTypes everythingArg = (AllTypes) args.get(0);
-                if (everythingArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   AllTypes output = api.echoAllTypes(everythingArg);
                   wrapped.add(0, output);
@@ -1145,46 +1134,13 @@ public class CoreTests {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterErrorFromVoid",
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                try {
-                  api.throwFlutterErrorFromVoid();
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
                 binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoInt", getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Number anIntArg = (Number) args.get(0);
-                if (anIntArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   Long output = api.echoInt((anIntArg == null) ? null : anIntArg.longValue());
                   wrapped.add(0, output);
@@ -1209,17 +1165,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Double aDoubleArg = (Double) args.get(0);
-                if (aDoubleArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   Double output = api.echoDouble(aDoubleArg);
                   wrapped.add(0, output);
@@ -1242,17 +1188,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Boolean aBoolArg = (Boolean) args.get(0);
-                if (aBoolArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   Boolean output = api.echoBool(aBoolArg);
                   wrapped.add(0, output);
@@ -1277,17 +1213,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 String aStringArg = (String) args.get(0);
-                if (aStringArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   String output = api.echoString(aStringArg);
                   wrapped.add(0, output);
@@ -1312,17 +1238,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 byte[] aUint8ListArg = (byte[]) args.get(0);
-                if (aUint8ListArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   byte[] output = api.echoUint8List(aUint8ListArg);
                   wrapped.add(0, output);
@@ -1347,17 +1263,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Object anObjectArg = args.get(0);
-                if (anObjectArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   Object output = api.echoObject(anObjectArg);
                   wrapped.add(0, output);
@@ -1380,17 +1286,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 List<Object> aListArg = (List<Object>) args.get(0);
-                if (aListArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   List<Object> output = api.echoList(aListArg);
                   wrapped.add(0, output);
@@ -1413,17 +1309,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                if (aMapArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   Map<String, Object> output = api.echoMap(aMapArg);
                   wrapped.add(0, output);
@@ -1448,12 +1334,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
                 try {
                   AllNullableTypes output = api.echoAllNullableTypes(everythingArg);
@@ -1479,17 +1359,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 AllNullableTypesWrapper wrapperArg = (AllNullableTypesWrapper) args.get(0);
-                if (wrapperArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 try {
                   String output = api.extractNestedNullableString(wrapperArg);
                   wrapped.add(0, output);
@@ -1514,12 +1384,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 String nullableStringArg = (String) args.get(0);
                 try {
                   AllNullableTypesWrapper output =
@@ -1546,12 +1410,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 Number aNullableIntArg = (Number) args.get(1);
                 String aNullableStringArg = (String) args.get(2);
@@ -1583,12 +1441,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Number aNullableIntArg = (Number) args.get(0);
                 try {
                   Long output =
@@ -1616,12 +1468,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Double aNullableDoubleArg = (Double) args.get(0);
                 try {
                   Double output = api.echoNullableDouble(aNullableDoubleArg);
@@ -1647,12 +1493,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 try {
                   Boolean output = api.echoNullableBool(aNullableBoolArg);
@@ -1678,12 +1518,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 String aNullableStringArg = (String) args.get(0);
                 try {
                   String output = api.echoNullableString(aNullableStringArg);
@@ -1709,12 +1543,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 byte[] aNullableUint8ListArg = (byte[]) args.get(0);
                 try {
                   byte[] output = api.echoNullableUint8List(aNullableUint8ListArg);
@@ -1740,12 +1568,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Object aNullableObjectArg = args.get(0);
                 try {
                   Object output = api.echoNullableObject(aNullableObjectArg);
@@ -1771,12 +1593,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 List<Object> aNullableListArg = (List<Object>) args.get(0);
                 try {
                   List<Object> output = api.echoNullableList(aNullableListArg);
@@ -1802,12 +1618,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Map<String, Object> aNullableMapArg = (Map<String, Object>) args.get(0);
                 try {
                   Map<String, Object> output = api.echoNullableMap(aNullableMapArg);
@@ -1860,17 +1670,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Number anIntArg = (Number) args.get(0);
-                if (anIntArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Long> resultCallback =
                     new Result<Long>() {
                       public void success(Long result) {
@@ -1901,17 +1701,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Double aDoubleArg = (Double) args.get(0);
-                if (aDoubleArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Double> resultCallback =
                     new Result<Double>() {
                       public void success(Double result) {
@@ -1942,17 +1732,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Boolean aBoolArg = (Boolean) args.get(0);
-                if (aBoolArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Boolean> resultCallback =
                     new Result<Boolean>() {
                       public void success(Boolean result) {
@@ -1983,17 +1763,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 String aStringArg = (String) args.get(0);
-                if (aStringArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<String> resultCallback =
                     new Result<String>() {
                       public void success(String result) {
@@ -2024,17 +1794,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 byte[] aUint8ListArg = (byte[]) args.get(0);
-                if (aUint8ListArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<byte[]> resultCallback =
                     new Result<byte[]>() {
                       public void success(byte[] result) {
@@ -2065,17 +1825,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Object anObjectArg = args.get(0);
-                if (anObjectArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Object> resultCallback =
                     new Result<Object>() {
                       public void success(Object result) {
@@ -2106,17 +1856,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 List<Object> aListArg = (List<Object>) args.get(0);
-                if (aListArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<List<Object>> resultCallback =
                     new Result<List<Object>>() {
                       public void success(List<Object> result) {
@@ -2147,17 +1887,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                if (aMapArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Map<String, Object>> resultCallback =
                     new Result<Map<String, Object>>() {
                       public void success(Map<String, Object> result) {
@@ -2268,35 +1998,6 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterErrorFromVoid",
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
-                      }
-
-                      public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
-                      }
-                    };
-
-                api.throwAsyncFlutterErrorFromVoid(resultCallback);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger,
                 "dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllTypes",
                 getCodec());
         if (api != null) {
@@ -2304,17 +2005,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 AllTypes everythingArg = (AllTypes) args.get(0);
-                if (everythingArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<AllTypes> resultCallback =
                     new Result<AllTypes>() {
                       public void success(AllTypes result) {
@@ -2345,12 +2036,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
                 Result<AllNullableTypes> resultCallback =
                     new Result<AllNullableTypes>() {
@@ -2382,12 +2067,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Number anIntArg = (Number) args.get(0);
                 Result<Long> resultCallback =
                     new Result<Long>() {
@@ -2420,12 +2099,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Double aDoubleArg = (Double) args.get(0);
                 Result<Double> resultCallback =
                     new Result<Double>() {
@@ -2457,12 +2130,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Boolean aBoolArg = (Boolean) args.get(0);
                 Result<Boolean> resultCallback =
                     new Result<Boolean>() {
@@ -2494,12 +2161,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
                     new Result<String>() {
@@ -2531,12 +2192,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 byte[] aUint8ListArg = (byte[]) args.get(0);
                 Result<byte[]> resultCallback =
                     new Result<byte[]>() {
@@ -2568,12 +2223,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Object anObjectArg = args.get(0);
                 Result<Object> resultCallback =
                     new Result<Object>() {
@@ -2605,12 +2254,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 List<Object> aListArg = (List<Object>) args.get(0);
                 Result<List<Object>> resultCallback =
                     new Result<List<Object>>() {
@@ -2642,12 +2285,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
                 Result<Map<String, Object>> resultCallback =
                     new Result<Map<String, Object>>() {
@@ -2766,17 +2403,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 AllTypes everythingArg = (AllTypes) args.get(0);
-                if (everythingArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<AllTypes> resultCallback =
                     new Result<AllTypes>() {
                       public void success(AllTypes result) {
@@ -2807,12 +2434,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 Number aNullableIntArg = (Number) args.get(1);
                 String aNullableStringArg = (String) args.get(2);
@@ -2850,17 +2471,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Boolean aBoolArg = (Boolean) args.get(0);
-                if (aBoolArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Boolean> resultCallback =
                     new Result<Boolean>() {
                       public void success(Boolean result) {
@@ -2891,17 +2502,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Number anIntArg = (Number) args.get(0);
-                if (anIntArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Long> resultCallback =
                     new Result<Long>() {
                       public void success(Long result) {
@@ -2933,17 +2534,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Double aDoubleArg = (Double) args.get(0);
-                if (aDoubleArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Double> resultCallback =
                     new Result<Double>() {
                       public void success(Double result) {
@@ -2974,17 +2565,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 String aStringArg = (String) args.get(0);
-                if (aStringArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<String> resultCallback =
                     new Result<String>() {
                       public void success(String result) {
@@ -3015,17 +2596,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 byte[] aListArg = (byte[]) args.get(0);
-                if (aListArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<byte[]> resultCallback =
                     new Result<byte[]>() {
                       public void success(byte[] result) {
@@ -3056,17 +2627,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 List<Object> aListArg = (List<Object>) args.get(0);
-                if (aListArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<List<Object>> resultCallback =
                     new Result<List<Object>>() {
                       public void success(List<Object> result) {
@@ -3097,17 +2658,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                if (aMapArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<Map<String, Object>> resultCallback =
                     new Result<Map<String, Object>>() {
                       public void success(Map<String, Object> result) {
@@ -3138,12 +2689,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Boolean aBoolArg = (Boolean) args.get(0);
                 Result<Boolean> resultCallback =
                     new Result<Boolean>() {
@@ -3175,12 +2720,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Number anIntArg = (Number) args.get(0);
                 Result<Long> resultCallback =
                     new Result<Long>() {
@@ -3213,12 +2752,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Double aDoubleArg = (Double) args.get(0);
                 Result<Double> resultCallback =
                     new Result<Double>() {
@@ -3250,12 +2783,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
                     new Result<String>() {
@@ -3287,12 +2814,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 byte[] aListArg = (byte[]) args.get(0);
                 Result<byte[]> resultCallback =
                     new Result<byte[]>() {
@@ -3324,12 +2845,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 List<Object> aListArg = (List<Object>) args.get(0);
                 Result<List<Object>> resultCallback =
                     new Result<List<Object>>() {
@@ -3361,12 +2876,6 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
                 Result<Map<String, Object>> resultCallback =
                     new Result<Map<String, Object>>() {
@@ -3836,17 +3345,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                if (args == null) {
-                  reply.reply(
-                      wrapError(
-                          new IllegalArgumentException("Arguments expected but none received.")));
-                  return;
-                }
                 String aStringArg = (String) args.get(0);
-                if (aStringArg == null) {
-                  reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));
-                  return;
-                }
                 Result<String> resultCallback =
                     new Result<String>() {
                       public void success(String result) {

@@ -384,7 +384,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns a flutter error, to test error handling.
+  /// Returns a Flutter error, to test error handling.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterError"
@@ -399,26 +399,6 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
         FlutterError *error;
         id output = [api throwFlutterErrorWithError:&error];
         callback(wrapResult(output, error));
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  /// Returns a flutter error from a void function, to test error handling.
-  {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterErrorFromVoid"
-        binaryMessenger:binaryMessenger
-                  codec:HostIntegrationCoreApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(throwFlutterErrorFromVoidWithError:)],
-                @"HostIntegrationCoreApi api (%@) doesn't respond to "
-                @"@selector(throwFlutterErrorFromVoidWithError:)",
-                api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        FlutterError *error;
-        [api throwFlutterErrorFromVoidWithError:&error];
-        callback(wrapResult(nil, error));
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1114,7 +1094,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Responds with a flutter error from an async function returning a value.
+  /// Responds with a Flutter error from an async function returning a value.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterError"
@@ -1129,26 +1109,6 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
         [api throwAsyncFlutterErrorWithCompletion:^(id _Nullable output,
                                                     FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
-        }];
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  /// Responds with a flutter error from an async void function.
-  {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterErrorFromVoid"
-        binaryMessenger:binaryMessenger
-                  codec:HostIntegrationCoreApiGetCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(throwAsyncFlutterErrorFromVoidWithCompletion:)],
-                @"HostIntegrationCoreApi api (%@) doesn't respond to "
-                @"@selector(throwAsyncFlutterErrorFromVoidWithCompletion:)",
-                api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api throwAsyncFlutterErrorFromVoidWithCompletion:^(FlutterError *_Nullable error) {
-          callback(wrapResult(nil, error));
         }];
       }];
     } else {

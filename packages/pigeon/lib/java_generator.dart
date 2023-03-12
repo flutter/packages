@@ -610,12 +610,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             if (method.arguments.isNotEmpty) {
               indent.writeln(
                   'ArrayList<Object> args = (ArrayList<Object>) message;');
-              indent.write('if (args == null) ');
-              indent.addScoped('{', '}', () {
-                indent.writeln(
-                    'reply.reply(wrapError(new IllegalArgumentException("Arguments expected but none received.")));');
-                indent.writeln('return;');
-              });
               enumerate(method.arguments, (int index, NamedType arg) {
                 // The StandardMessageCodec can give us [Integer, Long] for
                 // a Dart 'int'.  To keep things simple we just use 64bit
@@ -634,14 +628,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                   accessor = '($argType) $accessor';
                 }
                 indent.writeln('$argType $argName = $accessor;');
-                if (!arg.type.isNullable) {
-                  indent.write('if ($argName == null) ');
-                  indent.addScoped('{', '}', () {
-                    indent.writeln(
-                        'reply.reply(wrapError(new NullPointerException("aStringArg unexpectedly null.")));');
-                    indent.writeln('return;');
-                  });
-                }
                 methodArgument.add(argExpression);
               });
             }
@@ -772,10 +758,16 @@ Result<$returnType> $resultName =
   }
 
   void _writeErrorClass(Indent indent) {
+    indent.writeln(
+        '/** An error class for passing custom error details to Flutter via a thrown PlatformException. */');
     indent.write('public static class FlutterError extends RuntimeException ');
     indent.addScoped('{', '}', () {
+      indent.newln();
+      indent.writeln('/** The error code. */');
       indent.writeln('public final String code;');
-      indent.writeln('public final String message;');
+      indent.newln();
+      indent.writeln(
+          '/** The error details. Must be a datatype supported by the api codec. */');
       indent.writeln('public final Object details;');
       indent.newln();
       indent.writeln(
@@ -783,7 +775,6 @@ Result<$returnType> $resultName =
       indent.writeScoped('{', '}', () {
         indent.writeln('super(message);');
         indent.writeln('this.code = code;');
-        indent.writeln('this.message = message;');
         indent.writeln('this.details = details;');
       });
     });
@@ -797,7 +788,7 @@ private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 \tif (exception instanceof FlutterError) {
 \t\tFlutterError error = (FlutterError) exception;
 \t\terrorList.add(error.code);
-\t\terrorList.add(error.message);
+\t\terrorList.add(error.getMessage());
 \t\terrorList.add(error.details);
 \t} else {
 \t\terrorList.add(exception.toString());

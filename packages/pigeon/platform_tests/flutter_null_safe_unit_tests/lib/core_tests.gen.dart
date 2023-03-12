@@ -366,7 +366,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns a flutter error, to test error handling.
+  /// Returns a Flutter error, to test error handling.
   Future<Object?> throwFlutterError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterError', codec,
@@ -385,29 +385,6 @@ class HostIntegrationCoreApi {
       );
     } else {
       return replyList[0];
-    }
-  }
-
-  /// Returns a flutter error from a void function, to test error handling.
-  Future<void> throwFlutterErrorFromVoid() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterErrorFromVoid',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
     }
   }
 
@@ -1228,7 +1205,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Responds with a flutter error from an async function returning a value.
+  /// Responds with a Flutter error from an async function returning a value.
   Future<Object?> throwAsyncFlutterError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterError',
@@ -1248,29 +1225,6 @@ class HostIntegrationCoreApi {
       );
     } else {
       return replyList[0];
-    }
-  }
-
-  /// Responds with a flutter error from an async void function.
-  Future<void> throwAsyncFlutterErrorFromVoid() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterErrorFromVoid',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
     }
   }
 

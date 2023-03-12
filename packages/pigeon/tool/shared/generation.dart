@@ -79,7 +79,8 @@ Future<int> generatePigeons({required String baseDir}) async {
           ? null
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
-      kotlinErrorClassName: '${pascalCaseName}Error',
+      kotlinErrorClassName:
+          input == 'core_tests' ? null : '${pascalCaseName}Error',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguages.swift)
           ? null
