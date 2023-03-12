@@ -1,8 +1,11 @@
+## 2.4.2
+
+* Synchronizes `VideoPlayerValue.isPlaying` with `AVPlayer`.
+
 ## 2.4.1
 
 * Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
-* Synchronizes `VideoPlayerValue.isPlaying` with `AVPlayer`.
 
 ## 2.4.0
 
