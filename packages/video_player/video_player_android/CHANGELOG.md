@@ -1,5 +1,10 @@
-## 2.4.1
+## 2.4.2
+
 * Synchronizes `VideoPlayerValue.isPlaying` with `ExoPlayer`.
+
+## 2.4.1
+
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
 
 ## 2.4.0
 
