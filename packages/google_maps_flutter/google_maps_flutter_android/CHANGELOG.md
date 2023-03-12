@@ -1,3 +1,17 @@
+## 2.4.9
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.4.8
+
+* Fixes compilation warnings.
+
+## 2.4.7
+
+* Updates annotation dependency.
+* Updates compileSdkVersion to 33.
+
 ## 2.4.6
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

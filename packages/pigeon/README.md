@@ -268,4 +268,4 @@ void doSomething() {
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with the
-word 'pigeon' clearly in the title and cc **@gaaclarke**.
+word "pigeon" in the title.

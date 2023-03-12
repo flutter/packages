@@ -54,6 +54,8 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    compileSdkVersion flutter.compileSdkVersion
+
     signingConfigs {
         release {
             storeFile project.KEYSTORE_STORE_FILE
@@ -62,8 +64,6 @@ android {
             keyPassword project.KEYSTORE_KEY_PASSWORD
         }
     }
-
-    compileSdkVersion 31
 
     lintOptions {
         disable 'InvalidPackage'

@@ -107,4 +107,10 @@ public class WebSettingsTest {
     testHostApiImpl.setBuiltInZoomControls(0L, true);
     verify(mockWebSettings).setBuiltInZoomControls(true);
   }
+
+  @Test
+  public void setTextZoom() {
+    testHostApiImpl.setTextZoom(0L, 100L);
+    verify(mockWebSettings).setTextZoom(100);
+  }
 }

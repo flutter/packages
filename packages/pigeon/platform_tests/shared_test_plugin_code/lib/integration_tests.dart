@@ -771,7 +771,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const String sentObject = 'Hello, asyncronously!';
+      const String sentObject = 'Hello, asynchronously!';
 
       final String echoObject = await api.echoAsyncString(sentObject);
       expect(echoObject, sentObject);
@@ -867,7 +867,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const String sentObject = 'Hello, asyncronously!';
+      const String sentObject = 'Hello, asynchronously!';
 
       final String? echoObject = await api.echoAsyncNullableString(sentObject);
       expect(echoObject, sentObject);

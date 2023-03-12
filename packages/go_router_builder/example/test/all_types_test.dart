@@ -127,13 +127,18 @@ void main() {
     expect(find.text('Query param: https://dart.dev'), findsOneWidget);
 
     IterableRoute(
+      enumIterableField: <SportDetails>[SportDetails.football],
       intListField: <int>[1, 2, 3],
+      enumOnlyInSetField: <CookingRecipe>{
+        CookingRecipe.burger,
+        CookingRecipe.pizza,
+      },
     ).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('IterableRoute'), findsOneWidget);
     expect(
         find.text(
-            '/iterable-route?int-list-field=1&int-list-field=2&int-list-field=3'),
+            '/iterable-route?enum-iterable-field=football&int-list-field=1&int-list-field=2&int-list-field=3&enum-only-in-set-field=burger&enum-only-in-set-field=pizza'),
         findsOneWidget);
   });
 }

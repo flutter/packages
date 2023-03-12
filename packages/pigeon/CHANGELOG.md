@@ -1,10 +1,35 @@
-## 9.0.2
+## 9.0.7
 
 * [java] Adds an `GeneratedApi.FlutterError` exception for passing custom error parameters (code, message, details).
 * [kotlin] Adds an `FlutterError` exception for passing custom error parameters (code, message, details).
 * [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
 * [java] Removes legacy try catch from async apis.
 * Adds `FlutterError` handling integration tests for all platforms.
+
+## 9.0.6
+
+* [kotlin] Removes safe casting from decode process.
+* [swift] Removes safe casting from decode process.
+
+## 9.0.5
+
+* Removes the unnecessary Flutter constraint.
+* Removes an unnecessary null check.
+* Aligns Dart and Flutter SDK constraints.
+
+## 9.0.4
+
+* Adds parameter to generate Kotlin code in example README.
+
+## 9.0.3
+
+* [kotlin] Fixes compiler warnings in generated output.
+* [swift] Fixes compiler warnings in generated output.
+
+## 9.0.2
+
+* [swift] Removes safe casting from decode process.
+* [kotlin] Removes safe casting from decode process.
 
 ## 9.0.1
 
@@ -677,7 +702,7 @@ class Foo {
 
 ## 0.1.0-experimental.3
 
-* Added support for for Android Java.
+* Added support for Android Java.
 
 ## 0.1.0-experimental.2
 
