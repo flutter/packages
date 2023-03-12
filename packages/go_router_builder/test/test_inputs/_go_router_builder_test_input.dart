@@ -273,12 +273,14 @@ GoRoute get $iterableDefaultValueRoute => GoRouteData.$route(
       path: '/iterable-default-value-route',
       factory: $IterableDefaultValueRouteExtension._fromState,
     );
+
 extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
   static IterableDefaultValueRoute _fromState(GoRouterState state) =>
       IterableDefaultValueRoute(
         param:
             state.queryParametersAll['param']?.map(int.parse) ?? const <int>[0],
       );
+
   String get location => GoRouteData.$location(
         '/iterable-default-value-route',
         queryParams: {
@@ -286,8 +288,11 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
             'param': param.map((e) => e.toString()).toList(),
         },
       );
+
   void go(BuildContext context) => context.go(location);
+
   void push(BuildContext context) => context.push(location);
+
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 }
