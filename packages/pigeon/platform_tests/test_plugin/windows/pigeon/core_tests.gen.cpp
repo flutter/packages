@@ -2970,8 +2970,8 @@ EncodableValue HostIntegrationCoreApi::WrapError(
                     EncodableValue("Error"), EncodableValue()});
 }
 EncodableValue HostIntegrationCoreApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{EncodableValue(error.message()),
-                                      EncodableValue(error.code()),
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
                                       error.details()});
 }
 
@@ -3552,8 +3552,8 @@ EncodableValue HostTrivialApi::WrapError(std::string_view error_message) {
                     EncodableValue("Error"), EncodableValue()});
 }
 EncodableValue HostTrivialApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{EncodableValue(error.message()),
-                                      EncodableValue(error.code()),
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
                                       error.details()});
 }
 
@@ -3635,8 +3635,8 @@ EncodableValue HostSmallApi::WrapError(std::string_view error_message) {
                     EncodableValue("Error"), EncodableValue()});
 }
 EncodableValue HostSmallApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{EncodableValue(error.message()),
-                                      EncodableValue(error.code()),
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
                                       error.details()});
 }
 
