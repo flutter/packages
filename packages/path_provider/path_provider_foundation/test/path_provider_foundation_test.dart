@@ -19,7 +19,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('PathProviderFoundation', () {
-    late PathProviderFoundation pathProvider;
+    final PathProviderFoundation pathProvider = PathProviderFoundation();
+    ;
     late MockTestPathProviderApi mockApi;
     // These unit tests use the actual filesystem, since an injectable
     // filesystem would add a runtime dependency to the package, so everything
@@ -28,7 +29,6 @@ void main() {
 
     setUp(() async {
       testRoot = Directory.systemTemp.createTempSync();
-      pathProvider = PathProviderFoundation();
       mockApi = MockTestPathProviderApi();
       TestPathProviderApi.setup(mockApi);
     });
@@ -118,6 +118,28 @@ void main() {
     test('getExternalStoragePaths throws', () async {
       expect(
           pathProvider.getExternalStoragePaths(), throwsA(isUnsupportedError));
+    });
+
+    test('getContainerPath', () async {
+      const String appGroupIdentifier = 'group.example.test';
+      if (Platform.isIOS) {
+        final String containerPath = p.join(testRoot.path, 'container', 'path');
+        when(mockApi.getContainerPath(appGroupIdentifier))
+            .thenReturn(containerPath);
+
+        final String? result = await pathProvider.getContainerPath(
+            appGroupIdentifier: appGroupIdentifier);
+
+        verify(mockApi.getContainerPath(appGroupIdentifier));
+        expect(result, containerPath);
+      }
+    });
+
+    test('getContainerPath throws on macOS', () async {
+      expect(
+          pathProvider.getContainerPath(
+              appGroupIdentifier: 'group.example.test'),
+          throwsA(isUnsupportedError));
     });
   });
 }
