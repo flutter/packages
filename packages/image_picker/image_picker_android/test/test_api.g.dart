@@ -40,15 +40,15 @@ class _TestHostImagePickerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return CacheRetrievalError.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return CacheRetrievalResult.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return ImageSelectionOptions.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return SourceSpecification.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return VideoSelectionOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -63,18 +63,27 @@ abstract class TestHostImagePickerApi {
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
-  Future<List<String?>> pickImages(SourceSpecification source, ImageSelectionOptions options, bool allowMultiple, bool useAndroidPhotoPicker);
+  Future<List<String?>> pickImages(
+      SourceSpecification source,
+      ImageSelectionOptions options,
+      bool allowMultiple,
+      bool useAndroidPhotoPicker);
 
   /// Selects video and returns their paths.
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
-  Future<List<String?>> pickVideos(SourceSpecification source, VideoSelectionOptions options, bool allowMultiple, bool useAndroidPhotoPicker);
+  Future<List<String?>> pickVideos(
+      SourceSpecification source,
+      VideoSelectionOptions options,
+      bool allowMultiple,
+      bool useAndroidPhotoPicker);
 
   /// Returns results from a previous app session, if any.
   CacheRetrievalResult? retrieveLostResults();
 
-  static void setup(TestHostImagePickerApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestHostImagePickerApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.ImagePickerApi.pickImages', codec,
@@ -84,12 +93,14 @@ abstract class TestHostImagePickerApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.ImagePickerApi.pickImages was null.');
+              'Argument for dev.flutter.pigeon.ImagePickerApi.pickImages was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final SourceSpecification? arg_source = (args[0] as SourceSpecification?);
+          final SourceSpecification? arg_source =
+              (args[0] as SourceSpecification?);
           assert(arg_source != null,
               'Argument for dev.flutter.pigeon.ImagePickerApi.pickImages was null, expected non-null SourceSpecification.');
-          final ImageSelectionOptions? arg_options = (args[1] as ImageSelectionOptions?);
+          final ImageSelectionOptions? arg_options =
+              (args[1] as ImageSelectionOptions?);
           assert(arg_options != null,
               'Argument for dev.flutter.pigeon.ImagePickerApi.pickImages was null, expected non-null ImageSelectionOptions.');
           final bool? arg_allowMultiple = (args[2] as bool?);
@@ -98,7 +109,8 @@ abstract class TestHostImagePickerApi {
           final bool? arg_useAndroidPhotoPicker = (args[3] as bool?);
           assert(arg_useAndroidPhotoPicker != null,
               'Argument for dev.flutter.pigeon.ImagePickerApi.pickImages was null, expected non-null bool.');
-          final List<String?> output = await api.pickImages(arg_source!, arg_options!, arg_allowMultiple!, arg_useAndroidPhotoPicker!);
+          final List<String?> output = await api.pickImages(arg_source!,
+              arg_options!, arg_allowMultiple!, arg_useAndroidPhotoPicker!);
           return <Object?>[output];
         });
       }
@@ -112,12 +124,14 @@ abstract class TestHostImagePickerApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.ImagePickerApi.pickVideos was null.');
+              'Argument for dev.flutter.pigeon.ImagePickerApi.pickVideos was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final SourceSpecification? arg_source = (args[0] as SourceSpecification?);
+          final SourceSpecification? arg_source =
+              (args[0] as SourceSpecification?);
           assert(arg_source != null,
               'Argument for dev.flutter.pigeon.ImagePickerApi.pickVideos was null, expected non-null SourceSpecification.');
-          final VideoSelectionOptions? arg_options = (args[1] as VideoSelectionOptions?);
+          final VideoSelectionOptions? arg_options =
+              (args[1] as VideoSelectionOptions?);
           assert(arg_options != null,
               'Argument for dev.flutter.pigeon.ImagePickerApi.pickVideos was null, expected non-null VideoSelectionOptions.');
           final bool? arg_allowMultiple = (args[2] as bool?);
@@ -126,7 +140,8 @@ abstract class TestHostImagePickerApi {
           final bool? arg_useAndroidPhotoPicker = (args[3] as bool?);
           assert(arg_useAndroidPhotoPicker != null,
               'Argument for dev.flutter.pigeon.ImagePickerApi.pickVideos was null, expected non-null bool.');
-          final List<String?> output = await api.pickVideos(arg_source!, arg_options!, arg_allowMultiple!, arg_useAndroidPhotoPicker!);
+          final List<String?> output = await api.pickVideos(arg_source!,
+              arg_options!, arg_allowMultiple!, arg_useAndroidPhotoPicker!);
           return <Object?>[output];
         });
       }

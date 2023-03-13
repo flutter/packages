@@ -810,12 +810,12 @@ class _FakeImagePickerApi implements ImagePickerApi {
       SourceSpecification source,
       ImageSelectionOptions options,
       bool allowMultiple,
-      bool useAndroidPhotoPicker) async {
+      bool usePhotoPicker) async {
     lastCall = _LastPickType.image;
     passedSource = source;
     passedImageOptions = options;
     passedAllowMultiple = allowMultiple;
-    passedPhotoPickerFlag = useAndroidPhotoPicker;
+    passedPhotoPickerFlag = usePhotoPicker;
     return returnValue as List<String?>? ?? <String>[];
   }
 
@@ -824,12 +824,12 @@ class _FakeImagePickerApi implements ImagePickerApi {
       SourceSpecification source,
       VideoSelectionOptions options,
       bool allowMultiple,
-      bool useAndroidPhotoPicker) async {
+      bool usePhotoPicker) async {
     lastCall = _LastPickType.video;
     passedSource = source;
     passedVideoOptions = options;
     passedAllowMultiple = allowMultiple;
-    passedPhotoPickerFlag = useAndroidPhotoPicker;
+    passedPhotoPickerFlag = usePhotoPicker;
     return returnValue as List<String?>? ?? <String>[];
   }
 
