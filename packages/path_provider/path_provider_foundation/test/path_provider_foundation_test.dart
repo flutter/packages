@@ -10,6 +10,7 @@ import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_foundation/messages.g.dart';
 import 'package:path_provider_foundation/path_provider_foundation.dart';
+import 'package:path_provider_foundation/path_provider_platform_provider.dart';
 
 import 'messages_test.g.dart';
 import 'path_provider_foundation_test.mocks.dart';
@@ -19,8 +20,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('PathProviderFoundation', () {
-    final PathProviderFoundation pathProvider = PathProviderFoundation();
-    ;
+    late PathProviderFoundation pathProvider;
+    late PathProviderFoundation iosPathProvider;
+    late PathProviderFoundation macosPathProvider;
+
     late MockTestPathProviderApi mockApi;
     // These unit tests use the actual filesystem, since an injectable
     // filesystem would add a runtime dependency to the package, so everything
@@ -29,8 +32,14 @@ void main() {
 
     setUp(() async {
       testRoot = Directory.systemTemp.createTempSync();
+      pathProvider = PathProviderFoundation();
       mockApi = MockTestPathProviderApi();
       TestPathProviderApi.setup(mockApi);
+
+      iosPathProvider =
+          PathProviderFoundation(platform: FakePlatformProviderIOS());
+      macosPathProvider =
+          PathProviderFoundation(platform: FakePlatformProviderMac());
     });
 
     tearDown(() {
@@ -122,24 +131,34 @@ void main() {
 
     test('getContainerPath', () async {
       const String appGroupIdentifier = 'group.example.test';
-      if (Platform.isIOS) {
-        final String containerPath = p.join(testRoot.path, 'container', 'path');
-        when(mockApi.getContainerPath(appGroupIdentifier))
-            .thenReturn(containerPath);
 
-        final String? result = await pathProvider.getContainerPath(
-            appGroupIdentifier: appGroupIdentifier);
+      final String containerPath = p.join(testRoot.path, 'container', 'path');
+      when(mockApi.getContainerPath(appGroupIdentifier))
+          .thenReturn(containerPath);
 
-        verify(mockApi.getContainerPath(appGroupIdentifier));
-        expect(result, containerPath);
-      }
+      final String? result = await iosPathProvider.getContainerPath(
+          appGroupIdentifier: appGroupIdentifier);
+
+      verify(mockApi.getContainerPath(appGroupIdentifier));
+      expect(result, containerPath);
     });
 
     test('getContainerPath throws on macOS', () async {
       expect(
-          pathProvider.getContainerPath(
+          macosPathProvider.getContainerPath(
               appGroupIdentifier: 'group.example.test'),
           throwsA(isUnsupportedError));
     });
   });
+}
+
+/// Fake implementation of PathProviderPlatformProvider that returns iOS is true
+class FakePlatformProviderIOS implements PathProviderPlatformProvider {
+  @override
+  bool get isIOS => true;
+}
+
+class FakePlatformProviderMac implements PathProviderPlatformProvider {
+  @override
+  bool get isIOS => false;
 }

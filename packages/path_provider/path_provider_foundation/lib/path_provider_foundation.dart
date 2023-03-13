@@ -4,12 +4,22 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 import 'messages.g.dart';
+import 'path_provider_platform_provider.dart';
 
 /// The iOS and macOS implementation of [PathProviderPlatform].
 class PathProviderFoundation extends PathProviderPlatform {
+  /// Constructor that accepts a testable PathProviderPlatformProvider.
+  PathProviderFoundation({
+    @visibleForTesting PathProviderPlatformProvider? platform,
+  }) : platformProvider = platform ?? PathProviderPlatformProvider();
+
+  /// Helper class to provide the platform.
+  final PathProviderPlatformProvider platformProvider;
+
   final PathProviderApi _pathProvider = PathProviderApi();
 
   /// Registers this class as the default instance of [PathProviderPlatform]
@@ -72,7 +82,7 @@ class PathProviderFoundation extends PathProviderPlatform {
   /// Returns the path to the container of the specified App Group.
   /// This is only supported for iOS.
   Future<String?> getContainerPath({required String appGroupIdentifier}) async {
-    if (!Platform.isIOS) {
+    if (!platformProvider.isIOS) {
       throw UnsupportedError(
           'getContainerPath is not supported on this platform');
     }
