@@ -333,7 +333,8 @@ class PathBuilder implements PathProxy {
   /// Creates a new path builder for paths of the specified fill type.
   ///
   /// By default, will create non-zero filled paths.
-  PathBuilder([this.fillType = PathFillType.nonZero]);
+  PathBuilder([PathFillType? fillType])
+      : fillType = fillType ?? PathFillType.nonZero;
 
   /// Creates a new mutable path builder object from an existing [Path].
   PathBuilder.fromPath(Path path) {
@@ -518,6 +519,14 @@ class Path {
     _commands.addAll(commands);
   }
 
+  /// Creates a copy of this path, replacing the current [fillType] with [type].
+  Path withFillType(PathFillType type) {
+    if (type == fillType) {
+      return this;
+    }
+    return Path(fillType: type, commands: _commands);
+  }
+
   /// Whether this path has any commands.
   bool get isEmpty => _commands.isEmpty;
 
@@ -641,10 +650,9 @@ class Path {
 }
 
 /// Creates a new [Path] object from an SVG path data string.
-Path parseSvgPathData(String svg, [PathFillType type = PathFillType.nonZero]) {
-  // TODO(dnfield): get rid of PathFillType on paint.
+Path parseSvgPathData(String svg, [PathFillType? type]) {
   if (svg == '') {
-    return Path(fillType: type);
+    return Path(fillType: type ?? PathFillType.nonZero);
   }
 
   final SvgPathStringSource parser = SvgPathStringSource(svg);

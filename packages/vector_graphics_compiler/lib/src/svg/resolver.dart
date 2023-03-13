@@ -90,7 +90,9 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     final AffineMatrix transform = data.multiplied(
       pathNode.attributes.transform,
     );
-    final Path transformedPath = pathNode.path.transformed(transform);
+    final Path transformedPath = pathNode.path
+        .transformed(transform)
+        .withFillType(pathNode.attributes.fillRule ?? pathNode.path.fillType);
     final Rect originalBounds = pathNode.path.bounds();
     final Rect newBounds = transformedPath.bounds();
     final Paint? paint = pathNode.computePaint(originalBounds, transform);

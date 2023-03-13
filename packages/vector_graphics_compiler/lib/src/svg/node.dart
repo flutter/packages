@@ -420,7 +420,7 @@ class PathNode extends AttributedNode {
     final Fill? fill = attributes.fill?.toFill(
       bounds,
       transform,
-      defaultColor: stroke?.color == null ? Color.opaqueBlack : null,
+      defaultColor: Color.opaqueBlack,
     );
     if (fill == null && stroke == null) {
       return null;

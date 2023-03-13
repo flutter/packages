@@ -1660,8 +1660,7 @@ class SvgParser {
           color,
           id,
         ),
-        fillRule:
-            parseRawFillRule(attributeMap['fill-rule']) ?? PathFillType.nonZero,
+        fillRule: parseRawFillRule(attributeMap['fill-rule']),
         clipRule: parseRawFillRule(attributeMap['clip-rule']),
         clipPathId: attributeMap['clip-path'],
         blendMode: _blendModes[attributeMap['mix-blend-mode']],
@@ -1832,7 +1831,7 @@ class SvgAttributes {
     this.color = const ColorOrNone.color(),
     this.stroke,
     this.fill,
-    this.fillRule = PathFillType.nonZero,
+    this.fillRule,
     this.clipRule,
     this.clipPathId,
     this.blendMode,
@@ -1954,7 +1953,7 @@ class SvgAttributes {
   final AffineMatrix transform;
 
   /// The `@fill-rule` attribute.
-  final PathFillType fillRule;
+  final PathFillType? fillRule;
 
   /// The `@clip-rule` attribute.
   final PathFillType? clipRule;
@@ -2062,7 +2061,7 @@ class SvgAttributes {
       color: color._applyParent(parent.color),
       stroke: stroke?.applyParent(parent.stroke) ?? parent.stroke,
       fill: fill?.applyParent(parent.fill) ?? parent.fill,
-      fillRule: fillRule,
+      fillRule: fillRule ?? parent.fillRule,
       clipRule: clipRule ?? parent.clipRule,
       clipPathId: clipPathId ?? parent.clipPathId,
       blendMode: blendMode ?? parent.blendMode,

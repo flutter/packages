@@ -27,7 +27,7 @@ const String kBase64ImageContents =
 
 /// https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/svg.svg
 const String useStar = '''
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" fill="none">
  <g id='gtop' stroke-width="12" stroke="#000">
    <g id="svgstar" transform="translate(50,50)">
      <path id="svgbar" d="M-27-5a7,7,0,1,0,0,10h54a7,7,0,1,0,0-10z"/>
@@ -1396,7 +1396,7 @@ List<Path> basicClipsForClippingOptimzer = <Path>[
 
 /// https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/bzrfeed.svg
 const String signWithScaledStroke = '''
-<svg xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" viewBox="0 0 100 100">
+<svg xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" viewBox="0 0 100 100" fill="none">
   <path d="M50,4L4,50L50,96L96,50Z" stroke="#FE4" stroke-width="3"/>
   <path d="M50,5L5,50L50,95L95,50Z" stroke="#333" fill="#FE4" stroke-width="3"/>
   <g transform="scale(0.8) translate(14,30)">
@@ -1456,4 +1456,27 @@ const String numberBubbles = '''
                 </text>
     </g>
 </svg>
+''';
+
+/// Via https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+const String inheritFillRule = '''
+<svg viewBox="-10 -10 220 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Default value for fill-rule -->
+  <polygon
+    fill-rule="nonzero"
+    stroke="red"
+    points="50,0 21,90 98,35 2,35 79,90" />
+
+  <!--
+  The center of the shape has two
+  path segments (shown by the red stroke)
+  between it and infinity. It is therefore
+  considered outside the shape, and not filled.
+  -->
+  <polygon
+    fill-rule="evenodd"
+    stroke="red"
+    points="150,0 121,90 198,35 102,35 179,90" />
+</svg>
+
 ''';

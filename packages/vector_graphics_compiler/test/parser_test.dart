@@ -4,6 +4,46 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Fill rule inheritence', () {
+    final VectorInstructions instructions =
+        parseWithoutOptimizers(inheritFillRule);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(
+        blendMode: BlendMode.srcOver,
+        stroke: Stroke(color: Color(0xffff0000)),
+        fill: Fill(color: Color(0xff000000)),
+      ),
+    ]);
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(60.0, 10.0),
+          LineToCommand(31.0, 100.0),
+          LineToCommand(108.0, 45.0),
+          LineToCommand(12.0, 45.0),
+          LineToCommand(89.0, 100.0),
+          CloseCommand()
+        ],
+      ),
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(160.0, 10.0),
+          LineToCommand(131.0, 100.0),
+          LineToCommand(208.0, 45.0),
+          LineToCommand(112.0, 45.0),
+          LineToCommand(189.0, 100.0),
+          CloseCommand()
+        ],
+        fillType: PathFillType.evenOdd,
+      )
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 0),
+    ]);
+  });
+
   test('Text whitespace handling (number bubbles)', () {
     final VectorInstructions instructions =
         parseWithoutOptimizers(numberBubbles);
@@ -139,7 +179,7 @@ void main() {
 
   test('stroke-opacity', () {
     const String strokeOpacitySvg = '''
-<svg viewBox="0 0 10 10">
+<svg viewBox="0 0 10 10" fill="none">
   <rect x="0" y="0" width="5" height="5" stroke="red" stroke-opacity=".5" />
 </svg>
 ''';
