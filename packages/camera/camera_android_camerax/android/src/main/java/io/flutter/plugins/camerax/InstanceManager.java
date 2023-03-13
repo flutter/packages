@@ -30,6 +30,9 @@ import java.util.WeakHashMap;
  */
 @SuppressWarnings("unchecked")
 public class InstanceManager {
+  /// Constant returned from #addHostCreatedInstance() if the manager is closed.
+  public static final int INSTANCE_CLOSED = -1;
+
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -153,7 +156,7 @@ public class InstanceManager {
   public long addHostCreatedInstance(Object instance) {
     if (isClosed()) {
       Log.w(TAG, CLOSED_WARNING);
-      return -1;
+      return INSTANCE_CLOSED;
     } else if (containsInstance(instance)) {
       throw new IllegalArgumentException(
           String.format("Instance of `%s` has already been added.", instance.getClass()));

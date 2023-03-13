@@ -12,4 +12,4 @@
 * Adds implementation of availableCameras().
 * Implements camera preview, createCamera, initializeCamera, onCameraError, onDeviceOrientationChanged, and onCameraInitialized.
 * Adds integration test to plugin.
-* Updates instance manager and fixes casting issue.
+* Fixes instance manager hot restart behavior and fixes Java casting issue.

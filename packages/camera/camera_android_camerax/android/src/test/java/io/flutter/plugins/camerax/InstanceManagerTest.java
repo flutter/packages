@@ -42,7 +42,7 @@ public class InstanceManagerTest {
   }
 
   @Test
-  public void remove() {
+  public void removeReturnsRemovedObjectAndClearsIdentifier() {
     final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
 
     Object object = new Object();

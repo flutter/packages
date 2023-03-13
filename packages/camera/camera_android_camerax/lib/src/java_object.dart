@@ -26,19 +26,19 @@ class JavaObject {
           instanceManager: instanceManager,
         );
 
-/// Global instance of [InstanceManager].
-static final InstanceManager globalInstanceManager = _initInstanceManager();
+  /// Global instance of [InstanceManager].
+  static final InstanceManager globalInstanceManager = _initInstanceManager();
 
-static InstanceManager _initInstanceManager() {
-  WidgetsFlutterBinding.ensureInitialized();
-  // Clears the native `InstanceManager` on initial use of the Dart one.
-  InstanceManagerHostApi().clear();
-  return InstanceManager(
-    onWeakReferenceRemoved: (int identifier) {
-      JavaObjectHostApiImpl().dispose(identifier);
-     },
-  );
-}
+  static InstanceManager _initInstanceManager() {
+    WidgetsFlutterBinding.ensureInitialized();
+    // Clears the native `InstanceManager` on initial use of the Dart one.
+    InstanceManagerHostApi().clear();
+    return InstanceManager(
+      onWeakReferenceRemoved: (int identifier) {
+        JavaObjectHostApiImpl().dispose(identifier);
+      },
+    );
+  }
 
   /// Release the weak reference to the [instance].
   ///
