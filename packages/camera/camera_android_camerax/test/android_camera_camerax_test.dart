@@ -249,6 +249,22 @@ void main() {
     await streamQueue.cancel();
   });
 
+  test(
+      'onCameraClosing stream emits camera closing event when detected by ProcessCameraProvider',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 99;
+    final Stream<CameraClosingEvent> eventStream =
+        camera.onCameraClosing(cameraId);
+    final StreamQueue<CameraClosingEvent> streamQueue =
+        StreamQueue<CameraClosingEvent>(eventStream);
+
+    ProcessCameraProvider.cameraClosingStreamController.add(true);
+
+    expect(await streamQueue.next, equals(const CameraClosingEvent(cameraId)));
+    await streamQueue.cancel();
+  });
+
   test('onCameraError stream emits errors caught by system services', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 27;

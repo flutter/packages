@@ -239,10 +239,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
     return ProcessCameraProvider.cameraClosingStreamController.stream
-      .map<CameraClosingEvent>((bool isCameraClosing) {
-        assert(isCameraClosing);
-        return CameraClosingEvent(cameraId);
-      });
+        .map<CameraClosingEvent>((bool isCameraClosing) {
+      assert(isCameraClosing);
+      return CameraClosingEvent(cameraId);
+    });
   }
 
   /// The camera experienced an error.

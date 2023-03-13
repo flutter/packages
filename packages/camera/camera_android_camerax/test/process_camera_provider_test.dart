@@ -191,7 +191,8 @@ void main() {
       verify(mockApi.unbind(0, <int>[1]));
     });
 
-    test('unbindAllTest', () async {
+    test('unbindAll unbinds UseCases and sends camera closing events',
+        () async {
       final MockTestProcessCameraProviderHostApi mockApi =
           MockTestProcessCameraProviderHostApi();
       TestProcessCameraProviderHostApi.setup(mockApi);
@@ -203,22 +204,20 @@ void main() {
           ProcessCameraProvider.detached(
         instanceManager: instanceManager,
       );
-      final UseCase fakeUseCase =
-          UseCase.detached(instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(
         processCameraProvider,
         0,
         onCopy: (_) => ProcessCameraProvider.detached(),
       );
-      instanceManager.addHostCreatedInstance(
-        fakeUseCase,
-        1,
-        onCopy: (_) => UseCase.detached(),
-      );
 
-      processCameraProvider.unbind(<UseCase>[fakeUseCase]);
-      verify(mockApi.unbind(0, <int>[1]));
+      ProcessCameraProvider.cameraClosingStreamController.stream
+          .listen((bool event) {
+        expect(event, isTrue);
+      });
+
+      processCameraProvider.unbindAll();
+      verify(mockApi.unbindAll(0));
     });
 
     test('flutterApiCreateTest', () {
