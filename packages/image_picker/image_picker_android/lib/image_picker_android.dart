@@ -76,11 +76,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    return _hostApi.pickMultiImage(
+    return _hostApi.pickImages(
+        SourceSpecification(type: SourceType.gallery),
         ImageSelectionOptions(
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             quality: imageQuality ?? 100),
+        /* allowMultiple */ true,
         useAndroidPhotoPicker);
   }
 
@@ -91,7 +93,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     int? imageQuality,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     bool requestFullMetadata = true,
-  }) {
+  }) async {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
           imageQuality, 'imageQuality', 'must be between 0 and 100');
@@ -105,13 +107,15 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    return _hostApi.pickImage(
+    final List<String?> paths = await _hostApi.pickImages(
         _buildSourceSpec(source, preferredCameraDevice),
         ImageSelectionOptions(
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             quality: imageQuality ?? 100),
+        /* allowMultiple */ false,
         useAndroidPhotoPicker);
+    return paths.isEmpty ? null : paths.first;
   }
 
   @override
@@ -132,11 +136,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
-  }) {
-    return _hostApi.pickVideo(
+  }) async {
+    final List<String?> paths = await _hostApi.pickVideos(
         _buildSourceSpec(source, preferredCameraDevice),
         VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
+        /* allowMultiple */ false,
         useAndroidPhotoPicker);
+    return paths.isEmpty ? null : paths.first;
   }
 
   @override

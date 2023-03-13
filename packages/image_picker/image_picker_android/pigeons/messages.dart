@@ -83,22 +83,26 @@ class CacheRetrievalResult {
 
 @HostApi(dartHostTestHandler: 'TestHostImagePickerApi')
 abstract class ImagePickerApi {
-  /// Selects a single image and returns its path.
-  @async
-  String? pickImage(SourceSpecification source, ImageSelectionOptions options,
-      bool useAndroidPhotoPicker);
-
-  /// Selects multiple images and returns their paths.
+  /// Selects images and returns their paths.
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
   @async
-  List<String?> pickMultiImage(
-      ImageSelectionOptions options, bool useAndroidPhotoPicker);
+  List<String?> pickImages(
+      SourceSpecification source,
+      ImageSelectionOptions options,
+      bool allowMultiple,
+      bool useAndroidPhotoPicker);
 
-  /// Selects a video and returns its path.
+  /// Selects video and returns their paths.
+  ///
+  /// Elements must not be null, by convention. See
+  /// https://github.com/flutter/flutter/issues/97848
   @async
-  String? pickVideo(SourceSpecification source, VideoSelectionOptions options,
+  List<String?> pickVideos(
+      SourceSpecification source,
+      VideoSelectionOptions options,
+      bool allowMultiple,
       bool useAndroidPhotoPicker);
 
   /// Returns results from a previous app session, if any.

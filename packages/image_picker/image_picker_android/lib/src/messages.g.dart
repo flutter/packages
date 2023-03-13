@@ -108,7 +108,9 @@ class SourceSpecification {
     result as List<Object?>;
     return SourceSpecification(
       type: SourceType.values[result[0]! as int],
-      camera: result[1] != null ? SourceCamera.values[result[1]! as int] : null,
+      camera: result[1] != null
+          ? SourceCamera.values[result[1]! as int]
+          : null,
     );
   }
 }
@@ -209,15 +211,15 @@ class _ImagePickerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return CacheRetrievalError.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return CacheRetrievalResult.decode(readValue(buffer)!);
-      case 130:
+      case 130: 
         return ImageSelectionOptions.decode(readValue(buffer)!);
-      case 131:
+      case 131: 
         return SourceSpecification.decode(readValue(buffer)!);
-      case 132:
+      case 132: 
         return VideoSelectionOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -235,43 +237,16 @@ class ImagePickerApi {
 
   static const MessageCodec<Object?> codec = _ImagePickerApiCodec();
 
-  /// Selects a single image and returns its path.
-  Future<String?> pickImage(SourceSpecification arg_source,
-      ImageSelectionOptions arg_options, bool arg_useAndroidPhotoPicker) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ImagePickerApi.pickImage', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-            .send(<Object?>[arg_source, arg_options, arg_useAndroidPhotoPicker])
-        as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return (replyList[0] as String?);
-    }
-  }
-
-  /// Selects multiple images and returns their paths.
+  /// Selects images and returns their paths.
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
-  Future<List<String?>> pickMultiImage(
-      ImageSelectionOptions arg_options, bool arg_useAndroidPhotoPicker) async {
+  Future<List<String?>> pickImages(SourceSpecification arg_source, ImageSelectionOptions arg_options, bool arg_allowMultiple, bool arg_useAndroidPhotoPicker) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ImagePickerApi.pickMultiImage', codec,
+        'dev.flutter.pigeon.ImagePickerApi.pickImages', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_options, arg_useAndroidPhotoPicker])
-            as List<Object?>?;
+        await channel.send(<Object?>[arg_source, arg_options, arg_allowMultiple, arg_useAndroidPhotoPicker]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -293,15 +268,16 @@ class ImagePickerApi {
     }
   }
 
-  /// Selects a video and returns its path.
-  Future<String?> pickVideo(SourceSpecification arg_source,
-      VideoSelectionOptions arg_options, bool arg_useAndroidPhotoPicker) async {
+  /// Selects video and returns their paths.
+  ///
+  /// Elements must not be null, by convention. See
+  /// https://github.com/flutter/flutter/issues/97848
+  Future<List<String?>> pickVideos(SourceSpecification arg_source, VideoSelectionOptions arg_options, bool arg_allowMultiple, bool arg_useAndroidPhotoPicker) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ImagePickerApi.pickVideo', codec,
+        'dev.flutter.pigeon.ImagePickerApi.pickVideos', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-            .send(<Object?>[arg_source, arg_options, arg_useAndroidPhotoPicker])
-        as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_source, arg_options, arg_allowMultiple, arg_useAndroidPhotoPicker]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -313,8 +289,13 @@ class ImagePickerApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
     } else {
-      return (replyList[0] as String?);
+      return (replyList[0] as List<Object?>?)!.cast<String?>();
     }
   }
 
@@ -323,7 +304,8 @@ class ImagePickerApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImagePickerApi.retrieveLostResults', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

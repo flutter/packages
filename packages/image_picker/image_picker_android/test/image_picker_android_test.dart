@@ -25,12 +25,13 @@ void main() {
   group('#pickImage', () {
     test('calls the method correctly', () async {
       const String fakePath = '/foo.jpg';
-      api.returnValue = fakePath;
+      api.returnValue = <String>[fakePath];
       final PickedFile? result =
           await picker.pickImage(source: ImageSource.camera);
 
       expect(result?.path, fakePath);
       expect(api.lastCall, _LastPickType.image);
+      expect(api.passedAllowMultiple, false);
     });
 
     test('passes the gallery image source argument correctly', () async {
@@ -142,7 +143,8 @@ void main() {
 
       final List<PickedFile>? files = await picker.pickMultiImage();
 
-      expect(api.lastCall, _LastPickType.multiImage);
+      expect(api.lastCall, _LastPickType.image);
+      expect(api.passedAllowMultiple, true);
       expect(files?.length, 2);
       expect(files?[0].path, fakePaths[0]);
       expect(files?[1].path, fakePaths[1]);
@@ -215,12 +217,13 @@ void main() {
   group('#pickVideo', () {
     test('calls the method correctly', () async {
       const String fakePath = '/foo.jpg';
-      api.returnValue = fakePath;
+      api.returnValue = <String>[fakePath];
       final PickedFile? result =
           await picker.pickVideo(source: ImageSource.camera);
 
       expect(result?.path, fakePath);
       expect(api.lastCall, _LastPickType.video);
+      expect(api.passedAllowMultiple, false);
     });
 
     test('passes the gallery image source argument correctly', () async {
@@ -332,11 +335,12 @@ void main() {
   group('#getImage', () {
     test('calls the method correctly', () async {
       const String fakePath = '/foo.jpg';
-      api.returnValue = fakePath;
+      api.returnValue = <String>[fakePath];
       final XFile? result = await picker.getImage(source: ImageSource.camera);
 
       expect(result?.path, fakePath);
       expect(api.lastCall, _LastPickType.image);
+      expect(api.passedAllowMultiple, false);
     });
 
     test('passes the gallery image source argument correctly', () async {
@@ -448,7 +452,8 @@ void main() {
 
       final List<XFile>? files = await picker.getMultiImage();
 
-      expect(api.lastCall, _LastPickType.multiImage);
+      expect(api.lastCall, _LastPickType.image);
+      expect(api.passedAllowMultiple, true);
       expect(files?.length, 2);
       expect(files?[0].path, fakePaths[0]);
       expect(files?[1].path, fakePaths[1]);
@@ -522,11 +527,12 @@ void main() {
   group('#getVideo', () {
     test('calls the method correctly', () async {
       const String fakePath = '/foo.jpg';
-      api.returnValue = fakePath;
+      api.returnValue = <String>[fakePath];
       final XFile? result = await picker.getVideo(source: ImageSource.camera);
 
       expect(result?.path, fakePath);
       expect(api.lastCall, _LastPickType.video);
+      expect(api.passedAllowMultiple, false);
     });
 
     test('passes the gallery image source argument correctly', () async {
@@ -651,11 +657,12 @@ void main() {
   group('#getImageFromSource', () {
     test('calls the method correctly', () async {
       const String fakePath = '/foo.jpg';
-      api.returnValue = fakePath;
+      api.returnValue = <String>[fakePath];
       final XFile? result = await picker.getImage(source: ImageSource.camera);
 
       expect(result?.path, fakePath);
       expect(api.lastCall, _LastPickType.image);
+      expect(api.passedAllowMultiple, false);
     });
 
     test('passes the gallery image source argument correctly', () async {
@@ -784,7 +791,7 @@ void main() {
   });
 }
 
-enum _LastPickType { image, video, multiImage }
+enum _LastPickType { image, video }
 
 class _FakeImagePickerApi implements ImagePickerApi {
   // The value to return.
@@ -794,36 +801,36 @@ class _FakeImagePickerApi implements ImagePickerApi {
   SourceSpecification? passedSource;
   ImageSelectionOptions? passedImageOptions;
   VideoSelectionOptions? passedVideoOptions;
+  bool? passedAllowMultiple;
   bool? passedPhotoPickerFlag;
   _LastPickType? lastCall;
 
   @override
-  Future<String?> pickImage(SourceSpecification source,
-      ImageSelectionOptions options, bool useAndroidPhotoPicker) async {
+  Future<List<String?>> pickImages(
+      SourceSpecification source,
+      ImageSelectionOptions options,
+      bool allowMultiple,
+      bool useAndroidPhotoPicker) async {
     lastCall = _LastPickType.image;
     passedSource = source;
     passedImageOptions = options;
-    passedPhotoPickerFlag = useAndroidPhotoPicker;
-    return returnValue as String?;
-  }
-
-  @override
-  Future<List<String?>> pickMultiImage(
-      ImageSelectionOptions options, bool useAndroidPhotoPicker) async {
-    lastCall = _LastPickType.multiImage;
-    passedImageOptions = options;
+    passedAllowMultiple = allowMultiple;
     passedPhotoPickerFlag = useAndroidPhotoPicker;
     return returnValue as List<String?>? ?? <String>[];
   }
 
   @override
-  Future<String?> pickVideo(SourceSpecification source,
-      VideoSelectionOptions options, bool useAndroidPhotoPicker) async {
+  Future<List<String?>> pickVideos(
+      SourceSpecification source,
+      VideoSelectionOptions options,
+      bool allowMultiple,
+      bool useAndroidPhotoPicker) async {
     lastCall = _LastPickType.video;
     passedSource = source;
     passedVideoOptions = options;
+    passedAllowMultiple = allowMultiple;
     passedPhotoPickerFlag = useAndroidPhotoPicker;
-    return returnValue as String?;
+    return returnValue as List<String?>? ?? <String>[];
   }
 
   @override
