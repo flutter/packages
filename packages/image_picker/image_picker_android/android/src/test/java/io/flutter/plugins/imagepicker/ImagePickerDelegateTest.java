@@ -234,7 +234,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void takeImageWithCamera_whenHasNoCameraPermission_RequestsForPermission() {
+  public void takeImageWithCamera_whenHasNoCameraPermission_requestsForPermission() {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(false);
     when(mockPermissionManager.needRequestCameraPermission()).thenReturn(true);
 
@@ -247,7 +247,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void takeImageWithCamera_whenCameraPermissionNotPresent_RequestsForPermission() {
+  public void takeImageWithCamera_whenCameraPermissionNotPresent_requestsForPermission() {
     when(mockPermissionManager.needRequestCameraPermission()).thenReturn(false);
 
     ImagePickerDelegate delegate = createDelegate();
@@ -378,7 +378,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void onActivityResult_whenImagePickedFromGallery_andNoResizeNeeded_StoresImageInCache() {
+  public void onActivityResult_whenImagePickedFromGallery_andNoResizeNeeded_storesImageInCache() {
     ImagePickerDelegate delegate = createDelegate();
 
     delegate.onActivityResult(
@@ -483,7 +483,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-      retrieveLostImage_ShouldBeAbleToReturnLastItemFromResultMapWhenSingleFileIsRecovered() {
+      retrieveLostImage_shouldBeAbleToReturnLastItemFromResultMapWhenSingleFileIsRecovered() {
     Map<String, Object> resultMap = new HashMap<>();
     ArrayList<String> pathList = new ArrayList<>();
     pathList.add("/example/first_item");
