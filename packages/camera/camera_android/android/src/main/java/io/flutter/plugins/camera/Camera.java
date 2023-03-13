@@ -511,7 +511,7 @@ class Camera
       surfaces.add(mediaRecorder.getSurface());
       successCallback = () -> mediaRecorder.start();
     }
-    if (stream) {
+    if (stream && imageStreamReader != null) {
       surfaces.add(imageStreamReader.getSurface());
     }
 
@@ -1121,12 +1121,20 @@ class Camera
 
           @Override
           public void onCancel(Object o) {
+            if (imageStreamReader == null) {
+              return;
+            }
+
             imageStreamReader.removeListener(backgroundHandler);
           }
         });
   }
 
   private void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
+    if (imageStreamReader == null) {
+      return;
+    }
+
     imageStreamReader.subscribeListener(this.captureProps, imageStreamSink, backgroundHandler);
   }
 
