@@ -103,7 +103,7 @@ public class FileUtilTest {
     Uri uri = MockContentProvider.UNKNOWN_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(
-            uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
+        uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
     String path = fileUtils.getPathFromUri(context, uri);
     assertTrue(path.endsWith("e.f.g"));
   }
@@ -134,8 +134,8 @@ public class FileUtilTest {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-      if(uri.equals(PNG_URI)) return "image/png";
-      if(uri.equals(WEBP_URI)) return "image/webp";
+      if (uri.equals(PNG_URI)) return "image/png";
+      if (uri.equals(WEBP_URI)) return "image/webp";
       return null;
     }
 
