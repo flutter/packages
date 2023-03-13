@@ -15,7 +15,7 @@ packages/flutter_adaptive_scaffold/**                    @gspencergoog
 packages/flutter_image/**                                @stuartmorgan
 packages/flutter_lints/**                                @goderbauer
 packages/flutter_markdown/**                             @domesticmouse
-packages/flutter_migrate/**                              @GaryQian
+packages/flutter_migrate/**                              @stuartmorgan
 packages/flutter_template_images/**                      @stuartmorgan
 packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai

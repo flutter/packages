@@ -297,16 +297,19 @@ class IterableRoute extends GoRouteData {
     this.stringIterableField,
     this.boolIterableField,
     this.enumIterableField,
+    this.enumOnlyInIterableField,
     this.intListField,
     this.doubleListField,
     this.stringListField,
     this.boolListField,
     this.enumListField,
+    this.enumOnlyInListField,
     this.intSetField,
     this.doubleSetField,
     this.stringSetField,
     this.boolSetField,
     this.enumSetField,
+    this.enumOnlyInSetField,
   });
 
   final Iterable<int>? intIterableField;
@@ -328,6 +331,10 @@ class IterableRoute extends GoRouteData {
   final Iterable<SportDetails>? enumIterableField;
   final List<SportDetails>? enumListField;
   final Set<SportDetails>? enumSetField;
+
+  final Iterable<CookingRecipe>? enumOnlyInIterableField;
+  final List<CookingRecipe>? enumOnlyInListField;
+  final Set<CookingRecipe>? enumOnlyInSetField;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>

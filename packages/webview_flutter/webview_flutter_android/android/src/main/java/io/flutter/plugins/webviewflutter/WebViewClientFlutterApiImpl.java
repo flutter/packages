@@ -15,6 +15,7 @@ import androidx.webkit.WebResourceErrorCompat;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewClientFlutterApi;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Flutter Api implementation for {@link WebViewClient}.
@@ -22,7 +23,9 @@ import java.util.HashMap;
  * <p>Passes arguments of callbacks methods from a {@link WebViewClient} to Dart.
  */
 public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
+  private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
+  private final WebViewFlutterApiImpl webViewFlutterApi;
 
   @RequiresApi(api = Build.VERSION_CODES.M)
   static GeneratedAndroidWebView.WebResourceErrorData createWebResourceErrorData(
@@ -71,26 +74,28 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   public WebViewClientFlutterApiImpl(
       BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
     super(binaryMessenger);
+    this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
+    webViewFlutterApi = new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
   }
 
   /** Passes arguments from {@link WebViewClient#onPageStarted} to Dart. */
   public void onPageStarted(
       WebViewClient webViewClient, WebView webView, String urlArg, Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     onPageStarted(getIdentifierForClient(webViewClient), webViewIdentifier, urlArg, callback);
   }
 
   /** Passes arguments from {@link WebViewClient#onPageFinished} to Dart. */
   public void onPageFinished(
       WebViewClient webViewClient, WebView webView, String urlArg, Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     onPageFinished(getIdentifierForClient(webViewClient), webViewIdentifier, urlArg, callback);
   }
 
@@ -105,10 +110,10 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       WebResourceRequest request,
       WebResourceError error,
       Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     onReceivedRequestError(
         getIdentifierForClient(webViewClient),
         webViewIdentifier,
@@ -128,10 +133,10 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       WebResourceRequest request,
       WebResourceErrorCompat error,
       Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     onReceivedRequestError(
         getIdentifierForClient(webViewClient),
         webViewIdentifier,
@@ -151,10 +156,10 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       String descriptionArg,
       String failingUrlArg,
       Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     onReceivedError(
         getIdentifierForClient(webViewClient),
         webViewIdentifier,
@@ -174,10 +179,10 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       WebView webView,
       WebResourceRequest request,
       Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     requestLoading(
         getIdentifierForClient(webViewClient),
         webViewIdentifier,
@@ -190,10 +195,10 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
    */
   public void urlLoading(
       WebViewClient webViewClient, WebView webView, String urlArg, Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     urlLoading(getIdentifierForClient(webViewClient), webViewIdentifier, urlArg, callback);
   }
 

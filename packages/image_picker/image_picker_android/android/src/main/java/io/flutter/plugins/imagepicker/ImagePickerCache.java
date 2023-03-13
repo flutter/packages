@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import io.flutter.plugin.common.MethodCall;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +16,10 @@ import java.util.Map;
 import java.util.Set;
 
 class ImagePickerCache {
+  public enum CacheType {
+    IMAGE,
+    VIDEO
+  }
 
   static final String MAP_KEY_PATH = "path";
   static final String MAP_KEY_PATH_LIST = "pathList";
@@ -53,44 +56,31 @@ class ImagePickerCache {
     prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
   }
 
-  void saveTypeWithMethodCallName(String methodCallName) {
-    if (methodCallName.equals(ImagePickerPlugin.METHOD_CALL_IMAGE)
-        | methodCallName.equals(ImagePickerPlugin.METHOD_CALL_MULTI_IMAGE)) {
-      setType("image");
-    } else if (methodCallName.equals(ImagePickerPlugin.METHOD_CALL_VIDEO)) {
-      setType("video");
+  void saveType(CacheType type) {
+    switch (type) {
+      case IMAGE:
+        setType("image");
+        break;
+      case VIDEO:
+        setType("video");
+        break;
     }
   }
 
   private void setType(String type) {
-
     prefs.edit().putString(SHARED_PREFERENCE_TYPE_KEY, type).apply();
   }
 
-  void saveDimensionWithMethodCall(MethodCall methodCall) {
-    Double maxWidth = methodCall.argument(MAP_KEY_MAX_WIDTH);
-    Double maxHeight = methodCall.argument(MAP_KEY_MAX_HEIGHT);
-    int imageQuality =
-        methodCall.argument(MAP_KEY_IMAGE_QUALITY) == null
-            ? 100
-            : (int) methodCall.argument(MAP_KEY_IMAGE_QUALITY);
-
-    setMaxDimension(maxWidth, maxHeight, imageQuality);
-  }
-
-  private void setMaxDimension(Double maxWidth, Double maxHeight, int imageQuality) {
+  void saveDimensionWithOutputOptions(ImageOutputOptions options) {
     SharedPreferences.Editor editor = prefs.edit();
-    if (maxWidth != null) {
-      editor.putLong(SHARED_PREFERENCE_MAX_WIDTH_KEY, Double.doubleToRawLongBits(maxWidth));
+    if (options.maxWidth != null) {
+      editor.putLong(SHARED_PREFERENCE_MAX_WIDTH_KEY, Double.doubleToRawLongBits(options.maxWidth));
     }
-    if (maxHeight != null) {
-      editor.putLong(SHARED_PREFERENCE_MAX_HEIGHT_KEY, Double.doubleToRawLongBits(maxHeight));
+    if (options.maxHeight != null) {
+      editor.putLong(
+          SHARED_PREFERENCE_MAX_HEIGHT_KEY, Double.doubleToRawLongBits(options.maxHeight));
     }
-    if (imageQuality > -1 && imageQuality < 101) {
-      editor.putInt(SHARED_PREFERENCE_IMAGE_QUALITY_KEY, imageQuality);
-    } else {
-      editor.putInt(SHARED_PREFERENCE_IMAGE_QUALITY_KEY, 100);
-    }
+    editor.putInt(SHARED_PREFERENCE_IMAGE_QUALITY_KEY, options.quality);
     editor.apply();
   }
 
