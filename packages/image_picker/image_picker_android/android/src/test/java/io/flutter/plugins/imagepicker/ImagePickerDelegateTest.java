@@ -148,7 +148,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   @Config(sdk = 30)
-  public void chooseImageFromGallery_LaunchesChooseFromGalleryIntent() {
+  public void chooseImageFromGallery_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseImageFromGallery(new ImageOutputOptions(null, null, null), false, mockResult);
@@ -160,7 +160,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   @Config(minSdk = 33)
-  public void chooseImageFromGallery_WithPhotoPicker_LaunchesChooseFromGalleryIntent() {
+  public void chooseImageFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseImageFromGallery(new ImageOutputOptions(null, null, null), true, mockResult);
@@ -172,7 +172,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   @Config(sdk = 30)
-  public void chooseMultiImageFromGallery_LaunchesChooseFromGalleryIntent() {
+  public void chooseMultiImageFromGallery_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseMultiImageFromGallery(
@@ -186,7 +186,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   @Config(minSdk = 33)
-  public void chooseMultiImageFromGallery_WithPhotoPicker_LaunchesChooseFromGalleryIntent() {
+  public void chooseMultiImageFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseMultiImageFromGallery(
@@ -200,7 +200,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   @Config(sdk = 30)
-  public void chooseVideoFromGallery_LaunchesChooseFromGalleryIntent() {
+  public void chooseVideoFromGallery_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseVideoFromGallery(new VideoOptions(null), true, mockResult);
@@ -212,7 +212,7 @@ public class ImagePickerDelegateTest {
 
   @Test
   @Config(minSdk = 33)
-  public void chooseVideoFromGallery_WithPhotoPicker_LaunchesChooseFromGalleryIntent() {
+  public void chooseVideoFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseVideoFromGallery(new VideoOptions(null), true, mockResult);
