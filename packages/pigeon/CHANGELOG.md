@@ -1,3 +1,14 @@
+## 9.0.6
+
+* [kotlin] Removes safe casting from decode process.
+* [swift] Removes safe casting from decode process.
+
+## 9.0.5
+
+* Removes the unnecessary Flutter constraint.
+* Removes an unnecessary null check.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 9.0.4
 
 * Adds parameter to generate Kotlin code in example README.
@@ -682,7 +693,7 @@ class Foo {
 
 ## 0.1.0-experimental.3
 
-* Added support for for Android Java.
+* Added support for Android Java.
 
 ## 0.1.0-experimental.2
 

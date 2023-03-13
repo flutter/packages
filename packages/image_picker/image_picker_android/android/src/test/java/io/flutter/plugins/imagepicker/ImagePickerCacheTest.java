@@ -4,10 +4,9 @@
 
 package io.flutter.plugins.imagepicker;
 
-import static io.flutter.plugins.imagepicker.ImagePickerCache.MAP_KEY_IMAGE_QUALITY;
 import static io.flutter.plugins.imagepicker.ImagePickerCache.SHARED_PREFERENCES_NAME;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -16,29 +15,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import io.flutter.plugin.common.MethodCall;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class ImagePickerCacheTest {
-  private static final int IMAGE_QUALITY = 90;
-
   @Mock Activity mockActivity;
   @Mock SharedPreferences mockPreference;
   @Mock SharedPreferences.Editor mockEditor;
-  @Mock MethodCall mockMethodCall;
 
   static Map<String, Object> preferenceStorage;
 
+  AutoCloseable mockCloseable;
+
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
 
-    preferenceStorage = new HashMap();
+    preferenceStorage = new HashMap<String, Object>();
     when(mockActivity.getPackageName()).thenReturn("com.example.test");
     when(mockActivity.getPackageManager()).thenReturn(mock(PackageManager.class));
     when(mockActivity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE))
@@ -97,19 +95,24 @@ public class ImagePickerCacheTest {
     when(mockPreference.contains(any(String.class))).thenReturn(true);
   }
 
-  @Test
-  public void ImageCache_ShouldBeAbleToSetAndGetQuality() {
-    when(mockMethodCall.argument(MAP_KEY_IMAGE_QUALITY)).thenReturn(IMAGE_QUALITY);
-    ImagePickerCache cache = new ImagePickerCache(mockActivity);
-    cache.saveDimensionWithMethodCall(mockMethodCall);
-    Map<String, Object> resultMap = cache.getCacheMap();
-    int imageQuality = (int) resultMap.get(cache.MAP_KEY_IMAGE_QUALITY);
-    assertThat(imageQuality, equalTo(IMAGE_QUALITY));
+  @After
+  public void tearDown() throws Exception {
+    mockCloseable.close();
+  }
 
-    when(mockMethodCall.argument(MAP_KEY_IMAGE_QUALITY)).thenReturn(null);
-    cache.saveDimensionWithMethodCall(mockMethodCall);
+  @Test
+  public void imageCache_shouldBeAbleToSetAndGetQuality() {
+    final int quality = 90;
+    ImagePickerCache cache = new ImagePickerCache(mockActivity);
+    cache.saveDimensionWithOutputOptions(new ImageOutputOptions(null, null, quality));
+    Map<String, Object> resultMap = cache.getCacheMap();
+    int imageQuality = (int) resultMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
+    assertThat(imageQuality, equalTo(quality));
+
+    cache.saveDimensionWithOutputOptions(new ImageOutputOptions(null, null, null));
     Map<String, Object> resultMapWithDefaultQuality = cache.getCacheMap();
-    int defaultImageQuality = (int) resultMapWithDefaultQuality.get(cache.MAP_KEY_IMAGE_QUALITY);
+    int defaultImageQuality =
+        (int) resultMapWithDefaultQuality.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
     assertThat(defaultImageQuality, equalTo(100));
   }
 }

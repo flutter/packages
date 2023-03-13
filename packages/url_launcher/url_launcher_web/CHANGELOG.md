@@ -1,3 +1,8 @@
+## 2.0.16
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.0.15
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

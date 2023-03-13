@@ -1,3 +1,21 @@
+## 0.8.6+1
+
+* Refactors code in preparation for adopting Pigeon.
+
+## 0.8.6
+
+* Adds `usePhotoPickerAndroid` options.
+
+## 0.8.5+10
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.8.5+9
+
+* Fixes compilation warnings.
+* Updates compileSdkVersion to 33.
+
 ## 0.8.5+8
 
 * Adds Android 13 photo picker functionality if SDK version is at least 33.
