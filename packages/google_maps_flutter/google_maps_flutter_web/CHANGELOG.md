@@ -1,3 +1,7 @@
+## 0.4.0+8
+
+* Use padding from newLatLngBounds. Issue [#122192](https://github.com/flutter/flutter/issues/122192)
+
 ## 0.4.0+7
 
 * Clarifies explanation of endorsement in README.

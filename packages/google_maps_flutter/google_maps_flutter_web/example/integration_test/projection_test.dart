@@ -72,6 +72,73 @@ void main() {
         expect(coords.latitude, closeTo(19, _acceptableLatLngDelta));
         expect(coords.longitude, closeTo(26, _acceptableLatLngDelta));
       });
+
+      testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
+        const LatLng initialMapCenter = LatLng(0, 0);
+        const double initialZoomLevel = 5;
+        const CameraPosition initialCameraPosition =
+            CameraPosition(target: initialMapCenter, zoom: initialZoomLevel);
+        final LatLngBounds zeroLatLngBounds = LatLngBounds(
+            southwest: const LatLng(0, 0), northeast: const LatLng(0, 0));
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: GoogleMap(
+              initialCameraPosition: initialCameraPosition,
+              onMapCreated: onMapCreated,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final GoogleMapController controller = await controllerCompleter.future;
+
+        final LatLngBounds firstVisibleRegion =
+            await controller.getVisibleRegion();
+
+        expect(firstVisibleRegion, isNotNull);
+        expect(firstVisibleRegion.southwest, isNotNull);
+        expect(firstVisibleRegion.northeast, isNotNull);
+        expect(firstVisibleRegion, isNot(zeroLatLngBounds));
+        expect(firstVisibleRegion.contains(initialMapCenter), isTrue);
+
+        // Making a new `LatLngBounds` about (10, 10) distance south west to the `firstVisibleRegion`.
+        // The size of the `LatLngBounds` is 10 by 10.
+        final LatLng southWest = LatLng(
+            firstVisibleRegion.southwest.latitude - 20,
+            firstVisibleRegion.southwest.longitude - 20);
+        final LatLng northEast = LatLng(
+            firstVisibleRegion.southwest.latitude - 10,
+            firstVisibleRegion.southwest.longitude - 10);
+        final LatLng newCenter = LatLng(
+          (northEast.latitude + southWest.latitude) / 2,
+          (northEast.longitude + southWest.longitude) / 2,
+        );
+
+        expect(firstVisibleRegion.contains(northEast), isFalse);
+        expect(firstVisibleRegion.contains(southWest), isFalse);
+
+        final LatLngBounds latLngBounds =
+            LatLngBounds(southwest: southWest, northeast: northEast);
+
+        // TODO(iskakaushik): non-zero padding is needed for some device configurations
+        // https://github.com/flutter/flutter/issues/30575
+        const double padding = 0;
+        await controller
+            .moveCamera(CameraUpdate.newLatLngBounds(latLngBounds, padding));
+        await tester.pumpAndSettle(const Duration(seconds: 3));
+
+        final LatLngBounds secondVisibleRegion =
+            await controller.getVisibleRegion();
+
+        expect(secondVisibleRegion, isNotNull);
+        expect(secondVisibleRegion.southwest, isNotNull);
+        expect(secondVisibleRegion.northeast, isNotNull);
+        expect(secondVisibleRegion, isNot(zeroLatLngBounds));
+
+        expect(firstVisibleRegion, isNot(secondVisibleRegion));
+        expect(secondVisibleRegion.contains(newCenter), isTrue);
+      });
     });
 
     group('getScreenCoordinate', () {
