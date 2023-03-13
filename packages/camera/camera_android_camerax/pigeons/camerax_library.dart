@@ -143,3 +143,10 @@ abstract class ImageCaptureHostApi {
   @async
   String takePicture(int identifier);
 }
+
+@HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
+abstract class ImageAnalysisHostApi {
+  void create(int identifier, ResolutionInfo? targetResolution);
+
+  void setAnalyzer(int identifier);
+}

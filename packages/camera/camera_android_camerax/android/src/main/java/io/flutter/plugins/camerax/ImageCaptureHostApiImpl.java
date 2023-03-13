@@ -62,9 +62,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
       imageCaptureBuilder.setFlashMode(flashMode.intValue());
     }
     if (targetResolution != null) {
-      imageCaptureBuilder.setTargetResolution(
-          new Size(
-              targetResolution.getWidth().intValue(), targetResolution.getHeight().intValue()));
+      imageCaptureBuilder.setTargetResolution(CameraXProxy.sizeFromResolution(targetResolution));
     }
     ImageCapture imageCapture = imageCaptureBuilder.build();
     instanceManager.addDartCreatedInstance(imageCapture, identifier);

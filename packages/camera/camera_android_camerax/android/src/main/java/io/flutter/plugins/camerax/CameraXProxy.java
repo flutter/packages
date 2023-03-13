@@ -6,12 +6,16 @@ package io.flutter.plugins.camerax;
 
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
+import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.Preview;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.io.File;
 
 /** Utility class used to create CameraX-related objects primarily for testing purposes. */
@@ -60,5 +64,15 @@ public class CameraXProxy {
    */
   public ImageCapture.OutputFileOptions createImageCaptureOutputFileOptions(@NonNull File file) {
     return new ImageCapture.OutputFileOptions.Builder(file).build();
+  }
+
+  /** */
+  public ImageAnalysis.Builder createImageAnalysisBuilder() {
+    return new ImageAnalysis.Builder();
+  }
+
+  public static Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
+    return new Size(
+      resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
   }
 }

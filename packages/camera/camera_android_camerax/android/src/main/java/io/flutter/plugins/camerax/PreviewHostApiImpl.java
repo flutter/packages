@@ -46,9 +46,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
       previewBuilder.setTargetRotation(rotation.intValue());
     }
     if (targetResolution != null) {
-      previewBuilder.setTargetResolution(
-          new Size(
-              targetResolution.getWidth().intValue(), targetResolution.getHeight().intValue()));
+      previewBuilder.setTargetResolution(CameraXProxy.sizeFromResolution(targetResolution));
     }
     Preview preview = previewBuilder.build();
     instanceManager.addDartCreatedInstance(preview, identifier);

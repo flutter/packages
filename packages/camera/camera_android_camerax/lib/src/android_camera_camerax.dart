@@ -12,6 +12,7 @@ import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camerax_library.g.dart';
+import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
@@ -44,6 +45,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The [ImageCapture] instance that can be configured to capture a still image.
   @visibleForTesting
   ImageCapture? imageCapture;
+
+  /// 
+  ImageAnalysis? imageAnalysis;
 
   /// The [CameraSelector] used to configure the [processCameraProvider] to use
   /// the desired camera.
@@ -159,10 +163,14 @@ class AndroidCameraCameraX extends CameraPlatform {
         _getTargetResolutionForImageCapture(_resolutionPreset);
     imageCapture = createImageCapture(null, imageCaptureTargetResolution);
 
+    final ResolutionInfo? imageAnalysisTargetResolution = null;
+    imageAnalysis = ImageAnalysis(targetResolution: imageAnalysisTargetResolution);
+    imageAnalysis!.setAnalyzer();
+
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused.
     camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
+        .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -297,6 +305,21 @@ class AndroidCameraCameraX extends CameraPlatform {
     final String picturePath = await imageCapture!.takePicture();
 
     return XFile(picturePath);
+  }
+
+  /// A new streamed frame is available.
+  ///
+  /// Listening to this stream will start streaming, and canceling will stop.
+  /// Pausing will throw a [CameraException], as pausing the stream would cause
+  /// very high memory usage; to temporarily stop receiving frames, cancel, then
+  /// listen again later.
+  ///
+  ///
+  // TODO(bmparr): Add options to control streaming settings (e.g.,
+  // resolution and FPS).
+  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
+      {CameraImageStreamOptions? options}) {
+    throw UnimplementedError('onStreamedFrameAvailable() is not implemented.');
   }
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
