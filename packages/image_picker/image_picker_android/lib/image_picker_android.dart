@@ -2,21 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
-const MethodChannel _channel =
-    MethodChannel('plugins.flutter.io/image_picker_android');
+import 'src/messages.g.dart';
 
 /// An Android implementation of [ImagePickerPlatform].
 class ImagePickerAndroid extends ImagePickerPlatform {
-  /// The MethodChannel that is being used by this implementation of the plugin.
-  @visibleForTesting
-  MethodChannel get channel => _channel;
+  /// Creates a new plugin implemenation instance.
+  ImagePickerAndroid({@visibleForTesting ImagePickerApi? api})
+      : _hostApi = api ?? ImagePickerApi();
+
+  final ImagePickerApi _hostApi;
 
   /// Registers this class as the default platform implementation.
   static void registerWith() {
@@ -47,19 +46,19 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    final List<dynamic>? paths = await _getMultiImagePath(
+    final List<dynamic> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
     );
-    if (paths == null) {
+    if (paths.isEmpty) {
       return null;
     }
 
     return paths.map((dynamic path) => PickedFile(path as String)).toList();
   }
 
-  Future<List<dynamic>?> _getMultiImagePath({
+  Future<List<dynamic>> _getMultiImagePath({
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
@@ -77,15 +76,12 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    return _channel.invokeMethod<List<dynamic>?>(
-      'pickMultiImage',
-      <String, dynamic>{
-        'maxWidth': maxWidth,
-        'maxHeight': maxHeight,
-        'imageQuality': imageQuality,
-        'useAndroidPhotoPicker': useAndroidPhotoPicker,
-      },
-    );
+    return _hostApi.pickMultiImage(
+        ImageSelectionOptions(
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: imageQuality ?? 100),
+        useAndroidPhotoPicker);
   }
 
   Future<String?> _getImagePath({
@@ -109,18 +105,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    return _channel.invokeMethod<String>(
-      'pickImage',
-      <String, dynamic>{
-        'source': source.index,
-        'maxWidth': maxWidth,
-        'maxHeight': maxHeight,
-        'imageQuality': imageQuality,
-        'cameraDevice': preferredCameraDevice.index,
-        'requestFullMetadata': requestFullMetadata,
-        'useAndroidPhotoPicker': useAndroidPhotoPicker,
-      },
-    );
+    return _hostApi.pickImage(
+        _buildSourceSpec(source, preferredCameraDevice),
+        ImageSelectionOptions(
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: imageQuality ?? 100),
+        useAndroidPhotoPicker);
   }
 
   @override
@@ -142,15 +133,10 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
   }) {
-    return _channel.invokeMethod<String>(
-      'pickVideo',
-      <String, dynamic>{
-        'source': source.index,
-        'maxDuration': maxDuration?.inSeconds,
-        'cameraDevice': preferredCameraDevice.index,
-        'useAndroidPhotoPicker': useAndroidPhotoPicker,
-      },
-    );
+    return _hostApi.pickVideo(
+        _buildSourceSpec(source, preferredCameraDevice),
+        VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
+        useAndroidPhotoPicker);
   }
 
   @override
@@ -193,12 +179,12 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    final List<dynamic>? paths = await _getMultiImagePath(
+    final List<dynamic> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
     );
-    if (paths == null) {
+    if (paths.isEmpty) {
       return null;
     }
 
@@ -236,54 +222,89 @@ class ImagePickerAndroid extends ImagePickerPlatform {
 
   @override
   Future<LostDataResponse> getLostData() async {
-    List<XFile>? pickedFileList;
-
-    final Map<String, dynamic>? result =
-        await _channel.invokeMapMethod<String, dynamic>('retrieve');
+    final CacheRetrievalResult? result = await _hostApi.retrieveLostResults();
 
     if (result == null) {
       return LostDataResponse.empty();
     }
 
-    assert(result.containsKey('path') != result.containsKey('errorCode'));
+    // There must either be data or an error if the response wasn't null.
+    assert(result.paths.isEmpty != (result.error == null));
 
-    final String? type = result['type'] as String?;
-    assert(type == kTypeImage || type == kTypeVideo);
+    final CacheRetrievalError? error = result.error;
+    final PlatformException? exception = error == null
+        ? null
+        : PlatformException(code: error.code, message: error.message);
 
-    RetrieveType? retrieveType;
-    if (type == kTypeImage) {
-      retrieveType = RetrieveType.image;
-    } else if (type == kTypeVideo) {
-      retrieveType = RetrieveType.video;
-    }
-
-    PlatformException? exception;
-    if (result.containsKey('errorCode')) {
-      exception = PlatformException(
-          code: result['errorCode']! as String,
-          message: result['errorMessage'] as String?);
-    }
-
-    final String? path = result['path'] as String?;
-
-    final List<String>? pathList =
-        (result['pathList'] as List<dynamic>?)?.cast<String>();
-    if (pathList != null) {
-      pickedFileList = <XFile>[];
-      for (final String path in pathList) {
-        pickedFileList.add(XFile(path));
-      }
-    }
+    // Entries are guaranteed not to be null, even though that's not currently
+    // expressable in Pigeon.
+    final List<XFile> pickedFileList =
+        result.paths.map((String? path) => XFile(path!)).toList();
 
     return LostDataResponse(
-      file: path != null ? XFile(path) : null,
+      file: pickedFileList.isEmpty ? null : pickedFileList.last,
       exception: exception,
-      type: retrieveType,
+      type: _retrieveTypeForCacheType(result.type),
       files: pickedFileList,
     );
   }
 
-  /// Set [ImagePickerAndroid] to use Android 13 Photo Picker.
+  SourceSpecification _buildSourceSpec(
+      ImageSource source, CameraDevice device) {
+    return SourceSpecification(
+        type: _sourceSpecTypeForSource(source),
+        camera: _sourceSpecCameraForDevice(device));
+  }
+
+  SourceType _sourceSpecTypeForSource(ImageSource source) {
+    switch (source) {
+      case ImageSource.camera:
+        return SourceType.camera;
+      case ImageSource.gallery:
+        return SourceType.gallery;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return SourceType.gallery;
+  }
+
+  SourceCamera _sourceSpecCameraForDevice(CameraDevice device) {
+    switch (device) {
+      case CameraDevice.front:
+        return SourceCamera.front;
+      case CameraDevice.rear:
+        return SourceCamera.rear;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return SourceCamera.rear;
+  }
+
+  RetrieveType _retrieveTypeForCacheType(CacheRetrievalType type) {
+    switch (type) {
+      case CacheRetrievalType.image:
+        return RetrieveType.image;
+      case CacheRetrievalType.video:
+        return RetrieveType.video;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return RetrieveType.image;
+  }
+
+  /// Sets [ImagePickerAndroid] to use Android 13 Photo Picker.
   ///
   /// Currently defaults to false, but the default is subject to change.
   bool useAndroidPhotoPicker = false;
