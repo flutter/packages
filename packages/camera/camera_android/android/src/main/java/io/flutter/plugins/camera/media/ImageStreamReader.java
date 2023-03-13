@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 // Wraps an ImageReader to allow for testing of the image handler.
-public class  ImageStreamReader {
+public class ImageStreamReader {
 
   /**
    * The image format we are going to send back to dart. Usually it's the same as streamImageFormat
@@ -130,10 +130,10 @@ public class  ImageStreamReader {
   }
 
   /**
-   * Given an input image, will return a list of maps suitable to send back to dart where
-   * each map describes the image plane.
+   * Given an input image, will return a list of maps suitable to send back to dart where each map
+   * describes the image plane.
    *
-   * For Yuv / Jpeg, we do no further processing on the frame so we simply send it as-is.
+   * <p>For Yuv / Jpeg, we do no further processing on the frame so we simply send it as-is.
    *
    * @param image - the image to process.
    * @return parsed map describing the image planes to be sent to dart.
