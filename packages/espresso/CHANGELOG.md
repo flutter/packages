@@ -1,3 +1,7 @@
+## NEXT
+
+* Add integration test to expresso.
+
 ## 0.3.0
 
 * **BREAKING CHANGE**: Migrates uses of the deprecated `@Beta` annotation to the new `@ExperimentalApi` annotation.
