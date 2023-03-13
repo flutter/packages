@@ -30,7 +30,7 @@ public class CameraSelectorHostApiImpl implements CameraSelectorHostApi {
   public void create(@NonNull Long identifier, Long lensFacing) {
     CameraSelector.Builder cameraSelectorBuilder = cameraXProxy.createCameraSelectorBuilder();
     if (lensFacing != null) {
-      cameraSelector = cameraSelectorBuilder.requireLensFacing(lensFacing.intValue());
+      cameraSelectorBuilder = cameraSelectorBuilder.requireLensFacing(lensFacing.intValue());
     }
     instanceManager.addDartCreatedInstance(cameraSelectorBuilder.build(), identifier);
   }
