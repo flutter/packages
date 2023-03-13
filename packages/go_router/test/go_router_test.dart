@@ -3092,6 +3092,102 @@ void main() {
       expect(statefulWidgetKey.currentState?.counter, equals(0));
     });
 
+    testWidgets('Maintains state for nested StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
+          GlobalKey<DummyStatefulWidgetState>();
+      StatefulShellRouteState? routeState1;
+      StatefulShellRouteState? routeState2;
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute(
+          builder: (BuildContext context, StatefulShellRouteState state,
+              Widget child) {
+            routeState1 = state;
+            return child;
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <RouteBase>[
+              StatefulShellRoute(
+                  builder: (BuildContext context, StatefulShellRouteState state,
+                      Widget child) {
+                    routeState2 = state;
+                    return child;
+                  },
+                  branches: <StatefulShellBranch>[
+                    StatefulShellBranch(routes: <RouteBase>[
+                      GoRoute(
+                        path: '/a',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            const Text('Screen A'),
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'detailA',
+                            builder:
+                                (BuildContext context, GoRouterState state) =>
+                                    Column(children: <Widget>[
+                              const Text('Screen A Detail'),
+                              DummyStatefulWidget(key: statefulWidgetKey),
+                            ]),
+                          ),
+                        ],
+                      ),
+                    ]),
+                    StatefulShellBranch(routes: <RouteBase>[
+                      GoRoute(
+                        path: '/b',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            const Text('Screen B'),
+                      ),
+                    ]),
+                    StatefulShellBranch(routes: <RouteBase>[
+                      GoRoute(
+                        path: '/c',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            const Text('Screen C'),
+                      ),
+                    ]),
+                  ]),
+            ]),
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/d',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen D'),
+              ),
+            ]),
+          ],
+        ),
+      ];
+
+      await createRouter(routes, tester,
+          initialLocation: '/a/detailA', navigatorKey: rootNavigatorKey);
+      statefulWidgetKey.currentState?.increment();
+      expect(find.text('Screen A Detail'), findsOneWidget);
+      routeState2!.goBranch(index: 1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B'), findsOneWidget);
+
+      routeState1!.goBranch(index: 1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen D'), findsOneWidget);
+
+      routeState1!.goBranch(index: 0);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B'), findsOneWidget);
+
+      routeState2!.goBranch(index: 2);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen C'), findsOneWidget);
+
+      routeState2!.goBranch(index: 0);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A Detail'), findsOneWidget);
+      expect(statefulWidgetKey.currentState?.counter, equals(1));
+    });
+
     testWidgets(
         'Pops from the correct Navigator in a StatefulShellRoute when the '
         'Android back button is pressed', (WidgetTester tester) async {

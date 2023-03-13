@@ -154,20 +154,25 @@ class RouteMatchList {
 class UnmodifiableRouteMatchList {
   /// UnmodifiableRouteMatchList constructor.
   UnmodifiableRouteMatchList.from(RouteMatchList routeMatchList)
-      : _matches = List<RouteMatch>.unmodifiable(routeMatchList.matches),
-        _uri = routeMatchList.uri,
-        _pathParameters =
+      : matches = List<RouteMatch>.unmodifiable(routeMatchList.matches),
+        uri = routeMatchList.uri,
+        pathParameters =
             Map<String, String>.unmodifiable(routeMatchList.pathParameters);
 
-  final List<RouteMatch> _matches;
-  final Uri _uri;
-  final Map<String, String> _pathParameters;
+  /// The route matches.
+  final List<RouteMatch> matches;
+
+  /// The uri of the current match.
+  final Uri uri;
+
+  /// Parameters for the matched route, URI-encoded.
+  final Map<String, String> pathParameters;
 
   /// Creates a new [RouteMatchList] from this UnmodifiableRouteMatchList.
   RouteMatchList get modifiableMatchList => RouteMatchList(
-      List<RouteMatch>.from(_matches),
-      _uri,
-      Map<String, String>.from(_pathParameters));
+      List<RouteMatch>.from(matches),
+      uri,
+      Map<String, String>.from(pathParameters));
 
   @override
   bool operator ==(Object other) {
@@ -177,13 +182,13 @@ class UnmodifiableRouteMatchList {
     if (other is! UnmodifiableRouteMatchList) {
       return false;
     }
-    return listEquals<RouteMatch>(other._matches, _matches) &&
-        other._uri == _uri &&
-        mapEquals<String, String>(other._pathParameters, _pathParameters);
+    return listEquals<RouteMatch>(other.matches, matches) &&
+        other.uri == uri &&
+        mapEquals<String, String>(other.pathParameters, pathParameters);
   }
 
   @override
-  int get hashCode => Object.hash(_matches, _uri, _pathParameters);
+  int get hashCode => Object.hash(matches, uri, pathParameters);
 }
 
 /// An error that occurred during matching.

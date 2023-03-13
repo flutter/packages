@@ -131,9 +131,6 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   GoRouteInformationParser get routeInformationParser =>
       _routeInformationParser;
 
-  /// The route configuration. Used for testing.
-  RouteConfiguration get routeConfiguration => _routeConfiguration;
-
   /// Gets the current location.
   // TODO(chunhtai): deprecates this once go_router_builder is migrated to
   // GoRouterState.of.
@@ -184,6 +181,29 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     }());
     _routeInformationProvider.value =
         RouteInformation(location: location, state: extra);
+  }
+
+  /// Navigate to the last location of the [StatefulShellBranch] at the provided
+  /// index in the associated [StatefulShellBranch].
+  ///
+  /// If the branch has not been visited before, this method will navigate to
+  /// initial location of the branch. Consider using
+  /// [StatefulShellRouteState.goBranch] as a more convenient alternative to
+  /// this method.
+  void goBranch(int index, StatefulShellRouteState shellState) {
+    assert(index >= 0 && index < shellState.route.branches.length);
+    final RouteMatchList? matchlist = shellState.matchListForBranch(index);
+    if (matchlist != null) {
+      _routeInformationProvider.value = PreParsedRouteInformation(
+          location: matchlist.uri.toString(),
+          state: matchlist.extra,
+          matchlist: matchlist);
+    } else {
+      final StatefulShellBranch branch = shellState.route.branches[index];
+      final String initialLocation = branch.initialLocation ??
+          _routeConfiguration.findStatefulShellBranchDefaultLocation(branch);
+      go(initialLocation);
+    }
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.

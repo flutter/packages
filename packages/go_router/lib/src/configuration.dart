@@ -167,22 +167,23 @@ class RouteConfiguration {
     return true;
   }
 
-  static Iterable<RouteBase> _subRoutesRecursively(
-      List<RouteBase> routes) sync* {
+  /// Returns an Iterable that traverses the provided routes and their
+  /// sub-routes recursively.
+  static Iterable<RouteBase> routesRecursively(
+      Iterable<RouteBase> routes) sync* {
     for (final RouteBase route in routes) {
       yield route;
-      yield* _subRoutesRecursively(route.routes);
+      yield* routesRecursively(route.routes);
     }
   }
 
   static GoRoute? _findFirstGoRoute(List<RouteBase> routes) =>
-      _subRoutesRecursively(routes).whereType<GoRoute>().firstOrNull;
+      routesRecursively(routes).whereType<GoRoute>().firstOrNull;
 
   /// Tests if a route is a descendant of, or same as, an ancestor route.
   bool _debugIsDescendantOrSame(
           {required RouteBase ancestor, required RouteBase route}) =>
-      ancestor == route ||
-      _subRoutesRecursively(ancestor.routes).contains(route);
+      ancestor == route || routesRecursively(ancestor.routes).contains(route);
 
   /// Recursively traverses the routes of the provided StatefulShellBranch to
   /// find the first GoRoute, from which a full path will be derived.

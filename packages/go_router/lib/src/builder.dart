@@ -68,6 +68,10 @@ class RouteBuilder {
   final Map<GlobalKey<NavigatorState>, HeroController> _goHeroCache =
       <GlobalKey<NavigatorState>, HeroController>{};
 
+  /// State for any active stateful shell routes
+  final Map<ShellRouteBase, Object?> _shellRouteState =
+      <ShellRouteBase, Object?>{};
+
   /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
     BuildContext context,
@@ -154,43 +158,19 @@ class RouteBuilder {
       /// Clean up previous cache to prevent memory leak.
       _goHeroCache.removeWhere(
           (GlobalKey<NavigatorState> key, _) => !keyToPage.keys.contains(key));
-    }
-  }
 
-  /// Builds a preloaded nested [Navigator], containing a sub-tree (beginning
-  /// at startIndex) of the provided route match list.
-  Widget buildPreloadedNestedNavigator(
-      BuildContext context,
-      RouteMatchList matchList,
-      int startIndex,
-      bool routerNeglect,
-      GlobalKey<NavigatorState> navigatorKey,
-      {List<NavigatorObserver>? observers,
-      String? restorationScopeId}) {
-    final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
-        <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
-    try {
-      final _PagePopContext pagePopContext = _PagePopContext._(onPopPage);
-      _buildRecursive(
-          context,
-          matchList,
-          startIndex,
-          pagePopContext,
-          routerNeglect,
-          keyToPage,
-          navigatorKey, <Page<Object?>, GoRouterState>{});
-
-      return _buildNavigator(
-        pagePopContext.onPopPage,
-        keyToPage[navigatorKey]!,
-        navigatorKey,
-        observers: observers,
-        restorationScopeId: restorationScopeId,
-        heroController: _getHeroController(context),
-      );
-    } on _RouteBuilderError catch (e) {
-      return _buildErrorNavigator(
-          context, e, matchList, onPopPage, configuration.navigatorKey);
+      /// Clean up cache of shell route states, but keep states for shell routes
+      /// in the current match list, as well as in any nested stateful shell
+      /// routes
+      if (_shellRouteState.isNotEmpty) {
+        Iterable<ShellRouteBase> shellRoutes = matchList.matches
+            .map((RouteMatch e) => e.route)
+            .whereType<ShellRouteBase>();
+        shellRoutes = RouteConfiguration.routesRecursively(shellRoutes)
+            .whereType<ShellRouteBase>();
+        _shellRouteState
+            .removeWhere((ShellRouteBase key, _) => !shellRoutes.contains(key));
+      }
     }
   }
 
@@ -273,11 +253,19 @@ class RouteBuilder {
         );
       }
 
-      final ShellRouteContext shellRouteContext = ShellRouteContext(
+      ShellRouteContext shellRouteContext = ShellRouteContext(
         subRoute: subRoute,
         routeMatchList: matchList,
+        shellRouteState: _shellRouteState[route],
         navigatorBuilder: buildShellNavigator,
       );
+
+      // Call the ShellRouteBase to create/update the shell route state
+      final Object? shellRouteState =
+          route.updateShellState(context, state, shellRouteContext);
+      _shellRouteState[route] = shellRouteState;
+      shellRouteContext =
+          shellRouteContext.copyWith(shellRouteState: shellRouteState);
 
       // Build the Page for this route
       final Page<Object?> page = _buildPageForRoute(

@@ -56,8 +56,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   ) {
     late final RouteMatchList initialMatches;
     try {
-      initialMatches = matcher.findMatch(routeInformation.location!,
-          extra: routeInformation.state);
+      if (routeInformation is PreParsedRouteInformation) {
+        initialMatches = routeInformation.matchlist;
+      } else {
+        initialMatches = matcher.findMatch(routeInformation.location!,
+            extra: routeInformation.state);
+      }
     } on MatcherError {
       log.info('No initial matches: ${routeInformation.location}');
 
@@ -123,4 +127,14 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       state: configuration.extra,
     );
   }
+}
+
+/// Pre-parsed [RouteInformation] that contains a [RouteMatchList].
+class PreParsedRouteInformation extends RouteInformation {
+  /// Creates a [PreParsedRouteInformation].
+  PreParsedRouteInformation(
+      {super.location, super.state, required this.matchlist});
+
+  /// The pre-parsed [RouteMatchList].
+  final RouteMatchList matchlist;
 }
