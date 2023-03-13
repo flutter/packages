@@ -46,6 +46,32 @@ class CameraPermissionsErrorData {
   String description;
 }
 
+class ImagePlaneInformation {
+  ImagePlaneInformation({
+    required this.bytesPerRow,
+    required this.bytesPerPixel,
+    required this.bytes,
+  });
+
+  int bytesPerRow;
+  int bytesPerPixel;
+  Uint8List bytes;
+}
+
+class ImageInformation {
+  ImageInformation({
+    required this.width,
+    required this.height,
+    required this.format,
+    required this.imagePlanesInformation,
+  });
+
+  int width;
+  int height;
+  String format;
+  List<ImagePlaneInformation> imagePlanesInformation;
+}
+
 @HostApi(dartHostTestHandler: 'TestJavaObjectHostApi')
 abstract class JavaObjectHostApi {
   void dispose(int identifier);

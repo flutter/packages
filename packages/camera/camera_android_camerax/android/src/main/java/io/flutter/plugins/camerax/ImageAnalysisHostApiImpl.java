@@ -11,6 +11,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageAnalysisHostApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.util.Objects;
@@ -54,8 +55,31 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
       @Override
       public void analyze(@NonNull ImageProxy image) {
         ImageProxy.PlaneProxy[] planes = image.getPlanes();
-        Log.v(
-            "ImageAnalysisHostApiImpl", "Image timestamp: " + image.getImageInfo().getTimestamp());
+
+        List<GeneratedCameraXLibrary.ImagePlaneInformation> imagePlanesInformation = new ArrayList<GeneratedCameraXLibrary.ImagePlaneInformation>();
+        for(ImageProxy.PlaneProxy plane : planes) {
+          ByteBuffer byteBuffer = plane.getBuffer();
+          byte[] bytes = new byte[byteBuffer.remaining()];
+          buffer.get(bytes, 0, bytes.length);
+          GeneratedCameraXLibrary.ImagePlaneInformation.Builder imagePlaneInfoBuilder = new GeneratedCameraXLibrary.ImagePlaneInformation.Builder();
+
+          imagePlanesInformation.add(
+            imagePlaneInfoBuilder
+            .setBytesPerRow(plane.getRowStride())
+            .setBytesPerPixel(plane.getPixelStride())
+            .setBytes(bytes)
+            .build());
+        }
+
+        GeneratedCameraXLibrary.ImageInformation.Builder imageInfoBuilder = new GeneratedCameraXLibrary.ImageInformation.Builder();
+        imageInfoBuilder.setWidth(image.getWidth());
+        imageInfoBuilder.setHeight(image.getHeight());
+        imageInfoBuilder.setFormat(image.getFormat());
+        imageInfoBuilder.setPlanes(imagePlanesInformation);
+        // last lens aperture
+        // last sensor exposure time
+        // last sensor sensitivity
+
         image.close();
       }
     };
