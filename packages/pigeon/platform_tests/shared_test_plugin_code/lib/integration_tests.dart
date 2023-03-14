@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
+// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#10_regularInt31)
 // ignore: unnecessary_import
 import 'dart:typed_data';
 
@@ -12,6 +12,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
+
+const int _biggerThanBigInt = 3000000000;
+const int _regularInt = 42;
+const double _doublePi = 3.14159;
 
 /// Possible host languages that test can target.
 enum TargetGenerator {
@@ -37,14 +41,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
   final AllTypes genericAllTypes = AllTypes(
     aBool: true,
-    anInt: 42,
-    anInt64: 3000000000,
-    aDouble: 3.14159,
+    anInt: _regularInt,
+    anInt64: _biggerThanBigInt,
+    aDouble: _doublePi,
     aString: 'Hello host!',
     aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
     a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
     a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-    aFloatArray: Float64List.fromList(<double>[2.71828, 3.14159]),
+    aFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
     aList: <Object?>['Thing 1', 2, true, 3.14],
     aMap: <Object?, Object?>{'a': 1, 'b': 2.0, 'c': 'three', 'd': false},
     anEnum: AnEnum.two,
@@ -52,14 +56,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
     aNullableBool: true,
-    aNullableInt: 42,
-    aNullableInt64: 3000000000,
-    aNullableDouble: 3.14159,
+    aNullableInt: _regularInt,
+    aNullableInt64: _biggerThanBigInt,
+    aNullableDouble: _doublePi,
     aNullableString: 'Hello host!',
     aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
     aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
     aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-    aNullableFloatArray: Float64List.fromList(<double>[2.71828, 3.14159]),
+    aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
     aNullableList: <Object?>['Thing 1', 2, true, 3.14],
     aNullableMap: <Object?, Object?>{
       'a': 1,
@@ -277,7 +281,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
       const String aNullableString = 'this is a String';
       const bool aNullableBool = false;
-      const int aNullableInt = 42;
+      const int aNullableInt = _regularInt;
 
       final AllNullableTypes echoObject = await api.sendMultipleNullableTypes(
           aNullableBool, aNullableInt, aNullableString);
@@ -302,7 +306,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = -13;
+      const int sentInt = _regularInt;
       final int receivedInt = await api.echoInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -311,7 +315,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = 3000000000;
+      const int sentInt = _biggerThanBigInt;
       final int receivedInt = await api.echoInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -372,7 +376,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
 
       // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = 42;
+      const Object sentInt = _regularInt;
       final Object receivedInt = await api.echoObject(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -403,7 +407,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = -13;
+      const int sentInt = _regularInt;
       final int? receivedInt = await api.echoNullableInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -412,7 +416,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = 3000000000;
+      const int sentInt = _biggerThanBigInt;
       final int? receivedInt = await api.echoNullableInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -515,7 +519,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
 
       // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = 42;
+      const Object sentInt = _regularInt;
       final Object? receivedInt = await api.echoNullableObject(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -748,7 +752,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = -13;
+      const int sentInt = _regularInt;
       final int receivedInt = await api.echoAsyncInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -757,7 +761,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = 3000000000;
+      const int sentInt = _biggerThanBigInt;
       final int receivedInt = await api.echoAsyncInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -820,7 +824,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
 
       // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = 42;
+      const Object sentInt = _regularInt;
       final Object receivedInt = await api.echoAsyncObject(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -852,7 +856,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = -13;
+      const int sentInt = _regularInt;
       final int? receivedInt = await api.echoAsyncNullableInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -861,7 +865,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentInt = 3000000000;
+      const int sentInt = _biggerThanBigInt;
       final int? receivedInt = await api.echoAsyncNullableInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -927,7 +931,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
 
       // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = 42;
+      const Object sentInt = _regularInt;
       final Object? receivedInt = await api.echoAsyncNullableObject(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -1092,7 +1096,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
       const String aNullableString = 'this is a String';
       const bool aNullableBool = false;
-      const int aNullableInt = 42;
+      const int aNullableInt = _regularInt;
 
       final AllNullableTypes compositeObject =
           await api.callFlutterSendMultipleNullableTypes(
@@ -1128,7 +1132,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentObject = -13;
+      const int sentObject = _regularInt;
       final int echoObject = await api.callFlutterEchoInt(sentObject);
       expect(echoObject, sentObject);
     });
@@ -1222,7 +1226,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const int sentObject = -13;
+      const int sentObject = _regularInt;
       final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
       expect(echoObject, sentObject);
     });
