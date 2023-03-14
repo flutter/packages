@@ -669,6 +669,7 @@ String _camelCase(String text) {
 
 String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
   final String forceUnwrap = type.isNullable ? '' : '!';
+  final String castUnwrap = type.isNullable ? '?' : '';
   if (isEnum(root, type)) {
     final String nullableConditionPrefix =
         type.isNullable ? '$value == nil ? nil : ' : '';
@@ -676,8 +677,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
+  } else if (type.baseName == 'int') {
+    return '($value is Int) ? Int64($value as! Int) : $value as! Int64$castUnwrap';
   } else {
-    final String castUnwrap = type.isNullable ? '?' : '';
     return '$value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   }
 }
@@ -713,7 +715,7 @@ String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
     'void': 'Void',
     'bool': 'Bool',
     'String': 'String',
-    'int': 'Int32',
+    'int': 'Int64',
     'double': 'Double',
     'Uint8List': 'FlutterStandardTypedData',
     'Int32List': 'FlutterStandardTypedData',
