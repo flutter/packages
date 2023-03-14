@@ -38,6 +38,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   final AllTypes genericAllTypes = AllTypes(
     aBool: true,
     anInt: 42,
+    anInt64: 3000000000,
     aDouble: 3.14159,
     aString: 'Hello host!',
     aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
@@ -52,6 +53,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
     aNullableBool: true,
     aNullableInt: 42,
+    aNullableInt64: 3000000000,
     aNullableDouble: 3.14159,
     aNullableString: 'Hello host!',
     aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
@@ -89,6 +91,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       expect(echoObject.aBool, genericAllTypes.aBool);
       expect(echoObject.anInt, genericAllTypes.anInt);
+      expect(echoObject.anInt64, genericAllTypes.anInt64);
       expect(echoObject.aDouble, genericAllTypes.aDouble);
       expect(echoObject.aString, genericAllTypes.aString);
       expect(echoObject.aByteArray, genericAllTypes.aByteArray);
@@ -108,6 +111,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.echoAllNullableTypes(genericAllNullableTypes);
       expect(echoObject?.aNullableBool, genericAllNullableTypes.aNullableBool);
       expect(echoObject?.aNullableInt, genericAllNullableTypes.aNullableInt);
+      expect(
+          echoObject?.aNullableInt64, genericAllNullableTypes.aNullableInt64);
       expect(
           echoObject?.aNullableDouble, genericAllNullableTypes.aNullableDouble);
       expect(
@@ -161,6 +166,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       expect(echoNullFilledObject?.aNullableInt, allTypesNull.aNullableInt);
       expect(echoNullFilledObject?.aNullableInt, null);
+
+      expect(echoNullFilledObject?.aNullableInt64, allTypesNull.aNullableInt64);
+      expect(echoNullFilledObject?.aNullableInt64, null);
 
       expect(
           echoNullFilledObject?.aNullableDouble, allTypesNull.aNullableDouble);
@@ -290,11 +298,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoNullFilledObject.aNullableString, null);
     });
 
-    testWidgets('Ints serialize and deserialize correctly',
+    testWidgets('Int serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const int sentInt = -13;
+      final int receivedInt = await api.echoInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Int64 serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = 3000000000;
       final int receivedInt = await api.echoInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -382,11 +399,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('Nullable Ints serialize and deserialize correctly',
+    testWidgets('Nullable Int serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const int sentInt = -13;
+      final int? receivedInt = await api.echoNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Nullable Int64 serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = 3000000000;
       final int? receivedInt = await api.echoNullableInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -575,6 +601,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       expect(echoObject.aBool, genericAllTypes.aBool);
       expect(echoObject.anInt, genericAllTypes.anInt);
+      expect(echoObject.anInt64, genericAllTypes.anInt64);
       expect(echoObject.aDouble, genericAllTypes.aDouble);
       expect(echoObject.aString, genericAllTypes.aString);
       expect(echoObject.aByteArray, genericAllTypes.aByteArray);
@@ -595,6 +622,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.echoAsyncNullableAllNullableTypes(genericAllNullableTypes);
       expect(echoObject?.aNullableBool, genericAllNullableTypes.aNullableBool);
       expect(echoObject?.aNullableInt, genericAllNullableTypes.aNullableInt);
+      expect(
+          echoObject?.aNullableInt64, genericAllNullableTypes.aNullableInt64);
       expect(
           echoObject?.aNullableDouble, genericAllNullableTypes.aNullableDouble);
       expect(
@@ -648,6 +677,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       expect(echoNullFilledObject?.aNullableInt, allTypesNull.aNullableInt);
       expect(echoNullFilledObject?.aNullableInt, null);
+
+      expect(echoNullFilledObject?.aNullableInt64, allTypesNull.aNullableInt64);
+      expect(echoNullFilledObject?.aNullableInt64, null);
 
       expect(
           echoNullFilledObject?.aNullableDouble, allTypesNull.aNullableDouble);
@@ -712,11 +744,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         // See https://github.com/flutter/flutter/issues/118733
         skip: targetGenerator == TargetGenerator.objc);
 
-    testWidgets('Ints async serialize and deserialize correctly',
+    testWidgets('Int async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const int sentInt = -13;
+      final int receivedInt = await api.echoAsyncInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Int64 async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = 3000000000;
       final int receivedInt = await api.echoAsyncInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -807,11 +848,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('nullable Ints async serialize and deserialize correctly',
+    testWidgets('nullable Int async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const int sentInt = -13;
+      final int? receivedInt = await api.echoAsyncNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('nullable Int64 async serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = 3000000000;
       final int? receivedInt = await api.echoAsyncNullableInt(sentInt);
       expect(receivedInt, sentInt);
     });
@@ -1021,6 +1071,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       expect(echoObject.aBool, genericAllTypes.aBool);
       expect(echoObject.anInt, genericAllTypes.anInt);
+      expect(echoObject.anInt64, genericAllTypes.anInt64);
       expect(echoObject.aDouble, genericAllTypes.aDouble);
       expect(echoObject.aString, genericAllTypes.aString);
       expect(echoObject.aByteArray, genericAllTypes.aByteArray);

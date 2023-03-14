@@ -1,3 +1,8 @@
+## 9.0.7
+
+* [swift] Changes all ints to int64.
+* Adds integration tests for int64.
+
 ## 9.0.6
 
 * [kotlin] Removes safe casting from decode process.
