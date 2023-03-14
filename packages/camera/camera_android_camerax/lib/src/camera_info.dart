@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
@@ -24,11 +26,20 @@ class CameraInfo extends JavaObject {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
+  /// Stream that emits an event when the related [Camera] instance starts
+  /// to close.
+  static final StreamController<bool> cameraClosingStreamController =
+      StreamController<bool>.broadcast();
+
   late final CameraInfoHostApiImpl _api;
 
   /// Gets sensor orientation degrees of camera.
   Future<int> getSensorRotationDegrees() =>
       _api.getSensorRotationDegreesFromInstance(this);
+
+  /// Starts listening for the camera closing.
+  Future<void> startListeningForCameraClosing() =>
+      _api.startListeningForCameraClosingFromInstance(this);
 }
 
 /// Host API implementation of [CameraInfo].
@@ -49,6 +60,14 @@ class CameraInfoHostApiImpl extends CameraInfoHostApi {
     final int sensorRotationDegrees = await getSensorRotationDegrees(
         instanceManager.getIdentifier(instance)!);
     return sensorRotationDegrees;
+  }
+
+  Future<void> startListeningForCameraClosingFromInstance(
+      CameraInfo instance) async {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    assert(identifier != null,
+        'No CameraInfo has the identifer of that which was requested.');
+    startListeningForCameraClosing(identifier!);
   }
 }
 
@@ -80,5 +99,10 @@ class CameraInfoFlutterApiImpl extends CameraInfoFlutterApi {
             binaryMessenger: binaryMessenger, instanceManager: instanceManager);
       },
     );
+  }
+
+  @override
+  void onCameraClosing(int identifier) {
+    CameraInfo.cameraClosingStreamController.add(true);
   }
 }

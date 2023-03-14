@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -17,6 +18,7 @@ import io.flutter.view.TextureRegistry;
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
+  private CameraInfoHostApiImpl cameraInfoHostApiImpl;
   private ProcessCameraProviderHostApiImpl processCameraProviderHostApi;
   private ImageCaptureHostApiImpl imageCaptureHostApi;
   public SystemServicesHostApiImpl systemServicesHostApi;
@@ -38,8 +40,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
             });
 
     // Set up Host APIs.
-    GeneratedCameraXLibrary.CameraInfoHostApi.setup(
-        binaryMessenger, new CameraInfoHostApiImpl(instanceManager));
+    cameraInfoHostApiImpl = new CameraInfoHostApiImpl(binaryMessenger, instanceManager);
+    GeneratedCameraXLibrary.CameraInfoHostApi.setup(binaryMessenger, cameraInfoHostApiImpl);
     GeneratedCameraXLibrary.CameraSelectorHostApi.setup(
         binaryMessenger, new CameraSelectorHostApiImpl(binaryMessenger, instanceManager));
     GeneratedCameraXLibrary.JavaObjectHostApi.setup(
@@ -54,6 +56,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, new PreviewHostApiImpl(binaryMessenger, instanceManager, textureRegistry));
     imageCaptureHostApi = new ImageCaptureHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApi);
+    GeneratedCameraXLibrary.CameraHostApi.setup(
+        binaryMessenger, new CameraHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override
@@ -77,9 +81,11 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         pluginBinding.getApplicationContext(),
         pluginBinding.getTextureRegistry());
     updateContext(pluginBinding.getApplicationContext());
-    processCameraProviderHostApi.setLifecycleOwner(
-        (LifecycleOwner) activityPluginBinding.getActivity());
-    systemServicesHostApi.setActivity(activityPluginBinding.getActivity());
+
+    Activity activity = activityPluginBinding.getActivity();
+    processCameraProviderHostApi.setLifecycleOwner((LifecycleOwner) activity);
+    cameraInfoHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+    systemServicesHostApi.setActivity(activity);
     systemServicesHostApi.setPermissionsRegistry(
         activityPluginBinding::addRequestPermissionsResultListener);
   }

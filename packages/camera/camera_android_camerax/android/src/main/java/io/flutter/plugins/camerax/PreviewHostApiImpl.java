@@ -114,7 +114,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    * Returns an error description for each {@link SurfaceRequest.Result} that represents an error
    * with providing a surface.
    */
-  private String getProvideSurfaceErrorDescription(@Nullable int resultCode) {
+  private String getProvideSurfaceErrorDescription(@NonNull int resultCode) {
     switch (resultCode) {
       case SurfaceRequest.Result.RESULT_INVALID_SURFACE:
         return resultCode + ": Provided surface could not be used by the camera.";

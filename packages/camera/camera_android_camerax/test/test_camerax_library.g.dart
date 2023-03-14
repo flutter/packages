@@ -53,6 +53,7 @@ abstract class TestCameraInfoHostApi {
   static const MessageCodec<Object?> codec = _TestCameraInfoHostApiCodec();
 
   int getSensorRotationDegrees(int identifier);
+  void startListeningForCameraClosing(int identifier);
   static void setup(TestCameraInfoHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -72,6 +73,26 @@ abstract class TestCameraInfoHostApi {
               'Argument for dev.flutter.pigeon.CameraInfoHostApi.getSensorRotationDegrees was null, expected non-null int.');
           final int output = api.getSensorRotationDegrees(arg_identifier!);
           return <Object?, Object?>{'result': output};
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraInfoHostApi.startListeningForCameraClosing',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraInfoHostApi.startListeningForCameraClosing was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraInfoHostApi.startListeningForCameraClosing was null, expected non-null int.');
+          api.startListeningForCameraClosing(arg_identifier!);
+          return <Object?, Object?>{};
         });
       }
     }

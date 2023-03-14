@@ -59,11 +59,15 @@ abstract class JavaObjectFlutterApi {
 @HostApi(dartHostTestHandler: 'TestCameraInfoHostApi')
 abstract class CameraInfoHostApi {
   int getSensorRotationDegrees(int identifier);
+
+  void startListeningForCameraClosing(int identifier);
 }
 
 @FlutterApi()
 abstract class CameraInfoFlutterApi {
   void create(int identifier);
+
+  void onCameraClosing(int identifier);
 }
 
 @HostApi(dartHostTestHandler: 'TestCameraSelectorHostApi')
@@ -98,6 +102,11 @@ abstract class ProcessCameraProviderHostApi {
 @FlutterApi()
 abstract class ProcessCameraProviderFlutterApi {
   void create(int identifier);
+}
+
+@HostApi()
+abstract class CameraHostApi {
+  int getCameraInfo(int identifier);
 }
 
 @FlutterApi()

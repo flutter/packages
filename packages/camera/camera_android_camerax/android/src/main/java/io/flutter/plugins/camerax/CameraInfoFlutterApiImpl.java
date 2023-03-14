@@ -20,4 +20,8 @@ public class CameraInfoFlutterApiImpl extends CameraInfoFlutterApi {
   void create(CameraInfo cameraInfo, Reply<Void> reply) {
     create(instanceManager.addHostCreatedInstance(cameraInfo), reply);
   }
+
+  void sendCameraClosingEvent(Long identifier, Reply<Void> reply) {
+    onCameraClosing(identifier, reply);
+  }
 }

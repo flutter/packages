@@ -166,6 +166,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
+    CameraInfo cameraInfo = await camera!.getCameraInfo();
+    cameraInfo.startListeningForCameraClosing();
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -238,7 +240,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The camera started to close.
   @override
   Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
-    return ProcessCameraProvider.cameraClosingStreamController.stream
+    return CameraInfo.cameraClosingStreamController.stream
         .map<CameraClosingEvent>((bool isCameraClosing) {
       assert(isCameraClosing);
       return CameraClosingEvent(cameraId);
@@ -330,6 +332,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
+    CameraInfo cameraInfo = await camera!.getCameraInfo();
+    cameraInfo.startListeningForCameraClosing();
   }
 
   /// Unbinds [preview] instance to camera lifecycle controlled by the

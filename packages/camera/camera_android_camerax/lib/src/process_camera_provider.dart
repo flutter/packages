@@ -30,11 +30,6 @@ class ProcessCameraProvider extends JavaObject {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  /// Stream that emits an event when [unbindAll] is called, which will initiate
-  /// the closing of the cameras controlled by this instance.
-  static final StreamController<bool> cameraClosingStreamController =
-      StreamController<bool>.broadcast();
-
   late final ProcessCameraProviderHostApiImpl _api;
 
   /// Gets an instance of [ProcessCameraProvider].
@@ -75,7 +70,6 @@ class ProcessCameraProvider extends JavaObject {
   /// Unbinds all previously bound [UseCase]s from the lifecycle of the camera
   /// that this tracks.
   void unbindAll() {
-    cameraClosingStreamController.add(true);
     _api.unbindAllFromInstances(this);
   }
 }
