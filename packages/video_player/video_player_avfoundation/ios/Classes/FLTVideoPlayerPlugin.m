@@ -325,7 +325,7 @@ NS_INLINE UIViewController *rootViewController() {
     return;
   }
   if (_isPlaying) {
-    [_player play];
+    [_player playImmediatelyAtRate:_player.rate];
   } else {
     [_player pause];
   }
