@@ -10,13 +10,10 @@ import '../../in_app_purchase_android.dart';
 class GooglePlayPurchaseParam extends PurchaseParam {
   /// Creates a new [GooglePlayPurchaseParam] object with the given data.
   GooglePlayPurchaseParam({
-    required ProductDetails productDetails,
-    String? applicationUserName,
+    required super.productDetails,
+    super.applicationUserName,
     this.changeSubscriptionParam,
-  }) : super(
-          productDetails: productDetails,
-          applicationUserName: applicationUserName,
-        );
+  });
 
   /// The 'changeSubscriptionParam' containing information for upgrading or
   /// downgrading an existing subscription.

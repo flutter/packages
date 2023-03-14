@@ -1,6 +1,15 @@
-## 2.3.10
+## 2.4.2
 
 * Makes seekTo async and only complete when AVPlayer.seekTo completes.
+
+## 2.4.1
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.4.0
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
 
 ## 2.3.9
 
