@@ -264,6 +264,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       // trivial transform.
       return ResolvedImageNode(
         data: imageNode.data,
+        format: imageNode.format,
         rect: childTransform.transformRect(rect),
         transform: null,
       );
@@ -272,6 +273,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     // Non-trivial transform.
     return ResolvedImageNode(
       data: imageNode.data,
+      format: imageNode.format,
       rect: rect,
       transform: childTransform,
     );
@@ -483,12 +485,16 @@ class ResolvedImageNode extends Node {
   /// Create a new [ResolvedImageNode].
   const ResolvedImageNode({
     required this.data,
+    required this.format,
     required this.rect,
     required this.transform,
   });
 
   /// The image [data] encoded as a PNG.
   final Uint8List data;
+
+  /// The format of [data].
+  final ImageFormat format;
 
   /// The region to draw the image to.
   final Rect rect;

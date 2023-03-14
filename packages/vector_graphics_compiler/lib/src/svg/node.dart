@@ -9,6 +9,7 @@ import 'package:meta/meta.dart';
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
+import '../image/image_info.dart';
 import '../paint.dart';
 import 'parser.dart' show SvgAttributes;
 import 'visitor.dart';
@@ -571,11 +572,15 @@ class ImageNode extends AttributedNode {
   /// Create a new [ImageNode] with the given [text].
   ImageNode(
     this.data,
+    this.format,
     super.attributes,
   );
 
-  /// The text this node contains.
+  /// The image data this node contains.
   final Uint8List data;
+
+  /// The format of [data].
+  final ImageFormat format;
 
   @override
   AttributedNode applyAttributes(
@@ -584,6 +589,7 @@ class ImageNode extends AttributedNode {
   }) {
     return ImageNode(
       data,
+      format,
       replace
           ? newAttributes.applyParent(attributes, transformOverride: transform)
           : attributes.applyParent(newAttributes),

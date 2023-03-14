@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:vector_graphics_compiler/src/image/image_info.dart';
 import 'package:xml/xml_events.dart';
 
 import '../geometry/basic_types.dart';
@@ -429,15 +430,28 @@ class _Elements {
     }
 
     if (xlinkHref.startsWith('data:')) {
-      const String supportedMimeType = 'image/png;base64';
-      final int commaLocation = xlinkHref.indexOf(',') + 1;
+      const Map<String, ImageFormat> supportedMimeTypes = <String, ImageFormat>{
+        'png': ImageFormat.png,
+        'jpeg': ImageFormat.jpeg,
+        'jpg': ImageFormat.jpeg,
+        'webp': ImageFormat.webp,
+        'gif': ImageFormat.gif,
+        'bmp': ImageFormat.bmp,
+      };
+      final int semiColonLocation = xlinkHref.indexOf(';') + 1;
+      final int commaLocation = xlinkHref.indexOf(',', semiColonLocation) + 1;
       final String mimeType = xlinkHref
-          .substring(5, commaLocation - 1)
-          .replaceAll(_whitespacePattern, '');
-      if (mimeType != supportedMimeType) {
+          .substring(xlinkHref.indexOf('/') + 1, semiColonLocation - 1)
+          .replaceAll(_whitespacePattern, '')
+          .toLowerCase();
+
+      final ImageFormat? format = supportedMimeTypes[mimeType];
+      if (format == null) {
         if (warningsAsErrors) {
           throw UnimplementedError(
               'Image data format not supported: $mimeType');
+        } else {
+          print('Warning: Unsupported image format $mimeType');
         }
         return;
       }
@@ -445,7 +459,8 @@ class _Elements {
       final Uint8List data = base64.decode(xlinkHref
           .substring(commaLocation)
           .replaceAll(_whitespacePattern, ''));
-      final ImageNode image = ImageNode(data, parserState._currentAttributes);
+      final ImageNode image =
+          ImageNode(data, format, parserState._currentAttributes);
       parserState.currentGroup!.addChild(
         image,
         clipResolver: parserState._definitions.getClipPath,

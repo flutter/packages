@@ -1321,6 +1321,24 @@ void main() {
     expect(instructions.drawImages.first.rect, const Rect.fromLTWH(0, 0, 1, 1));
   });
 
+  test('Other image formats', () {
+    // 1x1 PNG image from png-pixel.com. Claiming that it's JPEG and using "img"
+    // instead of "image" to make sure parser doesn't barf. Chrome is ok with
+    // this kind of nonsense. How far we have strayed.
+    const String svgStr = '''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <image href="data:img/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg==" />
+</svg>''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(
+      svgStr,
+      key: 'image',
+      warningsAsErrors: true,
+    );
+
+    expect(instructions.images.first.format, 1);
+  });
+
   test('Ghostscript Tiger - dedupes paints', () {
     final VectorInstructions instructions = parseWithoutOptimizers(
       ghostscriptTiger,

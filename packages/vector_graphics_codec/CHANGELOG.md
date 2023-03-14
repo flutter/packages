@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.1.4
+
+- Support more image formats and malformed MIME types.
+- Fix inheritence for `fill-rule`s.
+
 ## 1.1.3
 
 - Further improvements to whitespace handling for text.
