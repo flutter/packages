@@ -382,7 +382,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
-          _applyPlaybackSpeed();
           break;
         case VideoEventType.completed:
           // In this case we need to stop _timer, set isPlaying=false, and
@@ -417,6 +416,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         initializingCompleter.completeError(obj);
       }
     }
+
+    _applyPlaybackSpeed();
 
     _eventSubscription = _videoPlayerPlatform
         .videoEventsFor(_textureId)
