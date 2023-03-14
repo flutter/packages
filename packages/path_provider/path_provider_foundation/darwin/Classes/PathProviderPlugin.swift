@@ -37,6 +37,7 @@ public class PathProviderPlugin: NSObject, FlutterPlugin, PathProviderApi {
       }
     }
   #endif
+    fail to compile for testing
     return path
   }
 }
