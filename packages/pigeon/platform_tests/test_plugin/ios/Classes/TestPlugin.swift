@@ -45,7 +45,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     throw FlutterError(code: "code", message: "message", details: "details")
   }
 
-  func echo(_ anInt: Int32) -> Int32 {
+  func echo(_ anInt: Int64) -> Int64 {
     return anInt
   }
 
@@ -85,12 +85,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return AllNullableTypesWrapper(values: AllNullableTypes(aNullableString: nullableString))
   }
 
-  func sendMultipleNullableTypes(aBool aNullableBool: Bool?, anInt aNullableInt: Int32?, aString aNullableString: String?) -> AllNullableTypes {
+  func sendMultipleNullableTypes(aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?) -> AllNullableTypes {
     let someThings = AllNullableTypes(aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
     return someThings
   }
 
-  func echo(_ aNullableInt: Int32?) -> Int32? {
+  func echo(_ aNullableInt: Int64?) -> Int64? {
     return aNullableInt
   }
 
@@ -142,7 +142,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(everything))
   }
 
-  func echoAsync(_ anInt: Int32, completion: @escaping (Result<Int32, Error>) -> Void) {
+  func echoAsync(_ anInt: Int64, completion: @escaping (Result<Int64, Error>) -> Void) {
     completion(.success(anInt))
   }
 
@@ -174,7 +174,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(aMap))
   }
 
-  func echoAsyncNullable(_ anInt: Int32?, completion: @escaping (Result<Int32?, Error>) -> Void) {
+  func echoAsyncNullable(_ anInt: Int64?, completion: @escaping (Result<Int64?, Error>) -> Void) {
     completion(.success(anInt))
   }
 
@@ -230,7 +230,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?,
-    anInt aNullableInt: Int32?,
+    anInt aNullableInt: Int64?,
     aString aNullableString: String?,
     completion: @escaping (Result<AllNullableTypes, Error>) -> Void
   ) {
@@ -249,7 +249,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEcho(_ anInt: Int32, completion: @escaping (Result<Int32, Error>) -> Void) {
+  func callFlutterEcho(_ anInt: Int64, completion: @escaping (Result<Int64, Error>) -> Void) {
     flutterAPI.echo(anInt) {
       completion(.success($0))
     }
@@ -291,7 +291,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEchoNullable(_ anInt: Int32?, completion: @escaping (Result<Int32?, Error>) -> Void) {
+  func callFlutterEchoNullable(_ anInt: Int64?, completion: @escaping (Result<Int64?, Error>) -> Void) {
     flutterAPI.echoNullable(anInt) {
       completion(.success($0))
     }

@@ -15,6 +15,7 @@ class AllTypes {
   AllTypes({
     this.aBool = false,
     this.anInt = 0,
+    this.anInt64 = 0,
     this.aDouble = 0,
     required this.aByteArray,
     required this.a4ByteArray,
@@ -28,6 +29,7 @@ class AllTypes {
 
   bool aBool;
   int anInt;
+  int anInt64;
   double aDouble;
   Uint8List aByteArray;
   Int32List a4ByteArray;
@@ -46,6 +48,7 @@ class AllNullableTypes {
   AllNullableTypes(
     this.aNullableBool,
     this.aNullableInt,
+    this.aNullableInt64,
     this.aNullableDouble,
     this.aNullableByteArray,
     this.aNullable4ByteArray,
@@ -62,6 +65,7 @@ class AllNullableTypes {
 
   bool? aNullableBool;
   int? aNullableInt;
+  int? aNullableInt64;
   double? aNullableDouble;
   Uint8List? aNullableByteArray;
   Int32List? aNullable4ByteArray;
