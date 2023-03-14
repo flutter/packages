@@ -36,7 +36,7 @@ flutter analyze --no-fatal-infos
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     # We only run the full tests on Linux because golden files differ
     # from platform to platform.
-    flutter test
+    USE_FLUTTER_TEST_FONT=1 flutter test
 fi
 # The next script verifies that the coverage is not regressed; it does
 # not verify goldens. (It does run all the tests though, so it still
