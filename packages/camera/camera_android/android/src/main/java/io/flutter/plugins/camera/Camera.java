@@ -330,7 +330,8 @@ class Camera
                     cameraFeatures.getExposurePoint().checkIsSupported(),
                     cameraFeatures.getFocusPoint().checkIsSupported());
 
-            } catch (CameraAccessException | InterruptedException e) {
+            } catch (Exception e) {
+              Log.i(TAG, "open | onOpened error: " + e.getMessage());
               dartMessenger.sendCameraErrorEvent(e.getMessage());
               close();
             }
