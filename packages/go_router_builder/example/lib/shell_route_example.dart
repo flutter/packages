@@ -88,6 +88,7 @@ class MyShellRouteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final int currentIndex = getCurrentIndex(context);
     return Scaffold(
+      body: child,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         items: const <BottomNavigationBarItem>[
