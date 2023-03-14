@@ -79,9 +79,6 @@ class Cache {
       // and thus move it to the end of the list.
       _cache.remove(key);
     } else {
-      if (_cache.length == maximumSize && maximumSize > 0) {
-        _cache.remove(_cache.keys.first);
-      }
       pendingResult = loader();
       _pending[key] = pendingResult;
       pendingResult.then((ByteData data) {
@@ -100,7 +97,12 @@ class Cache {
 
   void _add(Object key, ByteData result) {
     if (maximumSize > 0) {
-      assert(_cache.containsKey(key) || _cache.length < maximumSize);
+      if (_cache.containsKey(key)) {
+        _cache.remove(key); // update LRU.
+      } else if (_cache.length == maximumSize && maximumSize > 0) {
+        _cache.remove(_cache.keys.first);
+      }
+      assert(_cache.length < maximumSize);
       _cache[key] = result;
     }
     assert(_cache.length <= maximumSize);

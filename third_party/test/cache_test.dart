@@ -105,4 +105,32 @@ void main() {
     cache.putIfAbsent(2, () => completerB);
     expect(cache.count, 2);
   });
+
+  test('Futures completing late/together', () async {
+    final Cache cache = Cache();
+    cache.maximumSize = 2;
+    final Completer<ByteData> completerA = Completer<ByteData>();
+    final Completer<ByteData> completerB = Completer<ByteData>();
+    final Completer<ByteData> completerC = Completer<ByteData>();
+
+    expect(cache.count, 0);
+
+    cache.putIfAbsent(1, () => completerA.future);
+    cache.putIfAbsent(2, () => completerB.future);
+    completerA.complete(ByteData(1));
+    completerB.complete(ByteData(1));
+
+    expect(cache.count, 0);
+    await null;
+    expect(cache.count, 2);
+
+    cache.putIfAbsent(3, () => completerC.future);
+    expect(cache.count, 2);
+
+    completerC.complete(ByteData(1));
+    expect(cache.count, 2);
+
+    await null;
+    expect(cache.count, 2);
+  });
 }
