@@ -1,5 +1,11 @@
 # CHANGES
 
+## 2.0.4
+
+- Newer version of vector_graphics.
+- Caching bug fix.
+- Reintroduce clipBehavior.
+
 ## 2.0.3
 
 - Require newer version of vector_graphics.
