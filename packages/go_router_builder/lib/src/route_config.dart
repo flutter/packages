@@ -325,8 +325,11 @@ RouteBase get $_routeGetterName => ${_routeDefinition()};
         : '''
 routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
-    final String navigatorKey =
-        _key == null || _key!.isEmpty ? '' : 'navigatorKey: $_key,';
+    final String navigatorKeyParameterName =
+        _isShellRoute ? 'navigatorKey' : 'parentNavigatorKey';
+    final String navigatorKey = _key == null || _key!.isEmpty
+        ? ''
+        : '$navigatorKeyParameterName: $_key,';
     if (_isShellRoute) {
       return '''
   ShellRouteData.\$route(
