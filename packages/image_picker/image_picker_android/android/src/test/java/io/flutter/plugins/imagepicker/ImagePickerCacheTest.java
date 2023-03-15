@@ -7,6 +7,7 @@ package io.flutter.plugins.imagepicker;
 import static io.flutter.plugins.imagepicker.ImagePickerCache.SHARED_PREFERENCES_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -114,5 +115,12 @@ public class ImagePickerCacheTest {
     int defaultImageQuality =
         (int) resultMapWithDefaultQuality.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
     assertThat(defaultImageQuality, equalTo(100));
+  }
+
+  @Test
+  public void imageCache_shouldNotThrowIfPathIsNullInSaveResult() {
+    final ImagePickerCache cache = new ImagePickerCache(mockActivity);
+    cache.saveResult(null, "errorCode", "errorMessage");
+      assertTrue("No exception thrown when ImagePickerCache.saveResult() was passed a null path", true);
   }
 }
