@@ -281,13 +281,13 @@ void main() {
         destinations.length,
       );
 
-      for (final NavigationRailDestination element
+      for (final NavigationRailDestination destination
           in navigationRail.destinations) {
-        expect(element.label, isNotNull);
-        expect(element.icon, isA<Icon>());
-        expect(element.icon, isNotNull);
-        expect(element.selectedIcon, isA<Icon?>());
-        expect(element.selectedIcon, isNotNull);
+        expect(destination.label, isNotNull);
+        expect(destination.icon, isA<Icon>());
+        expect(destination.icon, isNotNull);
+        expect(destination.selectedIcon, isA<Icon?>());
+        expect(destination.selectedIcon, isNotNull);
       }
 
       final NavigationDestination firstDestinationFromListPassed =
