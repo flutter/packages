@@ -502,7 +502,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     ]) {
       for (final MapEntry<String, Dependency> entry in dependencies.entries) {
         final String name = entry.key;
-        if (!_allowDependency(name, entry.value)) {
+        if (!_shouldAllowDependency(name, entry.value)) {
           badDependencies.add(name);
         }
       }
@@ -517,7 +517,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   }
 
   // Checks whether a given dependency is allowed.
-  bool _allowDependency(String name, Dependency dependency) {
+  bool _shouldAllowDependency(String name, Dependency dependency) {
     if (dependency is PathDependency || dependency is SdkDependency) {
       return true;
     }
