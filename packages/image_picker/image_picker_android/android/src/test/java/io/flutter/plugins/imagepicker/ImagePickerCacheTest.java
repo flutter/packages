@@ -121,6 +121,7 @@ public class ImagePickerCacheTest {
   public void imageCache_shouldNotThrowIfPathIsNullInSaveResult() {
     final ImagePickerCache cache = new ImagePickerCache(mockActivity);
     cache.saveResult(null, "errorCode", "errorMessage");
-      assertTrue("No exception thrown when ImagePickerCache.saveResult() was passed a null path", true);
+    assertTrue(
+        "No exception thrown when ImagePickerCache.saveResult() was passed a null path", true);
   }
 }
