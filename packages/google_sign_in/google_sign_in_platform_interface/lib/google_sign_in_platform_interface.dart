@@ -139,4 +139,22 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   Future<bool> requestScopes(List<String> scopes) async {
     throw UnimplementedError('requestScopes() has not been implmented.');
   }
+
+  /// Determines if the current user can access all [scopes].
+  ///
+  /// Optionally, an [accessToken] can be passed for applications where a
+  /// long-lived token may be cached (like the web).
+  Future<bool> canAccessScopes(
+    List<String> scopes, {
+    String? accessToken,
+  }) async {
+    return isSignedIn();
+  }
+
+  /// Returns a stream of [GoogleSignInUserData] authentication events.
+  ///
+  /// These will normally come from asynchronous flows, like the Google Sign-In
+  /// Button Widget from the Web implementation, and will be funneled directly
+  /// to the `onCurrentUserChanged` Stream of the plugin.
+  Stream<GoogleSignInUserData?>? get userDataEvents => null;
 }

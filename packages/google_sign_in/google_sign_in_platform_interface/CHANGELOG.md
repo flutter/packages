@@ -1,5 +1,6 @@
-## NEXT
+## 2.4.0
 
+* Introduces: `canAccessScopes` method and `userDataEvents` stream.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
