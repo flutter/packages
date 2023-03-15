@@ -112,7 +112,7 @@ abstract class Api2Host {
 Generates:
 
 ```objc
-// Objc
+// Objective-C
 @protocol Api2Host
 -(void)calculate:(nullable Value *)input 
       completion:(void(^)(Value *_Nullable, FlutterError *_Nullable))completion;
@@ -250,12 +250,12 @@ class MyApi : GeneratedApi {
 }
 ```
 
-#### Objc and C++
+#### Objective-C and C++
 
 Likewise, Host API errors can be sent using the provided `FlutterError` class (translated into `PlatformException`).
 
 For synchronous methods:
-* Objc - Assign the `error` argument to a `FlutterError` reference.
+* Objective-C - Assign the `error` argument to a `FlutterError` reference.
 * C++ - Return a `FlutterError` directly (for void methods) or within an `ErrorOr` instance.
 
 For async methods:
