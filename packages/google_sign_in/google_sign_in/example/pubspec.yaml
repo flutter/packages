@@ -16,7 +16,20 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
+  google_sign_in_platform_interface: ^2.2.0
+  google_sign_in_web: ^0.11.0
   http: ^0.13.0
+
+dependency_overrides:
+  google_identity_services_web:
+    git:
+      url: https://github.com/ditman/flutter-packages.git
+      ref: gis-web-fix-render-button-api
+      path: packages/google_identity_services_web
+  google_sign_in_platform_interface:
+    path: ../../google_sign_in_platform_interface
+  google_sign_in_web:
+    path: ../../google_sign_in_web
 
 dev_dependencies:
   espresso: ^0.2.0

@@ -1,5 +1,9 @@
-## NEXT
+## 6.1.0
 
+* Exposes the new method `canAccessScopes`.
+* Updates example app to separate Authentication from Authorization for those
+  platforms where scopes are not automatically granted upon signIn (like the web).
+  * Updates README with information about these changes.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 

@@ -96,7 +96,15 @@ be an option.
 
 ### Web integration
 
-For web integration details, see the
+The new SDK used by the web has fully separated Authentication from Authorization,
+so `signIn` and `signInSilently` no longer authorize Oauth `scopes`.
+
+Flutter Apps must be able to detect what scopes have been granted by their users,
+and if the grants are still valid.
+
+Read below about **Working with scopes, and incremental authorization** for
+general information about changes that may be needed on an app, and for more
+specific web integration details, see the
 [`google_sign_in_web` package](https://pub.dev/packages/google_sign_in_web).
 
 ## Usage
@@ -138,6 +146,74 @@ Future<void> _handleSignIn() async {
   }
 }
 ```
+
+In the web, you should use the **Google Sign In button** (and not the `signIn` method)
+to guarantee that your user authentication contains a valid `idToken`.
+
+For more details, take a look at the
+[`google_sign_in_web` package](https://pub.dev/packages/google_sign_in_web).
+
+## Working with scopes, and incremental authorization.
+
+### Checking if scopes have been granted
+
+Users may (or may *not*) grant all the scopes that your application requests at
+Sign In. In fact, in the web, no scopes are granted by signIn or silentSignIn anymore.
+
+Your app must be able to:
+
+* Detect if the authenticated user has authorized the scopes your app needs.
+* Detect if the scopes that were granted a few minutes ago are still valid.
+
+There's a new method that allows your app to check this:
+
+```dart
+final bool isAuthorized = await _googleSignIn.canAccessScopes(scopes);
+```
+
+### Requesting more scopes when needed
+
+If your app determines that the user hasn't granted the scopes it requires, it
+should initiate an Authorization request **from an user interaction** (like a
+button press).
+
+```dart
+Future<void> _handleAuthorizeScopes() async {
+  final bool isAuthorized = await _googleSignIn.requestScopes(scopes);
+  if (isAuthorized) {
+    // Do things that only authorized users can do!
+    _handleGetContact(_currentUser!);
+  }
+}
+```
+
+The `requestScopes` returns a `boolean` value that is `true` if the user has
+granted all the requested scopes or `false` otherwise.
+
+Once your app determines that the current user `isAuthorized` to access the
+services for which you need `scopes`, it can proceed normally.
+
+### Authorization expiration
+
+In the web, **the `accessToken` is no longer refreshed**. It expires after 3600
+seconds (one hour), so your app needs to be able to handle failed REST requests,
+and update its UI to prompt the user for a new Authorization round.
+
+This can be done by combining the error responses from your REST requests with
+the `canAccessScopes` and `requestScopes` methods described above.
+
+For more details, take a look at the
+[`google_sign_in_web` package](https://pub.dev/packages/google_sign_in_web).
+
+### My app didn't need any of this, what gives!?
+
+The new web SDK implicitly grant access to `email`, `profile` and `openid` when
+users complete the sign-in process (either via the One Tap UX or the Google Sign
+In button).
+
+If your app only needs an `idToken`, or only requests permissions to some of the
+[OpenID Connect scopes](https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect),
+you might not need to implement any of the scope handling above.
 
 ## Example
 
