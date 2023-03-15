@@ -17,5 +17,8 @@
 
 ## Allowed by default
 
+# Dart-owned
+- mockito
+
 # Google-owned
 - file_testing
