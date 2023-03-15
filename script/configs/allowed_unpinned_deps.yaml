@@ -5,8 +5,6 @@
 # via being part of one of the default-allowed groups, or a specific reason.
 
 ## TODO(stuartmorgan): Move these to pinned-only.
-# Google-owned
-- file_testing
 # Dart-owned
 - mockito
 
