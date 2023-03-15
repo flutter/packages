@@ -63,6 +63,7 @@ enum class AnEnum(val raw: Int) {
 data class AllTypes (
   val aBool: Boolean,
   val anInt: Long,
+  val anInt64: Long,
   val aDouble: Double,
   val aByteArray: ByteArray,
   val a4ByteArray: IntArray,
@@ -79,22 +80,24 @@ data class AllTypes (
     fun fromList(list: List<Any?>): AllTypes {
       val aBool = list[0] as Boolean
       val anInt = list[1].let { if (it is Int) it.toLong() else it as Long }
-      val aDouble = list[2] as Double
-      val aByteArray = list[3] as ByteArray
-      val a4ByteArray = list[4] as IntArray
-      val a8ByteArray = list[5] as LongArray
-      val aFloatArray = list[6] as DoubleArray
-      val aList = list[7] as List<Any?>
-      val aMap = list[8] as Map<Any, Any?>
-      val anEnum = AnEnum.ofRaw(list[9] as Int)!!
-      val aString = list[10] as String
-      return AllTypes(aBool, anInt, aDouble, aByteArray, a4ByteArray, a8ByteArray, aFloatArray, aList, aMap, anEnum, aString)
+      val anInt64 = list[2].let { if (it is Int) it.toLong() else it as Long }
+      val aDouble = list[3] as Double
+      val aByteArray = list[4] as ByteArray
+      val a4ByteArray = list[5] as IntArray
+      val a8ByteArray = list[6] as LongArray
+      val aFloatArray = list[7] as DoubleArray
+      val aList = list[8] as List<Any?>
+      val aMap = list[9] as Map<Any, Any?>
+      val anEnum = AnEnum.ofRaw(list[10] as Int)!!
+      val aString = list[11] as String
+      return AllTypes(aBool, anInt, anInt64, aDouble, aByteArray, a4ByteArray, a8ByteArray, aFloatArray, aList, aMap, anEnum, aString)
     }
   }
   fun toList(): List<Any?> {
     return listOf<Any?>(
       aBool,
       anInt,
+      anInt64,
       aDouble,
       aByteArray,
       a4ByteArray,
@@ -112,6 +115,7 @@ data class AllTypes (
 data class AllNullableTypes (
   val aNullableBool: Boolean? = null,
   val aNullableInt: Long? = null,
+  val aNullableInt64: Long? = null,
   val aNullableDouble: Double? = null,
   val aNullableByteArray: ByteArray? = null,
   val aNullable4ByteArray: IntArray? = null,
@@ -131,27 +135,29 @@ data class AllNullableTypes (
     fun fromList(list: List<Any?>): AllNullableTypes {
       val aNullableBool = list[0] as Boolean?
       val aNullableInt = list[1].let { if (it is Int) it.toLong() else it as Long? }
-      val aNullableDouble = list[2] as Double?
-      val aNullableByteArray = list[3] as ByteArray?
-      val aNullable4ByteArray = list[4] as IntArray?
-      val aNullable8ByteArray = list[5] as LongArray?
-      val aNullableFloatArray = list[6] as DoubleArray?
-      val aNullableList = list[7] as List<Any?>?
-      val aNullableMap = list[8] as Map<Any, Any?>?
-      val nullableNestedList = list[9] as List<List<Boolean?>?>?
-      val nullableMapWithAnnotations = list[10] as Map<String?, String?>?
-      val nullableMapWithObject = list[11] as Map<String?, Any?>?
-      val aNullableEnum: AnEnum? = (list[12] as Int?)?.let {
+      val aNullableInt64 = list[2].let { if (it is Int) it.toLong() else it as Long? }
+      val aNullableDouble = list[3] as Double?
+      val aNullableByteArray = list[4] as ByteArray?
+      val aNullable4ByteArray = list[5] as IntArray?
+      val aNullable8ByteArray = list[6] as LongArray?
+      val aNullableFloatArray = list[7] as DoubleArray?
+      val aNullableList = list[8] as List<Any?>?
+      val aNullableMap = list[9] as Map<Any, Any?>?
+      val nullableNestedList = list[10] as List<List<Boolean?>?>?
+      val nullableMapWithAnnotations = list[11] as Map<String?, String?>?
+      val nullableMapWithObject = list[12] as Map<String?, Any?>?
+      val aNullableEnum: AnEnum? = (list[13] as Int?)?.let {
         AnEnum.ofRaw(it)
       }
-      val aNullableString = list[13] as String?
-      return AllNullableTypes(aNullableBool, aNullableInt, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableList, aNullableMap, nullableNestedList, nullableMapWithAnnotations, nullableMapWithObject, aNullableEnum, aNullableString)
+      val aNullableString = list[14] as String?
+      return AllNullableTypes(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableList, aNullableMap, nullableNestedList, nullableMapWithAnnotations, nullableMapWithObject, aNullableEnum, aNullableString)
     }
   }
   fun toList(): List<Any?> {
     return listOf<Any?>(
       aNullableBool,
       aNullableInt,
+      aNullableInt64,
       aNullableDouble,
       aNullableByteArray,
       aNullable4ByteArray,

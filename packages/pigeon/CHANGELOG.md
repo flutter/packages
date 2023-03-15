@@ -5,8 +5,14 @@
 * [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
 * [java] Removes legacy try catch from async apis.
 * [java] Removes legacy null check on non-nullable method arguments.
-* [cpp] Fixes wrong order of items in `FlutterError`
+* [cpp] Fixes wrong order of items in `FlutterError`.
 * Adds `FlutterError` handling integration tests for all platforms.
+
+## 9.0.7
+
+* [swift] Changes all ints to int64.
+  May require code updates to existing code.
+* Adds integration tests for int64.
 
 ## 9.0.6
 
