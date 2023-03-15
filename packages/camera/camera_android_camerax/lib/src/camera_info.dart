@@ -10,6 +10,7 @@ import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'live_camera_state.dart';
 
 /// Represents the metadata of a camera.
 ///
@@ -26,11 +27,6 @@ class CameraInfo extends JavaObject {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  /// Stream that emits an event when the related [Camera] instance starts
-  /// to close.
-  static final StreamController<bool> cameraClosingStreamController =
-      StreamController<bool>.broadcast();
-
   late final CameraInfoHostApiImpl _api;
 
   /// Gets sensor orientation degrees of camera.
@@ -38,8 +34,8 @@ class CameraInfo extends JavaObject {
       _api.getSensorRotationDegreesFromInstance(this);
 
   /// Starts listening for the camera closing.
-  Future<void> startListeningForCameraClosing() =>
-      _api.startListeningForCameraClosingFromInstance(this);
+  Future<LiveCameraState> getLiveCameraState() =>
+      _api.getLiveCameraStateFromInstance(this);
 }
 
 /// Host API implementation of [CameraInfo].
@@ -62,12 +58,13 @@ class CameraInfoHostApiImpl extends CameraInfoHostApi {
     return sensorRotationDegrees;
   }
 
-  Future<void> startListeningForCameraClosingFromInstance(
+  Future<LiveCameraState> getLiveCameraStateFromInstance(
       CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
         'No CameraInfo has the identifer of that which was requested.');
-    startListeningForCameraClosing(identifier!);
+    int? liveCameraStateId = await getLiveCameraState(identifier!);
+    return instanceManager.getInstanceWithWeakReference<LiveCameraState>(liveCameraStateId!)!;
   }
 }
 
@@ -99,10 +96,5 @@ class CameraInfoFlutterApiImpl extends CameraInfoFlutterApi {
             binaryMessenger: binaryMessenger, instanceManager: instanceManager);
       },
     );
-  }
-
-  @override
-  void onCameraClosing(int identifier) {
-    CameraInfo.cameraClosingStreamController.add(true);
   }
 }

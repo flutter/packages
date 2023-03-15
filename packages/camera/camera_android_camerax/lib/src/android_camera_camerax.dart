@@ -13,6 +13,7 @@ import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camerax_library.g.dart';
 import 'image_capture.dart';
+import 'live_camera_state.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
 import 'surface.dart';
@@ -34,6 +35,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// bound to the lifecycle of the camera it manages.
   @visibleForTesting
   Camera? camera;
+
+  LiveCameraState? liveCameraState;
 
   /// The [Preview] instance that can be configured to present a live camera preview.
   @visibleForTesting
@@ -167,7 +170,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
     CameraInfo cameraInfo = await camera!.getCameraInfo();
-    cameraInfo.startListeningForCameraClosing();
+    liveCameraState?.removeObservers();
+    liveCameraState = await cameraInfo.getLiveCameraState();
+    liveCameraState!.addObserver();
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -240,7 +245,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The camera started to close.
   @override
   Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
-    return CameraInfo.cameraClosingStreamController.stream
+    return LiveCameraState.cameraClosingStreamController.stream
         .map<CameraClosingEvent>((bool isCameraClosing) {
       assert(isCameraClosing);
       return CameraClosingEvent(cameraId);
@@ -333,7 +338,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
     CameraInfo cameraInfo = await camera!.getCameraInfo();
-    cameraInfo.startListeningForCameraClosing();
+    liveCameraState?.removeObservers();
+    liveCameraState = await cameraInfo.getLiveCameraState();
+    liveCameraState!.addObserver();
   }
 
   /// Unbinds [preview] instance to camera lifecycle controlled by the

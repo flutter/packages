@@ -18,7 +18,7 @@ import io.flutter.view.TextureRegistry;
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
-  private CameraInfoHostApiImpl cameraInfoHostApiImpl;
+  private LiveCameraStateHostApiImpl liveCameraStateHostApiImpl;
   private ProcessCameraProviderHostApiImpl processCameraProviderHostApi;
   private ImageCaptureHostApiImpl imageCaptureHostApi;
   public SystemServicesHostApiImpl systemServicesHostApi;
@@ -40,8 +40,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
             });
 
     // Set up Host APIs.
-    cameraInfoHostApiImpl = new CameraInfoHostApiImpl(binaryMessenger, instanceManager);
-    GeneratedCameraXLibrary.CameraInfoHostApi.setup(binaryMessenger, cameraInfoHostApiImpl);
+    GeneratedCameraXLibrary.CameraInfoHostApi.setup(binaryMessenger,  new CameraInfoHostApiImpl(binaryMessenger, instanceManager));
     GeneratedCameraXLibrary.CameraSelectorHostApi.setup(
         binaryMessenger, new CameraSelectorHostApiImpl(binaryMessenger, instanceManager));
     GeneratedCameraXLibrary.JavaObjectHostApi.setup(
@@ -58,6 +57,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApi);
     GeneratedCameraXLibrary.CameraHostApi.setup(
         binaryMessenger, new CameraHostApiImpl(binaryMessenger, instanceManager));
+    liveCameraStateHostApiImpl = new LiveCameraStateHostApiImpl(binaryMessenger, instanceManager);
+    GeneratedCameraXLibrary.LiveCameraStateHostApi.setup(binaryMessenger, liveCameraStateHostApiImpl);
   }
 
   @Override
@@ -84,7 +85,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
 
     Activity activity = activityPluginBinding.getActivity();
     processCameraProviderHostApi.setLifecycleOwner((LifecycleOwner) activity);
-    cameraInfoHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+    liveCameraStateHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
     systemServicesHostApi.setActivity(activity);
     systemServicesHostApi.setPermissionsRegistry(
         activityPluginBinding::addRequestPermissionsResultListener);
