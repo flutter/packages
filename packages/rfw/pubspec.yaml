@@ -16,4 +16,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  lcov_parser: ^0.1.2
+  lcov_parser: 0.1.2
