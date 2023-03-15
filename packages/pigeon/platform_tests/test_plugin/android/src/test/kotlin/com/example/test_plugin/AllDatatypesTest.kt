@@ -107,7 +107,7 @@ internal class AllDatatypesTest: TestCase() {
         assertNotNull(list[1])
         assertTrue(list[1] == 123L)
 
-        val list2 = listOf(null, 123, null, null, null, null, null, null, null, null, null, null, null, null)
+        val list2 = listOf(null, 123, null, null, null, null, null, null, null, null, null, null, null, null, null)
         val everything2 = AllNullableTypes.fromList(list2)
 
         assertEquals(everything.aNullableInt, everything2.aNullableInt)
