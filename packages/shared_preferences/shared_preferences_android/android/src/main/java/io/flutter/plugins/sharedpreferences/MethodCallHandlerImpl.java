@@ -45,6 +45,7 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
 
   private final ExecutorService executor;
   private final Handler handler;
+  private String prefix = "flutter.";
 
   /**
    * Constructs a {@link MethodCallHandlerImpl} instance. Creates a {@link
@@ -120,6 +121,10 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
           }
           commitAsync(clearEditor, result);
           break;
+        case "setPrefix":
+          prefix = call.argument("prefix");
+          result.success(true);
+          break;
         default:
           result.notImplemented();
           break;
@@ -186,7 +191,7 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     Map<String, ?> allPrefs = preferences.getAll();
     Map<String, Object> filteredPrefs = new HashMap<>();
     for (String key : allPrefs.keySet()) {
-      if (key.startsWith("flutter.")) {
+      if (key.startsWith(prefix)) {
         Object value = allPrefs.get(key);
         if (value instanceof String) {
           String stringValue = (String) value;

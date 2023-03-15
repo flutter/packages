@@ -67,6 +67,9 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
 
   /// Returns all key/value pairs persisted in this store.
   Future<Map<String, Object>> getAll();
+
+  /// Sets the prefix for all keys.
+  Future<bool> setPrefix(String prefix);
 }
 
 /// Stores data in memory.
@@ -79,6 +82,8 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
   /// Instantiates an in-memory preferences store containing a copy of [data].
   InMemorySharedPreferencesStore.withData(Map<String, Object> data)
       : _data = Map<String, Object>.from(data);
+
+  String _prefix = '';
 
   final Map<String, Object> _data;
 
@@ -95,13 +100,19 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> remove(String key) async {
-    _data.remove(key);
+    _data.remove(_prefix + key);
     return true;
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
-    _data[key] = value;
+    _data[_prefix + key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setPrefix(String prefix) async {
+    _prefix = prefix;
     return true;
   }
 }

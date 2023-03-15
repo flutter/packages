@@ -19,11 +19,13 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
     SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid();
   }
 
+  String _prefix = 'flutter.';
+
   @override
   Future<bool> remove(String key) async {
     return (await _kChannel.invokeMethod<bool>(
       'remove',
-      <String, dynamic>{'key': key},
+      <String, dynamic>{'key': _prefix + key},
     ))!;
   }
 
@@ -31,7 +33,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   Future<bool> setValue(String valueType, String key, Object value) async {
     return (await _kChannel.invokeMethod<bool>(
       'set$valueType',
-      <String, dynamic>{'key': key, 'value': value},
+      <String, dynamic>{'key': _prefix + key, 'value': value},
     ))!;
   }
 
@@ -49,5 +51,18 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
       return <String, Object>{};
     }
     return preferences;
+  }
+
+  @override
+  Future<bool> setPrefix(String prefix) async {
+    final bool success = (await _kChannel.invokeMethod<bool>(
+      'setPrefix',
+      <String, dynamic>{'prefix': prefix},
+    ))!;
+    if (success) {
+      _prefix = prefix;
+    }
+
+    return success;
   }
 }
