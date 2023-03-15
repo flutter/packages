@@ -186,10 +186,10 @@ For query parameters with a **non-nullable** type, you can define a default valu
 ```dart
 class MyRoute extends GoRouteData {
   MyRoute({this.queryParameter = 'defaultValue'});
-  final String from;
+  final String queryParameter;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => MyScreen(from: from);
+  Widget build(BuildContext context, GoRouterState state) => MyScreen(queryParameter: queryParameter);
 }
 ```
 

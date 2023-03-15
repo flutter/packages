@@ -6,11 +6,11 @@
 
 A Flutter plugin for iOS, Android and Web for playing back video on a Widget surface.
 
-|             | Android | iOS  | Web   |
-|-------------|---------|------|-------|
-| **Support** | SDK 16+ | 9.0+ | Any\* |
+|             | Android | iOS   | Web   |
+|-------------|---------|-------|-------|
+| **Support** | SDK 16+ | 11.0+ | Any\* |
 
-![The example app running in iOS](https://github.com/flutter/plugins/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
+![The example app running in iOS](https://github.com/flutter/packages/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
 
 ## Installation
 
@@ -61,7 +61,7 @@ void main() => runApp(const VideoApp());
 
 /// Stateful widget to fetch and then display video content.
 class VideoApp extends StatefulWidget {
-  const VideoApp({Key? key}) : super(key: key);
+  const VideoApp({super.key});
 
   @override
   _VideoAppState createState() => _VideoAppState();
@@ -123,7 +123,7 @@ class _VideoAppState extends State<VideoApp> {
 The following section contains usage information that goes beyond what is included in the
 documentation in order to give a more elaborate overview of the API.
 
-This is not complete as of now. You can contribute to this section by [opening a pull request](https://github.com/flutter/plugins/pulls).
+This is not complete as of now. You can contribute to this section by [opening a pull request](https://github.com/flutter/packages/pulls).
 
 ### Playback speed
 

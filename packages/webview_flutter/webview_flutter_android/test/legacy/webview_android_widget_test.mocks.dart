@@ -269,6 +269,15 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
+        Invocation.method(
+          #setTextZoom,
+          [textZoom],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
   _i2.WebSettings copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
@@ -953,36 +962,30 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageStarted,
+    )? onPageStarted,
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageFinished,
+    )? onPageFinished,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
       _i2.WebResourceError,
-    )?
-        onReceivedRequestError,
+    )? onReceivedRequestError,
     void Function(
       _i2.WebView,
       int,
       String,
       String,
-    )?
-        onReceivedError,
+    )? onReceivedError,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
-    )?
-        requestLoading,
+    )? requestLoading,
     void Function(
       _i2.WebView,
       String,
-    )?
-        urlLoading,
+    )? urlLoading,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

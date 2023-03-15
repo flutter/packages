@@ -11,6 +11,7 @@ import androidx.test.espresso.EspressoException;
  * hierarchy.
  */
 public final class NoMatchingWidgetException extends RuntimeException implements EspressoException {
+  private static final long serialVersionUID = 0L;
 
   public NoMatchingWidgetException(String message) {
     super(message);

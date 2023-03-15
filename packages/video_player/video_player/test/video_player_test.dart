@@ -18,7 +18,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
     implements VideoPlayerController {
   FakeController() : super(VideoPlayerValue(duration: Duration.zero));
 
-  FakeController.value(VideoPlayerValue value) : super(value);
+  FakeController.value(super.value);
 
   @override
   Future<void> dispose() async {
@@ -358,6 +358,22 @@ void main() {
             reason: 'Actual string: $uri');
       }, skip: kIsWeb /* Web does not support file assets. */);
 
+      test('file with headers (m3u8)', () async {
+        final VideoPlayerController controller = VideoPlayerController.file(
+          File('a.avi'),
+          httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+        );
+        await controller.initialize();
+
+        final String uri = fakeVideoPlayerPlatform.dataSources[0].uri!;
+        expect(uri.startsWith('file:///'), true, reason: 'Actual string: $uri');
+        expect(uri.endsWith('/a.avi'), true, reason: 'Actual string: $uri');
+
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'},
+        );
+      }, skip: kIsWeb /* Web does not support file assets. */);
       test('successful initialize on controller with error clears error',
           () async {
         final VideoPlayerController controller = VideoPlayerController.network(

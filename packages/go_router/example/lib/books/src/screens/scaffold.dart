@@ -25,8 +25,8 @@ class BookstoreScaffold extends StatelessWidget {
   const BookstoreScaffold({
     required this.selectedTab,
     required this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// Which tab of the scaffold to display.
   final ScaffoldTab selectedTab;

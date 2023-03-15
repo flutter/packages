@@ -1,3 +1,19 @@
+## 0.10.4+3
+
+* Clarifies explanation of endorsement in README.
+
+## 0.10.4+2
+
+* Aligns Dart and Flutter SDK constraints.
+* Updates compileSdkVersion to 33.
+* Fixes false positive for CamcorderProfile deprecation warning
+  that was already fixed.
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
+
+## 0.10.4+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.10.4
 
 * Temporarily fixes issue with requested video profiles being null by falling back to deprecated behavior in that case.

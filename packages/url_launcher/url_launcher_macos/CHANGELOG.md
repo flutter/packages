@@ -1,5 +1,11 @@
-## NEXT
+## 3.0.4
 
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 3.0.3
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
 
 ## 3.0.2

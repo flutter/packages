@@ -1,3 +1,12 @@
+## 2.1.5
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.1.4
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 2.1.3
 
 * Uses the new `sharedDarwinSource` flag when available.

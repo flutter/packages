@@ -95,9 +95,9 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: $PLUGIN_TOOL_COMMAND license-check
-        # The major and minor versions here should match the lowest version
+        # The major and minor version here should match the lowest version
         # analyzed in legacy_version_analyze.
-        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0 --min-min-dart-version=2.17.0
+        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0
         readme_script:
           - ./script/tool_runner.sh readme-check
           # Re-run with --require-excerpts, skipping packages that still need
@@ -122,9 +122,9 @@ task:
           # This check is only meaningful for PRs, as it validates changes
           # rather than state.
           - if [[ $CIRRUS_PR == "" ]]; then
-          -   ./script/tool_runner.sh federation-safety-check
-          - else
           -   echo "Only run in presubmit"
+          - else
+          -   ./script/tool_runner.sh federation-safety-check
           - fi
     - name: analyze
       env:
@@ -264,11 +264,13 @@ task:
       skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
       env:
         matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 5"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 5"
-          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 5"
-          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 5"
-          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 5"
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 7"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 7"
+          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 7"
+          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 7"
+          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 7"
+          PACKAGE_SHARDING: "--shardIndex 5 --shardCount 7"
+          PACKAGE_SHARDING: "--shardIndex 6 --shardCount 7"
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
@@ -318,13 +320,7 @@ task:
       build_script:
         - ./script/tool_runner.sh build-examples --web
       drive_script:
-        # TODO(stuartmorgan): Figure out why url_launcher_web is failing on stable and re-enable it:
-        # https://github.com/flutter/flutter/issues/121161
-        - if [[ "$CHANNEL" == "master" ]]; then
-        -   ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml
-        - else
-        -   ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml,url_launcher_web
-        - fi
+        - ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml
     - name: web_benchmarks_test
       env:
         matrix:

@@ -23,7 +23,7 @@ void main() => runApp(Bookstore());
 /// The book store view.
 class Bookstore extends StatelessWidget {
   /// Creates a [Bookstore].
-  Bookstore({Key? key}) : super(key: key);
+  Bookstore({super.key});
 
   final ValueKey<String> _scaffoldKey = const ValueKey<String>('App scaffold');
 
@@ -155,10 +155,9 @@ class Bookstore extends StatelessWidget {
 class FadeTransitionPage extends CustomTransitionPage<void> {
   /// Creates a [FadeTransitionPage].
   FadeTransitionPage({
-    required LocalKey key,
-    required Widget child,
+    required LocalKey super.key,
+    required super.child,
   }) : super(
-            key: key,
             transitionsBuilder: (BuildContext context,
                     Animation<double> animation,
                     Animation<double> secondaryAnimation,
@@ -166,8 +165,7 @@ class FadeTransitionPage extends CustomTransitionPage<void> {
                 FadeTransition(
                   opacity: animation.drive(_curveTween),
                   child: child,
-                ),
-            child: child);
+                ));
 
   static final CurveTween _curveTween = CurveTween(curve: Curves.easeIn);
 }

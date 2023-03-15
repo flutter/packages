@@ -1,3 +1,12 @@
+## 3.0.5
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 3.0.4
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 3.0.3
 
 * Converts internal implentation to Pigeon.
