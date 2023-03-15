@@ -69,7 +69,7 @@ class ImageInformation {
   int width;
   int height;
   String format;
-  List<ImagePlaneInformation> imagePlanesInformation;
+  List<ImagePlaneInformation?> imagePlanesInformation;
 }
 
 @HostApi(dartHostTestHandler: 'TestJavaObjectHostApi')
@@ -175,4 +175,9 @@ abstract class ImageAnalysisHostApi {
   void create(int identifier, ResolutionInfo? targetResolution);
 
   void setAnalyzer(int identifier);
+}
+
+@FlutterApi()
+abstract class ImageAnalysisFlutterApi {
+  void onImageAnalyzed(ImageInformation imageInformation);
 }

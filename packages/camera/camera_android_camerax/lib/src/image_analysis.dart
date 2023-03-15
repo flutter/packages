@@ -81,3 +81,40 @@ class ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     setAnalyzer(identifier!);
   }
 }
+
+/// Flutter API implementation of [ImageAnalysis].
+class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
+  /// Constructs a [ImageAnalysislutterApiImpl].
+  ImageAnalysisFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void onImageAnalyzed(ImageInformation imageInformation) {
+    List<CameraImagePlane> imagePlanes =
+      imageInformation.imagePlanesInformation!
+        .map((ImagePlaneInformation imagePlaneInformation) {
+          return CameraImagePlane(
+            bytes: imagePlaneInformation.bytes,
+            bytesPerRow: imagePlaneInformation.bytesPerRow,
+            bytesPerPixel: imagePlaneInformatino.bytesPerPixel,
+          );
+    });
+    return CameraImageData(
+      format: imageInformation.format,
+      planes: imagePlanes,
+      height: imageInformation.height,
+      width: imageInformation.width,
+    );
+  }
+}

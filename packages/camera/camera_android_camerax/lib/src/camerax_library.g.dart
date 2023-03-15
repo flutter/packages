@@ -60,6 +60,68 @@ class CameraPermissionsErrorData {
   }
 }
 
+class ImagePlaneInformation {
+  ImagePlaneInformation({
+    required this.bytesPerRow,
+    required this.bytesPerPixel,
+    required this.bytes,
+  });
+
+  int bytesPerRow;
+  int bytesPerPixel;
+  Uint8List bytes;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['bytesPerRow'] = bytesPerRow;
+    pigeonMap['bytesPerPixel'] = bytesPerPixel;
+    pigeonMap['bytes'] = bytes;
+    return pigeonMap;
+  }
+
+  static ImagePlaneInformation decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return ImagePlaneInformation(
+      bytesPerRow: pigeonMap['bytesPerRow']! as int,
+      bytesPerPixel: pigeonMap['bytesPerPixel']! as int,
+      bytes: pigeonMap['bytes']! as Uint8List,
+    );
+  }
+}
+
+class ImageInformation {
+  ImageInformation({
+    required this.width,
+    required this.height,
+    required this.format,
+    required this.imagePlanesInformation,
+  });
+
+  int width;
+  int height;
+  String format;
+  List<ImagePlaneInformation?> imagePlanesInformation;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['width'] = width;
+    pigeonMap['height'] = height;
+    pigeonMap['format'] = format;
+    pigeonMap['imagePlanesInformation'] = imagePlanesInformation;
+    return pigeonMap;
+  }
+
+  static ImageInformation decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return ImageInformation(
+      width: pigeonMap['width']! as int,
+      height: pigeonMap['height']! as int,
+      format: pigeonMap['format']! as String,
+      imagePlanesInformation: (pigeonMap['imagePlanesInformation'] as List<Object?>?)!.cast<ImagePlaneInformation?>(),
+    );
+  }
+}
+
 class _JavaObjectHostApiCodec extends StandardMessageCodec {
   const _JavaObjectHostApiCodec();
 }
@@ -976,6 +1038,61 @@ class ImageAnalysisHostApi {
       );
     } else {
       return;
+    }
+  }
+}
+
+class _ImageAnalysisFlutterApiCodec extends StandardMessageCodec {
+  const _ImageAnalysisFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ImageInformation) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is ImagePlaneInformation) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else 
+{
+      super.writeValue(buffer, value);
+    }
+  }
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:       
+        return ImageInformation.decode(readValue(buffer)!);
+      
+      case 129:       
+        return ImagePlaneInformation.decode(readValue(buffer)!);
+      
+      default:      
+        return super.readValueOfType(type, buffer);
+      
+    }
+  }
+}
+abstract class ImageAnalysisFlutterApi {
+  static const MessageCodec<Object?> codec = _ImageAnalysisFlutterApiCodec();
+
+  void onImageAnalyzed(ImageInformation imageInformation);
+  static void setup(ImageAnalysisFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ImageAnalysisFlutterApi.onImageAnalyzed', codec, binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null, 'Argument for dev.flutter.pigeon.ImageAnalysisFlutterApi.onImageAnalyzed was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final ImageInformation? arg_imageInformation = (args[0] as ImageInformation?);
+          assert(arg_imageInformation != null, 'Argument for dev.flutter.pigeon.ImageAnalysisFlutterApi.onImageAnalyzed was null, expected non-null ImageInformation.');
+          api.onImageAnalyzed(arg_imageInformation!);
+          return;
+        });
+      }
     }
   }
 }

@@ -137,6 +137,172 @@ public class GeneratedCameraXLibrary {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static class ImagePlaneInformation {
+    private @NonNull Long bytesPerRow;
+    public @NonNull Long getBytesPerRow() { return bytesPerRow; }
+    public void setBytesPerRow(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bytesPerRow\" is null.");
+      }
+      this.bytesPerRow = setterArg;
+    }
+
+    private @NonNull Long bytesPerPixel;
+    public @NonNull Long getBytesPerPixel() { return bytesPerPixel; }
+    public void setBytesPerPixel(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bytesPerPixel\" is null.");
+      }
+      this.bytesPerPixel = setterArg;
+    }
+
+    private @NonNull byte[] bytes;
+    public @NonNull byte[] getBytes() { return bytes; }
+    public void setBytes(@NonNull byte[] setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bytes\" is null.");
+      }
+      this.bytes = setterArg;
+    }
+
+    /** Constructor is private to enforce null safety; use Builder. */
+    private ImagePlaneInformation() {}
+    public static final class Builder {
+      private @Nullable Long bytesPerRow;
+      public @NonNull Builder setBytesPerRow(@NonNull Long setterArg) {
+        this.bytesPerRow = setterArg;
+        return this;
+      }
+      private @Nullable Long bytesPerPixel;
+      public @NonNull Builder setBytesPerPixel(@NonNull Long setterArg) {
+        this.bytesPerPixel = setterArg;
+        return this;
+      }
+      private @Nullable byte[] bytes;
+      public @NonNull Builder setBytes(@NonNull byte[] setterArg) {
+        this.bytes = setterArg;
+        return this;
+      }
+      public @NonNull ImagePlaneInformation build() {
+        ImagePlaneInformation pigeonReturn = new ImagePlaneInformation();
+        pigeonReturn.setBytesPerRow(bytesPerRow);
+        pigeonReturn.setBytesPerPixel(bytesPerPixel);
+        pigeonReturn.setBytes(bytes);
+        return pigeonReturn;
+      }
+    }
+    @NonNull Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("bytesPerRow", bytesPerRow);
+      toMapResult.put("bytesPerPixel", bytesPerPixel);
+      toMapResult.put("bytes", bytes);
+      return toMapResult;
+    }
+    static @NonNull ImagePlaneInformation fromMap(@NonNull Map<String, Object> map) {
+      ImagePlaneInformation pigeonResult = new ImagePlaneInformation();
+      Object bytesPerRow = map.get("bytesPerRow");
+      pigeonResult.setBytesPerRow((bytesPerRow == null) ? null : ((bytesPerRow instanceof Integer) ? (Integer)bytesPerRow : (Long)bytesPerRow));
+      Object bytesPerPixel = map.get("bytesPerPixel");
+      pigeonResult.setBytesPerPixel((bytesPerPixel == null) ? null : ((bytesPerPixel instanceof Integer) ? (Integer)bytesPerPixel : (Long)bytesPerPixel));
+      Object bytes = map.get("bytes");
+      pigeonResult.setBytes((byte[])bytes);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static class ImageInformation {
+    private @NonNull Long width;
+    public @NonNull Long getWidth() { return width; }
+    public void setWidth(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"width\" is null.");
+      }
+      this.width = setterArg;
+    }
+
+    private @NonNull Long height;
+    public @NonNull Long getHeight() { return height; }
+    public void setHeight(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"height\" is null.");
+      }
+      this.height = setterArg;
+    }
+
+    private @NonNull String format;
+    public @NonNull String getFormat() { return format; }
+    public void setFormat(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"format\" is null.");
+      }
+      this.format = setterArg;
+    }
+
+    private @NonNull List<ImagePlaneInformation> imagePlanesInformation;
+    public @NonNull List<ImagePlaneInformation> getImagePlanesInformation() { return imagePlanesInformation; }
+    public void setImagePlanesInformation(@NonNull List<ImagePlaneInformation> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"imagePlanesInformation\" is null.");
+      }
+      this.imagePlanesInformation = setterArg;
+    }
+
+    /** Constructor is private to enforce null safety; use Builder. */
+    private ImageInformation() {}
+    public static final class Builder {
+      private @Nullable Long width;
+      public @NonNull Builder setWidth(@NonNull Long setterArg) {
+        this.width = setterArg;
+        return this;
+      }
+      private @Nullable Long height;
+      public @NonNull Builder setHeight(@NonNull Long setterArg) {
+        this.height = setterArg;
+        return this;
+      }
+      private @Nullable String format;
+      public @NonNull Builder setFormat(@NonNull String setterArg) {
+        this.format = setterArg;
+        return this;
+      }
+      private @Nullable List<ImagePlaneInformation> imagePlanesInformation;
+      public @NonNull Builder setImagePlanesInformation(@NonNull List<ImagePlaneInformation> setterArg) {
+        this.imagePlanesInformation = setterArg;
+        return this;
+      }
+      public @NonNull ImageInformation build() {
+        ImageInformation pigeonReturn = new ImageInformation();
+        pigeonReturn.setWidth(width);
+        pigeonReturn.setHeight(height);
+        pigeonReturn.setFormat(format);
+        pigeonReturn.setImagePlanesInformation(imagePlanesInformation);
+        return pigeonReturn;
+      }
+    }
+    @NonNull Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("width", width);
+      toMapResult.put("height", height);
+      toMapResult.put("format", format);
+      toMapResult.put("imagePlanesInformation", imagePlanesInformation);
+      return toMapResult;
+    }
+    static @NonNull ImageInformation fromMap(@NonNull Map<String, Object> map) {
+      ImageInformation pigeonResult = new ImageInformation();
+      Object width = map.get("width");
+      pigeonResult.setWidth((width == null) ? null : ((width instanceof Integer) ? (Integer)width : (Long)width));
+      Object height = map.get("height");
+      pigeonResult.setHeight((height == null) ? null : ((height instanceof Integer) ? (Integer)height : (Long)height));
+      Object format = map.get("format");
+      pigeonResult.setFormat((String)format);
+      Object imagePlanesInformation = map.get("imagePlanesInformation");
+      pigeonResult.setImagePlanesInformation((List<ImagePlaneInformation>)imagePlanesInformation);
+      return pigeonResult;
+    }
+  }
+
   public interface Result<T> {
     void success(T result);
     void error(Throwable error);
@@ -1128,6 +1294,60 @@ public class GeneratedCameraXLibrary {
           channel.setMessageHandler(null);
         }
       }
+    }
+  }
+  private static class ImageAnalysisFlutterApiCodec extends StandardMessageCodec {
+    public static final ImageAnalysisFlutterApiCodec INSTANCE = new ImageAnalysisFlutterApiCodec();
+    private ImageAnalysisFlutterApiCodec() {}
+    @Override
+    protected Object readValueOfType(byte type, ByteBuffer buffer) {
+      switch (type) {
+        case (byte)128:         
+          return ImageInformation.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)129:         
+          return ImagePlaneInformation.fromMap((Map<String, Object>) readValue(buffer));
+        
+        default:        
+          return super.readValueOfType(type, buffer);
+        
+      }
+    }
+    @Override
+    protected void writeValue(ByteArrayOutputStream stream, Object value)     {
+      if (value instanceof ImageInformation) {
+        stream.write(128);
+        writeValue(stream, ((ImageInformation) value).toMap());
+      } else 
+      if (value instanceof ImagePlaneInformation) {
+        stream.write(129);
+        writeValue(stream, ((ImagePlaneInformation) value).toMap());
+      } else 
+{
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java.*/
+  public static class ImageAnalysisFlutterApi {
+    private final BinaryMessenger binaryMessenger;
+    public ImageAnalysisFlutterApi(BinaryMessenger argBinaryMessenger){
+      this.binaryMessenger = argBinaryMessenger;
+    }
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    static MessageCodec<Object> getCodec() {
+      return ImageAnalysisFlutterApiCodec.INSTANCE;
+    }
+
+    public void onImageAnalyzed(@NonNull ImageInformation imageInformationArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.ImageAnalysisFlutterApi.onImageAnalyzed", getCodec());
+      channel.send(new ArrayList<Object>(Arrays.asList(imageInformationArg)), channelReply -> {
+        callback.reply(null);
+      });
     }
   }
   private static Map<String, Object> wrapError(Throwable exception) {
