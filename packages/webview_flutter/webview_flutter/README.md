@@ -157,7 +157,7 @@ In version 3.0 and below, `WebViewController` could only be retrieved in a callb
 `WebView` was added to the widget tree. Now, `WebViewController` must be instantiated and can be
 used before it is added to the widget tree. See `Usage` section above for an example.
 
-### <a name="pookie"></a> Replacing WebView Functionality
+### Replacing WebView Functionality
 
 The `WebView` class has been removed and its functionality has been split into `WebViewController`
 and `WebViewWidget`.
