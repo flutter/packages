@@ -69,6 +69,9 @@ class RouteConfig {
   ) {
     assert(!reader.isNull, 'reader should not be null');
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
+    // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
+    // 5.2+ (when Flutter 3.4+ is on stable).
+    // ignore: deprecated_member_use
     final bool isShellRoute = type.element.name == 'TypedShellRoute';
 
     String? path;
