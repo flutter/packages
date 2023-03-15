@@ -97,7 +97,7 @@ task:
         license_script: $PLUGIN_TOOL_COMMAND license-check
         # The major and minor version here should match the lowest version
         # analyzed in legacy_version_analyze.
-        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0
+        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0 --allow-dependencies=script/configs/allowed_unpinned_deps.yaml --allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml
         readme_script:
           - ./script/tool_runner.sh readme-check
           # Re-run with --require-excerpts, skipping packages that still need
