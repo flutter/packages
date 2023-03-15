@@ -69,6 +69,8 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   Future<Map<String, Object>> getAll();
 
   /// Sets the prefix for all keys.
+  ///
+  /// If [prefix] is an empty string, no prefix will be added.
   Future<bool> setPrefix(String prefix);
 }
 
@@ -83,6 +85,7 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
   InMemorySharedPreferencesStore.withData(Map<String, Object> data)
       : _data = Map<String, Object>.from(data);
 
+  bool _usePrefix = false;
   String _prefix = '';
 
   final Map<String, Object> _data;
@@ -100,19 +103,24 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> remove(String key) async {
-    _data.remove(_prefix + key);
+    _data.remove(_addPrefixToKey(key));
     return true;
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
-    _data[_prefix + key] = value;
+    _data[_addPrefixToKey(key)] = value;
     return true;
   }
 
   @override
   Future<bool> setPrefix(String prefix) async {
+    _usePrefix = true;
     _prefix = prefix;
     return true;
+  }
+
+  String _addPrefixToKey(String key) {
+    return _usePrefix ? _prefix + key : key;
   }
 }

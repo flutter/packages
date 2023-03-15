@@ -17,13 +17,14 @@ const MethodChannel _kChannel =
 /// Data is persisted to disk asynchronously.
 class MethodChannelSharedPreferencesStore
     extends SharedPreferencesStorePlatform {
+  bool _usePrefix = false;
   String _prefix = 'flutter.';
 
   @override
   Future<bool> remove(String key) async {
     return (await _kChannel.invokeMethod<bool>(
       'remove',
-      <String, dynamic>{'key': key},
+      <String, dynamic>{'key': _addPrefixToKey(key)},
     ))!;
   }
 
@@ -31,7 +32,7 @@ class MethodChannelSharedPreferencesStore
   Future<bool> setValue(String valueType, String key, Object value) async {
     return (await _kChannel.invokeMethod<bool>(
       'set$valueType',
-      <String, dynamic>{'key': key, 'value': value},
+      <String, dynamic>{'key': _addPrefixToKey(key), 'value': value},
     ))!;
   }
 
@@ -58,9 +59,14 @@ class MethodChannelSharedPreferencesStore
       <String, dynamic>{'prefix': prefix},
     ))!;
     if (success) {
+      _usePrefix = true;
       _prefix = prefix;
     }
 
     return success;
+  }
+
+  String _addPrefixToKey(String key) {
+    return _usePrefix ? _prefix + key : key;
   }
 }
