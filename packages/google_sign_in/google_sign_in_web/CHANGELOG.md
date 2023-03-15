@@ -1,3 +1,16 @@
+## 0.11.1
+
+* Authentication:
+  * Adds web-only `renderButton` method and its configuration object, as a new
+    authentication mechanism.
+  * Prepares a `userDataEvents` Stream, so the Google Sign In Button can propagate
+    authentication changes to the core plugin.
+  * `signInSilently` now returns an authenticated (but not authorized) user.
+* Authorization:
+  * Implements the new `canAccessScopes` method.
+  * Ensures that the `requestScopes` call doesn't trigger user selection when the
+    current user is known (similar to what `signIn` does).
+
 ## 0.11.0+2
 
 * Clarifies explanation of endorsement in README.
