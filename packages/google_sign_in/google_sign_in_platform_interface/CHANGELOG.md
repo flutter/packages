@@ -1,5 +1,6 @@
-## NEXT
+## 2.4.0
 
+* Introduces: `canAccessScopes` method and `userDataEvents` stream.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.3.1
