@@ -1,10 +1,11 @@
-## 9.0.7
+## 9.1.0
 
 * [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
 * [kotlin] Adds a `FlutterError` exception for passing custom error details (code, message, details).
 * [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
 * [java] Removes legacy try catch from async apis.
 * [java] Removes legacy null check on non-nullable method arguments.
+* [cpp] Fixes wrong order of items in `FlutterError`
 * Adds `FlutterError` handling integration tests for all platforms.
 
 ## 9.0.6
@@ -38,8 +39,7 @@
 
 ## 9.0.0
 
-* **Breaking Change** Updates `DartOptions` to be immutable and 
-adds const to the constructor.
+* **Breaking Change** Updates `DartOptions` to be immutable and adds const to the constructor.
 * [java] Reverts `final` changes to Flutter Api classes.
 
 ## 8.0.0

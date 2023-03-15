@@ -226,15 +226,17 @@ abstract class Api2Host {
 
 ### Error Handling
 
+#### Kotlin, Java and Swift
+
 All Host API exceptions are translated into Flutter `PlatformException`.  
 * For synchronous methods, thrown exceptions will be caught and translated.  
-* For asynchronous methods, there is no default exception handling; exceptions should be returned via the provided callback.
+* For asynchronous methods, there is no default exception handling; errors should be returned via the provided callback.
 
-To pass custom details into `PlatformException` for error handling, use `FlutterError` in your Host API instead.
+To pass custom details into `PlatformException` for error handling, use `FlutterError` in your Host API.
 For example:
 
 ```kotlin
-// Kotlin Host API
+// Kotlin
 class MyApi : GeneratedApi {
   // For synchronous methods
   override fun doSomething() {
@@ -248,7 +250,20 @@ class MyApi : GeneratedApi {
 }
 ```
 
-Then you can implement error handling in the Flutter side:
+#### Objc and C++
+
+Likewise, Host API errors can be sent using the provided `FlutterError` class (translated into `PlatformException`).
+
+For synchronous methods:
+* Objc - Assign the `error` argument to a `FlutterError` reference.
+* C++ - Return a `FlutterError` directly (for void methods) or within an `ErrorOr` instance.
+
+For async methods:
+* Both - Return a `FlutterError` through the provided callback.
+
+#### Handling the errors
+
+Then you can implement error handling on the Flutter side:
 
 ```dart
 // Dart
