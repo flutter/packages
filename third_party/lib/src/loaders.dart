@@ -37,7 +37,8 @@ class SvgTheme {
   /// See: https://www.w3.org/TR/SVG11/coords.html#Units, https://en.wikipedia.org/wiki/X-height
   final double xHeight;
 
-  vg.SvgTheme _toVgTheme() {
+  /// Creates a [vg.SvgTheme] from this.
+  vg.SvgTheme toVgTheme() {
     return vg.SvgTheme(
       currentColor: vg.Color(currentColor.value),
       fontSize: fontSize,
@@ -122,7 +123,7 @@ abstract class SvgLoader<T> extends BytesLoader {
         return vg
             .encodeSvg(
               xml: provideSvg(message),
-              theme: theme._toVgTheme(),
+              theme: theme.toVgTheme(),
               colorMapper: colorMapper == null
                   ? null
                   : _DelegateVgColorMapper(colorMapper!),
@@ -189,7 +190,7 @@ class SvgBytesLoader extends SvgLoader<void> {
   final Uint8List bytes;
 
   @override
-  String provideSvg(void message) => utf8.decode(bytes);
+  String provideSvg(void message) => utf8.decode(bytes, allowMalformed: true);
 
   @override
   int get hashCode => Object.hash(svg, theme, colorMapper);
@@ -219,7 +220,7 @@ class SvgFileLoader extends SvgLoader<void> {
   @override
   String provideSvg(void message) {
     final Uint8List bytes = file.readAsBytesSync();
-    return utf8.decode(bytes);
+    return utf8.decode(bytes, allowMalformed: true);
   }
 
   @override
@@ -306,7 +307,7 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
   @override
   String provideSvg(ByteData? message) =>
-      utf8.decode(message!.buffer.asUint8List());
+      utf8.decode(message!.buffer.asUint8List(), allowMalformed: true);
 
   @override
   Object cacheKey(BuildContext? context) {
@@ -358,7 +359,8 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
   }
 
   @override
-  String provideSvg(Uint8List? message) => utf8.decode(message!);
+  String provideSvg(Uint8List? message) =>
+      utf8.decode(message!, allowMalformed: true);
 
   @override
   int get hashCode => Object.hash(url, headers, theme, colorMapper);
