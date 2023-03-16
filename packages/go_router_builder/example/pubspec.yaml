@@ -8,7 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  go_router: ^6.0.0
+  go_router: ^6.2.0
   provider: 6.0.5
 
 dev_dependencies:
