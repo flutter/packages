@@ -1,8 +1,9 @@
-## NEXT
+## 6.2.1
 
 - Aligns Dart and Flutter SDK constraints.
 - Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
+- Added `initialExtra` to **GoRouter** to pass extra data alongside `initialRoute`.
 
 ## 6.2.0
 
