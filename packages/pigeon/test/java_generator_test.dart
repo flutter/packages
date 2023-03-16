@@ -1336,4 +1336,25 @@ void main() {
     final String code = sink.toString();
     expect(code, contains(' extends StandardMessageCodec'));
   });
+
+  test('creates api error class for custom errors', () {
+    final Api api =
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[]);
+    final Root root = Root(
+      apis: <Api>[api],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaGenerator generator = JavaGenerator();
+    generator.generate(javaOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class FlutterError'));
+    expect(code, contains('if (exception instanceof FlutterError)'));
+    expect(code, contains('FlutterError error = (FlutterError) exception;'));
+    expect(code, contains('errorList.add(error.code);'));
+    expect(code, contains('errorList.add(error.getMessage());'));
+    expect(code, contains('errorList.add(error.details);'));
+  });
 }
