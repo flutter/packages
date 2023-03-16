@@ -28,10 +28,8 @@ const DocumentCommentSpecification _docCommentSpec =
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
   /// Creates a [KotlinOptions] object
-  const KotlinOptions({
-    this.package,
-    this.copyrightHeader,
-  });
+  const KotlinOptions(
+      {this.package, this.copyrightHeader, this.errorClassName});
 
   /// The package where the generated class will live.
   final String? package;
@@ -39,12 +37,16 @@ class KotlinOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
+  /// The name of the error class used for passing custom error parameters.
+  final String? errorClassName;
+
   /// Creates a [KotlinOptions] from a Map representation where:
   /// `x = KotlinOptions.fromMap(x.toMap())`.
   static KotlinOptions fromMap(Map<String, Object> map) {
     return KotlinOptions(
       package: map['package'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      errorClassName: map['errorClassName'] as String?,
     );
   }
 
@@ -54,6 +56,7 @@ class KotlinOptions {
     final Map<String, Object> result = <String, Object>{
       if (package != null) 'package': package!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (errorClassName != null) 'errorClassName': errorClassName!,
     };
     return result;
   }
@@ -400,6 +403,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   ///     fun setUp(binaryMessenger: BinaryMessenger, api: Api) {...}
   ///   }
   /// }
+  ///
   @override
   void writeHostApi(
     KotlinOptions generatorOptions,
@@ -548,7 +552,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         indent.writeln('wrapped = listOf<Any?>($call)');
                       }
                     }, addTrailingNewline: false);
-                    indent.add(' catch (exception: Error) ');
+                    indent.add(' catch (exception: Throwable) ');
                     indent.addScoped('{', '}', () {
                       indent.writeln('wrapped = wrapError(exception)');
                     });
@@ -621,25 +625,57 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     });
   }
 
-  void _writeWrapError(Indent indent) {
+  void _writeWrapError(KotlinOptions generatorOptions, Indent indent) {
     indent.newln();
-    indent.write('private fun wrapError(exception: Throwable): List<Any> ');
+    indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
-      indent.write('return ');
-      indent.addScoped('listOf<Any>(', ')', () {
-        indent.writeln('exception.javaClass.simpleName,');
-        indent.writeln('exception.toString(),');
-        indent.writeln(
-            '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
+      indent.write(
+          'if (exception is ${generatorOptions.errorClassName ?? "FlutterError"}) ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('listOf(', ')', () {
+          indent.writeln('exception.code,');
+          indent.writeln('exception.message,');
+          indent.writeln('exception.details');
+        });
+      }, addTrailingNewline: false);
+      indent.addScoped(' else {', '}', () {
+        indent.write('return ');
+        indent.addScoped('listOf(', ')', () {
+          indent.writeln('exception.javaClass.simpleName,');
+          indent.writeln('exception.toString(),');
+          indent.writeln(
+              '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
+        });
       });
     });
+  }
+
+  void _writeErrorClass(KotlinOptions generatorOptions, Indent indent) {
+    indent.newln();
+    indent.writeln('/**');
+    indent.writeln(
+        ' * Error class for passing custom error details to Flutter via a thrown PlatformException.');
+    indent.writeln(' * @property code The error code.');
+    indent.writeln(' * @property message The error message.');
+    indent.writeln(
+        ' * @property details The error details. Must be a datatype supported by the api codec.');
+    indent.writeln(' */');
+    indent.write('class ${generatorOptions.errorClassName ?? "FlutterError"} ');
+    indent.addScoped('(', ')', () {
+      indent.writeln('val code: String,');
+      indent.writeln('override val message: String? = null,');
+      indent.writeln('val details: Any? = null');
+    }, addTrailingNewline: false);
+    indent.addln(' : Throwable()');
   }
 
   @override
   void writeGeneralUtilities(
       KotlinOptions generatorOptions, Root root, Indent indent) {
     _writeWrapResult(indent);
-    _writeWrapError(indent);
+    _writeWrapError(generatorOptions, indent);
+    _writeErrorClass(generatorOptions, indent);
   }
 }
 
