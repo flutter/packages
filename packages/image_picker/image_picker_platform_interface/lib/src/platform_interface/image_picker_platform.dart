@@ -117,7 +117,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
   /// Defaults to [CameraDevice.rear].
   ///
-  /// In Android, the MainActivity can be destroyed for various fo reasons. If that happens, the result will be lost
+  /// In Android, the MainActivity can be destroyed for various reasons. If that happens, the result will be lost
   /// in this call. You can then call [retrieveLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
@@ -227,7 +227,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
   /// Defaults to [CameraDevice.rear].
   ///
-  /// In Android, the MainActivity can be destroyed for various fo reasons. If that happens, the result will be lost
+  /// In Android, the MainActivity can be destroyed for various reasons. If that happens, the result will be lost
   /// in this call. You can then call [getLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
