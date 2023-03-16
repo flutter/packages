@@ -3,8 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-device=com.apple.CoreSimulator.SimDeviceType.iPhone-13
-os=com.apple.CoreSimulator.SimRuntime.iOS-16-0
+# The name here must match remove_simulator.sh
+readonly DEVICE_NAME=Flutter-iPhone
+readonly DEVICE=com.apple.CoreSimulator.SimDeviceType.iPhone-13
+readonly OS=com.apple.CoreSimulator.SimRuntime.iOS-16-0
 
 xcrun simctl list
-xcrun simctl create Flutter-iPhone "$device" "$os" | xargs xcrun simctl boot
+xcrun simctl create "$DEVICE_NAME" "$DEVICE" "$OS" | xargs xcrun simctl boot
