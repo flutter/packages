@@ -500,12 +500,11 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       pubspec.dependencies,
       pubspec.devDependencies
     ]) {
-      for (final MapEntry<String, Dependency> entry in dependencies.entries) {
-        final String name = entry.key;
-        if (!_shouldAllowDependency(name, entry.value)) {
+      dependencies.forEach((String name, Dependency dependency) {
+        if (!_shouldAllowDependency(name, dependency)) {
           badDependencies.add(name);
         }
-      }
+      });
     }
     if (badDependencies.isEmpty) {
       return null;
