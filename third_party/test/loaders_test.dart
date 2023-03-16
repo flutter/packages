@@ -3,11 +3,28 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  setUp(() {
+    svg.cache.clear();
+    svg.cache.maximumSize = 100;
+  });
+
+  test('SvgTheme updates the cache', () async {
+    const TestLoader loaderA =
+        TestLoader(theme: SvgTheme(currentColor: Color(0xFFABCDEF)));
+    const TestLoader loaderB =
+        TestLoader(theme: SvgTheme(currentColor: Color(0xFFFEDCBA)));
+    final ByteData bytesA = await loaderA.loadBytes(null);
+    final ByteData bytesB = await loaderB.loadBytes(null);
+    expect(identical(bytesA, bytesB), false);
+    expect(svg.cache.count, 2);
+  });
+
   test('Uses the cache', () async {
     const TestLoader loader = TestLoader();
     final ByteData bytes = await loader.loadBytes(null);
     final ByteData bytes2 = await loader.loadBytes(null);
     expect(identical(bytes, bytes2), true);
+    expect(svg.cache.count, 1);
   });
 
   test('Empty cache', () async {

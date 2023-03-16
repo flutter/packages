@@ -18,6 +18,12 @@ class SvgTheme {
   /// and [fontSize].
   ///
   /// Defaults the [fontSize] to 14.
+  // WARNING WARNING WARNING
+  // If this codebase ever decides to default the font size to something off the
+  // BuildContext, caching logic will have to be updated. The font size can
+  // temporarily and unexpectedly change during route transitions in common
+  // patterns used in `MaterialApp`. This busts caching and destroys
+  // performance.
   const SvgTheme({
     this.currentColor = const Color(0xFF000000),
     this.fontSize = 14,
@@ -143,6 +149,39 @@ abstract class SvgLoader<T> extends BytesLoader {
   @override
   Future<ByteData> loadBytes(BuildContext? context) {
     return svg.cache.putIfAbsent(cacheKey(context), () => _load(context));
+  }
+
+  @override
+  SvgCacheKey cacheKey(BuildContext? context) {
+    return SvgCacheKey(keyData: this, theme: theme);
+  }
+}
+
+/// A [SvgTheme] aware cache key.
+///
+/// The theme must be part of the cache key to ensure that otherwise similar
+/// SVGs get cached separately.
+@immutable
+class SvgCacheKey {
+  /// See [SvgCacheKey].
+  const SvgCacheKey({required this.theme, required this.keyData});
+
+  /// The theme for this cached SVG.
+  final SvgTheme theme;
+
+  /// The other key data for the SVG.
+  ///
+  /// For most loaders, using the loader object itself is suitable.
+  final Object keyData;
+
+  @override
+  int get hashCode => Object.hash(theme, keyData);
+
+  @override
+  bool operator ==(Object other) {
+    return other is SvgCacheKey &&
+        other.theme == theme &&
+        other.keyData == keyData;
   }
 }
 
@@ -310,11 +349,14 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
       utf8.decode(message!.buffer.asUint8List(), allowMalformed: true);
 
   @override
-  Object cacheKey(BuildContext? context) {
-    return _AssetByteLoaderCacheKey(
-      assetName,
-      packageName,
-      _resolveBundle(context),
+  SvgCacheKey cacheKey(BuildContext? context) {
+    return SvgCacheKey(
+      theme: theme,
+      keyData: _AssetByteLoaderCacheKey(
+        assetName,
+        packageName,
+        _resolveBundle(context),
+      ),
     );
   }
 
