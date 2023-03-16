@@ -67,6 +67,18 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         callback);
   }
 
+  /** Passes arguments from {@link WebChromeClient#onGeolocationPermissionsShowPrompt} to Dart. */
+  public void onGeolocationPermissionsShowPrompt(
+      WebChromeClient webChromeClient,
+      String origin,
+      Reply<GeneratedAndroidWebView.GeoPermissionsHandleResult> callback) {
+    onGeolocationPermissionsShowPrompt(
+            Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
+            origin,
+            callback
+    );
+  }
+
   private long getIdentifierForClient(WebChromeClient webChromeClient) {
     final Long identifier = instanceManager.getIdentifierForStrongReference(webChromeClient);
     if (identifier == null) {

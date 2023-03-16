@@ -7,6 +7,7 @@ package io.flutter.plugins.webviewflutter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
+import android.webkit.GeolocationPermissions;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -48,6 +49,13 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     @Override
     public void onProgressChanged(WebView view, int progress) {
       flutterApi.onProgressChanged(this, view, (long) progress, reply -> {});
+    }
+
+    @Override
+    public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+      flutterApi.onGeolocationPermissionsShowPrompt(this, origin, reply -> {
+        callback.invoke(reply.getOrigin(), reply.getIsAllow(), reply.getIsRetain());
+      });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

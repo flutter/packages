@@ -152,6 +152,37 @@ class WebViewPoint {
   }
 }
 
+class GeoPermissionsHandleResult {
+  GeoPermissionsHandleResult({
+    required this.origin,
+    required this.isAllow,
+    required this.isRetain,
+  });
+
+  String origin;
+
+  bool isAllow;
+
+  bool isRetain;
+
+  Object encode() {
+    return <Object?>[
+      origin,
+      isAllow,
+      isRetain,
+    ];
+  }
+
+  static GeoPermissionsHandleResult decode(Object result) {
+    result as List<Object?>;
+    return GeoPermissionsHandleResult(
+      origin: result[0]! as String,
+      isAllow: result[1]! as bool,
+      isRetain: result[2]! as bool,
+    );
+  }
+}
+
 /// Handles methods calls to the native Java Object class.
 ///
 /// Also handles calls to remove the reference to an instance with `dispose`.
@@ -1853,13 +1884,40 @@ class FlutterAssetManagerHostApi {
   }
 }
 
+class _WebChromeClientFlutterApiCodec extends StandardMessageCodec {
+  const _WebChromeClientFlutterApiCodec();
+
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is GeoPermissionsHandleResult) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return GeoPermissionsHandleResult.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 abstract class WebChromeClientFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _WebChromeClientFlutterApiCodec();
 
   void onProgressChanged(int instanceId, int webViewInstanceId, int progress);
 
   Future<List<String?>> onShowFileChooser(
       int instanceId, int webViewInstanceId, int paramsInstanceId);
+
+  Future<GeoPermissionsHandleResult> onGeolocationPermissionsShowPrompt(
+      int instanceId, String origin);
 
   static void setup(WebChromeClientFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1913,6 +1971,30 @@ abstract class WebChromeClientFlutterApi {
               'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onShowFileChooser was null, expected non-null int.');
           final List<String?> output = await api.onShowFileChooser(
               arg_instanceId!, arg_webViewInstanceId!, arg_paramsInstanceId!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+          'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null int.');
+          final String? arg_origin = (args[1] as String?);
+          assert(arg_origin != null,
+          'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null String.');
+          final GeoPermissionsHandleResult output = await api
+              .onGeolocationPermissionsShowPrompt(arg_instanceId!, arg_origin!);
           return output;
         });
       }

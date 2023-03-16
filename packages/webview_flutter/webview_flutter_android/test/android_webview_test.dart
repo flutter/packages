@@ -857,6 +857,31 @@ void main() {
         expect(result, containsAllInOrder(<Object?>[mockWebView, 76]));
       });
 
+      test('onGeolocationPermissionsShowPrompt', () async {
+        const String origin = 'https://www.xxx.com';
+        final GeoPermissionsHandleResult uniObj = GeoPermissionsHandleResult(
+          origin: origin,
+          isAllow: true,
+          isRetain: false,
+        );
+        late final GeoPermissionsHandleResultProxy result;
+        when(mockWebChromeClient.onGeolocationPermissionsShowPrompt).thenReturn(
+          (String origin) async {
+            return result = GeoPermissionsHandleResultProxy.instance(
+              result: uniObj,
+            );
+          },
+        );
+
+        await expectLater(
+          flutterApi.onGeolocationPermissionsShowPrompt(
+            mockWebChromeClientInstanceId,
+            origin,
+          ),
+          completion(uniObj),
+        );
+      });
+
       test('onShowFileChooser', () async {
         late final List<Object> result;
         when(mockWebChromeClient.onShowFileChooser).thenReturn(

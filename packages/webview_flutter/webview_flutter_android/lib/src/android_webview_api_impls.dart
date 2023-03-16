@@ -885,6 +885,26 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
 
     return Future<List<String>>.value(const <String>[]);
   }
+
+  @override
+  Future<GeoPermissionsHandleResult> onGeolocationPermissionsShowPrompt(
+      int instanceId, String origin) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+    if (instance.onGeolocationPermissionsShowPrompt != null) {
+      return instance.onGeolocationPermissionsShowPrompt!(origin).then(
+        // Get the real transfer Object
+        (GeoPermissionsHandleResultProxy value) => value.geoPermissionsHandleResult,
+      );
+    }
+    return Future<GeoPermissionsHandleResult>.value(
+      GeoPermissionsHandleResult(
+        origin: origin,
+        isAllow: false,
+        isRetain: false,
+      ),
+    );
+  }
 }
 
 /// Host api implementation for [WebStorage].

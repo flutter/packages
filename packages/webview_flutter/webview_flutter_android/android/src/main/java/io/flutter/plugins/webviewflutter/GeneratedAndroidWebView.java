@@ -434,6 +434,104 @@ public class GeneratedAndroidWebView {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class GeoPermissionsHandleResult {
+    private @NonNull String origin;
+
+    public @NonNull String getOrigin() {
+      return origin;
+    }
+
+    public void setOrigin(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"origin\" is null.");
+      }
+      this.origin = setterArg;
+    }
+
+    private @NonNull Boolean isAllow;
+
+    public @NonNull Boolean getIsAllow() {
+      return isAllow;
+    }
+
+    public void setIsAllow(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isAllow\" is null.");
+      }
+      this.isAllow = setterArg;
+    }
+
+    private @NonNull Boolean isRetain;
+
+    public @NonNull Boolean getIsRetain() {
+      return isRetain;
+    }
+
+    public void setIsRetain(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isRetain\" is null.");
+      }
+      this.isRetain = setterArg;
+    }
+
+    /** Constructor is private to enforce null safety; use Builder. */
+    private GeoPermissionsHandleResult() {}
+
+    public static final class Builder {
+
+      private @Nullable String origin;
+
+      public @NonNull Builder setOrigin(@NonNull String setterArg) {
+        this.origin = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean isAllow;
+
+      public @NonNull Builder setIsAllow(@NonNull Boolean setterArg) {
+        this.isAllow = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean isRetain;
+
+      public @NonNull Builder setIsRetain(@NonNull Boolean setterArg) {
+        this.isRetain = setterArg;
+        return this;
+      }
+
+      public @NonNull GeoPermissionsHandleResult build() {
+        GeoPermissionsHandleResult pigeonReturn = new GeoPermissionsHandleResult();
+        pigeonReturn.setOrigin(origin);
+        pigeonReturn.setIsAllow(isAllow);
+        pigeonReturn.setIsRetain(isRetain);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(origin);
+      toListResult.add(isAllow);
+      toListResult.add(isRetain);
+      return toListResult;
+    }
+
+    static @NonNull GeoPermissionsHandleResult fromList(@NonNull ArrayList<Object> list) {
+      GeoPermissionsHandleResult pigeonResult = new GeoPermissionsHandleResult();
+      Object origin = list.get(0);
+      pigeonResult.setOrigin((String) origin);
+      Object isAllow = list.get(1);
+      pigeonResult.setIsAllow((Boolean) isAllow);
+      Object isRetain = list.get(2);
+      pigeonResult.setIsRetain((Boolean) isRetain);
+      return pigeonResult;
+    }
+  }
+
+
   public interface Result<T> {
     void success(T result);
 
@@ -2668,6 +2766,33 @@ public class GeneratedAndroidWebView {
       }
     }
   }
+
+  private static class WebChromeClientFlutterApiCodec extends StandardMessageCodec {
+    public static final WebChromeClientFlutterApiCodec INSTANCE = new WebChromeClientFlutterApiCodec();
+
+    private WebChromeClientFlutterApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return GeoPermissionsHandleResult.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof GeoPermissionsHandleResult) {
+        stream.write(128);
+        writeValue(stream, ((GeoPermissionsHandleResult) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class WebChromeClientFlutterApi {
     private final BinaryMessenger binaryMessenger;
@@ -2682,7 +2807,7 @@ public class GeneratedAndroidWebView {
     }
     /** The codec used by WebChromeClientFlutterApi. */
     static MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return WebChromeClientFlutterApiCodec.INSTANCE;
     }
 
     public void onProgressChanged(
@@ -2718,6 +2843,24 @@ public class GeneratedAndroidWebView {
             List<String> output = (List<String>) channelReply;
             callback.reply(output);
           });
+    }
+
+    public void onGeolocationPermissionsShowPrompt(
+            @NonNull Long instanceIdArg,
+            @NonNull String originArg,
+            Reply<GeoPermissionsHandleResult> callback) {
+      BasicMessageChannel<Object> channel =
+              new BasicMessageChannel<>(
+                      binaryMessenger,
+                      "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt",
+                      getCodec());
+      channel.send(
+              new ArrayList<Object>(Arrays.asList(instanceIdArg, originArg)),
+              channelReply -> {
+                @SuppressWarnings("ConstantConditions")
+                GeoPermissionsHandleResult output = (GeoPermissionsHandleResult) channelReply;
+                callback.reply(output);
+              });
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */

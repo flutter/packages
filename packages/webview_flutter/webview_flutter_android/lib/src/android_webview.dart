@@ -880,7 +880,11 @@ class DownloadListener extends JavaObject {
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
-  WebChromeClient({this.onProgressChanged, this.onShowFileChooser})
+  WebChromeClient({
+    this.onProgressChanged,
+    this.onShowFileChooser,
+    this.onGeolocationPermissionsShowPrompt,
+  })
       : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
@@ -894,6 +898,7 @@ class WebChromeClient extends JavaObject {
   WebChromeClient.detached({
     this.onProgressChanged,
     this.onShowFileChooser,
+    this.onGeolocationPermissionsShowPrompt,
   }) : super.detached();
 
   /// Pigeon Host Api implementation for [WebChromeClient].
@@ -915,6 +920,11 @@ class WebChromeClient extends JavaObject {
     WebView webView,
     FileChooserParams params,
   )? onShowFileChooser;
+
+  /// Indicates the client should handle geolocation permissions.
+  final Future<GeoPermissionsHandleResultProxy> Function(
+      String origin,
+  )? onGeolocationPermissionsShowPrompt;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -950,8 +960,44 @@ class WebChromeClient extends JavaObject {
     return WebChromeClient.detached(
       onProgressChanged: onProgressChanged,
       onShowFileChooser: onShowFileChooser,
+      onGeolocationPermissionsShowPrompt: onGeolocationPermissionsShowPrompt,
     );
   }
+}
+
+/// The result of the user handle geo permissions.
+/// Used to convert Dart data to Java Object.
+///
+/// see https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback
+class GeoPermissionsHandleResultProxy {
+  /// Used to convert Dart data to Java Object.
+  ///
+  /// [origin] the origin for which permissions are set
+  ///
+  /// [isAllow] whether or not the origin should be allowed to use the Geolocation API
+  ///
+  /// [isRetain] whether the permission should be retained beyond the lifetime of a page currently being displayed by a WebView
+  ///
+  GeoPermissionsHandleResultProxy.proxy({
+    required String origin,
+    required bool isAllow,
+    required bool isRetain,
+  })  : geoPermissionsHandleResult = GeoPermissionsHandleResult(
+          origin: origin,
+          isAllow: isAllow,
+          isRetain: isRetain,
+        ),
+        super();
+
+  /// only for test
+  @visibleForTesting
+  GeoPermissionsHandleResultProxy.instance({
+    required GeoPermissionsHandleResult result,
+  })  : geoPermissionsHandleResult = result,
+        super();
+
+  /// The Java Object to transfer.
+  final GeoPermissionsHandleResult geoPermissionsHandleResult;
 }
 
 /// Parameters received when a [WebChromeClient] should show a file chooser.

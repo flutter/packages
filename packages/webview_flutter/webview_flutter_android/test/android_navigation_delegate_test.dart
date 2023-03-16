@@ -480,6 +480,7 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   CapturingWebChromeClient({
     super.onProgressChanged,
     super.onShowFileChooser,
+    super.onGeolocationPermissionsShowPrompt,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }

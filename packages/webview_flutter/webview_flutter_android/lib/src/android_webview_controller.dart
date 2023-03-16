@@ -108,6 +108,30 @@ class AndroidWebViewController extends PlatformWebViewController {
         }
       };
     }),
+    onGeolocationPermissionsShowPrompt: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String origin) {
+        if (weakReference.target?._onGeolocationPermissionsShowPrompt != null) {
+          return weakReference
+              .target!
+              ._onGeolocationPermissionsShowPrompt!(origin).then(
+            (GeolocationPermissionsResult value) =>
+                android_webview.GeoPermissionsHandleResultProxy.proxy(
+              origin: value.origin,
+              isRetain: value.isRetain,
+              isAllow: value.isAllow,
+            ),
+          );
+        }
+        // default don't allow
+        return Future<android_webview.GeoPermissionsHandleResultProxy>.value(
+            android_webview.GeoPermissionsHandleResultProxy.proxy(
+          origin: origin,
+          isAllow: false,
+          isRetain: false,
+        ));
+      };
+    }),
     onShowFileChooser: withWeakReferenceTo(this,
         (WeakReference<AndroidWebViewController> weakReference) {
       return (android_webview.WebView webView,
@@ -133,6 +157,9 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
+
+  Future<GeolocationPermissionsResult> Function(String)?
+      _onGeolocationPermissionsShowPrompt;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -373,6 +400,48 @@ class AndroidWebViewController extends PlatformWebViewController {
       onShowFileSelector != null,
     );
   }
+
+  ///
+  /// Notify the host application that web content from the specified origin is attempting to use the Geolocation API,
+  /// but no permission state is currently set for that origin.
+  /// The host application should invoke the specified callback with the desired permission state.
+  /// See GeolocationPermissions for details.
+  ///
+  /// Note that for applications targeting Android N and later SDKs (API level > Build.VERSION_CODES.M)
+  /// this method is only called for requests originating from secure origins such as https.
+  /// On non-secure origins geolocation requests are automatically denied.
+  ///
+  /// see https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsShowPrompt(java.lang.String,%20android.webkit.GeolocationPermissions.Callback)
+  ///
+  Future<void> setOnGeolocationPermissionsShowPrompt(
+      Future<GeolocationPermissionsResult> Function(String origin)?
+          onGeolocationPermissionsShowPrompt) async {
+    _onGeolocationPermissionsShowPrompt = onGeolocationPermissionsShowPrompt;
+  }
+}
+
+/// The result of the user handle geo permissions.
+/// Used for dart layer data transfer.
+///
+/// see https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback
+class GeolocationPermissionsResult {
+  /// [origin] the origin for which permissions are set
+  /// [isAllow] whether or not the origin should be allowed to use the Geolocation API
+  /// [isRetain] whether the permission should be retained beyond the lifetime of a page currently being displayed by a WebView
+  GeolocationPermissionsResult({
+    required this.origin,
+    required this.isAllow,
+    required this.isRetain,
+  });
+
+  /// the origin for which permissions are set
+  String origin;
+
+  /// whether or not the origin should be allowed to use the Geolocation API
+  bool isAllow;
+
+  /// whether the permission should be retained beyond the lifetime of a page currently being displayed by a WebView
+  bool isRetain;
 }
 
 /// Mode of how to select files for a file chooser.
