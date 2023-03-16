@@ -9,8 +9,29 @@ part of 'shell_route_example.dart';
 // **************************************************************************
 
 List<RouteBase> get $appRoutes => [
+      $loginRoute,
       $myShellRouteData,
     ];
+
+RouteBase get $loginRoute => GoRouteData.$route(
+      path: '/login',
+      factory: $LoginRouteExtension._fromState,
+    );
+
+extension $LoginRouteExtension on LoginRoute {
+  static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
+
+  String get location => GoRouteData.$location(
+        '/login',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
 
 RouteBase get $myShellRouteData => ShellRouteData.$route(
       factory: $MyShellRouteDataExtension._fromState,

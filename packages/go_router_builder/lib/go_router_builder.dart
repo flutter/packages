@@ -22,15 +22,6 @@ import 'src/go_router_generator.dart';
 ///
 /// Not meant to be invoked by hand-authored code.
 Builder goRouterBuilder(BuilderOptions options) => SharedPartBuilder(
-      const <Generator>[
-        GoRouterGenerator(
-          annotation: 'TypedGoRoute',
-          routeClass: 'GoRouteData',
-        ),
-        GoRouterGenerator(
-          annotation: 'TypedShellRoute',
-          routeClass: 'ShellRouteData',
-        ),
-      ],
+      const <Generator>[GoRouterGenerator()],
       'go_router',
     );
