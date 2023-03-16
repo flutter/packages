@@ -864,10 +864,9 @@ void main() {
           isAllow: true,
           isRetain: false,
         );
-        late final GeoPermissionsHandleResultProxy result;
         when(mockWebChromeClient.onGeolocationPermissionsShowPrompt).thenReturn(
           (String origin) async {
-            return result = GeoPermissionsHandleResultProxy.instance(
+            return GeoPermissionsHandleResultProxy.instance(
               result: uniObj,
             );
           },
