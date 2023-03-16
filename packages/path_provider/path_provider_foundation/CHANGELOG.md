@@ -1,3 +1,7 @@
+## 2.2.0
+
+* Adds support for `getContainerPath` on iOS.
+
 ## 2.1.3
 
 * Clarifies explanation of endorsement in README.

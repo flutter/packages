@@ -65,6 +65,11 @@ std::optional<FlutterError> TestPlugin::ThrowErrorFromVoid() {
   return FlutterError("An error");
 }
 
+ErrorOr<std::optional<flutter::EncodableValue>>
+TestPlugin::ThrowFlutterError() {
+  return FlutterError("code", "message", EncodableValue("details"));
+}
+
 ErrorOr<int64_t> TestPlugin::EchoInt(int64_t an_int) { return an_int; }
 
 ErrorOr<double> TestPlugin::EchoDouble(double a_double) { return a_double; }
@@ -209,6 +214,11 @@ void TestPlugin::ThrowAsyncError(
 
 void TestPlugin::ThrowAsyncErrorFromVoid(
     std::function<void(std::optional<FlutterError> reply)> result) {
+  result(FlutterError("code", "message", EncodableValue("details")));
+}
+
+void TestPlugin::ThrowAsyncFlutterError(
+    std::function<void(ErrorOr<std::optional<EncodableValue>> reply)> result) {
   result(FlutterError("code", "message", EncodableValue("details")));
 }
 
