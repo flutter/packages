@@ -11,7 +11,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// This protocol exists to allow injecting an alternate implementation for testing.
 @protocol FULLauncher
 - (BOOL)canOpenURL:(NSURL *)url;
-- (void)openURL:(NSURL*)url options:(NSDictionary<UIApplicationOpenExternalURLOptionsKey, id> *)options completionHandler:(void (^ __nullable)(BOOL success))completion;
+- (void)openURL:(NSURL *)url
+              options:(NSDictionary<UIApplicationOpenExternalURLOptionsKey, id> *)options
+    completionHandler:(void (^__nullable)(BOOL success))completion;
 @end
 
 NS_ASSUME_NONNULL_END
