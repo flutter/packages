@@ -1,6 +1,10 @@
-## 2.4.2
+## 2.4.3
 
 * Synchronizes `VideoPlayerValue.isPlaying` with `AVPlayer`.
+
+## 2.4.2
+
+* Makes seekTo async and only complete when AVPlayer.seekTo completes.
 
 ## 2.4.1
 
