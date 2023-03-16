@@ -310,16 +310,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// A new streamed frame is available.
   ///
   /// Listening to this stream will start streaming, and canceling will stop.
-  /// Pausing will throw a [CameraException], as pausing the stream would cause
+  /// [?????] Pausing will throw a [CameraException], as pausing the stream would cause
   /// very high memory usage; to temporarily stop receiving frames, cancel, then
   /// listen again later.
-  ///
-  ///
-  // TODO(bmparr): Add options to control streaming settings (e.g.,
-  // resolution and FPS).
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
-    throw UnimplementedError('onStreamedFrameAvailable() is not implemented.');
+    // options not used, cameraId not used
+    // TODO(camsim99): I should probably bind image analysis here actually...
+    // or at the very least, I need to be aware of the state of the stream.
+    return ImageAnalysis.onStreamedFrameAvailableStreamController.stream;
   }
 
   // Methods for binding UseCases to the lifecycle of the camera controlled

@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
+import 'package:camera_platform_interface/camera_platform_interface.dart'
+    show CameraImageData, CameraImageFormat, CameraImagePlane, ImageFormatGroup;
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'camerax_library.g.dart';
@@ -22,6 +26,10 @@ class ImageAnalysis extends UseCase {
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     _api.createFromInstance(this, targetResolution);
   }
+
+  /// Stream that emits an event whenever a frame is received for image streaming.
+  static final StreamController<CameraImageData> onStreamedFrameAvailableStreamController =
+      StreamController<CameraImageData>.broadcast();
 
   late final ImageAnalysisHostApiImpl _api;
 
@@ -101,20 +109,36 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
 
   @override
   void onImageAnalyzed(ImageInformation imageInformation) {
+    print('HELLO?!?!?!?!?');
     List<CameraImagePlane> imagePlanes =
       imageInformation.imagePlanesInformation!
-        .map((ImagePlaneInformation imagePlaneInformation) {
+        .map((ImagePlaneInformation? imagePlaneInformation) {
           return CameraImagePlane(
-            bytes: imagePlaneInformation.bytes,
-            bytesPerRow: imagePlaneInformation.bytesPerRow,
-            bytesPerPixel: imagePlaneInformatino.bytesPerPixel,
+            bytes: imagePlaneInformation!.bytes,
+            bytesPerRow: imagePlaneInformation!.bytesPerRow,
+            bytesPerPixel: imagePlaneInformation!.bytesPerPixel,
           );
-    });
-    return CameraImageData(
-      format: imageInformation.format,
+    }).toList();
+
+    CameraImageData data = CameraImageData(
+      format: CameraImageFormat(_imageFormatGroupFromFormatCode(imageInformation.format), raw: imageInformation.format),
       planes: imagePlanes,
       height: imageInformation.height,
       width: imageInformation.width,
     );
+
+    print('CAMILLE');
+
+    ImageAnalysis.onStreamedFrameAvailableStreamController.add(data);
+  }
+
+  ImageFormatGroup _imageFormatGroupFromFormatCode(int format) {
+    switch (format) {
+      case 35: // android.graphics.ImageFormat.YUV_420_888
+        return ImageFormatGroup.yuv420;
+      case 256: // android.graphics.ImageFormat.JPEG
+        return ImageFormatGroup.jpeg;
+    }
+    return ImageFormatGroup.unknown;
   }
 }

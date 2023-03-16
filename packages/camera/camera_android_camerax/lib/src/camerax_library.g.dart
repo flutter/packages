@@ -99,7 +99,7 @@ class ImageInformation {
 
   int width;
   int height;
-  String format;
+  int format;
   List<ImagePlaneInformation?> imagePlanesInformation;
 
   Object encode() {
@@ -116,7 +116,7 @@ class ImageInformation {
     return ImageInformation(
       width: pigeonMap['width']! as int,
       height: pigeonMap['height']! as int,
-      format: pigeonMap['format']! as String,
+      format: pigeonMap['format']! as int,
       imagePlanesInformation: (pigeonMap['imagePlanesInformation'] as List<Object?>?)!.cast<ImagePlaneInformation?>(),
     );
   }

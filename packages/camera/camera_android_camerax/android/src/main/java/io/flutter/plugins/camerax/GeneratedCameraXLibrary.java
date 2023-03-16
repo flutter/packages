@@ -231,9 +231,9 @@ public class GeneratedCameraXLibrary {
       this.height = setterArg;
     }
 
-    private @NonNull String format;
-    public @NonNull String getFormat() { return format; }
-    public void setFormat(@NonNull String setterArg) {
+    private @NonNull Long format;
+    public @NonNull Long getFormat() { return format; }
+    public void setFormat(@NonNull Long setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"format\" is null.");
       }
@@ -262,8 +262,8 @@ public class GeneratedCameraXLibrary {
         this.height = setterArg;
         return this;
       }
-      private @Nullable String format;
-      public @NonNull Builder setFormat(@NonNull String setterArg) {
+      private @Nullable Long format;
+      public @NonNull Builder setFormat(@NonNull Long setterArg) {
         this.format = setterArg;
         return this;
       }
@@ -296,7 +296,7 @@ public class GeneratedCameraXLibrary {
       Object height = map.get("height");
       pigeonResult.setHeight((height == null) ? null : ((height instanceof Integer) ? (Integer)height : (Long)height));
       Object format = map.get("format");
-      pigeonResult.setFormat((String)format);
+      pigeonResult.setFormat((format == null) ? null : ((format instanceof Integer) ? (Integer)format : (Long)format));
       Object imagePlanesInformation = map.get("imagePlanesInformation");
       pigeonResult.setImagePlanesInformation((List<ImagePlaneInformation>)imagePlanesInformation);
       return pigeonResult;

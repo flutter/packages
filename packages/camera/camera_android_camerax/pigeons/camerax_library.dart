@@ -68,7 +68,7 @@ class ImageInformation {
 
   int width;
   int height;
-  String format;
+  int format;
   List<ImagePlaneInformation?> imagePlanesInformation;
 }
 
