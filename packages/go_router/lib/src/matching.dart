@@ -63,8 +63,31 @@ class RouteMatchList {
   /// Generate the full path (ex: `'/family/:fid/person/:pid'`) of a list of
   /// [RouteMatch].
   ///
-  /// This methods considers that [matches] is ordered accorresponding to how
-  /// the routes are given to `GoRouter`.
+  /// This methods considers that [matches]'s elements verify the go route
+  /// structure given to `GoRouter`.
+  /// For example, if the routes structure is
+  ///
+  /// ```dart
+  /// GoRoute(
+  ///   path: '/a',
+  ///   routes: [
+  ///     GoRoute(
+  ///       path: 'b',
+  ///       routes: [
+  ///         GoRoute(
+  ///           path: 'c',
+  ///         ),
+  ///       ],
+  ///     ),
+  ///   ],
+  /// ),
+  /// ```
+  ///
+  /// [matches] will be a list of [RouteMatch] corresponding to the routes:
+  ///
+  /// ```dart
+  /// [RouteMatchA(), RouteMatchB(), RouteMatchC()]
+  /// ```
   static String _generateFullPath(Iterable<RouteMatch> matches) {
     final StringBuffer buffer = StringBuffer();
     bool addsSlash = false;
@@ -83,7 +106,9 @@ class RouteMatchList {
 
   final List<RouteMatch> _matches;
 
-  /// the full path pattern that matches the uri. For example:
+  /// the full path pattern that matches the uri.
+  ///
+  /// For example:
   ///
   /// ```dart
   /// '/family/:fid/person/:pid'
@@ -169,17 +194,18 @@ class MatcherError extends Error {
   }
 }
 
-/// Returns the list of `RouteMatch` corresponding to the given [loc]. For
-/// example, for a given [loc] `/a/b/c/d`, this function will return the list of
-/// [RouteBase] `[GoRouteA(), GoRouterB(), GoRouteC(), GoRouterD()]`.
+/// Returns the list of `RouteMatch` corresponding to the given [loc].
+///
+/// For example, for a given [loc] `/a/b/c/d`, this function will return the
+/// list of [RouteBase] `[GoRouteA(), GoRouterB(), GoRouteC(), GoRouterD()]`.
 ///
 /// - [loc] is the complete URL to match (without the query parameters). For
 ///   example, for the URL `/a/b?c=0`, [loc] will be `/a/b`.
-/// - [restBloc] is the remaining part of the URL to match while [parentBloc] is
-///   the part of the URL that has already been matched. For examples, for the
-///   URL `/a/b/c/d`, at some point, [restBloc] would be `/c/d` and [parentBloc]
-///   will be `/a/b`.
-/// - [routes] are the possible [RouteBase] to match to [restBloc].
+/// - [restLoc] is the remaining part of the URL to match while [parentSubloc]
+///   is the part of the URL that has already been matched. For examples, for
+///   the URL `/a/b/c/d`, at some point, [restLoc] would be `/c/d` and
+///   [parentSubloc] will be `/a/b`.
+/// - [routes] are the possible [RouteBase] to match to [restLoc].
 List<RouteMatch>? _getLocRouteRecursively({
   required String loc,
   required String restLoc,
