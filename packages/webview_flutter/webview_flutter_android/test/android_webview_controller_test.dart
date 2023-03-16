@@ -77,9 +77,9 @@ void main() {
                       android_webview.WebView webView,
                       android_webview.FileChooserParams params,
                     )? onShowFileChooser,
-                    Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-                      String origin,
-                    )? onGeolocationPermissionsShowPrompt,
+                    Future<android_webview.GeoPermissionsHandleResultProxy>
+                            Function(String origin)?
+                        onGeolocationPermissionsShowPrompt,
                   }) =>
                       MockWebChromeClient(),
               createAndroidWebView: ({required bool useHybridComposition}) =>
@@ -567,8 +567,8 @@ void main() {
             android_webview.FileChooserParams params,
           )? onShowFileChooser,
           Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-            String origin,
-          )? onGeolocationPermissionsShowPrompt,
+                  String origin)?
+              onGeolocationPermissionsShowPrompt,
         }) {
           onShowFileChooserCallback = onShowFileChooser!;
           return mockWebChromeClient;

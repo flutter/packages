@@ -343,8 +343,8 @@ abstract class WebChromeClientFlutterApi {
 
   @async
   GeoPermissionsHandleResult onGeolocationPermissionsShowPrompt(
-      int instanceId,
-      String origin,
+    int instanceId,
+    String origin,
   );
 }
 

@@ -113,8 +113,8 @@ class AndroidWebViewController extends PlatformWebViewController {
       return (String origin) {
         if (weakReference.target?._onGeolocationPermissionsShowPrompt != null) {
           return weakReference
-              .target!
-              ._onGeolocationPermissionsShowPrompt!(origin).then(
+              .target!._onGeolocationPermissionsShowPrompt!(origin)
+              .then(
             (GeolocationPermissionsResult value) =>
                 android_webview.GeoPermissionsHandleResultProxy.proxy(
               origin: value.origin,
