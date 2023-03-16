@@ -1,6 +1,10 @@
-## 0.8.6+2
+## 0.8.6+3
 
 * Switches to Pigeon for internal implementation.
+
+## 0.8.6+2
+
+* Fixes null pointer exception in `saveResult`.
 
 ## 0.8.6+1
 
