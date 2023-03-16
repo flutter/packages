@@ -151,7 +151,7 @@ public class InstanceManager {
    * Adds a new instance that was instantiated from the host platform.
    *
    * @param instance the instance to be stored. This must be unique to all other added instances.
-   * @return the unique identifier stored with instance. If the manager is closed, returns -1.
+   * @return the unique identifier (>= 0) stored with instance. If the manager is closed, returns -1.
    */
   public long addHostCreatedInstance(Object instance) {
     if (isClosed()) {

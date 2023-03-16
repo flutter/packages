@@ -23,10 +23,6 @@ class InstanceManager {
   /// Constructs an [InstanceManager].
   InstanceManager({required void Function(int) onWeakReferenceRemoved}) {
     this.onWeakReferenceRemoved = (int identifier) {
-      debugPrint(
-        'InstanceManager: Removing a weak reference to a '
-        '${_strongInstances[identifier]?.runtimeType} with identifier: $identifier',
-      );
       _weakInstances.remove(identifier);
       onWeakReferenceRemoved(identifier);
     };
@@ -107,9 +103,6 @@ class InstanceManager {
   /// This does not remove the the weak referenced instance associtated with
   /// [identifier]. This can be done with [removeWeakReference].
   T? remove<T extends Object>(int identifier) {
-    debugPrint(
-      'InstanceManager: Removing a strong reference to a ${_strongInstances[identifier]?.runtimeType} with identifier: $identifier',
-    );
     _copyCallbacks.remove(identifier);
     return _strongInstances.remove(identifier) as T?;
   }

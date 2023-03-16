@@ -41,13 +41,8 @@ class JavaObject {
   }
 
   /// Release the weak reference to the [instance].
-  ///
-  /// Uses the [globalInstanceManager] by default.
-  static void dispose(
-    JavaObject instance, {
-    @visibleForTesting InstanceManager? instanceManager,
-  }) {
-    (instanceManager ?? globalInstanceManager).removeWeakReference(instance);
+  static void dispose(JavaObject instance) {
+    instance._api.instanceManager.removeWeakReference(instance);
   }
 
   // ignore: unused_field
