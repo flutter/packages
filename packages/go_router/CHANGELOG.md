@@ -1,4 +1,4 @@
-## 6.2.1
+## 6.3.0
 
 - Aligns Dart and Flutter SDK constraints.
 - Updates compileSdkVersion to 33.
