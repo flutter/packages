@@ -103,11 +103,11 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   @override
   Future<void> initializeRun() async {
     // Find all local, published packages.
-    await for (final File pubspecFile in packagesDir.parent
+    for (final File pubspecFile in (await packagesDir.parent
         .list(recursive: true, followLinks: false)
-        .where((FileSystemEntity entity) =>
-            entity is File && p.basename(entity.path) == 'pubspec.yaml')
-        .map((FileSystemEntity file) => file as File)) {
+        .toList())
+        .whereType<File>()
+        .where((File entity) => p.basename(entity.path) == 'pubspec.yaml')) {
       final Pubspec? pubspec = _tryParsePubspec(pubspecFile.readAsStringSync());
       if (pubspec != null && pubspec.publishTo != 'none') {
         _localPackages.add(pubspec.name);
