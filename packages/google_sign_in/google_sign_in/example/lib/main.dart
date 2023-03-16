@@ -10,9 +10,9 @@ import 'dart:convert' show json;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
-import 'package:google_sign_in_web/google_sign_in_web.dart' as web;
 import 'package:http/http.dart' as http;
+
+import 'src/sign_in_button.dart';
 
 const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
@@ -183,14 +183,9 @@ class SignInDemoState extends State<SignInDemo> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           const Text('You are not currently signed in.'),
-          if (kIsWeb)
-            (GoogleSignInPlatform.instance as web.GoogleSignInPlugin)
-                .renderButton(),
-          if (!kIsWeb)
-            ElevatedButton(
-              onPressed: _handleSignIn,
-              child: const Text('SIGN IN'),
-            ),
+          buildSignInButton(
+            onPressed: _handleSignIn,
+          ),
         ],
       );
     }
