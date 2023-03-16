@@ -30,6 +30,9 @@ import java.util.WeakHashMap;
  */
 @SuppressWarnings("unchecked")
 public class InstanceManager {
+  /// Constant returned from #addHostCreatedInstance() if the manager is closed.
+  public static final int INSTANCE_CLOSED = -1;
+
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -87,8 +90,7 @@ public class InstanceManager {
    */
   @Nullable
   public <T> T remove(long identifier) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
+    if (assertNotClosed()) {
       return null;
     }
     return (T) strongInstances.remove(identifier);
@@ -112,8 +114,7 @@ public class InstanceManager {
    */
   @Nullable
   public Long getIdentifierForStrongReference(Object instance) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
+    if (assertNotClosed()) {
       return null;
     }
     final Long identifier = identifiers.get(instance);
@@ -137,8 +138,7 @@ public class InstanceManager {
    *     unique.
    */
   public void addDartCreatedInstance(Object instance, long identifier) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
+    if (assertNotClosed()) {
       return;
     }
     addInstance(instance, identifier);
@@ -149,12 +149,14 @@ public class InstanceManager {
    *
    * @param instance the instance to be stored. This must be unique to all other added instances.
    * @return the unique identifier stored with instance. If the manager is closed, returns -1.
+   *     Otherwise, returns a value >= 0.
    */
   public long addHostCreatedInstance(Object instance) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
-      return -1;
-    } else if (containsInstance(instance)) {
+    if (assertNotClosed()) {
+      return INSTANCE_CLOSED;
+    }
+
+    if (containsInstance(instance)) {
       throw new IllegalArgumentException(
           String.format("Instance of `%s` has already been added.", instance.getClass()));
     }
@@ -173,10 +175,10 @@ public class InstanceManager {
    */
   @Nullable
   public <T> T getInstance(long identifier) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
+    if (assertNotClosed()) {
       return null;
     }
+
     final WeakReference<T> instance = (WeakReference<T>) weakInstances.get(identifier);
     if (instance != null) {
       return instance.get();
@@ -192,8 +194,7 @@ public class InstanceManager {
    *     `false`.
    */
   public boolean containsInstance(Object instance) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
+    if (assertNotClosed()) {
       return false;
     }
     return identifiers.containsKey(instance);
@@ -258,5 +259,13 @@ public class InstanceManager {
     weakInstances.put(identifier, weakReference);
     weakReferencesToIdentifiers.put(weakReference, identifier);
     strongInstances.put(identifier, instance);
+  }
+
+  private boolean assertNotClosed() {
+    if (isClosed()) {
+      Log.w(TAG, CLOSED_WARNING);
+      return true;
+    }
+    return false;
   }
 }
