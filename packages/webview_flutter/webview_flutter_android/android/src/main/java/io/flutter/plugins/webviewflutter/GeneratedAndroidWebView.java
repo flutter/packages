@@ -2768,7 +2768,7 @@ public class GeneratedAndroidWebView {
 
   private static class WebChromeClientFlutterApiCodec extends StandardMessageCodec {
     public static final WebChromeClientFlutterApiCodec INSTANCE =
-            new WebChromeClientFlutterApiCodec();
+        new WebChromeClientFlutterApiCodec();
 
     private WebChromeClientFlutterApiCodec() {}
 
