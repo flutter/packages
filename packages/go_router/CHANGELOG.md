@@ -1,5 +1,3 @@
-## NEXT
-
 ## 6.3.0
 
 - Aligns Dart and Flutter SDK constraints.
