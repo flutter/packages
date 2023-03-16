@@ -59,11 +59,16 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     int redirectLimit = 5,
     bool routerNeglect = false,
     String? initialLocation,
+    Object? initialExtra,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
-  }) : backButtonDispatcher = RootBackButtonDispatcher() {
+  }) : backButtonDispatcher = RootBackButtonDispatcher(),
+        assert(
+          initialExtra == null || initialLocation != null,
+          'initialLocation must be set in order to use initialExtra',
+        ) {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -82,9 +87,12 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     );
 
     _routeInformationProvider = GoRouteInformationProvider(
-        initialRouteInformation: RouteInformation(
-            location: _effectiveInitialLocation(initialLocation)),
-        refreshListenable: refreshListenable);
+      initialRouteInformation: RouteInformation(
+        location: _effectiveInitialLocation(initialLocation),
+        state: initialExtra,
+      ),
+      refreshListenable: refreshListenable,
+    );
 
     _routerDelegate = GoRouterDelegate(
       configuration: _routeConfiguration,
