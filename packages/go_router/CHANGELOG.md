@@ -1,11 +1,10 @@
 ## NEXT
 
+## 6.3.0
+
 - Aligns Dart and Flutter SDK constraints.
 - Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
-
-## 6.3.0
-
 - Adds `navigatorKey` to `TypedShellRoute`
 - Adds `parentNavigatorKey` to `TypedGoRoute`
 
@@ -27,7 +26,7 @@
 
 ## 6.0.8
 
-* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+- Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
 
 ## 6.0.7
 
