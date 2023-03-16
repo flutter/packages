@@ -26,7 +26,7 @@ Future<void> main() async {
 /// The home widget of this app.
 class ButtonConfiguratorDemo extends StatefulWidget {
   /// A const constructor for the Widget.
-  const ButtonConfiguratorDemo({Key? key}) : super(key: key);
+  const ButtonConfiguratorDemo({super.key});
 
   @override
   State createState() => _ButtonConfiguratorState();

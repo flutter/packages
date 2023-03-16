@@ -11,14 +11,20 @@ import 'dom.dart';
 /// An HTMLElementView widget that resizes with its contents.
 class FlexHtmlElementView extends StatefulWidget {
   /// Constructor
-  const FlexHtmlElementView(
-      {super.key,
-      required this.viewType,
-      this.onPlatformViewCreated,
-      this.initialSize});
+  const FlexHtmlElementView({
+    super.key,
+    required this.viewType,
+    this.onPlatformViewCreated,
+    this.initialSize,
+  });
 
+  /// See [HtmlElementView.viewType].
   final String viewType;
+
+  /// See [HtmlElementView.onPlatformViewCreated].
   final PlatformViewCreatedCallback? onPlatformViewCreated;
+
+  /// The initial Size for the widget, before it starts tracking its contents.
   final Size? initialSize;
 
   @override

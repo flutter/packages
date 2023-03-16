@@ -91,18 +91,21 @@ Widget _renderLocaleCard(
     required List<String> locales,
     void Function(String?)? onChanged}) {
   return _renderConfigCard(title: 'locale', children: <Widget>[
-    DropdownButton<String>(
-      items: locales
-          .map((String locale) => DropdownMenuItem<String>(
-                value: locale,
-                child: Text(locale),
-              ))
-          .toList(),
-      value: value,
-      onChanged: onChanged,
-      isExpanded: true,
+    Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-    )
+      child: DropdownButton<String>(
+        items: locales
+            .map((String locale) => DropdownMenuItem<String>(
+                  value: locale,
+                  child: Text(locale),
+                ))
+            .toList(),
+        value: value,
+        onChanged: onChanged,
+        isExpanded: true,
+        // padding: const EdgeInsets.symmetric(horizontal: 16), // Prefer padding here!
+      ),
+    ),
   ]);
 }
 
@@ -156,8 +159,10 @@ Widget _renderConfigCard(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            title: Text(title),
-            titleTextStyle: const TextStyle(fontWeight: FontWeight.bold),
+            title: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             dense: true,
           ),
           ...children,
