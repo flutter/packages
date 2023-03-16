@@ -1,6 +1,8 @@
-## NEXT
+## 6.1.0
 
 * Aligns Dart and Flutter SDK constraints.
+* Adds the `VideoEventType.isPlayingStateUpdate` event to track changes in play / pause state with
+  the underlying video player.
 
 ## 6.0.2
 
