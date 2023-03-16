@@ -2061,7 +2061,7 @@ void main() {
         GoRoute(
           path: '/',
           builder: (BuildContext context, GoRouterState state) =>
-          const HomeScreen(),
+              const HomeScreen(),
           routes: <GoRoute>[
             GoRoute(
               path: 'dummy',
