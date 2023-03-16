@@ -224,6 +224,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   const TypedGoRoute({
     required this.path,
     this.routes = const <TypedRoute<RouteData>>[],
+    this.parentNavigatorKey,
   });
 
   /// The path that corresponds to this route.
@@ -237,6 +238,9 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   ///
   /// See [RouteBase.routes].
   final List<TypedRoute<RouteData>> routes;
+
+  /// {@macro go_router.GoRoute.parentNavigatorKey}
+  final GlobalKey<NavigatorState>? parentNavigatorKey;
 }
 
 /// A superclass for each typed shell route descendant
@@ -245,12 +249,16 @@ class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// Default const constructor
   const TypedShellRoute({
     this.routes = const <TypedRoute<RouteData>>[],
+    this.navigatorKey,
   });
 
   /// Child route definitions.
   ///
   /// See [RouteBase.routes].
   final List<TypedRoute<RouteData>> routes;
+
+  /// {@macro go_router.ShellRoute.navigatorKey}
+  final GlobalKey<NavigatorState>? navigatorKey;
 }
 
 /// Internal class used to signal that the default page behavior should be used.
