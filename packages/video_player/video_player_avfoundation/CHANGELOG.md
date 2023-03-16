@@ -1,3 +1,7 @@
+## 2.4.2
+
+* Makes seekTo async and only complete when AVPlayer.seekTo completes.
+
 ## 2.4.1
 
 * Clarifies explanation of endorsement in README.

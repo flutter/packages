@@ -132,7 +132,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
     indent.writeln(
-        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})');
+        '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})');
     if (generatorOptions.useGeneratedAnnotation ?? false) {
       indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
     }
@@ -606,46 +606,36 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                 : _javaTypeForDartType(method.returnType);
             indent.writeln(
                 'ArrayList<Object> wrapped = new ArrayList<Object>();');
-            indent.write('try ');
-            indent.addScoped('{', '}', () {
-              final List<String> methodArgument = <String>[];
-              if (method.arguments.isNotEmpty) {
-                indent.writeln(
-                    'ArrayList<Object> args = (ArrayList<Object>) message;');
-                indent.writeln('assert args != null;');
-                enumerate(method.arguments, (int index, NamedType arg) {
-                  // The StandardMessageCodec can give us [Integer, Long] for
-                  // a Dart 'int'.  To keep things simple we just use 64bit
-                  // longs in Pigeon with Java.
-                  final bool isInt = arg.type.baseName == 'int';
-                  final String argType =
-                      isInt ? 'Number' : _javaTypeForDartType(arg.type);
-                  final String argName = _getSafeArgumentName(index, arg);
-                  final String argExpression = isInt
-                      ? '($argName == null) ? null : $argName.longValue()'
-                      : argName;
-                  String accessor = 'args.get($index)';
-                  if (isEnum(root, arg.type)) {
-                    accessor = _intToEnum(accessor, arg.type.baseName);
-                  } else {
-                    accessor = _cast(accessor, javaType: argType);
-                  }
-                  indent.writeln('$argType $argName = $accessor;');
-                  if (!arg.type.isNullable) {
-                    indent.write('if ($argName == null) ');
-                    indent.addScoped('{', '}', () {
-                      indent.writeln(
-                          'throw new NullPointerException("$argName unexpectedly null.");');
-                    });
-                  }
-                  methodArgument.add(argExpression);
-                });
-              }
-              if (method.isAsynchronous) {
-                final String resultValue =
-                    method.returnType.isVoid ? 'null' : 'result';
-                const String resultName = 'resultCallback';
-                indent.format('''
+            final List<String> methodArgument = <String>[];
+            if (method.arguments.isNotEmpty) {
+              indent.writeln(
+                  'ArrayList<Object> args = (ArrayList<Object>) message;');
+              enumerate(method.arguments, (int index, NamedType arg) {
+                // The StandardMessageCodec can give us [Integer, Long] for
+                // a Dart 'int'.  To keep things simple we just use 64bit
+                // longs in Pigeon with Java.
+                final bool isInt = arg.type.baseName == 'int';
+                final String argType =
+                    isInt ? 'Number' : _javaTypeForDartType(arg.type);
+                final String argName = _getSafeArgumentName(index, arg);
+                final String argExpression = isInt
+                    ? '($argName == null) ? null : $argName.longValue()'
+                    : argName;
+                String accessor = 'args.get($index)';
+                if (isEnum(root, arg.type)) {
+                  accessor = _intToEnum(accessor, arg.type.baseName);
+                } else if (argType != 'Object') {
+                  accessor = _cast(accessor, javaType: argType);
+                }
+                indent.writeln('$argType $argName = $accessor;');
+                methodArgument.add(argExpression);
+              });
+            }
+            if (method.isAsynchronous) {
+              final String resultValue =
+                  method.returnType.isVoid ? 'null' : 'result';
+              const String resultName = 'resultCallback';
+              indent.format('''
 Result<$returnType> $resultName =
 \t\tnew Result<$returnType>() {
 \t\t\tpublic void success($returnType result) {
@@ -659,31 +649,33 @@ Result<$returnType> $resultName =
 \t\t\t}
 \t\t};
 ''');
-                methodArgument.add(resultName);
-              }
-              final String call =
-                  'api.${method.name}(${methodArgument.join(', ')})';
-              if (method.isAsynchronous) {
-                indent.writeln('$call;');
-              } else if (method.returnType.isVoid) {
-                indent.writeln('$call;');
-                indent.writeln('wrapped.add(0, null);');
-              } else {
-                indent.writeln('$returnType output = $call;');
-                indent.writeln('wrapped.add(0, output);');
-              }
-            }, addTrailingNewline: false);
-            indent.add(' catch (Error | RuntimeException exception) ');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                  'ArrayList<Object> wrappedError = wrapError(exception);');
-              if (method.isAsynchronous) {
-                indent.writeln('reply.reply(wrappedError);');
-              } else {
-                indent.writeln('wrapped = wrappedError;');
-              }
-            });
-            if (!method.isAsynchronous) {
+              methodArgument.add(resultName);
+            }
+            final String call =
+                'api.${method.name}(${methodArgument.join(', ')})';
+            if (method.isAsynchronous) {
+              indent.writeln('$call;');
+            } else {
+              indent.write('try ');
+              indent.addScoped('{', '}', () {
+                if (method.returnType.isVoid) {
+                  indent.writeln('$call;');
+                  indent.writeln('wrapped.add(0, null);');
+                } else {
+                  indent.writeln('$returnType output = $call;');
+                  indent.writeln('wrapped.add(0, output);');
+                }
+              });
+              indent.add(' catch (Throwable exception) ');
+              indent.addScoped('{', '}', () {
+                indent.writeln(
+                    'ArrayList<Object> wrappedError = wrapError(exception);');
+                if (method.isAsynchronous) {
+                  indent.writeln('reply.reply(wrappedError);');
+                } else {
+                  indent.writeln('wrapped = wrappedError;');
+                }
+              });
               indent.writeln('reply.reply(wrapped);');
             }
           });
@@ -765,15 +757,45 @@ Result<$returnType> $resultName =
     });
   }
 
+  void _writeErrorClass(Indent indent) {
+    indent.writeln(
+        '/** Error class for passing custom error details to Flutter via a thrown PlatformException. */');
+    indent.write('public static class FlutterError extends RuntimeException ');
+    indent.addScoped('{', '}', () {
+      indent.newln();
+      indent.writeln('/** The error code. */');
+      indent.writeln('public final String code;');
+      indent.newln();
+      indent.writeln(
+          '/** The error details. Must be a datatype supported by the api codec. */');
+      indent.writeln('public final Object details;');
+      indent.newln();
+      indent.writeln(
+          'public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) ');
+      indent.writeScoped('{', '}', () {
+        indent.writeln('super(message);');
+        indent.writeln('this.code = code;');
+        indent.writeln('this.details = details;');
+      });
+    });
+  }
+
   void _writeWrapError(Indent indent) {
     indent.format('''
 @NonNull
 private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 \tArrayList<Object> errorList = new ArrayList<Object>(3);
-\terrorList.add(exception.toString());
-\terrorList.add(exception.getClass().getSimpleName());
-\terrorList.add(
-\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\tif (exception instanceof FlutterError) {
+\t\tFlutterError error = (FlutterError) exception;
+\t\terrorList.add(error.code);
+\t\terrorList.add(error.getMessage());
+\t\terrorList.add(error.details);
+\t} else {
+\t\terrorList.add(exception.toString());
+\t\terrorList.add(exception.getClass().getSimpleName());
+\t\terrorList.add(
+\t\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\t}
 \treturn errorList;
 }''');
   }
@@ -781,6 +803,9 @@ private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
   @override
   void writeGeneralUtilities(
       JavaOptions generatorOptions, Root root, Indent indent) {
+    indent.newln();
+    _writeErrorClass(indent);
+    indent.newln();
     _writeWrapError(indent);
   }
 
