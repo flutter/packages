@@ -73,9 +73,9 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
       String origin,
       Reply<GeneratedAndroidWebView.GeoPermissionsHandleResult> callback) {
     onGeolocationPermissionsShowPrompt(
-            Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
-            origin,
-            callback
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
+        origin,
+        callback
     );
   }
 

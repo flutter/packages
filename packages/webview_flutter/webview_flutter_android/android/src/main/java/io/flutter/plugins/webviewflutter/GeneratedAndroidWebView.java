@@ -531,7 +531,6 @@ public class GeneratedAndroidWebView {
     }
   }
 
-
   public interface Result<T> {
     void success(T result);
 
@@ -2768,7 +2767,8 @@ public class GeneratedAndroidWebView {
   }
 
   private static class WebChromeClientFlutterApiCodec extends StandardMessageCodec {
-    public static final WebChromeClientFlutterApiCodec INSTANCE = new WebChromeClientFlutterApiCodec();
+    public static final WebChromeClientFlutterApiCodec INSTANCE =
+            new WebChromeClientFlutterApiCodec();
 
     private WebChromeClientFlutterApiCodec() {}
 
@@ -2846,21 +2846,21 @@ public class GeneratedAndroidWebView {
     }
 
     public void onGeolocationPermissionsShowPrompt(
-            @NonNull Long instanceIdArg,
-            @NonNull String originArg,
-            Reply<GeoPermissionsHandleResult> callback) {
+        @NonNull Long instanceIdArg,
+        @NonNull String originArg,
+        Reply<GeoPermissionsHandleResult> callback) {
       BasicMessageChannel<Object> channel =
-              new BasicMessageChannel<>(
-                      binaryMessenger,
-                      "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt",
-                      getCodec());
+          new BasicMessageChannel<>(
+                  binaryMessenger,
+                  "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt",
+                  getCodec());
       channel.send(
-              new ArrayList<Object>(Arrays.asList(instanceIdArg, originArg)),
-              channelReply -> {
-                @SuppressWarnings("ConstantConditions")
-                GeoPermissionsHandleResult output = (GeoPermissionsHandleResult) channelReply;
-                callback.reply(output);
-              });
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, originArg)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            GeoPermissionsHandleResult output = (GeoPermissionsHandleResult) channelReply;
+            callback.reply(output);
+          });
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */

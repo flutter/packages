@@ -1,3 +1,8 @@
+## 4.0.7
+
+* Adds support for handling geolocation permissions.
+* See `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
+
 ## 4.0.6
 
 * Updates iOS minimum version in README.

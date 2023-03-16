@@ -34,17 +34,16 @@ class AndroidWebViewProxy {
   }) createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
-  final android_webview.WebChromeClient Function({
-    void Function(android_webview.WebView webView, int progress)?
-        onProgressChanged,
-    Future<List<String>> Function(
-      android_webview.WebView webView,
-      android_webview.FileChooserParams params,
-    )? onShowFileChooser,
-    Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-      String origin,
-      )? onGeolocationPermissionsShowPrompt
-  }) createAndroidWebChromeClient;
+  final android_webview.WebChromeClient Function(
+      {void Function(android_webview.WebView webView, int progress)?
+          onProgressChanged,
+      Future<List<String>> Function(
+        android_webview.WebView webView,
+        android_webview.FileChooserParams params,
+      )? onShowFileChooser,
+      Future<android_webview.GeoPermissionsHandleResultProxy> Function(
+        String origin,
+      )? onGeolocationPermissionsShowPrompt}) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
   final android_webview.WebViewClient Function({

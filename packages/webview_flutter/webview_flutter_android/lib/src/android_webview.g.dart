@@ -1985,14 +1985,14 @@ abstract class WebChromeClientFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null.');
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_instanceId = (args[0] as int?);
           assert(arg_instanceId != null,
-          'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null int.');
           final String? arg_origin = (args[1] as String?);
           assert(arg_origin != null,
-          'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null String.');
           final GeoPermissionsHandleResult output = await api
               .onGeolocationPermissionsShowPrompt(arg_instanceId!, arg_origin!);
           return output;

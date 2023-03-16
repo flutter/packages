@@ -615,7 +615,7 @@ void main() {
             android_webview.FileChooserParams params,
           )? onShowFileChooser,
           Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-                  String origin,
+            String origin,
           )? onGeolocationPermissionsShowPrompt,
         }) {
           onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;

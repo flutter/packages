@@ -894,7 +894,8 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     if (instance.onGeolocationPermissionsShowPrompt != null) {
       return instance.onGeolocationPermissionsShowPrompt!(origin).then(
         // Get the real transfer Object
-        (GeoPermissionsHandleResultProxy value) => value.geoPermissionsHandleResult,
+        (GeoPermissionsHandleResultProxy value) =>
+            value.geoPermissionsHandleResult,
       );
     }
     return Future<GeoPermissionsHandleResult>.value(

@@ -884,8 +884,7 @@ class WebChromeClient extends JavaObject {
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onGeolocationPermissionsShowPrompt,
-  })
-      : super.detached() {
+  }) : super.detached() {
     AndroidWebViewFlutterApis.instance.ensureSetUp();
     api.createFromInstance(this);
   }
@@ -923,7 +922,7 @@ class WebChromeClient extends JavaObject {
 
   /// Indicates the client should handle geolocation permissions.
   final Future<GeoPermissionsHandleResultProxy> Function(
-      String origin,
+    String origin,
   )? onGeolocationPermissionsShowPrompt;
 
   /// Sets the required synchronous return value for the Java method,
