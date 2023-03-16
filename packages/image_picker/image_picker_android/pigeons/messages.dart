@@ -88,22 +88,16 @@ abstract class ImagePickerApi {
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
   @async
-  List<String?> pickImages(
-      SourceSpecification source,
-      ImageSelectionOptions options,
-      bool allowMultiple,
-      bool useAndroidPhotoPicker);
+  List<String?> pickImages(SourceSpecification source,
+      ImageSelectionOptions options, bool allowMultiple, bool usePhotoPicker);
 
   /// Selects video and returns their paths.
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
   @async
-  List<String?> pickVideos(
-      SourceSpecification source,
-      VideoSelectionOptions options,
-      bool allowMultiple,
-      bool useAndroidPhotoPicker);
+  List<String?> pickVideos(SourceSpecification source,
+      VideoSelectionOptions options, bool allowMultiple, bool usePhotoPicker);
 
   /// Returns results from a previous app session, if any.
   CacheRetrievalResult? retrieveLostResults();
