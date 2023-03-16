@@ -122,9 +122,9 @@ task:
           # This check is only meaningful for PRs, as it validates changes
           # rather than state.
           - if [[ $CIRRUS_PR == "" ]]; then
-          -   ./script/tool_runner.sh federation-safety-check
-          - else
           -   echo "Only run in presubmit"
+          - else
+          -   ./script/tool_runner.sh federation-safety-check
           - fi
     - name: analyze
       env:

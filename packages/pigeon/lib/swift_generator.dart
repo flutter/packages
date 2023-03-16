@@ -455,7 +455,7 @@ import FlutterMacOS
             indent.addScoped('{ $messageVarName, reply in', '}', () {
               final List<String> methodArgument = <String>[];
               if (components.arguments.isNotEmpty) {
-                indent.writeln('let args = message as! [Any?]');
+                indent.writeln('let args = message as! [Any]');
                 enumerate(components.arguments,
                     (int index, _SwiftFunctionArgument arg) {
                   final String argName =
@@ -668,17 +668,19 @@ String _camelCase(String text) {
 }
 
 String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
+  final String forceUnwrap = type.isNullable ? '' : '!';
+  final String castUnwrap = type.isNullable ? '?' : '';
   if (isEnum(root, type)) {
-    final String forceUnwrap = type.isNullable ? '' : '!';
     final String nullableConditionPrefix =
         type.isNullable ? '$value == nil ? nil : ' : '';
     return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$forceUnwrap';
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
-    return type.isNullable ? value : '$value!';
+    return value;
+  } else if (type.baseName == 'int') {
+    return '($value is Int) ? Int64($value as! Int) : $value as! Int64$castUnwrap';
   } else {
-    final String castUnwrap = type.isNullable ? '?' : '!';
-    return '$value as$castUnwrap ${_swiftTypeForDartType(type)}';
+    return '$value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   }
 }
 
@@ -713,7 +715,7 @@ String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
     'void': 'Void',
     'bool': 'Bool',
     'String': 'String',
-    'int': 'Int32',
+    'int': 'Int64',
     'double': 'Double',
     'Uint8List': 'FlutterStandardTypedData',
     'Int32List': 'FlutterStandardTypedData',

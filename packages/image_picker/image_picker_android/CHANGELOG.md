@@ -1,3 +1,19 @@
+## 0.8.6+4
+
+* Bumps androidx.exifinterface:exifinterface from 1.3.3 to 1.3.6.
+
+## 0.8.6+3
+
+* Switches to Pigeon for internal implementation.
+
+## 0.8.6+2
+
+* Fixes null pointer exception in `saveResult`.
+
+## 0.8.6+1
+
+* Refactors code in preparation for adopting Pigeon.
+
 ## 0.8.6
 
 * Adds `usePhotoPickerAndroid` options.
