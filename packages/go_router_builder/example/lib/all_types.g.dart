@@ -64,6 +64,10 @@ GoRoute get $allTypesBaseRoute => GoRouteData.$route(
           path: 'iterable-route',
           factory: $IterableRouteExtension._fromState,
         ),
+        GoRouteData.$route(
+          path: 'iterable-route-with-default-values',
+          factory: $IterableRouteWithDefaultValuesExtension._fromState,
+        ),
       ],
     );
 
@@ -457,6 +461,120 @@ extension $IterableRouteExtension on IterableRoute {
             'enum-only-in-set-field': enumOnlyInSetField
                 ?.map((e) => _$CookingRecipeEnumMap[e])
                 .toList(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
+extension $IterableRouteWithDefaultValuesExtension
+    on IterableRouteWithDefaultValues {
+  static IterableRouteWithDefaultValues _fromState(GoRouterState state) =>
+      IterableRouteWithDefaultValues(
+        intIterableField:
+            state.queryParametersAll['int-iterable-field']?.map(int.parse) ??
+                const <int>[0],
+        doubleIterableField: state.queryParametersAll['double-iterable-field']
+                ?.map(double.parse) ??
+            const <double>[0, 1, 2],
+        stringIterableField:
+            state.queryParametersAll['string-iterable-field']?.map((e) => e) ??
+                const <String>['defaultValue'],
+        boolIterableField: state.queryParametersAll['bool-iterable-field']
+                ?.map(_$boolConverter) ??
+            const <bool>[false],
+        enumIterableField: state.queryParametersAll['enum-iterable-field']
+                ?.map(_$SportDetailsEnumMap._$fromName) ??
+            const <SportDetails>[SportDetails.tennis, SportDetails.hockey],
+        intListField: state.queryParametersAll['int-list-field']
+                ?.map(int.parse)
+                .toList() ??
+            const <int>[0],
+        doubleListField: state.queryParametersAll['double-list-field']
+                ?.map(double.parse)
+                .toList() ??
+            const <double>[1, 2, 3],
+        stringListField: state.queryParametersAll['string-list-field']
+                ?.map((e) => e)
+                .toList() ??
+            const <String>['defaultValue0', 'defaultValue1'],
+        boolListField: state.queryParametersAll['bool-list-field']
+                ?.map(_$boolConverter)
+                .toList() ??
+            const <bool>[true],
+        enumListField: state.queryParametersAll['enum-list-field']
+                ?.map(_$SportDetailsEnumMap._$fromName)
+                .toList() ??
+            const <SportDetails>[SportDetails.football],
+        intSetField:
+            state.queryParametersAll['int-set-field']?.map(int.parse).toSet() ??
+                const <int>{0, 1},
+        doubleSetField: state.queryParametersAll['double-set-field']
+                ?.map(double.parse)
+                .toSet() ??
+            const <double>{},
+        stringSetField: state.queryParametersAll['string-set-field']
+                ?.map((e) => e)
+                .toSet() ??
+            const <String>{'defaultValue'},
+        boolSetField: state.queryParametersAll['bool-set-field']
+                ?.map(_$boolConverter)
+                .toSet() ??
+            const <bool>{true, false},
+        enumSetField: state.queryParametersAll['enum-set-field']
+                ?.map(_$SportDetailsEnumMap._$fromName)
+                .toSet() ??
+            const <SportDetails>{SportDetails.hockey},
+      );
+
+  String get location => GoRouteData.$location(
+        '/iterable-route-with-default-values',
+        queryParams: {
+          if (intIterableField != const <int>[0])
+            'int-iterable-field':
+                intIterableField.map((e) => e.toString()).toList(),
+          if (doubleIterableField != const <double>[0, 1, 2])
+            'double-iterable-field':
+                doubleIterableField.map((e) => e.toString()).toList(),
+          if (stringIterableField != const <String>['defaultValue'])
+            'string-iterable-field': stringIterableField.map((e) => e).toList(),
+          if (boolIterableField != const <bool>[false])
+            'bool-iterable-field':
+                boolIterableField.map((e) => e.toString()).toList(),
+          if (enumIterableField !=
+              const <SportDetails>[SportDetails.tennis, SportDetails.hockey])
+            'enum-iterable-field':
+                enumIterableField.map((e) => _$SportDetailsEnumMap[e]).toList(),
+          if (intListField != const <int>[0])
+            'int-list-field': intListField.map((e) => e.toString()).toList(),
+          if (doubleListField != const <double>[1, 2, 3])
+            'double-list-field':
+                doubleListField.map((e) => e.toString()).toList(),
+          if (stringListField !=
+              const <String>['defaultValue0', 'defaultValue1'])
+            'string-list-field': stringListField.map((e) => e).toList(),
+          if (boolListField != const <bool>[true])
+            'bool-list-field': boolListField.map((e) => e.toString()).toList(),
+          if (enumListField != const <SportDetails>[SportDetails.football])
+            'enum-list-field':
+                enumListField.map((e) => _$SportDetailsEnumMap[e]).toList(),
+          if (intSetField != const <int>{0, 1})
+            'int-set-field': intSetField.map((e) => e.toString()).toList(),
+          if (doubleSetField != const <double>{})
+            'double-set-field':
+                doubleSetField.map((e) => e.toString()).toList(),
+          if (stringSetField != const <String>{'defaultValue'})
+            'string-set-field': stringSetField.map((e) => e).toList(),
+          if (boolSetField != const <bool>{true, false})
+            'bool-set-field': boolSetField.map((e) => e.toString()).toList(),
+          if (enumSetField != const <SportDetails>{SportDetails.hockey})
+            'enum-set-field':
+                enumSetField.map((e) => _$SportDetailsEnumMap[e]).toList(),
         },
       );
 

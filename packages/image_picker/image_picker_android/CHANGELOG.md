@@ -1,3 +1,7 @@
+## 0.8.6+2
+
+* Fixes null pointer exception in `saveResult`.
+
 ## 0.8.6+1
 
 * Refactors code in preparation for adopting Pigeon.
