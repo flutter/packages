@@ -2851,9 +2851,9 @@ public class GeneratedAndroidWebView {
         Reply<GeoPermissionsHandleResult> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-                  binaryMessenger,
-                  "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt",
-                  getCodec());
+              binaryMessenger,
+              "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt",
+              getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, originArg)),
           channelReply -> {
