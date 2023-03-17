@@ -35,6 +35,6 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  mockito: ^5.0.0
+  mockito: 5.3.2
   plugin_platform_interface: ^2.0.0
   video_player: ^2.0.0
