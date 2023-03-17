@@ -269,7 +269,7 @@ enum EnumOnlyUsedInIterable {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $iterableDefaultValueRoute => GoRouteData.$route(
+RouteBase get $iterableDefaultValueRoute => GoRouteData.$route(
       path: '/iterable-default-value-route',
       factory: $IterableDefaultValueRouteExtension._fromState,
     );
