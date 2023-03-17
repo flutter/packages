@@ -21,4 +21,4 @@ dev_dependencies:
   async: ^2.5.0
   flutter_test:
     sdk: flutter
-  mockito: ^5.0.0
+  mockito: 5.3.2

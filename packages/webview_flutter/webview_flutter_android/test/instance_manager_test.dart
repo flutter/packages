@@ -3,9 +3,18 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:webview_flutter_android/src/android_webview.dart';
 import 'package:webview_flutter_android/src/instance_manager.dart';
 
+import 'instance_manager_test.mocks.dart';
+import 'test_android_webview.g.dart';
+
+@GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('InstanceManager', () {
     test('addHostCreatedInstance', () {
       final CopyableObject object = CopyableObject();
@@ -131,6 +140,20 @@ void main() {
         0,
       )!;
       expect(identical(object, newWeakCopy), isFalse);
+    });
+
+    test('globalInstanceManager clears native `InstanceManager`', () {
+      final MockTestInstanceManagerHostApi mockApi =
+          MockTestInstanceManagerHostApi();
+      TestInstanceManagerHostApi.setup(mockApi);
+
+      // Calls method to clear the native InstanceManager.
+      // ignore: unnecessary_statements
+      JavaObject.globalInstanceManager;
+
+      verify(mockApi.clear());
+
+      TestInstanceManagerHostApi.setup(null);
     });
   });
 }
