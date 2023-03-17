@@ -839,8 +839,8 @@ EncodableValue ${api.name}::WrapError(std::string_view error_message) {
 }
 EncodableValue ${api.name}::WrapError(const FlutterError& error) {
 \treturn EncodableValue(EncodableList{
-\t\tEncodableValue(error.message()),
 \t\tEncodableValue(error.code()),
+\t\tEncodableValue(error.message()),
 \t\terror.details()
 \t});
 }''');
