@@ -22,6 +22,8 @@ import 'package:webview_flutter_android/src/platform_views_service_proxy.dart'
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     as _i3;
 
+import 'test_android_webview.g.dart' as _i15;
+
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -2233,4 +2235,19 @@ class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
+}
+
+/// A class which mocks [TestInstanceManagerHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestInstanceManagerHostApi extends _i1.Mock
+    implements _i15.TestInstanceManagerHostApi {
+  @override
+  void clear() => super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
