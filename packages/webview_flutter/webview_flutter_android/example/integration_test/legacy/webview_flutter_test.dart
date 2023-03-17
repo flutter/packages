@@ -192,6 +192,9 @@ Future<void> main() async {
       android.WebChromeClient.api = WebChromeClientHostApiImpl();
       android.WebViewClient.api = WebViewClientHostApiImpl();
       android.DownloadListener.api = DownloadListenerHostApiImpl();
+
+      // Create a new `WebStorage` with the default InstanceManager.
+      android.WebStorage.instance = android.WebStorage();
     },
   );
 

@@ -30,7 +30,7 @@ import 'webview_android_widget.dart';
 /// https://github.com/flutter/flutter/wiki/Hybrid-Composition for more
 /// information.
 class SurfaceAndroidWebView extends AndroidWebView {
-  /// Constructs an [SurfaceAndroidWebView].
+  /// Constructs a [SurfaceAndroidWebView].
   SurfaceAndroidWebView({@visibleForTesting super.instanceManager});
 
   @override
