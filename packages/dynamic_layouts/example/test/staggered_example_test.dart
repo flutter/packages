@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
+// ignore_for_file: deprecated_member_use
+
 import 'package:example/staggered_layout_example.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
