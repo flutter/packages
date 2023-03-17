@@ -235,10 +235,12 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Public helper method to be used for creating a [NavigationRailDestination] from
   /// a [NavigationDestination].
   static NavigationRailDestination toRailDestination(
-      NavigationDestination destination) {
+    NavigationDestination destination,
+  ) {
     return NavigationRailDestination(
       label: Text(destination.label),
       icon: destination.icon,
+      selectedIcon: destination.selectedIcon,
     );
   }
 
@@ -309,7 +311,6 @@ class AdaptiveScaffold extends StatefulWidget {
     double iconSize = 24,
     ValueChanged<int>? onDestinationSelected,
   }) {
-    currentIndex ??= 0;
     return Builder(
       builder: (_) {
         return BottomNavigationBar(
@@ -628,6 +629,7 @@ BottomNavigationBarItem _toBottomNavItem(NavigationDestination destination) {
   return BottomNavigationBarItem(
     label: destination.label,
     icon: destination.icon,
+    activeIcon: destination.selectedIcon,
   );
 }
 
