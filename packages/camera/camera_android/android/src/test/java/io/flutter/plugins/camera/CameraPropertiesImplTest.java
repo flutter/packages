@@ -50,7 +50,9 @@ public class CameraPropertiesImplTest {
   @SuppressWarnings("unchecked")
   public void getControlAutoExposureAvailableTargetFpsRangesTest() {
     Range<Integer> mockRange = mock(Range.class);
-    Range<Integer>[] mockRanges = new Range[] {mockRange};
+    // Use a wildcard, since `new Range<Integer>[] {mockRange}`
+    // results in a 'Generic array creation' error.
+    Range<Integer>[] mockRanges = (Range<Integer>[]) new Range<?>[] {mockRange};
     when(mockCharacteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES))
         .thenReturn(mockRanges);
 
@@ -177,7 +179,7 @@ public class CameraPropertiesImplTest {
 
   @Test
   public void getLensInfoMinimumFocusDistanceTest() {
-    Float expectedFocusDistance = new Float(3.14);
+    Float expectedFocusDistance = 3.14f;
     when(mockCharacteristics.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE))
         .thenReturn(expectedFocusDistance);
 
@@ -190,7 +192,7 @@ public class CameraPropertiesImplTest {
 
   @Test
   public void getScalerAvailableMaxDigitalZoomTest() {
-    Float expectedDigitalZoom = new Float(3.14);
+    Float expectedDigitalZoom = 3.14f;
     when(mockCharacteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM))
         .thenReturn(expectedDigitalZoom);
 
@@ -203,7 +205,8 @@ public class CameraPropertiesImplTest {
 
   @Test
   public void getScalerGetScalerMinZoomRatioTest() {
-    Range zoomRange = mock(Range.class);
+    @SuppressWarnings("unchecked")
+    Range<Float> zoomRange = (Range<Float>) mock(Range.class);
     when(mockCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE))
         .thenReturn(zoomRange);
 
@@ -215,7 +218,8 @@ public class CameraPropertiesImplTest {
 
   @Test
   public void getScalerGetScalerMaxZoomRatioTest() {
-    Range zoomRange = mock(Range.class);
+    @SuppressWarnings("unchecked")
+    Range<Float> zoomRange = (Range<Float>) mock(Range.class);
     when(mockCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE))
         .thenReturn(zoomRange);
 

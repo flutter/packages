@@ -19,8 +19,7 @@ class CameraOptions {
   const CameraOptions({
     AudioConstraints? audio,
     VideoConstraints? video,
-  })
-      : audio = audio ?? const AudioConstraints(),
+  })  : audio = audio ?? const AudioConstraints(),
         video = video ?? const VideoConstraints();
 
   /// The audio constraints for the camera.
@@ -72,8 +71,10 @@ class AudioConstraints {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is AudioConstraints && runtimeType == other.runtimeType &&
-              enabled == other.enabled && bitrate == other.bitrate;
+      other is AudioConstraints &&
+          runtimeType == other.runtimeType &&
+          enabled == other.enabled &&
+          bitrate == other.bitrate;
 
   @override
   int get hashCode => enabled.hashCode ^ bitrate.hashCode;
@@ -132,15 +133,21 @@ class VideoConstraints {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is VideoConstraints && runtimeType == other.runtimeType &&
-              bitrate == other.bitrate && facingMode == other.facingMode &&
-              width == other.width && height == other.height &&
-              deviceId == other.deviceId;
+      other is VideoConstraints &&
+          runtimeType == other.runtimeType &&
+          bitrate == other.bitrate &&
+          facingMode == other.facingMode &&
+          width == other.width &&
+          height == other.height &&
+          deviceId == other.deviceId;
 
   @override
   int get hashCode =>
-      bitrate.hashCode ^ facingMode.hashCode ^ width.hashCode ^ height
-          .hashCode ^ deviceId.hashCode;
+      bitrate.hashCode ^
+      facingMode.hashCode ^
+      width.hashCode ^
+      height.hashCode ^
+      deviceId.hashCode;
 }
 
 /// The camera type used in [FacingModeConstraint].

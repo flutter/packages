@@ -155,36 +155,6 @@ void main() {
     );
   });
 
-<<<<<<< HEAD
-  test('stopImageStream() throws $CameraException when recording videos',
-      () async {
-    final CameraController cameraController = CameraController(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        const MediaSettings(
-          resolutionPreset: ResolutionPreset.low,
-          fps: 15,
-          videoBitrate: 200000,
-          audioBitrate: 32000,
-        ));
-    await cameraController.initialize();
-
-    await cameraController.startImageStream((CameraImage image) => null);
-    cameraController.value =
-        cameraController.value.copyWith(isRecordingVideo: true);
-    expect(
-        cameraController.stopImageStream,
-        throwsA(isA<CameraException>().having(
-          (CameraException error) => error.description,
-          'A video recording is already started.',
-          'stopImageStream was called while a video is being recorded.',
-        )));
-  });
-
-=======
->>>>>>> mainorigin
   test('stopImageStream() throws $CameraException when not streaming images',
       () async {
     final CameraController cameraController = CameraController(

@@ -8,8 +8,6 @@ import android.annotation.TargetApi;
 import android.hardware.camera2.CaptureRequest;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
-import android.media.MediaCodecInfo;
-import android.media.MediaRecorder;
 import android.os.Build;
 import android.util.Size;
 import androidx.annotation.VisibleForTesting;
@@ -116,12 +114,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     if (preset.ordinal() > ResolutionPreset.high.ordinal()) {
       preset = ResolutionPreset.high;
     }
-<<<<<<< HEAD
-
-    if (Build.VERSION.SDK_INT >= 31) {
-=======
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
->>>>>>> mainorigin
       EncoderProfiles profile =
           getBestAvailableCamcorderProfileForResolutionPreset(cameraId, preset);
       List<EncoderProfiles.VideoProfile> videoProfiles = profile.getVideoProfiles();
@@ -132,8 +125,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
       }
     }
 
-    @SuppressWarnings("deprecation")
-    // TODO(camsim99): Suppression is currently safe because legacy code is used as a fallback for SDK >= S.
+    // TODO(camsim99): Suppression is currently safe because legacy code is used as a fallback for SDK < S.
     // This should be removed when reverting that fallback behavior: https://github.com/flutter/flutter/issues/119668.
     CamcorderProfile profile =
         getBestAvailableCamcorderProfileForResolutionPresetLegacy(cameraId, preset);
@@ -151,6 +143,9 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    * @return The best possible {@link android.media.CamcorderProfile} that matches the supplied
    *     {@link ResolutionPreset}.
    */
+  @TargetApi(Build.VERSION_CODES.R)
+  // All of these cases deliberately fall through to get the best available profile.
+  @SuppressWarnings({"fallthrough", "deprecation"})
   public static CamcorderProfile getBestAvailableCamcorderProfileForResolutionPresetLegacy(
       int cameraId, ResolutionPreset preset) {
     if (cameraId < 0) {
@@ -159,31 +154,36 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     }
 
     switch (preset) {
-        // All of these cases deliberately fall through to get the best available profile.
       case max:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_HIGH)) {
           return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
         }
+        // fall through
       case ultraHigh:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_2160P)) {
           return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_2160P);
         }
+        // fall through
       case veryHigh:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
           return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_1080P);
         }
+        // fall through
       case high:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
           return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_720P);
         }
+        // fall through
       case medium:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
           return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_480P);
         }
+        // fall through
       case low:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_QVGA)) {
           return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_QVGA);
         }
+        // fall through
       default:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_LOW)) {
           return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
@@ -195,6 +195,8 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   }
 
   @TargetApi(Build.VERSION_CODES.S)
+  // All of these cases deliberately fall through to get the best available profile.
+  @SuppressWarnings("fallthrough")
   public static EncoderProfiles getBestAvailableCamcorderProfileForResolutionPreset(
       int cameraId, ResolutionPreset preset) {
     if (cameraId < 0) {
@@ -205,31 +207,36 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     String cameraIdString = Integer.toString(cameraId);
 
     switch (preset) {
-        // All of these cases deliberately fall through to get the best available profile.
       case max:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_HIGH)) {
           return CamcorderProfile.getAll(cameraIdString, CamcorderProfile.QUALITY_HIGH);
         }
+        // fall through
       case ultraHigh:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_2160P)) {
           return CamcorderProfile.getAll(cameraIdString, CamcorderProfile.QUALITY_2160P);
         }
+        // fall through
       case veryHigh:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
           return CamcorderProfile.getAll(cameraIdString, CamcorderProfile.QUALITY_1080P);
         }
+        // fall through
       case high:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
           return CamcorderProfile.getAll(cameraIdString, CamcorderProfile.QUALITY_720P);
         }
+        // fall through
       case medium:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
           return CamcorderProfile.getAll(cameraIdString, CamcorderProfile.QUALITY_480P);
         }
+        // fall through
       case low:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_QVGA)) {
           return CamcorderProfile.getAll(cameraIdString, CamcorderProfile.QUALITY_QVGA);
         }
+        // fall through
       default:
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_LOW)) {
           return CamcorderProfile.getAll(cameraIdString, CamcorderProfile.QUALITY_LOW);
@@ -255,14 +262,6 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
 
       EncoderProfiles.VideoProfile defaultVideoProfile = videoProfiles.get(0);
 
-<<<<<<< HEAD
-//      if (null == defaultVideoProfile) {
-//        defaultVideoProfile = new EncoderProfiles.VideoProfile(MediaRecorder.VideoEncoder.H264, 1280, 720, 15, 600000, MediaCodecInfo.CodecProfileLevel.AVCProfileBaseline,
-//                EncoderProfiles.VideoProfile.YUV_420,  8 /* bitDepth */, EncoderProfiles.VideoProfile.HDR_NONE);
-//      }
-      captureSize = new Size(defaultVideoProfile.getWidth(), defaultVideoProfile.getHeight());
-    } else {
-=======
       if (defaultVideoProfile != null) {
         captureSizeCalculated = true;
         captureSize = new Size(defaultVideoProfile.getWidth(), defaultVideoProfile.getHeight());
@@ -271,8 +270,6 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
 
     if (!captureSizeCalculated) {
       recordingProfile = null;
->>>>>>> mainorigin
-      @SuppressWarnings("deprecation")
       CamcorderProfile camcorderProfile =
           getBestAvailableCamcorderProfileForResolutionPresetLegacy(cameraId, resolutionPreset);
       recordingProfileLegacy = camcorderProfile;

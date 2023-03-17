@@ -15,7 +15,7 @@ void main() {
 /// Example app for Camera Windows plugin.
 class MyApp extends StatefulWidget {
   /// Default Constructor
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
