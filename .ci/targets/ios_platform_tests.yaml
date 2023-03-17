@@ -22,3 +22,5 @@ tasks:
     # So we run `drive-examples` after `native-test`; changing the order will result ci failure.
     script: script/tool_runner.sh
     args: ["drive-examples", "--ios", "--exclude=script/configs/exclude_integration_ios.yaml"]
+  - name: remove simulator
+    script: .ci/scripts/remove_simulator.sh
