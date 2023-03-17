@@ -10,7 +10,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -27,11 +26,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import androidx.annotation.Nullable;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.imagepicker.Messages.FlutterError;
+import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
+import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,15 +48,18 @@ import org.robolectric.annotation.Config;
 public class ImagePickerDelegateTest {
   private static final Double WIDTH = 10.0;
   private static final Double HEIGHT = 10.0;
-  private static final int MAX_DURATION = 10;
+  private static final Long MAX_DURATION = 10L;
   private static final Integer IMAGE_QUALITY = 90;
-  private static final ImageOutputOptions DEFAULT_IMAGE_OPTIONS =
-      new ImageOutputOptions(null, null, null);
-  private static final VideoOptions DEFAULT_VIDEO_OPTIONS = new VideoOptions(null);
+  private static final ImageSelectionOptions DEFAULT_IMAGE_OPTIONS =
+      new ImageSelectionOptions.Builder().setQuality((long) 100).build();
+  private static final ImageSelectionOptions RESIZE_TRIGGERING_IMAGE_OPTIONS =
+      new ImageSelectionOptions.Builder().setQuality((long) 100).setMaxWidth(WIDTH).build();
+  private static final VideoSelectionOptions DEFAULT_VIDEO_OPTIONS =
+      new VideoSelectionOptions.Builder().build();
 
   @Mock Activity mockActivity;
   @Mock ImageResizer mockImageResizer;
-  @Mock MethodChannel.Result mockResult;
+  @Mock Messages.Result<List<String>> mockResult;
   @Mock ImagePickerDelegate.PermissionManager mockPermissionManager;
   @Mock FileUtils mockFileUtils;
   @Mock Intent mockIntent;
@@ -128,7 +131,7 @@ public class ImagePickerDelegateTest {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
-    delegate.chooseImageFromGallery(new ImageOutputOptions(null, null, null), false, mockResult);
+    delegate.chooseImageFromGallery(DEFAULT_IMAGE_OPTIONS, false, mockResult);
 
     verifyFinishedWithAlreadyActiveError();
     verifyNoMoreInteractions(mockResult);
@@ -139,8 +142,7 @@ public class ImagePickerDelegateTest {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
-    delegate.chooseMultiImageFromGallery(
-        new ImageOutputOptions(null, null, null), false, mockResult);
+    delegate.chooseMultiImageFromGallery(DEFAULT_IMAGE_OPTIONS, false, mockResult);
 
     verifyFinishedWithAlreadyActiveError();
     verifyNoMoreInteractions(mockResult);
@@ -151,7 +153,7 @@ public class ImagePickerDelegateTest {
   public void chooseImageFromGallery_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseImageFromGallery(new ImageOutputOptions(null, null, null), false, mockResult);
+    delegate.chooseImageFromGallery(DEFAULT_IMAGE_OPTIONS, false, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -163,7 +165,7 @@ public class ImagePickerDelegateTest {
   public void chooseImageFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseImageFromGallery(new ImageOutputOptions(null, null, null), true, mockResult);
+    delegate.chooseImageFromGallery(DEFAULT_IMAGE_OPTIONS, true, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -175,8 +177,7 @@ public class ImagePickerDelegateTest {
   public void chooseMultiImageFromGallery_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseMultiImageFromGallery(
-        new ImageOutputOptions(null, null, null), true, mockResult);
+    delegate.chooseMultiImageFromGallery(DEFAULT_IMAGE_OPTIONS, true, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -189,8 +190,7 @@ public class ImagePickerDelegateTest {
   public void chooseMultiImageFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseMultiImageFromGallery(
-        new ImageOutputOptions(null, null, null), false, mockResult);
+    delegate.chooseMultiImageFromGallery(DEFAULT_IMAGE_OPTIONS, false, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -203,7 +203,7 @@ public class ImagePickerDelegateTest {
   public void chooseVideoFromGallery_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseVideoFromGallery(new VideoOptions(null), true, mockResult);
+    delegate.chooseVideoFromGallery(DEFAULT_VIDEO_OPTIONS, true, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -215,7 +215,7 @@ public class ImagePickerDelegateTest {
   public void chooseVideoFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseVideoFromGallery(new VideoOptions(null), true, mockResult);
+    delegate.chooseVideoFromGallery(DEFAULT_VIDEO_OPTIONS, true, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -227,7 +227,7 @@ public class ImagePickerDelegateTest {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
-    delegate.takeImageWithCamera(new ImageOutputOptions(null, null, null), mockResult);
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     verifyFinishedWithAlreadyActiveError();
     verifyNoMoreInteractions(mockResult);
@@ -239,7 +239,7 @@ public class ImagePickerDelegateTest {
     when(mockPermissionManager.needRequestCameraPermission()).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(new ImageOutputOptions(null, null, null), mockResult);
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     verify(mockPermissionManager)
         .askForPermission(
@@ -251,7 +251,7 @@ public class ImagePickerDelegateTest {
     when(mockPermissionManager.needRequestCameraPermission()).thenReturn(false);
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(new ImageOutputOptions(null, null, null), mockResult);
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -264,7 +264,7 @@ public class ImagePickerDelegateTest {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(new ImageOutputOptions(null, null, null), mockResult);
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -279,10 +279,12 @@ public class ImagePickerDelegateTest {
         .when(mockActivity)
         .startActivityForResult(any(Intent.class), anyInt());
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(new ImageOutputOptions(null, null, null), mockResult);
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
-    verify(mockResult)
-        .error("no_available_camera", "No cameras available for taking pictures.", null);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_available_camera", errorCaptor.getValue().code);
+    assertEquals("No cameras available for taking pictures.", errorCaptor.getValue().getMessage());
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -291,7 +293,7 @@ public class ImagePickerDelegateTest {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(new ImageOutputOptions(null, null, null), mockResult);
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     mockStaticFile.verify(
         () -> File.createTempFile(any(), eq(".jpg"), eq(new File("/image_picker_cache"))),
@@ -308,7 +310,10 @@ public class ImagePickerDelegateTest {
         new String[] {Manifest.permission.CAMERA},
         new int[] {PackageManager.PERMISSION_DENIED});
 
-    verify(mockResult).error("camera_access_denied", "The user did not allow camera access.", null);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("camera_access_denied", errorCaptor.getValue().code);
+    assertEquals("The user did not allow camera access.", errorCaptor.getValue().getMessage());
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -343,14 +348,17 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void onActivityResult_whenPickFromGalleryCanceled_finishesWithNull() {
+  public void onActivityResult_whenPickFromGalleryCanceled_finishesWithEmptyList() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_CANCELED, null);
 
-    verify(mockResult).success(null);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals(0, pathListCapture.getValue().size());
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -373,7 +381,10 @@ public class ImagePickerDelegateTest {
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    verify(mockResult).success("originalPath");
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("originalPath", pathListCapture.getValue().get(0));
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -394,11 +405,14 @@ public class ImagePickerDelegateTest {
   public void
       onActivityResult_whenImagePickedFromGallery_andResizeNeeded_finishesWithScaledImagePath() {
     ImagePickerDelegate delegate =
-        createDelegateWithPendingResultAndOptions(new ImageOutputOptions(WIDTH, null, null), null);
+        createDelegateWithPendingResultAndOptions(RESIZE_TRIGGERING_IMAGE_OPTIONS, null);
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    verify(mockResult).success("scaledPath");
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("scaledPath", pathListCapture.getValue().get(0));
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -406,23 +420,29 @@ public class ImagePickerDelegateTest {
   public void
       onActivityResult_whenVideoPickedFromGallery_andResizeParametersSupplied_finishesWithFilePath() {
     ImagePickerDelegate delegate =
-        createDelegateWithPendingResultAndOptions(new ImageOutputOptions(WIDTH, null, null), null);
+        createDelegateWithPendingResultAndOptions(RESIZE_TRIGGERING_IMAGE_OPTIONS, null);
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    verify(mockResult).success("pathFromUri");
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("pathFromUri", pathListCapture.getValue().get(0));
     verifyNoMoreInteractions(mockResult);
   }
 
   @Test
-  public void onActivityResult_whenTakeImageWithCameraCanceled_finishesWithNull() {
+  public void onActivityResult_whenTakeImageWithCameraCanceled_finishesWithEmptyList() {
     ImagePickerDelegate delegate =
         createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA, Activity.RESULT_CANCELED, null);
 
-    verify(mockResult).success(null);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals(0, pathListCapture.getValue().size());
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -435,7 +455,10 @@ public class ImagePickerDelegateTest {
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA, Activity.RESULT_OK, mockIntent);
 
-    verify(mockResult).success("originalPath");
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("originalPath", pathListCapture.getValue().get(0));
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -445,11 +468,14 @@ public class ImagePickerDelegateTest {
     when(cache.retrievePendingCameraMediaUriPath()).thenReturn("testString");
 
     ImagePickerDelegate delegate =
-        createDelegateWithPendingResultAndOptions(new ImageOutputOptions(WIDTH, null, null), null);
+        createDelegateWithPendingResultAndOptions(RESIZE_TRIGGERING_IMAGE_OPTIONS, null);
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA, Activity.RESULT_OK, mockIntent);
 
-    verify(mockResult).success("scaledPath");
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("scaledPath", pathListCapture.getValue().get(0));
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -459,11 +485,14 @@ public class ImagePickerDelegateTest {
     when(cache.retrievePendingCameraMediaUriPath()).thenReturn("testString");
 
     ImagePickerDelegate delegate =
-        createDelegateWithPendingResultAndOptions(new ImageOutputOptions(WIDTH, null, null), null);
+        createDelegateWithPendingResultAndOptions(RESIZE_TRIGGERING_IMAGE_OPTIONS, null);
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA, Activity.RESULT_OK, mockIntent);
 
-    verify(mockResult).success("pathFromUri");
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("pathFromUri", pathListCapture.getValue().get(0));
     verifyNoMoreInteractions(mockResult);
   }
 
@@ -473,41 +502,16 @@ public class ImagePickerDelegateTest {
     when(cache.retrievePendingCameraMediaUriPath()).thenReturn("testString");
 
     ImagePickerDelegate delegate =
-        createDelegateWithPendingResultAndOptions(null, new VideoOptions(MAX_DURATION));
+        createDelegateWithPendingResultAndOptions(
+            null, new VideoSelectionOptions.Builder().setMaxDurationSeconds(MAX_DURATION).build());
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA, Activity.RESULT_OK, mockIntent);
 
-    verify(mockResult).success("pathFromUri");
-    verifyNoMoreInteractions(mockResult);
-  }
-
-  @Test
-  public void
-      retrieveLostImage_shouldBeAbleToReturnLastItemFromResultMapWhenSingleFileIsRecovered() {
-    Map<String, Object> resultMap = new HashMap<>();
-    ArrayList<String> pathList = new ArrayList<>();
-    pathList.add("/example/first_item");
-    pathList.add("/example/last_item");
-    resultMap.put("pathList", pathList);
-
-    when(mockImageResizer.resizeImageIfNeeded(pathList.get(0), null, null, 100))
-        .thenReturn(pathList.get(0));
-    when(mockImageResizer.resizeImageIfNeeded(pathList.get(1), null, null, 100))
-        .thenReturn(pathList.get(1));
-    when(cache.getCacheMap()).thenReturn(resultMap);
-
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-
-    ImagePickerDelegate mockDelegate = createDelegate();
-
     @SuppressWarnings("unchecked")
-    ArgumentCaptor<Map<String, Object>> valueCapture = ArgumentCaptor.forClass(Map.class);
-
-    doNothing().when(mockResult).success(valueCapture.capture());
-
-    mockDelegate.retrieveLostImage(mockResult);
-
-    assertEquals("/example/last_item", valueCapture.getValue().get("path"));
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("pathFromUri", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   private ImagePickerDelegate createDelegate() {
@@ -525,7 +529,7 @@ public class ImagePickerDelegateTest {
   }
 
   private ImagePickerDelegate createDelegateWithPendingResultAndOptions(
-      @Nullable ImageOutputOptions imageOptions, @Nullable VideoOptions videoOptions) {
+      @Nullable ImageSelectionOptions imageOptions, @Nullable VideoSelectionOptions videoOptions) {
     return new ImagePickerDelegate(
         mockActivity,
         new File("/image_picker_cache"),
@@ -540,6 +544,9 @@ public class ImagePickerDelegateTest {
   }
 
   private void verifyFinishedWithAlreadyActiveError() {
-    verify(mockResult).error("already_active", "Image picker is already active", null);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("already_active", errorCaptor.getValue().code);
+    assertEquals("Image picker is already active", errorCaptor.getValue().getMessage());
   }
 }
