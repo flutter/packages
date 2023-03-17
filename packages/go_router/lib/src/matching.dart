@@ -60,12 +60,11 @@ class RouteMatchList {
   static RouteMatchList empty =
       RouteMatchList(<RouteMatch>[], Uri.parse(''), const <String, String>{});
 
-  /// Generate the full path (ex: `'/family/:fid/person/:pid'`) of a list of
+  /// Generates the full path (ex: `'/family/:fid/person/:pid'`) of a list of
   /// [RouteMatch].
   ///
   /// This methods considers that [matches]'s elements verify the go route
-  /// structure given to `GoRouter`.
-  /// For example, if the routes structure is
+  /// structure given to `GoRouter`. For example, if the routes structure is
   ///
   /// ```dart
   /// GoRoute(
@@ -83,7 +82,7 @@ class RouteMatchList {
   /// ),
   /// ```
   ///
-  /// [matches] will be a list of [RouteMatch] corresponding to the routes:
+  /// The [matches] must be the in same order of how GoRoutes are matched.
   ///
   /// ```dart
   /// [RouteMatchA(), RouteMatchB(), RouteMatchC()]
@@ -194,9 +193,9 @@ class MatcherError extends Error {
   }
 }
 
-/// Returns the list of `RouteMatch` corresponding to the given [loc].
+/// Returns the list of `RouteMatch` corresponding to the given `loc`.
 ///
-/// For example, for a given [loc] `/a/b/c/d`, this function will return the
+/// For example, for a given `loc` `/a/b/c/d`, this function will return the
 /// list of [RouteBase] `[GoRouteA(), GoRouterB(), GoRouteC(), GoRouterD()]`.
 ///
 /// - [loc] is the complete URL to match (without the query parameters). For
