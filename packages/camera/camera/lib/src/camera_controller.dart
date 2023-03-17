@@ -226,7 +226,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   CameraController(
     this.description,
-    this.resolutionPreset, {
+    this.mediaSettings, {
     this.enableAudio = true,
     this.imageFormatGroup,
   }) : super(const CameraValue.uninitialized());
@@ -240,7 +240,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// if unavailable a lower resolution will be used.
   ///
   /// See also: [ResolutionPreset].
-  final ResolutionPreset resolutionPreset;
+  final MediaSettings mediaSettings;
 
   /// Whether to include audio when recording a video.
   final bool enableAudio;
@@ -295,7 +295,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
       _cameraId = await CameraPlatform.instance.createCamera(
         description,
-        resolutionPreset,
+        mediaSettings,
         enableAudio: enableAudio,
       );
 

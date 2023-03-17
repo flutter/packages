@@ -25,7 +25,7 @@
 @property(readonly, nonatomic) AVCaptureVideoDataOutput *captureVideoOutput;
 
 /// The output for photo capturing. Exposed setter for unit tests.
-@property(strong, nonatomic) AVCapturePhotoOutput *capturePhotoOutput;
+@property(strong, nonatomic) AVCapturePhotoOutput *capturePhotoOutput API_AVAILABLE(ios(10));
 
 /// True when images from the camera are being streamed.
 @property(assign, nonatomic) BOOL isStreamingImages;
@@ -50,8 +50,7 @@
                   resolutionPreset:(NSString *)resolutionPreset
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
-               videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-               audioCaptureSession:(AVCaptureSession *)audioCaptureSession
+                    captureSession:(AVCaptureSession *)captureSession
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error;
 

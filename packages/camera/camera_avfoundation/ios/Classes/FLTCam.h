@@ -40,6 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
+                  fps:(NSNumber *)fps
+                  videoBitrate:(NSNumber *)videoBitrate
+                  audioBitrate:(NSNumber *)audioBitrate
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
@@ -47,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)start;
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result;
+- (void)captureToFile:(FLTThreadSafeFlutterResult *)result API_AVAILABLE(ios(10));
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
 /**
@@ -95,8 +98,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)applyFocusMode:(FLTFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice;
 - (void)pausePreviewWithResult:(FLTThreadSafeFlutterResult *)result;
 - (void)resumePreviewWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)setDescriptionWhileRecording:(NSString *)cameraName
-                              result:(FLTThreadSafeFlutterResult *)result;
 - (void)setExposurePointWithResult:(FLTThreadSafeFlutterResult *)result x:(double)x y:(double)y;
 - (void)setFocusPointWithResult:(FLTThreadSafeFlutterResult *)result x:(double)x y:(double)y;
 - (void)setExposureOffsetWithResult:(FLTThreadSafeFlutterResult *)result offset:(double)offset;

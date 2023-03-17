@@ -18,7 +18,7 @@ import 'camera_preview.dart';
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {
   /// Default Constructor
-  const CameraExampleHome({super.key});
+  const CameraExampleHome({Key? key}) : super(key: key);
 
   @override
   State<CameraExampleHome> createState() {
@@ -1064,7 +1064,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 /// CameraApp is the Main Application.
 class CameraApp extends StatelessWidget {
   /// Default Constructor
-  const CameraApp({super.key});
+  const CameraApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

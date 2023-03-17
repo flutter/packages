@@ -2,12 +2,13 @@ name: camera
 description: A Flutter plugin for controlling the camera. Supports previewing
   the camera feed, capturing images and video, and streaming image buffers to
   Dart.
-repository: https://github.com/flutter/packages/tree/main/packages/camera/camera
+repository: https://github.com/flutter/plugins/tree/main/packages/camera/camera
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+camera%22
-version: 0.10.3+2
+version: 0.10.3+1
+publish_to: 'none'
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.14.0 <3.0.0"
   flutter: ">=3.0.0"
 
 flutter:
@@ -21,10 +22,26 @@ flutter:
         default_package: camera_web
 
 dependencies:
-  camera_android: ^0.10.1
-  camera_avfoundation: ^0.9.9
-  camera_platform_interface: ^2.3.2
-  camera_web: ^0.3.1
+  camera_android:
+    git:
+      url: https://github.com/mtbo-org/flutter-plugins.git
+      path: packages/camera/camera_android
+
+  camera_avfoundation:
+    git:
+      url: https://github.com/mtbo-org/flutter-plugins.git
+      path: packages/camera/camera_avfoundation
+
+  camera_platform_interface:
+    git:
+      url: https://github.com/mtbo-org/flutter-plugins.git
+      path: packages/camera/camera_platform_interface
+
+  camera_web:
+    git:
+      url: https://github.com/mtbo-org/flutter-plugins.git
+      path: packages/camera/camera_web
+
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.2
@@ -35,6 +52,6 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  mockito: 5.3.2
+  mockito: ^5.0.0
   plugin_platform_interface: ^2.0.0
   video_player: ^2.0.0

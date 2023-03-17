@@ -11,7 +11,8 @@ import '../camera.dart';
 /// A widget showing a live camera preview.
 class CameraPreview extends StatelessWidget {
   /// Creates a preview widget for the given camera controller.
-  const CameraPreview(this.controller, {super.key, this.child});
+  const CameraPreview(this.controller, {Key? key, this.child})
+      : super(key: key);
 
   /// The controller for the camera that the preview is shown for.
   final CameraController controller;
@@ -21,7 +22,7 @@ class CameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return controller.value.isInitialized
+    return (controller.value.isInitialized && !controller.value.isPreviewPaused)
         ? ValueListenableBuilder<CameraValue>(
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
@@ -32,7 +33,8 @@ class CameraPreview extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    _wrapInRotatedBox(child: controller.buildPreview()),
+                    if (!controller.value.isPreviewPaused)
+                      _wrapInRotatedBox(child: controller.buildPreview()),
                     child ?? Container(),
                   ],
                 ),

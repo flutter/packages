@@ -83,8 +83,7 @@ void main() {
       registerFallbackValue(FlashMode.off);
     });
 
-    testWidgets('CameraPlugin is the live instance',
-        (WidgetTester tester) async {
+    testWidgets('CameraPlugin is the live instance', (WidgetTester tester) async {
       expect(CameraPlatform.instance, isA<CameraPlugin>());
     });
 
@@ -101,10 +100,8 @@ void main() {
         );
       });
 
-      testWidgets('requests video and audio permissions',
-          (WidgetTester tester) async {
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+      testWidgets('requests video and audio permissions', (WidgetTester tester) async {
+        final List<CameraDescription> _ = await CameraPlatform.instance.availableCameras();
 
         verify(
           () => cameraService.getMediaStreamForOptions(
@@ -117,8 +114,7 @@ void main() {
 
       testWidgets(
           'releases the camera stream '
-          'used to request video and audio permissions',
-          (WidgetTester tester) async {
+          'used to request video and audio permissions', (WidgetTester tester) async {
         final MockMediaStreamTrack videoTrack = MockMediaStreamTrack();
 
         bool videoTrackStopped = false;
@@ -138,8 +134,7 @@ void main() {
           ),
         );
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance.availableCameras();
 
         expect(videoTrackStopped, isTrue);
       });
@@ -157,8 +152,7 @@ void main() {
           (_) => Future<List<dynamic>>.value(<Object>[videoDevice]),
         );
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance.availableCameras();
 
         verify(
           () => cameraService.getMediaStreamForOptions(
@@ -185,8 +179,7 @@ void main() {
           (_) => Future<List<dynamic>>.value(<Object>[videoDevice]),
         );
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance.availableCameras();
 
         verifyNever(
           () => cameraService.getMediaStreamForOptions(
@@ -209,8 +202,8 @@ void main() {
           MediaDeviceKind.videoInput,
         );
 
-        final FakeMediaStream videoStream = FakeMediaStream(
-            <MediaStreamTrack>[MockMediaStreamTrack(), MockMediaStreamTrack()]);
+        final FakeMediaStream videoStream =
+            FakeMediaStream(<MediaStreamTrack>[MockMediaStreamTrack(), MockMediaStreamTrack()]);
 
         when(
           () => cameraService.getMediaStreamForOptions(
@@ -224,8 +217,7 @@ void main() {
           (_) => Future<List<dynamic>>.value(<Object>[videoDevice]),
         );
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance.availableCameras();
 
         verify(
           () => cameraService.getFacingModeForVideoTrack(
@@ -251,8 +243,8 @@ void main() {
         );
 
         // Create a video stream for the first video device.
-        final FakeMediaStream firstVideoStream = FakeMediaStream(
-            <MediaStreamTrack>[MockMediaStreamTrack(), MockMediaStreamTrack()]);
+        final FakeMediaStream firstVideoStream =
+            FakeMediaStream(<MediaStreamTrack>[MockMediaStreamTrack(), MockMediaStreamTrack()]);
 
         // Create a video stream for the second video device.
         final FakeMediaStream secondVideoStream =
@@ -285,8 +277,7 @@ void main() {
               video: VideoConstraints(deviceId: firstVideoDevice.deviceId),
             ),
           ),
-        ).thenAnswer(
-            (Invocation _) => Future<MediaStream>.value(firstVideoStream));
+        ).thenAnswer((Invocation _) => Future<MediaStream>.value(firstVideoStream));
 
         // Mock camera service to return the second video stream
         // for the second video device.
@@ -296,8 +287,7 @@ void main() {
               video: VideoConstraints(deviceId: secondVideoDevice.deviceId),
             ),
           ),
-        ).thenAnswer(
-            (Invocation _) => Future<MediaStream>.value(secondVideoStream));
+        ).thenAnswer((Invocation _) => Future<MediaStream>.value(secondVideoStream));
 
         // Mock camera service to return a user facing mode
         // for the first video stream.
@@ -321,8 +311,7 @@ void main() {
         when(() => cameraService.mapFacingModeToLensDirection('environment'))
             .thenReturn(CameraLensDirection.back);
 
-        final List<CameraDescription> cameras =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
 
         // Expect two cameras and ignore two audio devices.
         expect(
@@ -351,8 +340,8 @@ void main() {
           MediaDeviceKind.videoInput,
         );
 
-        final FakeMediaStream videoStream = FakeMediaStream(
-            <MediaStreamTrack>[MockMediaStreamTrack(), MockMediaStreamTrack()]);
+        final FakeMediaStream videoStream =
+            FakeMediaStream(<MediaStreamTrack>[MockMediaStreamTrack(), MockMediaStreamTrack()]);
 
         when(mediaDevices.enumerateDevices).thenAnswer(
           (_) => Future<List<dynamic>>.value(<Object>[videoDevice]),
@@ -375,8 +364,7 @@ void main() {
         when(() => cameraService.mapFacingModeToLensDirection('left'))
             .thenReturn(CameraLensDirection.external);
 
-        final CameraDescription camera =
-            (await CameraPlatform.instance.availableCameras()).first;
+        final CameraDescription camera = (await CameraPlatform.instance.availableCameras()).first;
 
         expect(
           (CameraPlatform.instance as CameraPlugin).camerasMetadata,
@@ -398,8 +386,8 @@ void main() {
           MediaDeviceKind.videoInput,
         );
 
-        final FakeMediaStream videoStream = FakeMediaStream(
-            <MediaStreamTrack>[MockMediaStreamTrack(), MockMediaStreamTrack()]);
+        final FakeMediaStream videoStream =
+            FakeMediaStream(<MediaStreamTrack>[MockMediaStreamTrack(), MockMediaStreamTrack()]);
 
         when(mediaDevices.enumerateDevices).thenAnswer(
           (_) => Future<List<dynamic>>.value(<Object>[videoDevice]),
@@ -413,11 +401,9 @@ void main() {
           ),
         ).thenAnswer((Invocation _) => Future<MediaStream>.value(videoStream));
 
-        final List<CameraDescription> _ =
-            await CameraPlatform.instance.availableCameras();
+        final List<CameraDescription> _ = await CameraPlatform.instance.availableCameras();
 
-        for (final MediaStreamTrack videoTrack
-            in videoStream.getVideoTracks()) {
+        for (final MediaStreamTrack videoTrack in videoStream.getVideoTracks()) {
           verify(videoTrack.stop).called(1);
         }
       });
@@ -442,8 +428,7 @@ void main() {
 
         testWidgets('when MediaDevices.enumerateDevices throws DomException',
             (WidgetTester tester) async {
-          final FakeDomException exception =
-              FakeDomException(DomException.UNKNOWN);
+          final FakeDomException exception = FakeDomException(DomException.UNKNOWN);
 
           when(mediaDevices.enumerateDevices).thenThrow(exception);
 
@@ -468,8 +453,7 @@ void main() {
             'description',
           );
 
-          when(() => cameraService.getMediaStreamForOptions(any()))
-              .thenThrow(exception);
+          when(() => cameraService.getMediaStreamForOptions(any())).thenThrow(exception);
 
           expect(
             () => CameraPlatform.instance.availableCameras(),
@@ -491,8 +475,7 @@ void main() {
             message: 'message',
           );
 
-          when(() => cameraService.getMediaStreamForOptions(any()))
-              .thenThrow(exception);
+          when(() => cameraService.getMediaStreamForOptions(any())).thenThrow(exception);
 
           expect(
             () => CameraPlatform.instance.availableCameras(),
@@ -526,8 +509,8 @@ void main() {
 
         setUp(() {
           // Add metadata for the camera description.
-          (CameraPlatform.instance as CameraPlugin)
-              .camerasMetadata[cameraDescription] = cameraMetadata;
+          (CameraPlatform.instance as CameraPlugin).camerasMetadata[cameraDescription] =
+              cameraMetadata;
 
           when(
             () => cameraService.mapFacingModeToCameraType('user'),
@@ -536,13 +519,12 @@ void main() {
 
         testWidgets('with appropriate options', (WidgetTester tester) async {
           when(
-            () => cameraService
-                .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
+            () => cameraService.mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
           final int cameraId = await CameraPlatform.instance.createCamera(
             cameraDescription,
-            ResolutionPreset.ultraHigh,
+            MediaSettings.low(),
             enableAudio: true,
           );
 
@@ -584,7 +566,7 @@ void main() {
 
           final int cameraId = await CameraPlatform.instance.createCamera(
             cameraDescription,
-            null,
+            MediaSettings.low(),
           );
 
           expect(
@@ -622,7 +604,7 @@ void main() {
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            ResolutionPreset.ultraHigh,
+            MediaSettings.low(),
           ),
           throwsA(
             isA<CameraException>().having(
@@ -651,22 +633,19 @@ void main() {
         endedStreamController = StreamController<MediaStreamTrack>();
 
         when(camera.getVideoSize).thenReturn(const Size(10, 10));
-        when(camera.initialize)
-            .thenAnswer((Invocation _) => Future<void>.value());
+        when(camera.initialize).thenAnswer((Invocation _) => Future<void>.value());
         when(camera.play).thenAnswer((Invocation _) => Future<void>.value());
 
         when(() => camera.videoElement).thenReturn(videoElement);
-        when(() => videoElement.onError).thenAnswer((Invocation _) =>
-            FakeElementStream<Event>(errorStreamController.stream));
-        when(() => videoElement.onAbort).thenAnswer((Invocation _) =>
-            FakeElementStream<Event>(abortStreamController.stream));
+        when(() => videoElement.onError)
+            .thenAnswer((Invocation _) => FakeElementStream<Event>(errorStreamController.stream));
+        when(() => videoElement.onAbort)
+            .thenAnswer((Invocation _) => FakeElementStream<Event>(abortStreamController.stream));
 
-        when(() => camera.onEnded)
-            .thenAnswer((Invocation _) => endedStreamController.stream);
+        when(() => camera.onEnded).thenAnswer((Invocation _) => endedStreamController.stream);
       });
 
-      testWidgets('initializes and plays the camera',
-          (WidgetTester tester) async {
+      testWidgets('initializes and plays the camera', (WidgetTester tester) async {
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
@@ -690,8 +669,7 @@ void main() {
         expect(abortStreamController.hasListener, isTrue);
       });
 
-      testWidgets('starts listening to the camera ended events',
-          (WidgetTester tester) async {
+      testWidgets('starts listening to the camera ended events', (WidgetTester tester) async {
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
@@ -718,8 +696,7 @@ void main() {
           );
         });
 
-        testWidgets('when camera throws CameraWebException',
-            (WidgetTester tester) async {
+        testWidgets('when camera throws CameraWebException', (WidgetTester tester) async {
           final CameraWebException exception = CameraWebException(
             cameraId,
             CameraErrorCode.permissionDenied,
@@ -743,13 +720,10 @@ void main() {
           );
         });
 
-        testWidgets('when camera throws DomException',
-            (WidgetTester tester) async {
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_ALLOWED);
+        testWidgets('when camera throws DomException', (WidgetTester tester) async {
+          final FakeDomException exception = FakeDomException(DomException.NOT_ALLOWED);
 
-          when(camera.initialize)
-              .thenAnswer((Invocation _) => Future<void>.value());
+          when(camera.initialize).thenAnswer((Invocation _) => Future<void>.value());
           when(camera.play).thenThrow(exception);
 
           // Save the camera in the camera plugin.
@@ -837,8 +811,7 @@ void main() {
 
         testWidgets(
             'with orientationNotSupported error '
-            'when screen orientation is not supported',
-            (WidgetTester tester) async {
+            'when screen orientation is not supported', (WidgetTester tester) async {
           when(() => screen.orientation).thenReturn(null);
 
           expect(
@@ -858,8 +831,7 @@ void main() {
 
         testWidgets(
             'with orientationNotSupported error '
-            'when documentElement is not available',
-            (WidgetTester tester) async {
+            'when documentElement is not available', (WidgetTester tester) async {
           when(() => document.documentElement).thenReturn(null);
 
           expect(
@@ -877,10 +849,8 @@ void main() {
           );
         });
 
-        testWidgets('when lock throws DomException',
-            (WidgetTester tester) async {
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_ALLOWED);
+        testWidgets('when lock throws DomException', (WidgetTester tester) async {
+          final FakeDomException exception = FakeDomException(DomException.NOT_ALLOWED);
 
           when(() => screenOrientation.lock(any())).thenThrow(exception);
 
@@ -908,8 +878,7 @@ void main() {
         ).thenReturn(OrientationType.portraitPrimary);
       });
 
-      testWidgets('unlocks the capture orientation',
-          (WidgetTester tester) async {
+      testWidgets('unlocks the capture orientation', (WidgetTester tester) async {
         await CameraPlatform.instance.unlockCaptureOrientation(
           cameraId,
         );
@@ -939,8 +908,7 @@ void main() {
 
         testWidgets(
             'with orientationNotSupported error '
-            'when screen orientation is not supported',
-            (WidgetTester tester) async {
+            'when screen orientation is not supported', (WidgetTester tester) async {
           when(() => screen.orientation).thenReturn(null);
 
           expect(
@@ -959,8 +927,7 @@ void main() {
 
         testWidgets(
             'with orientationNotSupported error '
-            'when documentElement is not available',
-            (WidgetTester tester) async {
+            'when documentElement is not available', (WidgetTester tester) async {
           when(() => document.documentElement).thenReturn(null);
 
           expect(
@@ -977,10 +944,8 @@ void main() {
           );
         });
 
-        testWidgets('when unlock throws DomException',
-            (WidgetTester tester) async {
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_ALLOWED);
+        testWidgets('when unlock throws DomException', (WidgetTester tester) async {
+          final FakeDomException exception = FakeDomException(DomException.NOT_ALLOWED);
 
           when(screenOrientation.unlock).thenThrow(exception);
 
@@ -1005,14 +970,12 @@ void main() {
         final MockCamera camera = MockCamera();
         final MockXFile capturedPicture = MockXFile();
 
-        when(camera.takePicture)
-            .thenAnswer((Invocation _) => Future<XFile>.value(capturedPicture));
+        when(camera.takePicture).thenAnswer((Invocation _) => Future<XFile>.value(capturedPicture));
 
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
-        final XFile picture =
-            await CameraPlatform.instance.takePicture(cameraId);
+        final XFile picture = await CameraPlatform.instance.takePicture(cameraId);
 
         verify(camera.takePicture).called(1);
 
@@ -1035,11 +998,9 @@ void main() {
           );
         });
 
-        testWidgets('when takePicture throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when takePicture throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_SUPPORTED);
+          final FakeDomException exception = FakeDomException(DomException.NOT_SUPPORTED);
 
           when(camera.takePicture).thenThrow(exception);
 
@@ -1058,8 +1019,7 @@ void main() {
           );
         });
 
-        testWidgets('when takePicture throws CameraWebException',
-            (WidgetTester tester) async {
+        testWidgets('when takePicture throws CameraWebException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
           final CameraWebException exception = CameraWebException(
             cameraId,
@@ -1107,8 +1067,7 @@ void main() {
         verify(camera.startVideoRecording).called(1);
       });
 
-      testWidgets('listens to the onVideoRecordingError stream',
-          (WidgetTester tester) async {
+      testWidgets('listens to the onVideoRecordingError stream', (WidgetTester tester) async {
         final StreamController<ErrorEvent> videoRecordingErrorController =
             StreamController<ErrorEvent>();
 
@@ -1142,10 +1101,8 @@ void main() {
           );
         });
 
-        testWidgets('when startVideoRecording throws DomException',
-            (WidgetTester tester) async {
-          final FakeDomException exception =
-              FakeDomException(DomException.INVALID_STATE);
+        testWidgets('when startVideoRecording throws DomException', (WidgetTester tester) async {
+          final FakeDomException exception = FakeDomException(DomException.INVALID_STATE);
 
           when(camera.startVideoRecording).thenThrow(exception);
 
@@ -1208,9 +1165,8 @@ void main() {
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
         expect(
-          () => CameraPlatform.instance.startVideoCapturing(VideoCaptureOptions(
-              cameraId,
-              streamCallback: (CameraImageData imageData) {})),
+          () => CameraPlatform.instance.startVideoCapturing(
+              VideoCaptureOptions(cameraId, streamCallback: (CameraImageData imageData) {})),
           throwsA(
             isA<UnimplementedError>(),
           ),
@@ -1229,8 +1185,7 @@ void main() {
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
-        final XFile video =
-            await CameraPlatform.instance.stopVideoRecording(cameraId);
+        final XFile video = await CameraPlatform.instance.stopVideoRecording(cameraId);
 
         verify(camera.stopVideoRecording).called(1);
 
@@ -1255,8 +1210,7 @@ void main() {
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
         await CameraPlatform.instance.startVideoRecording(cameraId);
-        final XFile _ =
-            await CameraPlatform.instance.stopVideoRecording(cameraId);
+        final XFile _ = await CameraPlatform.instance.stopVideoRecording(cameraId);
 
         expect(
           videoRecordingErrorController.hasListener,
@@ -1280,11 +1234,9 @@ void main() {
           );
         });
 
-        testWidgets('when stopVideoRecording throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when stopVideoRecording throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.INVALID_STATE);
+          final FakeDomException exception = FakeDomException(DomException.INVALID_STATE);
 
           when(camera.stopVideoRecording).thenThrow(exception);
 
@@ -1361,11 +1313,9 @@ void main() {
           );
         });
 
-        testWidgets('when pauseVideoRecording throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when pauseVideoRecording throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.INVALID_STATE);
+          final FakeDomException exception = FakeDomException(DomException.INVALID_STATE);
 
           when(camera.pauseVideoRecording).thenThrow(exception);
 
@@ -1442,11 +1392,9 @@ void main() {
           );
         });
 
-        testWidgets('when resumeVideoRecording throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when resumeVideoRecording throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.INVALID_STATE);
+          final FakeDomException exception = FakeDomException(DomException.INVALID_STATE);
 
           when(camera.resumeVideoRecording).thenThrow(exception);
 
@@ -1494,8 +1442,7 @@ void main() {
     });
 
     group('setFlashMode', () {
-      testWidgets('calls setFlashMode on the camera',
-          (WidgetTester tester) async {
+      testWidgets('calls setFlashMode on the camera', (WidgetTester tester) async {
         final MockCamera camera = MockCamera();
         const FlashMode flashMode = FlashMode.always;
 
@@ -1529,11 +1476,9 @@ void main() {
           );
         });
 
-        testWidgets('when setFlashMode throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when setFlashMode throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_SUPPORTED);
+          final FakeDomException exception = FakeDomException(DomException.NOT_SUPPORTED);
 
           when(() => camera.setFlashMode(any())).thenThrow(exception);
 
@@ -1555,8 +1500,7 @@ void main() {
           );
         });
 
-        testWidgets('when setFlashMode throws CameraWebException',
-            (WidgetTester tester) async {
+        testWidgets('when setFlashMode throws CameraWebException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
           final CameraWebException exception = CameraWebException(
             cameraId,
@@ -1586,8 +1530,7 @@ void main() {
       });
     });
 
-    testWidgets('setExposureMode throws UnimplementedError',
-        (WidgetTester tester) async {
+    testWidgets('setExposureMode throws UnimplementedError', (WidgetTester tester) async {
       expect(
         () => CameraPlatform.instance.setExposureMode(
           cameraId,
@@ -1597,8 +1540,7 @@ void main() {
       );
     });
 
-    testWidgets('setExposurePoint throws UnimplementedError',
-        (WidgetTester tester) async {
+    testWidgets('setExposurePoint throws UnimplementedError', (WidgetTester tester) async {
       expect(
         () => CameraPlatform.instance.setExposurePoint(
           cameraId,
@@ -1608,32 +1550,28 @@ void main() {
       );
     });
 
-    testWidgets('getMinExposureOffset throws UnimplementedError',
-        (WidgetTester tester) async {
+    testWidgets('getMinExposureOffset throws UnimplementedError', (WidgetTester tester) async {
       expect(
         () => CameraPlatform.instance.getMinExposureOffset(cameraId),
         throwsUnimplementedError,
       );
     });
 
-    testWidgets('getMaxExposureOffset throws UnimplementedError',
-        (WidgetTester tester) async {
+    testWidgets('getMaxExposureOffset throws UnimplementedError', (WidgetTester tester) async {
       expect(
         () => CameraPlatform.instance.getMaxExposureOffset(cameraId),
         throwsUnimplementedError,
       );
     });
 
-    testWidgets('getExposureOffsetStepSize throws UnimplementedError',
-        (WidgetTester tester) async {
+    testWidgets('getExposureOffsetStepSize throws UnimplementedError', (WidgetTester tester) async {
       expect(
         () => CameraPlatform.instance.getExposureOffsetStepSize(cameraId),
         throwsUnimplementedError,
       );
     });
 
-    testWidgets('setExposureOffset throws UnimplementedError',
-        (WidgetTester tester) async {
+    testWidgets('setExposureOffset throws UnimplementedError', (WidgetTester tester) async {
       expect(
         () => CameraPlatform.instance.setExposureOffset(
           cameraId,
@@ -1643,8 +1581,7 @@ void main() {
       );
     });
 
-    testWidgets('setFocusMode throws UnimplementedError',
-        (WidgetTester tester) async {
+    testWidgets('setFocusMode throws UnimplementedError', (WidgetTester tester) async {
       expect(
         () => CameraPlatform.instance.setFocusMode(
           cameraId,
@@ -1654,8 +1591,7 @@ void main() {
       );
     });
 
-    testWidgets('setFocusPoint throws UnimplementedError',
-        (WidgetTester tester) async {
+    testWidgets('setFocusPoint throws UnimplementedError', (WidgetTester tester) async {
       expect(
         () => CameraPlatform.instance.setFocusPoint(
           cameraId,
@@ -1666,8 +1602,7 @@ void main() {
     });
 
     group('getMaxZoomLevel', () {
-      testWidgets('calls getMaxZoomLevel on the camera',
-          (WidgetTester tester) async {
+      testWidgets('calls getMaxZoomLevel on the camera', (WidgetTester tester) async {
         final MockCamera camera = MockCamera();
         const double maximumZoomLevel = 100.0;
 
@@ -1704,11 +1639,9 @@ void main() {
           );
         });
 
-        testWidgets('when getMaxZoomLevel throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when getMaxZoomLevel throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_SUPPORTED);
+          final FakeDomException exception = FakeDomException(DomException.NOT_SUPPORTED);
 
           when(camera.getMaxZoomLevel).thenThrow(exception);
 
@@ -1729,8 +1662,7 @@ void main() {
           );
         });
 
-        testWidgets('when getMaxZoomLevel throws CameraWebException',
-            (WidgetTester tester) async {
+        testWidgets('when getMaxZoomLevel throws CameraWebException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
           final CameraWebException exception = CameraWebException(
             cameraId,
@@ -1760,8 +1692,7 @@ void main() {
     });
 
     group('getMinZoomLevel', () {
-      testWidgets('calls getMinZoomLevel on the camera',
-          (WidgetTester tester) async {
+      testWidgets('calls getMinZoomLevel on the camera', (WidgetTester tester) async {
         final MockCamera camera = MockCamera();
         const double minimumZoomLevel = 100.0;
 
@@ -1798,11 +1729,9 @@ void main() {
           );
         });
 
-        testWidgets('when getMinZoomLevel throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when getMinZoomLevel throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_SUPPORTED);
+          final FakeDomException exception = FakeDomException(DomException.NOT_SUPPORTED);
 
           when(camera.getMinZoomLevel).thenThrow(exception);
 
@@ -1823,8 +1752,7 @@ void main() {
           );
         });
 
-        testWidgets('when getMinZoomLevel throws CameraWebException',
-            (WidgetTester tester) async {
+        testWidgets('when getMinZoomLevel throws CameraWebException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
           final CameraWebException exception = CameraWebException(
             cameraId,
@@ -1854,8 +1782,7 @@ void main() {
     });
 
     group('setZoomLevel', () {
-      testWidgets('calls setZoomLevel on the camera',
-          (WidgetTester tester) async {
+      testWidgets('calls setZoomLevel on the camera', (WidgetTester tester) async {
         final MockCamera camera = MockCamera();
 
         // Save the camera in the camera plugin.
@@ -1887,11 +1814,9 @@ void main() {
           );
         });
 
-        testWidgets('when setZoomLevel throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when setZoomLevel throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_SUPPORTED);
+          final FakeDomException exception = FakeDomException(DomException.NOT_SUPPORTED);
 
           when(() => camera.setZoomLevel(any())).thenThrow(exception);
 
@@ -1913,8 +1838,7 @@ void main() {
           );
         });
 
-        testWidgets('when setZoomLevel throws PlatformException',
-            (WidgetTester tester) async {
+        testWidgets('when setZoomLevel throws PlatformException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
           final PlatformException exception = PlatformException(
             code: CameraErrorCode.notSupported.toString(),
@@ -1941,8 +1865,7 @@ void main() {
           );
         });
 
-        testWidgets('when setZoomLevel throws CameraWebException',
-            (WidgetTester tester) async {
+        testWidgets('when setZoomLevel throws CameraWebException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
           final CameraWebException exception = CameraWebException(
             cameraId,
@@ -2000,11 +1923,9 @@ void main() {
           );
         });
 
-        testWidgets('when pause throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when pause throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_SUPPORTED);
+          final FakeDomException exception = FakeDomException(DomException.NOT_SUPPORTED);
 
           when(camera.pause).thenThrow(exception);
 
@@ -2055,11 +1976,9 @@ void main() {
           );
         });
 
-        testWidgets('when play throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when play throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.NOT_SUPPORTED);
+          final FakeDomException exception = FakeDomException(DomException.NOT_SUPPORTED);
 
           when(camera.play).thenThrow(exception);
 
@@ -2078,8 +1997,7 @@ void main() {
           );
         });
 
-        testWidgets('when play throws CameraWebException',
-            (WidgetTester tester) async {
+        testWidgets('when play throws CameraWebException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
           final CameraWebException exception = CameraWebException(
             cameraId,
@@ -2145,19 +2063,17 @@ void main() {
         videoRecordingErrorController = StreamController<ErrorEvent>();
 
         when(camera.getVideoSize).thenReturn(const Size(10, 10));
-        when(camera.initialize)
-            .thenAnswer((Invocation _) => Future<void>.value());
+        when(camera.initialize).thenAnswer((Invocation _) => Future<void>.value());
         when(camera.play).thenAnswer((Invocation _) => Future<void>.value());
         when(camera.dispose).thenAnswer((Invocation _) => Future<void>.value());
 
         when(() => camera.videoElement).thenReturn(videoElement);
-        when(() => videoElement.onError).thenAnswer((Invocation _) =>
-            FakeElementStream<Event>(errorStreamController.stream));
-        when(() => videoElement.onAbort).thenAnswer((Invocation _) =>
-            FakeElementStream<Event>(abortStreamController.stream));
+        when(() => videoElement.onError)
+            .thenAnswer((Invocation _) => FakeElementStream<Event>(errorStreamController.stream));
+        when(() => videoElement.onAbort)
+            .thenAnswer((Invocation _) => FakeElementStream<Event>(abortStreamController.stream));
 
-        when(() => camera.onEnded)
-            .thenAnswer((Invocation _) => endedStreamController.stream);
+        when(() => camera.onEnded).thenAnswer((Invocation _) => endedStreamController.stream);
 
         when(() => camera.onVideoRecordingError)
             .thenAnswer((Invocation _) => videoRecordingErrorController.stream);
@@ -2172,10 +2088,8 @@ void main() {
         final MockCamera firstCamera = MockCamera();
         final MockCamera secondCamera = MockCamera();
 
-        when(firstCamera.dispose)
-            .thenAnswer((Invocation _) => Future<void>.value());
-        when(secondCamera.dispose)
-            .thenAnswer((Invocation _) => Future<void>.value());
+        when(firstCamera.dispose).thenAnswer((Invocation _) => Future<void>.value());
+        when(secondCamera.dispose).thenAnswer((Invocation _) => Future<void>.value());
 
         // Save cameras in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras.addAll(<int, Camera>{
@@ -2211,8 +2125,7 @@ void main() {
         expect(abortStreamController.hasListener, isFalse);
       });
 
-      testWidgets('cancels the camera ended subscriptions',
-          (WidgetTester tester) async {
+      testWidgets('cancels the camera ended subscriptions', (WidgetTester tester) async {
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
@@ -2250,11 +2163,9 @@ void main() {
           );
         });
 
-        testWidgets('when dispose throws DomException',
-            (WidgetTester tester) async {
+        testWidgets('when dispose throws DomException', (WidgetTester tester) async {
           final MockCamera camera = MockCamera();
-          final FakeDomException exception =
-              FakeDomException(DomException.INVALID_ACCESS);
+          final FakeDomException exception = FakeDomException(DomException.INVALID_ACCESS);
 
           when(camera.dispose).thenThrow(exception);
 
@@ -2326,24 +2237,21 @@ void main() {
         videoRecordingErrorController = StreamController<ErrorEvent>();
 
         when(camera.getVideoSize).thenReturn(const Size(10, 10));
-        when(camera.initialize)
-            .thenAnswer((Invocation _) => Future<void>.value());
+        when(camera.initialize).thenAnswer((Invocation _) => Future<void>.value());
         when(camera.play).thenAnswer((Invocation _) => Future<void>.value());
 
         when(() => camera.videoElement).thenReturn(videoElement);
-        when(() => videoElement.onError).thenAnswer((Invocation _) =>
-            FakeElementStream<Event>(errorStreamController.stream));
-        when(() => videoElement.onAbort).thenAnswer((Invocation _) =>
-            FakeElementStream<Event>(abortStreamController.stream));
+        when(() => videoElement.onError)
+            .thenAnswer((Invocation _) => FakeElementStream<Event>(errorStreamController.stream));
+        when(() => videoElement.onAbort)
+            .thenAnswer((Invocation _) => FakeElementStream<Event>(abortStreamController.stream));
 
-        when(() => camera.onEnded)
-            .thenAnswer((Invocation _) => endedStreamController.stream);
+        when(() => camera.onEnded).thenAnswer((Invocation _) => endedStreamController.stream);
 
         when(() => camera.onVideoRecordingError)
             .thenAnswer((Invocation _) => videoRecordingErrorController.stream);
 
-        when(() => camera.startVideoRecording())
-            .thenAnswer((Invocation _) async {});
+        when(() => camera.startVideoRecording()).thenAnswer((Invocation _) async {});
       });
 
       testWidgets(
@@ -2395,8 +2303,7 @@ void main() {
         await streamQueue.cancel();
       });
 
-      testWidgets('onCameraResolutionChanged emits an empty stream',
-          (WidgetTester tester) async {
+      testWidgets('onCameraResolutionChanged emits an empty stream', (WidgetTester tester) async {
         expect(
           CameraPlatform.instance.onCameraResolutionChanged(cameraId),
           emits(isEmpty),
@@ -2449,11 +2356,10 @@ void main() {
 
           final FakeMediaError error = FakeMediaError(
             MediaError.MEDIA_ERR_NETWORK,
-            'A network error occured.',
+            'A network error occurred.',
           );
 
-          final CameraErrorCode errorCode =
-              CameraErrorCode.fromMediaError(error);
+          final CameraErrorCode errorCode = CameraErrorCode.fromMediaError(error);
 
           when(() => videoElement.error).thenReturn(error);
 
@@ -2484,10 +2390,8 @@ void main() {
 
           await CameraPlatform.instance.initializeCamera(cameraId);
 
-          final FakeMediaError error =
-              FakeMediaError(MediaError.MEDIA_ERR_NETWORK);
-          final CameraErrorCode errorCode =
-              CameraErrorCode.fromMediaError(error);
+          final FakeMediaError error = FakeMediaError(MediaError.MEDIA_ERR_NETWORK);
+          final CameraErrorCode errorCode = CameraErrorCode.fromMediaError(error);
 
           when(() => videoElement.error).thenReturn(error);
 
@@ -2810,8 +2714,7 @@ void main() {
 
         testWidgets(
             'emits a CameraErrorEvent '
-            'on the camera video recording error event',
-            (WidgetTester tester) async {
+            'on the camera video recording error event', (WidgetTester tester) async {
           final Stream<CameraErrorEvent> eventStream =
               CameraPlatform.instance.onCameraError(cameraId);
 
@@ -2950,22 +2853,18 @@ void main() {
         });
       });
 
-      testWidgets('onVideoRecordedEvent emits a VideoRecordedEvent',
-          (WidgetTester tester) async {
+      testWidgets('onVideoRecordedEvent emits a VideoRecordedEvent', (WidgetTester tester) async {
         final MockCamera camera = MockCamera();
         final MockXFile capturedVideo = MockXFile();
-        final Stream<VideoRecordedEvent> stream =
-            Stream<VideoRecordedEvent>.value(
-                VideoRecordedEvent(cameraId, capturedVideo, Duration.zero));
-        when(() => camera.onVideoRecordedEvent)
-            .thenAnswer((Invocation _) => stream);
+        final Stream<VideoRecordedEvent> stream = Stream<VideoRecordedEvent>.value(
+            VideoRecordedEvent(cameraId, capturedVideo, Duration.zero));
+        when(() => camera.onVideoRecordedEvent).thenAnswer((Invocation _) => stream);
 
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
         final StreamQueue<VideoRecordedEvent> streamQueue =
-            StreamQueue<VideoRecordedEvent>(
-                CameraPlatform.instance.onVideoRecordedEvent(cameraId));
+            StreamQueue<VideoRecordedEvent>(CameraPlatform.instance.onVideoRecordedEvent(cameraId));
 
         expect(
           await streamQueue.next,
@@ -2977,8 +2876,7 @@ void main() {
 
       group('onDeviceOrientationChanged', () {
         group('emits an empty stream', () {
-          testWidgets('when screen is not supported',
-              (WidgetTester tester) async {
+          testWidgets('when screen is not supported', (WidgetTester tester) async {
             when(() => window.screen).thenReturn(null);
 
             expect(
@@ -2987,8 +2885,7 @@ void main() {
             );
           });
 
-          testWidgets('when screen orientation is not supported',
-              (WidgetTester tester) async {
+          testWidgets('when screen orientation is not supported', (WidgetTester tester) async {
             when(() => screen.orientation).thenReturn(null);
 
             expect(
@@ -2998,8 +2895,7 @@ void main() {
           });
         });
 
-        testWidgets('emits the initial DeviceOrientationChangedEvent',
-            (WidgetTester tester) async {
+        testWidgets('emits the initial DeviceOrientationChangedEvent', (WidgetTester tester) async {
           when(
             () => cameraService.mapOrientationTypeToDeviceOrientation(
               OrientationType.portraitPrimary,
@@ -3007,11 +2903,9 @@ void main() {
           ).thenReturn(DeviceOrientation.portraitUp);
 
           // Set the initial screen orientation to portraitPrimary.
-          when(() => screenOrientation.type)
-              .thenReturn(OrientationType.portraitPrimary);
+          when(() => screenOrientation.type).thenReturn(OrientationType.portraitPrimary);
 
-          final StreamController<Event> eventStreamController =
-              StreamController<Event>();
+          final StreamController<Event> eventStreamController = StreamController<Event>();
 
           when(() => screenOrientation.onChange)
               .thenAnswer((Invocation _) => eventStreamController.stream);
@@ -3036,8 +2930,7 @@ void main() {
 
         testWidgets(
             'emits a DeviceOrientationChangedEvent '
-            'when the screen orientation is changed',
-            (WidgetTester tester) async {
+            'when the screen orientation is changed', (WidgetTester tester) async {
           when(
             () => cameraService.mapOrientationTypeToDeviceOrientation(
               OrientationType.landscapePrimary,
@@ -3050,8 +2943,7 @@ void main() {
             ),
           ).thenReturn(DeviceOrientation.portraitDown);
 
-          final StreamController<Event> eventStreamController =
-              StreamController<Event>();
+          final StreamController<Event> eventStreamController = StreamController<Event>();
 
           when(() => screenOrientation.onChange)
               .thenAnswer((Invocation _) => eventStreamController.stream);
@@ -3064,8 +2956,7 @@ void main() {
 
           // Change the screen orientation to landscapePrimary and
           // emit an event on the screenOrientation.onChange stream.
-          when(() => screenOrientation.type)
-              .thenReturn(OrientationType.landscapePrimary);
+          when(() => screenOrientation.type).thenReturn(OrientationType.landscapePrimary);
 
           eventStreamController.add(Event('change'));
 
@@ -3080,8 +2971,7 @@ void main() {
 
           // Change the screen orientation to portraitSecondary and
           // emit an event on the screenOrientation.onChange stream.
-          when(() => screenOrientation.type)
-              .thenReturn(OrientationType.portraitSecondary);
+          when(() => screenOrientation.type).thenReturn(OrientationType.portraitSecondary);
 
           eventStreamController.add(Event('change'));
 

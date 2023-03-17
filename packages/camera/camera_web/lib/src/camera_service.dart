@@ -310,6 +310,40 @@ class CameraService {
     return const Size(320, 240);
   }
 
+  int mapResolutionPresetToVideoBitrate(ResolutionPreset resolutionPreset) {
+    switch (resolutionPreset) {
+      case ResolutionPreset.max:
+      case ResolutionPreset.ultraHigh:
+        return 8000000;
+      case ResolutionPreset.veryHigh:
+        return 4000000;
+      case ResolutionPreset.high:
+        return 1000000;
+      case ResolutionPreset.medium:
+        return 400000;
+      case ResolutionPreset.low:
+      default:
+        return 200000;
+    }
+  }
+
+  int mapResolutionPresetToAudioBitrate(ResolutionPreset resolutionPreset) {
+    switch (resolutionPreset) {
+      case ResolutionPreset.max:
+      case ResolutionPreset.ultraHigh:
+        return 128000;
+      case ResolutionPreset.veryHigh:
+        return 128000;
+      case ResolutionPreset.high:
+        return 64000;
+      case ResolutionPreset.medium:
+        return 48000;
+      case ResolutionPreset.low:
+      default:
+        return 320000;
+    }
+  }
+
   /// Maps the given [deviceOrientation] to [OrientationType].
   String mapDeviceOrientationToOrientationType(
     DeviceOrientation deviceOrientation,

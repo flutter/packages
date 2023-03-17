@@ -15,7 +15,7 @@ void main() {
 /// Example app for Camera Windows plugin.
 class MyApp extends StatefulWidget {
   /// Default Constructor
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -32,7 +32,12 @@ class _MyAppState extends State<MyApp> {
   bool _recordAudio = true;
   bool _previewPaused = false;
   Size? _previewSize;
-  ResolutionPreset _resolutionPreset = ResolutionPreset.veryHigh;
+  MediaSettings _mediaSettings = MediaSettings(
+    resolutionPreset: ResolutionPreset.low,
+    fps: 15,
+    videoBitrate: 200000,
+    audioBitrate: 32000,
+  );
   StreamSubscription<CameraErrorEvent>? _errorStreamSubscription;
   StreamSubscription<CameraClosingEvent>? _cameraClosingStreamSubscription;
 
@@ -95,7 +100,7 @@ class _MyAppState extends State<MyApp> {
 
       cameraId = await CameraPlatform.instance.createCamera(
         camera,
-        _resolutionPreset,
+        _mediaSettings,
         enableAudio: _recordAudio,
       );
 
@@ -276,7 +281,12 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _onResolutionChange(ResolutionPreset newValue) async {
     setState(() {
-      _resolutionPreset = newValue;
+      _mediaSettings = MediaSettings(
+        resolutionPreset: newValue,
+        fps: _mediaSettings.fps,
+        videoBitrate: _mediaSettings.videoBitrate,
+        audioBitrate: _mediaSettings.audioBitrate,
+      );
     });
     if (_initialized && _cameraId >= 0) {
       // Re-inits camera with new resolution preset.
@@ -359,7 +369,7 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   DropdownButton<ResolutionPreset>(
-                    value: _resolutionPreset,
+                    value: _mediaSettings.resolutionPreset,
                     onChanged: (ResolutionPreset? value) {
                       if (value != null) {
                         _onResolutionChange(value);

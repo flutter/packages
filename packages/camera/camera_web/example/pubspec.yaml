@@ -2,7 +2,7 @@ name: camera_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=3.0.0"
 
 dependencies:
@@ -11,9 +11,17 @@ dependencies:
 
 dev_dependencies:
   async: ^2.5.0
-  camera_platform_interface: ^2.1.0
+
   camera_web:
-    path: ../
+    git:
+      url: https://github.com/mtbo-org/flutter-plugins.git
+      path: packages/camera/camera_web
+
+  camera_platform_interface:
+    git:
+      url: https://github.com/mtbo-org/flutter-plugins.git
+      path: packages/camera/camera_platform_interface
+
   cross_file: ^0.3.1
   flutter_driver:
     sdk: flutter
@@ -21,4 +29,4 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mocktail: 0.3.0
+  mocktail: ^0.3.0

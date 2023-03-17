@@ -4,6 +4,7 @@
 
 // #docregion FullAppExample
 import 'package:camera/camera.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/material.dart';
 
 late List<CameraDescription> _cameras;
@@ -18,7 +19,7 @@ Future<void> main() async {
 /// CameraApp is the Main Application.
 class CameraApp extends StatefulWidget {
   /// Default Constructor
-  const CameraApp({super.key});
+  const CameraApp({Key? key}) : super(key: key);
 
   @override
   State<CameraApp> createState() => _CameraAppState();
@@ -30,7 +31,15 @@ class _CameraAppState extends State<CameraApp> {
   @override
   void initState() {
     super.initState();
-    controller = CameraController(_cameras[0], ResolutionPreset.max);
+    controller = CameraController(
+      _cameras[0],
+      const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 5,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+      ),
+    );
     controller.initialize().then((_) {
       if (!mounted) {
         return;

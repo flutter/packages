@@ -51,14 +51,14 @@ class CameraInitializedEvent extends CameraEvent {
   /// The `previewWidth` represents the width of the generated preview in pixels.
   /// The `previewHeight` represents the height of the generated preview in pixels.
   const CameraInitializedEvent(
-    super.cameraId,
+    int cameraId,
     this.previewWidth,
     this.previewHeight,
     this.exposureMode,
     this.exposurePointSupported,
     this.focusMode,
     this.focusPointSupported,
-  );
+  ) : super(cameraId);
 
   /// Converts the supplied [Map] to an instance of the [CameraInitializedEvent]
   /// class.
@@ -135,10 +135,10 @@ class CameraResolutionChangedEvent extends CameraEvent {
   /// The `captureWidth` represents the width of the resulting image in pixels.
   /// The `captureHeight` represents the height of the resulting image in pixels.
   const CameraResolutionChangedEvent(
-    super.cameraId,
+    int cameraId,
     this.captureWidth,
     this.captureHeight,
-  );
+  ) : super(cameraId);
 
   /// Converts the supplied [Map] to an instance of the
   /// [CameraResolutionChangedEvent] class.
@@ -178,7 +178,7 @@ class CameraResolutionChangedEvent extends CameraEvent {
 class CameraClosingEvent extends CameraEvent {
   /// Build a CameraClosing event triggered from the camera represented by
   /// `cameraId`.
-  const CameraClosingEvent(super.cameraId);
+  const CameraClosingEvent(int cameraId) : super(cameraId);
 
   /// Converts the supplied [Map] to an instance of the [CameraClosingEvent]
   /// class.
@@ -211,7 +211,7 @@ class CameraErrorEvent extends CameraEvent {
   /// `cameraId`.
   ///
   /// The `description` represents the error occured on the camera.
-  const CameraErrorEvent(super.cameraId, this.description);
+  const CameraErrorEvent(int cameraId, this.description) : super(cameraId);
 
   /// Converts the supplied [Map] to an instance of the [CameraErrorEvent]
   /// class.
@@ -248,7 +248,8 @@ class VideoRecordedEvent extends CameraEvent {
   /// The `file` represents the file of the video.
   /// The `maxVideoDuration` shows if a maxVideoDuration shows if a maximum
   /// video duration was set.
-  const VideoRecordedEvent(super.cameraId, this.file, this.maxVideoDuration);
+  const VideoRecordedEvent(int cameraId, this.file, this.maxVideoDuration)
+      : super(cameraId);
 
   /// Converts the supplied [Map] to an instance of the [VideoRecordedEvent]
   /// class.

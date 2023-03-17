@@ -94,16 +94,17 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
+    MediaSettings mediaSettings, {
     bool enableAudio = false,
   }) async {
     try {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': resolutionPreset != null
-            ? _serializeResolutionPreset(resolutionPreset)
-            : null,
+        'resolutionPreset': _serializeResolutionPreset(mediaSettings.resolutionPreset),
+        'fps': mediaSettings.fps,
+        'videoBitrate': mediaSettings.videoBitrate,
+        'audioBitrate': mediaSettings.audioBitrate,
         'enableAudio': enableAudio,
       });
 
@@ -508,17 +509,6 @@ class AVFoundationCamera extends CameraPlatform {
     await _channel.invokeMethod<double>(
       'resumePreview',
       <String, dynamic>{'cameraId': cameraId},
-    );
-  }
-
-  @override
-  Future<void> setDescriptionWhileRecording(
-      CameraDescription description) async {
-    await _channel.invokeMethod<double>(
-      'setDescriptionWhileRecording',
-      <String, dynamic>{
-        'cameraName': description.name,
-      },
     );
   }
 

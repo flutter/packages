@@ -26,7 +26,8 @@ public class MediaRecorderBuilderTest {
   @Test
   public void ctor_testLegacy() {
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(CamcorderProfile.get(CamcorderProfile.QUALITY_1080P), "");
+        new MediaRecorderBuilder(CamcorderProfile.get(CamcorderProfile.QUALITY_1080P), "",
+                15, 200000, 32000);
 
     assertNotNull(builder);
   }
@@ -35,7 +36,8 @@ public class MediaRecorderBuilderTest {
   @Test
   public void ctor_test() {
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P), "");
+        new MediaRecorderBuilder(CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P), "",
+                15, 200000, 32000);
 
     assertNotNull(builder);
   }
@@ -51,7 +53,7 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory)
+        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, 15, 200000, 32000)
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
 
@@ -87,7 +89,7 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory)
+        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, 15, 200000, 32000)
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
 
@@ -121,7 +123,7 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory)
+        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, 15, 200000, 32000)
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
 
@@ -141,7 +143,7 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory)
+        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, 15, 200000, 32000)
             .setEnableAudio(true)
             .setMediaOrientation(mediaOrientation);
 
@@ -181,7 +183,7 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory)
+        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, 15, 200000, 32000)
             .setEnableAudio(true)
             .setMediaOrientation(mediaOrientation);
 

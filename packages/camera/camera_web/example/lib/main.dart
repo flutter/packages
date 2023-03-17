@@ -9,7 +9,7 @@ void main() => runApp(const MyApp());
 /// App for testing
 class MyApp extends StatelessWidget {
   /// Default Constructor
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

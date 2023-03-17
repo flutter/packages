@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -80,8 +81,15 @@ void main() {
         bool previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller =
-              CameraController(cameraDescription, preset.key);
+          final CameraController controller = CameraController(
+            cameraDescription,
+            MediaSettings(
+              resolutionPreset: preset.key,
+              fps: 15,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
+            ),
+          );
           await controller.initialize();
           final bool presetExactlySupported =
               await testCaptureImageResolution(controller, preset.key);
@@ -132,8 +140,15 @@ void main() {
         bool previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller =
-              CameraController(cameraDescription, preset.key);
+          final CameraController controller = CameraController(
+            cameraDescription,
+            MediaSettings(
+              resolutionPreset: preset.key,
+              fps: 15,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
+            ),
+          );
           await controller.initialize();
           await controller.prepareForVideoRecording();
           final bool presetExactlySupported =
@@ -157,7 +172,12 @@ void main() {
 
     final CameraController controller = CameraController(
       cameras[0],
-      ResolutionPreset.low,
+      const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+      ),
       enableAudio: false,
     );
 
@@ -212,7 +232,12 @@ void main() {
 
       final CameraController controller = CameraController(
         cameras[0],
-        ResolutionPreset.low,
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.low,
+          fps: 15,
+          videoBitrate: 200000,
+          audioBitrate: 32000,
+        ),
         enableAudio: false,
       );
 
@@ -244,7 +269,12 @@ void main() {
       ImageFormatGroup? imageFormatGroup) async {
     final CameraController controller = CameraController(
       cameras.first,
-      ResolutionPreset.low,
+      const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+      ),
       enableAudio: false,
       imageFormatGroup: imageFormatGroup,
     );
