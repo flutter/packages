@@ -14,7 +14,9 @@ GoogleSignInPlugin _plugin =
     GoogleSignInPlatform.instance as GoogleSignInPlugin;
 
 Future<void> main() async {
-  await _plugin.init();
+  await _plugin.initWithParams(const SignInInitParameters(
+    clientId: 'your-client_id.apps.googleusercontent.com',
+  ));
   runApp(
     const MaterialApp(
       title: 'Sign in with Google button Tester',

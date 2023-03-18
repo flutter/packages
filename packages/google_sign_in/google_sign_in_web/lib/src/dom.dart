@@ -12,6 +12,8 @@ import 'package:js/js_util.dart' as js_util;
 class DomConsole {}
 
 extension DomConsoleExtension on DomConsole {
+  void debug(String message, [List<Object?>? more]) =>
+      js_util.callMethod(this, 'debug', <Object?>[message, ...?more]);
   void info(String message, [List<Object?>? more]) =>
       js_util.callMethod(this, 'info', <Object?>[message, ...?more]);
 }
