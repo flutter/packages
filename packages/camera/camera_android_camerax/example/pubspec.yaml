@@ -19,6 +19,10 @@ dependencies:
     sdk: flutter
   video_player: ^2.4.10
 
+dependency_overrides:
+  camera_platform_interface:
+    path: ../../camera_platform_interface
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
