@@ -21,11 +21,11 @@ class MyApp extends StatelessWidget {
         navigationRailTheme: const NavigationRailThemeData(
           selectedIconTheme: IconThemeData(
             color: Colors.red,
-            size: 32,
+            size: 28,
           ),
           selectedLabelTextStyle: TextStyle(
             fontSize: 16,
-            color: Colors.black,
+            color: Colors.red,
           ),
           unselectedLabelTextStyle: TextStyle(
             fontSize: 14,
@@ -76,7 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
       mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
       largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
       useDrawer: false,
-
       selectedIndex: _selectedTab,
       onSelectedIndexChange: (int index) {
         setState(() {

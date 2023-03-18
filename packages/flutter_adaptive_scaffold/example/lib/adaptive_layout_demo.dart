@@ -60,9 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
         const SizedBox(height: 10),
         Row(
           children: const <Widget>[
-            SizedBox(
-              width: 27,
-            ),
+            SizedBox(width: 27),
             Text('Folders', style: TextStyle(fontSize: 16)),
           ],
         ),
@@ -71,9 +69,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Text('Freelance'),
           ],
@@ -83,9 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Text('Mortgage'),
           ],
@@ -95,12 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Flexible(
-                child: Text('Taxes', overflow: TextOverflow.ellipsis)),
+              child: Text('Taxes', overflow: TextOverflow.ellipsis),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -108,12 +110,14 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Flexible(
-                child: Text('Receipts', overflow: TextOverflow.ellipsis)),
+              child: Text('Receipts', overflow: TextOverflow.ellipsis),
+            ),
           ],
         ),
       ],
