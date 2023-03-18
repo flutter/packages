@@ -44,6 +44,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     throw FlutterError(code: "code", message: "message", details: "details")
   }
 
+  func throwFlutterError() throws -> Any? {
+    throw FlutterError(code: "code", message: "message", details: "details")
+  }
+
   func echo(_ anInt: Int64) -> Int64 {
     return anInt
   }
@@ -130,6 +134,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func throwAsyncErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+  }
+
+  func throwAsyncFlutterError(completion: @escaping (Result<Any?, Error>) -> Void) {
     completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
   }
 

@@ -70,26 +70,44 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
 
     return AdaptiveScaffold(
+      // An option to override the default breakpoints used for small, medium,
+      // and large.
+      smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
+      mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
+      largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+      useDrawer: false,
+
       selectedIndex: _selectedTab,
       onSelectedIndexChange: (int index) {
-        setState(() => _selectedTab = index);
+        setState(() {
+          _selectedTab = index;
+        });
       },
       destinations: const <NavigationDestination>[
         NavigationDestination(
           icon: Icon(Icons.inbox_outlined),
+          selectedIcon: Icon(Icons.inbox),
           label: 'Inbox',
         ),
         NavigationDestination(
           icon: Icon(Icons.article_outlined),
+          selectedIcon: Icon(Icons.article),
           label: 'Articles',
         ),
         NavigationDestination(
           icon: Icon(Icons.chat_outlined),
+          selectedIcon: Icon(Icons.chat),
           label: 'Chat',
         ),
         NavigationDestination(
           icon: Icon(Icons.video_call_outlined),
+          selectedIcon: Icon(Icons.video_call),
           label: 'Video',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
+          label: 'Inbox',
         ),
       ],
       body: (_) => GridView.count(crossAxisCount: 2, children: children),
@@ -99,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       // Define a default secondaryBody.
       secondaryBody: (_) => Container(
-        color: Colors.pink[200],
+        color: const Color.fromARGB(255, 234, 158, 192),
       ),
       // Override the default secondaryBody during the smallBreakpoint to be
       // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
@@ -107,5 +125,5 @@ class _MyHomePageState extends State<MyHomePage> {
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
     );
   }
-  // #enddocregion
+// #enddocregion
 }
