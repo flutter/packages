@@ -74,7 +74,12 @@ class _MyHomePageState extends State<MyHomePage> {
               iconSize: 21,
             ),
             const SizedBox(width: 21),
-            const Text('Freelance'),
+            Flexible(
+              child: const Text(
+                'Freelance',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -87,7 +92,12 @@ class _MyHomePageState extends State<MyHomePage> {
               iconSize: 21,
             ),
             const SizedBox(width: 21),
-            const Text('Mortgage'),
+            Flexible(
+              child: const Text(
+                'Mortgage',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),
