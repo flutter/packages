@@ -7,6 +7,7 @@ import 'dart:async' as _i4;
 
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'
     as _i2;
+import 'package:google_sign_in_web/src/button_configuration.dart' as _i5;
 import 'package:google_sign_in_web/src/gis_client.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -37,6 +38,23 @@ class _FakeGoogleSignInTokenData_0 extends _i1.SmartFake
 /// See the documentation for Mockito's code generation for more information.
 class MockGisSdkClient extends _i1.Mock implements _i3.GisSdkClient {
   @override
+  _i4.Stream<_i2.GoogleSignInUserData?> get userDataEvents =>
+      (super.noSuchMethod(
+        Invocation.getter(#userDataEvents),
+        returnValue: _i4.Stream<_i2.GoogleSignInUserData?>.empty(),
+        returnValueForMissingStub:
+            _i4.Stream<_i2.GoogleSignInUserData?>.empty(),
+      ) as _i4.Stream<_i2.GoogleSignInUserData?>);
+  @override
+  set userDataEvents(_i4.Stream<_i2.GoogleSignInUserData?>? _userDataEvents) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #userDataEvents,
+          _userDataEvents,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   _i4.Future<_i2.GoogleSignInUserData?> signInSilently() => (super.noSuchMethod(
         Invocation.method(
           #signInSilently,
@@ -46,6 +64,22 @@ class MockGisSdkClient extends _i1.Mock implements _i3.GisSdkClient {
         returnValueForMissingStub:
             _i4.Future<_i2.GoogleSignInUserData?>.value(),
       ) as _i4.Future<_i2.GoogleSignInUserData?>);
+  @override
+  _i4.Future<void> renderButton(
+    Object? parent,
+    _i5.GSIButtonConfiguration? options,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #renderButton,
+          [
+            parent,
+            options,
+          ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
   @override
   _i4.Future<_i2.GoogleSignInUserData?> signIn() => (super.noSuchMethod(
         Invocation.method(
@@ -118,6 +152,22 @@ class MockGisSdkClient extends _i1.Mock implements _i3.GisSdkClient {
         Invocation.method(
           #requestScopes,
           [scopes],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+  @override
+  _i4.Future<bool> canAccessScopes(
+    String? accessToken,
+    List<String>? scopes,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #canAccessScopes,
+          [
+            accessToken,
+            scopes,
+          ],
         ),
         returnValue: _i4.Future<bool>.value(false),
         returnValueForMissingStub: _i4.Future<bool>.value(false),
