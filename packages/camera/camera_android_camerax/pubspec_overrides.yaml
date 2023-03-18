@@ -1,0 +1,13 @@
+dependency_overrides:
+  camera_platform_interface:
+    path: ../camera_platform_interface
+  camera_android:
+    path: ../camera_android
+  camera:
+    path: ../camera
+  camera_avfoundation:
+    path: ../camera_avfoundation
+  camera_web:
+    path: ../camera_web
+  camera_windows:
+    path: ../camera_windows
