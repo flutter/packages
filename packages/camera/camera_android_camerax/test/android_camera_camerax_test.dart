@@ -105,7 +105,6 @@ void main() {
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
-    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const bool enableAudio = true;
     const int testSurfaceTextureId = 6;
 
@@ -113,7 +112,7 @@ void main() {
         .thenAnswer((_) async => testSurfaceTextureId);
 
     expect(
-        await camera.createCamera(testCameraDescription, testResolutionPreset,
+        await camera.createCamera(testCameraDescription, MediaSettings.low(),
             enableAudio: enableAudio),
         equals(testSurfaceTextureId));
 
@@ -148,7 +147,6 @@ void main() {
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
-    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const bool enableAudio = true;
     const int resolutionWidth = 350;
     const int resolutionHeight = 750;
@@ -173,7 +171,7 @@ void main() {
     // Call createCamera.
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => cameraId);
-    await camera.createCamera(testCameraDescription, testResolutionPreset,
+    await camera.createCamera(testCameraDescription, MediaSettings.low(),
         enableAudio: enableAudio);
 
     when(camera.processCameraProvider!.bindToLifecycle(

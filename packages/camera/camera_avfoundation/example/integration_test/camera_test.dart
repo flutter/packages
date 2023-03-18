@@ -221,7 +221,7 @@ void main() {
 
     final CameraController controller = CameraController(
       cameras[0],
-      ResolutionPreset.low,
+      MediaSettings.low(),
       enableAudio: false,
     );
 

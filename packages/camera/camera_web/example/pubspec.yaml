@@ -9,11 +9,16 @@ dependencies:
   flutter:
     sdk: flutter
 
-dev_dependencies:
-  async: ^2.5.0
-  camera_platform_interface: ^2.1.0
+dependency_overrides:
+  camera_platform_interface:
+    path: ../../camera_platform_interface
   camera_web:
     path: ../
+
+dev_dependencies:
+  async: ^2.5.0
+  camera_platform_interface:
+  camera_web:
   cross_file: ^0.3.1
   flutter_driver:
     sdk: flutter

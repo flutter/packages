@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
   bool _recordAudio = true;
   bool _previewPaused = false;
   Size? _previewSize;
-  MediaSettings _mediaSettings = MediaSettings(
+  MediaSettings _mediaSettings = const MediaSettings(
     resolutionPreset: ResolutionPreset.low,
     fps: 15,
     videoBitrate: 200000,

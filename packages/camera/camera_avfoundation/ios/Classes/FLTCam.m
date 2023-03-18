@@ -41,9 +41,9 @@
                       AVCaptureAudioDataOutputSampleBufferDelegate>
 
 @property(readonly, nonatomic) int64_t textureId;
-@property NSNumber* fps;
-@property NSNumber* videoBitrate;
-@property NSNumber* audioBitrate;
+@property NSNumber *fps;
+@property NSNumber *videoBitrate;
+@property NSNumber *audioBitrate;
 @property BOOL enableAudio;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
 @property(readonly, nonatomic) AVCaptureSession *videoCaptureSession;
@@ -204,7 +204,7 @@ NSString *const errorMethod = @"error";
   }
 
   [_captureSession beginConfiguration];
-  NSError* outError;
+  NSError *outError;
   [_captureDevice lockForConfiguration:&outError];
   _captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, [_fps intValue]);
   _captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, [_fps intValue]);

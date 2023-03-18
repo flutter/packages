@@ -63,6 +63,7 @@ class AudioConstraints {
   /// Whether the audio track should be enabled.
   final bool enabled;
 
+  /// Audio bitrate
   final int bitrate;
 
   /// Converts the current instance to a Map.
@@ -94,6 +95,7 @@ class VideoConstraints {
     this.deviceId,
   });
 
+  /// Video bitrate
   final int bitrate;
 
   /// The facing mode of the video track.

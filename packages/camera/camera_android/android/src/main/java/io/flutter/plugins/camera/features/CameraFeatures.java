@@ -295,7 +295,6 @@ public class CameraFeatures {
     return (IntFeature) featureMap.get(FPS);
   }
 
-
   public void setVideoBitrate(IntFeature videoBitrate) {
     this.featureMap.put(VIDEO_BITRATE, videoBitrate);
   }

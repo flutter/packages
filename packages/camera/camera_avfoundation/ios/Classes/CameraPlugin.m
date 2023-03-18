@@ -311,9 +311,9 @@
     NSError *error;
     FLTCam *cam = [[FLTCam alloc] initWithCameraName:cameraName
                                     resolutionPreset:resolutionPreset
-                                    fps:fps
-                                    videoBitrate:videoBitrate
-                                    audioBitrate:audioBitrate
+                                                 fps:fps
+                                        videoBitrate:videoBitrate
+                                        audioBitrate:audioBitrate
                                          enableAudio:[enableAudio boolValue]
                                          orientation:[[UIDevice currentDevice] orientation]
                                  captureSessionQueue:strongSelf.captureSessionQueue

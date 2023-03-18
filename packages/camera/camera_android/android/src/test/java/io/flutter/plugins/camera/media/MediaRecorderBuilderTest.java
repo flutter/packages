@@ -26,8 +26,8 @@ public class MediaRecorderBuilderTest {
   @Test
   public void ctor_testLegacy() {
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(CamcorderProfile.get(CamcorderProfile.QUALITY_1080P), "",
-                15, 200000, 32000);
+        new MediaRecorderBuilder(
+            CamcorderProfile.get(CamcorderProfile.QUALITY_1080P), "", 15, 200000, 32000);
 
     assertNotNull(builder);
   }
@@ -36,8 +36,8 @@ public class MediaRecorderBuilderTest {
   @Test
   public void ctor_test() {
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P), "",
-                15, 200000, 32000);
+        new MediaRecorderBuilder(
+            CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P), "", 15, 200000, 32000);
 
     assertNotNull(builder);
   }

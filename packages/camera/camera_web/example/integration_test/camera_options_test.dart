@@ -33,10 +33,8 @@ void main() {
           audio: const AudioConstraints(),
           video: VideoConstraints(
             facingMode: FacingModeConstraint(CameraType.environment),
-            width:
-                const VideoSizeConstraint(minimum: 10, ideal: 15, maximum: 20),
-            height:
-                const VideoSizeConstraint(minimum: 15, ideal: 20, maximum: 25),
+            width: const VideoSizeConstraint(minimum: 10, ideal: 15, maximum: 20),
+            height: const VideoSizeConstraint(minimum: 15, ideal: 20, maximum: 25),
             deviceId: 'deviceId',
           ),
         ),
@@ -45,10 +43,8 @@ void main() {
             audio: const AudioConstraints(),
             video: VideoConstraints(
               facingMode: FacingModeConstraint(CameraType.environment),
-              width: const VideoSizeConstraint(
-                  minimum: 10, ideal: 15, maximum: 20),
-              height: const VideoSizeConstraint(
-                  minimum: 15, ideal: 20, maximum: 25),
+              width: const VideoSizeConstraint(minimum: 10, ideal: 15, maximum: 20),
+              height: const VideoSizeConstraint(minimum: 15, ideal: 20, maximum: 25),
               deviceId: 'deviceId',
             ),
           ),
@@ -60,8 +56,11 @@ void main() {
   group('AudioConstraints', () {
     testWidgets('serializes correctly', (WidgetTester tester) async {
       expect(
-        const AudioConstraints(enabled: true).toJson(),
-        equals(true),
+        const AudioConstraints(enabled: true, bitrate: 28000).toJson(),
+        equals(<String, Object>{
+          'enabled': true,
+          'bitrate': 28000,
+        }),
       );
     });
 
@@ -80,6 +79,7 @@ void main() {
         width: const VideoSizeConstraint(ideal: 100, maximum: 100),
         height: const VideoSizeConstraint(ideal: 50, maximum: 50),
         deviceId: 'deviceId',
+        bitrate: 250000,
       );
 
       expect(
@@ -88,6 +88,7 @@ void main() {
           'facingMode': videoConstraints.facingMode!.toJson(),
           'width': videoConstraints.width!.toJson(),
           'height': videoConstraints.height!.toJson(),
+          'bitrate': videoConstraints.bitrate,
           'deviceId': <String, Object>{
             'exact': 'deviceId',
           }
@@ -99,19 +100,15 @@ void main() {
       expect(
         VideoConstraints(
           facingMode: FacingModeConstraint.exact(CameraType.environment),
-          width:
-              const VideoSizeConstraint(minimum: 90, ideal: 100, maximum: 100),
-          height:
-              const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
+          width: const VideoSizeConstraint(minimum: 90, ideal: 100, maximum: 100),
+          height: const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
           deviceId: 'deviceId',
         ),
         equals(
           VideoConstraints(
             facingMode: FacingModeConstraint.exact(CameraType.environment),
-            width: const VideoSizeConstraint(
-                minimum: 90, ideal: 100, maximum: 100),
-            height:
-                const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
+            width: const VideoSizeConstraint(minimum: 90, ideal: 100, maximum: 100),
+            height: const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
             deviceId: 'deviceId',
           ),
         ),

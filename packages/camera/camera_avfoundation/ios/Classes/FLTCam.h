@@ -40,9 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
-                  fps:(NSNumber *)fps
-                  videoBitrate:(NSNumber *)videoBitrate
-                  audioBitrate:(NSNumber *)audioBitrate
+                               fps:(NSNumber *)fps
+                      videoBitrate:(NSNumber *)videoBitrate
+                      audioBitrate:(NSNumber *)audioBitrate
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue

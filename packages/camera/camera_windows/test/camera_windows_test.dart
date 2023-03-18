@@ -53,7 +53,10 @@ void main() {
             'create',
             arguments: <String, Object?>{
               'cameraName': 'Test',
-              'resolutionPreset': 'high',
+              'resolutionPreset': 'low',
+              'fps': 15,
+              'videoBitrate': 200000,
+              'audioBitrate': 32000,
               'enableAudio': false
             },
           ),

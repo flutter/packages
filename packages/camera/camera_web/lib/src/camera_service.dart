@@ -310,6 +310,7 @@ class CameraService {
     return const Size(320, 240);
   }
 
+  /// Maps the given [resolutionPreset] to video bitrate.
   int mapResolutionPresetToVideoBitrate(ResolutionPreset resolutionPreset) {
     switch (resolutionPreset) {
       case ResolutionPreset.max:
@@ -322,11 +323,11 @@ class CameraService {
       case ResolutionPreset.medium:
         return 400000;
       case ResolutionPreset.low:
-      default:
         return 200000;
     }
   }
 
+  /// Maps the given [resolutionPreset] to audio bitrate.
   int mapResolutionPresetToAudioBitrate(ResolutionPreset resolutionPreset) {
     switch (resolutionPreset) {
       case ResolutionPreset.max:
@@ -339,7 +340,6 @@ class CameraService {
       case ResolutionPreset.medium:
         return 48000;
       case ResolutionPreset.low:
-      default:
         return 320000;
     }
   }

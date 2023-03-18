@@ -56,8 +56,10 @@ class CameraPreview extends StatelessWidget {
   }
 
   bool _isLandscape() {
-    return <DeviceOrientation>[DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]
-        .contains(_getApplicableOrientation());
+    return <DeviceOrientation>[
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ].contains(_getApplicableOrientation());
   }
 
   int _getQuarterTurns() {

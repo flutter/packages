@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Range;
 import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
@@ -54,6 +55,8 @@ import io.flutter.plugins.camera.features.exposurepoint.ExposurePointFeature;
 import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
+import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
+import io.flutter.plugins.camera.features.intfeature.IntFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
@@ -72,13 +75,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executors;
-
-import android.util.Range;
-
-import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
-import io.flutter.plugins.camera.features.intfeature.IntFeature;
-import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
-
 
 @FunctionalInterface
 interface ErrorCallback {
@@ -190,8 +186,7 @@ class Camera
       final boolean enableAudio,
       final int fps,
       final int videoBitrate,
-      final int audioBitrate
-  ) {
+      final int audioBitrate) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
@@ -261,11 +256,17 @@ class Camera
     // once this has largely been fixed on the Android side. https://github.com/flutter/flutter/issues/119668
     EncoderProfiles recordingProfile = getRecordingProfile();
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && recordingProfile != null) {
-      mediaRecorderBuilder = new MediaRecorderBuilder(recordingProfile, outputFilePath,
-          getFps(), getVideoBitrate(), getAudioBitrate());
+      mediaRecorderBuilder =
+          new MediaRecorderBuilder(
+              recordingProfile, outputFilePath, getFps(), getVideoBitrate(), getAudioBitrate());
     } else {
-      mediaRecorderBuilder = new MediaRecorderBuilder(getRecordingProfileLegacy(), outputFilePath,
-          getFps(), getVideoBitrate(), getAudioBitrate());
+      mediaRecorderBuilder =
+          new MediaRecorderBuilder(
+              getRecordingProfileLegacy(),
+              outputFilePath,
+              getFps(),
+              getVideoBitrate(),
+              getAudioBitrate());
     }
 
     mediaRecorder =

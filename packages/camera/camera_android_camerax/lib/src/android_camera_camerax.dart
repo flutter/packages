@@ -121,7 +121,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
+    MediaSettings mediaSettings, {
     bool enableAudio = false,
   }) async {
     // Must obtain proper permissions before attempting to access a camera.
@@ -144,7 +144,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
     final ResolutionInfo? targetResolution =
-        _getTargetResolutionForPreview(resolutionPreset);
+        _getTargetResolutionForPreview(mediaSettings.resolutionPreset);
     preview = createPreview(targetRotation, targetResolution);
     previewIsBound = false;
     _previewIsPaused = false;

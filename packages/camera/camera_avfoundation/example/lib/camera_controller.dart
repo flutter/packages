@@ -173,15 +173,16 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   CameraController(
     CameraDescription cameraDescription,
-    this.mediaSettings, {
+    MediaSettings mediaSettings, {
     this.enableAudio = true,
     this.imageFormatGroup,
-  }) : super(CameraValue.uninitialized(cameraDescription));
+  })  : _mediaSettings = mediaSettings,
+        super(CameraValue.uninitialized(cameraDescription));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
 
-  final MediaSettings mediaSettings;
+  final MediaSettings _mediaSettings;
 
   /// Whether to include audio when recording a video.
   final bool enableAudio;
@@ -219,7 +220,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
     _cameraId = await CameraPlatform.instance.createCamera(
       description,
-      mediaSettings,
+      _mediaSettings,
       enableAudio: enableAudio,
     );
 

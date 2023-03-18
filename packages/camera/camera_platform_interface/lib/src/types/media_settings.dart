@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
 
-import 'package:camera_platform_interface/src/types/resolution_preset.dart';
+import 'resolution_preset.dart';
 
 /// recording media settings.
 class MediaSettings {
@@ -44,7 +44,10 @@ class MediaSettings {
 
   @override
   int get hashCode =>
-      resolutionPreset.hashCode ^ fps.hashCode ^ videoBitrate.hashCode ^ audioBitrate.hashCode;
+      resolutionPreset.hashCode ^
+      fps.hashCode ^
+      videoBitrate.hashCode ^
+      audioBitrate.hashCode;
 
   @override
   String toString() =>
