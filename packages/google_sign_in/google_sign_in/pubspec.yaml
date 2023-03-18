@@ -49,5 +49,3 @@ false_secrets:
   - /example/android/app/google-services.json
   - /example/ios/Runner/GoogleService-Info.plist
   - /example/ios/RunnerTests/GoogleSignInTests.m
-  - /example/lib/main.dart
-  - /example/web/index.html

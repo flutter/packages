@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs, avoid_print
+// ignore_for_file: avoid_print
 
 import 'dart:async';
 import 'dart:convert' show json;
@@ -14,13 +14,14 @@ import 'package:http/http.dart' as http;
 
 import 'src/sign_in_button.dart';
 
+/// The scopes that are needed to access the People API.
 const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   // Optional clientId
-  // clientId: '479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com',
+  // clientId: 'your-client_id.apps.googleusercontent.com',
   scopes: scopes,
 );
 
@@ -33,14 +34,16 @@ void main() {
   );
 }
 
+/// The SignInDemo app.
 class SignInDemo extends StatefulWidget {
+  ///
   const SignInDemo({super.key});
 
   @override
-  State createState() => SignInDemoState();
+  State createState() => _SignInDemoState();
 }
 
-class SignInDemoState extends State<SignInDemo> {
+class _SignInDemoState extends State<SignInDemo> {
   GoogleSignInAccount? _currentUser;
   bool _isAuthorized = false; // has granted permissions?
   String _contactText = '';
@@ -54,13 +57,17 @@ class SignInDemoState extends State<SignInDemo> {
       // Check if the account can access scopes...
       bool isAuthorized = false;
       if (account != null) {
-        final String? accessToken = (await account.authentication).idToken;
+        final String? accessToken = (await account.authentication).accessToken;
         isAuthorized = await _googleSignIn.canAccessScopes(accessToken, scopes);
       }
+
       setState(() {
         _currentUser = account;
         _isAuthorized = isAuthorized;
       });
+
+      // Now that we know that the user can access the required scopes, the app
+      // can call the REST API.
       if (isAuthorized) {
         _handleGetContact(account!);
       }
@@ -74,6 +81,7 @@ class SignInDemoState extends State<SignInDemo> {
     }
   }
 
+  // Calls the People API REST endpoint for the signed-in user to retrieve information.
   Future<void> _handleGetContact(GoogleSignInAccount user) async {
     setState(() {
       _contactText = 'Loading contact info...';
@@ -123,6 +131,10 @@ class SignInDemoState extends State<SignInDemo> {
     return null;
   }
 
+  // This is the on-click handler for the Sign In button that is rendered by Flutter.
+  //
+  // On the web, the on-click handler of the Sign In button is owned by the JS
+  // SDK, so this method can be considered mobile only.
   Future<void> _handleSignIn() async {
     try {
       await _googleSignIn.signIn();
@@ -131,8 +143,13 @@ class SignInDemoState extends State<SignInDemo> {
     }
   }
 
+  // Prompts the user to authorize `scopes`.
+  //
+  // This action is **required** in platforms that don't perform Authentication
+  // and Authorization at the same time (like the web).
+  //
+  // On the web, this must be called from an user interaction (button click).
   Future<void> _handleAuthorizeScopes() async {
-    // requestScopes should also fire a new user notification when scopes/tokens change.
     final bool isAuthorized = await _googleSignIn.requestScopes(scopes);
     setState(() {
       _isAuthorized = isAuthorized;
@@ -147,6 +164,7 @@ class SignInDemoState extends State<SignInDemo> {
   Widget _buildBody() {
     final GoogleSignInAccount? user = _currentUser;
     if (user != null) {
+      // The user is Authenticated
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
@@ -159,6 +177,7 @@ class SignInDemoState extends State<SignInDemo> {
           ),
           const Text('Signed in successfully.'),
           if (_isAuthorized) ...<Widget>[
+            // The user has Authorized all required scopes
             Text(_contactText),
             ElevatedButton(
               child: const Text('REFRESH'),
@@ -166,6 +185,8 @@ class SignInDemoState extends State<SignInDemo> {
             ),
           ],
           if (!_isAuthorized) ...<Widget>[
+            // The user has NOT Authorized all required scopes.
+            // (Mobile users may never see this button!)
             const Text('Additional permissions needed to read your contacts.'),
             ElevatedButton(
               onPressed: _handleAuthorizeScopes,
@@ -179,10 +200,13 @@ class SignInDemoState extends State<SignInDemo> {
         ],
       );
     } else {
+      // The user is NOT Authenticated
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           const Text('You are not currently signed in.'),
+          // This method is used to separate mobile from web code with conditional exports.
+          // See: src/sign_in_button.dart
           buildSignInButton(
             onPressed: _handleSignIn,
           ),
