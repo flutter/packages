@@ -33,8 +33,10 @@ void main() {
           audio: const AudioConstraints(),
           video: VideoConstraints(
             facingMode: FacingModeConstraint(CameraType.environment),
-            width: const VideoSizeConstraint(minimum: 10, ideal: 15, maximum: 20),
-            height: const VideoSizeConstraint(minimum: 15, ideal: 20, maximum: 25),
+            width:
+                const VideoSizeConstraint(minimum: 10, ideal: 15, maximum: 20),
+            height:
+                const VideoSizeConstraint(minimum: 15, ideal: 20, maximum: 25),
             deviceId: 'deviceId',
           ),
         ),
@@ -43,8 +45,10 @@ void main() {
             audio: const AudioConstraints(),
             video: VideoConstraints(
               facingMode: FacingModeConstraint(CameraType.environment),
-              width: const VideoSizeConstraint(minimum: 10, ideal: 15, maximum: 20),
-              height: const VideoSizeConstraint(minimum: 15, ideal: 20, maximum: 25),
+              width: const VideoSizeConstraint(
+                  minimum: 10, ideal: 15, maximum: 20),
+              height: const VideoSizeConstraint(
+                  minimum: 15, ideal: 20, maximum: 25),
               deviceId: 'deviceId',
             ),
           ),
@@ -100,15 +104,19 @@ void main() {
       expect(
         VideoConstraints(
           facingMode: FacingModeConstraint.exact(CameraType.environment),
-          width: const VideoSizeConstraint(minimum: 90, ideal: 100, maximum: 100),
-          height: const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
+          width:
+              const VideoSizeConstraint(minimum: 90, ideal: 100, maximum: 100),
+          height:
+              const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
           deviceId: 'deviceId',
         ),
         equals(
           VideoConstraints(
             facingMode: FacingModeConstraint.exact(CameraType.environment),
-            width: const VideoSizeConstraint(minimum: 90, ideal: 100, maximum: 100),
-            height: const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
+            width: const VideoSizeConstraint(
+                minimum: 90, ideal: 100, maximum: 100),
+            height:
+                const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
             deviceId: 'deviceId',
           ),
         ),

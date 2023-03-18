@@ -106,6 +106,9 @@ NSString *const errorMethod = @"error";
                              error:(NSError **)error {
   return [self initWithCameraName:cameraName
                  resolutionPreset:resolutionPreset
+                              fps:fps
+                     videoBitrate:videoBitrate
+                     audioBitrate:audioBitrate
                       enableAudio:enableAudio
                       orientation:orientation
               videoCaptureSession:[[AVCaptureSession alloc] init]
@@ -203,12 +206,12 @@ NSString *const errorMethod = @"error";
     connection.videoMirrored = YES;
   }
 
-  [_captureSession beginConfiguration];
+  [_videoCaptureSession beginConfiguration];
   NSError *outError;
   [_captureDevice lockForConfiguration:&outError];
   _captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, [_fps intValue]);
   _captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, [_fps intValue]);
-  [_captureSession commitConfiguration];
+  [_videoCaptureSession commitConfiguration];
   [_captureDevice unlockForConfiguration];
   return connection;
 }

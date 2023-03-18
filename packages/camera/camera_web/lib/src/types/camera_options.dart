@@ -67,7 +67,8 @@ class AudioConstraints {
   final int bitrate;
 
   /// Converts the current instance to a Map.
-  Map<String, dynamic> toJson() => {'enabled': enabled, 'bitrate': bitrate};
+  Map<String, dynamic> toJson() =>
+      <String, dynamic>{'enabled': enabled, 'bitrate': bitrate};
 
   @override
   bool operator ==(Object other) =>
