@@ -94,18 +94,18 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,
-    MediaSettings mediaSettings, {
+    MediaSettings? mediaSettings, {
     bool enableAudio = false,
   }) async {
     try {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset':
-            _serializeResolutionPreset(mediaSettings.resolutionPreset),
-        'fps': mediaSettings.fps,
-        'videoBitrate': mediaSettings.videoBitrate,
-        'audioBitrate': mediaSettings.audioBitrate,
+        'resolutionPreset': null != mediaSettings?.resolutionPreset ?
+        _serializeResolutionPreset(mediaSettings!.resolutionPreset) : null,
+        'fps': mediaSettings?.fps,
+        'videoBitrate': mediaSettings?.videoBitrate,
+        'audioBitrate': mediaSettings?.audioBitrate,
         'enableAudio': enableAudio,
       });
 

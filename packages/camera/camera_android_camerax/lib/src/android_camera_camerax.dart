@@ -121,7 +121,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,
-    MediaSettings mediaSettings, {
+    MediaSettings? mediaSettings, {
     bool enableAudio = false,
   }) async {
     // Must obtain proper permissions before attempting to access a camera.
