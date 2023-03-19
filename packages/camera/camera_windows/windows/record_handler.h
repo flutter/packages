@@ -35,12 +35,12 @@ enum class RecordState { kNotStarted, kStarting, kRunning, kStopping };
 // Handles record sink initialization and manages the state of video recording.
 class RecordHandler {
  public:
-  RecordHandler(bool record_audio, int fps, int video_bitrate, int audio_bitrate) :
-   record_audio_(record_audio),
-   fps_(fps),
-   video_bitrate_(video_bitrate),
-   audio_bitrate_(audio_bitrate)
-    {}
+  RecordHandler(bool record_audio, int fps, int video_bitrate,
+                int audio_bitrate)
+      : record_audio_(record_audio),
+        fps_(fps),
+        video_bitrate_(video_bitrate),
+        audio_bitrate_(audio_bitrate) {}
   virtual ~RecordHandler() = default;
 
   // Prevent copying.

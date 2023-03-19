@@ -117,11 +117,13 @@ public class MediaRecorderBuilder {
       mediaRecorder.setOutputFormat(encoderProfiles.getRecommendedFileFormat());
       if (enableAudio) {
         mediaRecorder.setAudioEncoder(audioProfile.getCodec());
-        mediaRecorder.setAudioEncodingBitRate((null != audioBitrate && 0 < audioBitrate) ? audioBitrate : audioProfile.getBitrate());
+        mediaRecorder.setAudioEncodingBitRate(
+            (null != audioBitrate && 0 < audioBitrate) ? audioBitrate : audioProfile.getBitrate());
         mediaRecorder.setAudioSamplingRate(audioProfile.getSampleRate());
       }
       mediaRecorder.setVideoEncoder(videoProfile.getCodec());
-      mediaRecorder.setVideoEncodingBitRate((null != videoBitrate && 0 < videoBitrate) ? videoBitrate : videoProfile.getBitrate());
+      mediaRecorder.setVideoEncodingBitRate(
+          (null != videoBitrate && 0 < videoBitrate) ? videoBitrate : videoProfile.getBitrate());
       mediaRecorder.setVideoFrameRate((null != fps && 0 < fps) ? fps : videoProfile.getFrameRate());
       mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
       mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
@@ -129,12 +131,19 @@ public class MediaRecorderBuilder {
       mediaRecorder.setOutputFormat(camcorderProfile.fileFormat);
       if (enableAudio) {
         mediaRecorder.setAudioEncoder(camcorderProfile.audioCodec);
-        mediaRecorder.setAudioEncodingBitRate((null != audioBitrate && 0 < audioBitrate) ? audioBitrate : camcorderProfile.audioBitRate);
+        mediaRecorder.setAudioEncodingBitRate(
+            (null != audioBitrate && 0 < audioBitrate)
+                ? audioBitrate
+                : camcorderProfile.audioBitRate);
         mediaRecorder.setAudioSamplingRate(camcorderProfile.audioSampleRate);
       }
       mediaRecorder.setVideoEncoder(camcorderProfile.videoCodec);
-      mediaRecorder.setVideoEncodingBitRate((null != videoBitrate && 0 < videoBitrate) ? videoBitrate : camcorderProfile.videoBitRate);
-      mediaRecorder.setVideoFrameRate((null != fps && 0 < fps) ? fps : camcorderProfile.videoFrameRate);
+      mediaRecorder.setVideoEncodingBitRate(
+          (null != videoBitrate && 0 < videoBitrate)
+              ? videoBitrate
+              : camcorderProfile.videoBitRate);
+      mediaRecorder.setVideoFrameRate(
+          (null != fps && 0 < fps) ? fps : camcorderProfile.videoFrameRate);
       mediaRecorder.setVideoSize(
           camcorderProfile.videoFrameWidth, camcorderProfile.videoFrameHeight);
     }

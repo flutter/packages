@@ -60,7 +60,8 @@ void MockInitCaptureController(CaptureControllerImpl* capture_controller,
   EXPECT_CALL(*engine, Initialize).Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar, MOCK_DEVICE_ID, true, ResolutionPreset::kAuto, 5, 200000, 32000);
+      texture_registrar, MOCK_DEVICE_ID, true, ResolutionPreset::kAuto, 5,
+      200000, 32000);
 
   EXPECT_TRUE(result);
 
@@ -258,7 +259,8 @@ TEST(CaptureController, InitCaptureEngineCanOnlyBeCalledOnce) {
   EXPECT_CALL(*camera, OnCreateCaptureEngineFailed).Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto, 5, 200000, 32000);
+      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto, 5,
+      200000, 32000);
 
   EXPECT_FALSE(result);
 
@@ -299,7 +301,8 @@ TEST(CaptureController, InitCaptureEngineReportsFailure) {
       .Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto, 5, 200000, 32000);
+      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto, 5,
+      200000, 32000);
 
   EXPECT_FALSE(result);
   EXPECT_FALSE(engine->initialized_);
@@ -343,7 +346,8 @@ TEST(CaptureController, InitCaptureEngineReportsAccessDenied) {
       .Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto, 5, 200000, 32000);
+      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto, 5,
+      200000, 32000);
 
   EXPECT_FALSE(result);
   EXPECT_FALSE(engine->initialized_);

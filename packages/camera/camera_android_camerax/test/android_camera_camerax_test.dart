@@ -112,8 +112,8 @@ void main() {
         .thenAnswer((_) async => testSurfaceTextureId);
 
     expect(
-        await camera.createCamera(testCameraDescription, mediaSettings: MediaSettings.low(),
-            enableAudio: enableAudio),
+        await camera.createCamera(testCameraDescription,
+            mediaSettings: MediaSettings.low(), enableAudio: enableAudio),
         equals(testSurfaceTextureId));
 
     // Verify permissions are requested and the camera starts listening for device orientation changes.
@@ -171,8 +171,8 @@ void main() {
     // Call createCamera.
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => cameraId);
-    await camera.createCamera(testCameraDescription, mediaSettings: MediaSettings.low(),
-        enableAudio: enableAudio);
+    await camera.createCamera(testCameraDescription,
+        mediaSettings: MediaSettings.low(), enableAudio: enableAudio);
 
     when(camera.processCameraProvider!.bindToLifecycle(
             camera.cameraSelector!, <UseCase>[camera.testPreview]))

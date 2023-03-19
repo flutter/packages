@@ -230,7 +230,7 @@ class Camera
       this.cameraFeatures.setVideoBitrate(new IntFeature(cameraProperties, videoBitrate));
     }
 
-    if (null != audioBitrate && 0 < audioBitrate ) {
+    if (null != audioBitrate && 0 < audioBitrate) {
       this.cameraFeatures.setAudioBitrate(new IntFeature(cameraProperties, audioBitrate));
     }
 

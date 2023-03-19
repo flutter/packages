@@ -44,7 +44,10 @@ class MediaSettings {
 
   @override
   int get hashCode =>
-      resolutionPreset.hashCode ^ fps.hashCode ^ videoBitrate.hashCode ^ audioBitrate.hashCode;
+      resolutionPreset.hashCode ^
+      fps.hashCode ^
+      videoBitrate.hashCode ^
+      audioBitrate.hashCode;
 
   @override
   String toString() =>

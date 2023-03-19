@@ -139,8 +139,7 @@ public class CameraTest {
             enableAudio,
             15,
             200000,
-            32000
-            );
+            32000);
 
     TestUtils.setPrivateField(camera, "captureSession", mockCaptureSession);
     TestUtils.setPrivateField(camera, "previewRequestBuilder", mockPreviewRequestBuilder);

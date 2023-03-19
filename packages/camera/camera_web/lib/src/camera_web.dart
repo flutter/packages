@@ -198,9 +198,8 @@ class CameraPlugin extends CameraPlatform {
 
   @override
   Future<int> createCamera(
-    CameraDescription cameraDescription,
-     {
-       MediaSettings? mediaSettings,
+    CameraDescription cameraDescription, {
+    MediaSettings? mediaSettings,
     bool enableAudio = false,
   }) async {
     try {
@@ -222,8 +221,8 @@ class CameraPlugin extends CameraPlatform {
 
       // Use the highest resolution possible
       // if the resolution preset is not specified.
-      final Size videoSize = _cameraService
-          .mapResolutionPresetToSize(mediaSettings?.resolutionPreset ?? ResolutionPreset.max);
+      final Size videoSize = _cameraService.mapResolutionPresetToSize(
+          mediaSettings?.resolutionPreset ?? ResolutionPreset.max);
 
       // Create a camera with the given audio and video constraints.
       // Sensor orientation is currently not supported.

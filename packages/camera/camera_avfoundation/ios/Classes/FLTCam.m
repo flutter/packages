@@ -207,13 +207,13 @@ NSString *const errorMethod = @"error";
   }
 
   if (_fps) {
-      [_videoCaptureSession beginConfiguration];
-      NSError *outError;
-      [_captureDevice lockForConfiguration:&outError];
-      _captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, [_fps intValue]);
-      _captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, [_fps intValue]);
-      [_videoCaptureSession commitConfiguration];
-      [_captureDevice unlockForConfiguration];
+    [_videoCaptureSession beginConfiguration];
+    NSError *outError;
+    [_captureDevice lockForConfiguration:&outError];
+    _captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, [_fps intValue]);
+    _captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, [_fps intValue]);
+    [_videoCaptureSession commitConfiguration];
+    [_captureDevice unlockForConfiguration];
   }
 
   return connection;
@@ -1126,19 +1126,18 @@ NSString *const errorMethod = @"error";
     return NO;
   }
 
-
   NSMutableDictionary *videoSettings = [[_captureVideoOutput
-                                             recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeMPEG4] mutableCopy] ;
+      recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeMPEG4] mutableCopy];
 
   if (_videoBitrate || _fps) {
     NSMutableDictionary *compressionProperties = [@{} mutableCopy];
 
     if (_videoBitrate) {
-        compressionProperties[AVVideoAverageBitRateKey] = _videoBitrate;
+      compressionProperties[AVVideoAverageBitRateKey] = _videoBitrate;
     }
 
     if (_videoBitrate) {
-        compressionProperties[AVVideoExpectedSourceFrameRateKey] = _fps;
+      compressionProperties[AVVideoExpectedSourceFrameRateKey] = _fps;
     }
 
     videoSettings[AVVideoCompressionPropertiesKey] = compressionProperties;
@@ -1172,8 +1171,8 @@ NSString *const errorMethod = @"error";
     } mutableCopy];
 
     if (_audioBitrate) {
-        // Both type of audio inputs causes output video file to be corrupted.
-        audioOutputSettings[AVEncoderBitRateKey] = _audioBitrate;
+      // Both type of audio inputs causes output video file to be corrupted.
+      audioOutputSettings[AVEncoderBitRateKey] = _audioBitrate;
     }
 
     _audioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio

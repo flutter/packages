@@ -88,10 +88,8 @@ class CaptureController {
   virtual bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                                  const std::string& device_id,
                                  bool record_audio,
-                                 ResolutionPreset resolution_preset,
-                                 int fps,
-                                 int video_bitrate,
-                                 int audio_bitrate) = 0;
+                                 ResolutionPreset resolution_preset, int fps,
+                                 int video_bitrate, int audio_bitrate) = 0;
 
   // Returns preview frame width
   virtual uint32_t GetPreviewWidth() const = 0;
@@ -140,10 +138,8 @@ class CaptureControllerImpl : public CaptureController,
   // CaptureController
   bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                          const std::string& device_id, bool record_audio,
-                         ResolutionPreset resolution_preset,
-                         int fps,
-                         int video_bitrate,
-                         int audio_bitrate) override;
+                         ResolutionPreset resolution_preset, int fps,
+                         int video_bitrate, int audio_bitrate) override;
   uint32_t GetPreviewWidth() const override { return preview_frame_width_; }
   uint32_t GetPreviewHeight() const override { return preview_frame_height_; }
   void StartPreview() override;

@@ -114,41 +114,21 @@ HRESULT BuildMediaTypeForAudioCapture(IMFMediaType** audio_record_media_type) {
   return hr;
 }
 
-
 // Helper function to set the frame rate on a video media type.
-inline HRESULT SetFrameRate(
-    IMFMediaType *pType,
-    UINT32 numerator,
-    UINT32 denominator
-    )
-{
-    return MFSetAttributeRatio(
-        pType,
-        MF_MT_FRAME_RATE,
-        numerator,
-        denominator
-        );
+inline HRESULT SetFrameRate(IMFMediaType* pType, UINT32 numerator,
+                            UINT32 denominator) {
+  return MFSetAttributeRatio(pType, MF_MT_FRAME_RATE, numerator, denominator);
 }
 
 // Helper function to set the video bitrate on a video media type.
-inline HRESULT SetVideoBitrate(
-    IMFMediaType *pType,
-    UINT32 bitrate
-    )
-{
-    return pType->SetUINT32(MF_MT_AVG_BITRATE, bitrate);
+inline HRESULT SetVideoBitrate(IMFMediaType* pType, UINT32 bitrate) {
+  return pType->SetUINT32(MF_MT_AVG_BITRATE, bitrate);
 }
-
 
 // Helper function to set the audio bitrate on an audio media type.
-inline HRESULT SetAudioBitrate(
-    IMFMediaType *pType,
-    UINT32 bitrate
-    )
-{
-    return pType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, bitrate);
+inline HRESULT SetAudioBitrate(IMFMediaType* pType, UINT32 bitrate) {
+  return pType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, bitrate);
 }
-
 
 HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
                                       IMFMediaType* base_media_type) {

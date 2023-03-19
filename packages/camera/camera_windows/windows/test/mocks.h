@@ -206,9 +206,8 @@ class MockCamera : public Camera {
   MOCK_METHOD(bool, InitCamera,
               (flutter::TextureRegistrar * texture_registrar,
                flutter::BinaryMessenger* messenger, bool record_audio,
-               ResolutionPreset resolution_preset, int fps,
-             int video_bitrate,
-             int audio_bitrate),
+               ResolutionPreset resolution_preset, int fps, int video_bitrate,
+               int audio_bitrate),
               (override));
 
   std::unique_ptr<CaptureController> capture_controller_;
@@ -238,9 +237,8 @@ class MockCaptureController : public CaptureController {
   MOCK_METHOD(bool, InitCaptureDevice,
               (flutter::TextureRegistrar * texture_registrar,
                const std::string& device_id, bool record_audio,
-               ResolutionPreset resolution_preset, int fps,
-                int video_bitrate,
-                int audio_bitrate),
+               ResolutionPreset resolution_preset, int fps, int video_bitrate,
+               int audio_bitrate),
               (override));
 
   MOCK_METHOD(uint32_t, GetPreviewWidth, (), (const override));
