@@ -230,7 +230,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// null.
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
-  /// [httpHeaders] option allows to specify HTTP headers
+  /// [httpHeaders] option allows to specify HTTP headers.
   /// for the request to the [dataSource].
   VideoPlayerController.network(
     this.dataSource, {
@@ -246,14 +246,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
   /// This will load the file from a file:// URI constructed from [file]'s path.
+  /// [httpHeaders] option allows to specify HTTP headers, mainly used for hls files like (m3u8).
   VideoPlayerController.file(File file,
-      {Future<ClosedCaptionFile>? closedCaptionFile, this.videoPlayerOptions})
+      {Future<ClosedCaptionFile>? closedCaptionFile,
+      this.videoPlayerOptions,
+      this.httpHeaders = const <String, String>{}})
       : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
         formatHint = null,
-        httpHeaders = const <String, String>{},
         super(VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
@@ -344,6 +346,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
+          httpHeaders: httpHeaders,
         );
         break;
       case DataSourceType.contentUri:
@@ -369,6 +372,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         return;
       }
 
+      // ignore: missing_enum_constant_in_switch
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(
