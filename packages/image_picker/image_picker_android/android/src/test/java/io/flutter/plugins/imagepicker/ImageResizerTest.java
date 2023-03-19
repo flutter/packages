@@ -92,7 +92,7 @@ public class ImageResizerTest {
   public void onResizeImageIfNeeded_whenResizeIsNotNecessary_shouldOnlyQueryBitmap() {
     try (MockedStatic<BitmapFactory> mockBitmapFactory =
         mockStatic(BitmapFactory.class, Mockito.CALLS_REAL_METHODS)) {
-      String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, null);
+      String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, 100);
       ArgumentCaptor<BitmapFactory.Options> argument =
           ArgumentCaptor.forClass(BitmapFactory.Options.class);
       mockBitmapFactory.verify(() -> BitmapFactory.decodeFile(anyString(), argument.capture()));
@@ -105,7 +105,7 @@ public class ImageResizerTest {
   public void onResizeImageIfNeeded_whenResizeIsNecessary_shouldAllocateBitmap() {
     try (MockedStatic<BitmapFactory> mockBitmapFactory =
         mockStatic(BitmapFactory.class, Mockito.CALLS_REAL_METHODS)) {
-      String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), 50.0, 50.0, null);
+      String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), 50.0, 50.0, 100);
       ArgumentCaptor<BitmapFactory.Options> argument =
           ArgumentCaptor.forClass(BitmapFactory.Options.class);
       mockBitmapFactory.verify(
