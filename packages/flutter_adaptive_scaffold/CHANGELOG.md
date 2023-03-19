@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Adds `transitionDuration` parameter for specifying how long the animation should be.
+
 ## 0.1.1
 
 * Fixes flutter/flutter#121135) `selectedIcon` parameter not displayed even if it is provided.
