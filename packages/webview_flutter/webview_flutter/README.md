@@ -175,10 +175,9 @@ for more details.
 
 ### PlatformView Implementation on Android
 
-The PlatformView implementation for Android is currently no longer configurable. It uses Texture
-Layer Hybrid Composition on versions 23+ and automatically fallbacks to Hybrid Composition for
-version 19-23. See section `Platform-Specific Features` and
-[AndroidWebViewWidgetCreationParams.displayWithHybridComposition](https://pub.dev/documentation/webview_flutter_android/latest/webview_flutter_android/AndroidWebViewWidgetCreationParams/displayWithHybridComposition.html)
+The PlatformView implementation for Android uses Texture Layer Hybrid Composition on versions 23+
+and automatically fallbacks to Hybrid Composition for version 19-23. See section
+`Platform-Specific Features` and [AndroidWebViewWidgetCreationParams.displayWithHybridComposition](https://pub.dev/documentation/webview_flutter_android/latest/webview_flutter_android/AndroidWebViewWidgetCreationParams/displayWithHybridComposition.html)
 to manually switch to Hybrid Composition on versions 23+.
 
 ### API Changes
