@@ -58,13 +58,13 @@ class CameraOptions {
 class AudioConstraints {
   /// Creates a new instance of [AudioConstraints]
   /// with the given [enabled] constraint.
-  const AudioConstraints({this.bitrate = 32000, this.enabled = false});
+  const AudioConstraints({this.bitrate, this.enabled = false});
 
   /// Whether the audio track should be enabled.
   final bool enabled;
 
   /// Audio bitrate
-  final int bitrate;
+  final int? bitrate;
 
   /// Converts the current instance to a Map.
   Map<String, dynamic> toJson() =>
@@ -89,7 +89,7 @@ class VideoConstraints {
   /// Creates a new instance of [VideoConstraints]
   /// with the given constraints.
   const VideoConstraints({
-    this.bitrate = 200000,
+    this.bitrate,
     this.facingMode,
     this.width,
     this.height,
@@ -97,7 +97,7 @@ class VideoConstraints {
   });
 
   /// Video bitrate
-  final int bitrate;
+  final int? bitrate;
 
   /// The facing mode of the video track.
   final FacingModeConstraint? facingMode;

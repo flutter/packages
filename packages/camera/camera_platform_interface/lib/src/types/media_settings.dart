@@ -6,14 +6,14 @@ import 'resolution_preset.dart';
 class MediaSettings {
   /// constructor
   const MediaSettings({
-    required this.resolutionPreset,
-    required this.fps,
-    required this.videoBitrate,
-    required this.audioBitrate,
+    this.resolutionPreset,
+    this.fps,
+    this.videoBitrate,
+    this.audioBitrate,
   });
 
   /// Default low quality factory
-  factory MediaSettings.low() => const MediaSettings(
+  static MediaSettings low() => const MediaSettings(
         resolutionPreset: ResolutionPreset.low,
         fps: 15,
         videoBitrate: 200000,
@@ -21,16 +21,16 @@ class MediaSettings {
       );
 
   /// resolution preset
-  final ResolutionPreset resolutionPreset;
+  final ResolutionPreset? resolutionPreset;
 
   /// camera fps
-  final int fps;
+  final int? fps;
 
   /// recording video bitrate
-  final int videoBitrate;
+  final int? videoBitrate;
 
   /// recording audio bitrate
-  final int audioBitrate;
+  final int? audioBitrate;
 
   @override
   bool operator ==(Object other) =>
@@ -44,10 +44,7 @@ class MediaSettings {
 
   @override
   int get hashCode =>
-      resolutionPreset.hashCode ^
-      fps.hashCode ^
-      videoBitrate.hashCode ^
-      audioBitrate.hashCode;
+      resolutionPreset.hashCode ^ fps.hashCode ^ videoBitrate.hashCode ^ audioBitrate.hashCode;
 
   @override
   String toString() =>

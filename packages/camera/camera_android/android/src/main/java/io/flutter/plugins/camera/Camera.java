@@ -199,9 +199,9 @@ class Camera
       final CameraProperties cameraProperties,
       final ResolutionPreset resolutionPreset,
       final boolean enableAudio,
-      final int fps,
-      final int videoBitrate,
-      final int audioBitrate) {
+      final Integer fps,
+      final Integer videoBitrate,
+      final Integer audioBitrate) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
@@ -218,13 +218,21 @@ class Camera
         CameraFeatures.init(
             cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
 
-    final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
-    fpsRange.setValue(new Range<>(fps, fps));
-    this.cameraFeatures.setFpsRange(fpsRange);
+    if (null != fps && 0 < fps) {
+      final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
+      fpsRange.setValue(new Range<>(fps, fps));
+      this.cameraFeatures.setFpsRange(fpsRange);
 
-    this.cameraFeatures.setFps(new IntFeature(cameraProperties, fps));
-    this.cameraFeatures.setVideoBitrate(new IntFeature(cameraProperties, videoBitrate));
-    this.cameraFeatures.setAudioBitrate(new IntFeature(cameraProperties, audioBitrate));
+      this.cameraFeatures.setFps(new IntFeature(cameraProperties, fps));
+    }
+
+    if (null != videoBitrate && 0 < videoBitrate) {
+      this.cameraFeatures.setVideoBitrate(new IntFeature(cameraProperties, videoBitrate));
+    }
+
+    if (null != audioBitrate && 0 < audioBitrate ) {
+      this.cameraFeatures.setAudioBitrate(new IntFeature(cameraProperties, audioBitrate));
+    }
 
     // Create capture callback.
     captureTimeouts = new CaptureTimeoutsWrapper(3000, 3000);

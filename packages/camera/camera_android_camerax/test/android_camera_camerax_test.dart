@@ -112,7 +112,7 @@ void main() {
         .thenAnswer((_) async => testSurfaceTextureId);
 
     expect(
-        await camera.createCamera(testCameraDescription, MediaSettings.low(),
+        await camera.createCamera(testCameraDescription, mediaSettings: MediaSettings.low(),
             enableAudio: enableAudio),
         equals(testSurfaceTextureId));
 
@@ -171,7 +171,7 @@ void main() {
     // Call createCamera.
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => cameraId);
-    await camera.createCamera(testCameraDescription, MediaSettings.low(),
+    await camera.createCamera(testCameraDescription, mediaSettings: MediaSettings.low(),
         enableAudio: enableAudio);
 
     when(camera.processCameraProvider!.bindToLifecycle(

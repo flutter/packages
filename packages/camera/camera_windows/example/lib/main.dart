@@ -32,12 +32,7 @@ class _MyAppState extends State<MyApp> {
   bool _recordAudio = true;
   bool _previewPaused = false;
   Size? _previewSize;
-  MediaSettings _mediaSettings = const MediaSettings(
-    resolutionPreset: ResolutionPreset.low,
-    fps: 15,
-    videoBitrate: 200000,
-    audioBitrate: 32000,
-  );
+  MediaSettings _mediaSettings = MediaSettings.low();
   StreamSubscription<CameraErrorEvent>? _errorStreamSubscription;
   StreamSubscription<CameraClosingEvent>? _cameraClosingStreamSubscription;
 
@@ -100,19 +95,17 @@ class _MyAppState extends State<MyApp> {
 
       cameraId = await CameraPlatform.instance.createCamera(
         camera,
-        _mediaSettings,
+        mediaSettings: _mediaSettings,
         enableAudio: _recordAudio,
       );
 
       _errorStreamSubscription?.cancel();
-      _errorStreamSubscription = CameraPlatform.instance
-          .onCameraError(cameraId)
-          .listen(_onCameraError);
+      _errorStreamSubscription =
+          CameraPlatform.instance.onCameraError(cameraId).listen(_onCameraError);
 
       _cameraClosingStreamSubscription?.cancel();
-      _cameraClosingStreamSubscription = CameraPlatform.instance
-          .onCameraClosing(cameraId)
-          .listen(_onCameraClosing);
+      _cameraClosingStreamSubscription =
+          CameraPlatform.instance.onCameraClosing(cameraId).listen(_onCameraClosing);
 
       final Future<CameraInitializedEvent> initialized =
           CameraPlatform.instance.onCameraInitialized(cameraId).first;
@@ -153,8 +146,7 @@ class _MyAppState extends State<MyApp> {
           _previewSize = null;
           _recording = false;
           _recordingTimed = false;
-          _cameraInfo =
-              'Failed to initialize camera: ${e.code}: ${e.description}';
+          _cameraInfo = 'Failed to initialize camera: ${e.code}: ${e.description}';
         });
       }
     }
@@ -179,8 +171,7 @@ class _MyAppState extends State<MyApp> {
       } on CameraException catch (e) {
         if (mounted) {
           setState(() {
-            _cameraInfo =
-                'Failed to dispose camera: ${e.code}: ${e.description}';
+            _cameraInfo = 'Failed to dispose camera: ${e.code}: ${e.description}';
           });
         }
       }
@@ -233,8 +224,7 @@ class _MyAppState extends State<MyApp> {
         if (!_recording) {
           await CameraPlatform.instance.startVideoRecording(_cameraId);
         } else {
-          final XFile file =
-              await CameraPlatform.instance.stopVideoRecording(_cameraId);
+          final XFile file = await CameraPlatform.instance.stopVideoRecording(_cameraId);
 
           _showInSnackBar('Video captured to: ${file.path}');
         }
@@ -308,8 +298,8 @@ class _MyAppState extends State<MyApp> {
 
   void _onCameraError(CameraErrorEvent event) {
     if (mounted) {
-      _scaffoldMessengerKey.currentState?.showSnackBar(
-          SnackBar(content: Text('Error: ${event.description}')));
+      _scaffoldMessengerKey.currentState
+          ?.showSnackBar(SnackBar(content: Text('Error: ${event.description}')));
 
       // Dispose camera on camera error as it can not be used anymore.
       _disposeCurrentCamera();
@@ -336,8 +326,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final List<DropdownMenuItem<ResolutionPreset>> resolutionItems =
-        ResolutionPreset.values
-            .map<DropdownMenuItem<ResolutionPreset>>((ResolutionPreset value) {
+        ResolutionPreset.values.map<DropdownMenuItem<ResolutionPreset>>((ResolutionPreset value) {
       return DropdownMenuItem<ResolutionPreset>(
         value: value,
         child: Text(value.toString()),
@@ -379,16 +368,11 @@ class _MyAppState extends State<MyApp> {
                   ),
                   const SizedBox(width: 20),
                   const Text('Audio:'),
-                  Switch(
-                      value: _recordAudio,
-                      onChanged: (bool state) => _onAudioChange(state)),
+                  Switch(value: _recordAudio, onChanged: (bool state) => _onAudioChange(state)),
                   const SizedBox(width: 20),
                   ElevatedButton(
-                    onPressed: _initialized
-                        ? _disposeCurrentCamera
-                        : _initializeCamera,
-                    child:
-                        Text(_initialized ? 'Dispose camera' : 'Create camera'),
+                    onPressed: _initialized ? _disposeCurrentCamera : _initializeCamera,
+                    child: Text(_initialized ? 'Dispose camera' : 'Create camera'),
                   ),
                   const SizedBox(width: 5),
                   ElevatedButton(
@@ -406,9 +390,7 @@ class _MyAppState extends State<MyApp> {
                   ElevatedButton(
                     onPressed: _initialized ? _toggleRecord : null,
                     child: Text(
-                      (_recording || _recordingTimed)
-                          ? 'Stop recording'
-                          : 'Record Video',
+                      (_recording || _recordingTimed) ? 'Stop recording' : 'Record Video',
                     ),
                   ),
                   const SizedBox(width: 5),

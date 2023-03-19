@@ -223,8 +223,8 @@ class CameraValue {
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   CameraController(
-    this.description,
-    this.mediaSettings, {
+    this.description, {
+    this.mediaSettings,
     this.enableAudio = true,
     this.imageFormatGroup,
   }) : super(const CameraValue.uninitialized());
@@ -292,7 +292,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
       _cameraId = await CameraPlatform.instance.createCamera(
         description,
-        mediaSettings,
+        mediaSettings: mediaSettings,
         enableAudio: enableAudio,
       );
 

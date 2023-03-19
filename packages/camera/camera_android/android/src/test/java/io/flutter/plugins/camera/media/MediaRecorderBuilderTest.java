@@ -45,6 +45,27 @@ public class MediaRecorderBuilderTest {
   @Config(maxSdk = 30)
   @SuppressWarnings("deprecation")
   @Test
+  public void ctor_testDefaultsLegacy() {
+    MediaRecorderBuilder builder =
+            new MediaRecorderBuilder(
+                    CamcorderProfile.get(CamcorderProfile.QUALITY_1080P), "", null, null, null);
+
+    assertNotNull(builder);
+  }
+
+  @Config(minSdk = 31)
+  @Test
+  public void ctor_testDefaults() {
+    MediaRecorderBuilder builder =
+            new MediaRecorderBuilder(
+                    CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P), "", null, null, null);
+
+    assertNotNull(builder);
+  }
+
+  @Config(maxSdk = 30)
+  @SuppressWarnings("deprecation")
+  @Test
   public void build_shouldSetValuesInCorrectOrderWhenAudioIsDisabledLegacy() throws IOException {
     CamcorderProfile recorderProfile = getEmptyCamcorderProfile();
     MediaRecorderBuilder.MediaRecorderFactory mockFactory =

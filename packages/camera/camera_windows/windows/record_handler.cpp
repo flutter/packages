@@ -114,6 +114,42 @@ HRESULT BuildMediaTypeForAudioCapture(IMFMediaType** audio_record_media_type) {
   return hr;
 }
 
+
+// Helper function to set the frame rate on a video media type.
+inline HRESULT SetFrameRate(
+    IMFMediaType *pType,
+    UINT32 numerator,
+    UINT32 denominator
+    )
+{
+    return MFSetAttributeRatio(
+        pType,
+        MF_MT_FRAME_RATE,
+        numerator,
+        denominator
+        );
+}
+
+// Helper function to set the video bitrate on a video media type.
+inline HRESULT SetVideoBitrate(
+    IMFMediaType *pType,
+    UINT32 bitrate
+    )
+{
+    return pType->SetUINT32(MF_MT_AVG_BITRATE, bitrate);
+}
+
+
+// Helper function to set the audio bitrate on an audio media type.
+inline HRESULT SetAudioBitrate(
+    IMFMediaType *pType,
+    UINT32 bitrate
+    )
+{
+    return pType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, bitrate);
+}
+
+
 HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
                                       IMFMediaType* base_media_type) {
   assert(!file_path_.empty());
@@ -160,6 +196,14 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
     return hr;
   }
 
+  if (0 < fps_) {
+    SetFrameRate(video_record_media_type.Get(), fps_, 1);
+  }
+
+  if (0 < video_bitrate_) {
+    SetVideoBitrate(video_record_media_type.Get(), video_bitrate_);
+  }
+
   DWORD video_record_sink_stream_index;
   hr = record_sink_->AddStream(
       (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
@@ -175,6 +219,10 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
         BuildMediaTypeForAudioCapture(audio_record_media_type.GetAddressOf());
 
     if (SUCCEEDED(audio_capture_hr)) {
+      if (0 < audio_bitrate_) {
+        SetAudioBitrate(audio_record_media_type.Get(), audio_bitrate_);
+      }
+
       DWORD audio_record_sink_stream_index;
       hr = record_sink_->AddStream(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_AUDIO,

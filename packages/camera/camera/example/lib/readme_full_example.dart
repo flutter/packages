@@ -33,12 +33,7 @@ class _CameraAppState extends State<CameraApp> {
     super.initState();
     controller = CameraController(
       _cameras[0],
-      const MediaSettings(
-        resolutionPreset: ResolutionPreset.low,
-        fps: 5,
-        videoBitrate: 200000,
-        audioBitrate: 32000,
-      ),
+      mediaSettings: MediaSettings.low(),
     );
     controller.initialize().then((_) {
       if (!mounted) {

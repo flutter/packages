@@ -53,7 +53,10 @@ void MockInitCamera(MockCamera* camera, bool success) {
       .WillOnce([camera, success](flutter::TextureRegistrar* texture_registrar,
                                   flutter::BinaryMessenger* messenger,
                                   bool record_audio,
-                                  ResolutionPreset resolution_preset) {
+                                  ResolutionPreset resolution_preset,
+                                  int fps,
+                                int video_bitrate,
+                                int audio_bitrate) {
         assert(camera->pending_result_);
         if (success) {
           camera->pending_result_->Success(EncodableValue(1));

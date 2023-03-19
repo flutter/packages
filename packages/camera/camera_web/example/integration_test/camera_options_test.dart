@@ -92,7 +92,7 @@ void main() {
           'facingMode': videoConstraints.facingMode!.toJson(),
           'width': videoConstraints.width!.toJson(),
           'height': videoConstraints.height!.toJson(),
-          'bitrate': videoConstraints.bitrate,
+          'bitrate': videoConstraints.bitrate!,
           'deviceId': <String, Object>{
             'exact': 'deviceId',
           }

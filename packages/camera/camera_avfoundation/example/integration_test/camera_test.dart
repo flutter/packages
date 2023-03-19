@@ -83,7 +83,7 @@ void main() {
           in presetExpectedSizes.entries) {
         final CameraController controller = CameraController(
           cameraDescription,
-          MediaSettings(
+          mediaSettings: MediaSettings(
             resolutionPreset: preset.key,
             fps: 15,
             videoBitrate: 200000,
@@ -139,7 +139,7 @@ void main() {
           in presetExpectedSizes.entries) {
         final CameraController controller = CameraController(
           cameraDescription,
-          MediaSettings(
+          mediaSettings: MediaSettings(
             resolutionPreset: preset.key,
             fps: 15,
             videoBitrate: 200000,
@@ -167,7 +167,7 @@ void main() {
 
     final CameraController controller = CameraController(
       cameras[0],
-      MediaSettings.low(),
+      mediaSettings: MediaSettings.low(),
       enableAudio: false,
     );
 
@@ -221,7 +221,7 @@ void main() {
 
     final CameraController controller = CameraController(
       cameras[0],
-      MediaSettings.low(),
+      mediaSettings: MediaSettings.low(),
       enableAudio: false,
     );
 
@@ -243,7 +243,7 @@ void main() {
 
     final CameraController controller = CameraController(
       cameras[0],
-      MediaSettings.low(),
+      mediaSettings: MediaSettings.low(),
       enableAudio: false,
     );
 
@@ -258,7 +258,7 @@ void main() {
       ImageFormatGroup? imageFormatGroup) async {
     final CameraController controller = CameraController(
       cameras.first,
-      MediaSettings.low(),
+      mediaSettings: MediaSettings.low(),
       enableAudio: false,
       imageFormatGroup: imageFormatGroup,
     );
@@ -314,7 +314,7 @@ void main() {
 
     final CameraController controller = CameraController(
       cameras[0],
-      MediaSettings.low(),
+      mediaSettings: MediaSettings.low(),
       enableAudio: false,
     );
 

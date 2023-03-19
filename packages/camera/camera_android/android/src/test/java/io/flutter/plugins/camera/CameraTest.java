@@ -136,7 +136,11 @@ public class CameraTest {
             mockDartMessenger,
             mockCameraProperties,
             resolutionPreset,
-            enableAudio);
+            enableAudio,
+            15,
+            200000,
+            32000
+            );
 
     TestUtils.setPrivateField(camera, "captureSession", mockCaptureSession);
     TestUtils.setPrivateField(camera, "previewRequestBuilder", mockPreviewRequestBuilder);
@@ -179,7 +183,10 @@ public class CameraTest {
             mockDartMessenger,
             mockCameraProperties,
             resolutionPreset,
-            enableAudio);
+            enableAudio,
+            15,
+            200000,
+            32000);
 
     verify(mockCameraFeatureFactory, times(1))
         .createSensorOrientationFeature(mockCameraProperties, mockActivity, mockDartMessenger);
