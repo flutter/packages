@@ -24,7 +24,7 @@
 
 ## 6.2.0
 
-- Exports supertypes in route_data.dart library
+- Exports supertypes in route_data.dart library.
 
 ## 6.1.0
 

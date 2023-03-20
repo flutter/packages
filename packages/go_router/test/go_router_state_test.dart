@@ -95,9 +95,10 @@ void main() {
       router.go('/123');
       await tester.pumpAndSettle();
       expect(find.text('2 123'), findsOneWidget);
-      // The query parameter is removed, so is the location in first page.
       router.pop();
       await tester.pump();
+      // Page 2 is in popping animation but should still be on screen with the
+      // correct path parameter.
       expect(find.text('2 123'), findsOneWidget);
     });
 
