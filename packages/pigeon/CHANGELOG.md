@@ -1,3 +1,24 @@
+## 9.1.0
+
+* [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
+* [kotlin] Adds a `FlutterError` exception for passing custom error details (code, message, details).
+* [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
+* [java] Removes legacy try catch from async apis.
+* [java] Removes legacy null check on non-nullable method arguments.
+* [cpp] Fixes wrong order of items in `FlutterError`.
+* Adds `FlutterError` handling integration tests for all platforms.
+
+## 9.0.7
+
+* [swift] Changes all ints to int64.
+  May require code updates to existing code.
+* Adds integration tests for int64.
+
+## 9.0.6
+
+* [kotlin] Removes safe casting from decode process.
+* [swift] Removes safe casting from decode process.
+
 ## 9.0.5
 
 * Removes the unnecessary Flutter constraint.
@@ -688,7 +709,7 @@ class Foo {
 
 ## 0.1.0-experimental.3
 
-* Added support for for Android Java.
+* Added support for Android Java.
 
 ## 0.1.0-experimental.2
 

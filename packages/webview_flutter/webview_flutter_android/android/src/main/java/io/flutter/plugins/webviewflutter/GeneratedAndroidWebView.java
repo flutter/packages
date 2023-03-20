@@ -440,6 +440,51 @@ public class GeneratedAndroidWebView {
     void error(Throwable error);
   }
   /**
+   * Host API for managing the native `InstanceManager`.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface InstanceManagerHostApi {
+    /**
+     * Clear the native `InstanceManager`.
+     *
+     * <p>This is typically only used after a hot restart.
+     */
+    void clear();
+
+    /** The codec used by InstanceManagerHostApi. */
+    static MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `InstanceManagerHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(BinaryMessenger binaryMessenger, InstanceManagerHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.InstanceManagerHostApi.clear", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  api.clear();
+                  wrapped.add(0, null);
+                } catch (Error | RuntimeException exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /**
    * Handles methods calls to the native Java Object class.
    *
    * <p>Also handles calls to remove the reference to an instance with `dispose`.

@@ -1,4 +1,5 @@
 # Shared preferences plugin
+<?code-excerpt path-base="excerpts/packages/shared_preferences_example"?>
 
 [![pub package](https://img.shields.io/pub/v/shared_preferences.svg)](https://pub.dev/packages/shared_preferences)
 
@@ -21,9 +22,10 @@ To use this plugin, add `shared_preferences` as a [dependency in your pubspec.ya
 Here are small examples that show you how to use the API.
 
 #### Write data
+<?code-excerpt "readme_excerpts.dart (Write)"?>
 ```dart
 // Obtain shared preferences.
-final prefs = await SharedPreferences.getInstance();
+final SharedPreferences prefs = await SharedPreferences.getInstance();
 
 // Save an integer value to 'counter' key.
 await prefs.setInt('counter', 10);
@@ -38,6 +40,7 @@ await prefs.setStringList('items', <String>['Earth', 'Moon', 'Sun']);
 ```
 
 #### Read data
+<?code-excerpt "readme_excerpts.dart (Read)"?>
 ```dart
 // Try reading data from the 'counter' key. If it doesn't exist, returns null.
 final int? counter = prefs.getInt('counter');
@@ -52,17 +55,21 @@ final List<String>? items = prefs.getStringList('items');
 ```
 
 #### Remove an entry
+<?code-excerpt "readme_excerpts.dart (Clear)"?>
 ```dart
 // Remove data for the 'counter' key.
-final success = await prefs.remove('counter');
+await prefs.remove('counter');
 ```
 
 ### Testing
 
-You can populate `SharedPreferences` with initial values in your tests by running this code:
+In tests, you can replace the standard `SharedPreferences` implementation with
+a mock implementation with initial values. This implementation is in-memory
+only, and will not persist values to the usual preference store.
 
+<?code-excerpt "readme_excerpts.dart (Tests)"?>
 ```dart
-Map<String, Object> values = <String, Object>{'counter': 1};
+final Map<String, Object> values = <String, Object>{'counter': 1};
 SharedPreferences.setMockInitialValues(values);
 ```
 

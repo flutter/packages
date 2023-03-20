@@ -179,8 +179,15 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
         ...routeDef._ctorParams,
         ...routeDef._ctorQueryParams,
       ]) {
-        if (ctorParam.type.isEnum) {
-          enumParamTypes.add(ctorParam.type as InterfaceType);
+        DartType potentialEnumType = ctorParam.type;
+        if (potentialEnumType is ParameterizedType &&
+            (ctorParam.type as ParameterizedType).typeArguments.isNotEmpty) {
+          potentialEnumType =
+              (ctorParam.type as ParameterizedType).typeArguments.first;
+        }
+
+        if (potentialEnumType.isEnum) {
+          enumParamTypes.add(potentialEnumType as InterfaceType);
         }
       }
     }

@@ -6,6 +6,8 @@ import 'package:file/file.dart';
 import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
+import 'package:yaml/yaml.dart';
+import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/git_version_finder.dart';
@@ -13,9 +15,6 @@ import 'common/package_command.dart';
 import 'common/repository_package.dart';
 
 const int _exitPackageNotFound = 3;
-const int _exitCannotUpdatePubspec = 4;
-
-enum _RewriteOutcome { changed, noChangesNeeded, alreadyChanged }
 
 /// Converts all dependencies on target packages to path-based dependencies.
 ///
@@ -50,8 +49,12 @@ class MakeDepsPathBasedCommand extends PackageCommand {
       'target-dependencies-with-non-breaking-updates';
 
   // The comment to add to temporary dependency overrides.
+  //
+  // Includes a reference to the docs so that reviewers who aren't familiar with
+  // the federated plugin change process don't think it's a mistake.
   static const String _dependencyOverrideWarningComment =
-      '# FOR TESTING ONLY. DO NOT MERGE.';
+      '# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.\n'
+      '# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins';
 
   @override
   final String name = 'make-deps-path-based';
@@ -80,17 +83,10 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     for (final File pubspec in await _getAllPubspecs()) {
       final String displayPath = p.posix.joinAll(
           path.split(path.relative(pubspec.absolute.path, from: repoRootPath)));
-      final _RewriteOutcome outcome = await _addDependencyOverridesIfNecessary(
-          pubspec, localDependencyPackages);
-      switch (outcome) {
-        case _RewriteOutcome.changed:
-          print('  Modified $displayPath');
-          break;
-        case _RewriteOutcome.alreadyChanged:
-          print('  Skipped $displayPath - Already rewritten');
-          break;
-        case _RewriteOutcome.noChangesNeeded:
-          break;
+      final bool changed = await _addDependencyOverridesIfNecessary(
+          RepositoryPackage(pubspec.parent), localDependencyPackages);
+      if (changed) {
+        print('  Modified $displayPath');
       }
     }
   }
@@ -137,26 +133,25 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   /// If [pubspecFile] has any dependencies on packages in [localDependencies],
   /// adds dependency_overrides entries to redirect them to the local version
   /// using path-based dependencies.
-  Future<_RewriteOutcome> _addDependencyOverridesIfNecessary(File pubspecFile,
-      Map<String, RepositoryPackage> localDependencies) async {
-    final String pubspecContents = pubspecFile.readAsStringSync();
-    final Pubspec pubspec = Pubspec.parse(pubspecContents);
-    // Fail if there are any dependency overrides already, other than ones
-    // created by this script. If support for that is needed at some point, it
-    // can be added, but currently it's not and relying on that makes the logic
-    // here much simpler.
-    if (pubspec.dependencyOverrides.isNotEmpty) {
-      if (pubspecContents.contains(_dependencyOverrideWarningComment)) {
-        return _RewriteOutcome.alreadyChanged;
-      }
-      printError(
-          'Packages with dependency overrides are not currently supported.');
-      throw ToolExit(_exitCannotUpdatePubspec);
-    }
+  ///
+  /// Returns true if any overrides were added.
+  ///
+  /// If [additionalPackagesToOverride] are provided, they will get
+  /// dependency_overrides even if there is no direct dependency. This is
+  /// useful for overriding transitive dependencies.
+  Future<bool> _addDependencyOverridesIfNecessary(
+    RepositoryPackage package,
+    Map<String, RepositoryPackage> localDependencies, {
+    Iterable<String> additionalPackagesToOverride = const <String>{},
+  }) async {
+    final String pubspecContents = package.pubspecFile.readAsStringSync();
 
+    // Determine the dependencies to be overridden.
+    final Pubspec pubspec = Pubspec.parse(pubspecContents);
     final Iterable<String> combinedDependencies = <String>[
       ...pubspec.dependencies.keys,
       ...pubspec.devDependencies.keys,
+      ...additionalPackagesToOverride,
     ];
     final List<String> packagesToOverride = combinedDependencies
         .where(
@@ -164,42 +159,68 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         .toList();
     // Sort the combined list to avoid sort_pub_dependencies lint violations.
     packagesToOverride.sort();
-    if (packagesToOverride.isNotEmpty) {
-      final String commonBasePath = packagesDir.path;
-      // Find the relative path to the common base.
-      final int packageDepth = path
-          .split(path.relative(pubspecFile.parent.absolute.path,
-              from: commonBasePath))
-          .length;
-      final List<String> relativeBasePathComponents =
-          List<String>.filled(packageDepth, '..');
-      // This is done via strings rather than by manipulating the Pubspec and
-      // then re-serialiazing so that it's a localized change, rather than
-      // rewriting the whole file (e.g., destroying comments), which could be
-      // more disruptive for local use.
-      String newPubspecContents = '''
-$pubspecContents
+
+    if (packagesToOverride.isEmpty) {
+      return false;
+    }
+
+    // Find the relative path to the common base.
+    final String commonBasePath = packagesDir.path;
+    final int packageDepth = path
+        .split(path.relative(package.directory.absolute.path,
+            from: commonBasePath))
+        .length;
+    final List<String> relativeBasePathComponents =
+        List<String>.filled(packageDepth, '..');
+
+    // Add the overrides.
+    final YamlEditor editablePubspec = YamlEditor(pubspecContents);
+    final YamlNode root = editablePubspec.parseAt(<String>[]);
+    const String dependencyOverridesKey = 'dependency_overrides';
+    // Ensure that there's a `dependencyOverridesKey` entry to update.
+    if ((root as YamlMap)[dependencyOverridesKey] == null) {
+      editablePubspec.update(<String>[dependencyOverridesKey], YamlMap());
+    }
+    for (final String packageName in packagesToOverride) {
+      // Find the relative path from the common base to the local package.
+      final List<String> repoRelativePathComponents = path.split(path.relative(
+          localDependencies[packageName]!.path,
+          from: commonBasePath));
+      editablePubspec.update(<String>[
+        dependencyOverridesKey,
+        packageName
+      ], <String, String>{
+        'path': p.posix.joinAll(<String>[
+          ...relativeBasePathComponents,
+          ...repoRelativePathComponents,
+        ])
+      });
+    }
+
+    // Add the warning if it's not already there.
+    String newContent = editablePubspec.toString();
+    if (!newContent.contains(_dependencyOverrideWarningComment)) {
+      newContent = newContent.replaceFirst('$dependencyOverridesKey:', '''
 
 $_dependencyOverrideWarningComment
-dependency_overrides:
-''';
-      for (final String packageName in packagesToOverride) {
-        // Find the relative path from the common base to the local package.
-        final List<String> repoRelativePathComponents = path.split(
-            path.relative(localDependencies[packageName]!.path,
-                from: commonBasePath));
-        newPubspecContents += '''
-  $packageName:
-    path: ${p.posix.joinAll(<String>[
-              ...relativeBasePathComponents,
-              ...repoRelativePathComponents,
-            ])}
-''';
-      }
-      pubspecFile.writeAsStringSync(newPubspecContents);
-      return _RewriteOutcome.changed;
+$dependencyOverridesKey:
+''');
     }
-    return _RewriteOutcome.noChangesNeeded;
+
+    // Write the new pubspec.
+    package.pubspecFile.writeAsStringSync(newContent);
+
+    // Update any examples. This is important for cases like integration tests
+    // of app-facing packages in federated plugins, where the app-facing
+    // package depends directly on the implementation packages, but the
+    // example app doesn't. Since integration tests are run in the example app,
+    // it needs the overrides in order for tests to pass.
+    for (final RepositoryPackage example in package.getExamples()) {
+      _addDependencyOverridesIfNecessary(example, localDependencies,
+          additionalPackagesToOverride: packagesToOverride);
+    }
+
+    return true;
   }
 
   /// Returns all pubspecs anywhere under the packages directory.

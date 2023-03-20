@@ -35,4 +35,6 @@ const Set<String> _expectedAnnotatedTests = <String>{
   'EnumParam',
   'DefaultValueRoute',
   'NullableDefaultValueRoute',
+  'IterableWithEnumRoute',
+  'IterableDefaultValueRoute',
 };
