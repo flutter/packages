@@ -20,4 +20,4 @@ readonly TOOL_PATH="$REPO_DIR/script/tool/bin/flutter_plugin_tools.dart"
 cd "$REPO_DIR"
 # Run from the in-tree source.
 # PACKAGE_SHARDING is (optionally) set from Cirrus. See .cirrus.yml
-dart run "$TOOL_PATH" "$@" --packages-for-branch --log-timing $PACKAGE_SHARDING
+USE_FLUTTER_TEST_FONT=1 dart run "$TOOL_PATH" "$@" --packages-for-branch --log-timing $PACKAGE_SHARDING
