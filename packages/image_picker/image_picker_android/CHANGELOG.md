@@ -1,3 +1,7 @@
+## 0.8.6+5
+
+* Fixes case when file extension returned from the OS does not match its real mime type.
+
 ## 0.8.6+4
 
 * Bumps androidx.exifinterface:exifinterface from 1.3.3 to 1.3.6.
