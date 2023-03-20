@@ -5,8 +5,8 @@ host platform type-safe, easier and faster.
 
 ## Supported Platforms
 
-Currently Pigeon supports generating Objective-C and experimental Swift code
-for usage on iOS, Java and experimental Kotlin code for Android, 
+Currently Pigeon supports generating Objective-C and Swift code
+for usage on iOS, Java and Kotlin code for Android, 
 and has experimental support for C++ for Windows.
 The Objective-C code is
 [accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift)
@@ -37,18 +37,12 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Implement the generated iOS protocol for handling the calls on iOS, set it up
    as the handler for the messages.
 
-**Note:** Swift code generation for iOS is experimental while we get more usage and add more
-testing. Not all features may be supported.
-
 ### Flutter calling into Android Steps
 
 1) Add the generated Java or Kotlin code to your `./android/app/src/main/java` directory
    for compilation.
 1) Implement the generated Java or Kotlin interface for handling the calls on Android, set
    it up as the handler for the messages.
-
-**Note:** Kotlin code generation for Android is experimental while we get more usage and add more
-testing and works just with Flutter 3.3.0 or later. Not all features may be supported.
 
 ### Flutter calling into Windows Steps
 
