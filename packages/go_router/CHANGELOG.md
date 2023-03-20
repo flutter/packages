@@ -5,6 +5,7 @@
 - Updates example app to iOS 11.
 - Adds `navigatorKey` to `TypedShellRoute`
 - Adds `parentNavigatorKey` to `TypedGoRoute`
+- Updates documentation in matching methods.
 
 ## 6.2.0
 
