@@ -40,6 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final NavigationRailThemeData navRailTheme =
+        Theme.of(context).navigationRailTheme;
+
     // Define the children to display within the body.
     final List<Widget> children = List<Widget>.generate(10, (int index) {
       return Padding(
@@ -57,9 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
         const SizedBox(height: 10),
         Row(
           children: const <Widget>[
-            SizedBox(
-              width: 27,
-            ),
+            SizedBox(width: 27),
             Text('Folders', style: TextStyle(fontSize: 16)),
           ],
         ),
@@ -68,11 +69,17 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
-            const Text('Freelance'),
+            Flexible(
+              child: const Text(
+                'Freelance',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -80,11 +87,17 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
-            const Text('Mortgage'),
+            Flexible(
+              child: const Text(
+                'Mortgage',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -92,12 +105,14 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Flexible(
-                child: Text('Taxes', overflow: TextOverflow.ellipsis)),
+              child: Text('Taxes', overflow: TextOverflow.ellipsis),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -105,12 +120,14 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Flexible(
-                child: Text('Receipts', overflow: TextOverflow.ellipsis)),
+              child: Text('Receipts', overflow: TextOverflow.ellipsis),
+            ),
           ],
         ),
       ],
@@ -163,6 +180,11 @@ class _MyHomePageState extends State<MyHomePage> {
               destinations: destinations
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
           Breakpoints.large: SlotLayout.from(
@@ -190,6 +212,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
               trailing: trailingNavRail,
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
         },
