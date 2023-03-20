@@ -1,5 +1,6 @@
-## NEXT
+## 2.1.4
 
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum supported Dart version.
 
 ## 2.1.3

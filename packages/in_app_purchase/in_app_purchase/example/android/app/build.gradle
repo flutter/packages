@@ -63,7 +63,7 @@ android {
         }
     }
 
-    compileSdkVersion 31
+    compileSdkVersion flutter.compileSdkVersion
 
     lintOptions {
         disable 'InvalidPackage'

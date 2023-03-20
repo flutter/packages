@@ -20,7 +20,7 @@ class AnimateCameraPage extends GoogleMapExampleAppPage {
 }
 
 class AnimateCamera extends StatefulWidget {
-  const AnimateCamera({Key? key}) : super(key: key);
+  const AnimateCamera({super.key});
   @override
   State createState() => AnimateCameraState();
 }

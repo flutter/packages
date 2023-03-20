@@ -94,12 +94,17 @@ abstract class PackageCommand extends Command<void> {
         help: 'The base sha used to determine git diff. \n'
             'This is useful when $_runOnChangedPackagesArg is specified.\n'
             'If not specified, merge-base is used as base sha.');
+    argParser.addOption(_baseBranchArg,
+        help: 'The base branch whose merge base is used as the base SHA if '
+            '--$_baseShaArg is not provided. \n'
+            'If not specified, FETCH_HEAD is used as the base branch.');
     argParser.addFlag(_logTimingArg,
         help: 'Logs timing information.\n\n'
             'Currently only logs per-package timing for multi-package commands, '
             'but more information may be added in the future.');
   }
 
+  static const String _baseBranchArg = 'base-branch';
   static const String _baseShaArg = 'base-sha';
   static const String _excludeArg = 'exclude';
   static const String _logTimingArg = 'log-timing';
@@ -186,6 +191,11 @@ abstract class PackageCommand extends Command<void> {
   /// Convenience accessor for String arguments.
   String getStringArg(String key) {
     return (argResults![key] as String?) ?? '';
+  }
+
+  /// Convenience accessor for String arguments.
+  String? getNullableStringArg(String key) {
+    return argResults![key] as String?;
   }
 
   /// Convenience accessor for List<String> arguments.
@@ -338,7 +348,7 @@ abstract class PackageCommand extends Command<void> {
         if (lastCommitOnly) {
           print(
               '--$_packagesForBranchArg: using parent commit as the diff base.');
-          changedFileFinder = GitVersionFinder(await gitDir, 'HEAD~');
+          changedFileFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD~');
         } else {
           changedFileFinder = await retrieveVersionFinder();
         }
@@ -361,7 +371,7 @@ abstract class PackageCommand extends Command<void> {
       }
     } else if (getBoolArg(_runOnDirtyPackagesArg)) {
       final GitVersionFinder gitVersionFinder =
-          GitVersionFinder(await gitDir, 'HEAD');
+          GitVersionFinder(await gitDir, baseSha: 'HEAD');
       print('Running for all packages that have uncommitted changes\n');
       // _changesRequireFullTest is deliberately not used here, as this flag is
       // intended for use in CI to re-test packages changed by
@@ -473,10 +483,12 @@ abstract class PackageCommand extends Command<void> {
   ///
   /// Throws tool exit if [gitDir] nor root directory is a git directory.
   Future<GitVersionFinder> retrieveVersionFinder() async {
-    final String baseSha = getStringArg(_baseShaArg);
+    final String? baseSha = getNullableStringArg(_baseShaArg);
+    final String? baseBranch =
+        baseSha == null ? getNullableStringArg(_baseBranchArg) : null;
 
-    final GitVersionFinder gitVersionFinder =
-        GitVersionFinder(await gitDir, baseSha);
+    final GitVersionFinder gitVersionFinder = GitVersionFinder(await gitDir,
+        baseSha: baseSha, baseBranch: baseBranch);
     return gitVersionFinder;
   }
 

@@ -19,14 +19,14 @@ extension GoogleApisGoogleSignInAuth on GoogleSignIn {
   }) async {
     final GoogleSignInAuthentication? auth =
         debugAuthentication ?? await currentUser?.authentication;
-    final String? oathTokenString = auth?.accessToken;
-    if (oathTokenString == null) {
+    final String? oauthTokenString = auth?.accessToken;
+    if (oauthTokenString == null) {
       return null;
     }
     final gapis.AccessCredentials credentials = gapis.AccessCredentials(
       gapis.AccessToken(
         'Bearer',
-        oathTokenString,
+        oauthTokenString,
         // TODO(kevmoo): Use the correct value once it's available from authentication
         // See https://github.com/flutter/flutter/issues/80905
         DateTime.now().toUtc().add(const Duration(days: 365)),

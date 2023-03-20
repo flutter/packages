@@ -38,6 +38,8 @@ flutter pub run pigeon \
   --objc_header_out ios/Runner/pigeon.h \
   --objc_source_out ios/Runner/pigeon.m \
   --experimental_swift_out ios/Runner/Pigeon.swift \
+  --experimental_kotlin_out ./android/app/src/main/kotlin/dev/flutter/pigeon/Pigeon.kt \
+  --experimental_kotlin_package "dev.flutter.pigeon" \
   --java_out ./android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
   --java_package "dev.flutter.pigeon"
 ```
@@ -66,7 +68,7 @@ from Flutter.
 @end
 
 @implementation AppDelegate
-- (BOOL)application:(UIApplication *)application 
+- (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions {
   MyApi *api = [[MyApi alloc] init];
   BookApiSetup(getFlutterEngine().binaryMessenger, api);
@@ -158,4 +160,4 @@ A full example of using Pigeon for add-to-app with Swift on iOS can be found at
 ## Video player plugin
 
 A full real-world example can also be found in the
-[video_player plugin](https://github.com/flutter/plugins/tree/main/packages/video_player).
+[video_player plugin](https://github.com/flutter/packages/tree/main/packages/video_player).

@@ -23,6 +23,7 @@ import io.flutter.plugins.videoplayer.Messages.VolumeMessage;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -138,7 +139,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               handle,
               "asset:///" + assetLookupKey,
               null,
-              null,
+              new HashMap<String, String>(),
               options);
     } else {
       @SuppressWarnings("unchecked")

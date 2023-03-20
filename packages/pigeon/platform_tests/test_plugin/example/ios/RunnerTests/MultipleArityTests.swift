@@ -7,7 +7,7 @@ import XCTest
 @testable import test_plugin
 
 class MockMultipleArityHostApi: MultipleArityHostApi {
-  func subtract(x: Int32, y: Int32) -> Int32 {
+  func subtract(x: Int64, y: Int64) -> Int64 {
     return x - y
   }
 }
@@ -15,7 +15,7 @@ class MockMultipleArityHostApi: MultipleArityHostApi {
 class MultipleArityTests: XCTestCase {
   var codec = FlutterStandardMessageCodec.sharedInstance()
   func testSimpleHost() throws {
-    let binaryMessenger = MockBinaryMessenger<Int32>(codec: EnumApi2HostCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<Int64>(codec: EnumApi2HostCodec.shared)
     MultipleArityHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockMultipleArityHostApi())
     let channelName = "dev.flutter.pigeon.MultipleArityHostApi.subtract"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
@@ -29,7 +29,7 @@ class MultipleArityTests: XCTestCase {
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputList)
       
-      let output = outputList![0] as? Int32
+      let output = outputList![0] as? Int64
       XCTAssertEqual(3, output)
         XCTAssertTrue(outputList?.count == 1)
       expectation.fulfill()

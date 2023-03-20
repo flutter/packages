@@ -1,3 +1,16 @@
+## 4.0.7
+
+* Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on
+  Android.
+
+## 4.0.6
+
+* Updates iOS minimum version in README.
+
+## 4.0.5
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 4.0.4
 
 * Adds examples of accessing platform-specific features for each class.

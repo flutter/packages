@@ -8,9 +8,9 @@ the user.
 On supported devices, this includes authentication with biometrics such as
 fingerprint or facial recognition.
 
-|             | Android   | iOS  | Windows     |
-|-------------|-----------|------|-------------|
-| **Support** | SDK 16+\* | 9.0+ | Windows 10+ |
+|             | Android   | iOS   | Windows     |
+|-------------|-----------|-------|-------------|
+| **Support** | SDK 16+\* | 11.0+ | Windows 10+ |
 
 ## Usage
 

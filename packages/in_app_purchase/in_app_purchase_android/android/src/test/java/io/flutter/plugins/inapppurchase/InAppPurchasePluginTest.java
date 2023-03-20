@@ -15,6 +15,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -25,18 +26,23 @@ public class InAppPurchasePluginTest {
 
   static final String PROXY_PACKAGE_KEY = "PROXY_PACKAGE";
 
+  @SuppressWarnings("deprecation")
+  @Mock
+  PluginRegistry.Registrar mockRegistrar; // For v1 embedding
+
   @Mock Activity activity;
   @Mock Context context;
-  @Mock PluginRegistry.Registrar mockRegistrar; // For v1 embedding
   @Mock BinaryMessenger mockMessenger;
   @Mock Application mockApplication;
   @Mock Intent mockIntent;
   @Mock ActivityPluginBinding activityPluginBinding;
   @Mock FlutterPlugin.FlutterPluginBinding flutterPluginBinding;
 
+  AutoCloseable mockCloseable;
+
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
     when(mockRegistrar.activity()).thenReturn(activity);
     when(mockRegistrar.messenger()).thenReturn(mockMessenger);
     when(mockRegistrar.context()).thenReturn(context);
@@ -44,6 +50,11 @@ public class InAppPurchasePluginTest {
     when(activityPluginBinding.getActivity()).thenReturn(activity);
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mockMessenger);
     when(flutterPluginBinding.getApplicationContext()).thenReturn(context);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    mockCloseable.close();
   }
 
   @Test

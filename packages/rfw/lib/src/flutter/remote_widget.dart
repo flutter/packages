@@ -20,7 +20,7 @@ class RemoteWidget extends StatefulWidget {
   /// Inserts the specified [widget] into the tree.
   ///
   /// The [onEvent] argument is optional. When omitted, events are discarded.
-  const RemoteWidget({ Key? key, required this.runtime, required this.widget, required this.data, this.onEvent }) : super(key: key);
+  const RemoteWidget({ super.key, required this.runtime, required this.widget, required this.data, this.onEvent });
 
   /// The [Runtime] to use to render the widget specified by [widget].
   ///

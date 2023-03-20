@@ -431,7 +431,7 @@ $resultAt != null
   ///
   /// Messages will be sent and received in a list.
   ///
-  /// If the message recieved was succesful,
+  /// If the message received was successful,
   /// the result will be contained at the 0'th index.
   ///
   /// If the message was a failure, the list will contain 3 items:

@@ -136,6 +136,7 @@ abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('position:')
   PositionMessage position(TextureMessage msg);
 
+  @async
   @ObjCSelector('seekTo:')
   void seekTo(PositionMessage msg);
 
