@@ -66,7 +66,6 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     return new ImageAnalysis.Analyzer() {
       @Override
       public void analyze(@NonNull ImageProxy image) {
-        Log.v("FLUTTER", "Analyzing images!!!!!");
         ImageProxy.PlaneProxy[] planes = image.getPlanes();
 
         List<GeneratedCameraXLibrary.ImagePlaneInformation> imagePlanesInformation = new ArrayList<GeneratedCameraXLibrary.ImagePlaneInformation>();

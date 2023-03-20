@@ -16,7 +16,6 @@ public class ImageAnalysisFlutterApiImpl extends ImageAnalysisFlutterApi {
   }
 
   public void sendOnImageAnalyzedEvent(@NonNull ImageInformation imageInformation, Reply<Void> callback) {
-    Log.v("FLUTTER", "sendOnImageAnalyzedEvent");
     onImageAnalyzed(imageInformation, callback);
   }
 }

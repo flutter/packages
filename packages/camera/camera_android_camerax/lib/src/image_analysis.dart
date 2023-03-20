@@ -8,6 +8,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart'
     show CameraImageData, CameraImageFormat, CameraImagePlane, ImageFormatGroup;
 import 'package:flutter/services.dart' show BinaryMessenger;
 
+import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
@@ -25,13 +26,8 @@ class ImageAnalysis extends UseCase {
     _api = ImageAnalysisHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     _api.createFromInstance(this, targetResolution);
+    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
-
-  /// Stream that emits an event whenever a frame is received for image streaming.
-  static final StreamController<CameraImageData> onStreamedFrameAvailableStreamController =
-      StreamController<CameraImageData>.broadcast();
-
-  late final ImageAnalysisHostApiImpl _api;
 
   /// Constructs a [ImageAnalysis] that is not automatically attached to a native object.
   ImageAnalysis.detached(
@@ -43,7 +39,14 @@ class ImageAnalysis extends UseCase {
             instanceManager: instanceManager) {
     _api = ImageAnalysisHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
+
+  /// Stream that emits an event whenever a frame is received for image streaming.
+  static final StreamController<CameraImageData> onStreamedFrameAvailableStreamController =
+      StreamController<CameraImageData>.broadcast();
+
+  late final ImageAnalysisHostApiImpl _api;
 
   /// Target resolution of the camera preview stream.
   final ResolutionInfo? targetResolution;
@@ -109,7 +112,6 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
 
   @override
   void onImageAnalyzed(ImageInformation imageInformation) {
-    print('HELLO?!?!?!?!?');
     List<CameraImagePlane> imagePlanes =
       imageInformation.imagePlanesInformation!
         .map((ImagePlaneInformation? imagePlaneInformation) {
@@ -126,8 +128,6 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
       height: imageInformation.height,
       width: imageInformation.width,
     );
-
-    print('CAMILLE');
 
     ImageAnalysis.onStreamedFrameAvailableStreamController.add(data);
   }
