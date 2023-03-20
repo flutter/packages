@@ -11,7 +11,7 @@ import '../shared/markdown_extensions.dart';
 // ignore_for_file: public_member_api_docs
 
 class DemoScreen extends StatelessWidget {
-  const DemoScreen({Key? key, required this.child}) : super(key: key);
+  const DemoScreen({super.key, required this.child});
 
   static const String routeName = '/demoScreen';
 
@@ -47,7 +47,7 @@ class DemoScreen extends StatelessWidget {
 }
 
 class DemoFormattedView extends StatelessWidget {
-  const DemoFormattedView({Key? key, required this.child}) : super(key: key);
+  const DemoFormattedView({super.key, required this.child});
 
   final Widget? child;
 
@@ -64,7 +64,7 @@ class DemoFormattedView extends StatelessWidget {
 }
 
 class DemoRawDataView extends StatelessWidget {
-  const DemoRawDataView({Key? key, required this.data}) : super(key: key);
+  const DemoRawDataView({super.key, required this.data});
 
   final Future<String> data;
 
@@ -96,7 +96,7 @@ class DemoRawDataView extends StatelessWidget {
 }
 
 class DemoNotesView extends StatelessWidget {
-  const DemoNotesView({Key? key, required this.notes}) : super(key: key);
+  const DemoNotesView({super.key, required this.notes});
 
   final Future<String> notes;
 

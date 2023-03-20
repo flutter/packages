@@ -76,7 +76,7 @@ class CameraMoveEvent extends MapEvent<CameraPosition> {
   /// Build a CameraMove Event triggered from the map represented by `mapId`.
   ///
   /// The `value` of this event is a [CameraPosition] object with the current position of the Camera.
-  CameraMoveEvent(int mapId, CameraPosition position) : super(mapId, position);
+  CameraMoveEvent(super.mapId, super.position);
 }
 
 /// An event fired when the Camera of a [mapId] becomes idle.
@@ -90,7 +90,7 @@ class MarkerTapEvent extends MapEvent<MarkerId> {
   /// Build a MarkerTap Event triggered from the map represented by `mapId`.
   ///
   /// The `value` of this event is a [MarkerId] object that represents the tapped Marker.
-  MarkerTapEvent(int mapId, MarkerId markerId) : super(mapId, markerId);
+  MarkerTapEvent(super.mapId, super.markerId);
 }
 
 /// An event fired when an [InfoWindow] is tapped.
@@ -98,7 +98,7 @@ class InfoWindowTapEvent extends MapEvent<MarkerId> {
   /// Build an InfoWindowTap Event triggered from the map represented by `mapId`.
   ///
   /// The `value` of this event is a [MarkerId] object that represents the tapped InfoWindow.
-  InfoWindowTapEvent(int mapId, MarkerId markerId) : super(mapId, markerId);
+  InfoWindowTapEvent(super.mapId, super.markerId);
 }
 
 /// An event fired when a [Marker] is starting to be dragged to a new [LatLng].
@@ -107,8 +107,7 @@ class MarkerDragStartEvent extends _PositionedMapEvent<MarkerId> {
   ///
   /// The `position` on this event is the [LatLng] on which the Marker was picked up from.
   /// The `value` of this event is a [MarkerId] object that represents the Marker.
-  MarkerDragStartEvent(int mapId, LatLng position, MarkerId markerId)
-      : super(mapId, position, markerId);
+  MarkerDragStartEvent(super.mapId, super.position, super.markerId);
 }
 
 /// An event fired when a [Marker] is being dragged to a new [LatLng].
@@ -117,8 +116,7 @@ class MarkerDragEvent extends _PositionedMapEvent<MarkerId> {
   ///
   /// The `position` on this event is the [LatLng] on which the Marker was dragged to.
   /// The `value` of this event is a [MarkerId] object that represents the Marker.
-  MarkerDragEvent(int mapId, LatLng position, MarkerId markerId)
-      : super(mapId, position, markerId);
+  MarkerDragEvent(super.mapId, super.position, super.markerId);
 }
 
 /// An event fired when a [Marker] is dragged to a new [LatLng].
@@ -127,8 +125,7 @@ class MarkerDragEndEvent extends _PositionedMapEvent<MarkerId> {
   ///
   /// The `position` on this event is the [LatLng] on which the Marker was dropped.
   /// The `value` of this event is a [MarkerId] object that represents the moved Marker.
-  MarkerDragEndEvent(int mapId, LatLng position, MarkerId markerId)
-      : super(mapId, position, markerId);
+  MarkerDragEndEvent(super.mapId, super.position, super.markerId);
 }
 
 /// An event fired when a [Polyline] is tapped.
@@ -136,7 +133,7 @@ class PolylineTapEvent extends MapEvent<PolylineId> {
   /// Build an PolylineTap Event triggered from the map represented by `mapId`.
   ///
   /// The `value` of this event is a [PolylineId] object that represents the tapped Polyline.
-  PolylineTapEvent(int mapId, PolylineId polylineId) : super(mapId, polylineId);
+  PolylineTapEvent(super.mapId, super.polylineId);
 }
 
 /// An event fired when a [Polygon] is tapped.
@@ -144,7 +141,7 @@ class PolygonTapEvent extends MapEvent<PolygonId> {
   /// Build an PolygonTap Event triggered from the map represented by `mapId`.
   ///
   /// The `value` of this event is a [PolygonId] object that represents the tapped Polygon.
-  PolygonTapEvent(int mapId, PolygonId polygonId) : super(mapId, polygonId);
+  PolygonTapEvent(super.mapId, super.polygonId);
 }
 
 /// An event fired when a [Circle] is tapped.
@@ -152,7 +149,7 @@ class CircleTapEvent extends MapEvent<CircleId> {
   /// Build an CircleTap Event triggered from the map represented by `mapId`.
   ///
   /// The `value` of this event is a [CircleId] object that represents the tapped Circle.
-  CircleTapEvent(int mapId, CircleId circleId) : super(mapId, circleId);
+  CircleTapEvent(super.mapId, super.circleId);
 }
 
 /// An event fired when a Map is tapped.

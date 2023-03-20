@@ -10,7 +10,7 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Custom Transitions';
@@ -120,8 +120,8 @@ class ExampleTransitionsScreen extends StatelessWidget {
   const ExampleTransitionsScreen({
     required this.color,
     required this.kind,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The available transition kinds.
   static final List<String> kinds = <String>[

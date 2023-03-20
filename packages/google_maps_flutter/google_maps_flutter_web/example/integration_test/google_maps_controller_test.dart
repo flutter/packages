@@ -16,10 +16,6 @@ import 'package:mockito/mockito.dart';
 
 import 'google_maps_controller_test.mocks.dart';
 
-// This value is used when comparing long~num, like
-// LatLng values.
-const double _acceptableDelta = 0.0000000001;
-
 @GenerateMocks(<Type>[], customMocks: <MockSpec<dynamic>>[
   MockSpec<CirclesController>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<PolygonsController>(onMissingStub: OnMissingStub.returnDefault),
@@ -548,20 +544,7 @@ void main() {
       });
 
       group('moveCamera', () {
-        testWidgets('newLatLngZoom', (WidgetTester tester) async {
-          await controller.moveCamera(
-            CameraUpdate.newLatLngZoom(
-              const LatLng(19, 26),
-              12,
-            ),
-          );
-
-          final gmaps.LatLng gmCenter = map.center!;
-
-          expect(map.zoom, 12);
-          expect(gmCenter.lat, closeTo(19, _acceptableDelta));
-          expect(gmCenter.lng, closeTo(26, _acceptableDelta));
-        });
+        // Tested in projection_test.dart
       });
 
       group('map.projection methods', () {

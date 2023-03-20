@@ -57,7 +57,6 @@ import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
-import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
@@ -77,24 +76,6 @@ import java.util.concurrent.Executors;
 @FunctionalInterface
 interface ErrorCallback {
   void onError(String errorCode, String errorMessage);
-}
-
-/** A mockable wrapper for CameraDevice calls. */
-interface CameraDeviceWrapper {
-  @NonNull
-  CaptureRequest.Builder createCaptureRequest(int templateType) throws CameraAccessException;
-
-  @TargetApi(VERSION_CODES.P)
-  void createCaptureSession(SessionConfiguration config) throws CameraAccessException;
-
-  @TargetApi(VERSION_CODES.LOLLIPOP)
-  void createCaptureSession(
-      @NonNull List<Surface> outputs,
-      @NonNull CameraCaptureSession.StateCallback callback,
-      @Nullable Handler handler)
-      throws CameraAccessException;
-
-  void close();
 }
 
 class Camera
@@ -255,7 +236,7 @@ class Camera
    * @param requestBuilder request builder to update.
    */
   private void updateBuilderSettings(CaptureRequest.Builder requestBuilder) {
-    for (CameraFeature feature : cameraFeatures.getAllFeatures()) {
+    for (CameraFeature<?> feature : cameraFeatures.getAllFeatures()) {
       Log.d(TAG, "Updating builder with feature: " + feature.getDebugName());
       feature.updateBuilder(requestBuilder);
     }
@@ -270,8 +251,7 @@ class Camera
     closeRenderer();
 
     final PlatformChannel.DeviceOrientation lockedOrientation =
-        ((SensorOrientationFeature) cameraFeatures.getSensorOrientation())
-            .getLockedCaptureOrientation();
+        cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
 
     MediaRecorderBuilder mediaRecorderBuilder;
 
@@ -350,7 +330,12 @@ class Camera
                     cameraFeatures.getExposurePoint().checkIsSupported(),
                     cameraFeatures.getFocusPoint().checkIsSupported());
 
+<<<<<<< HEAD
             } catch (CameraAccessException | InterruptedException e) {
+=======
+            } catch (Exception e) {
+              Log.i(TAG, "open | onOpened error: " + e.getMessage());
+>>>>>>> main
               dartMessenger.sendCameraErrorEvent(e.getMessage());
               close();
             }
@@ -658,8 +643,7 @@ class Camera
 
     // Orientation.
     final PlatformChannel.DeviceOrientation lockedOrientation =
-        ((SensorOrientationFeature) cameraFeatures.getSensorOrientation())
-            .getLockedCaptureOrientation();
+        cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
     stillBuilder.set(
         CaptureRequest.JPEG_ORIENTATION,
         lockedOrientation == null
@@ -1120,8 +1104,12 @@ class Camera
 
     // get rotation for rendered video
     final PlatformChannel.DeviceOrientation lockedOrientation =
+<<<<<<< HEAD
         ((SensorOrientationFeature) cameraFeatures.getSensorOrientation())
             .getLockedCaptureOrientation();
+=======
+        cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
+>>>>>>> main
     DeviceOrientationManager orientationManager =
         cameraFeatures.getSensorOrientation().getDeviceOrientationManager();
 
@@ -1330,6 +1318,18 @@ class Camera
       return;
     }
 
+<<<<<<< HEAD
+=======
+    // See VideoRenderer.java requires API 26 to switch camera while recording
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+      result.error(
+          "setDescriptionWhileRecordingFailed",
+          "Device does not support switching the camera while recording",
+          null);
+      return;
+    }
+
+>>>>>>> main
     stopAndReleaseCamera();
     prepareVideoRenderer();
     cameraProperties = properties;

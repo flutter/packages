@@ -51,7 +51,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of setOnNavigationRequest should throw unimplemented error',
       () {
     final PlatformNavigationDelegate callbackDelegate =
@@ -66,7 +65,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of setOnPageStarted should throw unimplemented error',
       () {
     final PlatformNavigationDelegate callbackDelegate =
@@ -80,7 +78,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of setOnPageFinished should throw unimplemented error',
       () {
     final PlatformNavigationDelegate callbackDelegate =
@@ -94,7 +91,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of setOnProgress should throw unimplemented error',
       () {
     final PlatformNavigationDelegate callbackDelegate =
@@ -108,7 +104,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of setOnWebResourceError should throw unimplemented error',
       () {
     final PlatformNavigationDelegate callbackDelegate =
@@ -117,6 +112,19 @@ void main() {
 
     expect(
       () => callbackDelegate.setOnWebResourceError((WebResourceError error) {}),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+      'Default implementation of setOnUrlChange should throw unimplemented error',
+      () {
+    final PlatformNavigationDelegate callbackDelegate =
+        ExtendsPlatformNavigationDelegate(
+            const PlatformNavigationDelegateCreationParams());
+
+    expect(
+      () => callbackDelegate.setOnUrlChange((UrlChange change) {}),
       throwsUnimplementedError,
     );
   });
@@ -141,7 +149,5 @@ class MockNavigationDelegate extends Mock
         PlatformNavigationDelegate {}
 
 class ExtendsPlatformNavigationDelegate extends PlatformNavigationDelegate {
-  ExtendsPlatformNavigationDelegate(
-      PlatformNavigationDelegateCreationParams params)
-      : super.implementation(params);
+  ExtendsPlatformNavigationDelegate(super.params) : super.implementation();
 }

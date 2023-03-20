@@ -18,7 +18,7 @@ import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
 
-const bool enableLogs = true;
+const bool enableLogs = false;
 final Logger log = Logger('GoRouter tests');
 
 Future<void> sendPlatformUrl(String url) async {
@@ -3274,6 +3274,68 @@ void main() {
         expect(find.byKey(heroKey), findsNothing);
       });
     });
+  });
+
+  group('of', () {
+    testWidgets(
+      'It should return the go router instance of the widget tree',
+      (WidgetTester tester) async {
+        const Key key = Key('key');
+        final List<RouteBase> routes = <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const SizedBox(key: key),
+          ),
+        ];
+
+        final GoRouter router = await createRouter(routes, tester);
+        final Element context = tester.element(find.byKey(key));
+        final GoRouter foundRouter = GoRouter.of(context);
+        expect(foundRouter, router);
+      },
+    );
+
+    testWidgets(
+      'It should throw if there is no go router in the widget tree',
+      (WidgetTester tester) async {
+        const Key key = Key('key');
+        await tester.pumpWidget(const SizedBox(key: key));
+
+        final Element context = tester.element(find.byKey(key));
+        expect(() => GoRouter.of(context), throwsA(anything));
+      },
+    );
+  });
+
+  group('maybeOf', () {
+    testWidgets(
+      'It should return the go router instance of the widget tree',
+      (WidgetTester tester) async {
+        const Key key = Key('key');
+        final List<RouteBase> routes = <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const SizedBox(key: key),
+          ),
+        ];
+
+        final GoRouter router = await createRouter(routes, tester);
+        final Element context = tester.element(find.byKey(key));
+        final GoRouter? foundRouter = GoRouter.maybeOf(context);
+        expect(foundRouter, router);
+      },
+    );
+
+    testWidgets(
+      'It should return null if there is no go router in the widget tree',
+      (WidgetTester tester) async {
+        const Key key = Key('key');
+        await tester.pumpWidget(const SizedBox(key: key));
+
+        final Element context = tester.element(find.byKey(key));
+        expect(GoRouter.maybeOf(context), isNull);
+      },
+    );
   });
 }
 

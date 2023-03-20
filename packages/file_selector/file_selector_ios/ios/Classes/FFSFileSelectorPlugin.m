@@ -21,9 +21,7 @@
                  initWithDocumentTypes:config.utis
                                 inMode:UIDocumentPickerModeImport];
   documentPicker.delegate = self;
-  if (@available(iOS 11.0, *)) {
-    documentPicker.allowsMultipleSelection = config.allowMultiSelection.boolValue;
-  }
+  documentPicker.allowsMultipleSelection = config.allowMultiSelection.boolValue;
 
   UIViewController *presentingVC =
       self.presentingViewControllerOverride
@@ -47,16 +45,6 @@
 }
 
 #pragma mark - UIDocumentPickerDelegate
-
-// This method is only called in iOS < 11.0. The new codepath is
-// documentPicker:didPickDocumentsAtURLs:, implemented below.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)documentPicker:(UIDocumentPickerViewController *)controller
-    didPickDocumentAtURL:(NSURL *)url {
-  [self sendBackResults:@[ url.path ] error:nil forPicker:controller];
-}
-#pragma clang diagnostic pop
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller
     didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {

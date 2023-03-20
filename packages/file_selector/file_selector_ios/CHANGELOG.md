@@ -1,5 +1,15 @@
-## NEXT
+## 0.5.1+1
 
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.5.1
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
+## 0.5.0+3
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates example code for `use_build_context_synchronously` lint.
 * Updates minimum Flutter version to 3.0.
 

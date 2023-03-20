@@ -614,8 +614,21 @@ public class CameraTest {
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
     camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
 
+<<<<<<< HEAD
     verify(mockResult, times(1)).success(null);
     verify(mockResult, never()).error(any(), any(), any());
+=======
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+      verify(mockResult, times(1))
+          .error(
+              eq("setDescriptionWhileRecordingFailed"),
+              eq("Device does not support switching the camera while recording"),
+              eq(null));
+    } else {
+      verify(mockResult, times(1)).success(null);
+      verify(mockResult, never()).error(any(), any(), any());
+    }
+>>>>>>> main
   }
 
   @Test

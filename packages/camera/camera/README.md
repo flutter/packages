@@ -6,9 +6,9 @@
 
 A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
-|                | Android | iOS      | Web                    |
-|----------------|---------|----------|------------------------|
-| **Support**    | SDK 21+ | iOS 10+* | [See `camera_web `][1] |
+|                | Android | iOS       | Web                    |
+|----------------|---------|-----------|------------------------|
+| **Support**    | SDK 21+ | iOS 11.0+ | [See `camera_web `][1] |
 
 ## Features
 
@@ -22,11 +22,6 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 First, add `camera` as a [dependency in your pubspec.yaml file](https://flutter.dev/using-packages/).
 
 ### iOS
-
-\* The camera plugin compiles for any version of iOS, but its functionality
-requires iOS 10 or higher. If compiling for iOS 9, make sure to programmatically
-check the version of iOS running on the device before using any camera plugin features.
-The [device_info_plus](https://pub.dev/packages/device_info_plus) plugin, for example, can be used to check the iOS version.
 
 Add two rows to the `ios/Runner/Info.plist`:
 
@@ -59,7 +54,7 @@ For web integration details, see the
 
 ### Handling Lifecycle states
 
-As of version [0.5.0](https://github.com/flutter/plugins/blob/main/packages/camera/CHANGELOG.md#050) of the camera plugin, lifecycle changes are no longer handled by the plugin. This means developers are now responsible to control camera resources when the lifecycle state is updated. Failure to do so might lead to unexpected behavior (for example as described in issue [#39109](https://github.com/flutter/flutter/issues/39109)). Handling lifecycle changes can be done by overriding the `didChangeAppLifecycleState` method like so:
+As of version [0.5.0](https://github.com/flutter/packages/blob/main/packages/camera/CHANGELOG.md#050) of the camera plugin, lifecycle changes are no longer handled by the plugin. This means developers are now responsible to control camera resources when the lifecycle state is updated. Failure to do so might lead to unexpected behavior (for example as described in issue [#39109](https://github.com/flutter/flutter/issues/39109)). Handling lifecycle changes can be done by overriding the `didChangeAppLifecycleState` method like so:
 
 <?code-excerpt "main.dart (AppLifecycle)"?>
 ```dart
@@ -119,7 +114,7 @@ Future<void> main() async {
 /// CameraApp is the Main Application.
 class CameraApp extends StatefulWidget {
   /// Default Constructor
-  const CameraApp({Key? key}) : super(key: key);
+  const CameraApp({super.key});
 
   @override
   State<CameraApp> createState() => _CameraAppState();
@@ -169,6 +164,6 @@ class _CameraAppState extends State<CameraApp> {
 }
 ```
 
-For a more elaborate usage example see [here](https://github.com/flutter/plugins/tree/main/packages/camera/camera/example).
+For a more elaborate usage example see [here](https://github.com/flutter/packages/tree/main/packages/camera/camera/example).
 
 [1]: https://pub.dev/packages/camera_web#limitations-on-the-web-platform

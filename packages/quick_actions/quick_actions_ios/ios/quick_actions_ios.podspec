@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
 This Flutter plugin allows you to manage and interact with the application's home screen quick actions.
 Downloaded by pub (not CocoaPods).
                        DESC
-  s.homepage         = 'https://github.com/flutter/plugins'
+  s.homepage         = 'https://github.com/flutter/packages'
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
-  s.source           = { :http => 'https://github.com/flutter/plugins/tree/main/packages/quick_actions' }
+  s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/quick_actions' }
   s.documentation_url = 'https://pub.dev/packages/quick_actions'
   s.swift_version = '5.0'
   s.source_files = 'Classes/**/*.swift'

@@ -3,7 +3,7 @@ description: Demonstrates how to use the camera plugin.
 publish_to: none
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
   flutter: ">=3.0.0"
 
 dependencies:
@@ -33,8 +33,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+<<<<<<< HEAD
 
 # FOR TESTING ONLY. DO NOT MERGE.
 dependency_overrides:
   camera_android:
     path: ../../../camera/camera_android
+=======
+>>>>>>> main

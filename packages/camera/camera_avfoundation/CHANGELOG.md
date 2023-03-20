@@ -1,6 +1,25 @@
+<<<<<<< HEAD
 ## 0.9.12
 
 * Allows camera to be switched while video recording.
+=======
+## 0.9.13+1
+
+* Clarifies explanation of endorsement in README.
+
+## 0.9.13
+
+* Allows camera to be switched while video recording.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.9.12
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
+## 0.9.11+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+>>>>>>> main
 
 ## 0.9.11
 

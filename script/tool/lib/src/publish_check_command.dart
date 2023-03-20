@@ -217,18 +217,23 @@ class PublishCheckCommand extends PackageLoopingCommand {
     final _PublishCheckResult alreadyPublishedResult =
         await _checkPublishingStatus(
             packageName: packageName, version: version);
-    if (alreadyPublishedResult == _PublishCheckResult.nothingToPublish) {
-      print(
-          'Package $packageName version: $version has already be published on pub.');
-      return alreadyPublishedResult;
-    } else if (alreadyPublishedResult == _PublishCheckResult.error) {
+    if (alreadyPublishedResult == _PublishCheckResult.error) {
       print('Check pub version failed $packageName');
       return _PublishCheckResult.error;
     }
 
+    // Run the dry run even if no publishing is needed, so that changes in pub
+    // behavior (e.g., new checks that some existing packages may fail) are
+    // caught by CI in the Flutter roller, rather than the next time the package
+    // package is actually published.
     if (await _hasValidPublishCheckRun(package)) {
-      print('Package $packageName is able to be published.');
-      return _PublishCheckResult.needsPublishing;
+      if (alreadyPublishedResult == _PublishCheckResult.nothingToPublish) {
+        print(
+            'Package $packageName version: $version has already been published on pub.');
+      } else {
+        print('Package $packageName is able to be published.');
+      }
+      return alreadyPublishedResult;
     } else {
       print('Unable to publish $packageName');
       return _PublishCheckResult.error;

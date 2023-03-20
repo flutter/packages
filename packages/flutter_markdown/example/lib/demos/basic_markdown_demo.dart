@@ -46,7 +46,7 @@ for the formatted Markdown view in the demo.
 // TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
 // ignore: avoid_implementing_value_types
 class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
-  const BasicMarkdownDemo({Key? key}) : super(key: key);
+  const BasicMarkdownDemo({super.key});
 
   static const String _title = 'Basic Markdown Demo';
 

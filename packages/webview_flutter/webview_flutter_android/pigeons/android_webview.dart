@@ -27,6 +27,15 @@ import 'package:pigeon/pigeon.dart';
   ),
 )
 
+/// Host API for managing the native `InstanceManager`.
+@HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
+abstract class InstanceManagerHostApi {
+  /// Clear the native `InstanceManager`.
+  ///
+  /// This is typically only used after a hot restart.
+  void clear();
+}
+
 /// Mode of how to select files for a file chooser.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams.
@@ -191,6 +200,19 @@ abstract class WebViewHostApi {
   void setBackgroundColor(int instanceId, int color);
 }
 
+/// Flutter API for `WebView`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/WebView.
+@FlutterApi()
+abstract class WebViewFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int identifier);
+}
+
 @HostApi(dartHostTestHandler: 'TestWebSettingsHostApi')
 abstract class WebSettingsHostApi {
   void create(int instanceId, int webViewInstanceId);
@@ -218,6 +240,8 @@ abstract class WebSettingsHostApi {
   void setBuiltInZoomControls(int instanceId, bool enabled);
 
   void setAllowFileAccess(int instanceId, bool enabled);
+
+  void setTextZoom(int instanceId, int textZoom);
 }
 
 @HostApi(dartHostTestHandler: 'TestJavaScriptChannelHostApi')
