@@ -215,7 +215,7 @@ void main() {
   });
 }
 
-class FakeSharedPreferencesStore implements SharedPreferencesStorePlatform {
+class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   FakeSharedPreferencesStore(Map<String, Object> data)
       : backend = InMemorySharedPreferencesStore.withData(data);
 
