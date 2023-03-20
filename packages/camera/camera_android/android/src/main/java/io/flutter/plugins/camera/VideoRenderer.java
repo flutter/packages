@@ -358,12 +358,7 @@ public class VideoRenderer {
 
     EGLExt.eglPresentationTimeANDROID(display, surface, uptimeMillis() * 1000000);
     if (!EGL14.eglSwapBuffers(display, surface)) {
-<<<<<<< HEAD
-      throw new RuntimeException(
-          "eglSwapBuffers()" + GLUtils.getEGLErrorString(EGL14.eglGetError()));
-=======
       Log.w(TAG, "eglSwapBuffers() " + GLUtils.getEGLErrorString(EGL14.eglGetError()));
->>>>>>> main
     }
   }
 }

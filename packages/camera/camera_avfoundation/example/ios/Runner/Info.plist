@@ -56,10 +56,7 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-<<<<<<< HEAD
-=======
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
->>>>>>> main
 </dict>
 </plist>

@@ -223,13 +223,6 @@ void main() {
     await controller.prepareForVideoRecording();
 
     await controller.startVideoRecording();
-<<<<<<< HEAD
-    sleep(const Duration(milliseconds: 500));
-    await controller.setDescription(cameras[1]);
-    sleep(const Duration(milliseconds: 500));
-
-    expect(controller.description, cameras[1]);
-=======
 
     // SDK < 26 will throw a platform error when trying to switch and keep the same camera
     // we accept either outcome here, while the native unit tests check the outcome based on the current Android SDK
@@ -252,7 +245,6 @@ void main() {
       // cameras switched
       expect(controller.description, cameras[1]);
     }
->>>>>>> main
   });
 
   testWidgets('Set description', (WidgetTester tester) async {
@@ -269,13 +261,7 @@ void main() {
     );
 
     await controller.initialize();
-<<<<<<< HEAD
-    sleep(const Duration(milliseconds: 500));
     await controller.setDescription(cameras[1]);
-    sleep(const Duration(milliseconds: 500));
-=======
-    await controller.setDescription(cameras[1]);
->>>>>>> main
 
     expect(controller.description, cameras[1]);
   });

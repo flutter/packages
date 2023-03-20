@@ -155,18 +155,10 @@ NSString *const errorMethod = @"error";
   [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
   [_videoCaptureSession addConnection:connection];
 
-<<<<<<< HEAD
-  if (@available(iOS 10.0, *)) {
-    _capturePhotoOutput = [AVCapturePhotoOutput new];
-    [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
-    [_videoCaptureSession addOutput:_capturePhotoOutput];
-  }
-=======
   _capturePhotoOutput = [AVCapturePhotoOutput new];
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
   [_videoCaptureSession addOutput:_capturePhotoOutput];
 
->>>>>>> main
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 

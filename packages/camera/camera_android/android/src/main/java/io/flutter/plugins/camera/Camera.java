@@ -330,12 +330,8 @@ class Camera
                     cameraFeatures.getExposurePoint().checkIsSupported(),
                     cameraFeatures.getFocusPoint().checkIsSupported());
 
-<<<<<<< HEAD
-            } catch (CameraAccessException | InterruptedException e) {
-=======
             } catch (Exception e) {
               Log.i(TAG, "open | onOpened error: " + e.getMessage());
->>>>>>> main
               dartMessenger.sendCameraErrorEvent(e.getMessage());
               close();
             }
@@ -1104,12 +1100,7 @@ class Camera
 
     // get rotation for rendered video
     final PlatformChannel.DeviceOrientation lockedOrientation =
-<<<<<<< HEAD
-        ((SensorOrientationFeature) cameraFeatures.getSensorOrientation())
-            .getLockedCaptureOrientation();
-=======
         cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
->>>>>>> main
     DeviceOrientationManager orientationManager =
         cameraFeatures.getSensorOrientation().getDeviceOrientationManager();
 
@@ -1318,8 +1309,6 @@ class Camera
       return;
     }
 
-<<<<<<< HEAD
-=======
     // See VideoRenderer.java requires API 26 to switch camera while recording
     if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
       result.error(
@@ -1329,7 +1318,6 @@ class Camera
       return;
     }
 
->>>>>>> main
     stopAndReleaseCamera();
     prepareVideoRenderer();
     cameraProperties = properties;
