@@ -662,9 +662,4 @@ NS_INLINE UIViewController *rootViewController() {
   }
 }
 
-- (void)viktorTest:(FLTTextureMessage *)input error:(FlutterError **)error {
-  FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
-  [player pause];
-}
-
 @end
