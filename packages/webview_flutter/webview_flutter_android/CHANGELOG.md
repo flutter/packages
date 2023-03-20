@@ -1,6 +1,10 @@
-## 3.4.3
+## 3.4.4
 
 * Removes unused internal `WebView` field and Java class.
+
+## 3.4.3
+
+* Updates internal Java InstanceManager to be cleared on hot restart.
 
 ## 3.4.2
 
