@@ -1,8 +1,6 @@
 ## 0.10.5
 
 * Allows camera to be switched while video recording.
-<<<<<<< HEAD
-=======
 ## 0.10.4+3
 
 * Clarifies explanation of endorsement in README.
@@ -18,7 +16,6 @@
 ## 0.10.4+1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
->>>>>>> main
 
 ## 0.10.4
 

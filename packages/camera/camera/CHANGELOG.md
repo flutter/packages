@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 ## 0.10.4
 
 * Allows camera to be switched while video recording.
-=======
-## NEXT
-
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.10.3+2
@@ -14,7 +10,6 @@
 ## 0.10.3+1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
->>>>>>> main
 
 ## 0.10.3
 
