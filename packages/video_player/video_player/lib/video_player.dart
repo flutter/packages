@@ -47,6 +47,7 @@ class VideoPlayerValue {
     this.isPlaying = false,
     this.isLooping = false,
     this.isBuffering = false,
+    this.isPictureInPictureActive = false,
     this.volume = 1.0,
     this.playbackSpeed = 1.0,
     this.rotationCorrection = 0,
@@ -105,6 +106,9 @@ class VideoPlayerValue {
   /// The current speed of the playback.
   final double playbackSpeed;
 
+  /// True if picture in picture is currently active.
+  final bool isPictureInPictureActive;
+
   /// A description of the error if present.
   ///
   /// If [hasError] is false this is `null`.
@@ -153,6 +157,7 @@ class VideoPlayerValue {
     bool? isPlaying,
     bool? isLooping,
     bool? isBuffering,
+    bool? isPictureInPictureActive,
     double? volume,
     double? playbackSpeed,
     int? rotationCorrection,
@@ -169,6 +174,8 @@ class VideoPlayerValue {
       isPlaying: isPlaying ?? this.isPlaying,
       isLooping: isLooping ?? this.isLooping,
       isBuffering: isBuffering ?? this.isBuffering,
+      isPictureInPictureActive:
+          isPictureInPictureActive ?? this.isPictureInPictureActive,
       volume: volume ?? this.volume,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       rotationCorrection: rotationCorrection ?? this.rotationCorrection,
@@ -191,6 +198,7 @@ class VideoPlayerValue {
         'isPlaying: $isPlaying, '
         'isLooping: $isLooping, '
         'isBuffering: $isBuffering, '
+        'isPictureInPictureActive: $isPictureInPictureActive, '
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
         'errorDescription: $errorDescription)';
@@ -399,6 +407,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
           break;
+        case VideoEventType.startingPictureInPicture:
+          value = value.copyWith(isPictureInPictureActive: true);
+          break;
+        case VideoEventType.stoppedPictureInPicture:
+          value = value.copyWith(isPictureInPictureActive: false);
+          break;
         case VideoEventType.unknown:
           break;
       }
@@ -516,6 +530,53 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
     await _videoPlayerPlatform.setVolume(_textureId, value.volume);
+  }
+
+  /// Returns true if picture in picture is supported on the device.
+  Future<bool> isPictureInPictureSupported() =>
+      _videoPlayerPlatform.isPictureInPictureSupported();
+
+  /// Enable/disable to start picture in picture automatically when the app goes to the background.
+  Future<void> setAutomaticallyStartPictureInPicture({
+    required bool enableStartPictureInPictureAutomaticallyFromInline,
+  }) async {
+    if (!value.isInitialized || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.setAutomaticallyStartPictureInPicture(
+      textureId: _textureId,
+      enableStartPictureInPictureAutomaticallyFromInline:
+          enableStartPictureInPictureAutomaticallyFromInline,
+    );
+  }
+
+  /// Set the location of the video player view. So picture in picture can use it for animating
+  Future<void> setPictureInPictureOverlayRect({
+    required Rect rect,
+  }) async {
+    if (!value.isInitialized || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.setPictureInPictureOverlayRect(
+      textureId: _textureId,
+      rect: rect,
+    );
+  }
+
+  /// Start picture in picture mode
+  Future<void> startPictureInPicture() async {
+    if (!value.isInitialized || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.startPictureInPicture(_textureId);
+  }
+
+  /// Stop picture in picture mode
+  Future<void> stopPictureInPicture() async {
+    if (!value.isInitialized || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.stopPictureInPicture(_textureId);
   }
 
   Future<void> _applyPlaybackSpeed() async {
@@ -689,6 +750,7 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
   _VideoAppLifeCycleObserver(this._controller);
 
   bool _wasPlayingBeforePause = false;
+  bool _isPictureInPictureActive = false;
   final VideoPlayerController _controller;
 
   void initialize() {
@@ -699,6 +761,10 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _wasPlayingBeforePause = _controller.value.isPlaying;
+      _isPictureInPictureActive = _controller.value.isPictureInPictureActive;
+      if (!_isPictureInPictureActive) {
+        _controller.pause();
+      }
       _controller.pause();
     } else if (state == AppLifecycleState.resumed) {
       if (_wasPlayingBeforePause) {

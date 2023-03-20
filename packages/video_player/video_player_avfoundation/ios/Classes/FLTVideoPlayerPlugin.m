@@ -3,10 +3,9 @@
 // found in the LICENSE file.
 
 #import "FLTVideoPlayerPlugin.h"
-
 #import <AVFoundation/AVFoundation.h>
+#import <AVKit/AVKit.h>
 #import <GLKit/GLKit.h>
-
 #import "AVAssetTrackUtils.h"
 #import "messages.g.h"
 
@@ -33,7 +32,8 @@
 }
 @end
 
-@interface FLTVideoPlayer : NSObject <FlutterTexture, FlutterStreamHandler>
+@interface FLTVideoPlayer
+    : NSObject <FlutterTexture, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
 @property(readonly, nonatomic) AVPlayer *player;
 @property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
 // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
@@ -41,8 +41,10 @@
 // streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116).
 // An invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
 // for issue #1, and restore the correct width and height for issue #2.
+// It is also used to start picture in picture
 @property(readonly, nonatomic) AVPlayerLayer *playerLayer;
 @property(readonly, nonatomic) CADisplayLink *displayLink;
+@property(nonatomic) AVPictureInPictureController *pictureInPictureController;
 @property(nonatomic) FlutterEventChannel *eventChannel;
 @property(nonatomic) FlutterEventSink eventSink;
 @property(nonatomic) CGAffineTransform preferredTransform;
@@ -50,6 +52,7 @@
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
 @property(nonatomic, readonly) BOOL isInitialized;
+@property(nonatomic) BOOL isPictureInPictureStarted;
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers;
@@ -247,8 +250,15 @@ NS_INLINE UIViewController *rootViewController() {
   // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
   // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
   // for issue #1, and restore the correct width and height for issue #2.
+  // It is also used to start picture in picture
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
+  // We set the opacity to 0.001 because it is an overlay.
+  // Picture in picture will show a placeholder over other widgets when video_player is used in a
+  // ScrollView, PageView or in a widget that changes location.
+  _playerLayer.opacity = 0.001;
   [rootViewController().view.layer addSublayer:_playerLayer];
+
+  [self setupPipController];
 
   [self createVideoOutputAndDisplayLink:frameUpdater];
 
@@ -257,6 +267,70 @@ NS_INLINE UIViewController *rootViewController() {
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
   return self;
+}
+
+- (void)setupPipController {
+  if ([AVPictureInPictureController isPictureInPictureSupported]) {
+    self.pictureInPictureController =
+        [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
+    [self setAutomaticallyStartPictureInPicture:NO];
+    self.pictureInPictureController.delegate = self;
+  }
+}
+
+- (void)setAutomaticallyStartPictureInPicture:
+    (BOOL)canStartPictureInPictureAutomaticallyFromInline {
+  if (!self.pictureInPictureController) return;
+  if (@available(iOS 14.2, *)) {
+    self.pictureInPictureController.canStartPictureInPictureAutomaticallyFromInline =
+        canStartPictureInPictureAutomaticallyFromInline;
+  }
+}
+
+- (void)setPictureInPictureOverlayRect:(CGRect)frame {
+  if (_player) {
+    self.playerLayer.frame = frame;
+  }
+}
+
+- (void)startOrStopPictureInPicture:(BOOL)shouldPictureInPictureStart {
+  if (![AVPictureInPictureController isPictureInPictureSupported] ||
+      self.isPictureInPictureStarted == shouldPictureInPictureStart) {
+    return;
+  }
+
+  self.isPictureInPictureStarted = shouldPictureInPictureStart;
+  if (self.pictureInPictureController && self.isPictureInPictureStarted &&
+      ![self.pictureInPictureController isPictureInPictureActive]) {
+    if (_eventSink != nil) {
+      // The event is already send here to make sure that Flutter UI can be updates as soon as
+      // possible
+      _eventSink(@{@"event" : @"startingPictureInPicture"});
+    }
+    [self.pictureInPictureController startPictureInPicture];
+  } else if (self.pictureInPictureController && !self.isPictureInPictureStarted &&
+             [self.pictureInPictureController isPictureInPictureActive]) {
+    [self.pictureInPictureController stopPictureInPicture];
+  }
+}
+
+#pragma mark - AVPictureInPictureControllerDelegate
+
+- (void)pictureInPictureControllerDidStopPictureInPicture:
+    (AVPictureInPictureController *)pictureInPictureController {
+  self.isPictureInPictureStarted = NO;
+  if (_eventSink != nil) {
+    _eventSink(@{@"event" : @"stoppedPictureInPicture"});
+  }
+}
+
+- (void)pictureInPictureControllerDidStartPictureInPicture:
+    (AVPictureInPictureController *)pictureInPictureController {
+  self.isPictureInPictureStarted = YES;
+  if (_eventSink != nil) {
+    _eventSink(@{@"event" : @"startingPictureInPicture"});
+  }
+  [self updatePlayingState];
 }
 
 - (void)observeValueForKeyPath:(NSString *)path
@@ -656,6 +730,57 @@ NS_INLINE UIViewController *rootViewController() {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
+}
+
+- (nullable NSNumber *)isPictureInPictureSupported:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @([AVPictureInPictureController isPictureInPictureSupported]);
+}
+
+- (void)setAutomaticallyStartPictureInPicture:(FLTAutomaticallyStartPictureInPictureMessage *)input
+                                        error:(FlutterError **)error {
+  FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
+  [player
+      setAutomaticallyStartPictureInPicture:input.enableStartPictureInPictureAutomaticallyFromInline
+                                                .boolValue];
+}
+
+- (void)setPictureInPictureOverlayRect:(FLTSetPictureInPictureOverlayRectMessage *)input
+                                 error:(FlutterError **)error {
+  FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
+  [player setPictureInPictureOverlayRect:CGRectMake(input.rect.left.floatValue,
+                                                    input.rect.top.floatValue,
+                                                    input.rect.width.floatValue,
+                                                    input.rect.height.floatValue)];
+}
+
+- (BOOL)doesInfoPlistSupportPictureInPicture:(FlutterError **)error {
+  NSArray *backgroundModes = [NSBundle.mainBundle objectForInfoDictionaryKey:@"UIBackgroundModes"];
+  if (![backgroundModes isKindOfClass:[NSArray class]] ||
+      ![backgroundModes containsObject:@"audio"]) {
+    *error = [FlutterError errorWithCode:@"video_player"
+                                 message:@"missing audio UIBackgroundModes audio in Info.plist"
+                                 details:nil];
+    return NO;
+  }
+  return YES;
+}
+
+- (void)startPictureInPicture:(FLTStartPictureInPictureMessage *)input
+                        error:(FlutterError **)error {
+  if (![self doesInfoPlistSupportPictureInPicture:error]) {
+    return;
+  }
+  FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
+  [player startOrStopPictureInPicture:YES];
+}
+
+- (void)stopPictureInPicture:(FLTStopPictureInPictureMessage *)input error:(FlutterError **)error {
+  if (![self doesInfoPlistSupportPictureInPicture:error]) {
+    return;
+  }
+  FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
+  [player startOrStopPictureInPicture:NO];
 }
 
 @end

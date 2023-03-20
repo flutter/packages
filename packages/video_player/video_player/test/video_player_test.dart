@@ -80,6 +80,25 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
+
+  @override
+  Future<bool> isPictureInPictureSupported() async => true;
+
+  @override
+  Future<void> setAutomaticallyStartPictureInPicture({
+    required bool enableStartPictureInPictureAutomaticallyFromInline,
+  }) async {}
+
+  @override
+  Future<void> setPictureInPictureOverlayRect({
+    required Rect rect,
+  }) async {}
+
+  @override
+  Future<void> startPictureInPicture() async {}
+
+  @override
+  Future<void> stopPictureInPicture() async {}
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -933,6 +952,7 @@ void main() {
           'isPlaying: true, '
           'isLooping: true, '
           'isBuffering: true, '
+          'isPictureInPictureActive: false, '
           'volume: 0.5, '
           'playbackSpeed: 1.5, '
           'errorDescription: null)');

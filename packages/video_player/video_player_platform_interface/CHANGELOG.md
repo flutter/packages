@@ -2,6 +2,10 @@
 
 * Updates minimum Flutter version to 3.0.
 
+## 6.1.0
+
+* Added support for picture in picture on iOS
+
 ## 6.0.1
 
 * Fixes comment describing file URI construction.
