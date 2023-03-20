@@ -61,7 +61,7 @@ public class AsyncTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
+              ArrayList<Object> wrapped = (ArrayList<Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.size() == 1);
               didCall[0] = true;
             });
@@ -88,7 +88,7 @@ public class AsyncTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
+              ArrayList<Object> wrapped = (ArrayList<Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.size() > 1);
               assertEquals("java.lang.Exception: error", (String) wrapped.get(0));
               didCall[0] = true;

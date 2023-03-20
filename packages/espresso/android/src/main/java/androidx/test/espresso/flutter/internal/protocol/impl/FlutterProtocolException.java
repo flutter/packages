@@ -6,6 +6,7 @@ package androidx.test.espresso.flutter.internal.protocol.impl;
 
 /** Represents an exception/error relevant to Dart VM service. */
 public final class FlutterProtocolException extends RuntimeException {
+  private static final long serialVersionUID = 0L;
 
   public FlutterProtocolException(String message) {
     super(message);

@@ -633,6 +633,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     KotlinOptions kotlinOptions =
         options.kotlinOptions ?? const KotlinOptions();
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
+        errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
         copyrightHeader: options.copyrightHeader != null
             ? _lineReader(options.copyrightHeader!)
             : null));
@@ -672,22 +673,20 @@ List<Error> _validateAst(Root root, String source) {
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
   for (final Class klass in root.classes) {
     for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-      if (field.type.typeArguments != null) {
-        for (final TypeDeclaration typeArgument in field.type.typeArguments) {
-          if (!typeArgument.isNullable) {
-            result.add(Error(
-              message:
-                  'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
-              lineNumber: _calculateLineNumberNullable(source, field.offset),
-            ));
-          }
-          if (customEnums.contains(typeArgument.baseName)) {
-            result.add(Error(
-              message:
-                  'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
-              lineNumber: _calculateLineNumberNullable(source, field.offset),
-            ));
-          }
+      for (final TypeDeclaration typeArgument in field.type.typeArguments) {
+        if (!typeArgument.isNullable) {
+          result.add(Error(
+            message:
+                'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
+            lineNumber: _calculateLineNumberNullable(source, field.offset),
+          ));
+        }
+        if (customEnums.contains(typeArgument.baseName)) {
+          result.add(Error(
+            message:
+                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
+            lineNumber: _calculateLineNumberNullable(source, field.offset),
+          ));
         }
       }
       if (!(validTypes.contains(field.type.baseName) ||

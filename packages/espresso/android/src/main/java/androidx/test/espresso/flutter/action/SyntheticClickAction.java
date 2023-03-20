@@ -5,7 +5,7 @@
 package androidx.test.espresso.flutter.action;
 
 import android.view.View;
-import androidx.test.annotation.Beta;
+import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.flutter.api.FlutterTestingProtocol;
 import androidx.test.espresso.flutter.api.SyntheticAction;
@@ -21,9 +21,9 @@ import javax.annotation.Nullable;
  * <p>Note, this is not a real click gesture event issued from Android system. Espresso delegates to
  * Flutter engine to perform the {@link SyntheticClick} action.
  */
-@Beta
 public final class SyntheticClickAction implements WidgetAction {
 
+  @ExperimentalTestApi
   @Override
   public Future<Void> perform(
       @Nullable WidgetMatcher targetWidget,

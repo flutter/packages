@@ -28,7 +28,7 @@ void main() {
 /// The main widget of this demo.
 class SignInDemo extends StatefulWidget {
   /// Creates the main widget of this demo.
-  const SignInDemo({Key? key}) : super(key: key);
+  const SignInDemo({super.key});
 
   @override
   State createState() => SignInDemoState();

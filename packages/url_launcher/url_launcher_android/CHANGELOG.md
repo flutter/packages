@@ -1,3 +1,8 @@
+## 6.0.25
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 6.0.24
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

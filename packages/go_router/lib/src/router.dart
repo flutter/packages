@@ -301,6 +301,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     return inherited!.goRouter;
   }
 
+  /// The current GoRouter in the widget tree, if any.
+  static GoRouter? maybeOf(BuildContext context) {
+    final InheritedGoRouter? inherited =
+        context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
+    return inherited?.goRouter;
+  }
+
   @override
   void dispose() {
     _routeInformationProvider.dispose();

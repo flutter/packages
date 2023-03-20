@@ -11,7 +11,7 @@ class PickedFile extends PickedFileBase {
   /// Construct a PickedFile object, from its `bytes`.
   ///
   /// Optionally, you may pass a `path`. See caveats in [PickedFileBase.path].
-  PickedFile(String path) : super(path) {
+  PickedFile(super.path) {
     throw UnimplementedError(
         'PickedFile is not available in your current platform.');
   }

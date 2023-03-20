@@ -26,7 +26,7 @@ void main() {
 /// An example demonstrating how to use [ShellRoute]
 class ShellRouteExampleApp extends StatelessWidget {
   /// Creates a [ShellRouteExampleApp]
-  ShellRouteExampleApp({Key? key}) : super(key: key);
+  ShellRouteExampleApp({super.key});
 
   final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -118,8 +118,8 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
     required this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The widget to display in the body of the Scaffold.
   /// In this sample, it is a Navigator.
@@ -182,7 +182,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 /// The first screen in the bottom navigation bar.
 class ScreenA extends StatelessWidget {
   /// Constructs a [ScreenA] widget.
-  const ScreenA({Key? key}) : super(key: key);
+  const ScreenA({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +209,7 @@ class ScreenA extends StatelessWidget {
 /// The second screen in the bottom navigation bar.
 class ScreenB extends StatelessWidget {
   /// Constructs a [ScreenB] widget.
-  const ScreenB({Key? key}) : super(key: key);
+  const ScreenB({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +236,7 @@ class ScreenB extends StatelessWidget {
 /// The third screen in the bottom navigation bar.
 class ScreenC extends StatelessWidget {
   /// Constructs a [ScreenC] widget.
-  const ScreenC({Key? key}) : super(key: key);
+  const ScreenC({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -265,8 +265,8 @@ class DetailsScreen extends StatelessWidget {
   /// Constructs a [DetailsScreen].
   const DetailsScreen({
     required this.label,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The label to display in the center of the screen.
   final String label;

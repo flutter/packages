@@ -12,19 +12,13 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
   /// Creates a new Google Play specific purchase details object with the
   /// provided details.
   GooglePlayPurchaseDetails({
-    String? purchaseID,
-    required String productID,
-    required PurchaseVerificationData verificationData,
-    required String? transactionDate,
+    super.purchaseID,
+    required super.productID,
+    required super.verificationData,
+    required super.transactionDate,
     required this.billingClientPurchase,
-    required PurchaseStatus status,
-  }) : super(
-          productID: productID,
-          purchaseID: purchaseID,
-          transactionDate: transactionDate,
-          verificationData: verificationData,
-          status: status,
-        ) {
+    required super.status,
+  }) {
     pendingCompletePurchase = !billingClientPurchase.isAcknowledged;
   }
 

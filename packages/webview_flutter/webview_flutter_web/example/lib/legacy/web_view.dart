@@ -29,10 +29,10 @@ class WebView extends StatefulWidget {
   /// The web view can be controlled using a `WebViewController` that is passed to the
   /// `onWebViewCreated` callback once the web view is created.
   const WebView({
-    Key? key,
+    super.key,
     this.onWebViewCreated,
     this.initialUrl,
-  }) : super(key: key);
+  });
 
   /// The WebView platform that's used by this WebView.
   ///

@@ -10,8 +10,8 @@ import 'types.dart';
 // (Do not re-export)
 class PolylineUpdates extends MapsObjectUpdates<Polyline> {
   /// Computes [PolylineUpdates] given previous and current [Polyline]s.
-  PolylineUpdates.from(Set<Polyline> previous, Set<Polyline> current)
-      : super.from(previous, current, objectName: 'polyline');
+  PolylineUpdates.from(super.previous, super.current)
+      : super.from(objectName: 'polyline');
 
   /// Set of Polylines to be added in this update.
   Set<Polyline> get polylinesToAdd => objectsToAdd;
