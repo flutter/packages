@@ -273,7 +273,7 @@ this command.
     bool hasMissingBuild = false;
     bool hasMisconfiguredIntegrationTest = false;
     // Iterate through all examples (in the rare case that there is more than
-    // on example); running any tests found for each one. Requirements on what
+    // one example); running any tests found for each one. Requirements on what
     // tests are present are enforced at the overall package level, not a per-
     // example level. E.g., it's fine for only one example to have unit tests.
     for (final RepositoryPackage example in examples) {
@@ -681,7 +681,7 @@ class _JavaTestInfo {
       {required this.usesFlutterTestRunner,
       required this.hasDartIntegrationTestAnnotation});
 
-  /// Whether the test class uses the FlutterTestRunner runner.
+  /// Whether the test class uses the FlutterTestRunner.
   final bool usesFlutterTestRunner;
   //// Whether the test class has the @DartIntegrationTest annotation.
   final bool hasDartIntegrationTestAnnotation;
