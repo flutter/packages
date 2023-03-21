@@ -7,7 +7,7 @@
 A Flutter plugin for iOS, Android and Web for playing back video on a Widget surface.
 
 |             | Android | iOS   | Web   |
-|-------------|---------|-------|-------|
+| ----------- | ------- | ----- | ----- |
 | **Support** | SDK 16+ | 11.0+ | Any\* |
 
 ![The example app running in iOS](https://github.com/flutter/packages/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
@@ -53,6 +53,7 @@ The `VideoPlayerOptions.mixWithOthers` option can't be implemented in web, at le
 ## Example
 
 <?code-excerpt "basic.dart (basic-example)"?>
+
 ```dart
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -73,8 +74,8 @@ class _VideoAppState extends State<VideoApp> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
+    _controller = VideoPlayerController.networkUri(
+        Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});

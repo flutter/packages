@@ -253,6 +253,17 @@ void main() {
             shouldPlayInBackground: false);
       });
 
+      test('networkUri started app lifecycle observing', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        await controller.play();
+        verifyPlayStateRespondsToLifecycle(controller,
+            shouldPlayInBackground: false);
+      });
+
       test('asset', () async {
         final VideoPlayerController controller = VideoPlayerController.asset(
           'a.avi',
@@ -283,9 +294,52 @@ void main() {
         );
       });
 
+      test('networkUri', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].uri,
+          'https://127.0.0.1',
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].formatHint,
+          null,
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
+          <String, String>{},
+        );
+      });
+
       test('network with hint', () async {
         final VideoPlayerController controller = VideoPlayerController.network(
           'https://127.0.0.1',
+          formatHint: VideoFormat.dash,
+        );
+        await controller.initialize();
+
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].uri,
+          'https://127.0.0.1',
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].formatHint,
+          VideoFormat.dash,
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
+          <String, String>{},
+        );
+      });
+
+      test('networkUri with hint', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
           formatHint: VideoFormat.dash,
         );
         await controller.initialize();
@@ -325,9 +379,44 @@ void main() {
         );
       });
 
+      test('networkUri with some headers', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+          httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+        );
+        await controller.initialize();
+
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].uri,
+          'https://127.0.0.1',
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].formatHint,
+          null,
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'},
+        );
+      });
+
       test('init errors', () async {
         final VideoPlayerController controller = VideoPlayerController.network(
           'http://testing.com/invalid_url',
+        );
+
+        late Object error;
+        fakeVideoPlayerPlatform.forceInitError = true;
+        await controller.initialize().catchError((Object e) => error = e);
+        final PlatformException platformEx = error as PlatformException;
+        expect(platformEx.code, equals('VideoError'));
+      });
+
+      test('networkUri init errors', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('http://testing.com/invalid_url'),
         );
 
         late Object error;
@@ -386,6 +475,21 @@ void main() {
         await controller.initialize();
         expect(controller.value.hasError, equals(false));
       });
+
+      test(
+          'networkUri successful initialize on controller with error clears error',
+          () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        fakeVideoPlayerPlatform.forceInitError = true;
+        await controller.initialize().catchError((dynamic e) {});
+        expect(controller.value.hasError, equals(true));
+        fakeVideoPlayerPlatform.forceInitError = false;
+        await controller.initialize();
+        expect(controller.value.hasError, equals(false));
+      });
     });
 
     test('contentUri', () async {
@@ -411,9 +515,36 @@ void main() {
       expect(await controller.position, isNull);
     });
 
+    test('networkUri dispose', () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUri(
+        Uri.parse('https://127.0.0.1'),
+      );
+      expect(
+          controller.textureId, VideoPlayerController.kUninitializedTextureId);
+      expect(await controller.position, Duration.zero);
+      await controller.initialize();
+
+      await controller.dispose();
+
+      expect(controller.textureId, 0);
+      expect(await controller.position, isNull);
+    });
+
     test('calling dispose() on disposed controller does not throw', () async {
       final VideoPlayerController controller = VideoPlayerController.network(
         'https://127.0.0.1',
+      );
+
+      await controller.initialize();
+      await controller.dispose();
+
+      expect(() async => controller.dispose(), returnsNormally);
+    });
+
+    test('networkUri calling dispose() on disposed controller does not throw',
+        () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUri(
+        Uri.parse('https://127.0.0.1'),
       );
 
       await controller.initialize();
@@ -441,9 +572,39 @@ void main() {
       expect(fakeVideoPlayerPlatform.calls.last, 'setPlaybackSpeed');
     });
 
+    test('networkUri play', () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUri(
+        Uri.parse('https://127.0.0.1'),
+      );
+      await controller.initialize();
+      expect(controller.value.isPlaying, isFalse);
+      await controller.play();
+
+      expect(controller.value.isPlaying, isTrue);
+
+      // The two last calls will be "play" and then "setPlaybackSpeed". The
+      // reason for this is that "play" calls "setPlaybackSpeed" internally.
+      expect(
+          fakeVideoPlayerPlatform
+              .calls[fakeVideoPlayerPlatform.calls.length - 2],
+          'play');
+      expect(fakeVideoPlayerPlatform.calls.last, 'setPlaybackSpeed');
+    });
+
     test('play before initialized does not call platform', () async {
       final VideoPlayerController controller = VideoPlayerController.network(
         'https://127.0.0.1',
+      );
+      expect(controller.value.isInitialized, isFalse);
+
+      await controller.play();
+
+      expect(fakeVideoPlayerPlatform.calls, isEmpty);
+    });
+
+    test('networkUri play before initialized does not call platform', () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUri(
+        Uri.parse('https://127.0.0.1'),
       );
       expect(controller.value.isInitialized, isFalse);
 
@@ -469,6 +630,24 @@ void main() {
       expect(controller.value.position, Duration.zero);
     });
 
+    test('networkUri play restarts from beginning if video is at end',
+        () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUri(
+        Uri.parse('https://127.0.0.1'),
+      );
+      await controller.initialize();
+      const Duration nonzeroDuration = Duration(milliseconds: 100);
+      controller.value = controller.value.copyWith(duration: nonzeroDuration);
+      await controller.seekTo(nonzeroDuration);
+      expect(controller.value.isPlaying, isFalse);
+      expect(controller.value.position, nonzeroDuration);
+
+      await controller.play();
+
+      expect(controller.value.isPlaying, isTrue);
+      expect(controller.value.position, Duration.zero);
+    });
+
     test('setLooping', () async {
       final VideoPlayerController controller = VideoPlayerController.network(
         'https://127.0.0.1',
@@ -480,9 +659,34 @@ void main() {
       expect(controller.value.isLooping, isTrue);
     });
 
+    test('networkUri setLooping', () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUri(
+        Uri.parse('https://127.0.0.1'),
+      );
+      await controller.initialize();
+      expect(controller.value.isLooping, isFalse);
+      await controller.setLooping(true);
+
+      expect(controller.value.isLooping, isTrue);
+    });
+
     test('pause', () async {
       final VideoPlayerController controller = VideoPlayerController.network(
         'https://127.0.0.1',
+      );
+      await controller.initialize();
+      await controller.play();
+      expect(controller.value.isPlaying, isTrue);
+
+      await controller.pause();
+
+      expect(controller.value.isPlaying, isFalse);
+      expect(fakeVideoPlayerPlatform.calls.last, 'pause');
+    });
+
+    test('networkUri pause', () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUri(
+        Uri.parse('https://127.0.0.1'),
       );
       await controller.initialize();
       await controller.play();
@@ -806,6 +1010,366 @@ void main() {
       testWidgets('buffering status', (WidgetTester tester) async {
         final VideoPlayerController controller = VideoPlayerController.network(
           'https://127.0.0.1',
+        );
+        await controller.initialize();
+        expect(controller.value.isBuffering, false);
+        expect(controller.value.buffered, isEmpty);
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.textureId]!;
+
+        fakeVideoEventStream
+            .add(VideoEvent(eventType: VideoEventType.bufferingStart));
+        await tester.pumpAndSettle();
+        expect(controller.value.isBuffering, isTrue);
+
+        const Duration bufferStart = Duration.zero;
+        const Duration bufferEnd = Duration(milliseconds: 500);
+        fakeVideoEventStream.add(VideoEvent(
+            eventType: VideoEventType.bufferingUpdate,
+            buffered: <DurationRange>[
+              DurationRange(bufferStart, bufferEnd),
+            ]));
+        await tester.pumpAndSettle();
+        expect(controller.value.isBuffering, isTrue);
+        expect(controller.value.buffered.length, 1);
+        expect(controller.value.buffered[0].toString(),
+            DurationRange(bufferStart, bufferEnd).toString());
+
+        fakeVideoEventStream
+            .add(VideoEvent(eventType: VideoEventType.bufferingEnd));
+        await tester.pumpAndSettle();
+        expect(controller.value.isBuffering, isFalse);
+      });
+    });
+
+    group('networkUri seekTo', () {
+      test('works', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        expect(await controller.position, Duration.zero);
+
+        await controller.seekTo(const Duration(milliseconds: 500));
+
+        expect(await controller.position, const Duration(milliseconds: 500));
+      });
+
+      test('before initialized does not call platform', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        expect(controller.value.isInitialized, isFalse);
+
+        await controller.seekTo(const Duration(milliseconds: 500));
+
+        expect(fakeVideoPlayerPlatform.calls, isEmpty);
+      });
+
+      test('clamps values that are too high or low', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        expect(await controller.position, Duration.zero);
+
+        await controller.seekTo(const Duration(seconds: 100));
+        expect(await controller.position, const Duration(seconds: 1));
+
+        await controller.seekTo(const Duration(seconds: -100));
+        expect(await controller.position, Duration.zero);
+      });
+    });
+
+    group('networkUri setVolume', () {
+      test('works', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        expect(controller.value.volume, 1.0);
+
+        const double volume = 0.5;
+        await controller.setVolume(volume);
+
+        expect(controller.value.volume, volume);
+      });
+
+      test('clamps values that are too high or low', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        expect(controller.value.volume, 1.0);
+
+        await controller.setVolume(-1);
+        expect(controller.value.volume, 0.0);
+
+        await controller.setVolume(11);
+        expect(controller.value.volume, 1.0);
+      });
+    });
+
+    group('networkUri setPlaybackSpeed', () {
+      test('works', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        expect(controller.value.playbackSpeed, 1.0);
+
+        const double speed = 1.5;
+        await controller.setPlaybackSpeed(speed);
+
+        expect(controller.value.playbackSpeed, speed);
+      });
+
+      test('rejects negative values', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        expect(controller.value.playbackSpeed, 1.0);
+
+        expect(() => controller.setPlaybackSpeed(-1), throwsArgumentError);
+      });
+    });
+
+    group('networkUri scrubbing', () {
+      testWidgets('restarts on release if already playing',
+          (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        final VideoProgressIndicator progressWidget =
+            VideoProgressIndicator(controller, allowScrubbing: true);
+
+        await tester.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: progressWidget,
+        ));
+
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+
+        final Rect progressRect = tester.getRect(find.byWidget(progressWidget));
+        await tester.dragFrom(progressRect.center, const Offset(1.0, 0.0));
+        await tester.pumpAndSettle();
+
+        expect(controller.value.position, lessThan(controller.value.duration));
+        expect(controller.value.isPlaying, isTrue);
+
+        await controller.pause();
+      });
+
+      testWidgets('does not restart when dragging to end',
+          (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        final VideoProgressIndicator progressWidget =
+            VideoProgressIndicator(controller, allowScrubbing: true);
+
+        await tester.pumpWidget(Directionality(
+          textDirection: TextDirection.ltr,
+          child: progressWidget,
+        ));
+
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+
+        final Rect progressRect = tester.getRect(find.byWidget(progressWidget));
+        await tester.dragFrom(progressRect.center, progressRect.centerRight);
+        await tester.pumpAndSettle();
+
+        expect(controller.value.position, controller.value.duration);
+        expect(controller.value.isPlaying, isFalse);
+      });
+    });
+
+    group('networkUri caption', () {
+      test('works when seeking', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+          closedCaptionFile: _loadClosedCaption(),
+        );
+
+        await controller.initialize();
+        expect(controller.value.position, Duration.zero);
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 100));
+        expect(controller.value.caption.text, 'one');
+
+        await controller.seekTo(const Duration(milliseconds: 250));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 301));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 500));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 301));
+        expect(controller.value.caption.text, 'two');
+      });
+
+      test('works when seeking with captionOffset positive', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+          closedCaptionFile: _loadClosedCaption(),
+        );
+
+        await controller.initialize();
+        controller.setCaptionOffset(const Duration(milliseconds: 100));
+        expect(controller.value.position, Duration.zero);
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 100));
+        expect(controller.value.caption.text, 'one');
+
+        await controller.seekTo(const Duration(milliseconds: 101));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 250));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 301));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 500));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 301));
+        expect(controller.value.caption.text, '');
+      });
+
+      test('works when seeking with captionOffset negative', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+          closedCaptionFile: _loadClosedCaption(),
+        );
+
+        await controller.initialize();
+        controller.setCaptionOffset(const Duration(milliseconds: -100));
+        expect(controller.value.position, Duration.zero);
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 100));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 200));
+        expect(controller.value.caption.text, 'one');
+
+        await controller.seekTo(const Duration(milliseconds: 250));
+        expect(controller.value.caption.text, 'one');
+
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(controller.value.caption.text, 'one');
+
+        await controller.seekTo(const Duration(milliseconds: 301));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 400));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 500));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 600));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(controller.value.caption.text, 'one');
+      });
+
+      test('setClosedCaptionFile loads caption file', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+
+        await controller.initialize();
+        expect(controller.closedCaptionFile, null);
+
+        await controller.setClosedCaptionFile(_loadClosedCaption());
+        expect(
+          (await controller.closedCaptionFile)!.captions,
+          (await _loadClosedCaption()).captions,
+        );
+      });
+
+      test('setClosedCaptionFile removes/changes caption file', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+          closedCaptionFile: _loadClosedCaption(),
+        );
+
+        await controller.initialize();
+        expect(
+          (await controller.closedCaptionFile)!.captions,
+          (await _loadClosedCaption()).captions,
+        );
+
+        await controller.setClosedCaptionFile(null);
+        expect(controller.closedCaptionFile, null);
+      });
+    });
+
+    group('networkUri Platform callbacks', () {
+      testWidgets('playing completed', (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
+        );
+        await controller.initialize();
+        const Duration nonzeroDuration = Duration(milliseconds: 100);
+        controller.value = controller.value.copyWith(duration: nonzeroDuration);
+        expect(controller.value.isPlaying, isFalse);
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.textureId]!;
+
+        fakeVideoEventStream
+            .add(VideoEvent(eventType: VideoEventType.completed));
+        await tester.pumpAndSettle();
+
+        expect(controller.value.isPlaying, isFalse);
+        expect(controller.value.position, nonzeroDuration);
+      });
+
+      testWidgets('buffering status', (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUri(
+          Uri.parse('https://127.0.0.1'),
         );
         await controller.initialize();
         expect(controller.value.isBuffering, false);
