@@ -29,6 +29,5 @@
 - pointer_interceptor
 - quick_actions/quick_actions
 - rfw
-- shared_preferences/shared_preferences
 - webview_flutter_android
 - webview_flutter_web

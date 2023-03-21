@@ -242,6 +242,25 @@ class MockTestDownloadListenerHostApi extends _i1.Mock
       );
 }
 
+/// A class which mocks [TestInstanceManagerHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestInstanceManagerHostApi extends _i1.Mock
+    implements _i6.TestInstanceManagerHostApi {
+  MockTestInstanceManagerHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void clear() => super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [TestJavaObjectHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
