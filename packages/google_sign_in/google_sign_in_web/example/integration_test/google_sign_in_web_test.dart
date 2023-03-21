@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
@@ -140,6 +142,10 @@ void main() {
       expect(() async {
         await plugin.requestScopes(<String>[]);
       }, throwsStateError);
+
+      expect(() async {
+        await plugin.canAccessScopes('', <String>[]);
+      }, throwsStateError);
     });
   });
 
@@ -163,20 +169,20 @@ void main() {
         plugin.initWithParams(options, overrideClient: mockGis);
       });
 
-      testWidgets('always returns null, regardless of GIS response', (_) async {
+      testWidgets('returns the GIS response', (_) async {
         final GoogleSignInUserData someUser = extractUserData(person)!;
 
         mockito
             .when(mockGis.signInSilently())
-            .thenAnswer((_) => Future<GoogleSignInUserData>.value(someUser));
+            .thenAnswer((_) => Future<GoogleSignInUserData?>.value(someUser));
 
-        expect(plugin.signInSilently(), completion(isNull));
+        expect(await plugin.signInSilently(), someUser);
 
         mockito
             .when(mockGis.signInSilently())
             .thenAnswer((_) => Future<GoogleSignInUserData?>.value());
 
-        expect(plugin.signInSilently(), completion(isNull));
+        expect(await plugin.signInSilently(), isNull);
       });
     });
 
@@ -213,6 +219,65 @@ void main() {
           expect(exception, isA<PlatformException>());
           expect((exception as PlatformException).code, 'popup_closed');
         }
+      });
+    });
+
+    group('canAccessScopes', () {
+      const String someAccessToken = '50m3_4cc35_70k3n';
+      const List<String> scopes = <String>['scope1', 'scope2'];
+
+      setUp(() {
+        plugin.initWithParams(options, overrideClient: mockGis);
+      });
+
+      testWidgets('passes-through call to gis client', (_) async {
+        mockito
+            .when(
+              mockGis.canAccessScopes(mockito.captureAny, mockito.captureAny),
+            )
+            .thenAnswer((_) => Future<bool>.value(true));
+
+        final bool canAccess =
+            await plugin.canAccessScopes(someAccessToken, scopes);
+
+        final List<Object?> arguments = mockito
+            .verify(
+              mockGis.canAccessScopes(mockito.captureAny, mockito.captureAny),
+            )
+            .captured;
+
+        expect(canAccess, isTrue);
+
+        expect(arguments.first, someAccessToken);
+        expect(arguments.elementAt(1), scopes);
+      });
+    });
+
+    group('userDataEvents', () {
+      final StreamController<GoogleSignInUserData?> controller =
+          StreamController<GoogleSignInUserData?>.broadcast();
+      setUp(() {
+        plugin.initWithParams(options, overrideClient: mockGis);
+      });
+
+      testWidgets('accepts async user data events from GIS.', (_) async {
+        mockito
+            .when(mockGis.userDataEvents)
+            .thenAnswer((_) => controller.stream);
+
+        final Future<GoogleSignInUserData?> data = plugin.userDataEvents!.first;
+
+        final GoogleSignInUserData expected = extractUserData(person)!;
+        controller.add(expected);
+
+        expect(await data, expected,
+            reason: 'Sign-in events should be propagated');
+
+        final Future<GoogleSignInUserData?> more = plugin.userDataEvents!.first;
+        controller.add(null);
+
+        expect(await more, isNull,
+            reason: 'Sign-out events can also be propagated');
       });
     });
   });
