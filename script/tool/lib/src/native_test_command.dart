@@ -22,6 +22,8 @@ const String _iOSDestinationFlag = 'ios-destination';
 
 const int _exitNoIOSSimulators = 3;
 
+/// The error message logged when a FlutterTestRunner test is not annotated with
+/// @DartIntegrationTest.
 @visibleForTesting
 const String misconfiguredJavaIntegrationTestErrorExplanation =
     'The following files use @RunWith(FlutterTestRunner.class) '
