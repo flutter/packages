@@ -89,7 +89,7 @@ public class ImageResizerTest {
   }
 
   @Test
-  public void onResizeImageIfNeeded_whenResizeIsNotNecessary_shouldOnlyQueryBitmap() {
+  public void onResizeImageIfNeeded_whenResizeIsNotNecessary_shouldOnlyQueryBitmapDimensions() {
     try (MockedStatic<BitmapFactory> mockBitmapFactory =
         mockStatic(BitmapFactory.class, Mockito.CALLS_REAL_METHODS)) {
       String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, 100);
@@ -102,7 +102,7 @@ public class ImageResizerTest {
   }
 
   @Test
-  public void onResizeImageIfNeeded_whenResizeIsNecessary_shouldAllocateBitmap() {
+  public void onResizeImageIfNeeded_whenResizeIsNecessary_shouldDecodeBitmapPixels() {
     try (MockedStatic<BitmapFactory> mockBitmapFactory =
         mockStatic(BitmapFactory.class, Mockito.CALLS_REAL_METHODS)) {
       String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), 50.0, 50.0, 100);
