@@ -683,6 +683,7 @@ class _JavaTestInfo {
 
   /// Whether the test class uses the FlutterTestRunner.
   final bool usesFlutterTestRunner;
-  //// Whether the test class has the @DartIntegrationTest annotation.
+
+  /// Whether the test class has the @DartIntegrationTest annotation.
   final bool hasDartIntegrationTestAnnotation;
 }
