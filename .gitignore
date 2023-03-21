@@ -54,3 +54,5 @@ gradlew.bat
 .project
 .classpath
 .settings
+.gitpod.Dockerfile
+.gitpod.yml
