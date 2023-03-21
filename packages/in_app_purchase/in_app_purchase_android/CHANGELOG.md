@@ -1,3 +1,7 @@
+## 0.2.4+4
+
+* Updates androidx.annotation:annotation from 1.5.0 to 1.6.0.
+
 ## 0.2.4+3
 
 * Clarifies explanation of endorsement in README.
