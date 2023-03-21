@@ -190,7 +190,8 @@ public class ImagePickerDelegate
                 });
           }
         },
-        new FileUtils());
+        new FileUtils(),
+        new ThreadPoolExecutor(0, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue<>()));
   }
 
   /**
@@ -208,7 +209,8 @@ public class ImagePickerDelegate
       final ImagePickerCache cache,
       final PermissionManager permissionManager,
       final FileUriResolver fileUriResolver,
-      final FileUtils fileUtils) {
+      final FileUtils fileUtils,
+      final ExecutorService executor) {
     this.activity = activity;
     this.externalFilesDirectory = externalFilesDirectory;
     this.imageResizer = imageResizer;
@@ -221,7 +223,7 @@ public class ImagePickerDelegate
     this.fileUriResolver = fileUriResolver;
     this.fileUtils = fileUtils;
     this.cache = cache;
-    this.executor = new ThreadPoolExecutor(0, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+    this.executor = executor;
   }
 
   void setCameraDevice(CameraDevice device) {
