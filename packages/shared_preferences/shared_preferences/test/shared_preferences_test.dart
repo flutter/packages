@@ -223,9 +223,6 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   final List<MethodCall> log = <MethodCall>[];
 
   @override
-  bool get isMock => true;
-
-  @override
   Future<bool> clear() {
     log.add(const MethodCall('clear'));
     return backend.clear();
