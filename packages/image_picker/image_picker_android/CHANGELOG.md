@@ -1,3 +1,7 @@
+## 0.8.6+7
+
+* Bumps androidx.annotation:annotation from 1.3.0 to 1.6.0.
+
 ## 0.8.6+6
 
 * Bumps androidx.core:core from 1.8.0 to 1.9.0.
