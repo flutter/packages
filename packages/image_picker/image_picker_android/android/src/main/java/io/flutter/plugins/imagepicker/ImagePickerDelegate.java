@@ -32,6 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A delegate class doing the heavy lifting for the plugin.
@@ -112,6 +116,7 @@ public class ImagePickerDelegate
   private final PermissionManager permissionManager;
   private final FileUriResolver fileUriResolver;
   private final FileUtils fileUtils;
+  private final ExecutorService executor;
   private CameraDevice cameraDevice;
 
   interface PermissionManager {
@@ -216,6 +221,7 @@ public class ImagePickerDelegate
     this.fileUriResolver = fileUriResolver;
     this.fileUtils = fileUtils;
     this.cache = cache;
+    this.executor = new ThreadPoolExecutor(0, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
   }
 
   void setCameraDevice(CameraDevice device) {
@@ -537,28 +543,33 @@ public class ImagePickerDelegate
   }
 
   @Override
-  public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-    switch (requestCode) {
-      case REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY:
-        handleChooseImageResult(resultCode, data);
-        break;
-      case REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY:
-        handleChooseMultiImageResult(resultCode, data);
-        break;
-      case REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA:
-        handleCaptureImageResult(resultCode);
-        break;
-      case REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY:
-        handleChooseVideoResult(resultCode, data);
-        break;
-      case REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA:
-        handleCaptureVideoResult(resultCode);
-        break;
-      default:
-        return false;
-    }
+  public boolean onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+    // Off-load result handling to a separate thread as it almost always involves I/O operations.
+    executor.execute(() -> {
+      switch (requestCode) {
+        case REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY:
+          handleChooseImageResult(resultCode, data);
+          break;
+        case REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY:
+          handleChooseMultiImageResult(resultCode, data);
+          break;
+        case REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA:
+          handleCaptureImageResult(resultCode);
+          break;
+        case REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY:
+          handleChooseVideoResult(resultCode, data);
+          break;
+        case REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA:
+          handleCaptureVideoResult(resultCode);
+          break;
+      }
+    });
 
-    return true;
+    return requestCode == REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY ||
+    requestCode == REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY ||
+    requestCode == REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA ||
+    requestCode == REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY ||
+    requestCode == REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA;
   }
 
   private void handleChooseImageResult(int resultCode, Intent data) {
