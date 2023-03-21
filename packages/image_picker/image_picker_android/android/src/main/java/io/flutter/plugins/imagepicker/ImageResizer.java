@@ -6,9 +6,9 @@ package io.flutter.plugins.imagepicker;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.util.Log;
 import androidx.annotation.Nullable;
+import androidx.core.util.SizeFCompat;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,10 +31,8 @@ class ImageResizer {
    */
   String resizeImageIfNeeded(
       String imagePath, @Nullable Double maxWidth, @Nullable Double maxHeight, int imageQuality) {
-    BitmapFactory.Options queryOptions = new BitmapFactory.Options();
-    queryOptions.inJustDecodeBounds = true;
-    decodeFile(imagePath, queryOptions);
-    if (queryOptions.outWidth == -1 || queryOptions.outHeight == -1) {
+    SizeFCompat originalSize = readFileDimensions(imagePath);
+    if (originalSize.getWidth() == -1 || originalSize.getHeight() == -1) {
       return null;
     }
     boolean shouldScale = maxWidth != null || maxHeight != null || imageQuality < 100;
@@ -44,18 +42,22 @@ class ImageResizer {
     try {
       String[] pathParts = imagePath.split("/");
       String imageName = pathParts[pathParts.length - 1];
-      Point size =
-          calculateSize(
-              Double.valueOf(queryOptions.outWidth),
-              Double.valueOf(queryOptions.outHeight),
+      SizeFCompat targetSize =
+          calculateTargetSize(
+              (double) originalSize.getWidth(),
+              (double) originalSize.getHeight(),
               maxWidth,
               maxHeight);
       BitmapFactory.Options options = new BitmapFactory.Options();
-      options.inSampleSize = calculateInSampleSize(options, size.x, size.y);
-      options.inJustDecodeBounds = false;
+      options.inSampleSize =
+          calculateSampleSize(options, (int) targetSize.getWidth(), (int) targetSize.getHeight());
       File file =
           resizedImage(
-              decodeFile(imagePath, options), maxWidth, maxHeight, imageQuality, imageName);
+              decodeFile(imagePath, options),
+              (int) targetSize.getWidth(),
+              (int) targetSize.getHeight(),
+              imageQuality,
+              imageName);
       copyExif(imagePath, file.getPath());
       return file.getPath();
     } catch (IOException e) {
@@ -64,19 +66,15 @@ class ImageResizer {
   }
 
   private File resizedImage(
-      Bitmap bmp, Double maxWidth, Double maxHeight, int imageQuality, String outputImageName)
+      Bitmap bmp, int width, int height, int imageQuality, String outputImageName)
       throws IOException {
-    double originalWidth = bmp.getWidth() * 1.0;
-    double originalHeight = bmp.getHeight() * 1.0;
-
-    Point size = calculateSize(originalWidth, originalHeight, maxWidth, maxHeight);
-    Bitmap scaledBmp = createScaledBitmap(bmp, size.x, size.y, false);
+    Bitmap scaledBmp = createScaledBitmap(bmp, width, height, false);
     File file =
         createImageOnExternalDirectory("/scaled_" + outputImageName, scaledBmp, imageQuality);
     return file;
   }
 
-  private Point calculateSize(
+  private SizeFCompat calculateTargetSize(
       Double originalWidth, Double originalHeight, Double maxWidth, Double maxHeight) {
 
     boolean hasMaxWidth = maxWidth != null;
@@ -114,7 +112,7 @@ class ImageResizer {
       }
     }
 
-    return new Point(width.intValue(), height.intValue());
+    return new SizeFCompat(width.floatValue(), height.floatValue());
   }
 
   private File createFile(File externalFilesDirectory, String child) {
@@ -133,6 +131,13 @@ class ImageResizer {
     exifDataCopier.copyExif(filePathOri, filePathDest);
   }
 
+  private SizeFCompat readFileDimensions(String path) {
+    BitmapFactory.Options options = new BitmapFactory.Options();
+    options.inJustDecodeBounds = true;
+    decodeFile(path, options);
+    return new SizeFCompat(options.outWidth, options.outHeight);
+  }
+
   private Bitmap decodeFile(String path, @Nullable BitmapFactory.Options opts) {
     return BitmapFactory.decodeFile(path, opts);
   }
@@ -141,18 +146,26 @@ class ImageResizer {
     return Bitmap.createScaledBitmap(bmp, width, height, filter);
   }
 
-  private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+  /**
+   * Calculates the largest sample size value that is a power of two based on a target width and
+   * height.
+   *
+   * <p>This value is necessary to tell the Bitmap decoder to subsample the original image,
+   * returning a smaller image to save memory.
+   */
+  private int calculateSampleSize(
+      BitmapFactory.Options options, int targetWidth, int targetHeight) {
     final int height = options.outHeight;
     final int width = options.outWidth;
-    int inSampleSize = 1;
-    if (height > reqHeight || width > reqWidth) {
+    int sampleSize = 1;
+    if (height > targetHeight || width > targetWidth) {
       final int halfHeight = height / 2;
       final int halfWidth = width / 2;
-      while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-        inSampleSize *= 2;
+      while ((halfHeight / sampleSize) >= targetHeight && (halfWidth / sampleSize) >= targetWidth) {
+        sampleSize *= 2;
       }
     }
-    return inSampleSize;
+    return sampleSize;
   }
 
   private File createImageOnExternalDirectory(String name, Bitmap bitmap, int imageQuality)

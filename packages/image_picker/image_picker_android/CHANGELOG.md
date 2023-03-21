@@ -1,6 +1,6 @@
 ## 0.8.6+6
 
-* Improved Bitmap resizing.
+* Improves Bitmap resizing.
 
 ## 0.8.6+5
 
