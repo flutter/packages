@@ -1,0 +1,81 @@
+image:
+  file: .gitpod.Dockerfile
+tasks:
+  - name: Android Appetize info
+    # Gitpod is not able to run emulators within a worspace at this stage as
+    # Google Kubernetes Engine does not support Nested Virtualization.
+    #
+    # If running Gitpod on your own infrastructure or via the Dockerfile locally
+    # on infrastructure that exposes vmx or svm then this command will launch
+    # the emulator.
+    #
+    # $ emulator -avd avd28 -no-audio -no-window
+    #
+    # Until this restriction is mitigated you can run native mobile apps in your
+    # browser via https://appetize.io/
+    command: |
+      printf "\033[3J\033c\033[3J"
+      printf 'info[gitpod]: %s\n' \
+        "If you want to build apk/appbundle for Android then you might consider doing the below" \
+        "Appetize can will help you debug your app inside the browser"
+      if test -z "$APPETIZE_API_TOKEN"; then
+          printf '%s\n\n' \
+            "Appetize API token not set. Run:" \
+            "    gp env APPETIZE_API_TOKEN=your_token" \
+            "and create a new workspace in order to get an app preview." \
+            "Request your token here: https://appetize.io/docs#request-api-token if you want to test android builds"
+      else
+          curl -sS --http1.1 "https://$APPETIZE_API_TOKEN@api.appetize.io/v1/apps/$APPETIZE_PUBLICKEY" \
+              -F "file=@/workspace/template-flutter/build/app/outputs/flutter-apk/app.apk" \
+              -F platform=android \
+              -F "buttonText=Start App" \
+              -F "postSessionButtonText=Start App" \
+              > .appetize.json
+          APPETIZE_PUBLICKEY=$(jq -r .publicKey .appetize.json)
+          gp env "APPETIZE_PUBLICKEY=$APPETIZE_PUBLICKEY"
+          export APPETIZE_PUBLICKEY
+          gp preview "https://appetize.io/embed/$APPETIZE_PUBLICKEY?device=pixel4&autoplay=true"
+      fi
+  - name: Build for different targets
+    init: |
+      if test ! -e "pubspec.yaml"; then {
+        rm -f /workspace/.template_init
+        flutter create --project-name gitpod_flutter_quickstart .
+      } fi
+      flutter build -v linux
+      flutter build -v web
+      ### If you want to build for android, consider uncommenting the below lines
+      # flutter build -v bundle
+      # flutter build -v appbundle
+      # flutter build -v apk
+      ### This line is necessary for the below `- name: Run project` to await before proceeding to `flutter run` when prebuilds are not effective
+      # We could use `gp sync-[done|await] <id>` but that won't work between `init` and `command`
+      touch /workspace/.template_init
+  - name: Run project
+    command: |
+      printf "\033[3J\033c\033[3J" && if test ! -e /workspace/.template_init; then {
+        printf 'info[gitpod]: %s\n' "Waiting for the flutter build process to complete ..."
+        until test -e /workspace/.template_init; do
+          sleep 0.5
+        done
+      } fi
+      flutter run
+ports:
+  - port: 5900
+    onOpen: ignore
+    # vnc
+  - port: 6080
+    onOpen: open-preview
+    # flutter
+  - port: 8080
+    onOpen: ignore
+  - port: 5037
+    onOpen: ignore
+  - port: 9100-9101
+    onOpen: ignore
+  - port: 40000-50000
+    onOpen: ignore
+
+vscode:
+  extensions:
+    - dart-code.flutter
