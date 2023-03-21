@@ -1,3 +1,7 @@
+## 6.2.0
+
+* Added support for picture in picture on iOS
+
 ## 6.1.0
 
 * Aligns Dart and Flutter SDK constraints.
@@ -8,10 +12,6 @@
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
-
-## 6.1.0
-
-* Added support for picture in picture on iOS
 
 ## 6.0.1
 
