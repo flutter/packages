@@ -1302,17 +1302,17 @@ ${_argParser.usage}''';
     ..addOption(
       'swift_out',
       help: 'Path to generated Swift file (.swift).',
-      aliases: <String>['experimental_swift_out'],
+      aliases: const <String>['experimental_swift_out'],
     )
     ..addOption(
       'kotlin_out',
       help: 'Path to generated Kotlin file (.kt).',
-      aliases: <String>['experimental_kotlin_out'],
+      aliases: const <String>['experimental_kotlin_out'],
     )
     ..addOption(
       'kotlin_package',
       help: 'The package that generated Kotlin code will be in.',
-      aliases: <String>['experimental_kotlin_package'],
+      aliases: const <String>['experimental_kotlin_package'],
     )
     ..addOption('experimental_cpp_header_out',
         help: 'Path to generated C++ header file (.h). (experimental)')
