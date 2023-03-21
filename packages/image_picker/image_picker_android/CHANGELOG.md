@@ -1,3 +1,7 @@
+## 0.8.6+6
+
+* Bumps androidx.core:core from 1.8.0 to 1.9.0.
+
 ## 0.8.6+5
 
 * Fixes case when file extension returned from the OS does not match its real mime type.
