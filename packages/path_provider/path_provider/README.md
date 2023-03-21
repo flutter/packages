@@ -1,4 +1,5 @@
 # path_provider
+<?code-excerpt path-base="excerpts/packages/path_provider_example"?>
 
 [![pub package](https://img.shields.io/pub/v/path_provider.svg)](https://pub.dev/packages/path_provider)
 
@@ -15,12 +16,13 @@ Not all methods are supported on all platforms.
 To use this plugin, add `path_provider` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
 
 ## Example
+<?code-excerpt "readme_excerpts.dart (Example)"?>
 ```dart
-Directory tempDir = await getTemporaryDirectory();
-String tempPath = tempDir.path;
+final Directory tempDir = await getTemporaryDirectory();
 
-Directory appDocDir = await getApplicationDocumentsDirectory();
-String appDocPath = appDocDir.path;
+final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
+
+final Directory? downloadsDir = await getDownloadsDirectory();
 ```
 
 ## Supported platforms and paths

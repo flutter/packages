@@ -292,11 +292,13 @@ class GoRoute extends RouteBase {
   /// re-evaluation will be triggered if the [InheritedWidget] changes.
   final GoRouterRedirect? redirect;
 
+  /// {@template go_router.GoRoute.parentNavigatorKey}
   /// An optional key specifying which Navigator to display this route's screen
   /// onto.
   ///
   /// Specifying the root Navigator will stack this route onto that
   /// Navigator instead of the nearest ShellRoute ancestor.
+  /// {@endtemplate}
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
@@ -454,8 +456,10 @@ class ShellRoute extends RouteBase {
   /// sub-route's observers.
   final List<NavigatorObserver>? observers;
 
+  /// {@template go_router.ShellRoute.navigatorKey}
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
+  /// {@endtemplate}
   final GlobalKey<NavigatorState> navigatorKey;
 }
