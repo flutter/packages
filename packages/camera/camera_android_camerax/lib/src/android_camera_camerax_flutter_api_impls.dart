@@ -7,6 +7,7 @@ import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camerax_library.g.dart';
 import 'java_object.dart';
+import 'live_camera_state.dart';
 import 'process_camera_provider.dart';
 import 'system_services.dart';
 
@@ -20,6 +21,7 @@ class AndroidCameraXCameraFlutterApis {
     CameraSelectorFlutterApiImpl? cameraSelectorFlutterApi,
     ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApi,
     SystemServicesFlutterApiImpl? systemServicesFlutterApi,
+    LiveCameraStateFlutterApiImpl? liveCameraStateFlutterApiImpl,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -32,6 +34,8 @@ class AndroidCameraXCameraFlutterApis {
     this.cameraFlutterApi = cameraFlutterApi ?? CameraFlutterApiImpl();
     this.systemServicesFlutterApi =
         systemServicesFlutterApi ?? SystemServicesFlutterApiImpl();
+    this.liveCameraStateFlutterApiImpl =
+        liveCameraStateFlutterApiImpl ?? LiveCameraStateFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -61,6 +65,9 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api for [SystemServices].
   late final SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
+  /// Flutter Api for [LiveCameraState].
+  late final LiveCameraStateFlutterApiImpl liveCameraStateFlutterApiImpl;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -70,6 +77,7 @@ class AndroidCameraXCameraFlutterApis {
       ProcessCameraProviderFlutterApi.setup(processCameraProviderFlutterApi);
       CameraFlutterApi.setup(cameraFlutterApi);
       SystemServicesFlutterApi.setup(systemServicesFlutterApi);
+      LiveCameraStateFlutterApi.setup(liveCameraStateFlutterApiImpl);
       _haveBeenSetUp = true;
     }
   }

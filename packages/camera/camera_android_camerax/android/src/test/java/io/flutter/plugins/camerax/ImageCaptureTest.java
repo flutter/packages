@@ -187,8 +187,6 @@ public class ImageCaptureTest {
         mock(ImageCapture.OutputFileResults.class);
     final String mockFileAbsolutePath = "absolute/path/to/captured/image";
     final ImageCaptureException mockException = mock(ImageCaptureException.class);
-    final int testImageCaptureError = 54;
-    final String testExceptionMessage = "Test exception message";
 
     imageCaptureHostApiImpl.cameraXProxy = mockCameraXProxy;
     when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger))

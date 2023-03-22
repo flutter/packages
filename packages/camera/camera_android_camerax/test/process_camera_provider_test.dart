@@ -191,7 +191,7 @@ void main() {
       verify(mockApi.unbind(0, <int>[1]));
     });
 
-    test('unbindAll unbinds UseCases and sends camera closing events',
+    test('unbindAll unbinds UseCases',
         () async {
       final MockTestProcessCameraProviderHostApi mockApi =
           MockTestProcessCameraProviderHostApi();
@@ -210,11 +210,6 @@ void main() {
         0,
         onCopy: (_) => ProcessCameraProvider.detached(),
       );
-
-      ProcessCameraProvider.cameraClosingStreamController.stream
-          .listen((bool event) {
-        expect(event, isTrue);
-      });
 
       processCameraProvider.unbindAll();
       verify(mockApi.unbindAll(0));

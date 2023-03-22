@@ -12,6 +12,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.CameraInfo;
+import androidx.camera.core.CameraState;
+import androidx.lifecycle.LiveData;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
 import org.junit.After;
@@ -41,8 +43,8 @@ public class CameraInfoTest {
   }
 
   @Test
-  public void getSensorRotationDegreesTest() {
-    final CameraInfoHostApiImpl cameraInfoHostApi = new CameraInfoHostApiImpl(testInstanceManager);
+  public void getSensorRotationDegrees_MakesCallToRetrieveSensorRotationDegrees() {
+    final CameraInfoHostApiImpl cameraInfoHostApi = new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
 
     testInstanceManager.addDartCreatedInstance(mockCameraInfo, 1);
 
@@ -53,7 +55,21 @@ public class CameraInfoTest {
   }
 
   @Test
-  public void flutterApiCreateTest() {
+  public void getLiveCameraState_MakesCallToRetrieveLiveCameraState() {
+    final CameraInfoHostApiImpl cameraInfoHostApiImpl = new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final Long mockCameraInfoIdentifier = 27L;
+    final LiveData<CameraState> mockLiveCameraState = mock(LiveData.class);
+
+    testInstanceManager.addDartCreatedInstance(mockCameraInfo, mockCameraInfoIdentifier);
+
+    when(mockCameraInfo.getCameraState()).thenReturn(mockLiveCameraState);
+
+    final Long liveCameraStateIdentifier = cameraInfoHostApiImpl.getLiveCameraState(mockCameraInfoIdentifier);
+    assertEquals(liveCameraStateIdentifier, testInstanceManager.getIdentifierForStrongReference(mockLiveCameraState));
+  }
+
+  @Test
+  public void flutterApi_MakesCallToDartToCreateInstance() {
     final CameraInfoFlutterApiImpl spyFlutterApi =
         spy(new CameraInfoFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
 

@@ -33,8 +33,8 @@ public class LiveCameraStateHostApiImpl implements LiveCameraStateHostApi {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void addObserver(@NonNull Long identifier) {
+    @SuppressWarnings("unchecked")
     LiveData<CameraState> liveCameraState =
         (LiveData<CameraState>) Objects.requireNonNull(instanceManager.getInstance(identifier));
     liveCameraState.observe(lifecycleOwner, createCameraStateObserver());
@@ -46,7 +46,7 @@ public class LiveCameraStateHostApiImpl implements LiveCameraStateHostApi {
       public void onChanged(@NonNull CameraState cameraState) {
         if (cameraState.getType() == CameraState.Type.CLOSING) {
           LiveCameraStateFlutterApiImpl liveCameraStateFlutterApiImpl =
-              new LiveCameraStateFlutterApiImpl(binaryMessenger, instanceManager);
+              cameraXProxy.createLiveCameraStateFlutterApiImpl(binaryMessenger, instanceManager);
               liveCameraStateFlutterApiImpl.sendCameraClosingEvent(reply -> {});
         }
         CameraState.StateError cameraStateError = cameraState.getError();
