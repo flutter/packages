@@ -12,5 +12,6 @@
 * Adds implementation of availableCameras().
 * Implements camera preview, createCamera, initializeCamera, onCameraError, onDeviceOrientationChanged, and onCameraInitialized.
 * Adds integration test to plugin.
-* Fixes instance manager hot restart behavior and fixes Java casting issue.
 * Bump CameraX version to 1.3.0-alpha04.
+* Fixes instance manager hot restart behavior and fixes Java casting issue.
+* Implements image capture.
