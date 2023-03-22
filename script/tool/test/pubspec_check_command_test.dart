@@ -58,7 +58,7 @@ ${publishable ? '' : "publish_to: 'none'"}
 }
 
 String _environmentSection({
-  String dartConstraint = '>=2.17.0 <3.0.0',
+  String dartConstraint = '>=2.17.0 <4.0.0',
   String? flutterConstraint = '>=3.0.0',
 }) {
   return <String>[
@@ -999,7 +999,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <3.0.0')}
+${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <4.0.0')}
 ${_dependenciesSection()}
 ''');
 
@@ -1024,7 +1024,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <3.0.0')}
+${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <4.0.0')}
 ${_dependenciesSection()}
 ''');
 
@@ -1047,7 +1047,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.14.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.14.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ''');
 
@@ -1078,7 +1078,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ''');
 
@@ -1103,7 +1103,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ''');
 
@@ -1156,7 +1156,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.16.0 <3.0.0')}
+${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.16.0 <4.0.0')}
 ${_dependenciesSection()}
 ''');
 
