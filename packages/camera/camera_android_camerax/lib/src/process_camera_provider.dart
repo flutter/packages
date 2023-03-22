@@ -53,6 +53,12 @@ class ProcessCameraProvider extends JavaObject {
     return _api.bindToLifecycleFromInstances(this, cameraSelector, useCases);
   }
 
+  /// Returns whether or not the specified [UseCase] has been bound to the
+  /// lifecycle of the camera that this instance tracks.
+  Future<bool> isBound(UseCase useCase) {
+    return _api.isBoundFromInstances(this, useCase);
+  }
+
   /// Unbinds specified [UseCase]s from the lifecycle of the camera that this
   /// instance tracks.
   void unbind(List<UseCase> useCases) {
@@ -87,8 +93,8 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
   /// Retrieves an instance of a ProcessCameraProvider from the context of
   /// the FlutterActivity.
   Future<ProcessCameraProvider> getInstancefromInstances() async {
-    return instanceManager.getInstanceWithWeakReference(await getInstance())!
-        as ProcessCameraProvider;
+    return instanceManager.getInstanceWithWeakReference<ProcessCameraProvider>(
+        await getInstance())!;
   }
 
   /// Gets identifier that the [instanceManager] has set for
@@ -108,7 +114,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
     final List<int?> cameraInfos = await getAvailableCameraInfos(identifier);
     return cameraInfos
         .map<CameraInfo>((int? id) =>
-            instanceManager.getInstanceWithWeakReference(id!)! as CameraInfo)
+            instanceManager.getInstanceWithWeakReference<CameraInfo>(id!)!)
         .toList();
   }
 
@@ -132,8 +138,24 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
       instanceManager.getIdentifier(cameraSelector)!,
       useCaseIds,
     );
-    return instanceManager.getInstanceWithWeakReference(cameraIdentifier)!
-        as Camera;
+    return instanceManager
+        .getInstanceWithWeakReference<Camera>(cameraIdentifier)!;
+  }
+
+  /// Returns whether or not the specified [UseCase] has been bound to the
+  /// lifecycle of the camera that this instance tracks.
+  Future<bool> isBoundFromInstances(
+    ProcessCameraProvider instance,
+    UseCase useCase,
+  ) async {
+    final int identifier = getProcessCameraProviderIdentifier(instance);
+    final int? useCaseId = instanceManager.getIdentifier(useCase);
+
+    assert(useCaseId != null,
+        'UseCase must have been created in order for this check to be valid.');
+
+    final bool useCaseIsBound = await isBound(identifier, useCaseId!);
+    return useCaseIsBound;
   }
 
   /// Unbinds specified [UseCase]s from the lifecycle of the camera which the

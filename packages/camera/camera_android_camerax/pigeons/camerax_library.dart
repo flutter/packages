@@ -96,6 +96,8 @@ abstract class ProcessCameraProviderHostApi {
   int bindToLifecycle(
       int identifier, int cameraSelectorIdentifier, List<int> useCaseIds);
 
+  bool isBound(int identifier, int useCaseIdentifier);
+
   void unbind(int identifier, List<int> useCaseIds);
 
   void unbindAll(int identifier);
@@ -138,4 +140,14 @@ abstract class PreviewHostApi {
   void releaseFlutterSurfaceTexture();
 
   ResolutionInfo getResolutionInfo(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')
+abstract class ImageCaptureHostApi {
+  void create(int identifier, int? flashMode, ResolutionInfo? targetResolution);
+
+  void setFlashMode(int identifier, int flashMode);
+
+  @async
+  String takePicture(int identifier);
 }
