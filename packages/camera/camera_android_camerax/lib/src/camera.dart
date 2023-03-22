@@ -24,6 +24,8 @@ class Camera extends JavaObject {
 
   late final CameraHostApiImpl _api;
 
+  /// Retrieve the [CameraInfo] instance that contains information about this
+  /// instance.
   Future<CameraInfo> getCameraInfo() async {
     return _api.getCameraInfoFromInstance(this);
   }
@@ -48,13 +50,13 @@ class CameraHostApiImpl extends CameraHostApi {
 
   /// Gets the [CameraInfo] associated with the specified instance of [Camera].
   Future<CameraInfo> getCameraInfoFromInstance(Camera instance) async {
-    final int identifier = instanceManager.getIdentifier(instance);
+    final int identifier = instanceManager.getIdentifier(instance)!;
 
     assert(identifier != null,
         'No Camera has the identifer of that which was requested.');
-    final int? cameraInfoId = await getCameraInfo(identifier!);
+    final int cameraInfoId = await getCameraInfo(identifier);
     return instanceManager
-        .getInstanceWithWeakReference<CameraInfo>(cameraInfoId!)!;
+        .getInstanceWithWeakReference<CameraInfo>(cameraInfoId)!;
   }
 }
 
