@@ -36,6 +36,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Camera? camera;
 
+  /// The [LiveCameraState] that represents the state of the [camera] instance.
   LiveCameraState? liveCameraState;
 
   /// The [Preview] instance that can be configured to present a live camera preview.
@@ -169,7 +170,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
-    CameraInfo cameraInfo = await camera!.getCameraInfo();
+    final CameraInfo cameraInfo = await camera!.getCameraInfo();
     liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo.getLiveCameraState();
     liveCameraState!.addObserver();
@@ -337,7 +338,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
-    CameraInfo cameraInfo = await camera!.getCameraInfo();
+    final CameraInfo cameraInfo = await camera!.getCameraInfo();
     liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo.getLiveCameraState();
     liveCameraState!.addObserver();

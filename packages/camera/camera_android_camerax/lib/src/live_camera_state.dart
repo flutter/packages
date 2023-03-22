@@ -11,6 +11,11 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
+/// The live state that a camera can be in.
+///
+/// This is the LiveData of type CameraState that Android tracks in relation
+/// to a CameraInfo instance. See
+/// https://developer.android.com/reference/androidx/camera/core/CameraInfo#getCameraState().
 class LiveCameraState extends JavaObject {
   /// Creates a detached [LiveCameraState].
   LiveCameraState.detached({
@@ -31,8 +36,17 @@ class LiveCameraState extends JavaObject {
 
   late final LiveCameraStateHostApiImpl _api;
 
+  /// Adds an observer to the live camera state this instance represents.
+  ///
+  /// This observer will (i) send a notification to a previously set up
+  /// [LiveCameraStateFlutterApiImpl] whenever the camera begins to close
+  /// and (ii) send a notification to a previously set up
+  /// [SystemServicesFlutterApiImpl] whenever a camera error occurs while
+  /// transitioning between states.
   Future<void> addObserver() => _api.addObserverFromInstance(this);
 
+  /// Removes any observers added to the live camera state this instance
+  /// represents.
   Future<void> removeObservers() => _api.removeObserversFromInstance(this);
 }
 
@@ -47,6 +61,8 @@ class LiveCameraStateHostApiImpl extends LiveCameraStateHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
+  /// Adds an observer to the life camera state represented by the specified
+  /// [instance].
   Future<void> addObserverFromInstance(LiveCameraState instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
@@ -54,6 +70,8 @@ class LiveCameraStateHostApiImpl extends LiveCameraStateHostApi {
     addObserver(identifier!);
   }
 
+  /// Removes any observers added to the life camera state represented by the
+  /// specified [instance].
   Future<void> removeObserversFromInstance(LiveCameraState instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,

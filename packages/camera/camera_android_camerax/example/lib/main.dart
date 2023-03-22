@@ -54,8 +54,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   VideoPlayerController? videoController;
   VoidCallback? videoPlayerListener;
   bool enableAudio = true;
-  double _minAvailableExposureOffset = 0.0;
-  double _maxAvailableExposureOffset = 0.0;
+  const double _minAvailableExposureOffset = 0.0;
+  const double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
   late AnimationController _flashModeControlRowAnimationController;
   late Animation<double> _flashModeControlRowAnimation;
@@ -63,8 +63,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   late Animation<double> _exposureModeControlRowAnimation;
   late AnimationController _focusModeControlRowAnimationController;
   late Animation<double> _focusModeControlRowAnimation;
-  double _minAvailableZoom = 1.0;
-  double _maxAvailableZoom = 1.0;
+  const double _minAvailableZoom = 1.0;
+  const double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
 
@@ -637,24 +637,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     try {
       await cameraController.initialize();
-      // await Future.wait(<Future<Object?>>[
-      //   // The exposure mode is currently not supported on the web.
-      //   ...!kIsWeb
-      //       ? <Future<Object?>>[
-      //           cameraController.getMinExposureOffset().then(
-      //               (double value) => _minAvailableExposureOffset = value),
-      //           cameraController
-      //               .getMaxExposureOffset()
-      //               .then((double value) => _maxAvailableExposureOffset = value)
-      //         ]
-      //       : <Future<Object?>>[],
-      //   cameraController
-      //       .getMaxZoomLevel()
-      //       .then((double value) => _maxAvailableZoom = value),
-      //   cameraController
-      //       .getMinZoomLevel()
-      //       .then((double value) => _minAvailableZoom = value),
-      // ]);
+      // TODO(camsim99): Add back functionality retrieving exposure offset
+      // and zoom level information.
     } on CameraException catch (e) {
       switch (e.code) {
         case 'CameraAccessDenied':

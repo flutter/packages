@@ -12,7 +12,7 @@ import 'instance_manager.dart';
 import 'java_object.dart';
 import 'live_camera_state.dart';
 
-/// Represents the metadata of a camera.
+/// The metadata of a camera.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo.
 class CameraInfo extends JavaObject {
@@ -58,12 +58,14 @@ class CameraInfoHostApiImpl extends CameraInfoHostApi {
     return sensorRotationDegrees;
   }
 
+  /// Gets the [LiveCameraState] that represents the state of the camera
+  /// to which the CameraInfo [instance] pertains.
   Future<LiveCameraState> getLiveCameraStateFromInstance(
       CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
         'No CameraInfo has the identifer of that which was requested.');
-    int? liveCameraStateId = await getLiveCameraState(identifier!);
+    int liveCameraStateId = await getLiveCameraState(identifier!);
     return instanceManager
         .getInstanceWithWeakReference<LiveCameraState>(liveCameraStateId!)!;
   }

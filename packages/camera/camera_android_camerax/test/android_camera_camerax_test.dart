@@ -223,7 +223,7 @@ void main() {
         .thenAnswer((_) async => cameraId);
 
     when(camera.processCameraProvider!.bindToLifecycle(
-            camera.mockBackCameraSelector!,
+            camera.mockBackCameraSelector,
             <UseCase>[camera.testPreview, camera.testImageCapture]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => testCameraInfo);
