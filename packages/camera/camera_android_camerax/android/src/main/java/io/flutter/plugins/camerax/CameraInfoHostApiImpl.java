@@ -8,9 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraState;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraInfoHostApi;
 import java.util.Objects;
@@ -38,7 +36,8 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
     LiveData<CameraState> liveCameraState = cameraInfo.getCameraState();
-    LiveCameraStateFlutterApiImpl liveCameraStateFlutterApiImpl = new LiveCameraStateFlutterApiImpl(binaryMessenger, instanceManager);
+    LiveCameraStateFlutterApiImpl liveCameraStateFlutterApiImpl =
+        new LiveCameraStateFlutterApiImpl(binaryMessenger, instanceManager);
     if (!instanceManager.containsInstance(liveCameraState)) {
       liveCameraStateFlutterApiImpl.create(liveCameraState, reply -> {});
     }

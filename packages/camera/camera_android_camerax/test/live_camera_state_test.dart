@@ -42,7 +42,8 @@ void main() {
       verify(mockApi.addObserver(liveCameraStateId));
     });
 
-    test('removeObservers makes call to remove camera state observers', () async {
+    test('removeObservers makes call to remove camera state observers',
+        () async {
       final MockTestLiveCameraStateHostApi mockApi =
           MockTestLiveCameraStateHostApi();
       TestLiveCameraStateHostApi.setup(mockApi);
@@ -65,11 +66,13 @@ void main() {
       verify(mockApi.removeObservers(liveCameraStateId));
     });
 
-    test('flutter api create adds LiveCameraState instance to instance manager', () async {
+    test('flutter api create adds LiveCameraState instance to instance manager',
+        () async {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      final LiveCameraStateFlutterApi flutterApi = LiveCameraStateFlutterApiImpl(
+      final LiveCameraStateFlutterApi flutterApi =
+          LiveCameraStateFlutterApiImpl(
         instanceManager: instanceManager,
       );
       const int liveCameraStateId = 90;
@@ -80,11 +83,12 @@ void main() {
           isA<LiveCameraState>());
     });
 
-    test('flutter api onCameraClosing adds event to expected stream when called', () async {
-      LiveCameraState.cameraClosingStreamController.stream
-        .listen((bool event) {
-            expect(event, isTrue);
-        });
+    test(
+        'flutter api onCameraClosing adds event to expected stream when called',
+        () async {
+      LiveCameraState.cameraClosingStreamController.stream.listen((bool event) {
+        expect(event, isTrue);
+      });
 
       LiveCameraStateFlutterApiImpl().onCameraClosing();
     });

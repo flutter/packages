@@ -45,7 +45,8 @@ public class CameraInfoTest {
 
   @Test
   public void getSensorRotationDegrees_MakesCallToRetrieveSensorRotationDegrees() {
-    final CameraInfoHostApiImpl cameraInfoHostApi = new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final CameraInfoHostApiImpl cameraInfoHostApi =
+        new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
 
     testInstanceManager.addDartCreatedInstance(mockCameraInfo, 1);
 
@@ -57,7 +58,8 @@ public class CameraInfoTest {
 
   @Test
   public void getLiveCameraState_MakesCallToRetrieveLiveCameraState() {
-    final CameraInfoHostApiImpl cameraInfoHostApiImpl = new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final CameraInfoHostApiImpl cameraInfoHostApiImpl =
+        new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
     final Long mockCameraInfoIdentifier = 27L;
     @SuppressWarnings("unchecked")
     final LiveData<CameraState> mockLiveCameraState = mock(LiveData.class);
@@ -66,8 +68,11 @@ public class CameraInfoTest {
 
     when(mockCameraInfo.getCameraState()).thenReturn(mockLiveCameraState);
 
-    final Long liveCameraStateIdentifier = cameraInfoHostApiImpl.getLiveCameraState(mockCameraInfoIdentifier);
-    assertEquals(liveCameraStateIdentifier, testInstanceManager.getIdentifierForStrongReference(mockLiveCameraState));
+    final Long liveCameraStateIdentifier =
+        cameraInfoHostApiImpl.getLiveCameraState(mockCameraInfoIdentifier);
+    assertEquals(
+        liveCameraStateIdentifier,
+        testInstanceManager.getIdentifierForStrongReference(mockLiveCameraState));
   }
 
   @Test

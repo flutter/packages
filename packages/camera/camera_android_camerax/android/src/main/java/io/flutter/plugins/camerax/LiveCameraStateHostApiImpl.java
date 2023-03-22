@@ -6,7 +6,6 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraState;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
@@ -22,7 +21,8 @@ public class LiveCameraStateHostApiImpl implements LiveCameraStateHostApi {
 
   @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
 
-  public LiveCameraStateHostApiImpl(BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+  public LiveCameraStateHostApiImpl(
+      BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
   }
@@ -47,7 +47,7 @@ public class LiveCameraStateHostApiImpl implements LiveCameraStateHostApi {
         if (cameraState.getType() == CameraState.Type.CLOSING) {
           LiveCameraStateFlutterApiImpl liveCameraStateFlutterApiImpl =
               cameraXProxy.createLiveCameraStateFlutterApiImpl(binaryMessenger, instanceManager);
-              liveCameraStateFlutterApiImpl.sendCameraClosingEvent(reply -> {});
+          liveCameraStateFlutterApiImpl.sendCameraClosingEvent(reply -> {});
         }
         CameraState.StateError cameraStateError = cameraState.getError();
         if (cameraStateError != null) {

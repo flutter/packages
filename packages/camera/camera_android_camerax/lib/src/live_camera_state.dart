@@ -11,12 +11,12 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-class LiveCameraState extends JavaObject { 
+class LiveCameraState extends JavaObject {
   /// Creates a detached [LiveCameraState].
-  LiveCameraState.detached(
-      {BinaryMessenger? binaryMessenger,
-      InstanceManager? instanceManager,
-      }) : super.detached(
+  LiveCameraState.detached({
+    BinaryMessenger? binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = LiveCameraStateHostApiImpl(

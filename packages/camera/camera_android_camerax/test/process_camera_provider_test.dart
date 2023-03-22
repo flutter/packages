@@ -191,8 +191,7 @@ void main() {
       verify(mockApi.unbind(0, <int>[1]));
     });
 
-    test('unbindAll unbinds UseCases',
-        () async {
+    test('unbindAll unbinds UseCases', () async {
       final MockTestProcessCameraProviderHostApi mockApi =
           MockTestProcessCameraProviderHostApi();
       TestProcessCameraProviderHostApi.setup(mockApi);
