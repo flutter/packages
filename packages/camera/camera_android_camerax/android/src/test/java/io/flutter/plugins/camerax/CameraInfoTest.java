@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,6 +59,7 @@ public class CameraInfoTest {
   public void getLiveCameraState_MakesCallToRetrieveLiveCameraState() {
     final CameraInfoHostApiImpl cameraInfoHostApiImpl = new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
     final Long mockCameraInfoIdentifier = 27L;
+    @SuppressWarnings("unchecked")
     final LiveData<CameraState> mockLiveCameraState = mock(LiveData.class);
 
     testInstanceManager.addDartCreatedInstance(mockCameraInfo, mockCameraInfoIdentifier);

@@ -24,10 +24,11 @@ import androidx.lifecycle.Observer;
 import androidx.camera.core.CameraInfo;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraXProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveCameraStateFlutterApi.Reply;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesFlutterApi.Reply;
 import io.flutter.plugins.camerax.LiveCameraStateFlutterApiImpl;
 import io.flutter.plugins.camerax.LiveCameraStateHostApiImpl;
+import io.flutter.plugins.camerax.SystemServicesFlutterApiImpl;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveCameraStateFlutterApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesFlutterApi;
 import io.flutter.plugins.camerax.InstanceManager;
 import java.util.Objects;
 import org.junit.After;
@@ -62,9 +63,11 @@ public class LiveCameraStateTest {
   public void addObserver_addsExpectedCameraStateObesrveToLiveCameraState() {
     final LiveCameraStateHostApiImpl liveCameraStateHostApiImpl = new LiveCameraStateHostApiImpl(mockBinaryMessenger, testInstanceManager);
     final LiveCameraStateFlutterApiImpl mockLiveCameraStateFlutterApiImpl = mock(LiveCameraStateFlutterApiImpl.class);
+    final SystemServicesFlutterApiImpl mockSystemServicesFlutterApiImpl = mock(SystemServicesFlutterApiImpl.class);
     final Long liveCameraStateIdentifier = 94L;
     final LifecycleOwner mockLifecycleOwner = mock(LifecycleOwner.class);
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
+    @SuppressWarnings("unchecked")
     final ArgumentCaptor<Observer<CameraState>> cameraStateObserverCaptor = ArgumentCaptor.forClass(Observer.class);
     
     testInstanceManager.addDartCreatedInstance(liveCameraState, liveCameraStateIdentifier);
@@ -81,12 +84,12 @@ public class LiveCameraStateTest {
     // Test case where camera is closing.
     when(mockCameraXProxy.createLiveCameraStateFlutterApiImpl(mockBinaryMessenger, testInstanceManager)).thenReturn(mockLiveCameraStateFlutterApiImpl);
     cameraStateObserver.onChanged(CameraState.create(CameraState.Type.CLOSING));
-    verify(mockLiveCameraStateFlutterApiImpl).sendCameraClosingEvent(ArgumentMatchers.<Reply<Void>>any());
+    verify(mockLiveCameraStateFlutterApiImpl).sendCameraClosingEvent(ArgumentMatchers.<LiveCameraStateFlutterApi.Reply<Void>>any());
 
     // Test case where there is a camera state error.
-    when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger));
+    when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger)).thenReturn(mockSystemServicesFlutterApiImpl);
     cameraStateObserver.onChanged(CameraState.create(CameraState.Type.OPEN, CameraState.StateError.create(CameraState.ERROR_CAMERA_IN_USE)));
-    verify(mockBinaryMessenger).sendCameraError(anyString(), ArgumentMatchers.<Reply<Void>>any());
+    verify(mockSystemServicesFlutterApiImpl).sendCameraError(anyString(), ArgumentMatchers.<SystemServicesFlutterApi.Reply<Void>>any());
   }
 
   @Test
