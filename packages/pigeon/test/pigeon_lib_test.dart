@@ -100,19 +100,19 @@ void main() {
 
   test('parse args - swift_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_swift_out', 'Foo.swift']);
+        Pigeon.parseArgs(<String>['--swift_out', 'Foo.swift']);
     expect(opts.swiftOut, equals('Foo.swift'));
   });
 
   test('parse args - kotlin_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_kotlin_out', 'Foo.kt']);
+        Pigeon.parseArgs(<String>['--kotlin_out', 'Foo.kt']);
     expect(opts.kotlinOut, equals('Foo.kt'));
   });
 
   test('parse args - kotlin_package', () {
-    final PigeonOptions opts = Pigeon.parseArgs(
-        <String>['--experimental_kotlin_package', 'com.google.foo']);
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--kotlin_package', 'com.google.foo']);
     expect(opts.kotlinOptions?.package, equals('com.google.foo'));
   });
 

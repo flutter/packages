@@ -61,6 +61,30 @@ final List<String>? items = prefs.getStringList('items');
 await prefs.remove('counter');
 ```
 
+### Multiple instances
+
+In order to make preference lookup via the `get*` methods synchronous,
+`shared_preferences` uses a cache on the Dart side, which is normally only
+updated by the `set*` methods. Usually this is an implementation detail that
+does not affect callers, but it can cause issues in a few cases:
+- If you are using `shared_preferences` from multiple isolates, since each
+  isolate has its own `SharedPreferences` singleton and cache.
+- If you are using `shared_preferences` in multiple engine instances (including
+  those created by plugins that create background contexts on mobile devices,
+  such as `firebase_messaging`).
+- If you are modifying the underlying system preference store through something
+  other than the `shared_preferences` plugin, such as native code.
+
+If you need to read a preference value that may have been changed by anything
+other than the `SharedPreferences` instance you are reading it from, you should
+call `reload()` on the instance before reading from it to update its cache with
+any external changes.
+
+If this is problematic for your use case, you can thumbs up
+[this issue](https://github.com/flutter/flutter/issues/123078) to express
+interest in APIs that provide direct (asynchronous) access to the underlying
+preference store, and/or subscribe to it for updates.
+
 ### Testing
 
 In tests, you can replace the standard `SharedPreferences` implementation with
