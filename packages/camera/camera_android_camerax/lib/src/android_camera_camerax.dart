@@ -163,14 +163,10 @@ class AndroidCameraCameraX extends CameraPlatform {
         _getTargetResolutionForImageCapture(_resolutionPreset);
     imageCapture = createImageCapture(null, imageCaptureTargetResolution);
 
-    final ResolutionInfo? imageAnalysisTargetResolution = null;
-    imageAnalysis = ImageAnalysis(targetResolution: imageAnalysisTargetResolution);
-    imageAnalysis!.setAnalyzer();
-
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused.
     camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
+        .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -313,11 +309,20 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [?????] Pausing will throw a [CameraException], as pausing the stream would cause
   /// very high memory usage; to temporarily stop receiving frames, cancel, then
   /// listen again later.
+  ///
+  /// [cameraId] and [options] are not used.
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
-    // options not used, cameraId not used
-    // TODO(camsim99): I should probably bind image analysis here actually...
-    // or at the very least, I need to be aware of the state of the stream.
+    assert(processCameraProvider != null);
+    assert(cameraSelector != null);
+
+    // TODO(camsim99): Support resolution configuration.
+    final ResolutionInfo? imageAnalysisTargetResolution = null;
+    imageAnalysis = ImageAnalysis(targetResolution: imageAnalysisTargetResolution);
+    imageAnalysis!.setAnalyzer();
+
+    camera = await processCameraProvider!.bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+
     return ImageAnalysis.onStreamedFrameAvailableStreamController.stream;
   }
 
