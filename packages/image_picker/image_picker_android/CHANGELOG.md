@@ -1,6 +1,10 @@
-## 0.8.6+6
+## 0.8.6+7
 
 * Improves Bitmap resizing.
+
+## 0.8.6+6
+
+* Bumps androidx.core:core from 1.8.0 to 1.9.0.
 
 ## 0.8.6+5
 

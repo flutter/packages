@@ -407,6 +407,98 @@ void main() {
       expect(lastDestinationWithSelectedIcon, findsOneWidget);
     },
   );
+
+  testWidgets(
+    'when view in medium screen, navigation rail must be visible as per theme data values.',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
+      await tester.pumpWidget(SimulatedLayout.medium.app());
+      await tester.pumpAndSettle();
+
+      final Finder primaryNavigationMedium = find.byKey(
+        const Key('primaryNavigation'),
+      );
+      expect(primaryNavigationMedium, findsOneWidget);
+
+      final Finder navigationRailFinder = find.descendant(
+        of: primaryNavigationMedium,
+        matching: find.byType(NavigationRail),
+      );
+      expect(navigationRailFinder, findsOneWidget);
+
+      final NavigationRail navigationRailView = tester.firstWidget(
+        navigationRailFinder,
+      );
+      expect(navigationRailView, isNotNull);
+
+      expect(
+        navigationRailView.backgroundColor,
+        SimulatedLayout.navigationRailThemeBgColor,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.color,
+        SimulatedLayout.selectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.size,
+        SimulatedLayout.selectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.color,
+        SimulatedLayout.unSelectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.size,
+        SimulatedLayout.unSelectedIconThemeData.size,
+      );
+    },
+  );
+
+  testWidgets(
+    'when view in large screen, navigation rail must be visible as per theme data values.',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
+      await tester.pumpWidget(SimulatedLayout.large.app());
+      await tester.pumpAndSettle();
+
+      final Finder primaryNavigationLarge = find.byKey(
+        const Key('primaryNavigation1'),
+      );
+      expect(primaryNavigationLarge, findsOneWidget);
+
+      final Finder navigationRailFinder = find.descendant(
+        of: primaryNavigationLarge,
+        matching: find.byType(NavigationRail),
+      );
+      expect(navigationRailFinder, findsOneWidget);
+
+      final NavigationRail navigationRailView = tester.firstWidget(
+        navigationRailFinder,
+      );
+      expect(navigationRailView, isNotNull);
+
+      expect(
+        navigationRailView.backgroundColor,
+        SimulatedLayout.navigationRailThemeBgColor,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.color,
+        SimulatedLayout.selectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.size,
+        SimulatedLayout.selectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.color,
+        SimulatedLayout.unSelectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.size,
+        SimulatedLayout.unSelectedIconThemeData.size,
+      );
+    },
+  );
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that
