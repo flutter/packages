@@ -1,3 +1,7 @@
+## 0.1.0+3
+
+* Migrates from SingletonFlutterWindow to PlatformDispatcher API.
+
 ## 0.1.0+2
 
 * Updates code to fix strict-cast violations.
