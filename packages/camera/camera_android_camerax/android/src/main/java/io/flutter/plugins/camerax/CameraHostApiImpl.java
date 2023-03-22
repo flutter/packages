@@ -22,7 +22,7 @@ public class CameraHostApiImpl implements CameraHostApi {
 
   /**
    * Retrieves the {@link CameraInfo} instance that contains information about the {@link Camera}
-   * instance with the specified identifier. 
+   * instance with the specified identifier.
    */
   @Override
   public Long getCameraInfo(@NonNull Long identifier) {

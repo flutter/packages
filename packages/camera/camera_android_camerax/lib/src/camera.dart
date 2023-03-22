@@ -24,7 +24,7 @@ class Camera extends JavaObject {
 
   late final CameraHostApiImpl _api;
 
-  /// Retrieve the [CameraInfo] instance that contains information about this
+  /// Retrieves the [CameraInfo] instance that contains information about this
   /// instance.
   Future<CameraInfo> getCameraInfo() async {
     return _api.getCameraInfoFromInstance(this);

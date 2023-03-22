@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.camera.core.CameraState;
 import androidx.lifecycle.LiveData;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -18,11 +19,11 @@ public class LiveCameraStateFlutterApiImpl extends LiveCameraStateFlutterApi {
 
   private final InstanceManager instanceManager;
 
-  void create(LiveData<CameraState> liveCameraState, Reply<Void> reply) {
+  void create(@NonNull LiveData<CameraState> liveCameraState, @NonNull Reply<Void> reply) {
     create(instanceManager.addHostCreatedInstance(liveCameraState), reply);
   }
 
-  void sendCameraClosingEvent(Reply<Void> reply) {
+  void sendCameraClosingEvent(@NonNull Reply<Void> reply) {
     onCameraClosing(reply);
   }
 }

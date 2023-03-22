@@ -126,9 +126,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
-  // TODO(camsim99): Merge changes for image capture implementation, and ensure
-  // onCameraClosing is not called when the processCameraProvider has its
-  // UseCases cleared here if it was not previously null.
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,
@@ -170,10 +167,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
-    final CameraInfo cameraInfo = await camera!.getCameraInfo();
-    liveCameraState?.removeObservers();
-    liveCameraState = await cameraInfo.getLiveCameraState();
-    liveCameraState!.addObserver();
+    _updateLiveCameraState();
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -322,7 +316,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods for binding/unbinding UseCases to the lifecycle of the camera
   // controlled by a ProcessCameraProvider instance:
-  
+
   /// Binds [preview] instance to the camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _bindPreviewToLifecycle() async {
@@ -338,10 +332,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
-    final CameraInfo cameraInfo = await camera!.getCameraInfo();
-    liveCameraState?.removeObservers();
-    liveCameraState = await cameraInfo.getLiveCameraState();
-    liveCameraState!.addObserver();
+    _updateLiveCameraState();
   }
 
   /// Unbinds [preview] instance to camera lifecycle controlled by the
@@ -355,6 +346,16 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(processCameraProvider != null);
 
     processCameraProvider!.unbind(<UseCase>[preview!]);
+  }
+
+  // Methods concerning camera information:
+
+  /// Adds fresh observers to the [LiveCameraState] of the current [camera].
+  Future<void> _updateLiveCameraState() async {
+    final CameraInfo cameraInfo = await camera!.getCameraInfo();
+    liveCameraState?.removeObservers();
+    liveCameraState = await cameraInfo.getLiveCameraState();
+    liveCameraState!.addObserver();
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:

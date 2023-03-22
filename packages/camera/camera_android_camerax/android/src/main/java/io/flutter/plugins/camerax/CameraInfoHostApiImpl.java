@@ -24,6 +24,10 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     this.instanceManager = instanceManager;
   }
 
+  /**
+   * Retrieves the sensor rotation degrees of the {@link androidx.camera.core.Camera} that is
+   * represented by the {@link CameraInfo} with the specified identifier.
+   */
   @Override
   public Long getSensorRotationDegrees(@NonNull Long identifier) {
     CameraInfo cameraInfo =
@@ -31,6 +35,11 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     return Long.valueOf(cameraInfo.getSensorRotationDegrees());
   }
 
+  /**
+   * Retrieves the {@link LiveData} of the {@link CameraState} that is tied to the {@link
+   * androidx.camera.core.Camera} that is represented by the {@link CameraInfo} with the specified
+   * identifier.
+   */
   @Override
   public Long getLiveCameraState(@NonNull Long identifier) {
     CameraInfo cameraInfo =

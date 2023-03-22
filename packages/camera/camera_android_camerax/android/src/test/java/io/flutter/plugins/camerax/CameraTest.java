@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -39,7 +40,22 @@ public class CameraTest {
   }
 
   @Test
-  public void flutterApiCreateTest() {
+  public void getCameraInfo_makesCallToGetCameraInfo() {
+    final CameraHostApiImpl cameraHostApiImpl =
+        CameraHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final Long cameraIdentifier = 65L;
+    CameraInfo mockCameraInfo = mock(CameraInfo.class);
+
+    testInstanceManager.addDartCreatedInstance(camera, cameraIdentifier);
+    Long mockCameraInfoIdentifier = testInstanceManager.addHostCreatedInstance(mockCameraInfo);
+
+    when(camera.getCameraInfo()).thenReturn(mockCameraInfo);
+
+    assertEquals(cameraHostApiImpl.getCameraInfo(cameraIdentifier), mockCameraInfoIdentifier);
+  }
+
+  @Test
+  public void flutterApiCreate_makesCallToCreateInstance() {
     final CameraFlutterApiImpl spyFlutterApi =
         spy(new CameraFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
 

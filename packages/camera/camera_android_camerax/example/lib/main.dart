@@ -54,8 +54,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   VideoPlayerController? videoController;
   VoidCallback? videoPlayerListener;
   bool enableAudio = true;
-  final double _minAvailableExposureOffset = 0.0;
-  final double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
   late AnimationController _flashModeControlRowAnimationController;
   late Animation<double> _flashModeControlRowAnimation;
@@ -63,10 +61,15 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   late Animation<double> _exposureModeControlRowAnimation;
   late AnimationController _focusModeControlRowAnimationController;
   late Animation<double> _focusModeControlRowAnimation;
-  final double _minAvailableZoom = 1.0;
-  final double _maxAvailableZoom = 1.0;
+
   double _currentScale = 1.0;
   double _baseScale = 1.0;
+
+  // TODO(camsim99): Make these configuration values variable.
+  final double _minAvailableZoom = 1.0;
+  final double _maxAvailableZoom = 1.0;
+  final double _minAvailableExposureOffset = 0.0;
+  final double _maxAvailableExposureOffset = 0.0;
 
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
@@ -421,7 +424,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   Text(_minAvailableExposureOffset.toString()),
                   Slider(
                     value: _currentExposureOffset,
-                    // TODO(camsim99): Specify min available exposure offset here.
+                    // TODO(camsim99): Specify minimum available exposure offset here.
                     max: _maxAvailableExposureOffset,
                     label: _currentExposureOffset.toString(),
                     onChanged: _minAvailableExposureOffset ==

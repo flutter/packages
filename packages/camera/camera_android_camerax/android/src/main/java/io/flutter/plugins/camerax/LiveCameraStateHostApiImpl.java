@@ -32,6 +32,14 @@ public class LiveCameraStateHostApiImpl implements LiveCameraStateHostApi {
     this.lifecycleOwner = lifecycleOwner;
   }
 
+  /**
+   * Adds an observer to the {@link LiveData} of the {@link CameraState} that is represented by the
+   * specified identifier.
+   *
+   * <p>This observer is created with {@link
+   * LiveCameraStateHostApiImpl#getCameraStateErrorDescription(int)}, and it will only observe
+   * within the lifetime of the {@link LiveCameraStateHostApiImpl#lifecycleOwner}.
+   */
   @Override
   public void addObserver(@NonNull Long identifier) {
     @SuppressWarnings("unchecked")
@@ -40,6 +48,14 @@ public class LiveCameraStateHostApiImpl implements LiveCameraStateHostApi {
     liveCameraState.observe(lifecycleOwner, createCameraStateObserver());
   }
 
+  /**
+   * Creates an {@link Observer} of the different {@link CameraState}s that a camera may
+   * encountered.
+   *
+   * <p>This observer notifies the Dart side when the camera is closing with an instance of {@link
+   * LiveCameraStateFlutterApiImpl}, and notifies the Dart side when the camera encounters a error
+   * when transitioning between states with an intance of {@link SystemServicesFlutterApiImpl}.
+   */
   private Observer<CameraState> createCameraStateObserver() {
     return new Observer<CameraState>() {
       @Override
@@ -54,40 +70,22 @@ public class LiveCameraStateHostApiImpl implements LiveCameraStateHostApi {
           SystemServicesFlutterApiImpl systemServicesFlutterApi =
               cameraXProxy.createSystemServicesFlutterApiImpl(binaryMessenger);
           systemServicesFlutterApi.sendCameraError(
-              getCameraStateErrorDescription(cameraStateError.getCode()), reply -> {});
+              getCameraStateErrorDescription(cameraStateError), reply -> {});
         }
       }
     };
   }
 
-  private String getCameraStateErrorDescription(@NonNull int cameraStateErrorCode) {
-    // See CameraState errors: https://developer.android.com/reference/androidx/camera/core/CameraState#constants_1.
-    switch (cameraStateErrorCode) {
-      case CameraState.ERROR_CAMERA_IN_USE:
-        return cameraStateErrorCode
-            + ": The camera was already in use, possibly by a higher-priority camera client.";
-      case CameraState.ERROR_MAX_CAMERAS_IN_USE:
-        return cameraStateErrorCode
-            + ": The limit number of open cameras has been reached, and more cameras cannot be opened until other instances are closed.";
-      case CameraState.ERROR_OTHER_RECOVERABLE_ERROR:
-        return cameraStateErrorCode
-            + ": The camera device has encountered a recoverable error. CameraX will attempt to recover from the error.";
-      case CameraState.ERROR_STREAM_CONFIG:
-        return cameraStateErrorCode + ": Configuring the camera has failed.";
-      case CameraState.ERROR_CAMERA_DISABLED:
-        return cameraStateErrorCode
-            + ": The camera device could not be opened due to a device policy. Thia may be caused by a client from a background process attempting to open the camera.";
-      case CameraState.ERROR_CAMERA_FATAL_ERROR:
-        return cameraStateErrorCode
-            + ": The camera was closed due to a fatal error. This may require the Android device be shut down and restarted to restore camera function or may indicate a persistent camera hardware problem.";
-      case CameraState.ERROR_DO_NOT_DISTURB_MODE_ENABLED:
-        return cameraStateErrorCode
-            + ": The camera could not be opened because 'Do Not Disturb' mode is enabled. Please disable this mode, and try opening the camera again.";
-      default:
-        return "There was an undefined issue with the camera state.";
-    }
+  /** Returns an error message corresponding to the specified {@link CameraState.StateError}. */
+  private String getCameraStateErrorDescription(@NonNull CameraState.StateError cameraStateError) {
+    return cameraStateError.getCode() + ": " + cameraStateError.getCause().getMessage();
   }
 
+  /**
+   * Removes any observers of the {@link LiveData} of the {@link CameraState} that is represented by
+   * the specified identifier within the lifetime of the {@link
+   * LiveCameraStateHostApiImpl#lifecycleOwner}.
+   */
   @Override
   @SuppressWarnings("unchecked")
   public void removeObservers(@NonNull Long identifier) {
