@@ -1,3 +1,7 @@
+## 2.4.3
+
+* Fixes playback speed doesn't get persisted after reinitializing with new VideoPlayerController (https://github.com/flutter/flutter/issues/100351)
+
 ## 2.4.2
 
 * Makes seekTo async and only complete when AVPlayer.seekTo completes.
