@@ -1,5 +1,6 @@
-## NEXT
+## 2.0.14
 
+* Updates README to use code excerpts.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.0.13

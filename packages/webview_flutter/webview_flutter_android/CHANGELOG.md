@@ -1,3 +1,7 @@
+## 3.4.3
+
+* Updates internal Java InstanceManager to be cleared on hot restart.
+
 ## 3.4.2
 
 * Clarifies explanation of endorsement in README.
