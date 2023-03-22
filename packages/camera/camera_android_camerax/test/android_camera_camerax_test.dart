@@ -233,6 +233,9 @@ void main() {
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
 
+    when(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
+            <UseCase>[camera.testPreview, camera.testImageCapture]))
+        .thenAnswer((_) async => mockCamera);
     when(camera.testPreview.getResolutionInfo())
         .thenAnswer((_) async => testResolutionInfo);
 

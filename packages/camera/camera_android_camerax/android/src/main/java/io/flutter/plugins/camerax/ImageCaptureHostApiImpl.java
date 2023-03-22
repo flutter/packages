@@ -23,6 +23,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   private final InstanceManager instanceManager;
 
   private Context context;
+  private SystemServicesFlutterApiImpl systemServicesFlutterApiImpl;
 
   public static final String TEMPORARY_FILE_NAME = "CAP";
   public static final String JPG_FILE_TYPE = ".jpg";

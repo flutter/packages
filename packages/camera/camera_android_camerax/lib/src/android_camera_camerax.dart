@@ -321,7 +321,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods for binding/unbinding UseCases to the lifecycle of the camera
   // controlled by a ProcessCameraProvider instance:
-
+  
   /// Binds [preview] instance to the camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _bindPreviewToLifecycle() async {

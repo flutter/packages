@@ -30,7 +30,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: Int32? = nil'));
+    expect(code, contains('var field1: Int64? = nil'));
     expect(code, contains('static func fromList(_ list: [Any]) -> Foobar?'));
     expect(code, contains('func toList() -> [Any?]'));
   });
@@ -191,7 +191,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('var aBool: Bool? = nil'));
-    expect(code, contains('var aInt: Int32? = nil'));
+    expect(code, contains('var aInt: Int64? = nil'));
     expect(code, contains('var aDouble: Double? = nil'));
     expect(code, contains('var aString: String? = nil'));
     expect(code, contains('var aUint8List: FlutterStandardTypedData? = nil'));
@@ -622,7 +622,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [Int32?]'));
+    expect(code, contains('var field1: [Int64?]'));
   });
 
   test('generics - maps', () {
@@ -681,7 +681,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit(arg: [Int32?]'));
+    expect(code, contains('func doit(arg: [Int64?]'));
   });
 
   test('flutter generics argument', () {
@@ -711,7 +711,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit(arg argArg: [Int32?]'));
+    expect(code, contains('func doit(arg argArg: [Int64?]'));
   });
 
   test('host generics return', () {
@@ -737,7 +737,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit() throws -> [Int32?]'));
+    expect(code, contains('func doit() throws -> [Int64?]'));
     expect(code, contains('let result = try api.doit()'));
     expect(code, contains('reply(wrapResult(result))'));
   });
@@ -766,8 +766,8 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(
-        code, contains('func doit(completion: @escaping ([Int32?]) -> Void'));
-    expect(code, contains('let result = response as! [Int32?]'));
+        code, contains('func doit(completion: @escaping ([Int64?]) -> Void'));
+    expect(code, contains('let result = response as! [Int64?]'));
     expect(code, contains('completion(result)'));
   });
 
@@ -795,10 +795,16 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func add(x: Int32, y: Int32) throws -> Int32'));
+    expect(code, contains('func add(x: Int64, y: Int64) throws -> Int64'));
     expect(code, contains('let args = message as! [Any]'));
-    expect(code, contains('let xArg = args[0] as! Int32'));
-    expect(code, contains('let yArg = args[1] as! Int32'));
+    expect(
+        code,
+        contains(
+            'let xArg = (args[0] is Int) ? Int64(args[0] as! Int) : args[0] as! Int64'));
+    expect(
+        code,
+        contains(
+            'let yArg = (args[1] is Int) ? Int64(args[1] as! Int) : args[1] as! Int64'));
     expect(code, contains('let result = try api.add(x: xArg, y: yArg)'));
     expect(code, contains('reply(wrapResult(result))'));
   });
@@ -828,12 +834,15 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
-    expect(code, contains('let result = response as! Int32'));
+    expect(
+        code,
+        contains(
+            'let result = (response is Int) ? Int64(response as! Int) : response as! Int64'));
     expect(code, contains('completion(result)'));
     expect(
         code,
         contains(
-            'func add(x xArg: Int32, y yArg: Int32, completion: @escaping (Int32) -> Void)'));
+            'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Int64) -> Void)'));
     expect(code,
         contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
   });
@@ -859,7 +868,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func doit() throws -> Int32?'));
+    expect(code, contains('func doit() throws -> Int64?'));
   });
 
   test('return nullable host async', () {
@@ -887,7 +896,7 @@ void main() {
     expect(
         code,
         contains(
-            'func doit(completion: @escaping (Result<Int32?, Error>) -> Void'));
+            'func doit(completion: @escaping (Result<Int64?, Error>) -> Void'));
   });
 
   test('nullable argument host', () {
@@ -915,7 +924,10 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('let fooArg = args[0] as! Int32?'));
+    expect(
+        code,
+        contains(
+            'let fooArg = (args[0] is Int) ? Int64(args[0] as! Int) : args[0] as! Int64?'));
   });
 
   test('nullable argument flutter', () {
@@ -946,7 +958,7 @@ void main() {
     expect(
         code,
         contains(
-            'func doit(foo fooArg: Int32?, completion: @escaping () -> Void'));
+            'func doit(foo fooArg: Int64?, completion: @escaping () -> Void'));
   });
 
   test('nonnull fields', () {
@@ -1181,7 +1193,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('func setValue(_ value: Int32, for key: String)'));
+    expect(code, contains('func setValue(_ value: Int64, for key: String)'));
   });
 
   test('swift function signature with same name argument', () {

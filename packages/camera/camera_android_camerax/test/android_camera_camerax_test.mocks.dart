@@ -17,8 +17,7 @@ import 'package:camera_android_camerax/src/process_camera_provider.dart'
 import 'package:camera_android_camerax/src/use_case.dart' as _i14;
 import 'package:flutter/foundation.dart' as _i8;
 import 'package:flutter/services.dart' as _i7;
-import 'package:flutter/src/widgets/framework.dart' as _i6;
-import 'package:flutter/src/widgets/notification_listener.dart' as _i15;
+import 'package:flutter/widgets.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -438,7 +437,7 @@ class MockBuildContext extends _i1.Mock implements _i6.BuildContext {
         returnValueForMissingStub: null,
       );
   @override
-  void dispatchNotification(_i15.Notification? notification) =>
+  void dispatchNotification(_i6.Notification? notification) =>
       super.noSuchMethod(
         Invocation.method(
           #dispatchNotification,
