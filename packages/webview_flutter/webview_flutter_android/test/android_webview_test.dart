@@ -18,6 +18,7 @@ import 'test_android_webview.g.dart';
   DownloadListener,
   JavaScriptChannel,
   TestDownloadListenerHostApi,
+  TestInstanceManagerHostApi,
   TestJavaObjectHostApi,
   TestJavaScriptChannelHostApi,
   TestWebChromeClientHostApi,
@@ -32,6 +33,9 @@ import 'test_android_webview.g.dart';
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('Android WebView', () {
     group('JavaObject', () {

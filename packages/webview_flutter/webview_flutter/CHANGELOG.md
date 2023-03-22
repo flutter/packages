@@ -1,7 +1,12 @@
-## 4.0.7
+## 4.0.8
 
 * Adds support for handling geolocation permissions.
 * See `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
+
+## 4.0.7
+
+* Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on
+  Android.
 
 ## 4.0.6
 

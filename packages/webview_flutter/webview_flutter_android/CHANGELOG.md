@@ -1,8 +1,11 @@
-## 3.4.3
+## 3.4.4
 
 * Adds support for handling geolocation permissions.
 * See `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
 
+## 3.4.3
+
+* Updates internal Java InstanceManager to be cleared on hot restart.
 
 ## 3.4.2
 

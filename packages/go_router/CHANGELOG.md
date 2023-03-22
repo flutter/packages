@@ -1,8 +1,15 @@
-## NEXT
+## 6.4.0
+
+- Adds `replace` method to that replaces the current route with a new one and keeps the same page key. This is useful for when you want to update the query params without changing the page key ([#115902]https://github.com/flutter/flutter/issues/115902).
+
+## 6.3.0
 
 - Aligns Dart and Flutter SDK constraints.
 - Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
+- Adds `navigatorKey` to `TypedShellRoute`
+- Adds `parentNavigatorKey` to `TypedGoRoute`
+- Updates documentation in matching methods.
 
 ## 6.2.0
 
@@ -22,7 +29,7 @@
 
 ## 6.0.8
 
-* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+- Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
 
 ## 6.0.7
 

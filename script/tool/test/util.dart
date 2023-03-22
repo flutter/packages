@@ -167,7 +167,8 @@ RepositoryPackage createFakePackage(
       isFlutter: isFlutter,
       version: version,
       flutterConstraint: flutterConstraint,
-      dartConstraint: dartConstraint);
+      dartConstraint: dartConstraint,
+      publishTo: publishTo);
   if (includeCommonFiles) {
     package.changelogFile.writeAsStringSync('''
 ## $version
