@@ -116,6 +116,7 @@ public class ImageCaptureTest {
         mock(ImageCapture.OutputFileOptions.class);
     final ImageCapture.OnImageSavedCallback mockOnImageSavedCallback =
         mock(ImageCapture.OnImageSavedCallback.class);
+    @SuppressWarnings("unchecked")
     final GeneratedCameraXLibrary.Result<String> mockResult =
         mock(GeneratedCameraXLibrary.Result.class);
 
@@ -148,6 +149,7 @@ public class ImageCaptureTest {
     final Long imageCaptureIdentifier = 6L;
     final File mockOutputDir = mock(File.class);
     final File mockTemporaryCaptureFile = mock(File.class);
+    @SuppressWarnings("unchecked")
     final GeneratedCameraXLibrary.Result<String> mockResult =
         mock(GeneratedCameraXLibrary.Result.class);
     final IOException fileCreationException = new IOException();
@@ -181,6 +183,7 @@ public class ImageCaptureTest {
     final SystemServicesFlutterApiImpl mockSystemServicesFlutterApiImpl =
         mock(SystemServicesFlutterApiImpl.class);
     final File mockFile = mock(File.class);
+    @SuppressWarnings("unchecked")
     final GeneratedCameraXLibrary.Result<String> mockResult =
         mock(GeneratedCameraXLibrary.Result.class);
     final ImageCapture.OutputFileResults mockOutputFileResults =
