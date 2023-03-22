@@ -232,6 +232,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// the video format detection code.
   /// [httpHeaders] option allows to specify HTTP headers.
   /// for the request to the [dataSource].
+  @Deprecated('Use VideoPlayerController.networkUrl instead')
   VideoPlayerController.network(
     this.dataSource, {
     this.formatHint,
@@ -239,6 +240,27 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
   })  : _closedCaptionFileFuture = closedCaptionFile,
+        dataSourceType = DataSourceType.network,
+        package = null,
+        super(VideoPlayerValue(duration: Duration.zero));
+
+  /// Constructs a [VideoPlayerController] playing a video from obtained from
+  /// the network.
+  ///
+  /// The URI for the video is given by the [dataSource] argument and must not be
+  /// null.
+  /// **Android only**: The [formatHint] option allows the caller to override
+  /// the video format detection code.
+  /// [httpHeaders] option allows to specify HTTP headers.
+  /// for the request to the [dataSource].
+  VideoPlayerController.networkUrl(
+    Uri url, {
+    this.formatHint,
+    Future<ClosedCaptionFile>? closedCaptionFile,
+    this.videoPlayerOptions,
+    this.httpHeaders = const <String, String>{},
+  })  : _closedCaptionFileFuture = closedCaptionFile,
+        dataSource = url.toString(),
         dataSourceType = DataSourceType.network,
         package = null,
         super(VideoPlayerValue(duration: Duration.zero));
