@@ -93,8 +93,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
   /// Retrieves an instance of a ProcessCameraProvider from the context of
   /// the FlutterActivity.
   Future<ProcessCameraProvider> getInstancefromInstances() async {
-    return instanceManager.getInstanceWithWeakReference<ProcessCameraProvider>(await getInstance())!
-        as ProcessCameraProvider;
+    return instanceManager.getInstanceWithWeakReference<ProcessCameraProvider>(await getInstance())!;
   }
 
   /// Gets identifier that the [instanceManager] has set for
@@ -114,7 +113,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
     final List<int?> cameraInfos = await getAvailableCameraInfos(identifier);
     return cameraInfos
         .map<CameraInfo>((int? id) =>
-            instanceManager.getInstanceWithWeakReference<CameraInfo>(id!)! as CameraInfo)
+            instanceManager.getInstanceWithWeakReference<CameraInfo>(id!)!)
         .toList();
   }
 
@@ -138,8 +137,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
       instanceManager.getIdentifier(cameraSelector)!,
       useCaseIds,
     );
-    return instanceManager.getInstanceWithWeakReference<Camera>(cameraIdentifier)!
-        as Camera;
+    return instanceManager.getInstanceWithWeakReference<Camera>(cameraIdentifier)!;
   }
 
   /// Returns whether or not the specified [UseCase] has been bound to the
