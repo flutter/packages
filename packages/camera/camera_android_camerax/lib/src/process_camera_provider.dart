@@ -93,7 +93,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
   /// Retrieves an instance of a ProcessCameraProvider from the context of
   /// the FlutterActivity.
   Future<ProcessCameraProvider> getInstancefromInstances() async {
-    return instanceManager.getInstanceWithWeakReference(await getInstance())!
+    return instanceManager.getInstanceWithWeakReference<ProcessCameraProvider>(await getInstance())!
         as ProcessCameraProvider;
   }
 
@@ -114,7 +114,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
     final List<int?> cameraInfos = await getAvailableCameraInfos(identifier);
     return cameraInfos
         .map<CameraInfo>((int? id) =>
-            instanceManager.getInstanceWithWeakReference(id!)! as CameraInfo)
+            instanceManager.getInstanceWithWeakReference<CameraInfo>(id!)! as CameraInfo)
         .toList();
   }
 
@@ -138,7 +138,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
       instanceManager.getIdentifier(cameraSelector)!,
       useCaseIds,
     );
-    return instanceManager.getInstanceWithWeakReference(cameraIdentifier)!
+    return instanceManager.getInstanceWithWeakReference<Camera>(cameraIdentifier)!
         as Camera;
   }
 
