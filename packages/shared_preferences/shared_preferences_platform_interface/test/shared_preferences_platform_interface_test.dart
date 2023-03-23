@@ -47,7 +47,17 @@ class IllegalImplementation implements SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<bool> clearWithPrefix(String prefix) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Map<String, Object>> getAll() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
     throw UnimplementedError();
   }
 
@@ -58,6 +68,11 @@ class IllegalImplementation implements SharedPreferencesStorePlatform {
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setPrefix(String prefix) {
     throw UnimplementedError();
   }
 }
@@ -72,7 +87,17 @@ class LegacyIsMockImplementation implements SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<bool> clearWithPrefix(String prefix) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Map<String, Object>> getAll() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
     throw UnimplementedError();
   }
 
@@ -83,6 +108,11 @@ class LegacyIsMockImplementation implements SharedPreferencesStorePlatform {
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setPrefix(String prefix) {
     throw UnimplementedError();
   }
 }
@@ -99,7 +129,17 @@ class ModernMockImplementation
   }
 
   @override
+  Future<bool> clearWithPrefix(String prefix) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Map<String, Object>> getAll() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
     throw UnimplementedError();
   }
 
@@ -110,6 +150,11 @@ class ModernMockImplementation
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setPrefix(String prefix) {
     throw UnimplementedError();
   }
 }

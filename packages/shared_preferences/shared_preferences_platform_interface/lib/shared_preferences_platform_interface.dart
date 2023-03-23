@@ -48,6 +48,11 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   @Deprecated('Use MockPlatformInterfaceMixin instead')
   bool get isMock => false;
 
+  /// Sets prefix for necessary platforms (web).
+  Future<bool> setPrefix(String prefix) async {
+    return true;
+  }
+
   /// Removes the value associated with the [key].
   Future<bool> remove(String key);
 
@@ -62,11 +67,21 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   /// * Value type "StringList" must be passed if the value is of type `List<String>`.
   Future<bool> setValue(String valueType, String key, Object value);
 
-  /// Removes all keys and values in the store.
+  /// Removes all keys and values in the store with default prefix.
   Future<bool> clear();
+
+  /// Removes all keys and values in the store with given prefix.
+  Future<bool> clearWithPrefix(String prefix) {
+    throw UnimplementedError('clearWithPrefix is not implemented.');
+  }
 
   /// Returns all key/value pairs persisted in this store.
   Future<Map<String, Object>> getAll();
+
+  /// Returns all key/value pairs persisting in this store that have given [prefix].
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    throw UnimplementedError('getAllWithPrefix is not implemented.');
+  }
 }
 
 /// Stores data in memory.
@@ -89,8 +104,20 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    return clear();
+  }
+
+  @override
   Future<Map<String, Object>> getAll() async {
     return Map<String, Object>.from(_data);
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    final Map<String, Object> preferences = Map<String, Object>.from(_data);
+    preferences.removeWhere((String key, _) => !key.startsWith(prefix));
+    return preferences;
   }
 
   @override

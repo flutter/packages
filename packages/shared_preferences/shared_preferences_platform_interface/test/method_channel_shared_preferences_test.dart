@@ -43,6 +43,12 @@ void main() {
         if (methodCall.method == 'getAll') {
           return testData.getAll();
         }
+        if (methodCall.method == 'getAllWithPrefix') {
+          final Map<String, Object?> arguments =
+              getArgumentDictionary(methodCall);
+          final String prefix = arguments['prefix']! as String;
+          return testData.getAllWithPrefix(prefix);
+        }
         if (methodCall.method == 'remove') {
           final Map<String, Object?> arguments =
               getArgumentDictionary(methodCall);
@@ -51,6 +57,12 @@ void main() {
         }
         if (methodCall.method == 'clear') {
           return testData.clear();
+        }
+        if (methodCall.method == 'clearWithPrefix') {
+          final Map<String, Object?> arguments =
+              getArgumentDictionary(methodCall);
+          final String prefix = arguments['prefix']! as String;
+          return testData.clearWithPrefix(prefix);
         }
         final RegExp setterRegExp = RegExp(r'set(.*)');
         final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
@@ -76,6 +88,18 @@ void main() {
       testData = InMemorySharedPreferencesStore.withData(kTestValues);
       expect(await store.getAll(), kTestValues);
       expect(log.single.method, 'getAll');
+    });
+
+    test('getAllWithPrefix', () async {
+      final Map<String, Object> newPrefixKTestValues = kTestValues.map(
+          (String key, Object value) => MapEntry<String, Object>(
+              key.replaceFirst('flutter.', 'string.'), value));
+      final Map<String, Object> allKTestValues = <String, Object>{};
+      allKTestValues.addAll(newPrefixKTestValues);
+      allKTestValues.addAll(kTestValues);
+      testData = InMemorySharedPreferencesStore.withData(allKTestValues);
+      expect(await store.getAllWithPrefix('string.'), newPrefixKTestValues);
+      expect(log.single.method, 'getAllWithPrefix');
     });
 
     test('remove', () async {
@@ -116,6 +140,21 @@ void main() {
       expect(await store.clear(), true);
       expect(await testData.getAll(), isEmpty);
       expect(log.single.method, 'clear');
+    });
+
+    test('clearWithPrefix', () async {
+      testData = InMemorySharedPreferencesStore.withData(kTestValues);
+      final Map<String, Object> newPrefixKTestValues = kTestValues.map(
+          (String key, Object value) => MapEntry<String, Object>(
+              key.replaceFirst('flutter.', 'string.'), value));
+      final Map<String, Object> allKTestValues = <String, Object>{};
+      allKTestValues.addAll(newPrefixKTestValues);
+      allKTestValues.addAll(kTestValues);
+      testData = InMemorySharedPreferencesStore.withData(allKTestValues);
+
+      expect(await testData.getAll(), isNotEmpty);
+      expect(await store.clearWithPrefix('string.'), true);
+      expect(await testData.getAll(), kTestValues);
     });
   });
 }

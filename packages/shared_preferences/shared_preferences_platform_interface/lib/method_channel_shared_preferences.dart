@@ -39,6 +39,28 @@ class MethodChannelSharedPreferencesStore
   }
 
   @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    return (await _kChannel.invokeMethod<bool>(
+      'clearWithPrefix',
+      <String, dynamic>{'prefix': prefix},
+    ))!;
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    final Map<String, Object>? preferences =
+        await _kChannel.invokeMapMethod<String, Object>(
+      'getAllWithPrefix',
+      <String, dynamic>{'prefix': prefix},
+    );
+
+    if (preferences == null) {
+      return <String, Object>{};
+    }
+    return preferences;
+  }
+
+  @override
   Future<Map<String, Object>> getAll() async {
     final Map<String, Object>? preferences =
         await _kChannel.invokeMapMethod<String, Object>('getAll');
