@@ -48,26 +48,16 @@ class MethodChannelSharedPreferencesStore
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    final Map<String, Object>? preferences =
-        await _kChannel.invokeMapMethod<String, Object>(
-      'getAllWithPrefix',
-      <String, dynamic>{'prefix': prefix},
-    );
-
-    if (preferences == null) {
-      return <String, Object>{};
-    }
-    return preferences;
+    return await _kChannel.invokeMapMethod<String, Object>(
+          'getAllWithPrefix',
+          <String, dynamic>{'prefix': prefix},
+        ) ??
+        <String, Object>{};
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    final Map<String, Object>? preferences =
-        await _kChannel.invokeMapMethod<String, Object>('getAll');
-
-    if (preferences == null) {
-      return <String, Object>{};
-    }
-    return preferences;
+    return await _kChannel.invokeMapMethod<String, Object>('getAll') ??
+        <String, Object>{};
   }
 }
