@@ -9,7 +9,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('StaggeredExample lays out children correctly',
       (WidgetTester tester) async {
+    // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
+    // ignore: deprecated_member_use
     tester.binding.window.physicalSizeTestValue = const Size(400, 200);
+
+    // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
+    // ignore: deprecated_member_use
     tester.binding.window.devicePixelRatioTestValue = 1.0;
 
     await tester.pumpWidget(
