@@ -11,7 +11,7 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-/// The live state that a camera can be in.
+/// The live state of the camera.
 ///
 /// This is the LiveData of type CameraState that Android tracks in relation
 /// to a CameraInfo instance. See

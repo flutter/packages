@@ -65,6 +65,7 @@ class CameraInfoHostApiImpl extends CameraInfoHostApi {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
         'No CameraInfo has the identifer of that which was requested.');
+
     final int liveCameraStateId = await getLiveCameraState(identifier!);
     return instanceManager
         .getInstanceWithWeakReference<LiveCameraState>(liveCameraStateId)!;

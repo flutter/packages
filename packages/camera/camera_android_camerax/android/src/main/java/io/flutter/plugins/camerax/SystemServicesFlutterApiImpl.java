@@ -19,7 +19,6 @@ public class SystemServicesFlutterApiImpl extends SystemServicesFlutterApi {
   }
 
   public void sendCameraError(@NonNull String errorDescription, @NonNull Reply<Void> reply) {
-    System.out.println("HELLO?!?!?!");
     super.onCameraError(errorDescription, reply);
   }
 }

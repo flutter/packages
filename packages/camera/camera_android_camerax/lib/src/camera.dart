@@ -16,15 +16,19 @@ import 'java_object.dart';
 /// See https://developer.android.com/reference/androidx/camera/core/Camera.
 class Camera extends JavaObject {
   /// Constructs a [Camera] that is not automatically attached to a native object.
-  Camera.detached({super.binaryMessenger, super.instanceManager})
-      : super.detached() {
-    _api = CameraHostApiImpl();
+  Camera.detached(
+      {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
+      : super.detached(
+            binaryMessenger: binaryMessenger,
+            instanceManager: instanceManager) {
+    _api = CameraHostApiImpl(
+        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
   late final CameraHostApiImpl _api;
 
-  /// Retrieves the [CameraInfo] instance that contains information about this
+  /// Retrieve the [CameraInfo] instance that contains information about this
   /// instance.
   Future<CameraInfo> getCameraInfo() async {
     return _api.getCameraInfoFromInstance(this);
