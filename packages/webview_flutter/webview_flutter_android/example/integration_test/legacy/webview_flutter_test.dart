@@ -128,6 +128,8 @@ Future<void> main() async {
     expect(gcIdentifier, 0);
   }, timeout: const Timeout(Duration(seconds: 10)));
 
+  // TODO(bparrishMines): This test is skipped because of
+  // https://github.com/flutter/flutter/issues/123327
   testWidgets(
     'WebView is released by garbage collection',
     (WidgetTester tester) async {
@@ -196,6 +198,7 @@ Future<void> main() async {
       // Create a new `WebStorage` with the default InstanceManager.
       android.WebStorage.instance = android.WebStorage();
     },
+    skip: true,
   );
 
   testWidgets('evaluateJavascript', (WidgetTester tester) async {
