@@ -142,9 +142,4 @@ class ModernMockImplementation
   Future<bool> setValue(String valueType, String key, Object value) {
     throw UnimplementedError();
   }
-
-  @override
-  Future<bool> setPrefix(String prefix) {
-    throw UnimplementedError();
-  }
 }
