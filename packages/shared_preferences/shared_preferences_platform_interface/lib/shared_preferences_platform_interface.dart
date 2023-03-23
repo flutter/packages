@@ -48,11 +48,6 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   @Deprecated('Use MockPlatformInterfaceMixin instead')
   bool get isMock => false;
 
-  /// Sets prefix for necessary platforms (web).
-  Future<bool> setPrefix(String prefix) async {
-    return true;
-  }
-
   /// Removes the value associated with the [key].
   Future<bool> remove(String key);
 
