@@ -1,4 +1,4 @@
-## 0.8.6+6
+## 0.8.6+7
 
 * Bumps androidx.activity:activity from 1.6.1 to 1.7.0.
 
