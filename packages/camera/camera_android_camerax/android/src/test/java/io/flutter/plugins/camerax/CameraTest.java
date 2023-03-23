@@ -4,13 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import androidx.camera.core.Camera;
+import androidx.camera.core.CameraInfo;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
 import org.junit.After;
@@ -42,7 +45,7 @@ public class CameraTest {
   @Test
   public void getCameraInfo_makesCallToGetCameraInfo() {
     final CameraHostApiImpl cameraHostApiImpl =
-        CameraHostApiImpl(mockBinaryMessenger, testInstanceManager);
+        new CameraHostApiImpl(mockBinaryMessenger, testInstanceManager);
     final Long cameraIdentifier = 65L;
     CameraInfo mockCameraInfo = mock(CameraInfo.class);
 

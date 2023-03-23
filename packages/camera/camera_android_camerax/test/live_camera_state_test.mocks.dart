@@ -44,3 +44,22 @@ class MockTestLiveCameraStateHostApi extends _i1.Mock
         returnValueForMissingStub: null,
       );
 }
+
+/// A class which mocks [TestInstanceManagerHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestInstanceManagerHostApi extends _i1.Mock
+    implements _i2.TestInstanceManagerHostApi {
+  MockTestInstanceManagerHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void clear() => super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
