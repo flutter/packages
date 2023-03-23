@@ -105,7 +105,8 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clear();
+    _data.removeWhere((String key, _) => key.startsWith(prefix));
+    return true;
   }
 
   @override
