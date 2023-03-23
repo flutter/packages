@@ -44,17 +44,17 @@ extension GoRouterHelper on BuildContext {
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  void push(String location, {Object? extra}) =>
-      GoRouter.of(this).push(location, extra: extra);
+  Future<T?> push<T extends Object?>(String location, {Object? extra}) =>
+      GoRouter.of(this).push<T>(location, extra: extra);
 
   /// Navigate to a named route onto the page stack.
-  void pushNamed(
+  Future<T?> pushNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) =>
-      GoRouter.of(this).pushNamed(
+      GoRouter.of(this).pushNamed<T>(
         name,
         params: params,
         queryParams: queryParams,
