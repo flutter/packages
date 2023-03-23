@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'matching.dart';
@@ -60,6 +59,9 @@ class RouteMatch {
     }
     throw MatcherError('Unexpected route type: $route', restLoc);
   }
+
+  /// Called when the corresponding [Route] associated with this route match is completed.
+  void complete([Object? value]) {}
 
   /// The matched route.
   final RouteBase route;
