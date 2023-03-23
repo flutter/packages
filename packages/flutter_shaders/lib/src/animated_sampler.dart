@@ -174,7 +174,7 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    if (size.isEmpty) {
+    if (size.isEmpty || !_enabled) {
       return;
     }
     assert(offset == Offset.zero);
