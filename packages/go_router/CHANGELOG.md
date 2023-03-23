@@ -1,3 +1,6 @@
+## 6.4.2
+- Adds `onPushRoute` callback to **GoRouter** that can be used to intercept route pushes from the application host.
+
 ## 6.4.1
 - Adds `initialExtra` to **GoRouter** to pass extra data alongside `initialRoute`.
 
