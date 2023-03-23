@@ -9,17 +9,12 @@ import 'package:go_router/src/information_provider.dart';
 const RouteInformation initialRoute = RouteInformation(location: '/');
 const RouteInformation newRoute = RouteInformation(location: '/new');
 
-PushRouteDecision _defaultPushRouteHandler(RouteInformation routeInformation) {
-  return PushRouteDecision.navigate;
-}
-
 void main() {
   group('GoRouteInformationProvider', () {
     testWidgets('notifies its listeners when set by the app',
         (WidgetTester tester) async {
       final GoRouteInformationProvider provider = GoRouteInformationProvider(
         initialRouteInformation: initialRoute,
-        onPushRoute: _defaultPushRouteHandler,
       );
       provider.addListener(expectAsync0(() {}));
       provider.value = newRoute;
@@ -29,7 +24,6 @@ void main() {
         (WidgetTester tester) async {
       final GoRouteInformationProvider provider = GoRouteInformationProvider(
         initialRouteInformation: initialRoute,
-        onPushRoute: _defaultPushRouteHandler,
       );
       provider.addListener(expectAsync0(() {}));
       provider.didPushRouteInformation(newRoute);

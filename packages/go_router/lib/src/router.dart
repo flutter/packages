@@ -64,7 +64,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
-    PushRouteCallback onPushRoute = _defaultPushRouteHandler,
+    PushRouteCallback? onPushRoute,
   })  : backButtonDispatcher = RootBackButtonDispatcher(),
         assert(
           initialExtra == null || initialLocation != null,
@@ -393,8 +393,4 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       return platformDefault;
     }
   }
-}
-
-PushRouteDecision _defaultPushRouteHandler(RouteInformation routeInformation) {
-  return PushRouteDecision.navigate;
 }

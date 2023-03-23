@@ -3380,6 +3380,118 @@ void main() {
       },
     );
   });
+
+  group('push route decision', () {
+    testWidgets(
+      'defaults to "navigate"',
+      (WidgetTester tester) async {
+        final List<RouteBase> routes = <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const SizedBox(),
+          ),
+          GoRoute(
+            path: '/dummy',
+            builder: (_, __) => const _DidPushRouteWidget(),
+          ),
+        ];
+
+        final GoRouter router = await createRouter(routes, tester);
+
+        sendPlatformUrl('/dummy');
+        await tester.pumpAndSettle();
+
+        expect(router.location, '/dummy');
+        expect(find.text('DidPushRoute: null'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'based on location',
+      (WidgetTester tester) async {
+        final List<RouteBase> routes = <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const _DidPushRouteWidget(),
+          ),
+          GoRoute(
+            path: '/dummy',
+            builder: (_, __) => const _DidPushRouteWidget(),
+          ),
+        ];
+
+        final GoRouter router = await createRouter(
+          routes,
+          tester,
+          onPushRoute: (RouteInformation routeInformation) {
+            final String? location = routeInformation.location;
+
+            switch (location) {
+              case '/prevent':
+                return PushRouteDecision.prevent;
+              case '/delegate':
+                return PushRouteDecision.delegate;
+            }
+
+            return PushRouteDecision.navigate;
+          },
+        );
+
+        sendPlatformUrl('/dummy');
+        await tester.pumpAndSettle();
+        expect(router.location, '/dummy');
+        expect(find.text('DidPushRoute: null'), findsOneWidget);
+
+        sendPlatformUrl('/prevent');
+        await tester.pumpAndSettle();
+        expect(router.location, '/dummy');
+        expect(find.text('DidPushRoute: null'), findsOneWidget);
+
+        sendPlatformUrl('/delegate');
+        await tester.pumpAndSettle();
+        expect(router.location, '/dummy');
+        expect(find.text('DidPushRoute: /delegate'), findsOneWidget);
+      },
+    );
+  });
+}
+
+class _DidPushRouteWidget extends StatefulWidget {
+  const _DidPushRouteWidget();
+
+  @override
+  State<_DidPushRouteWidget> createState() => _DidPushRouteWidgetState();
+}
+
+class _DidPushRouteWidgetState extends State<_DidPushRouteWidget>
+    with WidgetsBindingObserver {
+  String? _route;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Future<bool> didPushRoute(String route) {
+    if (mounted) {
+      _route = route;
+      setState(() {});
+    }
+    return SynchronousFuture<bool>(true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('DidPushRoute: $_route');
+  }
 }
 
 /// This allows a value of type T or T? to be treated as a value of type T?.

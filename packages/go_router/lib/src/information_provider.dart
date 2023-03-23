@@ -32,7 +32,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   /// Creates a [GoRouteInformationProvider].
   GoRouteInformationProvider({
     required RouteInformation initialRouteInformation,
-    required PushRouteCallback onPushRoute,
+    PushRouteCallback? onPushRoute,
     Listenable? refreshListenable,
   })  : _refreshListenable = refreshListenable,
         _onPushRoute = onPushRoute,
@@ -41,7 +41,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   final Listenable? _refreshListenable;
-  final PushRouteCallback _onPushRoute;
+  final PushRouteCallback? _onPushRoute;
 
   // ignore: unnecessary_non_null_assertion
   static WidgetsBinding get _binding => WidgetsBinding.instance;
@@ -84,7 +84,11 @@ class GoRouteInformationProvider extends RouteInformationProvider
   Future<bool> _platformReportsNewRouteInformation(
     RouteInformation routeInformation,
   ) async {
-    switch (await _onPushRoute(routeInformation)) {
+    final PushRouteDecision decision =
+        await _onPushRoute?.call(routeInformation) ??
+            PushRouteDecision.navigate;
+
+    switch (decision) {
       case PushRouteDecision.delegate:
         return false;
       case PushRouteDecision.prevent:

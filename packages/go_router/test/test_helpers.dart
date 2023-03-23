@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/information_provider.dart';
 
 Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(
@@ -145,6 +146,7 @@ Future<GoRouter> createRouter(
   int redirectLimit = 5,
   GlobalKey<NavigatorState>? navigatorKey,
   GoRouterWidgetBuilder? errorBuilder,
+  PushRouteCallback? onPushRoute,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
@@ -156,6 +158,7 @@ Future<GoRouter> createRouter(
         (BuildContext context, GoRouterState state) =>
             TestErrorScreen(state.error!),
     navigatorKey: navigatorKey,
+    onPushRoute: onPushRoute,
   );
   await tester.pumpWidget(
     MaterialApp.router(
