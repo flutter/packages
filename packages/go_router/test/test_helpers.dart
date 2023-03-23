@@ -143,6 +143,7 @@ Future<GoRouter> createRouter(
   WidgetTester tester, {
   GoRouterRedirect? redirect,
   String initialLocation = '/',
+  Object? initialExtra,
   int redirectLimit = 5,
   GlobalKey<NavigatorState>? navigatorKey,
   GoRouterWidgetBuilder? errorBuilder,
@@ -151,6 +152,7 @@ Future<GoRouter> createRouter(
     routes: routes,
     redirect: redirect,
     initialLocation: initialLocation,
+    initialExtra: initialExtra,
     redirectLimit: redirectLimit,
     errorBuilder: errorBuilder ??
         (BuildContext context, GoRouterState state) =>

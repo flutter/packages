@@ -1,3 +1,7 @@
+## 2.0.20
+
+* Adds README discussion of `reload()`.
+
 ## 2.0.19
 
 * Updates README to use code excerpts.
