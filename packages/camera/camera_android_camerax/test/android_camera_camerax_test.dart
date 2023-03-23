@@ -390,7 +390,7 @@ void main() {
     camera.preview = MockPreview();
 
     when(mockProcessCameraProvider.bindToLifecycle(
-            camera.cameraSelector!, <UseCase>[camera.preview!]))
+            camera.cameraSelector, <UseCase>[camera.preview!]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
@@ -417,7 +417,7 @@ void main() {
     camera.preview = MockPreview();
 
     when(mockProcessCameraProvider.bindToLifecycle(
-            camera.cameraSelector!, <UseCase>[camera.preview!]))
+            camera.cameraSelector, <UseCase>[camera.preview!]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
@@ -455,7 +455,7 @@ void main() {
     camera.preview = MockPreview();
 
     when(mockProcessCameraProvider.bindToLifecycle(
-            camera.cameraSelector!, <UseCase>[camera.preview!]))
+            camera.cameraSelector, <UseCase>[camera.preview!]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
