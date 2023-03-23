@@ -17,8 +17,7 @@ void main() {
   group('GoRouteInformationProvider', () {
     testWidgets('notifies its listeners when set by the app',
         (WidgetTester tester) async {
-      late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(
+      final GoRouteInformationProvider provider = GoRouteInformationProvider(
         initialRouteInformation: initialRoute,
         onPushRoute: _defaultPushRouteHandler,
       );
@@ -28,13 +27,42 @@ void main() {
 
     testWidgets('notifies its listeners when set by the platform',
         (WidgetTester tester) async {
-      late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(
+      final GoRouteInformationProvider provider = GoRouteInformationProvider(
         initialRouteInformation: initialRoute,
         onPushRoute: _defaultPushRouteHandler,
       );
       provider.addListener(expectAsync0(() {}));
       provider.didPushRouteInformation(newRoute);
+    });
+
+    group('[push route decision]', () {
+      test('didPushRoute is false for "delegate"', () async {
+        final GoRouteInformationProvider provider = GoRouteInformationProvider(
+          initialRouteInformation: initialRoute,
+          onPushRoute: (_) => PushRouteDecision.delegate,
+        );
+        expect(await provider.didPushRoute('/new'), isFalse);
+        expect(await provider.didPushRouteInformation(newRoute), isFalse);
+      });
+
+      test('didPushRoute is true for "prevent"', () async {
+        final GoRouteInformationProvider provider = GoRouteInformationProvider(
+          initialRouteInformation: initialRoute,
+          onPushRoute: (_) => PushRouteDecision.prevent,
+        );
+        expect(await provider.didPushRoute('/new'), isTrue);
+        expect(await provider.didPushRouteInformation(newRoute), isTrue);
+      });
+
+      test('didPushRoute is true for "navigate"', () async {
+        final GoRouteInformationProvider provider = GoRouteInformationProvider(
+          initialRouteInformation: initialRoute,
+          onPushRoute: (_) => PushRouteDecision.navigate,
+        );
+        provider.addListener(expectAsync0(() {}));
+        expect(await provider.didPushRoute('/new'), isTrue);
+        expect(await provider.didPushRouteInformation(newRoute), isTrue);
+      });
     });
   });
 }

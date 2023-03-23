@@ -90,6 +90,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
       case PushRouteDecision.prevent:
         return true;
       case PushRouteDecision.navigate:
+        assert(hasListeners);
         if (_value != routeInformation) {
           _value = routeInformation;
           _valueInEngine = routeInformation;
@@ -125,18 +126,13 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   @override
-  Future<bool> didPushRouteInformation(
-    RouteInformation routeInformation,
-  ) async {
-    assert(hasListeners);
+  Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
     return _platformReportsNewRouteInformation(routeInformation);
   }
 
   @override
   Future<bool> didPushRoute(String route) {
-    assert(hasListeners);
-    return _platformReportsNewRouteInformation(
-      RouteInformation(location: route),
-    );
+    final RouteInformation routeInformation = RouteInformation(location: route);
+    return _platformReportsNewRouteInformation(routeInformation);
   }
 }
