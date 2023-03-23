@@ -1,3 +1,7 @@
+## 2.6.1
+
+* New video player network constructor.
+
 ## 2.6.0
 
 * Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
