@@ -8,6 +8,7 @@ library go_router;
 
 export 'src/configuration.dart'
     show GoRoute, GoRouterState, RouteBase, ShellRoute;
+export 'src/information_provider.dart' show PushRouteDecision;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/pages/custom_transition_page.dart';

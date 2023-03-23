@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 /// The decision on how to handle the route
 /// when host tells the application to push a new one.
 enum PushRouteDecision {
-  /// Delegate the route information to [WidgetsBindingObserver.didPushRoute]),
+  /// Delegate the route information to [WidgetsBindingObserver.didPushRoute],
   /// in registration order, until one returns true.
   delegate,
 
