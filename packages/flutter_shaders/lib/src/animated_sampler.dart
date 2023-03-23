@@ -232,6 +232,7 @@ class _ShaderSamplerBuilderLayer extends OffsetLayer {
 
   @override
   void addToScene(ui.SceneBuilder builder) {
+    if (size.isEmpty) return;
     final ui.Image image = _buildChildScene(
       offset & size,
       devicePixelRatio,
