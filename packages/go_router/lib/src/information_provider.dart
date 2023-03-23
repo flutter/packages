@@ -2,9 +2,29 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
+/// The decision on how to handle the route
+/// when host tells the application to push a new one.
+enum PushRouteDecision {
+  /// Delegate the route information to [WidgetsBindingObserver.didPushRoute]),
+  /// in registration order, until one returns true.
+  delegate,
+
+  /// Prevent the route information from being addressed by [GoRouter].
+  prevent,
+
+  /// Delegate the route information to the [GoRouter].
+  navigate,
+}
+
+/// Signature for callbacks that report a pushed route information.
+typedef PushRouteCallback = FutureOr<PushRouteDecision> Function(
+  RouteInformation routeInformation,
+);
 
 /// The [RouteInformationProvider] created by go_router.
 class GoRouteInformationProvider extends RouteInformationProvider
@@ -12,13 +32,16 @@ class GoRouteInformationProvider extends RouteInformationProvider
   /// Creates a [GoRouteInformationProvider].
   GoRouteInformationProvider({
     required RouteInformation initialRouteInformation,
+    required PushRouteCallback onPushRoute,
     Listenable? refreshListenable,
   })  : _refreshListenable = refreshListenable,
+        _onPushRoute = onPushRoute,
         _value = initialRouteInformation {
     _refreshListenable?.addListener(notifyListeners);
   }
 
   final Listenable? _refreshListenable;
+  final PushRouteCallback _onPushRoute;
 
   // ignore: unnecessary_non_null_assertion
   static WidgetsBinding get _binding => WidgetsBinding.instance;
@@ -58,13 +81,22 @@ class GoRouteInformationProvider extends RouteInformationProvider
   RouteInformation _valueInEngine =
       RouteInformation(location: _binding.platformDispatcher.defaultRouteName);
 
-  void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
-    if (_value == routeInformation) {
-      return;
+  Future<bool> _platformReportsNewRouteInformation(
+    RouteInformation routeInformation,
+  ) async {
+    switch (await _onPushRoute(routeInformation)) {
+      case PushRouteDecision.delegate:
+        return false;
+      case PushRouteDecision.prevent:
+        return true;
+      case PushRouteDecision.navigate:
+        if (_value != routeInformation) {
+          _value = routeInformation;
+          _valueInEngine = routeInformation;
+          notifyListeners();
+        }
+        return true;
     }
-    _value = routeInformation;
-    _valueInEngine = routeInformation;
-    notifyListeners();
   }
 
   @override
@@ -93,16 +125,18 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   @override
-  Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
+  Future<bool> didPushRouteInformation(
+    RouteInformation routeInformation,
+  ) async {
     assert(hasListeners);
-    _platformReportsNewRouteInformation(routeInformation);
-    return SynchronousFuture<bool>(true);
+    return _platformReportsNewRouteInformation(routeInformation);
   }
 
   @override
   Future<bool> didPushRoute(String route) {
     assert(hasListeners);
-    _platformReportsNewRouteInformation(RouteInformation(location: route));
-    return SynchronousFuture<bool>(true);
+    return _platformReportsNewRouteInformation(
+      RouteInformation(location: route),
+    );
   }
 }
