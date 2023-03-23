@@ -420,7 +420,7 @@ class MockBuildContext extends _i1.Mock implements _i6.BuildContext {
         ),
       ) as _i6.InheritedWidget);
   @override
-  void visitAncestorElements(_i6.ConditionalElementVisitor? visitor) =>
+  void visitAncestorElements(bool Function(_i6.Element)? visitor) =>
       super.noSuchMethod(
         Invocation.method(
           #visitAncestorElements,
