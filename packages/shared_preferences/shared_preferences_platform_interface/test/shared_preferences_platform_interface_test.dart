@@ -70,11 +70,6 @@ class IllegalImplementation implements SharedPreferencesStorePlatform {
   Future<bool> setValue(String valueType, String key, Object value) {
     throw UnimplementedError();
   }
-
-  @override
-  Future<bool> setPrefix(String prefix) {
-    throw UnimplementedError();
-  }
 }
 
 class LegacyIsMockImplementation implements SharedPreferencesStorePlatform {
@@ -108,11 +103,6 @@ class LegacyIsMockImplementation implements SharedPreferencesStorePlatform {
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> setPrefix(String prefix) {
     throw UnimplementedError();
   }
 }
