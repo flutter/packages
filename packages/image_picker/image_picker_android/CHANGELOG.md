@@ -1,5 +1,9 @@
 ## 0.8.6+6
 
+* Bumps androidx.activity:activity from 1.6.1 to 1.7.0.
+
+## 0.8.6+6
+
 * Bumps androidx.core:core from 1.8.0 to 1.9.0.
 
 ## 0.8.6+5
