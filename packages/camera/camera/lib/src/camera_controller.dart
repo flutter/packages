@@ -395,7 +395,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   }
 
   /// Sets the description of the camera.
-  ///
+  /// 
   /// Throws a [CameraException] if setting the description fails.
   Future<void> setDescription(CameraDescription description) async {
     if (value.isRecordingVideo) {
