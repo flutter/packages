@@ -1,3 +1,7 @@
+## 6.5.0
+
+- Supports returning values on pop.
+
 ## 6.4.1
 - Adds `initialExtra` to **GoRouter** to pass extra data alongside `initialRoute`.
 
@@ -21,6 +25,7 @@
 ## 6.1.0
 
 - Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.
+
 
 ## 6.0.10
 
