@@ -1,3 +1,7 @@
+## 0.5.3
+
+* Initial support for custom overlays. [#98596](https://github.com/flutter/flutter/issues/98596).
+
 ## 0.5.2
 
 * Adds options for gesture handling and tilt controls.
@@ -36,10 +40,6 @@
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
-
-## 0.4.1
-
-* Initial support for custom overlays. [#98596](https://github.com/flutter/flutter/issues/98596).
 
 ## 0.4.0+5
 

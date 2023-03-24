@@ -14,14 +14,14 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'google_maps_controller_test.mocks.dart';
-
-@GenerateMocks(<Type>[], customMocks: <MockSpec<dynamic>>[
-  MockSpec<CirclesController>(onMissingStub: OnMissingStub.returnDefault),
-  MockSpec<PolygonsController>(onMissingStub: OnMissingStub.returnDefault),
-  MockSpec<PolylinesController>(onMissingStub: OnMissingStub.returnDefault),
-  MockSpec<MarkersController>(onMissingStub: OnMissingStub.returnDefault),
+@GenerateNiceMocks(<MockSpec<dynamic>>[
+  MockSpec<CirclesController>(),
+  MockSpec<PolygonsController>(),
+  MockSpec<PolylinesController>(),
+  MockSpec<MarkersController>(),
+  MockSpec<TileOverlaysController>(),
 ])
+import 'google_maps_controller_test.mocks.dart';
 
 /// Test Google Map Controller
 void main() {
