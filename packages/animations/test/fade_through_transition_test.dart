@@ -487,7 +487,7 @@ class _TestWidget extends StatelessWidget {
 }
 
 class _StatefulTestWidget extends StatefulWidget {
-  const _StatefulTestWidget({Key? key, this.name}) : super(key: key);
+  const _StatefulTestWidget({super.key, this.name});
 
   final String? name;
 

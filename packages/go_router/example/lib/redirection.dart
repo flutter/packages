@@ -39,7 +39,7 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   final LoginInfo _loginInfo = LoginInfo();
 
@@ -98,7 +98,7 @@ class App extends StatelessWidget {
 /// The login screen.
 class LoginScreen extends StatelessWidget {
   /// Creates a [LoginScreen].
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -126,7 +126,7 @@ class LoginScreen extends StatelessWidget {
 /// The home screen.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

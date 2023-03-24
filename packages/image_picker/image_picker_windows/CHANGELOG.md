@@ -1,3 +1,8 @@
+## 0.1.0+6
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.1.0+5
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

@@ -15,7 +15,7 @@ void main() => runApp(const VideoApp());
 
 /// Stateful widget to fetch and then display video content.
 class VideoApp extends StatefulWidget {
-  const VideoApp({Key? key}) : super(key: key);
+  const VideoApp({super.key});
 
   @override
   _VideoAppState createState() => _VideoAppState();

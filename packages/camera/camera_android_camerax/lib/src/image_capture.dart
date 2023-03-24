@@ -126,7 +126,8 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
 
   /// Sets the flash mode for the specified [ImageCapture] instance to take
   /// a picture with.
-  void setFlashModeFromInstance(ImageCapture instance, int flashMode) {
+  Future<void> setFlashModeFromInstance(
+      ImageCapture instance, int flashMode) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
         'No ImageCapture has the identifer of that requested to get the resolution information for.');

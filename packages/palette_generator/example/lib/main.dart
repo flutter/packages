@@ -19,7 +19,7 @@ const Color _kPlaceholderColor = Color(0x80404040);
 /// The main Application class.
 class MyApp extends StatelessWidget {
   /// Creates the main Application class.
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -43,11 +43,11 @@ class MyApp extends StatelessWidget {
 class ImageColors extends StatefulWidget {
   /// Creates the home page.
   const ImageColors({
-    Key? key,
+    super.key,
     this.title,
     required this.image,
     this.imageSize,
-  }) : super(key: key);
+  });
 
   /// The title that is shown at the top of the page.
   final String? title;
@@ -194,7 +194,7 @@ class PaletteSwatches extends StatelessWidget {
   ///
   /// The [generator] is optional. If it is null, then the display will
   /// just be an empty container.
-  const PaletteSwatches({Key? key, this.generator}) : super(key: key);
+  const PaletteSwatches({super.key, this.generator});
 
   /// The [PaletteGenerator] that contains all of the swatches that we're going
   /// to display.
@@ -244,10 +244,10 @@ class PaletteSwatch extends StatelessWidget {
   /// then the swatch will show a placeholder instead, to indicate
   /// that there is no color.
   const PaletteSwatch({
-    Key? key,
+    super.key,
     this.color,
     this.label,
-  }) : super(key: key);
+  });
 
   /// The color of the swatch.
   final Color? color;

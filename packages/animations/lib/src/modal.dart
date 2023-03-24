@@ -98,10 +98,10 @@ class _ModalRoute<T> extends PopupRoute<T> {
     required _ModalTransitionBuilder transitionBuilder,
     required this.builder,
     RouteSettings? routeSettings,
-    ui.ImageFilter? filter,
+    super.filter,
   })  : assert(!barrierDismissible || barrierLabel != null),
         _transitionBuilder = transitionBuilder,
-        super(filter: filter, settings: routeSettings);
+        super(settings: routeSettings);
 
   @override
   final Color? barrierColor;

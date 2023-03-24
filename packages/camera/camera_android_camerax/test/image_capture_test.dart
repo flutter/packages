@@ -76,7 +76,7 @@ void main() {
       instanceManager.addHostCreatedInstance(
         imageCapture,
         0,
-        onCopy: (_) => ImageCapture.detached(),
+        onCopy: (_) => ImageCapture.detached(instanceManager: instanceManager),
       );
 
       imageCapture.setFlashMode(flashMode);

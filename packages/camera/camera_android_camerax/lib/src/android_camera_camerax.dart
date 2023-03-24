@@ -46,7 +46,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   ImageCapture? imageCapture;
 
-  /// 
+  /// The [ImageAnalysis] instance that can be configured to analyze individual
+  /// frames.
   ImageAnalysis? imageAnalysis;
 
   /// The [CameraSelector] used to configure the [processCameraProvider] to use
@@ -311,6 +312,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// listen again later.
   ///
   /// [cameraId] and [options] are not used.
+  @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
     assert(processCameraProvider != null);

@@ -4,8 +4,10 @@
 
 import 'package:file/file.dart';
 import 'package:git/git.dart';
+import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
@@ -32,21 +34,28 @@ class PubspecCheckCommand extends PackageLoopingCommand {
           gitDir: gitDir,
         ) {
     argParser.addOption(
-      _minMinDartVersionFlag,
-      help:
-          'The minimum Dart version to allow as the minimum SDK constraint.\n\n'
-          'This is only enforced for non-Flutter packages; Flutter packages '
-          'use --$_minMinFlutterVersionFlag',
-    );
-    argParser.addOption(
       _minMinFlutterVersionFlag,
       help:
           'The minimum Flutter version to allow as the minimum SDK constraint.',
     );
+    argParser.addMultiOption(_allowDependenciesFlag,
+        help: 'Packages (comma separated) that are allowed as dependencies or '
+            'dev_dependencies.\n\n'
+            'Alternately, a list of one or more YAML files that contain a list '
+            'of allowed dependencies.',
+        defaultsTo: <String>[]);
+    argParser.addMultiOption(_allowPinnedDependenciesFlag,
+        help: 'Packages (comma separated) that are allowed as dependencies or '
+            'dev_dependencies only if pinned to an exact version.\n\n'
+            'Alternately, a list of one or more YAML files that contain a list '
+            'of allowed pinned dependencies.',
+        defaultsTo: <String>[]);
   }
 
-  static const String _minMinDartVersionFlag = 'min-min-dart-version';
   static const String _minMinFlutterVersionFlag = 'min-min-flutter-version';
+  static const String _allowDependenciesFlag = 'allow-dependencies';
+  static const String _allowPinnedDependenciesFlag =
+      'allow-pinned-dependencies';
 
   // Section order for plugins. Because the 'flutter' section is critical
   // information for plugins, and usually small, it goes near the top unlike in
@@ -70,6 +79,13 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   static const String _expectedIssueLinkFormat =
       'https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A';
 
+  // The names of all published packages in the repository.
+  late final Set<String> _localPackages = <String>{};
+
+  // Packages on the explicit allow list.
+  late final Set<String> _allowedUnpinnedPackages = <String>{};
+  late final Set<String> _allowedPinnedPackages = <String>{};
+
   @override
   final String name = 'pubspec-check';
 
@@ -83,6 +99,40 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   @override
   PackageLoopingType get packageLoopingType =>
       PackageLoopingType.includeAllSubpackages;
+
+  @override
+  Future<void> initializeRun() async {
+    // Find all local, published packages.
+    for (final File pubspecFile in (await packagesDir.parent
+        .list(recursive: true, followLinks: false)
+        .toList())
+        .whereType<File>()
+        .where((File entity) => p.basename(entity.path) == 'pubspec.yaml')) {
+      final Pubspec? pubspec = _tryParsePubspec(pubspecFile.readAsStringSync());
+      if (pubspec != null && pubspec.publishTo != 'none') {
+        _localPackages.add(pubspec.name);
+      }
+    }
+    // Load explicitly allowed packages.
+    _allowedUnpinnedPackages
+        .addAll(_getAllowedPackages(_allowDependenciesFlag));
+    _allowedPinnedPackages
+        .addAll(_getAllowedPackages(_allowPinnedDependenciesFlag));
+  }
+
+  Iterable<String> _getAllowedPackages(String flag) {
+    return getStringListArg(flag).expand<String>((String item) {
+      if (item.endsWith('.yaml')) {
+        final File file = packagesDir.fileSystem.file(item);
+        final Object? yaml = loadYaml(file.readAsStringSync());
+        if (yaml == null) {
+          return <String>[];
+        }
+        return (yaml as YamlList).toList().cast<String>();
+      }
+      return <String>[item];
+    });
+  }
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
@@ -117,15 +167,11 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       printError('$listIndentation${sectionOrder.join('\n$listIndentation')}');
     }
 
-    final String minMinDartVersionString = getStringArg(_minMinDartVersionFlag);
     final String minMinFlutterVersionString =
         getStringArg(_minMinFlutterVersionFlag);
     final String? minVersionError = _checkForMinimumVersionError(
       pubspec,
       package,
-      minMinDartVersion: minMinDartVersionString.isEmpty
-          ? null
-          : Version.parse(minMinDartVersionString),
       minMinFlutterVersion: minMinFlutterVersionString.isEmpty
           ? null
           : Version.parse(minMinFlutterVersionString),
@@ -149,6 +195,12 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         printError('$indentation$defaultPackageError');
         passing = false;
       }
+    }
+
+    final String? dependenciesError = _checkDependencies(pubspec);
+    if (dependenciesError != null) {
+      printError('$indentation$dependenciesError');
+      passing = false;
     }
 
     // Ignore metadata that's only relevant for published packages if the
@@ -368,33 +420,120 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   String? _checkForMinimumVersionError(
     Pubspec pubspec,
     RepositoryPackage package, {
-    Version? minMinDartVersion,
     Version? minMinFlutterVersion,
   }) {
-    final VersionConstraint? dartConstraint = pubspec.environment?['sdk'];
-    final VersionConstraint? flutterConstraint =
-        pubspec.environment?['flutter'];
+    String unknownDartVersionError(Version flutterVersion) {
+      return 'Dart SDK version for Fluter SDK version '
+          '$flutterVersion is unknown. '
+          'Please update the map for getDartSdkForFlutterSdk with the '
+          'corresponding Dart version.';
+    }
 
-    if (flutterConstraint != null) {
-      // Validate Flutter packages against the Flutter requirement.
-      if (minMinFlutterVersion != null) {
-        final Version? constraintMin =
-            flutterConstraint is VersionRange ? flutterConstraint.min : null;
-        if ((constraintMin ?? Version(0, 0, 0)) < minMinFlutterVersion) {
-          return 'Minimum allowed Flutter version $constraintMin is less than $minMinFlutterVersion';
+    Version? minMinDartVersion;
+    if (minMinFlutterVersion != null) {
+      minMinDartVersion = getDartSdkForFlutterSdk(minMinFlutterVersion);
+      if (minMinDartVersion == null) {
+        return unknownDartVersionError(minMinFlutterVersion);
+      }
+    }
+
+    final Version? dartConstraintMin =
+        _minimumForConstraint(pubspec.environment?['sdk']);
+    final Version? flutterConstraintMin =
+        _minimumForConstraint(pubspec.environment?['flutter']);
+
+    // Validate the Flutter constraint, if any.
+    if (flutterConstraintMin != null && minMinFlutterVersion != null) {
+      if (flutterConstraintMin < minMinFlutterVersion) {
+        return 'Minimum allowed Flutter version $flutterConstraintMin is less '
+            'than $minMinFlutterVersion';
+      }
+    }
+
+    // Validate the Dart constraint, if any.
+    if (dartConstraintMin != null) {
+      // Ensure that it satisfies the minimum.
+      if (minMinDartVersion != null) {
+        if (dartConstraintMin < minMinDartVersion) {
+          return 'Minimum allowed Dart version $dartConstraintMin is less than $minMinDartVersion';
         }
       }
-    } else {
-      // Validate non-Flutter packages against the Dart requirement.
-      if (minMinDartVersion != null) {
-        final Version? constraintMin =
-            dartConstraint is VersionRange ? dartConstraint.min : null;
-        if ((constraintMin ?? Version(0, 0, 0)) < minMinDartVersion) {
-          return 'Minimum allowed Dart version $constraintMin is less than $minMinDartVersion';
+
+      // Ensure that if there is also a Flutter constraint, they are consistent.
+      if (flutterConstraintMin != null) {
+        final Version? dartVersionForFlutterMinimum =
+            getDartSdkForFlutterSdk(flutterConstraintMin);
+        if (dartVersionForFlutterMinimum == null) {
+          return unknownDartVersionError(flutterConstraintMin);
+        }
+        if (dartVersionForFlutterMinimum != dartConstraintMin) {
+          return 'The minimum Dart version is $dartConstraintMin, but the '
+              'minimum Flutter version of $flutterConstraintMin shipped with '
+              'Dart $dartVersionForFlutterMinimum. Please use consistent lower '
+              'SDK bounds';
         }
       }
     }
 
     return null;
+  }
+
+  /// Returns the minumum version allowed by [constraint], or null if the
+  /// constraint is null.
+  Version? _minimumForConstraint(VersionConstraint? constraint) {
+    if (constraint == null) {
+      return null;
+    }
+    Version? result;
+    if (constraint is VersionRange) {
+      result = constraint.min;
+    }
+    return result ?? Version.none;
+  }
+
+  // Validates the dependencies for a package, returning an error string if
+  // there are any that aren't allowed.
+  String? _checkDependencies(Pubspec pubspec) {
+    final Set<String> badDependencies = <String>{};
+    for (final Map<String, Dependency> dependencies
+        in <Map<String, Dependency>>[
+      pubspec.dependencies,
+      pubspec.devDependencies
+    ]) {
+      dependencies.forEach((String name, Dependency dependency) {
+        if (!_shouldAllowDependency(name, dependency)) {
+          badDependencies.add(name);
+        }
+      });
+    }
+    if (badDependencies.isEmpty) {
+      return null;
+    }
+    return 'The following unexpected non-local dependencies were found:\n'
+        '${badDependencies.map((String name) => '  $name').join('\n')}\n'
+        'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+        'for more information and next steps.';
+  }
+
+  // Checks whether a given dependency is allowed.
+  bool _shouldAllowDependency(String name, Dependency dependency) {
+    if (dependency is PathDependency || dependency is SdkDependency) {
+      return true;
+    }
+    if (_localPackages.contains(name) ||
+        _allowedUnpinnedPackages.contains(name)) {
+      return true;
+    }
+    if (dependency is HostedDependency &&
+        _allowedPinnedPackages.contains(name)) {
+      final VersionConstraint constraint = dependency.version;
+      if (constraint is VersionRange &&
+          constraint.min != null &&
+          constraint.max != null &&
+          constraint.min == constraint.max) {
+        return true;
+      }
+    }
+    return false;
   }
 }

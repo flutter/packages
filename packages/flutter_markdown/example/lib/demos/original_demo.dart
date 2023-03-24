@@ -146,7 +146,7 @@ This demo example is being preserved for reference purposes.
 
 class OriginalMarkdownDemo extends StatelessWidget
     implements MarkdownDemoWidget {
-  OriginalMarkdownDemo({Key? key}) : super(key: key);
+  OriginalMarkdownDemo({super.key});
 
   static const String _title = 'Original Markdown Demo';
 

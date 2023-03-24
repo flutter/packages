@@ -54,6 +54,8 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    compileSdkVersion flutter.compileSdkVersion
+
     signingConfigs {
         release {
             storeFile project.KEYSTORE_STORE_FILE
@@ -62,8 +64,6 @@ android {
             keyPassword project.KEYSTORE_KEY_PASSWORD
         }
     }
-
-    compileSdkVersion 31
 
     lintOptions {
         disable 'InvalidPackage'
@@ -109,7 +109,7 @@ dependencies {
     implementation 'com.android.billingclient:billing:5.0.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.1.1'
-    testImplementation 'org.json:json:20220924'
+    testImplementation 'org.json:json:20230227'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }

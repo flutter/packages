@@ -147,7 +147,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   ///
   /// The [data] argument must not be null.
   const MarkdownWidget({
-    Key? key,
+    super.key,
     required this.data,
     this.selectable = false,
     this.styleSheet,
@@ -168,7 +168,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.listItemCrossAxisAlignment =
         MarkdownListItemCrossAxisAlignment.baseline,
     this.softLineBreak = false,
-  }) : super(key: key);
+  });
 
   /// The Markdown to display.
   final String data;
@@ -389,52 +389,31 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
 class MarkdownBody extends MarkdownWidget {
   /// Creates a non-scrolling widget that parses and displays Markdown.
   const MarkdownBody({
-    Key? key,
-    required String data,
-    bool selectable = false,
-    MarkdownStyleSheet? styleSheet,
-    MarkdownStyleSheetBaseTheme? styleSheetTheme,
-    SyntaxHighlighter? syntaxHighlighter,
-    MarkdownTapLinkCallback? onTapLink,
-    VoidCallback? onTapText,
-    String? imageDirectory,
-    List<md.BlockSyntax>? blockSyntaxes,
-    List<md.InlineSyntax>? inlineSyntaxes,
-    md.ExtensionSet? extensionSet,
-    MarkdownImageBuilder? imageBuilder,
-    MarkdownCheckboxBuilder? checkboxBuilder,
-    MarkdownBulletBuilder? bulletBuilder,
-    Map<String, MarkdownElementBuilder> builders =
-        const <String, MarkdownElementBuilder>{},
-    Map<String, MarkdownPaddingBuilder> paddingBuilders =
-        const <String, MarkdownPaddingBuilder>{},
-    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
-        MarkdownListItemCrossAxisAlignment.baseline,
+    super.key,
+    required super.data,
+    super.selectable,
+    super.styleSheet,
+    // TODO(stuartmorgan): Remove this once 3.0 is no longer part of the
+    // legacy analysis matrix; it's a false positive there.
+    // ignore: avoid_init_to_null
+    super.styleSheetTheme = null,
+    super.syntaxHighlighter,
+    super.onTapLink,
+    super.onTapText,
+    super.imageDirectory,
+    super.blockSyntaxes,
+    super.inlineSyntaxes,
+    super.extensionSet,
+    super.imageBuilder,
+    super.checkboxBuilder,
+    super.bulletBuilder,
+    super.builders,
+    super.paddingBuilders,
+    super.listItemCrossAxisAlignment,
     this.shrinkWrap = true,
-    bool fitContent = true,
-    bool softLineBreak = false,
-  }) : super(
-          key: key,
-          data: data,
-          selectable: selectable,
-          styleSheet: styleSheet,
-          styleSheetTheme: styleSheetTheme,
-          syntaxHighlighter: syntaxHighlighter,
-          onTapLink: onTapLink,
-          onTapText: onTapText,
-          imageDirectory: imageDirectory,
-          blockSyntaxes: blockSyntaxes,
-          inlineSyntaxes: inlineSyntaxes,
-          extensionSet: extensionSet,
-          imageBuilder: imageBuilder,
-          checkboxBuilder: checkboxBuilder,
-          builders: builders,
-          paddingBuilders: paddingBuilders,
-          listItemCrossAxisAlignment: listItemCrossAxisAlignment,
-          bulletBuilder: bulletBuilder,
-          fitContent: fitContent,
-          softLineBreak: softLineBreak,
-        );
+    super.fitContent = true,
+    super.softLineBreak,
+  });
 
   /// If [shrinkWrap] is `true`, [MarkdownBody] will take the minimum height
   /// that wraps its content. Otherwise, [MarkdownBody] will expand to the
@@ -467,53 +446,33 @@ class MarkdownBody extends MarkdownWidget {
 class Markdown extends MarkdownWidget {
   /// Creates a scrolling widget that parses and displays Markdown.
   const Markdown({
-    Key? key,
-    required String data,
-    bool selectable = false,
-    MarkdownStyleSheet? styleSheet,
-    MarkdownStyleSheetBaseTheme? styleSheetTheme,
-    SyntaxHighlighter? syntaxHighlighter,
-    MarkdownTapLinkCallback? onTapLink,
-    VoidCallback? onTapText,
-    String? imageDirectory,
-    List<md.BlockSyntax>? blockSyntaxes,
-    List<md.InlineSyntax>? inlineSyntaxes,
-    md.ExtensionSet? extensionSet,
-    MarkdownImageBuilder? imageBuilder,
-    MarkdownCheckboxBuilder? checkboxBuilder,
-    MarkdownBulletBuilder? bulletBuilder,
-    Map<String, MarkdownElementBuilder> builders =
-        const <String, MarkdownElementBuilder>{},
-    Map<String, MarkdownPaddingBuilder> paddingBuilders =
-        const <String, MarkdownPaddingBuilder>{},
-    MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment =
-        MarkdownListItemCrossAxisAlignment.baseline,
+    super.key,
+    required super.data,
+    super.selectable,
+    super.styleSheet,
+    // TODO(stuartmorgan): Remove this once 3.0 is no longer part of the
+    // legacy analysis matrix; it's a false positive there.
+    // ignore: avoid_init_to_null
+    super.styleSheetTheme = null,
+    super.syntaxHighlighter,
+    super.onTapLink,
+    super.onTapText,
+    super.imageDirectory,
+    super.blockSyntaxes,
+    super.inlineSyntaxes,
+    super.extensionSet,
+    super.imageBuilder,
+    super.checkboxBuilder,
+    super.bulletBuilder,
+    super.builders,
+    super.paddingBuilders,
+    super.listItemCrossAxisAlignment,
     this.padding = const EdgeInsets.all(16.0),
     this.controller,
     this.physics,
     this.shrinkWrap = false,
-    bool softLineBreak = false,
-  }) : super(
-          key: key,
-          data: data,
-          selectable: selectable,
-          styleSheet: styleSheet,
-          styleSheetTheme: styleSheetTheme,
-          syntaxHighlighter: syntaxHighlighter,
-          onTapLink: onTapLink,
-          onTapText: onTapText,
-          imageDirectory: imageDirectory,
-          blockSyntaxes: blockSyntaxes,
-          inlineSyntaxes: inlineSyntaxes,
-          extensionSet: extensionSet,
-          imageBuilder: imageBuilder,
-          checkboxBuilder: checkboxBuilder,
-          builders: builders,
-          paddingBuilders: paddingBuilders,
-          listItemCrossAxisAlignment: listItemCrossAxisAlignment,
-          bulletBuilder: bulletBuilder,
-          softLineBreak: softLineBreak,
-        );
+    super.softLineBreak,
+  });
 
   /// The amount of space by which to inset the children.
   final EdgeInsets padding;
