@@ -425,6 +425,10 @@ class AndroidWebViewController extends PlatformWebViewController {
     );
   }
 
+  /// Sets a callback that notifies the host application that web content is
+  /// requesting permission to access the specified resources.
+  ///
+  /// Only invoked on Android versions 21+.
   @override
   Future<void> setOnPermissionRequest(
     Future<WebViewPermissionResponse> Function(

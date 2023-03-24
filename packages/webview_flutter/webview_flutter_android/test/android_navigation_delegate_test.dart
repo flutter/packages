@@ -493,6 +493,7 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   CapturingWebChromeClient({
     super.onProgressChanged,
     super.onShowFileChooser,
+    super.onPermissionRequest,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached() {

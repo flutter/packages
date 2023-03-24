@@ -383,10 +383,7 @@ void main() {
             const PlatformWebViewControllerCreationParams());
 
     expect(
-      () => controller.setOnPermissionRequest((_) async {
-        return const WebViewPermissionResponse(
-            type: WebViewPermissionResponseType.grant);
-      }),
+      () => controller.setOnPermissionRequest((_) {}),
       throwsUnimplementedError,
     );
   });

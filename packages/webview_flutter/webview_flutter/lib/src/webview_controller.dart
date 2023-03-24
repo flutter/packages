@@ -318,4 +318,13 @@ class WebViewController {
   Future<void> setUserAgent(String? userAgent) {
     return platform.setUserAgent(userAgent);
   }
+
+  /// Sets a callback that notifies the host application that web content is
+  /// requesting permission to access the specified resources.
+  Future<void> setOnPermissionRequest(
+    Future<WebViewPermissionResponse> Function(WebViewPermissionRequest request)
+        onPermissionRequest,
+  ) {
+    return platform.setOnPermissionRequest(onPermissionRequest);
+  }
 }

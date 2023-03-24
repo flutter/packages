@@ -261,11 +261,10 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'setUserAgent is not implemented on the current platform');
   }
 
-  /// Notify the host application that web content is requesting permission to
-  /// access the specified resources.
+  /// Sets a callback that notifies the host application that web content is
+  /// requesting permission to access the specified resources.
   Future<void> setOnPermissionRequest(
-    Future<WebViewPermissionResponse> Function(WebViewPermissionRequest request)
-        onPermissionRequest,
+    void Function(WebViewPermissionRequest request) onPermissionRequest,
   ) {
     throw UnimplementedError(
       'setOnPermissionRequest is not implemented on the current platform',

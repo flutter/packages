@@ -184,9 +184,20 @@ class _FakeSize_13 extends _i1.SmartFake implements _i4.Size {
         );
 }
 
-class _FakeExpensiveAndroidViewController_14 extends _i1.SmartFake
+class _FakePermissionRequest_14 extends _i1.SmartFake
+    implements _i2.PermissionRequest {
+  _FakePermissionRequest_14(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeExpensiveAndroidViewController_15 extends _i1.SmartFake
     implements _i7.ExpensiveAndroidViewController {
-  _FakeExpensiveAndroidViewController_14(
+  _FakeExpensiveAndroidViewController_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -195,9 +206,9 @@ class _FakeExpensiveAndroidViewController_14 extends _i1.SmartFake
         );
 }
 
-class _FakeSurfaceAndroidViewController_15 extends _i1.SmartFake
+class _FakeSurfaceAndroidViewController_16 extends _i1.SmartFake
     implements _i7.SurfaceAndroidViewController {
-  _FakeSurfaceAndroidViewController_15(
+  _FakeSurfaceAndroidViewController_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -206,8 +217,8 @@ class _FakeSurfaceAndroidViewController_15 extends _i1.SmartFake
         );
 }
 
-class _FakeWebSettings_16 extends _i1.SmartFake implements _i2.WebSettings {
-  _FakeWebSettings_16(
+class _FakeWebSettings_17 extends _i1.SmartFake implements _i2.WebSettings {
+  _FakeWebSettings_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -216,8 +227,8 @@ class _FakeWebSettings_16 extends _i1.SmartFake implements _i2.WebSettings {
         );
 }
 
-class _FakeWebStorage_17 extends _i1.SmartFake implements _i2.WebStorage {
-  _FakeWebStorage_17(
+class _FakeWebStorage_18 extends _i1.SmartFake implements _i2.WebStorage {
+  _FakeWebStorage_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -724,6 +735,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
   @override
   _i2.WebChromeClient Function({
     void Function(
+      _i2.WebChromeClient,
+      _i2.PermissionRequest,
+    )? onPermissionRequest,
+    void Function(
       _i2.WebView,
       int,
     )? onProgressChanged,
@@ -734,6 +749,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
   }) get createAndroidWebChromeClient => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebChromeClient),
         returnValue: ({
+          void Function(
+            _i2.WebChromeClient,
+            _i2.PermissionRequest,
+          )? onPermissionRequest,
           void Function(
             _i2.WebView,
             int,
@@ -749,6 +768,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
         ),
         returnValueForMissingStub: ({
           void Function(
+            _i2.WebChromeClient,
+            _i2.PermissionRequest,
+          )? onPermissionRequest,
+          void Function(
             _i2.WebView,
             int,
           )? onProgressChanged,
@@ -762,6 +785,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebChromeClient),
         ),
       ) as _i2.WebChromeClient Function({
+        void Function(
+          _i2.WebChromeClient,
+          _i2.PermissionRequest,
+        )? onPermissionRequest,
         void Function(
           _i2.WebView,
           int,
@@ -1293,6 +1320,57 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
       ) as _i2.JavaScriptChannel);
 }
 
+/// A class which mocks [PermissionRequest].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockPermissionRequest extends _i1.Mock implements _i2.PermissionRequest {
+  @override
+  List<String> get resources => (super.noSuchMethod(
+        Invocation.getter(#resources),
+        returnValue: <String>[],
+        returnValueForMissingStub: <String>[],
+      ) as List<String>);
+  @override
+  _i9.Future<void> grant(List<String>? resources) => (super.noSuchMethod(
+        Invocation.method(
+          #grant,
+          [resources],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> deny() => (super.noSuchMethod(
+        Invocation.method(
+          #deny,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i2.PermissionRequest copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakePermissionRequest_14(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakePermissionRequest_14(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.PermissionRequest);
+}
+
 /// A class which mocks [PlatformViewsServiceProxy].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -1321,7 +1399,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             #onFocus: onFocus,
           },
         ),
-        returnValue: _FakeExpensiveAndroidViewController_14(
+        returnValue: _FakeExpensiveAndroidViewController_15(
           this,
           Invocation.method(
             #initExpensiveAndroidView,
@@ -1336,7 +1414,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-        returnValueForMissingStub: _FakeExpensiveAndroidViewController_14(
+        returnValueForMissingStub: _FakeExpensiveAndroidViewController_15(
           this,
           Invocation.method(
             #initExpensiveAndroidView,
@@ -1374,7 +1452,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             #onFocus: onFocus,
           },
         ),
-        returnValue: _FakeSurfaceAndroidViewController_15(
+        returnValue: _FakeSurfaceAndroidViewController_16(
           this,
           Invocation.method(
             #initSurfaceAndroidView,
@@ -1389,7 +1467,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-        returnValueForMissingStub: _FakeSurfaceAndroidViewController_15(
+        returnValueForMissingStub: _FakeSurfaceAndroidViewController_16(
           this,
           Invocation.method(
             #initSurfaceAndroidView,
@@ -1749,14 +1827,14 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
           #copy,
           [],
         ),
-        returnValue: _FakeWebSettings_16(
+        returnValue: _FakeWebSettings_17(
           this,
           Invocation.method(
             #copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWebSettings_16(
+        returnValueForMissingStub: _FakeWebSettings_17(
           this,
           Invocation.method(
             #copy,
@@ -1779,11 +1857,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   @override
   _i2.WebSettings get settings => (super.noSuchMethod(
         Invocation.getter(#settings),
-        returnValue: _FakeWebSettings_16(
+        returnValue: _FakeWebSettings_17(
           this,
           Invocation.getter(#settings),
         ),
-        returnValueForMissingStub: _FakeWebSettings_16(
+        returnValueForMissingStub: _FakeWebSettings_17(
           this,
           Invocation.getter(#settings),
         ),
@@ -2156,14 +2234,14 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
           #copy,
           [],
         ),
-        returnValue: _FakeWebStorage_17(
+        returnValue: _FakeWebStorage_18(
           this,
           Invocation.method(
             #copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWebStorage_17(
+        returnValueForMissingStub: _FakeWebStorage_18(
           this,
           Invocation.method(
             #copy,
