@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.PermissionRequestFlutterApi;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Flutter API implementation for `PermissionRequest`.
@@ -45,10 +45,11 @@ public class PermissionRequestFlutterApiImpl {
    */
   public void create(
       @NonNull PermissionRequest instance,
-      @NonNull List<String> resources,
+      @NonNull String[] resources,
       @NonNull PermissionRequestFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      api.create(instanceManager.addHostCreatedInstance(instance), resources, callback);
+      api.create(
+          instanceManager.addHostCreatedInstance(instance), Arrays.asList(resources), callback);
     }
   }
 

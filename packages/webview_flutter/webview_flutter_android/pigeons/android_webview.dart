@@ -338,6 +338,9 @@ abstract class WebChromeClientFlutterApi {
     int webViewInstanceId,
     int paramsInstanceId,
   );
+
+  /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
+  void onPermissionRequest(int instanceId, int requestInstanceId);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebStorageHostApi')

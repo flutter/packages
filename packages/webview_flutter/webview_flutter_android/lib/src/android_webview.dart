@@ -937,6 +937,7 @@ class DownloadListener extends JavaObject {
 }
 
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
+@SimpleClassAnnotation()
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
   WebChromeClient({
@@ -985,8 +986,11 @@ class WebChromeClient extends JavaObject {
   )? onShowFileChooser;
 
   /// Notify the host application that web content is requesting permission to
-  /// access the specified resources and the permission currently isn't granted or denied.
-  final Future<void> Function(
+  /// access the specified resources and the permission currently isn't granted
+  /// or denied.
+  ///
+  /// Only invoked on Android versions 21+.
+  final void Function(
     WebChromeClient instance,
     PermissionRequest request,
   )? onPermissionRequest;
@@ -1037,7 +1041,6 @@ class WebChromeClient extends JavaObject {
 /// Only supported on Android versions >= 21.
 ///
 /// See https://developer.android.com/reference/android/webkit/PermissionRequest.
-@SimpleClassAnnotation()
 class PermissionRequest extends JavaObject {
   /// Instantiates a [PermissionRequest] without creating and attaching to an
   /// instance of the associated native class.

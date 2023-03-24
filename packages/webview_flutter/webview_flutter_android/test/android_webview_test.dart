@@ -944,6 +944,51 @@ void main() {
         );
       });
 
+      test('onPermissionRequest', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WebChromeClient instance = WebChromeClient.detached(
+          onPermissionRequest: (
+            WebChromeClient instance,
+            PermissionRequest request,
+          ) {
+            callbackParameters = <Object?>[
+              instance,
+              request,
+            ];
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WebChromeClientFlutterApiImpl flutterApi =
+            WebChromeClientFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        final PermissionRequest request = PermissionRequest.detached(
+          resources: <String>[],
+          binaryMessenger: null,
+          instanceManager: instanceManager,
+        );
+        const int requestIdentifier = 32;
+        instanceManager.addHostCreatedInstance(
+          request,
+          requestIdentifier,
+        );
+
+        flutterApi.onPermissionRequest(
+          instanceIdentifier,
+          requestIdentifier,
+        );
+
+        expect(callbackParameters, <Object?>[instance, request]);
+      });
+
       test('copy', () {
         expect(WebChromeClient.detached().copy(), isA<WebChromeClient>());
       });

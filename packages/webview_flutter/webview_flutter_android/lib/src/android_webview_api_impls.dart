@@ -885,6 +885,21 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
 
     return Future<List<String>>.value(const <String>[]);
   }
+
+  @override
+  void onPermissionRequest(
+    int instanceId,
+    int requestInstanceId,
+  ) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+    if (instance.onPermissionRequest != null) {
+      instance.onPermissionRequest!(
+        instance,
+        instanceManager.getInstanceWithWeakReference(requestInstanceId)!,
+      );
+    }
+  }
 }
 
 /// Host api implementation for [WebStorage].

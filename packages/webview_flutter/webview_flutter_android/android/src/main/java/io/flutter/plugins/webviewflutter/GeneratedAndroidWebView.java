@@ -2473,6 +2473,18 @@ public class GeneratedAndroidWebView {
             callback.reply(output);
           });
     }
+    /** Callback to Dart function `WebChromeClient.onPermissionRequest`. */
+    public void onPermissionRequest(
+        @NonNull Long instanceIdArg, @NonNull Long requestInstanceIdArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, requestInstanceIdArg)),
+          channelReply -> callback.reply(null));
+    }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebStorageHostApi {

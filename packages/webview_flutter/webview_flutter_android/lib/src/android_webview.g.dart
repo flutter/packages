@@ -1897,6 +1897,9 @@ abstract class WebChromeClientFlutterApi {
   Future<List<String?>> onShowFileChooser(
       int instanceId, int webViewInstanceId, int paramsInstanceId);
 
+  /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
+  void onPermissionRequest(int instanceId, int requestInstanceId);
+
   static void setup(WebChromeClientFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1950,6 +1953,29 @@ abstract class WebChromeClientFlutterApi {
           final List<String?> output = await api.onShowFileChooser(
               arg_instanceId!, arg_webViewInstanceId!, arg_paramsInstanceId!);
           return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest was null, expected non-null int.');
+          final int? arg_requestInstanceId = (args[1] as int?);
+          assert(arg_requestInstanceId != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest was null, expected non-null int.');
+          api.onPermissionRequest(arg_instanceId!, arg_requestInstanceId!);
+          return;
         });
       }
     }

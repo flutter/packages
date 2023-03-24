@@ -7,6 +7,7 @@ package io.flutter.plugins.webviewflutter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
+import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -73,6 +74,12 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
             }
           });
       return currentReturnValueForOnShowFileChooser;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onPermissionRequest(PermissionRequest request) {
+      flutterApi.onPermissionRequest(this, request, reply -> {});
     }
 
     /** Sets return value for {@link #onShowFileChooser}. */

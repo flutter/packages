@@ -82,7 +82,7 @@ public class PermissionRequestTest {
     final List<String> resources =
         Collections.singletonList(PermissionRequest.RESOURCE_AUDIO_CAPTURE);
 
-    flutterApi.create(mockPermissionRequest, resources, reply -> {});
+    flutterApi.create(mockPermissionRequest, resources.toArray(new String[0]), reply -> {});
 
     final long instanceIdentifier =
         Objects.requireNonNull(
