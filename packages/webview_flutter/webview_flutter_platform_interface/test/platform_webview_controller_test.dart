@@ -383,7 +383,7 @@ void main() {
             const PlatformWebViewControllerCreationParams());
 
     expect(
-      () => controller.setOnPermissionRequest((_) {}),
+      () => controller.setOnPlatformPermissionRequest((_) {}),
       throwsUnimplementedError,
     );
   });

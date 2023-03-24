@@ -630,9 +630,9 @@ void main() {
         },
       );
 
-      late final WebViewPermissionRequest permissionRequest;
-      await controller.setOnPermissionRequest(
-        (WebViewPermissionRequest request) async {
+      late final PlatformWebViewPermissionRequest permissionRequest;
+      await controller.setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) async {
           permissionRequest = request;
           request.grant(const WebViewPermissionGrantParams());
         },

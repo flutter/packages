@@ -173,7 +173,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
-  void Function(WebViewPermissionRequest)? _onPermissionRequestCallback;
+  void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -420,9 +420,9 @@ class AndroidWebViewController extends PlatformWebViewController {
   ///
   /// Only invoked on Android versions 21+.
   @override
-  Future<void> setOnPermissionRequest(
+  Future<void> setOnPlatformPermissionRequest(
     void Function(
-      WebViewPermissionRequest request,
+      PlatformWebViewPermissionRequest request,
     ) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
@@ -430,7 +430,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 }
 
 /// Android implementation of [WebViewPermissionRequest].
-class AndroidWebViewPermissionRequest extends WebViewPermissionRequest {
+class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   const AndroidWebViewPermissionRequest._({
     required super.types,
     required android_webview.PermissionRequest request,

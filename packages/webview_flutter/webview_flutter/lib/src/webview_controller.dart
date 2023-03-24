@@ -322,9 +322,13 @@ class WebViewController {
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
   Future<void> setOnPermissionRequest(
-    Future<WebViewPermissionResponse> Function(WebViewPermissionRequest request)
+    Future<WebViewPermissionRequest> Function(WebViewPermissionRequest request)
         onPermissionRequest,
   ) {
     return platform.setOnPermissionRequest(onPermissionRequest);
   }
+}
+
+class WebViewPermissionRequest {
+
 }

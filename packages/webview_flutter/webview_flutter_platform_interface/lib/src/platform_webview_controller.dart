@@ -263,8 +263,8 @@ abstract class PlatformWebViewController extends PlatformInterface {
 
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
-  Future<void> setOnPermissionRequest(
-    void Function(WebViewPermissionRequest request) onPermissionRequest,
+  Future<void> setOnPlatformPermissionRequest(
+    void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) {
     throw UnimplementedError(
       'setOnPermissionRequest is not implemented on the current platform',

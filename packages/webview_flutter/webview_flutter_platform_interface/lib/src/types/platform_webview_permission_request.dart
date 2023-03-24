@@ -17,33 +17,37 @@ enum WebViewPermissionResourceType {
 ///
 /// A response must be provided by calling a method from [response].
 ///
-/// Platform specific implementations can add additional fields by extending
+/// Platform specific implementations can add additional fields when extending
 /// this class.
 ///
-/// When extending [WebViewPermissionRequest] additional parameters should
-/// always accept `null` or have a default value to prevent breaking changes.
+/// When extending [PlatformWebViewPermissionRequest] additional parameters
+/// should always accept `null` or have a default value to prevent breaking
+/// changes.
 ///
-/// This example demonstrates how to extend the [WebViewPermissionRequest] to
-/// provide additional platform specific parameters:
+/// This example demonstrates how to extend the
+/// [PlatformWebViewPermissionRequest] to provide additional platform specific
+/// parameters:
 ///
 /// ```dart
 /// enum AndroidWebViewPermissionResourceType {
 ///   midiSysex,
 /// }
 ///
-/// class AndroidWebViewPermissionRequest extends WebViewPermissionRequest {
+/// class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 ///   const AndroidWebViewPermissionRequest({
 ///     required super.types,
 ///     required this.androidTypes,
 ///   });
 ///
 ///   final List<AndroidWebViewPermissionResourceType> androidTypes;
+///
+///   // ...
 /// }
 /// ```
 @immutable
-abstract class WebViewPermissionRequest {
-  /// Creates a [WebViewPermissionRequest].
-  const WebViewPermissionRequest({required this.types});
+abstract class PlatformWebViewPermissionRequest {
+  /// Creates a [PlatformWebViewPermissionRequest].
+  const PlatformWebViewPermissionRequest({required this.types});
 
   /// All resources requested access.
   final List<WebViewPermissionResourceType> types;

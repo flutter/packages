@@ -698,11 +698,12 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-  _i9.Future<void> setOnPermissionRequest(
-          void Function(_i3.WebViewPermissionRequest)? onPermissionRequest) =>
+  _i9.Future<void> setOnPlatformPermissionRequest(
+          void Function(_i3.PlatformWebViewPermissionRequest)?
+              onPermissionRequest) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setOnPermissionRequest,
+          #setOnPlatformPermissionRequest,
           [onPermissionRequest],
         ),
         returnValue: _i9.Future<void>.value(),
