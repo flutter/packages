@@ -39,13 +39,11 @@ public class PermissionRequestHostApiImpl implements PermissionRequestHostApi {
     this.instanceManager = instanceManager;
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @Override
   public void grant(@NonNull Long instanceId, @NonNull List<String> resources) {
     getPermissionRequestInstance(instanceId).grant(resources.toArray(new String[0]));
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @Override
   public void deny(@NonNull Long instanceId) {
     getPermissionRequestInstance(instanceId).deny();
