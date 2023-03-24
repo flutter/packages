@@ -5,6 +5,7 @@
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:camera_android_camerax/src/live_camera_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -44,6 +45,40 @@ void main() {
       expect(await cameraInfo.getSensorRotationDegrees(), equals(90));
 
       verify(mockApi.getSensorRotationDegrees(0));
+    });
+
+    test('getLiveCameraState makes call to retrieve live camera state',
+        () async {
+      final MockTestCameraInfoHostApi mockApi = MockTestCameraInfoHostApi();
+      TestCameraInfoHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final CameraInfo cameraInfo = CameraInfo.detached(
+        instanceManager: instanceManager,
+      );
+      final int cameraIdentifier = 55;
+      final LiveCameraState liveCameraState = LiveCameraState.detached(
+        instanceManager: instanceManager,
+      );
+      final int liveCameraStateIdentifier = 73;
+      instanceManager.addHostCreatedInstance(
+        cameraInfo,
+        cameraIdentifier,
+        onCopy: (_) => CameraInfo.detached(),
+      );
+      instanceManager.addHostCreatedInstance(
+        liveCameraState,
+        liveCameraStateIdentifier,
+        onCopy: (_) => LiveCameraState.detached(),
+      );
+
+      when(mockApi.getLiveCameraState(cameraIdentifier))
+          .thenReturn(liveCameraStateIdentifier);
+
+      expect(await cameraInfo.getLiveCameraState(), equals(liveCameraState));
+      verify(mockApi.getLiveCameraState(cameraIdentifier));
     });
 
     test('flutterApiCreateTest', () {

@@ -110,7 +110,7 @@ abstract class ProcessCameraProviderFlutterApi {
   void create(int identifier);
 }
 
-@HostApi()
+@HostApi(dartHostTestHandler: 'TestCameraHostApi')
 abstract class CameraHostApi {
   int getCameraInfo(int identifier);
 }
