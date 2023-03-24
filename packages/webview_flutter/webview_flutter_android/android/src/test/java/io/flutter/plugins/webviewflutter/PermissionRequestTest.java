@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -42,6 +43,14 @@ public class PermissionRequestTest {
   @After
   public void tearDown() {
     instanceManager.close();
+  }
+
+  // These values Must equal the constants for the Dart PermssionRequest class.
+  @Test
+  public void enums() {
+    assertEquals(PermissionRequest.RESOURCE_AUDIO_CAPTURE, "android.webkit.resource.AUDIO_CAPTURE");
+    assertEquals(PermissionRequest.RESOURCE_VIDEO_CAPTURE, "android.webkit.resource.VIDEO_CAPTURE");
+    assertEquals(PermissionRequest.RESOURCE_MIDI_SYSEX, "android.webkit.resource.MIDI_SYSEX");
   }
 
   @Test
