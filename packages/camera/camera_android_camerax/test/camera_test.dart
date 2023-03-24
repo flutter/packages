@@ -32,11 +32,11 @@ void main() {
       final Camera camera = Camera.detached(
         instanceManager: instanceManager,
       );
-      final int cameraIdentifier = 34;
+      const int cameraIdentifier = 34;
       final CameraInfo cameraInfo = CameraInfo.detached(
         instanceManager: instanceManager,
       );
-      final int cameraInfoIdentifier = 28;
+      const int cameraInfoIdentifier = 28;
       instanceManager.addHostCreatedInstance(
         camera,
         cameraIdentifier,

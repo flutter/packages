@@ -58,11 +58,11 @@ void main() {
       final CameraInfo cameraInfo = CameraInfo.detached(
         instanceManager: instanceManager,
       );
-      final int cameraIdentifier = 55;
+      const int cameraIdentifier = 55;
       final LiveCameraState liveCameraState = LiveCameraState.detached(
         instanceManager: instanceManager,
       );
-      final int liveCameraStateIdentifier = 73;
+      const int liveCameraStateIdentifier = 73;
       instanceManager.addHostCreatedInstance(
         cameraInfo,
         cameraIdentifier,
