@@ -48,10 +48,12 @@ enum WebViewPermissionResponseType {
 /// }
 ///
 /// class AndroidWebViewPermissionRequest extends WebViewPermissionRequest {
-///   const AndroidWebViewPermissionRequest({required this.androidType})
-///       : super(type: WebViewPermissionResourceType.platform);
+///   const AndroidWebViewPermissionRequest({
+///     required super.types,
+///     required this.androidTypes,
+///   });
 ///
-///   final AndroidWebViewPermissionResourceType androidType;
+///   final List<AndroidWebViewPermissionResourceType> androidTypes;
 /// }
 /// ```
 @immutable

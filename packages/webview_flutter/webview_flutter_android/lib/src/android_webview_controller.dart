@@ -108,18 +108,67 @@ class AndroidWebViewController extends PlatformWebViewController {
         }
       };
     }),
-    onShowFileChooser: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
-      return (android_webview.WebView webView,
-          android_webview.FileChooserParams params) async {
-        if (weakReference.target?._onShowFileSelectorCallback != null) {
-          return weakReference.target!._onShowFileSelectorCallback!(
-            FileSelectorParams._fromFileChooserParams(params),
-          );
-        }
-        return <String>[];
-      };
-    }),
+    onShowFileChooser: withWeakReferenceTo(
+      this,
+      (WeakReference<AndroidWebViewController> weakReference) {
+        return (android_webview.WebView webView,
+            android_webview.FileChooserParams params) async {
+          if (weakReference.target?._onShowFileSelectorCallback != null) {
+            return weakReference.target!._onShowFileSelectorCallback!(
+              FileSelectorParams._fromFileChooserParams(params),
+            );
+          }
+          return <String>[];
+        };
+      },
+    ),
+    onPermissionRequest: withWeakReferenceTo(
+      this,
+      (WeakReference<AndroidWebViewController> weakReference) {
+        return (_, android_webview.PermissionRequest request) async {
+          final List<String> interfaceSupportedTypes =
+              request.resources.where((String type) {
+            return type == android_webview.PermissionRequest.audioCapture ||
+                type == android_webview.PermissionRequest.videoCapture;
+          }).toList();
+
+          if (interfaceSupportedTypes.isEmpty) {
+            request.deny();
+          }
+
+          if (weakReference.target?._onPermissionRequestCallback != null) {
+            final WebViewPermissionRequest permissionRequest =
+                WebViewPermissionRequest(
+              types: interfaceSupportedTypes
+                  .map<WebViewPermissionResourceType>((String type) {
+                switch (type) {
+                  case android_webview.PermissionRequest.audioCapture:
+                    return WebViewPermissionResourceType.microphone;
+                  case android_webview.PermissionRequest.videoCapture:
+                    return WebViewPermissionResourceType.camera;
+                  default:
+                    throw UnsupportedError('Type `$type` is unsupported.');
+                }
+              }).toList(),
+            );
+
+            final WebViewPermissionResponse response =
+                await weakReference.target!._onPermissionRequestCallback!(
+              permissionRequest,
+            );
+
+            switch (response.type) {
+              case WebViewPermissionResponseType.grant:
+                return request.grant(interfaceSupportedTypes);
+              case WebViewPermissionResponseType.deny:
+                return request.deny();
+              case WebViewPermissionResponseType.platform:
+                throw UnsupportedError('Platform types are not supported.');
+            }
+          }
+        };
+      },
+    ),
   );
 
   /// The native [android_webview.FlutterAssetManager] allows managing assets.
@@ -133,6 +182,8 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
+  Future<WebViewPermissionResponse> Function(WebViewPermissionRequest)?
+      _onPermissionRequestCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -372,6 +423,15 @@ class AndroidWebViewController extends PlatformWebViewController {
     return _webChromeClient.setSynchronousReturnValueForOnShowFileChooser(
       onShowFileSelector != null,
     );
+  }
+
+  @override
+  Future<void> setOnPermissionRequest(
+    Future<WebViewPermissionResponse> Function(
+      WebViewPermissionRequest request,
+    ) onPermissionRequest,
+  ) async {
+    _onPermissionRequestCallback = onPermissionRequest;
   }
 }
 

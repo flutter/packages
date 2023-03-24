@@ -898,6 +898,13 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         instance,
         instanceManager.getInstanceWithWeakReference(requestInstanceId)!,
       );
+    } else {
+      // The method requires calling grant or deny if the Java method is
+      // overridden, so this calls deny by default if `onPermissionRequest` is
+      // null.
+      final PermissionRequest request =
+          instanceManager.getInstanceWithWeakReference(requestInstanceId)!;
+      request.deny();
     }
   }
 }
