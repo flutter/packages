@@ -10,8 +10,6 @@ import 'platform_webview_cookie_manager.dart';
 import 'platform_webview_widget.dart';
 import 'types/types.dart';
 
-export 'types/types.dart';
-
 /// Interface for a platform implementation of a WebView.
 abstract class WebViewPlatform extends PlatformInterface {
   /// Creates a new [WebViewPlatform].
