@@ -158,22 +158,6 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
     return useCaseIsBound;
   }
 
-  /// Returns whether or not the specified [UseCase] has been bound to the
-  /// lifecycle of the camera that this instance tracks.
-  Future<bool> isBoundFromInstances(
-    ProcessCameraProvider instance,
-    UseCase useCase,
-  ) async {
-    final int identifier = getProcessCameraProviderIdentifier(instance);
-    final int? useCaseId = instanceManager.getIdentifier(useCase);
-
-    assert(useCaseId != null,
-        'UseCase must have been created in order for this check to be valid.');
-
-    final bool useCaseIsBound = await isBound(identifier, useCaseId!);
-    return useCaseIsBound;
-  }
-
   /// Unbinds specified [UseCase]s from the lifecycle of the camera which the
   /// provided [ProcessCameraProvider] instance tracks.
   void unbindFromInstances(

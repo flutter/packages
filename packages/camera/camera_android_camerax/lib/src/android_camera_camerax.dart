@@ -315,18 +315,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) async {
-    assert(processCameraProvider != null);
-    assert(cameraSelector != null);
-
-    // TODO(camsim99): Support resolution configuration.
-    final ResolutionInfo? imageAnalysisTargetResolution = null;
-    imageAnalysis =
-        ImageAnalysis(targetResolution: imageAnalysisTargetResolution);
-    imageAnalysis!.setAnalyzer();
-
-    camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
-
+    _bindImageAnalysisToLifecycle();
     return ImageAnalysis.onStreamedFrameAvailableStreamController.stream;
   }
 
@@ -361,6 +350,24 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(processCameraProvider != null);
 
     processCameraProvider!.unbind(<UseCase>[preview!]);
+  }
+
+  /// Binds [imageAnalysis] instance to camera lifecycle controlled by the
+  /// [processCameraProvider].
+  Future<void> _bindImageAnalysisToLifecycle() async {
+    assert(processCameraProvider != null);
+    assert(cameraSelector != null);
+
+    // TODO(camsim99): Support resolution configuration.
+    final ResolutionInfo? imageAnalysisTargetResolution = null;
+    imageAnalysis =
+        ImageAnalysis(targetResolution: imageAnalysisTargetResolution);
+    imageAnalysis!.setAnalyzer();
+
+    camera = await processCameraProvider!
+        .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+    // TODO(camsim99): Reset live camera state observers here when 
+    // https://github.com/flutter/packages/pull/3419 lands.
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:
