@@ -11,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:flutter/widgets.dart'
     show AndroidViewSurface, WidgetsFlutterBinding;
-import 'package:simple_ast/annotations.dart';
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -937,7 +936,6 @@ class DownloadListener extends JavaObject {
 }
 
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
-@SimpleClassAnnotation()
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
   WebChromeClient({
