@@ -5,7 +5,6 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
-import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;

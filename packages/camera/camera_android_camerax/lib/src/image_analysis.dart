@@ -43,7 +43,8 @@ class ImageAnalysis extends UseCase {
   }
 
   /// Stream that emits an event whenever a frame is received for image streaming.
-  static final StreamController<CameraImageData> onStreamedFrameAvailableStreamController =
+  static final StreamController<CameraImageData>
+      onStreamedFrameAvailableStreamController =
       StreamController<CameraImageData>.broadcast();
 
   late final ImageAnalysisHostApiImpl _api;
@@ -112,18 +113,20 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
 
   @override
   void onImageAnalyzed(ImageInformation imageInformation) {
-    List<CameraImagePlane> imagePlanes =
-      imageInformation.imagePlanesInformation!
+    List<CameraImagePlane> imagePlanes = imageInformation
+        .imagePlanesInformation!
         .map((ImagePlaneInformation? imagePlaneInformation) {
-          return CameraImagePlane(
-            bytes: imagePlaneInformation!.bytes,
-            bytesPerRow: imagePlaneInformation!.bytesPerRow,
-            bytesPerPixel: imagePlaneInformation!.bytesPerPixel,
-          );
+      return CameraImagePlane(
+        bytes: imagePlaneInformation!.bytes,
+        bytesPerRow: imagePlaneInformation!.bytesPerRow,
+        bytesPerPixel: imagePlaneInformation!.bytesPerPixel,
+      );
     }).toList();
 
     CameraImageData data = CameraImageData(
-      format: CameraImageFormat(_imageFormatGroupFromFormatCode(imageInformation.format), raw: imageInformation.format),
+      format: CameraImageFormat(
+          _imageFormatGroupFromFormatCode(imageInformation.format),
+          raw: imageInformation.format),
       planes: imagePlanes,
       height: imageInformation.height,
       width: imageInformation.width,

@@ -314,16 +314,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] and [options] are not used.
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
-      {CameraImageStreamOptions? options}) {
+      {CameraImageStreamOptions? options}) async {
     assert(processCameraProvider != null);
     assert(cameraSelector != null);
 
     // TODO(camsim99): Support resolution configuration.
     final ResolutionInfo? imageAnalysisTargetResolution = null;
-    imageAnalysis = ImageAnalysis(targetResolution: imageAnalysisTargetResolution);
+    imageAnalysis =
+        ImageAnalysis(targetResolution: imageAnalysisTargetResolution);
     imageAnalysis!.setAnalyzer();
 
-    camera = await processCameraProvider!.bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+    camera = await processCameraProvider!
+        .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
 
     return ImageAnalysis.onStreamedFrameAvailableStreamController.stream;
   }

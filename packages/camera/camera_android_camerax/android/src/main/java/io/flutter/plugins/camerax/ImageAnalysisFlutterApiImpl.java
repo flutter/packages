@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.util.Log;
 import androidx.annotation.NonNull;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageAnalysisFlutterApi;
@@ -15,7 +14,8 @@ public class ImageAnalysisFlutterApiImpl extends ImageAnalysisFlutterApi {
     super(binaryMessenger);
   }
 
-  public void sendOnImageAnalyzedEvent(@NonNull ImageInformation imageInformation, Reply<Void> callback) {
+  public void sendOnImageAnalyzedEvent(
+      @NonNull ImageInformation imageInformation, Reply<Void> callback) {
     onImageAnalyzed(imageInformation, callback);
   }
 }

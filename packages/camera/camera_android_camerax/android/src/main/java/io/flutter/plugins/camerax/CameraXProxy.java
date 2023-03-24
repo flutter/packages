@@ -9,7 +9,6 @@ import android.graphics.SurfaceTexture;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
@@ -72,7 +71,6 @@ public class CameraXProxy {
   }
 
   public static Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
-    return new Size(
-      resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
+    return new Size(resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
   }
 }

@@ -13,8 +13,6 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import androidx.core.content.ContextCompat;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary;
-import io.flutter.plugins.camerax.ImageAnalysisFlutterApiImpl;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageAnalysisHostApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.nio.ByteBuffer;
@@ -68,22 +66,25 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
       public void analyze(@NonNull ImageProxy image) {
         ImageProxy.PlaneProxy[] planes = image.getPlanes();
 
-        List<GeneratedCameraXLibrary.ImagePlaneInformation> imagePlanesInformation = new ArrayList<GeneratedCameraXLibrary.ImagePlaneInformation>();
-        for(ImageProxy.PlaneProxy plane : planes) {
+        List<GeneratedCameraXLibrary.ImagePlaneInformation> imagePlanesInformation =
+            new ArrayList<GeneratedCameraXLibrary.ImagePlaneInformation>();
+        for (ImageProxy.PlaneProxy plane : planes) {
           ByteBuffer byteBuffer = plane.getBuffer();
           byte[] bytes = new byte[byteBuffer.remaining()];
           byteBuffer.get(bytes, 0, bytes.length);
-          GeneratedCameraXLibrary.ImagePlaneInformation.Builder imagePlaneInfoBuilder = new GeneratedCameraXLibrary.ImagePlaneInformation.Builder();
+          GeneratedCameraXLibrary.ImagePlaneInformation.Builder imagePlaneInfoBuilder =
+              new GeneratedCameraXLibrary.ImagePlaneInformation.Builder();
 
           imagePlanesInformation.add(
-            imagePlaneInfoBuilder
-            .setBytesPerRow(Long.valueOf(plane.getRowStride()))
-            .setBytesPerPixel(Long.valueOf(plane.getPixelStride()))
-            .setBytes(bytes)
-            .build());
+              imagePlaneInfoBuilder
+                  .setBytesPerRow(Long.valueOf(plane.getRowStride()))
+                  .setBytesPerPixel(Long.valueOf(plane.getPixelStride()))
+                  .setBytes(bytes)
+                  .build());
         }
 
-        GeneratedCameraXLibrary.ImageInformation.Builder imageInfoBuilder = new GeneratedCameraXLibrary.ImageInformation.Builder();
+        GeneratedCameraXLibrary.ImageInformation.Builder imageInfoBuilder =
+            new GeneratedCameraXLibrary.ImageInformation.Builder();
         imageInfoBuilder.setWidth(Long.valueOf(image.getWidth()));
         imageInfoBuilder.setHeight(Long.valueOf(image.getHeight()));
         imageInfoBuilder.setFormat(Long.valueOf(image.getFormat()));
@@ -92,7 +93,8 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
         // TODO: last sensor exposure time
         // TODO: last sensor sensitivity
 
-        ImageAnalysisFlutterApiImpl imageAnalysisFlutterApiImpl = new ImageAnalysisFlutterApiImpl(binaryMessenger);
+        ImageAnalysisFlutterApiImpl imageAnalysisFlutterApiImpl =
+            new ImageAnalysisFlutterApiImpl(binaryMessenger);
         imageAnalysisFlutterApiImpl.sendOnImageAnalyzedEvent(imageInfoBuilder.build(), reply -> {});
         image.close();
       }
