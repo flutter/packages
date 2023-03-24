@@ -27,6 +27,7 @@ import 'test_android_webview.g.dart';
   TestWebViewClientHostApi,
   TestWebViewHostApi,
   TestAssetManagerHostApi,
+  TestPermissionRequestHostApi,
   WebChromeClient,
   WebView,
   WebViewClient,
@@ -1019,6 +1020,83 @@ void main() {
 
     test('copy', () {
       expect(WebStorage.detached().copy(), isA<WebStorage>());
+    });
+  });
+
+  group('PermissionRequest', () {
+    setUp(() {});
+
+    tearDown(() {
+      TestPermissionRequestHostApi.setup(null);
+    });
+
+    test('grant', () async {
+      final MockTestPermissionRequestHostApi mockApi =
+          MockTestPermissionRequestHostApi();
+      TestPermissionRequestHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequest instance = PermissionRequest.detached(
+        resources: <String>[],
+        binaryMessenger: null,
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      const List<String> resources = <String>[PermissionRequest.audioCapture];
+
+      await instance.grant(resources);
+
+      verify(mockApi.grant(
+        instanceIdentifier,
+        resources,
+      ));
+    });
+
+    test('deny', () async {
+      final MockTestPermissionRequestHostApi mockApi =
+          MockTestPermissionRequestHostApi();
+      TestPermissionRequestHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequest instance = PermissionRequest.detached(
+        resources: <String>[],
+        binaryMessenger: null,
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      await instance.deny();
+
+      verify(mockApi.deny(instanceIdentifier));
+    });
+
+    test('FlutterAPI create', () {
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequestFlutterApiImpl api =
+          PermissionRequestFlutterApiImpl(
+        instanceManager: instanceManager,
+      );
+
+      const int instanceIdentifier = 0;
+
+      api.create(instanceIdentifier, <String?>[]);
+
+      expect(
+        instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+        isA<PermissionRequest>(),
+      );
     });
   });
 }

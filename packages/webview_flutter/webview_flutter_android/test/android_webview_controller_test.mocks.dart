@@ -343,6 +343,16 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setOnUrlChange(_i3.UrlChangeCallback? onUrlChange) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnUrlChange,
+          [onUrlChange],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewController].
@@ -672,6 +682,19 @@ class MockAndroidWebViewController extends _i1.Mock
         Invocation.method(
           #setOnShowFileSelector,
           [onShowFileSelector],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setOnPermissionRequest(
+          _i9.Future<_i3.WebViewPermissionResponse> Function(
+                  _i3.WebViewPermissionRequest)?
+              onPermissionRequest) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnPermissionRequest,
+          [onPermissionRequest],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),

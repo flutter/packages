@@ -950,3 +950,72 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
     );
   }
 }
+
+/// Host api implementation for [PermissionRequest].
+class PermissionRequestHostApiImpl extends PermissionRequestHostApi {
+  /// Constructs a [PermissionRequestHostApiImpl].
+  PermissionRequestHostApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> grantFromInstances(
+    PermissionRequest instance,
+    List<String> resources,
+  ) {
+    return grant(instanceManager.getIdentifier(instance)!, resources);
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> denyFromInstances(PermissionRequest instance) {
+    return deny(instanceManager.getIdentifier(instance)!);
+  }
+}
+
+/// Flutter API implementation for [PermissionRequest].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+class PermissionRequestFlutterApiImpl implements PermissionRequestFlutterApi {
+  /// Constructs a [PermissionRequestFlutterApiImpl].
+  PermissionRequestFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(
+    int identifier,
+    List<String?> resources,
+  ) {
+    instanceManager.addHostCreatedInstance(
+      PermissionRequest.detached(
+        resources: resources.cast<String>(),
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+}
