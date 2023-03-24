@@ -1,3 +1,7 @@
+## 9.1.2
+
+* [swift] Fixes NSNull casting crash.
+
 ## 9.1.1
 
 * [swift] Removes experimental tags.

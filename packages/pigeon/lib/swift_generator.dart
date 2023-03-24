@@ -199,7 +199,8 @@ import FlutterMacOS
                   '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
             });
           } else {
-            indent.writeln('let ${field.name} = $listValue as! $fieldType? ');
+            indent.writeln(
+                'let ${field.name} = ${_castForceUnwrap(listValue, field.type, root)} ');
           }
         } else {
           if (!hostDatatype.isBuiltin &&
@@ -637,11 +638,25 @@ import FlutterMacOS
     });
   }
 
+  void _writeNSNullToNil(Indent indent) {
+    indent.format('''
+
+private func nullToNil(value : Any?) -> Any? {
+  if value is NSNull {
+      return nil
+  } else {
+      return value
+  }
+}
+''');
+  }
+
   @override
   void writeGeneralUtilities(
       SwiftOptions generatorOptions, Root root, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
+    _writeNSNullToNil(indent);
   }
 }
 
@@ -677,8 +692,8 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
-  } else if (type.baseName == 'int') {
-    return '($value is Int) ? Int64($value as! Int) : $value as! Int64$castUnwrap';
+  } else if (type.isNullable) {
+    return '($value is NSNull) ? nullToNil(value: $value) as! ${_swiftTypeForDartType(type)}$castUnwrap : $value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   } else {
     return '$value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   }
