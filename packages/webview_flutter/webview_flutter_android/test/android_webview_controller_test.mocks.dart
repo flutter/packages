@@ -699,9 +699,7 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i9.Future<void>);
   @override
   _i9.Future<void> setOnPermissionRequest(
-          _i9.Future<_i3.WebViewPermissionResponse> Function(
-                  _i3.WebViewPermissionRequest)?
-              onPermissionRequest) =>
+          void Function(_i3.WebViewPermissionRequest)? onPermissionRequest) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnPermissionRequest,

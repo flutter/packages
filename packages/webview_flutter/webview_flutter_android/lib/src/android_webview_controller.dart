@@ -64,22 +64,6 @@ class AndroidWebViewControllerCreationParams
   final android_webview.WebStorage androidWebStorage;
 }
 
-class AndroidWebViewPermissionResponse extends WebViewPermissionResponse {
-  const AndroidWebViewPermissionResponse();
-
-  @override
-  Future<void> deny(WebViewPermissionDenyParams params) {
-    // TODO: implement deny
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> grant(WebViewPermissionGrantParams params) {
-    // TODO: implement grant
-    throw UnimplementedError();
-  }
-}
-
 /// Implementation of the [PlatformWebViewController] with the Android WebView API.
 class AndroidWebViewController extends PlatformWebViewController {
   /// Creates a new [AndroidWebViewCookieManager].
@@ -153,8 +137,8 @@ class AndroidWebViewController extends PlatformWebViewController {
           }
 
           if (weakReference.target?._onPermissionRequestCallback != null) {
-            final WebViewPermissionRequest permissionRequest =
-                WebViewPermissionRequest(
+            final AndroidWebViewPermissionRequest permissionRequest =
+                AndroidWebViewPermissionRequest._(
               types: interfaceSupportedTypes
                   .map<WebViewPermissionResourceType>((String type) {
                 switch (type) {
@@ -166,21 +150,12 @@ class AndroidWebViewController extends PlatformWebViewController {
                     throw UnsupportedError('Type `$type` is unsupported.');
                 }
               }).toList(),
+              request: request,
             );
 
-            final WebViewPermissionResponse response =
-                await weakReference.target!._onPermissionRequestCallback!(
+            weakReference.target!._onPermissionRequestCallback!(
               permissionRequest,
             );
-
-            switch (response.type) {
-              case WebViewPermissionResponseType.grant:
-                return request.grant(interfaceSupportedTypes);
-              case WebViewPermissionResponseType.deny:
-                return request.deny();
-              case WebViewPermissionResponseType.platform:
-                throw UnsupportedError('Platform types are not supported.');
-            }
           }
         };
       },
@@ -451,6 +426,30 @@ class AndroidWebViewController extends PlatformWebViewController {
     ) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+}
+
+/// Android implementation of [WebViewPermissionRequest].
+class AndroidWebViewPermissionRequest extends WebViewPermissionRequest {
+  const AndroidWebViewPermissionRequest._({
+    required super.types,
+    required android_webview.PermissionRequest request,
+  }) : _request = request;
+
+  final android_webview.PermissionRequest _request;
+
+  @override
+  Future<void> grant(WebViewPermissionGrantParams params) {
+    return _request.grant(_request.resources
+        .where((String type) =>
+            type == android_webview.PermissionRequest.videoCapture ||
+            type == android_webview.PermissionRequest.audioCapture)
+        .toList());
+  }
+
+  @override
+  Future<void> deny(WebViewPermissionDenyParams params) {
+    return _request.deny();
   }
 }
 

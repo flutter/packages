@@ -634,28 +634,27 @@ void main() {
       await controller.setOnPermissionRequest(
         (WebViewPermissionRequest request) async {
           permissionRequest = request;
-          return WebViewPermissionResponse(type: WebViewPermissionResponseType.grant);
+          request.grant(const WebViewPermissionGrantParams());
         },
       );
 
-      verify(
-        mockWebChromeClient.setSynchronousReturnValueForOnShowFileChooser(true),
+      final List<String> permissionTypes = <String>[
+        android_webview.PermissionRequest.audioCapture,
+      ];
+
+      final MockPermissionRequest mockPermissionRequest =
+          MockPermissionRequest();
+      when(mockPermissionRequest.resources).thenReturn(permissionTypes);
+
+      onPermissionRequestCallback(
+        android_webview.WebChromeClient.detached(),
+        mockPermissionRequest,
       );
 
-      onShowFileChooserCallback(
-        android_webview.WebView.detached(),
-        android_webview.FileChooserParams.detached(
-          isCaptureEnabled: false,
-          acceptTypes: const <String>['png'],
-          filenameHint: 'filenameHint',
-          mode: android_webview.FileChooserMode.open,
-        ),
-      );
-
-      expect(fileSelectorParams.isCaptureEnabled, isFalse);
-      expect(fileSelectorParams.acceptTypes, <String>['png']);
-      expect(fileSelectorParams.filenameHint, 'filenameHint');
-      expect(fileSelectorParams.mode, FileSelectorMode.open);
+      expect(permissionRequest.types, <WebViewPermissionResourceType>[
+        WebViewPermissionResourceType.microphone,
+      ]);
+      verify(mockPermissionRequest.grant(permissionTypes));
     });
 
     test('runJavaScript', () async {
