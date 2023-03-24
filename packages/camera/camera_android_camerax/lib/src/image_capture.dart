@@ -109,7 +109,7 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates a [ImageCapture] instance with the flash mode and target resolution
+  /// Creates an [ImageCapture] instance with the flash mode and target resolution
   /// if specified.
   void createFromInstance(ImageCapture instance, int? targetFlashMode,
       ResolutionInfo? targetResolution) {

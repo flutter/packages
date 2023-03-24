@@ -14,6 +14,7 @@ import 'instance_manager.dart';
 import 'java_object.dart';
 import 'use_case.dart';
 
+/// Use case for providing CPU accessible images for performing image analysis.
 class ImageAnalysis extends UseCase {
   /// Creates a [ImageAnalysis].
   ImageAnalysis(
@@ -52,11 +53,15 @@ class ImageAnalysis extends UseCase {
   /// Target resolution of the camera preview stream.
   final ResolutionInfo? targetResolution;
 
+  /// Configures this instance for image streaming support.
+  ///
+  /// This is an indirect wrapping of ...
   Future<void> setAnalyzer() async {
     _api.setAnalyzerFromInstance(this);
   }
 }
 
+/// Host API implementation of [ImageAnalysis].
 class ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
   /// Constructs a [ImageAnalysisHostApiImpl].
   ImageAnalysisHostApiImpl(
@@ -73,6 +78,7 @@ class ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
+  /// Creates an [ImageAnallysis] instance with the specified target resolution.
   Future<void> createFromInstance(
       ImageAnalysis instance, ResolutionInfo? targetResolution) async {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
@@ -85,6 +91,7 @@ class ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     create(identifier, targetResolution);
   }
 
+  /// Sets analyzer for the provided instance to support image streaming.
   Future<void> setAnalyzerFromInstance(ImageAnalysis instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
@@ -113,17 +120,17 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
 
   @override
   void onImageAnalyzed(ImageInformation imageInformation) {
-    List<CameraImagePlane> imagePlanes = imageInformation
-        .imagePlanesInformation!
+    final List<CameraImagePlane> imagePlanes = imageInformation
+        .imagePlanesInformation
         .map((ImagePlaneInformation? imagePlaneInformation) {
       return CameraImagePlane(
         bytes: imagePlaneInformation!.bytes,
-        bytesPerRow: imagePlaneInformation!.bytesPerRow,
-        bytesPerPixel: imagePlaneInformation!.bytesPerPixel,
+        bytesPerRow: imagePlaneInformation.bytesPerRow,
+        bytesPerPixel: imagePlaneInformation.bytesPerPixel,
       );
     }).toList();
 
-    CameraImageData data = CameraImageData(
+    final CameraImageData data = CameraImageData(
       format: CameraImageFormat(
           _imageFormatGroupFromFormatCode(imageInformation.format),
           raw: imageInformation.format),

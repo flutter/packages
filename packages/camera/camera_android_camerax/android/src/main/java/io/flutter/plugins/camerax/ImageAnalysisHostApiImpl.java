@@ -19,7 +19,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-// import java.util.concurrent.Executors;
 
 public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
 
@@ -53,10 +52,10 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
 
   @Override
   public void setAnalyzer(@NonNull Long identifier) {
-    Log.v("FLUTTER", "set analyzer called");
     ImageAnalysis imageAnalysis =
         (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
     ImageAnalysis.Analyzer analyzer = createImageAnalysisAnalyzer();
+    // TODO(camsim99): Determine what executor to use.
     imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), analyzer);
   }
 
@@ -83,15 +82,14 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
                   .build());
         }
 
+        // TODO (camsim99): Retrieve and send the following when made available by b/274791178: 
+        // last lens aperture, last sensor exposure time, last sensor sensitivity.
         GeneratedCameraXLibrary.ImageInformation.Builder imageInfoBuilder =
             new GeneratedCameraXLibrary.ImageInformation.Builder();
         imageInfoBuilder.setWidth(Long.valueOf(image.getWidth()));
         imageInfoBuilder.setHeight(Long.valueOf(image.getHeight()));
         imageInfoBuilder.setFormat(Long.valueOf(image.getFormat()));
         imageInfoBuilder.setImagePlanesInformation(imagePlanesInformation);
-        // TODO: last lens aperture
-        // TODO: last sensor exposure time
-        // TODO: last sensor sensitivity
 
         ImageAnalysisFlutterApiImpl imageAnalysisFlutterApiImpl =
             new ImageAnalysisFlutterApiImpl(binaryMessenger);

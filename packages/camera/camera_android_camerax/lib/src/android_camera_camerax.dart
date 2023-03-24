@@ -307,16 +307,17 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// A new streamed frame is available.
   ///
   /// Listening to this stream will start streaming, and canceling will stop.
-  /// [?????] Pausing will throw a [CameraException], as pausing the stream would cause
+  /// Pausing will throw a [CameraException], as pausing the stream would cause
   /// very high memory usage; to temporarily stop receiving frames, cancel, then
   /// listen again later.
   ///
   /// [cameraId] and [options] are not used.
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
-      {CameraImageStreamOptions? options}) async {
-    _bindImageAnalysisToLifecycle();
-    return ImageAnalysis.onStreamedFrameAvailableStreamController.stream;
+      {CameraImageStreamOptions? options}) {
+    final StreamController<CameraImageData> cameraImageDataStreamController = ImageAnalysis.onStreamedFrameAvailableStreamController;
+    _configureStreamController(cameraImageDataStreamController);
+    return cameraImageDataStreamController.stream;
   }
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
@@ -339,11 +340,11 @@ class AndroidCameraCameraX extends CameraPlatform {
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
   }
 
-  /// Unbinds [preview] instance to camera lifecycle controlled by the
+  /// Unbinds [preview] instance from camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _unbindPreviewFromLifecycle() async {
-    final bool previewIsBound = await processCameraProvider!.isBound(preview!);
-    if (preview == null || !previewIsBound) {
+    final bool imageAnalysisIsBound = preview != null && await processCameraProvider!.isBound(imageAnalysis!);
+    if (imageAnalysisIsBound) {
       return;
     }
 
@@ -359,15 +360,50 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(cameraSelector != null);
 
     // TODO(camsim99): Support resolution configuration.
-    final ResolutionInfo? imageAnalysisTargetResolution = null;
-    imageAnalysis =
-        ImageAnalysis(targetResolution: imageAnalysisTargetResolution);
+    imageAnalysis = ImageAnalysis();
     imageAnalysis!.setAnalyzer();
 
-    camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
     // TODO(camsim99): Reset live camera state observers here when 
     // https://github.com/flutter/packages/pull/3419 lands.
+    camera = await processCameraProvider!
+        .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+  }
+
+  /// Unbinds [imageAnalysis] instance from camera lifecycle controlled by the
+  /// [processCameraProvider].
+  // TODO(camsim99): Make general unbind method since logic will be same.
+  Future<void> _unbindImageAnalysisFromLifecycle() async {
+    final bool imageAnalysisIsBound = imageAnalysis != null && await processCameraProvider!.isBound(imageAnalysis!);
+    if (imageAnalysisIsBound) {
+      return;
+    }
+
+    assert(processCameraProvider != null);
+
+    processCameraProvider!.unbind(<UseCase>[imageAnalysis!]);
+  }
+
+  // Methods for configuring image streaming:
+
+  void _configureStreamController(StreamController<CameraImageData> controller) {
+    controller.onListen = _onFrameStreamListen;
+    controller.onPause = _onFrameStreamPauseResume;
+    controller.onResume = _onFrameStreamPauseResume;
+    controller.onCancel = _onFrameStreamCancel;
+  }
+
+  void _onFrameStreamListen() {
+    _bindImageAnalysisToLifecycle();
+  }
+
+  void _onFrameStreamPauseResume() {
+    // Consistent implementation with camera_android.
+    throw CameraException('InvalidCall',
+        'Pause and resume are not supported for onStreamedFrameAvailable');
+  }
+
+  FutureOr<void> _onFrameStreamCancel() async {
+    _unbindImageAnalysisFromLifecycle();
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:
