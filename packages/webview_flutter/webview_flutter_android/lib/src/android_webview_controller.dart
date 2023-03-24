@@ -132,11 +132,10 @@ class AndroidWebViewController extends PlatformWebViewController {
                 type == android_webview.PermissionRequest.videoCapture;
           }).toList();
 
-          if (interfaceSupportedTypes.isEmpty) {
+          if (interfaceSupportedTypes.isEmpty ||
+              weakReference.target?._onPermissionRequestCallback == null) {
             request.deny();
-          }
-
-          if (weakReference.target?._onPermissionRequestCallback != null) {
+          } else {
             final AndroidWebViewPermissionRequest permissionRequest =
                 AndroidWebViewPermissionRequest._(
               types: interfaceSupportedTypes

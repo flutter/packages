@@ -1,3 +1,7 @@
+## 4.1.0
+
+* Adds support to receive permission requests. See `WebViewController.setOnPermissionRequest`.
+
 ## 4.0.7
 
 * Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on

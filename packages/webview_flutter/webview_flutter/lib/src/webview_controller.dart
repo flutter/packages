@@ -322,13 +322,34 @@ class WebViewController {
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
   Future<void> setOnPermissionRequest(
-    Future<WebViewPermissionRequest> Function(WebViewPermissionRequest request)
-        onPermissionRequest,
+    void Function(WebViewPermissionRequest request) onPermissionRequest,
   ) {
-    return platform.setOnPermissionRequest(onPermissionRequest);
+    return platform.setOnPlatformPermissionRequest(
+      (PlatformWebViewPermissionRequest request) {
+        onPermissionRequest(WebViewPermissionRequest._(request));
+      },
+    );
   }
 }
 
+/// Permissions request when web content requests access to protected resources.
+///
+/// A response MUST be provided by calling [grant], [deny], or a method of
+/// [platform].
 class WebViewPermissionRequest {
+  WebViewPermissionRequest._(this.platform);
 
+  /// Implementation of [PlatformWebViewPermissionRequest] for the current
+  /// platform.
+  final PlatformWebViewPermissionRequest platform;
+
+  /// Grant permission for the requested resource(s).
+  Future<void> grant() {
+    return platform.grant(const WebViewPermissionGrantParams());
+  }
+
+  /// Deny permission for the requested resource(s).
+  Future<void> deny() {
+    return platform.deny(const WebViewPermissionDenyParams());
+  }
 }

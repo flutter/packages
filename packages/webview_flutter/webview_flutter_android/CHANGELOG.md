@@ -1,3 +1,7 @@
+## 3.5.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
 ## 3.4.3
 
 * Updates internal Java InstanceManager to be cleared on hot restart.

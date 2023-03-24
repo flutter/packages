@@ -1,3 +1,8 @@
+## 2.2.0
+
+* Adds support to receive permission requests. See
+  `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
 ## 2.1.0
 
 * Adds support to track url changes. See `PlatformNavigationDelegate.setOnUrlChange`.
