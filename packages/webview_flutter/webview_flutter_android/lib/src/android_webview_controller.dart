@@ -64,6 +64,22 @@ class AndroidWebViewControllerCreationParams
   final android_webview.WebStorage androidWebStorage;
 }
 
+class AndroidWebViewPermissionResponse extends WebViewPermissionResponse {
+  const AndroidWebViewPermissionResponse();
+
+  @override
+  Future<void> deny(WebViewPermissionDenyParams params) {
+    // TODO: implement deny
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> grant(WebViewPermissionGrantParams params) {
+    // TODO: implement grant
+    throw UnimplementedError();
+  }
+}
+
 /// Implementation of the [PlatformWebViewController] with the Android WebView API.
 class AndroidWebViewController extends PlatformWebViewController {
   /// Creates a new [AndroidWebViewCookieManager].
@@ -182,8 +198,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
-  Future<WebViewPermissionResponse> Function(WebViewPermissionRequest)?
-      _onPermissionRequestCallback;
+  void Function(WebViewPermissionRequest)? _onPermissionRequestCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -431,7 +446,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// Only invoked on Android versions 21+.
   @override
   Future<void> setOnPermissionRequest(
-    Future<WebViewPermissionResponse> Function(
+    void Function(
       WebViewPermissionRequest request,
     ) onPermissionRequest,
   ) async {

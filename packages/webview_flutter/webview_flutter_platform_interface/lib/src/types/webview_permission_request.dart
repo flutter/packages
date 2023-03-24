@@ -41,44 +41,12 @@ enum WebViewPermissionResourceType {
 /// }
 /// ```
 @immutable
-class WebViewPermissionRequest {
+abstract class WebViewPermissionRequest {
   /// Creates a [WebViewPermissionRequest].
-  const WebViewPermissionRequest({
-    required this.types,
-    required this.response,
-  });
+  const WebViewPermissionRequest({required this.types});
 
   /// All resources requested access.
   final List<WebViewPermissionResourceType> types;
-
-  /// Response to a permission request.
-  final WebViewPermissionResponse response;
-}
-
-/// Response to a permission request.
-///
-/// Platform specific implementations can add additional fields by extending
-/// this class.
-///
-/// When extending [WebViewPermissionResponse] additional parameters should
-/// always accept `null` or have a default value to prevent breaking changes.
-///
-/// This example demonstrates how to extend the [WebViewPermissionResponse] to
-/// provide additional platform specific parameters:
-///
-/// ```dart
-/// class WebKitWebViewPermissionResponse extends WebViewPermissionResponse {
-///   const WebKitWebViewPermissionResponse();
-///
-///   Future<void> prompt() {
-///     // ..
-///   }
-/// }
-/// ```
-@immutable
-abstract class WebViewPermissionResponse {
-  /// Creates a [WebViewPermissionResponse].
-  const WebViewPermissionResponse();
 
   /// Grant permission for the requested resource(s).
   Future<void> grant(WebViewPermissionGrantParams params);
