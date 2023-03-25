@@ -1,3 +1,8 @@
+## 0.1.1
+
+* Fix `AnimatedSampler` offset assertion to no longer trigger incorrectly when shader is disabled.
+* Fix runtime exception when the `AnimatedSampler` was asked to construct an image with no size.
+
 ## 0.1.0
 
 * Update URLs in pubspec.yaml.
