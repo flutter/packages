@@ -638,25 +638,11 @@ import FlutterMacOS
     });
   }
 
-  void _writeNSNullToNil(Indent indent) {
-    indent.format('''
-
-private func nullToNil(value : Any?) -> Any? {
-  if value is NSNull {
-      return nil
-  } else {
-      return value
-  }
-}
-''');
-  }
-
   @override
   void writeGeneralUtilities(
       SwiftOptions generatorOptions, Root root, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
-    _writeNSNullToNil(indent);
   }
 }
 
@@ -693,7 +679,7 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
   } else if (type.isNullable) {
-    return '($value is NSNull) ? nullToNil(value: $value) as! ${_swiftTypeForDartType(type)}$castUnwrap : $value as! ${_swiftTypeForDartType(type)}$castUnwrap';
+    return '($value is NSNull) ? (nil as Any?) as! ${_swiftTypeForDartType(type)}$castUnwrap : $value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   } else {
     return '$value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   }

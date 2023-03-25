@@ -918,7 +918,7 @@ void main() {
     expect(
         code,
         contains(
-            'let fooArg = (args[0] is NSNull) ? nullToNil(value: args[0]) as! Int64? : args[0] as! Int64?'));
+            'let fooArg = (args[0] is NSNull) ? (nil as Any?) as! Int64? : args[0] as! Int64?'));
   });
 
   test('nullable argument flutter', () {
