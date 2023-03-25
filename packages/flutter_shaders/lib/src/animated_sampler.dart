@@ -177,7 +177,7 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
     if (size.isEmpty) {
       return;
     }
-    assert(offset == Offset.zero);
+    assert(!_enabled || offset == Offset.zero);
     return super.paint(context, offset);
   }
 }
@@ -232,6 +232,7 @@ class _ShaderSamplerBuilderLayer extends OffsetLayer {
 
   @override
   void addToScene(ui.SceneBuilder builder) {
+    if (size.isEmpty) return;
     final ui.Image image = _buildChildScene(
       offset & size,
       devicePixelRatio,
