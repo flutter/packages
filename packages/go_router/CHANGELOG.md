@@ -1,3 +1,7 @@
+## 6.5.1
+
+* Fix redirect being called with empty location for unknown routes.
+
 ## 6.5.0
 
 - Supports returning values on pop.
