@@ -1,3 +1,7 @@
+## 6.1.1
+
+* Adds a feature on the video_player package to enable a video to go fullscreen on web platform.
+
 ## 6.1.0
 
 * Aligns Dart and Flutter SDK constraints.

@@ -1,3 +1,7 @@
+## 2.0.16
+
+* Adds a feature on the video_player package to enable a video to go fullscreen on web platform.
+
 ## 2.0.15
 
 * Clarifies explanation of endorsement in README.

@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Adds a feature on the video_player package to enable a video to go fullscreen on web platform.
+
 ## 2.6.0
 
 * Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
