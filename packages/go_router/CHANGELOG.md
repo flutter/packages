@@ -1,3 +1,14 @@
+## 6.5.0
+
+- Supports returning values on pop.
+
+## 6.4.1
+- Adds `initialExtra` to **GoRouter** to pass extra data alongside `initialRoute`.
+
+## 6.4.0
+
+- Adds `replace` method to that replaces the current route with a new one and keeps the same page key. This is useful for when you want to update the query params without changing the page key ([#115902]https://github.com/flutter/flutter/issues/115902).
+
 ## 6.3.0
 
 - Aligns Dart and Flutter SDK constraints.
@@ -14,6 +25,7 @@
 ## 6.1.0
 
 - Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.
+
 
 ## 6.0.10
 
