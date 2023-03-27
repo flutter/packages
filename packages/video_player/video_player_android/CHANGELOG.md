@@ -1,3 +1,7 @@
+## 2.4.3
+
+* Bumps ExoPlayer version to 2.18.5.
+
 ## 2.4.2
 
 * Bumps ExoPlayer version to 2.18.4.
