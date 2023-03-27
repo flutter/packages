@@ -22,6 +22,7 @@ import 'package:webview_flutter_platform_interface/src/webview_platform.dart';
 
 import 'android_navigation_delegate_test.dart';
 import 'android_webview_controller_test.mocks.dart';
+import 'test_android_webview.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<AndroidNavigationDelegate>(),
@@ -39,9 +40,13 @@ import 'android_webview_controller_test.mocks.dart';
   MockSpec<android_webview.WebViewClient>(),
   MockSpec<android_webview.WebStorage>(),
   MockSpec<InstanceManager>(),
+  MockSpec<TestInstanceManagerHostApi>(),
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   AndroidWebViewController createControllerWithMocks({
     android_webview.FlutterAssetManager? mockFlutterAssetManager,
@@ -52,10 +57,8 @@ void main() {
       Future<List<String>> Function(
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
-      )?
-          onShowFileChooser,
-    })?
-        createWebChromeClient,
+      )? onShowFileChooser,
+    })? createWebChromeClient,
     android_webview.WebView? mockWebView,
     android_webview.WebViewClient? mockWebViewClient,
     android_webview.WebStorage? mockWebStorage,
@@ -75,8 +78,7 @@ void main() {
                     Future<List<String>> Function(
                       android_webview.WebView webView,
                       android_webview.FileChooserParams params,
-                    )?
-                        onShowFileChooser,
+                    )? onShowFileChooser,
                   }) =>
                       MockWebChromeClient(),
               createAndroidWebView: ({required bool useHybridComposition}) =>
@@ -92,19 +94,16 @@ void main() {
                   int errorCode,
                   String description,
                   String failingUrl,
-                )?
-                        onReceivedError,
+                )? onReceivedError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
                   android_webview.WebResourceError error,
-                )?
-                    onReceivedRequestError,
+                )? onReceivedRequestError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
-                )?
-                    requestLoading,
+                )? requestLoading,
                 void Function(android_webview.WebView webView, String url)?
                     urlLoading,
               }) =>
@@ -565,8 +564,7 @@ void main() {
           Future<List<String>> Function(
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
-          )?
-              onShowFileChooser,
+          )? onShowFileChooser,
         }) {
           onShowFileChooserCallback = onShowFileChooser!;
           return mockWebChromeClient;
@@ -589,7 +587,7 @@ void main() {
         android_webview.WebView.detached(),
         android_webview.FileChooserParams.detached(
           isCaptureEnabled: false,
-          acceptTypes: <String>['png'],
+          acceptTypes: const <String>['png'],
           filenameHint: 'filenameHint',
           mode: android_webview.FileChooserMode.open,
         ),
@@ -883,6 +881,22 @@ void main() {
     await controller.setMediaPlaybackRequiresUserGesture(true);
 
     verify(mockSettings.setMediaPlaybackRequiresUserGesture(true)).called(1);
+  });
+
+  test('setTextZoom', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setTextZoom(100);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setTextZoom(100)).called(1);
   });
 
   test('webViewIdentifier', () {

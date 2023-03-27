@@ -44,7 +44,8 @@ class AndroidWebViewControllerCreationParams
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
         AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting android_webview.WebStorage? androidWebStorage,
+    @visibleForTesting
+        android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -355,6 +356,12 @@ class AndroidWebViewController extends PlatformWebViewController {
     return _webView.settings.setMediaPlaybackRequiresUserGesture(require);
   }
 
+  /// Sets the text zoom of the page in percent.
+  ///
+  /// The default is 100.
+  Future<void> setTextZoom(int textZoom) =>
+      _webView.settings.setTextZoom(textZoom);
+
   /// Sets the callback that is invoked when the client should show a file
   /// selector.
   Future<void> setOnShowFileSelector(
@@ -489,7 +496,8 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
-    @visibleForTesting InstanceManager? instanceManager,
+    @visibleForTesting
+        InstanceManager? instanceManager,
     @visibleForTesting
         this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =

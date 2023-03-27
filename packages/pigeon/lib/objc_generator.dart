@@ -893,7 +893,7 @@ String _className(String? prefix, String className) {
   }
 }
 
-/// Calculates callback block signature for for async methods.
+/// Calculates callback block signature for async methods.
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
       ? 'void (^)(FlutterError *_Nullable)'

@@ -29,16 +29,12 @@ class ImageResizer {
    * <p>If no resizing is needed, returns the path for the original image.
    */
   String resizeImageIfNeeded(
-      String imagePath,
-      @Nullable Double maxWidth,
-      @Nullable Double maxHeight,
-      @Nullable Integer imageQuality) {
+      String imagePath, @Nullable Double maxWidth, @Nullable Double maxHeight, int imageQuality) {
     Bitmap bmp = decodeFile(imagePath);
     if (bmp == null) {
       return null;
     }
-    boolean shouldScale =
-        maxWidth != null || maxHeight != null || isImageQualityValid(imageQuality);
+    boolean shouldScale = maxWidth != null || maxHeight != null || imageQuality < 100;
     if (!shouldScale) {
       return imagePath;
     }
@@ -54,14 +50,10 @@ class ImageResizer {
   }
 
   private File resizedImage(
-      Bitmap bmp, Double maxWidth, Double maxHeight, Integer imageQuality, String outputImageName)
+      Bitmap bmp, Double maxWidth, Double maxHeight, int imageQuality, String outputImageName)
       throws IOException {
     double originalWidth = bmp.getWidth() * 1.0;
     double originalHeight = bmp.getHeight() * 1.0;
-
-    if (!isImageQualityValid(imageQuality)) {
-      imageQuality = 100;
-    }
 
     boolean hasMaxWidth = maxWidth != null;
     boolean hasMaxHeight = maxHeight != null;
@@ -126,10 +118,6 @@ class ImageResizer {
 
   private Bitmap createScaledBitmap(Bitmap bmp, int width, int height, boolean filter) {
     return Bitmap.createScaledBitmap(bmp, width, height, filter);
-  }
-
-  private boolean isImageQualityValid(Integer imageQuality) {
-    return imageQuality != null && imageQuality > 0 && imageQuality < 100;
   }
 
   private File createImageOnExternalDirectory(String name, Bitmap bitmap, int imageQuality)
