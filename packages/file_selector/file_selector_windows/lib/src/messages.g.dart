@@ -86,9 +86,9 @@ class _FileSelectorApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return SelectionOptions.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return TypeGroup.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -106,12 +106,14 @@ class FileSelectorApi {
 
   static const MessageCodec<Object?> codec = _FileSelectorApiCodec();
 
-  Future<List<String?>> showOpenDialog(SelectionOptions arg_options, String? arg_initialDirectory, String? arg_confirmButtonText) async {
+  Future<List<String?>> showOpenDialog(SelectionOptions arg_options,
+      String? arg_initialDirectory, String? arg_confirmButtonText) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.showOpenDialog', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_options, arg_initialDirectory, arg_confirmButtonText]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(
+            <Object?>[arg_options, arg_initialDirectory, arg_confirmButtonText])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -133,12 +135,20 @@ class FileSelectorApi {
     }
   }
 
-  Future<List<String?>> showSaveDialog(SelectionOptions arg_options, String? arg_initialDirectory, String? arg_suggestedName, String? arg_confirmButtonText) async {
+  Future<List<String?>> showSaveDialog(
+      SelectionOptions arg_options,
+      String? arg_initialDirectory,
+      String? arg_suggestedName,
+      String? arg_confirmButtonText) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.showSaveDialog', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_options, arg_initialDirectory, arg_suggestedName, arg_confirmButtonText]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_options,
+      arg_initialDirectory,
+      arg_suggestedName,
+      arg_confirmButtonText
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

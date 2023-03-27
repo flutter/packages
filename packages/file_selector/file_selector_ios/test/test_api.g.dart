@@ -28,7 +28,7 @@ class _TestFileSelectorApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return FileSelectorConfig.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -41,7 +41,8 @@ abstract class TestFileSelectorApi {
 
   Future<List<String?>> openFile(FileSelectorConfig config);
 
-  static void setup(TestFileSelectorApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestFileSelectorApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.FileSelectorApi.openFile', codec,
@@ -51,9 +52,10 @@ abstract class TestFileSelectorApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.FileSelectorApi.openFile was null.');
+              'Argument for dev.flutter.pigeon.FileSelectorApi.openFile was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final FileSelectorConfig? arg_config = (args[0] as FileSelectorConfig?);
+          final FileSelectorConfig? arg_config =
+              (args[0] as FileSelectorConfig?);
           assert(arg_config != null,
               'Argument for dev.flutter.pigeon.FileSelectorApi.openFile was null, expected non-null FileSelectorConfig.');
           final List<String?> output = await api.openFile(arg_config!);
