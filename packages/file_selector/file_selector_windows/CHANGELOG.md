@@ -1,6 +1,6 @@
-## 0.9.2
+## 0.9.1+7
 
-* Update to `pigeon` version 9.
+* Updates to `pigeon` version 9.
 
 ## 0.9.1+6
 
