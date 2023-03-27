@@ -1,3 +1,7 @@
+## NEXT
+
+* Update to `pigeon` version 9.
+
 ## 0.9.1+6
 
 * Clarifies explanation of endorsement in README.
