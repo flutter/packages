@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.imagepicker;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,26 +26,36 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.imagepicker.Messages.FlutterError;
+import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
+import io.flutter.plugins.imagepicker.Messages.SourceSpecification;
+import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class ImagePickerPluginTest {
-  private static final int SOURCE_CAMERA = 0;
-  private static final int SOURCE_GALLERY = 1;
-  private static final String PICK_IMAGE = "pickImage";
-  private static final String PICK_MULTI_IMAGE = "pickMultiImage";
-  private static final String PICK_VIDEO = "pickVideo";
-
-  @Rule public ExpectedException exception = ExpectedException.none();
+  private static final ImageSelectionOptions DEFAULT_IMAGE_OPTIONS =
+      new ImageSelectionOptions.Builder().setQuality((long) 100).build();
+  private static final VideoSelectionOptions DEFAULT_VIDEO_OPTIONS =
+      new VideoSelectionOptions.Builder().build();
+  private static final SourceSpecification SOURCE_GALLERY =
+      new SourceSpecification.Builder().setType(Messages.SourceType.GALLERY).build();
+  private static final SourceSpecification SOURCE_CAMERA_FRONT =
+      new SourceSpecification.Builder()
+          .setType(Messages.SourceType.CAMERA)
+          .setCamera(Messages.SourceCamera.FRONT)
+          .build();
+  private static final SourceSpecification SOURCE_CAMERA_REAR =
+      new SourceSpecification.Builder()
+          .setType(Messages.SourceType.CAMERA)
+          .setCamera(Messages.SourceCamera.REAR)
+          .build();
 
   @SuppressWarnings("deprecation")
   @Mock
@@ -55,112 +67,128 @@ public class ImagePickerPluginTest {
   @Mock Activity mockActivity;
   @Mock Application mockApplication;
   @Mock ImagePickerDelegate mockImagePickerDelegate;
-  @Mock MethodChannel.Result mockResult;
+  @Mock Messages.Result<List<String>> mockResult;
 
   ImagePickerPlugin plugin;
 
+  AutoCloseable mockCloseable;
+
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mockCloseable = MockitoAnnotations.openMocks(this);
     when(mockRegistrar.context()).thenReturn(mockApplication);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     when(mockPluginBinding.getApplicationContext()).thenReturn(mockApplication);
     plugin = new ImagePickerPlugin(mockImagePickerDelegate, mockActivity);
   }
 
+  @After
+  public void tearDown() throws Exception {
+    mockCloseable.close();
+  }
+
   @Test
-  public void onMethodCall_WhenActivityIsNull_FinishesWithForegroundActivityRequiredError() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_GALLERY);
+  public void pickImages_whenActivityIsNull_finishesWithForegroundActivityRequiredError() {
     ImagePickerPlugin imagePickerPluginWithNullActivity =
         new ImagePickerPlugin(mockImagePickerDelegate, null);
-    imagePickerPluginWithNullActivity.onMethodCall(call, mockResult);
-    verify(mockResult)
-        .error("no_activity", "image_picker plugin requires a foreground activity.", null);
+    imagePickerPluginWithNullActivity.pickImages(
+        SOURCE_GALLERY, DEFAULT_IMAGE_OPTIONS, false, false, mockResult);
+
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_activity", errorCaptor.getValue().code);
+    assertEquals(
+        "image_picker plugin requires a foreground activity.", errorCaptor.getValue().getMessage());
     verifyNoInteractions(mockImagePickerDelegate);
   }
 
   @Test
-  public void onMethodCall_WhenCalledWithUnknownMethod_ThrowsException() {
-    exception.expect(IllegalArgumentException.class);
-    exception.expectMessage("Unknown method test");
-    plugin.onMethodCall(new MethodCall("test", null), mockResult);
+  public void pickVideos_whenActivityIsNull_finishesWithForegroundActivityRequiredError() {
+    ImagePickerPlugin imagePickerPluginWithNullActivity =
+        new ImagePickerPlugin(mockImagePickerDelegate, null);
+    imagePickerPluginWithNullActivity.pickVideos(
+        SOURCE_CAMERA_REAR, DEFAULT_VIDEO_OPTIONS, false, false, mockResult);
+
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_activity", errorCaptor.getValue().code);
+    assertEquals(
+        "image_picker plugin requires a foreground activity.", errorCaptor.getValue().getMessage());
     verifyNoInteractions(mockImagePickerDelegate);
-    verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_WhenCalledWithUnknownImageSource_ThrowsException() {
-    exception.expect(IllegalArgumentException.class);
-    exception.expectMessage("Invalid image source: -1");
-    plugin.onMethodCall(buildMethodCall(PICK_IMAGE, -1), mockResult);
+  public void retrieveLostResults_whenActivityIsNull_finishesWithForegroundActivityRequiredError() {
+    ImagePickerPlugin imagePickerPluginWithNullActivity =
+        new ImagePickerPlugin(mockImagePickerDelegate, null);
+    FlutterError error =
+        assertThrows(FlutterError.class, imagePickerPluginWithNullActivity::retrieveLostResults);
+    assertEquals("image_picker plugin requires a foreground activity.", error.getMessage());
+    assertEquals("no_activity", error.code);
     verifyNoInteractions(mockImagePickerDelegate);
+  }
+
+  @Test
+  public void pickImages_whenSourceIsGallery_invokesChooseImageFromGallery() {
+    plugin.pickImages(SOURCE_GALLERY, DEFAULT_IMAGE_OPTIONS, false, false, mockResult);
+    verify(mockImagePickerDelegate).chooseImageFromGallery(any(), eq(false), any());
     verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_WhenSourceIsGallery_InvokesChooseImageFromGallery() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_GALLERY);
-    plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).chooseImageFromGallery(eq(call), any());
+  public void pickImages_whenSourceIsGalleryUsingPhotoPicker_invokesChooseImageFromGallery() {
+    plugin.pickImages(SOURCE_GALLERY, DEFAULT_IMAGE_OPTIONS, false, true, mockResult);
+    verify(mockImagePickerDelegate).chooseImageFromGallery(any(), eq(true), any());
     verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_InvokesChooseMultiImageFromGallery() {
-    MethodCall call = buildMethodCall(PICK_MULTI_IMAGE);
-    plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(eq(call), any());
+  public void pickImages_invokesChooseMultiImageFromGallery() {
+    plugin.pickImages(SOURCE_GALLERY, DEFAULT_IMAGE_OPTIONS, true, false, mockResult);
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), any());
     verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_WhenSourceIsCamera_InvokesTakeImageWithCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).takeImageWithCamera(eq(call), any());
+  public void pickImages_usingPhotoPicker_invokesChooseMultiImageFromGallery() {
+    plugin.pickImages(SOURCE_GALLERY, DEFAULT_IMAGE_OPTIONS, true, true, mockResult);
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), any());
     verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void onMethodCall_PickingImage_WhenSourceIsCamera_InvokesTakeImageWithCamera_RearCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    HashMap<String, Object> arguments = (HashMap<String, Object>) call.arguments;
-    arguments.put("cameraDevice", 0);
-    plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).setCameraDevice(eq(CameraDevice.REAR));
+  public void pickImages_whenSourceIsCamera_invokesTakeImageWithCamera() {
+    plugin.pickImages(SOURCE_CAMERA_REAR, DEFAULT_IMAGE_OPTIONS, false, false, mockResult);
+    verify(mockImagePickerDelegate).takeImageWithCamera(any(), any());
+    verifyNoInteractions(mockResult);
   }
 
   @Test
-  public void
-      onMethodCall_PickingImage_WhenSourceIsCamera_InvokesTakeImageWithCamera_FrontCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    HashMap<String, Object> arguments = (HashMap<String, Object>) call.arguments;
-    arguments.put("cameraDevice", 1);
-    plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).setCameraDevice(eq(CameraDevice.FRONT));
+  public void pickImages_whenSourceIsCamera_invokesTakeImageWithCamera_RearCamera() {
+    plugin.pickImages(SOURCE_CAMERA_REAR, DEFAULT_IMAGE_OPTIONS, false, false, mockResult);
+    verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.REAR));
   }
 
   @Test
-  public void onMethodCall_PickingVideo_WhenSourceIsCamera_InvokesTakeImageWithCamera_RearCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    HashMap<String, Object> arguments = (HashMap<String, Object>) call.arguments;
-    arguments.put("cameraDevice", 0);
-    plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).setCameraDevice(eq(CameraDevice.REAR));
+  public void pickImages_whenSourceIsCamera_invokesTakeImageWithCamera_FrontCamera() {
+    plugin.pickImages(SOURCE_CAMERA_FRONT, DEFAULT_IMAGE_OPTIONS, false, false, mockResult);
+    verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.FRONT));
   }
 
   @Test
-  public void
-      onMethodCall_PickingVideo_WhenSourceIsCamera_InvokesTakeImageWithCamera_FrontCamera() {
-    MethodCall call = buildMethodCall(PICK_IMAGE, SOURCE_CAMERA);
-    HashMap<String, Object> arguments = (HashMap<String, Object>) call.arguments;
-    arguments.put("cameraDevice", 1);
-    plugin.onMethodCall(call, mockResult);
-    verify(mockImagePickerDelegate).setCameraDevice(eq(CameraDevice.FRONT));
+  public void pickVideos_whenSourceIsCamera_invokesTakeImageWithCamera_RearCamera() {
+    plugin.pickVideos(SOURCE_CAMERA_REAR, DEFAULT_VIDEO_OPTIONS, false, false, mockResult);
+    verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.REAR));
   }
 
   @Test
-  public void onResiter_WhenAcitivityIsNull_ShouldNotCrash() {
+  public void pickVideos_whenSourceIsCamera_invokesTakeImageWithCamera_FrontCamera() {
+    plugin.pickVideos(SOURCE_CAMERA_FRONT, DEFAULT_VIDEO_OPTIONS, false, false, mockResult);
+    verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.FRONT));
+  }
+
+  @Test
+  public void onRegister_whenActivityIsNull_shouldNotCrash() {
     when(mockRegistrar.activity()).thenReturn(null);
     ImagePickerPlugin.registerWith((mockRegistrar));
     assertTrue(
@@ -168,14 +196,14 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onConstructor_WhenContextTypeIsActivity_ShouldNotCrash() {
+  public void onConstructor_whenContextTypeIsActivity_shouldNotCrash() {
     new ImagePickerPlugin(mockImagePickerDelegate, mockActivity);
     assertTrue(
         "No exception thrown when ImagePickerPlugin() ran with context instanceof Activity", true);
   }
 
   @Test
-  public void constructDelegate_ShouldUseInternalCacheDirectory() {
+  public void constructDelegate_shouldUseInternalCacheDirectory() {
     File mockDirectory = new File("/mockpath");
     when(mockActivity.getCacheDir()).thenReturn(mockDirectory);
 
@@ -189,7 +217,7 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onDetachedFromActivity_ShouldReleaseActivityState() {
+  public void onDetachedFromActivity_shouldReleaseActivityState() {
     final BinaryMessenger mockBinaryMessenger = mock(BinaryMessenger.class);
     when(mockPluginBinding.getBinaryMessenger()).thenReturn(mockBinaryMessenger);
 
@@ -205,16 +233,5 @@ public class ImagePickerPluginTest {
 
     plugin.onDetachedFromActivity();
     assertNull(plugin.getActivityState());
-  }
-
-  private MethodCall buildMethodCall(String method, final int source) {
-    final Map<String, Object> arguments = new HashMap<>();
-    arguments.put("source", source);
-
-    return new MethodCall(method, arguments);
-  }
-
-  private MethodCall buildMethodCall(String method) {
-    return new MethodCall(method, null);
   }
 }

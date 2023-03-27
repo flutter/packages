@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 /// Screen that shows an example of openFile
 class OpenTextPage extends StatelessWidget {
   /// Default Constructor
-  const OpenTextPage({Key? key}) : super(key: key);
+  const OpenTextPage({super.key});
 
   Future<void> _openTextFile(BuildContext context) async {
     const XTypeGroup typeGroup = XTypeGroup(
@@ -71,8 +71,7 @@ class OpenTextPage extends StatelessWidget {
 /// Widget that displays a text file in a dialog
 class TextDisplay extends StatelessWidget {
   /// Default Constructor
-  const TextDisplay(this.fileName, this.fileContent, {Key? key})
-      : super(key: key);
+  const TextDisplay(this.fileName, this.fileContent, {super.key});
 
   /// File's name
   final String fileName;

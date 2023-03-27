@@ -30,7 +30,7 @@ export 'package:flutter_plugin_tools/src/common/repository_package.dart';
 // get out of sync with what actually drives excerpting.
 const String kReadmeExcerptConfigPath = 'example/build.excerpt.yaml';
 
-const String _defaultDartConstraint = '>=2.14.0 <3.0.0';
+const String _defaultDartConstraint = '>=2.14.0 <4.0.0';
 const String _defaultFlutterConstraint = '>=2.5.0';
 
 /// Returns the exe name that command will use when running Flutter on
@@ -167,7 +167,8 @@ RepositoryPackage createFakePackage(
       isFlutter: isFlutter,
       version: version,
       flutterConstraint: flutterConstraint,
-      dartConstraint: dartConstraint);
+      dartConstraint: dartConstraint,
+      publishTo: publishTo);
   if (includeCommonFiles) {
     package.changelogFile.writeAsStringSync('''
 ## $version

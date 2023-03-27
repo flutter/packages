@@ -16,6 +16,8 @@ final class ImagePickerUtils {
   private static boolean isPermissionPresentInManifest(Context context, String permissionName) {
     try {
       PackageManager packageManager = context.getPackageManager();
+      // TODO(stuartmorgan): Add new codepath: https://github.com/flutter/flutter/issues/121816
+      @SuppressWarnings("deprecation")
       PackageInfo packageInfo =
           packageManager.getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
 

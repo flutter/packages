@@ -27,7 +27,7 @@ jobs:
         cd $GITHUB_WORKSPACE
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools
@@ -36,7 +36,7 @@ jobs:
 
     # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@3a563271c3f8d1611ed7352809303617ee7e54ac
+      uses: lewagon/wait-on-check-action@e106e5c43e8ca1edea6383a39a01c5ca495fd812
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'

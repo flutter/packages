@@ -37,7 +37,7 @@ class AllDatatypesTests: XCTestCase {
 
   func testAllEquals() throws {
     let everything = AllNullableTypes(
-      aNullableBool: false,
+      aNullableBool: true,
       aNullableInt: 1,
       aNullableDouble: 2.0,
       aNullableByteArray: FlutterStandardTypedData(bytes: "1234".data(using: .utf8)!),

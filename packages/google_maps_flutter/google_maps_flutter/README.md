@@ -6,9 +6,9 @@
 
 A Flutter plugin that provides a [Google Maps](https://developers.google.com/maps/) widget.
 
-|             | Android | iOS    |
-|-------------|---------|--------|
-| **Support** | SDK 20+ | iOS 9+ |
+|             | Android | iOS     |
+|-------------|---------|---------|
+| **Support** | SDK 20+ | iOS 11+ |
 
 ## Usage
 
@@ -110,7 +110,7 @@ the `GoogleMap`'s `onMapCreated` callback.
 <?code-excerpt "readme_sample.dart (MapSample)"?>
 ```dart
 class MapSample extends StatefulWidget {
-  const MapSample({Key? key}) : super(key: key);
+  const MapSample({super.key});
 
   @override
   State<MapSample> createState() => MapSampleState();

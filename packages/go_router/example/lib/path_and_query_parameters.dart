@@ -59,7 +59,7 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Query Parameters';
@@ -97,7 +97,7 @@ class App extends StatelessWidget {
 /// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +121,7 @@ class HomeScreen extends StatelessWidget {
 /// The screen that shows a list of persons in a family.
 class FamilyScreen extends StatelessWidget {
   /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.fid, required this.asc, Key? key})
-      : super(key: key);
+  const FamilyScreen({required this.fid, required this.asc, super.key});
 
   /// The family to display.
   final String fid;

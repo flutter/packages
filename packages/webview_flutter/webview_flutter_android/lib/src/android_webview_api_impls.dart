@@ -346,6 +346,33 @@ class WebViewHostApiImpl extends WebViewHostApi {
   }
 }
 
+/// Flutter API implementation for [WebView].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+class WebViewFlutterApiImpl implements WebViewFlutterApi {
+  /// Constructs a [WebViewFlutterApiImpl].
+  WebViewFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(int identifier) {
+    instanceManager.addHostCreatedInstance(WebView.detached(), identifier);
+  }
+}
+
 /// Host api implementation for [WebSettings].
 class WebSettingsHostApiImpl extends WebSettingsHostApi {
   /// Constructs a [WebSettingsHostApiImpl].
@@ -432,6 +459,14 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
     bool support,
   ) {
     return setSupportZoom(instanceManager.getIdentifier(instance)!, support);
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSetTextZoomFromInstance(
+    WebSettings instance,
+    int textZoom,
+  ) {
+    return setTextZoom(instanceManager.getIdentifier(instance)!, textZoom);
   }
 
   /// Helper method to convert instances ids to objects.
@@ -880,8 +915,16 @@ class WebStorageHostApiImpl extends WebStorageHostApi {
 /// Flutter api implementation for [FileChooserParams].
 class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
   /// Constructs a [FileChooserParamsFlutterApiImpl].
-  FileChooserParamsFlutterApiImpl({InstanceManager? instanceManager})
-      : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  FileChooserParamsFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -900,6 +943,8 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
         acceptTypes: acceptTypes.cast(),
         mode: mode.value,
         filenameHint: filenameHint,
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
       ),
       instanceId,
     );

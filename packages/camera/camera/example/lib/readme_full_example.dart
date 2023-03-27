@@ -18,7 +18,7 @@ Future<void> main() async {
 /// CameraApp is the Main Application.
 class CameraApp extends StatefulWidget {
   /// Default Constructor
-  const CameraApp({Key? key}) : super(key: key);
+  const CameraApp({super.key});
 
   @override
   State<CameraApp> createState() => _CameraAppState();

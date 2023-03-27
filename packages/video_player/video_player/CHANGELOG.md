@@ -1,3 +1,12 @@
+## 2.6.0
+
+* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.5.3
+
+* Updates iOS minimum version in README.
+
 ## 2.5.2
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
