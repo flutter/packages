@@ -134,7 +134,6 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
 
   @override
   void onImageAnalyzed(ImageInformation imageInformation) {
-    print('whoops!');
     final List<CameraImagePlane> imagePlanes = imageInformation
         .imagePlanesInformation
         .map((ImagePlaneInformation? imagePlaneInformation) {
