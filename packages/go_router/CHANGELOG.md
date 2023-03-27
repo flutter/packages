@@ -1,6 +1,6 @@
 ## 6.5.1
 
-* Fix redirect being called with empty location for unknown routes.
+- Fixes redirect being called with an empty location for unknown routes.
 
 ## 6.5.0
 
