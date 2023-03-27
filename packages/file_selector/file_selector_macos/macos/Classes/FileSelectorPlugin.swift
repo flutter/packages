@@ -60,20 +60,19 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     self.panelController = panelController
   }
 
-  func displayOpenPanel(options: OpenPanelOptions, completion: @escaping ([String?]) -> Void) {
-
+  func displayOpenPanel(options: OpenPanelOptions, completion: @escaping (Result<[String?], Error>) -> Void) {
     let panel = NSOpenPanel()
     configure(openPanel: panel, with: options)
     panelController.display(panel, for: viewProvider.view?.window) { (selection: [URL]?) in
-      completion(selection?.map({ item in item.path }) ?? [])
+      completion(.success(selection?.map({ item in item.path }) ?? []))
     }
   }
 
-  func displaySavePanel(options: SavePanelOptions, completion: @escaping (String?) -> Void) {
+  func displaySavePanel(options: SavePanelOptions, completion: @escaping (Result<String?, Error>) -> Void) {
     let panel = NSSavePanel()
     configure(panel: panel, with: options)
     panelController.display(panel, for: viewProvider.view?.window) { (selection: URL?) in
-      completion(selection?.path)
+      completion(.success(selection?.path))
     }
   }
 
