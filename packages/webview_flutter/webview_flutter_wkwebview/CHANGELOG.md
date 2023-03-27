@@ -1,6 +1,6 @@
 ## 3.2.3
 
-* Updates to `pigeon` version 9.
+* Updates to `pigeon` version 7.
 
 ## 3.2.2
 
