@@ -1,5 +1,6 @@
-## NEXT
+## 3.0.5
 
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 3.0.4

@@ -18,6 +18,7 @@ import 'test_android_webview.g.dart';
   DownloadListener,
   JavaScriptChannel,
   TestDownloadListenerHostApi,
+  TestInstanceManagerHostApi,
   TestJavaObjectHostApi,
   TestJavaScriptChannelHostApi,
   TestWebChromeClientHostApi,
@@ -32,6 +33,9 @@ import 'test_android_webview.g.dart';
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('Android WebView', () {
     group('JavaObject', () {
@@ -364,6 +368,24 @@ void main() {
         ));
       });
 
+      test('FlutterAPI create', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final WebViewFlutterApiImpl api = WebViewFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        const int instanceIdentifier = 0;
+        api.create(instanceIdentifier);
+
+        expect(
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+          isA<WebView>(),
+        );
+      });
+
       test('copy', () {
         expect(webView.copy(), isA<WebView>());
       });
@@ -496,6 +518,14 @@ void main() {
 
       test('copy', () {
         expect(webSettings.copy(), isA<WebSettings>());
+      });
+
+      test('setTextZoom', () {
+        webSettings.setTextZoom(100);
+        verify(mockPlatformHostApi.setTextZoom(
+          webSettingsInstanceId,
+          100,
+        ));
       });
     });
 

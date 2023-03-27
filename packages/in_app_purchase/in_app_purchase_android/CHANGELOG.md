@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.4+3
 
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 * Updates compileSdkVersion to 33.
 
