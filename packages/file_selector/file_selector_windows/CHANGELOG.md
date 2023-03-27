@@ -1,4 +1,4 @@
-## NEXT
+## 0.9.2
 
 * Update to `pigeon` version 9.
 
