@@ -183,6 +183,8 @@ abstract class ImageAnalysisHostApi {
   void create(int identifier, ResolutionInfo? targetResolution);
 
   void setAnalyzer(int identifier);
+
+  void clearAnalyzer(int identifier);
 }
 
 @FlutterApi()

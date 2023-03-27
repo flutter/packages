@@ -13,6 +13,7 @@ import 'package:video_player/video_player.dart';
 
 import 'camera_controller.dart';
 import 'camera_preview.dart';
+import 'camera_image.dart';
 
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {
@@ -276,7 +277,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             IconButton(
               icon: const Icon(Icons.flash_on),
               color: Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: () {controller?.startImageStream((CameraImage image) {}); }, // TODO(camsim99): Add functionality back here.
             ),
             // The exposure and focus mode are currently not supported on the web.
             ...!kIsWeb
@@ -285,7 +286,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                       icon: const Icon(Icons.exposure),
                       color: Colors.blue,
                       onPressed:
-                          () {}, // TODO(camsim99): Add functionality back here.
+                          () {controller?.stopImageStream(); }, // TODO(camsim99): Add functionality back here.
                     ),
                     IconButton(
                       icon: const Icon(Icons.filter_center_focus),

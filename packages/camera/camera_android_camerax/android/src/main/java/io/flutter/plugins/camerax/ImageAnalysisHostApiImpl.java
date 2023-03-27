@@ -37,6 +37,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   public void setContext(Context context) {
     this.context = context;
   }
+    
 
   @Override
   public void create(@NonNull Long identifier, @Nullable ResolutionInfo targetResolution) {
@@ -55,7 +56,6 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     ImageAnalysis imageAnalysis =
         (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
     ImageAnalysis.Analyzer analyzer = createImageAnalysisAnalyzer();
-    // TODO(camsim99): Determine what executor to use.
     imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), analyzer);
   }
 
@@ -98,4 +98,12 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
       }
     };
   }
+
+  @Override
+  public void clearAnalyzer(@NonNull Long identifier) {
+    ImageAnalysis imageAnalysis =
+      (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    imageAnalysis.clearAnalyzer();
+  }
+
 }

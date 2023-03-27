@@ -59,6 +59,11 @@ class ImageAnalysis extends UseCase {
   Future<void> setAnalyzer() async {
     _api.setAnalyzerFromInstance(this);
   }
+
+  /// Clears previously set analyzer for image streaming support.
+  Future<void> clearAnalyzer() async {
+    _api.clearAnalyzerFromInstance(this);
+  }
 }
 
 /// Host API implementation of [ImageAnalysis].
@@ -78,7 +83,7 @@ class ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates an [ImageAnallysis] instance with the specified target resolution.
+  /// Creates an [ImageAnalysis] instance with the specified target resolution.
   Future<void> createFromInstance(
       ImageAnalysis instance, ResolutionInfo? targetResolution) async {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
@@ -95,9 +100,18 @@ class ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
   Future<void> setAnalyzerFromInstance(ImageAnalysis instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
-        'No ImageAnalysis instanced in the instance manager has been found.');
+        'No ImageAnalysis instance in the instance manager has been found.');
 
     setAnalyzer(identifier!);
+  }
+
+  /// Clears analyzer of provide instance for image streaming support.
+  Future<void> clearAnalyzerFromInstance(ImageAnalysis instance) async {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    assert(identifier != null,
+        'No ImageAnalysis instance in the instance manager has been found.');
+
+    clearAnalyzer(identifier!);    
   }
 }
 
@@ -120,6 +134,7 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
 
   @override
   void onImageAnalyzed(ImageInformation imageInformation) {
+    print('whoops!');
     final List<CameraImagePlane> imagePlanes = imageInformation
         .imagePlanesInformation
         .map((ImagePlaneInformation? imagePlaneInformation) {

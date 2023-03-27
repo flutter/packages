@@ -179,18 +179,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// the CameraX library, this method just retrieves information about the
   /// camera and sends a [CameraInitializedEvent].
   ///
-  /// [imageFormatGroup] is used to specify the image formatting used.
-  /// On Android this defaults to ImageFormat.YUV_420_888 and applies only to
-  /// the image stream.
+  /// [imageFormatGroup] is used to specify the image formatting used for image
+  /// streaming, but CameraX currently only supports YUV_420_888, supported by
+  /// Flutter, and RGBA, not supported by Flutter. CameraX uses YUV_420_888
+  /// by default, so [imageFormatGroup] is not used.
   @override
   Future<void> initializeCamera(
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
-    // TODO(camsim99): Use imageFormatGroup to configure ImageAnalysis use case
-    // for image streaming.
-    // https://github.com/flutter/flutter/issues/120463
-
     // Configure CameraInitializedEvent to send as representation of a
     // configured camera:
     // Retrieve preview resolution.
@@ -257,7 +254,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> pausePreview(int cameraId) async {
-    _unbindPreviewFromLifecycle();
+    assert(preview != null);
+    _unbindUseCaseFromLifecycle(preview!);
     _previewIsPaused = true;
   }
 
@@ -307,9 +305,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// A new streamed frame is available.
   ///
   /// Listening to this stream will start streaming, and canceling will stop.
-  /// Pausing will throw a [CameraException], as pausing the stream would cause
-  /// very high memory usage; to temporarily stop receiving frames, cancel, then
-  /// listen again later.
+  /// To temporarily stop receiving frames, cancel, then listen again later.
+  /// Pausing/resuming is not supported, as pausing the stream would cause
+  /// very high memory usage, and will throw an exception due to the
+  /// implementation using a broadcast [StreamController], which does not
+  /// support those operations.
   ///
   /// [cameraId] and [options] are not used.
   @override
@@ -340,19 +340,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
   }
 
-  /// Unbinds [preview] instance from camera lifecycle controlled by the
-  /// [processCameraProvider].
-  Future<void> _unbindPreviewFromLifecycle() async {
-    final bool imageAnalysisIsBound = preview != null && await processCameraProvider!.isBound(imageAnalysis!);
-    if (imageAnalysisIsBound) {
-      return;
-    }
-
-    assert(processCameraProvider != null);
-
-    processCameraProvider!.unbind(<UseCase>[preview!]);
-  }
-
   /// Binds [imageAnalysis] instance to camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _bindImageAnalysisToLifecycle() async {
@@ -360,6 +347,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(cameraSelector != null);
 
     // TODO(camsim99): Support resolution configuration.
+    // Defaults to YUV_420_888 image format.
     imageAnalysis = ImageAnalysis();
     imageAnalysis!.setAnalyzer();
 
@@ -369,26 +357,22 @@ class AndroidCameraCameraX extends CameraPlatform {
         .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
   }
 
-  /// Unbinds [imageAnalysis] instance from camera lifecycle controlled by the
+  /// Unbinds [useCase] from camera lifecycle controlled by the
   /// [processCameraProvider].
-  // TODO(camsim99): Make general unbind method since logic will be same.
-  Future<void> _unbindImageAnalysisFromLifecycle() async {
-    final bool imageAnalysisIsBound = imageAnalysis != null && await processCameraProvider!.isBound(imageAnalysis!);
-    if (imageAnalysisIsBound) {
+  Future<void> _unbindUseCaseFromLifecycle(UseCase useCase) async {
+    final bool useCaseIsBound = await processCameraProvider!.isBound(useCase);
+    if (!useCaseIsBound) {
       return;
     }
 
     assert(processCameraProvider != null);
-
-    processCameraProvider!.unbind(<UseCase>[imageAnalysis!]);
+    processCameraProvider!.unbind(<UseCase>[useCase]);
   }
 
   // Methods for configuring image streaming:
 
   void _configureStreamController(StreamController<CameraImageData> controller) {
     controller.onListen = _onFrameStreamListen;
-    controller.onPause = _onFrameStreamPauseResume;
-    controller.onResume = _onFrameStreamPauseResume;
     controller.onCancel = _onFrameStreamCancel;
   }
 
@@ -396,14 +380,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     _bindImageAnalysisToLifecycle();
   }
 
-  void _onFrameStreamPauseResume() {
-    // Consistent implementation with camera_android.
-    throw CameraException('InvalidCall',
-        'Pause and resume are not supported for onStreamedFrameAvailable');
-  }
-
   FutureOr<void> _onFrameStreamCancel() async {
-    _unbindImageAnalysisFromLifecycle();
+    assert(imageAnalysis != null);
+    imageAnalysis!.clearAnalyzer();
+    _unbindUseCaseFromLifecycle(imageAnalysis!);
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:
