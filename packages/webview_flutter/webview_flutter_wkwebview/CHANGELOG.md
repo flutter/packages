@@ -1,3 +1,7 @@
+## 3.2.3
+
+* Updates to `pigeon` version 9.
+
 ## 3.2.2
 
 * Changes Objective-C to use relative imports.
