@@ -16,7 +16,7 @@ protocol PanelController {
   func display(
     _ panel: NSSavePanel,
     for window: NSWindow?,
-    completionHandler: @escaping (URL?) -> Void);
+    completionHandler: @escaping (URL?) -> Void)
 
   /// Displays the given open panel, and provides the selected URLs, or nil if the panel is
   /// cancelled, to the handler.
@@ -27,7 +27,7 @@ protocol PanelController {
   func display(
     _ panel: NSOpenPanel,
     for window: NSWindow?,
-    completionHandler: @escaping ([URL]?) -> Void);
+    completionHandler: @escaping ([URL]?) -> Void)
 }
 
 /// Protocol to provide access to the Flutter view, allowing for dependency injection in tests.
@@ -60,7 +60,9 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     self.panelController = panelController
   }
 
-  func displayOpenPanel(options: OpenPanelOptions, completion: @escaping (Result<[String?], Error>) -> Void) {
+  func displayOpenPanel(
+    options: OpenPanelOptions, completion: @escaping (Result<[String?], Error>) -> Void
+  ) {
     let panel = NSOpenPanel()
     configure(openPanel: panel, with: options)
     panelController.display(panel, for: viewProvider.view?.window) { (selection: [URL]?) in
@@ -68,7 +70,9 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     }
   }
 
-  func displaySavePanel(options: SavePanelOptions, completion: @escaping (Result<String?, Error>) -> Void) {
+  func displaySavePanel(
+    options: SavePanelOptions, completion: @escaping (Result<String?, Error>) -> Void
+  ) {
     let panel = NSSavePanel()
     configure(panel: panel, with: options)
     panelController.display(panel, for: viewProvider.view?.window) { (selection: URL?) in
@@ -117,8 +121,8 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
   ) {
     configure(panel: panel, with: options.baseOptions)
     panel.allowsMultipleSelection = options.allowsMultipleSelection
-    panel.canChooseDirectories = options.canChooseDirectories;
-    panel.canChooseFiles = options.canChooseFiles;
+    panel.canChooseDirectories = options.canChooseDirectories
+    panel.canChooseFiles = options.canChooseFiles
   }
 }
 
@@ -165,8 +169,6 @@ private class DefaultViewProvider: ViewProvider {
   }
 
   var view: NSView? {
-    get {
-      registrar.view
-    }
+    registrar.view
   }
 }
