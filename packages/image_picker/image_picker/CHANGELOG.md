@@ -1,3 +1,7 @@
+## 0.8.7+1
+
+* Updates README to use code excerpts.
+
 ## 0.8.7
 
 * Adds `usePhotoPickerAndroid` options.
