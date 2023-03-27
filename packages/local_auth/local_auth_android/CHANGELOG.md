@@ -1,3 +1,7 @@
+## 1.0.22
+
+* Updates androidx.fragment version to 1.5.6
+
 ## 1.0.21
 
 * Clarifies explanation of endorsement in README.
