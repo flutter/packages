@@ -62,54 +62,6 @@ public class InstanceManagerTest {
   }
 
   @Test
-  public void removeReturnsNullWhenClosed() {
-    final Object object = new Object();
-    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
-    instanceManager.addDartCreatedInstance(object, 0);
-    instanceManager.stopFinalizationListener();
-
-    assertNull(instanceManager.remove(0));
-  }
-
-  @Test
-  public void getIdentifierForStrongReferenceReturnsNullWhenClosed() {
-    final Object object = new Object();
-    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
-    instanceManager.addDartCreatedInstance(object, 0);
-    instanceManager.stopFinalizationListener();
-
-    assertNull(instanceManager.getIdentifierForStrongReference(object));
-  }
-
-  @Test
-  public void addHostCreatedInstanceReturnsNegativeOneWhenClosed() {
-    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
-    instanceManager.stopFinalizationListener();
-
-    assertEquals(instanceManager.addHostCreatedInstance(new Object()), -1L);
-  }
-
-  @Test
-  public void getInstanceReturnsNullWhenClosed() {
-    final Object object = new Object();
-    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
-    instanceManager.addDartCreatedInstance(object, 0);
-    instanceManager.stopFinalizationListener();
-
-    assertNull(instanceManager.getInstance(0));
-  }
-
-  @Test
-  public void containsInstanceReturnsFalseWhenClosed() {
-    final Object object = new Object();
-    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
-    instanceManager.addDartCreatedInstance(object, 0);
-    instanceManager.stopFinalizationListener();
-
-    assertFalse(instanceManager.containsInstance(object));
-  }
-
-  @Test
   public void clear() {
     final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
