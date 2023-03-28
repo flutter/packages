@@ -1,3 +1,7 @@
+## 2.2.1
+
+* Updates to `pigeon` version 9.
+
 ## 2.2.0
 
 * Adds support for `getContainerPath` on iOS.
