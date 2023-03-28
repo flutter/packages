@@ -1161,9 +1161,7 @@ NSString *const errorMethod = @"error";
     AudioChannelLayout acl;
     bzero(&acl, sizeof(acl));
     acl.mChannelLayoutTag = kAudioChannelLayoutTag_Mono;
-    NSDictionary *audioOutputSettings = nil;
-
-    audioOutputSettings = [@{
+    NSMutableDictionary *audioOutputSettings = [@{
       AVFormatIDKey : [NSNumber numberWithInt:kAudioFormatMPEG4AAC],
       AVSampleRateKey : [NSNumber numberWithFloat:44100.0],
       AVNumberOfChannelsKey : [NSNumber numberWithInt:1],
