@@ -1,3 +1,7 @@
+## 3.4.4
+
+* Updates internal Java InstanceManager to only stop finalization callbacks when engine is detached.
+
 ## 3.4.3
 
 * Updates internal Java InstanceManager to be cleared on hot restart.
