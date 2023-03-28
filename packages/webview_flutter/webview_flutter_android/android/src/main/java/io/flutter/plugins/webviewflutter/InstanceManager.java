@@ -137,7 +137,7 @@ public class InstanceManager {
    * Adds a new instance that was instantiated from the host platform.
    *
    * @param instance the instance to be stored. This must be unique to all other added instances.
-   * @return the unique identifier stored with instance. Otherwise, returns a value >= 0.
+   * @return the unique identifier (>= 0) stored with instance.
    */
   public long addHostCreatedInstance(Object instance) {
     logWarningIfFinalizationListenerHasStopped();
