@@ -1,13 +1,49 @@
-import io.flutter.plugins.camerax.CameraXProxy;
-import io.flutter.plugins.camerax.ImageAnalysisFlutterApiImpl;
-import io.flutter.plugins.camerax.ImageAnalysisHostApiImpl;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageInformation;
-import io.flutter.plugins.webviewflutter.InstanceManager;
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+package io.flutter.plugins.camerax;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import android.content.Context;
+import android.util.Size;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
+import androidx.test.core.app.ApplicationProvider;
+import io.flutter.plugins.camerax.CameraXProxy;
+import io.flutter.plugins.camerax.ImageAnalysisFlutterApiImpl;
+import io.flutter.plugins.camerax.ImageAnalysisHostApiImpl;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageInformation;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImagePlaneInformation;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
+import io.flutter.plugins.camerax.InstanceManager;
+import io.flutter.plugin.common.BinaryMessenger;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.robolectric.RobolectricTestRunner;
+
+@RunWith(RobolectricTestRunner.class)
 public class ImageAnalysisTest {
     @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -17,12 +53,11 @@ public class ImageAnalysisTest {
   
     InstanceManager testInstanceManager;
     private Context context;
-    private MockedStatic<File> mockedStaticFile;
   
     @Before
     public void setUp() throws Exception {
       testInstanceManager = spy(InstanceManager.open(identifier -> {}));
-      context = mock(Context.class);
+      context = ApplicationProvider.getApplicationContext();
     }
   
     @After
@@ -60,37 +95,66 @@ public class ImageAnalysisTest {
     }
 
     @Test
-    public void setAnalyzer_() {
+    public void setAnalyzer_setsAnalyzerThatSendsExpectedImageInformation() {
         final ImageAnalysisHostApiImpl imageAnalysisHostApiImpl =
             new ImageAnalysisHostApiImpl(mockBinaryMessenger, testInstanceManager);
+        final ImageAnalysisFlutterApiImpl mockImageAnalysisFlutterApiImpl = mock(ImageAnalysisFlutterApiImpl.class);
         final Long mockImageAnalysisIdentifier = 37L;
         final ImageProxy mockImageProxy = mock(ImageProxy.class);
 
         testInstanceManager.addDartCreatedInstance(mockImageAnalysis, mockImageAnalysisIdentifier);
+        imageAnalysisHostApiImpl.setContext(context);
+        imageAnalysisHostApiImpl.cameraXProxy = mockCameraXProxy;
+        when(mockCameraXProxy.createImageAnalysisFlutterApiImpl(mockBinaryMessenger)).thenReturn(mockImageAnalysisFlutterApiImpl);
 
         final ArgumentCaptor<ImageAnalysis.Analyzer> analyzerCaptor = ArgumentCaptor.forClass(ImageAnalysis.Analyzer.class);
 
+        // Test that analyzer is set:
+
         imageAnalysisHostApiImpl.setAnalyzer(mockImageAnalysisIdentifier);
 
-        // todo: try verifying executor, may need real context
         verify(mockImageAnalysis).setAnalyzer(any(Executor.class), analyzerCaptor.capture());
         ImageAnalysis.Analyzer analyzer = analyzerCaptor.getValue();
 
-        when(mockImageProxy.getPlanes()).thenReturn();
-        // mock at least one plane, give it values for everything. can use captor to verify
+        // Test that the expected image information is sent:
 
-        // for the rest, give real/mock info and mock the flutter api. capture whatever it sends and check info with it
-        when(mockImageProxy.getWidth()).thenReturn();
-        when(mockImageProxy.getHeight()).thenReturn();
-        when(mockImageProxy.getFormat()).thenReturn();
+        final ImageProxy.PlaneProxy mockPlaneProxy = mock(ImageProxy.PlaneProxy.class);
+        final ImageProxy.PlaneProxy[] mockPlanes = new ImageProxy.PlaneProxy[] { mockPlaneProxy };
+        final ByteBuffer mockByteBuffer = mock(ByteBuffer.class);
+        final int remainingBytes = 1;
+        final int rowStride = 40;
+        final int pixelStride = 36;
+        final int width = 50;
+        final int height = 10;
+        final int format = 35;
 
+        when(mockImageProxy.getPlanes()).thenReturn(mockPlanes);
+        when(mockPlaneProxy.getBuffer()).thenReturn(mockByteBuffer);
+        when(mockByteBuffer.remaining()).thenReturn(remainingBytes);
+        when(mockPlaneProxy.getRowStride()).thenReturn(rowStride);
+        when(mockPlaneProxy.getPixelStride()).thenReturn(pixelStride);
+        when(mockImageProxy.getWidth()).thenReturn(width);
+        when(mockImageProxy.getHeight()).thenReturn(height);
+        when(mockImageProxy.getFormat()).thenReturn(format);
+
+        final ArgumentCaptor<GeneratedCameraXLibrary.ImageInformation> imageInformationCaptor = ArgumentCaptor.forClass(GeneratedCameraXLibrary.ImageInformation.class);
 
         analyzer.analyze(mockImageProxy);
 
-        verify(mockImageAnalysisFlutterApiImpl).sendOnImageAnalyzedEvent(..., any());
+        verify(mockImageAnalysisFlutterApiImpl).sendOnImageAnalyzedEvent(imageInformationCaptor.capture(), any());
         verify(mockImageProxy).close();
 
-
+        ImageInformation imageInformation = imageInformationCaptor.getValue();
+        assertEquals(imageInformation.getWidth(), Long.valueOf(width));
+        assertEquals(imageInformation.getHeight(), Long.valueOf(height));
+        assertEquals(imageInformation.getFormat(), Long.valueOf(format));
+        List<ImagePlaneInformation> imagePlanesInformation = imageInformation.getImagePlanesInformation();
+        ImagePlaneInformation imagePlaneInformation = imagePlanesInformation.get(0);
+        assertEquals(imagePlaneInformation.getBytesPerRow(), Long.valueOf(rowStride));
+        assertEquals(imagePlaneInformation.getBytesPerPixel(), Long.valueOf(pixelStride));
+        // We expect one (remainingBytes) bye. This byte should equal the byte contained by the mock ByteBuffer.
+        assertEquals(imagePlaneInformation.getBytes().length, remainingBytes);
+        assertEquals(imagePlaneInformation.getBytes()[0], mockByteBuffer.get());
     }
 
     @Test

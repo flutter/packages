@@ -5,7 +5,6 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -92,7 +91,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
         imageInfoBuilder.setImagePlanesInformation(imagePlanesInformation);
 
         ImageAnalysisFlutterApiImpl imageAnalysisFlutterApiImpl =
-            new ImageAnalysisFlutterApiImpl(binaryMessenger);
+          cameraXProxy.createImageAnalysisFlutterApiImpl(binaryMessenger);
         imageAnalysisFlutterApiImpl.sendOnImageAnalyzedEvent(imageInfoBuilder.build(), reply -> {});
         image.close();
       }
