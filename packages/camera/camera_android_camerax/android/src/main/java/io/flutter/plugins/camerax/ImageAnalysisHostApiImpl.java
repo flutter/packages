@@ -26,7 +26,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   private BinaryMessenger binaryMessenger;
   private Context context;
 
-  @VisibleForTesting CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
 
   public ImageAnalysisHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
@@ -64,9 +64,9 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
       @Override
       public void analyze(@NonNull ImageProxy image) {
         ImageProxy.PlaneProxy[] planes = image.getPlanes();
-
         List<GeneratedCameraXLibrary.ImagePlaneInformation> imagePlanesInformation =
             new ArrayList<GeneratedCameraXLibrary.ImagePlaneInformation>();
+
         for (ImageProxy.PlaneProxy plane : planes) {
           ByteBuffer byteBuffer = plane.getBuffer();
           byte[] bytes = new byte[byteBuffer.remaining()];

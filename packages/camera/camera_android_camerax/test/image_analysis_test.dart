@@ -2,9 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data' show Uint8List;
+
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart'
+    show CameraImageData, CameraImageFormat, CameraImagePlane, ImageFormatGroup;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -12,9 +16,12 @@ import 'package:mockito/mockito.dart';
 import 'image_analysis_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestImageAnalysisHostApi])
+@GenerateMocks(<Type>[TestImageAnalysisHostApi, TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ImageAnalysis', () {
     tearDown(() => TestImageAnalysisHostApi.setup(null));
@@ -105,24 +112,43 @@ void main() {
     });
 
     test('flutterApi onImageAnalyzed adds event with image information to expected stream', () async {
-      final InstanceManager instanceManager = InstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      final ProcessCameraProviderFlutterApiImpl flutterApi =
-          ProcessCameraProviderFlutterApiImpl(
-        instanceManager: instanceManager,
-      );
+      final ImageAnalysisFlutterApiImpl flutterApi =
+          ImageAnalysisFlutterApiImpl();
+      
+      // Fake image information for testing.
+      const int bytesPerRow = 5;
+      const int bytesPerPixel = 1;
+      final Uint8List bytes = Uint8List(50);
+      final List<ImagePlaneInformation> imagePlanesInformation = <ImagePlaneInformation>[
+        ImagePlaneInformation(
+          bytesPerRow: bytesPerRow,
+          bytesPerPixel: bytesPerPixel,
+          bytes: bytes,
+        )];
+      const int width = 5;
+      const int height = 10;
+      const int format = 35;
+      final ImageInformation imageInformation =
+        ImageInformation(
+          width: width,
+          height: height,
+          format: format,
+          imagePlanesInformation: imagePlanesInformation,
+        );
 
-      flutterApi.create(0);
-
-      expect(instanceManager.getInstanceWithWeakReference(0),
-          isA<ProcessCameraProvider>());        
-
-          const String testErrorDescription = 'Test error description!';
-      SystemServices.cameraErrorStreamController.stream
-          .listen((String errorDescription) {
-        expect(errorDescription, equals(testErrorDescription));
+      ImageAnalysis.onStreamedFrameAvailableStreamController.stream
+          .listen((CameraImageData cameraImageData) {
+        expect(cameraImageData.format!.group, equals(ImageFormatGroup.yuv420));
+        expect(cameraImageData.planes.first, isNotNull);
+        expect(cameraImageData.planes.first!.bytes, equals(bytes));
+        expect(cameraImageData.planes.first!.bytesPerRow, equals(bytesPerRow));
+        expect(cameraImageData.planes.first!.bytesPerPixel, equals(bytesPerPixel));
+        expect(cameraImageData.format!.raw, equals(format));
+        expect(cameraImageData.height, equals(height));
+        expect(cameraImageData.width, equals(width));
       });
-      SystemServicesFlutterApiImpl().onCameraError(testErrorDescription);
+
+      flutterApi.onImageAnalyzed(imageInformation);
     });
+  });
 }
