@@ -1,6 +1,6 @@
 ## 3.4.4
 
-* Updates internal Java InstanceManager to only stop finalization callbacks when engine is detached.
+* Updates internal Java InstanceManager to only stop finalization callbacks when stopped.
 
 ## 3.4.3
 
