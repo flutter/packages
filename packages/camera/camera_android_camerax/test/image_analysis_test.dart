@@ -27,7 +27,8 @@ void main() {
     tearDown(() => TestImageAnalysisHostApi.setup(null));
 
     test('detached create does not call create on the Java side', () async {
-      final MockTestImageAnalysisHostApi mockApi = MockTestImageAnalysisHostApi();
+      final MockTestImageAnalysisHostApi mockApi =
+          MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
 
       final InstanceManager instanceManager = InstanceManager(
@@ -38,12 +39,13 @@ void main() {
         targetResolution: ResolutionInfo(width: 50, height: 10),
       );
 
-      verifyNever(mockApi.create(argThat(isA<int>()),
-          argThat(isA<ResolutionInfo>())));
+      verifyNever(
+          mockApi.create(argThat(isA<int>()), argThat(isA<ResolutionInfo>())));
     });
 
     test('create calls create on the Java side', () async {
-      final MockTestImageAnalysisHostApi mockApi = MockTestImageAnalysisHostApi();
+      final MockTestImageAnalysisHostApi mockApi =
+          MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
 
       final InstanceManager instanceManager = InstanceManager(
@@ -57,8 +59,8 @@ void main() {
             width: targetResolutionWidth, height: targetResolutionHeight),
       );
 
-      final VerificationResult createVerification = verify(mockApi.create(
-          argThat(isA<int>()), captureAny));
+      final VerificationResult createVerification =
+          verify(mockApi.create(argThat(isA<int>()), captureAny));
       final ResolutionInfo capturedResolutionInfo =
           createVerification.captured.single as ResolutionInfo;
       expect(capturedResolutionInfo.width, equals(targetResolutionWidth));
@@ -67,7 +69,8 @@ void main() {
 
     test('setAnalyzer makes call to set analyzer on ImageAnalysis instance',
         () async {
-      final MockTestImageAnalysisHostApi mockApi = MockTestImageAnalysisHostApi();
+      final MockTestImageAnalysisHostApi mockApi =
+          MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
 
       final InstanceManager instanceManager = InstanceManager(
@@ -90,7 +93,8 @@ void main() {
 
     test('clearAnalyzer makes call to set analyzer on ImageAnalysis instance',
         () async {
-      final MockTestImageAnalysisHostApi mockApi = MockTestImageAnalysisHostApi();
+      final MockTestImageAnalysisHostApi mockApi =
+          MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
 
       final InstanceManager instanceManager = InstanceManager(
@@ -111,30 +115,33 @@ void main() {
       verify(mockApi.clearAnalyzer(imageAnalysisIdentifier));
     });
 
-    test('flutterApi onImageAnalyzed adds event with image information to expected stream', () async {
+    test(
+        'flutterApi onImageAnalyzed adds event with image information to expected stream',
+        () async {
       final ImageAnalysisFlutterApiImpl flutterApi =
           ImageAnalysisFlutterApiImpl();
-      
+
       // Fake image information for testing.
       const int bytesPerRow = 5;
       const int bytesPerPixel = 1;
       final Uint8List bytes = Uint8List(50);
-      final List<ImagePlaneInformation> imagePlanesInformation = <ImagePlaneInformation>[
+      final List<ImagePlaneInformation> imagePlanesInformation =
+          <ImagePlaneInformation>[
         ImagePlaneInformation(
           bytesPerRow: bytesPerRow,
           bytesPerPixel: bytesPerPixel,
           bytes: bytes,
-        )];
+        )
+      ];
       const int width = 5;
       const int height = 10;
       const int format = 35;
-      final ImageInformation imageInformation =
-        ImageInformation(
-          width: width,
-          height: height,
-          format: format,
-          imagePlanesInformation: imagePlanesInformation,
-        );
+      final ImageInformation imageInformation = ImageInformation(
+        width: width,
+        height: height,
+        format: format,
+        imagePlanesInformation: imagePlanesInformation,
+      );
 
       ImageAnalysis.onStreamedFrameAvailableStreamController.stream
           .listen((CameraImageData cameraImageData) {
@@ -142,7 +149,8 @@ void main() {
         expect(cameraImageData.planes.first, isNotNull);
         expect(cameraImageData.planes.first!.bytes, equals(bytes));
         expect(cameraImageData.planes.first!.bytesPerRow, equals(bytesPerRow));
-        expect(cameraImageData.planes.first!.bytesPerPixel, equals(bytesPerPixel));
+        expect(
+            cameraImageData.planes.first!.bytesPerPixel, equals(bytesPerPixel));
         expect(cameraImageData.format!.raw, equals(format));
         expect(cameraImageData.height, equals(height));
         expect(cameraImageData.width, equals(width));

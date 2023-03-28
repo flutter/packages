@@ -10,6 +10,7 @@ import 'package:camera_android_camerax/src/camera.dart';
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camera_selector.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/image_capture.dart';
 import 'package:camera_android_camerax/src/preview.dart';
 import 'package:camera_android_camerax/src/process_camera_provider.dart';
@@ -27,7 +28,9 @@ import 'android_camera_camerax_test.mocks.dart';
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
+  MockSpec<CameraImageData>(),
   MockSpec<CameraSelector>(),
+  MockSpec<ImageAnalysis>(),
   MockSpec<ImageCapture>(),
   MockSpec<Preview>(),
   MockSpec<ProcessCameraProvider>(),
@@ -39,7 +42,7 @@ void main() {
   test('Should fetch CameraDescription instances for available cameras',
       () async {
     // Arrange
-    final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
+    final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
     camera.processCameraProvider = MockProcessCameraProvider();
     final List<dynamic> returnData = <dynamic>[
       <String, dynamic>{
@@ -99,7 +102,7 @@ void main() {
   test(
       'createCamera requests permissions, starts listening for device orientation changes, and returns flutter surface texture ID',
       () async {
-    final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
+    final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
     camera.processCameraProvider = MockProcessCameraProvider();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
@@ -139,7 +142,7 @@ void main() {
   test(
       'createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance',
       () async {
-    final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
+    final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
     camera.processCameraProvider = MockProcessCameraProvider();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
@@ -165,7 +168,7 @@ void main() {
   });
 
   test('initializeCamera sends expected CameraInitializedEvent', () async {
-    final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
+    final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
     camera.processCameraProvider = MockProcessCameraProvider();
     const int cameraId = 10;
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -405,17 +408,76 @@ void main() {
 
     expect(imageFile.path, equals(testPicturePath));
   });
+
+  test(
+      'onStreamedFrameAvailable emits CameraImageData when picked up from ImageAnalysis',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.cameraSelector = MockCameraSelector();
+
+    final CameraImageData mockCameraImageData = MockCameraImageData();
+    final Stream<CameraImageData> imageStream =
+        camera.onStreamedFrameAvailable(22);
+    final StreamQueue<CameraImageData> streamQueue =
+        StreamQueue<CameraImageData>(imageStream);
+
+    ImageAnalysis.onStreamedFrameAvailableStreamController
+        .add(mockCameraImageData);
+
+    expect(await streamQueue.next, equals(mockCameraImageData));
+    await streamQueue.cancel();
+  });
+
+  test(
+      'onStreamedFrameAvaiable returns stream that responds expectedly to being listened to and canceled',
+      () async {
+    final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
+    final ProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final CameraSelector mockCameraSelector = MockCameraSelector();
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.cameraSelector = mockCameraSelector;
+
+    // Test listening.
+    final Camera mockCamera = MockCamera();
+    when(mockProcessCameraProvider.bindToLifecycle(
+            mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
+        .thenAnswer((_) async => mockCamera);
+
+    final StreamSubscription<CameraImageData> imageStreamSubscription =
+        camera.onStreamedFrameAvailable(32).listen((CameraImageData data) {});
+
+    verify(camera.mockImageAnalysis.setAnalyzer());
+    verify(mockProcessCameraProvider.bindToLifecycle(
+        mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
+
+    // Test canceling.
+    when(mockProcessCameraProvider.isBound(camera.mockImageAnalysis))
+        .thenAnswer((_) async => Future<bool>.value(true));
+
+    await imageStreamSubscription.cancel();
+
+    verify(camera.mockImageAnalysis.clearAnalyzer());
+    verify(
+        mockProcessCameraProvider.unbind(<UseCase>[camera.mockImageAnalysis]));
+  });
 }
 
+// TODO(camsim99): Refactor this to reduce redundancy.
 /// Mock of [AndroidCameraCameraX] that stubs behavior of some methods for
-/// testing.
-class MockAndroidCameraCamerax extends AndroidCameraCameraX {
+/// testing the createCamera and initializeCamera methods.
+class MockAndroidCameraCameraX extends AndroidCameraCameraX {
   bool cameraPermissionsRequested = false;
   bool startedListeningForDeviceOrientationChanges = false;
+
+  // Mocks available for use throughout testing.
   final MockPreview testPreview = MockPreview();
   final MockImageCapture testImageCapture = MockImageCapture();
   final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
   final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+  final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
   @override
   Future<void> requestCameraPermissions(bool enableAudio) async {
@@ -449,5 +511,10 @@ class MockAndroidCameraCamerax extends AndroidCameraCameraX {
   ImageCapture createImageCapture(
       int? flashMode, ResolutionInfo? targetResolution) {
     return testImageCapture;
+  }
+
+  @override
+  ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
+    return mockImageAnalysis;
   }
 }

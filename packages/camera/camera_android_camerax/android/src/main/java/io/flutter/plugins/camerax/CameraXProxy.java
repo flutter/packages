@@ -74,13 +74,13 @@ public class CameraXProxy {
     return new Size(resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
   }
 
-    /**
+  /**
    * Creates an instance of the {@code ImageAnalysisFlutterApiImpl}.
    *
    * <p>Included in this class for testing purposes.
    */
   public ImageAnalysisFlutterApiImpl createImageAnalysisFlutterApiImpl(
-    @NonNull BinaryMessenger binaryMessenger) {
-  return new ImageAnalysisFlutterApiImpl(binaryMessenger);
-}
+      @NonNull BinaryMessenger binaryMessenger) {
+    return new ImageAnalysisFlutterApiImpl(binaryMessenger);
+  }
 }

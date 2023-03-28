@@ -315,8 +315,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
-    final StreamController<CameraImageData> cameraImageDataStreamController = ImageAnalysis.onStreamedFrameAvailableStreamController;
-    _configureStreamController(cameraImageDataStreamController);
+    final StreamController<CameraImageData> cameraImageDataStreamController =
+        ImageAnalysis.onStreamedFrameAvailableStreamController;
+    _configureCameraImageDataStreamController(cameraImageDataStreamController);
     return cameraImageDataStreamController.stream;
   }
 
@@ -348,10 +349,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = ImageAnalysis();
+    imageAnalysis = createImageAnalysis(null);
     imageAnalysis!.setAnalyzer();
 
-    // TODO(camsim99): Reset live camera state observers here when 
+    // TODO(camsim99): Reset live camera state observers here when
     // https://github.com/flutter/packages/pull/3419 lands.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
@@ -360,18 +361,20 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Unbinds [useCase] from camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _unbindUseCaseFromLifecycle(UseCase useCase) async {
+    assert(processCameraProvider != null);
+
     final bool useCaseIsBound = await processCameraProvider!.isBound(useCase);
     if (!useCaseIsBound) {
       return;
     }
 
-    assert(processCameraProvider != null);
     processCameraProvider!.unbind(<UseCase>[useCase]);
   }
 
   // Methods for configuring image streaming:
 
-  void _configureStreamController(StreamController<CameraImageData> controller) {
+  void _configureCameraImageDataStreamController(
+      StreamController<CameraImageData> controller) {
     controller.onListen = _onFrameStreamListen;
     controller.onCancel = _onFrameStreamCancel;
   }
@@ -480,5 +483,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       int? flashMode, ResolutionInfo? targetResolution) {
     return ImageCapture(
         targetFlashMode: flashMode, targetResolution: targetResolution);
+  }
+
+  /// Returns an [ImageAnalysis] configured with specified flash mode and
+  /// target resolution.
+  @visibleForTesting
+  ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
+    return ImageAnalysis(targetResolution: targetResolution);
   }
 }

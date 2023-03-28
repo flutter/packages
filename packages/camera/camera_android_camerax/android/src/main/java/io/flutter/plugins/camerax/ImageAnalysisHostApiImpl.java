@@ -36,7 +36,6 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   public void setContext(Context context) {
     this.context = context;
   }
-    
 
   @Override
   public void create(@NonNull Long identifier, @Nullable ResolutionInfo targetResolution) {
@@ -81,7 +80,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
                   .build());
         }
 
-        // TODO (camsim99): Retrieve and send the following when made available by b/274791178: 
+        // TODO (camsim99): Retrieve and send the following when made available by b/274791178:
         // last lens aperture, last sensor exposure time, last sensor sensitivity.
         GeneratedCameraXLibrary.ImageInformation.Builder imageInfoBuilder =
             new GeneratedCameraXLibrary.ImageInformation.Builder();
@@ -91,7 +90,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
         imageInfoBuilder.setImagePlanesInformation(imagePlanesInformation);
 
         ImageAnalysisFlutterApiImpl imageAnalysisFlutterApiImpl =
-          cameraXProxy.createImageAnalysisFlutterApiImpl(binaryMessenger);
+            cameraXProxy.createImageAnalysisFlutterApiImpl(binaryMessenger);
         imageAnalysisFlutterApiImpl.sendOnImageAnalyzedEvent(imageInfoBuilder.build(), reply -> {});
         image.close();
       }
@@ -101,8 +100,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   @Override
   public void clearAnalyzer(@NonNull Long identifier) {
     ImageAnalysis imageAnalysis =
-      (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
+        (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
     imageAnalysis.clearAnalyzer();
   }
-
 }

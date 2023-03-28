@@ -111,7 +111,7 @@ class ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     assert(identifier != null,
         'No ImageAnalysis instance in the instance manager has been found.');
 
-    clearAnalyzer(identifier!);    
+    clearAnalyzer(identifier!);
   }
 }
 
