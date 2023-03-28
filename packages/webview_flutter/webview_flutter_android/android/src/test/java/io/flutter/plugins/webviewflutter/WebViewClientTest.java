@@ -41,7 +41,7 @@ public class WebViewClientTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
 
     final WebViewClientCreator webViewClientCreator =
         new WebViewClientCreator() {
@@ -59,7 +59,7 @@ public class WebViewClientTest {
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test

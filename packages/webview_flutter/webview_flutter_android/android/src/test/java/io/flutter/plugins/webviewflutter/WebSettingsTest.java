@@ -30,7 +30,7 @@ public class WebSettingsTest {
 
   @Before
   public void setUp() {
-    testInstanceManager = InstanceManager.open(identifier -> {});
+    testInstanceManager = InstanceManager.create(identifier -> {});
 
     when(mockWebSettingsCreator.createWebSettings(any())).thenReturn(mockWebSettings);
     testHostApiImpl = new WebSettingsHostApiImpl(testInstanceManager, mockWebSettingsCreator);
@@ -39,7 +39,7 @@ public class WebSettingsTest {
 
   @After
   public void tearDown() {
-    testInstanceManager.close();
+    testInstanceManager.stopFinalizationListener();
   }
 
   @Test
