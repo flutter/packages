@@ -560,7 +560,7 @@ class JavaScriptChannelFlutterApiImpl extends JavaScriptChannelFlutterApi {
         .getInstanceWithWeakReference(instanceId) as JavaScriptChannel?;
     assert(
       instance != null,
-      'InstanceManager does not contain an JavaScriptChannel with instanceId: $instanceId',
+      'InstanceManager does not contain a JavaScriptChannel with instanceId: $instanceId',
     );
     instance!.postMessage(message);
   }
@@ -614,11 +614,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.onPageFinished != null) {
       instance.onPageFinished!(webViewInstance!, url);
@@ -633,11 +633,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.onPageStarted != null) {
       instance.onPageStarted!(webViewInstance!, url);
@@ -658,11 +658,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     // ignore: deprecated_member_use_from_same_package
     if (instance!.onReceivedError != null) {
@@ -688,11 +688,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.onReceivedRequestError != null) {
       instance.onReceivedRequestError!(
@@ -715,11 +715,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.requestLoading != null) {
       instance.requestLoading!(
@@ -741,11 +741,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.urlLoading != null) {
       instance.urlLoading!(webViewInstance!, url);
@@ -795,7 +795,7 @@ class DownloadListenerFlutterApiImpl extends DownloadListenerFlutterApi {
         .getInstanceWithWeakReference(instanceId) as DownloadListener?;
     assert(
       instance != null,
-      'InstanceManager does not contain an DownloadListener with instanceId: $instanceId',
+      'InstanceManager does not contain a DownloadListener with instanceId: $instanceId',
     );
     instance!.onDownloadStart(
       url,
@@ -855,11 +855,11 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebChromeClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebChromeClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.onProgressChanged != null) {
       instance.onProgressChanged!(webViewInstance!, progress);
