@@ -62,7 +62,11 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   /// * Value type "StringList" must be passed if the value is of type `List<String>`.
   Future<bool> setValue(String valueType, String key, Object value);
 
-  /// Removes all keys and values in the store with default prefix.
+  /// Removes all keys and values in the store where the key starts with 'flutter.'.
+  ///
+  /// This default behavior is for backwards compatibility with older versions of this
+  /// plugin, which did not support custom prefixes, and instead always used the
+  /// prefix 'flutter.'.
   Future<bool> clear();
 
   /// Removes all keys and values in the store with given prefix.
@@ -70,7 +74,11 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
     throw UnimplementedError('clearWithPrefix is not implemented.');
   }
 
-  /// Returns all key/value pairs persisted in this store.
+  /// Returns all key/value pairs persisted in this store where the key starts with 'flutter.'.
+  ///
+  /// This default behavior is for backwards compatibility with older versions of this
+  /// plugin, which did not support custom prefixes, and instead always used the
+  /// prefix 'flutter.'.
   Future<Map<String, Object>> getAll();
 
   /// Returns all key/value pairs persisting in this store that have given [prefix].
@@ -91,11 +99,11 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
       : _data = Map<String, Object>.from(data);
 
   final Map<String, Object> _data;
+  static const String _defaultPrefix = 'flutter.';
 
   @override
   Future<bool> clear() async {
-    _data.clear();
-    return true;
+    return clearWithPrefix(_defaultPrefix);
   }
 
   @override
@@ -106,7 +114,7 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAll() async {
-    return Map<String, Object>.from(_data);
+    return getAllWithPrefix(_defaultPrefix);
   }
 
   @override

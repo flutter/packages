@@ -15,13 +15,35 @@ void main() {
       'plugins.flutter.io/shared_preferences',
     );
 
-    const Map<String, Object> kTestValues = <String, Object>{
+    const Map<String, Object> flutterTestValues = <String, Object>{
       'flutter.String': 'hello world',
       'flutter.Bool': true,
       'flutter.Int': 42,
       'flutter.Double': 3.14159,
       'flutter.StringList': <String>['foo', 'bar'],
     };
+
+    const Map<String, Object> prefixTestValues = <String, Object>{
+      'prefix.String': 'hello world',
+      'prefix.Bool': true,
+      'prefix.Int': 42,
+      'prefix.Double': 3.14159,
+      'prefix.StringList': <String>['foo', 'bar'],
+    };
+
+    const Map<String, Object> nonPrefixTestValues = <String, Object>{
+      'String': 'hello world',
+      'Bool': true,
+      'Int': 42,
+      'Double': 3.14159,
+      'StringList': <String>['foo', 'bar'],
+    };
+
+    final Map<String, Object> allTestValues = <String, Object>{};
+
+    allTestValues.addAll(flutterTestValues);
+    allTestValues.addAll(prefixTestValues);
+    allTestValues.addAll(nonPrefixTestValues);
 
     late InMemorySharedPreferencesStore testData;
 
@@ -85,25 +107,19 @@ void main() {
     });
 
     test('getAll', () async {
-      testData = InMemorySharedPreferencesStore.withData(kTestValues);
-      expect(await store.getAll(), kTestValues);
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
+      expect(await store.getAll(), flutterTestValues);
       expect(log.single.method, 'getAll');
     });
 
     test('getAllWithPrefix', () async {
-      final Map<String, Object> newPrefixKTestValues = kTestValues.map(
-          (String key, Object value) => MapEntry<String, Object>(
-              key.replaceFirst('flutter.', 'string.'), value));
-      final Map<String, Object> allKTestValues = <String, Object>{};
-      allKTestValues.addAll(newPrefixKTestValues);
-      allKTestValues.addAll(kTestValues);
-      testData = InMemorySharedPreferencesStore.withData(allKTestValues);
-      expect(await store.getAllWithPrefix('string.'), newPrefixKTestValues);
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
+      expect(await store.getAllWithPrefix('prefix.'), prefixTestValues);
       expect(log.single.method, 'getAllWithPrefix');
     });
 
     test('remove', () async {
-      testData = InMemorySharedPreferencesStore.withData(kTestValues);
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
       expect(await store.remove('flutter.String'), true);
       expect(await store.remove('flutter.Bool'), true);
       expect(await store.remove('flutter.Int'), true);
@@ -120,13 +136,13 @@ void main() {
 
     test('setValue', () async {
       expect(await testData.getAll(), isEmpty);
-      for (final String key in kTestValues.keys) {
-        final Object value = kTestValues[key]!;
+      for (final String key in allTestValues.keys) {
+        final Object value = allTestValues[key]!;
         expect(await store.setValue(key.split('.').last, key, value), true);
       }
-      expect(await testData.getAll(), kTestValues);
+      expect(await testData.getAll(), flutterTestValues);
 
-      expect(log, hasLength(5));
+      expect(log, hasLength(15));
       expect(log[0].method, 'setString');
       expect(log[1].method, 'setBool');
       expect(log[2].method, 'setInt');
@@ -135,7 +151,7 @@ void main() {
     });
 
     test('clear', () async {
-      testData = InMemorySharedPreferencesStore.withData(kTestValues);
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
       expect(await testData.getAll(), isNotEmpty);
       expect(await store.clear(), true);
       expect(await testData.getAll(), isEmpty);
@@ -143,18 +159,25 @@ void main() {
     });
 
     test('clearWithPrefix', () async {
-      testData = InMemorySharedPreferencesStore.withData(kTestValues);
-      final Map<String, Object> newPrefixKTestValues = kTestValues.map(
-          (String key, Object value) => MapEntry<String, Object>(
-              key.replaceFirst('flutter.', 'string.'), value));
-      final Map<String, Object> allKTestValues = <String, Object>{};
-      allKTestValues.addAll(newPrefixKTestValues);
-      allKTestValues.addAll(kTestValues);
-      testData = InMemorySharedPreferencesStore.withData(allKTestValues);
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
-      expect(await testData.getAll(), isNotEmpty);
-      expect(await store.clearWithPrefix('string.'), true);
-      expect(await testData.getAll(), kTestValues);
+      expect(await testData.getAllWithPrefix('prefix.'), isNotEmpty);
+      expect(await store.clearWithPrefix('prefix.'), true);
+      expect(await testData.getAllWithPrefix('prefix.'), isEmpty);
+    });
+
+    test('getAllWithNoPrefix', () async {
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
+
+      expect(await testData.getAllWithPrefix(''), hasLength(15));
+    });
+
+    test('clearWithNoPrefix', () async {
+      testData = InMemorySharedPreferencesStore.withData(allTestValues);
+
+      expect(await testData.getAllWithPrefix(''), isNotEmpty);
+      expect(await store.clearWithPrefix(''), true);
+      expect(await testData.getAllWithPrefix(''), isEmpty);
     });
   });
 }
