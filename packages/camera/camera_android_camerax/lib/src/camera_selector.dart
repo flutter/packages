@@ -152,7 +152,7 @@ class CameraSelectorHostApiImpl extends CameraSelectorHostApi {
     }
     return filteredCameraInfoIds
         .map<CameraInfo>((int? id) =>
-            instanceManager.getInstanceWithWeakReference(id!)! as CameraInfo)
+            instanceManager.getInstanceWithWeakReference<CameraInfo>(id!)!)
         .toList();
   }
 }
