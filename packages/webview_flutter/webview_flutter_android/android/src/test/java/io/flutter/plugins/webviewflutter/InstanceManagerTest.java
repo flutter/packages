@@ -123,4 +123,18 @@ public class InstanceManagerTest {
 
     instanceManager.stopFinalizationListener();
   }
+
+  @Test
+  public void managerIsUsableWhileListenerHasStopped() {
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
+    instanceManager.stopFinalizationListener();
+
+    final Object instance = new Object();
+    final long identifier = 0;
+
+    instanceManager.addDartCreatedInstance(instance, identifier);
+    assertEquals(instanceManager.getInstance(identifier), instance);
+    assertEquals(instanceManager.getIdentifierForStrongReference(instance), (Long) identifier);
+    assertTrue(instanceManager.containsInstance(instance));
+  }
 }
