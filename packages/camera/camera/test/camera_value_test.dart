@@ -19,22 +19,23 @@ void main() {
   group('camera_value', () {
     test('Can be created', () {
       const CameraValue cameraValue = CameraValue(
-          isInitialized: false,
-          previewSize: Size(10, 10),
-          isRecordingPaused: false,
-          isRecordingVideo: false,
-          isTakingPicture: false,
-          isStreamingImages: false,
-          flashMode: FlashMode.auto,
-          exposureMode: ExposureMode.auto,
-          exposurePointSupported: true,
-          focusMode: FocusMode.auto,
-          deviceOrientation: DeviceOrientation.portraitUp,
-          lockedCaptureOrientation: DeviceOrientation.portraitUp,
-          recordingOrientation: DeviceOrientation.portraitUp,
-          focusPointSupported: true,
-          previewPauseOrientation: DeviceOrientation.portraitUp,
-          description: FakeController.fakeDescription);
+        isInitialized: false,
+        previewSize: Size(10, 10),
+        isRecordingPaused: false,
+        isRecordingVideo: false,
+        isTakingPicture: false,
+        isStreamingImages: false,
+        flashMode: FlashMode.auto,
+        exposureMode: ExposureMode.auto,
+        exposurePointSupported: true,
+        focusMode: FocusMode.auto,
+        deviceOrientation: DeviceOrientation.portraitUp,
+        lockedCaptureOrientation: DeviceOrientation.portraitUp,
+        recordingOrientation: DeviceOrientation.portraitUp,
+        focusPointSupported: true,
+        previewPauseOrientation: DeviceOrientation.portraitUp,
+        description: FakeController.fakeDescription,
+      );
 
       expect(cameraValue, isA<CameraValue>());
       expect(cameraValue.isInitialized, isFalse);
