@@ -15,4 +15,5 @@
 * Bump CameraX version to 1.3.0-alpha04.
 * Fixes instance manager hot restart behavior and fixes Java casting issue.
 * Implements image capture.
+* Fixes cast of CameraInfo to fix integration test failure.
 * Implements onCameraClosing callback method for indicating the camera is closing and bumps CameraX version to 1.3.0-alpha05.
