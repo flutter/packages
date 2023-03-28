@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes common typos in tests and documentation.
+
 ## 4.0.7
 
 * Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on

@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes common typos in tests and documentation.
+
 ## 3.2.3
 
 * Updates to `pigeon` version 7.
