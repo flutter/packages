@@ -3130,7 +3130,7 @@ void FlutterIntegrationCoreApi::EchoAllTypes(
       binary_messenger_,
       "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes", &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      EncodableValue(everything_arg.ToEncodableList()),
+      CustomEncodableValue(everything_arg),
   });
   channel->Send(
       encoded_api_arguments,
@@ -3153,7 +3153,7 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypes(
       "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      EncodableValue(everything_arg.ToEncodableList()),
+      CustomEncodableValue(everything_arg),
   });
   channel->Send(
       encoded_api_arguments,
@@ -3718,7 +3718,7 @@ void FlutterSmallApi::EchoWrappedList(
       binary_messenger_, "dev.flutter.pigeon.FlutterSmallApi.echoWrappedList",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      EncodableValue(msg_arg.ToEncodableList()),
+      CustomEncodableValue(msg_arg),
   });
   channel->Send(
       encoded_api_arguments,
