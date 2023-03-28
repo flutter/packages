@@ -19,6 +19,14 @@ import java.io.File;
 
 /** Utility class used to create CameraX-related objects primarily for testing purposes. */
 public class CameraXProxy {
+  /**
+   * Converts a {@link ResolutionInfo} instance to a {@link Size} for setting the target resolution
+   * of {@link UseCase}s.
+   */
+  public static Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
+    return new Size(resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
+  }
+
   public CameraSelector.Builder createCameraSelectorBuilder() {
     return new CameraSelector.Builder();
   }
@@ -65,13 +73,9 @@ public class CameraXProxy {
     return new ImageCapture.OutputFileOptions.Builder(file).build();
   }
 
-  /** */
+  /** Creates an instance of {@link ImageAnalysis.Builder}. */
   public ImageAnalysis.Builder createImageAnalysisBuilder() {
     return new ImageAnalysis.Builder();
-  }
-
-  public static Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
-    return new Size(resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
   }
 
   /**

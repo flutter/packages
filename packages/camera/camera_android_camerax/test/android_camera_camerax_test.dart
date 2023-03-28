@@ -412,7 +412,7 @@ void main() {
   test(
       'onStreamedFrameAvailable emits CameraImageData when picked up from ImageAnalysis',
       () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
     camera.processCameraProvider = MockProcessCameraProvider();
     camera.cameraSelector = MockCameraSelector();
 
@@ -460,14 +460,11 @@ void main() {
     await imageStreamSubscription.cancel();
 
     verify(camera.mockImageAnalysis.clearAnalyzer());
-    verify(
-        mockProcessCameraProvider.unbind(<UseCase>[camera.mockImageAnalysis]));
   });
 }
 
-// TODO(camsim99): Refactor this to reduce redundancy.
 /// Mock of [AndroidCameraCameraX] that stubs behavior of some methods for
-/// testing the createCamera and initializeCamera methods.
+/// testing.
 class MockAndroidCameraCameraX extends AndroidCameraCameraX {
   bool cameraPermissionsRequested = false;
   bool startedListeningForDeviceOrientationChanges = false;

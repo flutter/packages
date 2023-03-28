@@ -15,8 +15,10 @@ import 'java_object.dart';
 import 'use_case.dart';
 
 /// Use case for providing CPU accessible images for performing image analysis.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.
 class ImageAnalysis extends UseCase {
-  /// Creates a [ImageAnalysis].
+  /// Creates an [ImageAnalysis].
   ImageAnalysis(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
@@ -30,7 +32,7 @@ class ImageAnalysis extends UseCase {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  /// Constructs a [ImageAnalysis] that is not automatically attached to a native object.
+  /// Constructs an [ImageAnalysis] that is not automatically attached to a native object.
   ImageAnalysis.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
@@ -43,7 +45,7 @@ class ImageAnalysis extends UseCase {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  /// Stream that emits an event whenever a frame is received for image streaming.
+  /// Stream that emits data whenever a frame is received for image streaming.
   static final StreamController<CameraImageData>
       onStreamedFrameAvailableStreamController =
       StreamController<CameraImageData>.broadcast();
@@ -55,7 +57,14 @@ class ImageAnalysis extends UseCase {
 
   /// Configures this instance for image streaming support.
   ///
-  /// This is an indirect wrapping of ...
+  /// This is a direct wrapping of the setAnalyzer method in CameraX,
+  /// but also handles the creation of the CameraX ImageAnalysis.Analyzer
+  /// that is used to collect the image information required for image
+  /// streaming.
+  ///
+  /// See [ImageAnalysisFlutterApiImpl.onImageAnalyzed] for the image
+  /// information that is analyzed by the created ImageAnalysis.Analyzer
+  /// instance.
   Future<void> setAnalyzer() async {
     _api.setAnalyzerFromInstance(this);
   }
@@ -134,6 +143,7 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
 
   @override
   void onImageAnalyzed(ImageInformation imageInformation) {
+    // Parse image plane information.
     final List<CameraImagePlane> imagePlanes = imageInformation
         .imagePlanesInformation
         .map((ImagePlaneInformation? imagePlaneInformation) {
@@ -144,6 +154,7 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
       );
     }).toList();
 
+    // Parse general image information.
     final CameraImageData data = CameraImageData(
       format: CameraImageFormat(
           _imageFormatGroupFromFormatCode(imageInformation.format),
@@ -153,9 +164,13 @@ class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
       width: imageInformation.width,
     );
 
+    // Add image information to stream for visibility by the plugin.
     ImageAnalysis.onStreamedFrameAvailableStreamController.add(data);
   }
 
+  /// Converts Flutter supported image format codes to [ImageFormatGroup].
+  ///
+  /// Note that for image analysis, CameraX only currently supports YUV_420_888.
   ImageFormatGroup _imageFormatGroupFromFormatCode(int format) {
     switch (format) {
       case 35: // android.graphics.ImageFormat.YUV_420_888

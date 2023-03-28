@@ -33,10 +33,14 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     this.instanceManager = instanceManager;
   }
 
+  /**
+   * Sets the context that will be used to run an {@link ImageAnalysis.Analyzer} on the main thread.
+   */
   public void setContext(Context context) {
     this.context = context;
   }
 
+  /** Creates an {@link ImageAnalysis} instance with the target resolution if specified. */
   @Override
   public void create(@NonNull Long identifier, @Nullable ResolutionInfo targetResolution) {
     ImageAnalysis.Builder imageAnalysisBuilder = cameraXProxy.createImageAnalysisBuilder();
@@ -49,6 +53,10 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     instanceManager.addDartCreatedInstance(imageAnalysis, identifier);
   }
 
+  /**
+   * Sets an analyzer created by {@link ImageAnalysisHostApiImpl#createImageAnalysisAnalyzer()} on
+   * an {@link ImageAnalysis} instance to receive and analyze images.
+   */
   @Override
   public void setAnalyzer(@NonNull Long identifier) {
     ImageAnalysis imageAnalysis =
@@ -57,10 +65,18 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), analyzer);
   }
 
+  /**
+   * Creates an {@link ImageAnalysis.Analyzer} instance to send image information to the Dart side
+   * to support image streaming.
+   *
+   * <p>The image information collected and sent matches that of the (Dart) CameraImageData class,
+   * which is required for image streaming in this plugin.
+   */
   private ImageAnalysis.Analyzer createImageAnalysisAnalyzer() {
     return new ImageAnalysis.Analyzer() {
       @Override
       public void analyze(@NonNull ImageProxy image) {
+        // Collect image plane information.
         ImageProxy.PlaneProxy[] planes = image.getPlanes();
         List<GeneratedCameraXLibrary.ImagePlaneInformation> imagePlanesInformation =
             new ArrayList<GeneratedCameraXLibrary.ImagePlaneInformation>();
@@ -80,15 +96,17 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
                   .build());
         }
 
-        // TODO (camsim99): Retrieve and send the following when made available by b/274791178:
+        // Collect general image information.
+        // TODO(camsim99): Retrieve and send the following when made available by b/274791178:
         // last lens aperture, last sensor exposure time, last sensor sensitivity.
         GeneratedCameraXLibrary.ImageInformation.Builder imageInfoBuilder =
             new GeneratedCameraXLibrary.ImageInformation.Builder();
-        imageInfoBuilder.setWidth(Long.valueOf(image.getWidth()));
-        imageInfoBuilder.setHeight(Long.valueOf(image.getHeight()));
         imageInfoBuilder.setFormat(Long.valueOf(image.getFormat()));
         imageInfoBuilder.setImagePlanesInformation(imagePlanesInformation);
+        imageInfoBuilder.setHeight(Long.valueOf(image.getHeight()));
+        imageInfoBuilder.setWidth(Long.valueOf(image.getWidth()));
 
+        // Send image frame to Dart side for image streaming and close ImageProxy, since we are done using it.
         ImageAnalysisFlutterApiImpl imageAnalysisFlutterApiImpl =
             cameraXProxy.createImageAnalysisFlutterApiImpl(binaryMessenger);
         imageAnalysisFlutterApiImpl.sendOnImageAnalyzedEvent(imageInfoBuilder.build(), reply -> {});
@@ -97,6 +115,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     };
   }
 
+  /** Clears any analyzer previously set on the specified {@link ImageAnalysis} instance. */
   @Override
   public void clearAnalyzer(@NonNull Long identifier) {
     ImageAnalysis imageAnalysis =

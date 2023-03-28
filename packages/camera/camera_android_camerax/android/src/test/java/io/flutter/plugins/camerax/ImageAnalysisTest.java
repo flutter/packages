@@ -103,14 +103,14 @@ public class ImageAnalysisTest {
     final ArgumentCaptor<ImageAnalysis.Analyzer> analyzerCaptor =
         ArgumentCaptor.forClass(ImageAnalysis.Analyzer.class);
 
-    // Test that analyzer is set:
+    // Test that an analyzer is set:
 
     imageAnalysisHostApiImpl.setAnalyzer(mockImageAnalysisIdentifier);
 
     verify(mockImageAnalysis).setAnalyzer(any(Executor.class), analyzerCaptor.capture());
     ImageAnalysis.Analyzer analyzer = analyzerCaptor.getValue();
 
-    // Test that the expected image information is sent:
+    // Test that the expected image information is sent when analyzer is called to analyze image data:
 
     final ImageProxy.PlaneProxy mockPlaneProxy = mock(ImageProxy.PlaneProxy.class);
     final ImageProxy.PlaneProxy[] mockPlanes = new ImageProxy.PlaneProxy[] {mockPlaneProxy};
@@ -149,7 +149,7 @@ public class ImageAnalysisTest {
     ImagePlaneInformation imagePlaneInformation = imagePlanesInformation.get(0);
     assertEquals(imagePlaneInformation.getBytesPerRow(), Long.valueOf(rowStride));
     assertEquals(imagePlaneInformation.getBytesPerPixel(), Long.valueOf(pixelStride));
-    // We expect one (remainingBytes) bye. This byte should equal the byte contained by the mock ByteBuffer.
+    // We expect one (remainingBytes) bye. This byte should be equal to the byte contained by the mock ByteBuffer.
     assertEquals(imagePlaneInformation.getBytes().length, remainingBytes);
     assertEquals(imagePlaneInformation.getBytes()[0], mockByteBuffer.get());
   }

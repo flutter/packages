@@ -48,28 +48,28 @@ class CameraPermissionsErrorData {
 
 class ImagePlaneInformation {
   ImagePlaneInformation({
+    required this.bytes,
     required this.bytesPerRow,
     required this.bytesPerPixel,
-    required this.bytes,
   });
 
+  Uint8List bytes;
   int bytesPerRow;
   int bytesPerPixel;
-  Uint8List bytes;
 }
 
 class ImageInformation {
   ImageInformation({
-    required this.width,
-    required this.height,
     required this.format,
     required this.imagePlanesInformation,
+    required this.height,
+    required this.width,
   });
 
-  int width;
-  int height;
   int format;
   List<ImagePlaneInformation?> imagePlanesInformation;
+  int height;
+  int width;
 }
 
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')

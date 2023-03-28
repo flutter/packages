@@ -133,14 +133,14 @@ void main() {
           bytes: bytes,
         )
       ];
-      const int width = 5;
       const int height = 10;
+      const int width = 5;
       const int format = 35;
       final ImageInformation imageInformation = ImageInformation(
-        width: width,
-        height: height,
         format: format,
         imagePlanesInformation: imagePlanesInformation,
+        height: height,
+        width: width,
       );
 
       ImageAnalysis.onStreamedFrameAvailableStreamController.stream

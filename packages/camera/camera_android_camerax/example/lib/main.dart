@@ -277,9 +277,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             IconButton(
               icon: const Icon(Icons.flash_on),
               color: Colors.blue,
-              onPressed: () {
-                controller?.startImageStream((CameraImage image) {});
-              }, // TODO(camsim99): Add functionality back here.
+              onPressed: () {}, // TODO(camsim99): Add functionality back here.
             ),
             // The exposure and focus mode are currently not supported on the web.
             ...!kIsWeb
@@ -287,9 +285,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     IconButton(
                       icon: const Icon(Icons.exposure),
                       color: Colors.blue,
-                      onPressed: () {
-                        controller?.stopImageStream();
-                      }, // TODO(camsim99): Add functionality back here.
+                      onPressed:
+                          () {}, // TODO(camsim99): Add functionality back here.
                     ),
                     IconButton(
                       icon: const Icon(Icons.filter_center_focus),

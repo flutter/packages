@@ -179,9 +179,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// the CameraX library, this method just retrieves information about the
   /// camera and sends a [CameraInitializedEvent].
   ///
-  /// [imageFormatGroup] is used to specify the image formatting used for image
-  /// streaming, but CameraX currently only supports YUV_420_888, supported by
-  /// Flutter, and RGBA, not supported by Flutter. CameraX uses YUV_420_888
+  /// [imageFormatGroup] is used to specify the image format used for image
+  /// streaming, but CameraX currently only supports YUV_420_888 (supported by
+  /// Flutter) and RGBA (not supported by Flutter). CameraX uses YUV_420_888
   /// by default, so [imageFormatGroup] is not used.
   @override
   Future<void> initializeCamera(
@@ -341,11 +341,17 @@ class AndroidCameraCameraX extends CameraPlatform {
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
   }
 
-  /// Binds [imageAnalysis] instance to camera lifecycle controlled by the
-  /// [processCameraProvider].
-  Future<void> _bindImageAnalysisToLifecycle() async {
+  /// Configures and binds [imageAnalysis] instance to camera lifecycle
+  /// controlled by the [processCameraProvider].
+  Future<void> _configureAndBindImageAnalysisToLifecycle() async {
     assert(processCameraProvider != null);
     assert(cameraSelector != null);
+
+    if (imageAnalysis != null &&
+        await processCameraProvider!.isBound(imageAnalysis!)) {
+      // imageAnalysis already configured and bound to lifecycle.
+      return;
+    }
 
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.
@@ -373,20 +379,28 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods for configuring image streaming:
 
+  /// Sets [onListen] and [onCancel] callbacks for the stream controller
+  /// used for image streaming.
   void _configureCameraImageDataStreamController(
       StreamController<CameraImageData> controller) {
     controller.onListen = _onFrameStreamListen;
     controller.onCancel = _onFrameStreamCancel;
   }
 
+  /// The [onListen] callback for the stream controller used for image
+  /// streaming.
   void _onFrameStreamListen() {
-    _bindImageAnalysisToLifecycle();
+    _configureAndBindImageAnalysisToLifecycle();
   }
 
+  /// The [onCancel] callback for the stream controller used for image
+  /// streaming.
+  ///
+  /// Removes the previously set analyzer on the [imageAnalysis] instance, since
+  /// image information should no longer be streamed.
   FutureOr<void> _onFrameStreamCancel() async {
     assert(imageAnalysis != null);
     imageAnalysis!.clearAnalyzer();
-    _unbindUseCaseFromLifecycle(imageAnalysis!);
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:
@@ -485,8 +499,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         targetFlashMode: flashMode, targetResolution: targetResolution);
   }
 
-  /// Returns an [ImageAnalysis] configured with specified flash mode and
-  /// target resolution.
+  /// Returns an [ImageAnalysis] configured with specified target resolution.
   @visibleForTesting
   ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
     return ImageAnalysis(targetResolution: targetResolution);
