@@ -1,3 +1,7 @@
+## 0.9.13+4
+
+* Fixed isPixel4A bug.
+
 ## 0.9.13+3
 
 * [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
