@@ -1312,7 +1312,7 @@ void main() {
       expect(
           code,
           contains(
-              'an_object_arg ? EncodableValue(an_object_arg->ToEncodableList()) : EncodableValue()'));
+              'an_object_arg ? CustomEncodableValue(*an_object_arg) : EncodableValue()'));
     }
   });
 
@@ -1433,7 +1433,7 @@ void main() {
       expect(code, contains('EncodableValue(a_list_arg)'));
       expect(code, contains('EncodableValue(a_map_arg)'));
       // Class types use ToEncodableList.
-      expect(code, contains('EncodableValue(an_object_arg.ToEncodableList())'));
+      expect(code, contains('CustomEncodableValue(an_object_arg)'));
     }
   });
 

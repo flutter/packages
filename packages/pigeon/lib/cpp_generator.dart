@@ -563,7 +563,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         final HostDatatype hostDatatype = getFieldHostDatatype(field,
             root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
         final String encodableValue = _wrappedHostApiArgumentExpression(
-            root, _makeInstanceVariableName(field), field.type, hostDatatype);
+            root, _makeInstanceVariableName(field), field.type, hostDatatype,
+            preSerializeClasses: true);
         indent.writeln('list.push_back($encodableValue);');
       }
       indent.writeln('return list;');
@@ -686,7 +687,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
           indent.addScoped('EncodableValue(EncodableList{', '});', () {
             for (final _HostNamedType param in hostParameters) {
               final String encodedArgument = _wrappedHostApiArgumentExpression(
-                  root, param.name, param.originalType, param.hostType);
+                  root, param.name, param.originalType, param.hostType,
+                  preSerializeClasses: false);
               indent.writeln('$encodedArgument,');
             }
           });
@@ -994,14 +996,26 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
 
   /// Returns the expression to create an EncodableValue from a host API argument
   /// with the given [variableName] and types.
+  ///
+  /// If [preSerializeClasses] is true, custom classes will be returned as
+  /// encodable lists rather than CustomEncodableValues; see
+  /// https://github.com/flutter/flutter/issues/119351 for why this is currently
+  /// needed.
   String _wrappedHostApiArgumentExpression(Root root, String variableName,
-      TypeDeclaration dartType, HostDatatype hostType) {
+      TypeDeclaration dartType, HostDatatype hostType,
+      {required bool preSerializeClasses}) {
     final String encodableValue;
     if (!hostType.isBuiltin &&
         root.classes.any((Class c) => c.name == dartType.baseName)) {
-      final String operator = hostType.isNullable ? '->' : '.';
-      encodableValue =
-          'EncodableValue($variableName${operator}ToEncodableList())';
+      if (preSerializeClasses) {
+        final String operator = hostType.isNullable ? '->' : '.';
+        encodableValue =
+            'EncodableValue($variableName${operator}ToEncodableList())';
+      } else {
+        final String nonNullValue =
+            hostType.isNullable ? '*$variableName' : variableName;
+        encodableValue = 'CustomEncodableValue($nonNullValue)';
+      }
     } else if (!hostType.isBuiltin &&
         root.enums.any((Enum e) => e.name == dartType.baseName)) {
       final String nonNullValue =
