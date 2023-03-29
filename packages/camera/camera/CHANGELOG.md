@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.3+3
 
+* CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.10.3+2
