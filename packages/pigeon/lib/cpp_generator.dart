@@ -622,40 +622,36 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       enumerate(getFieldsInSerializationOrder(klass),
           (int index, final NamedType field) {
         final String instanceVariableName = _makeInstanceVariableName(field);
-        final String pointerFieldName =
-            '${_pointerPrefix}_${_makeVariableName(field)}';
         final String encodableFieldName =
             '${_encodablePrefix}_${_makeVariableName(field)}';
         indent.writeln('auto& $encodableFieldName = list[$index];');
+
+        final String valueExpression;
         if (customEnumNames.contains(field.type.baseName)) {
-          indent.writeln(
-              'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
+          valueExpression =
+              '(${field.type.baseName})(std::get<int32_t>($encodableFieldName))';
+        } else if (field.type.baseName == 'int') {
+          valueExpression = '$encodableFieldName.LongValue()';
         } else {
           final HostDatatype hostDatatype = getFieldHostDatatype(field,
               root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
-          if (field.type.baseName == 'int') {
-            indent.format('''
-if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))
-\t$instanceVariableName = *$pointerFieldName;
-else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodableFieldName))
-\t$instanceVariableName = *${pointerFieldName}_64;''');
-          } else if (!hostDatatype.isBuiltin &&
+          if (!hostDatatype.isBuiltin &&
               root.classes
                   .map((Class x) => x.name)
                   .contains(field.type.baseName)) {
-            indent.write(
-                'if (const EncodableList* $pointerFieldName = std::get_if<EncodableList>(&$encodableFieldName)) ');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                  '$instanceVariableName = ${hostDatatype.datatype}(*$pointerFieldName);');
-            });
+            valueExpression =
+                '${hostDatatype.datatype}(std::get<EncodableList>($encodableFieldName))';
           } else {
-            indent.write(
-                'if (const ${hostDatatype.datatype}* $pointerFieldName = std::get_if<${hostDatatype.datatype}>(&$encodableFieldName)) ');
-            indent.addScoped('{', '}', () {
-              indent.writeln('$instanceVariableName = *$pointerFieldName;');
-            });
+            valueExpression =
+                'std::get<${hostDatatype.datatype}>($encodableFieldName)';
           }
+        }
+        if (field.type.isNullable) {
+          indent.writeScoped('if (!$encodableFieldName.IsNull()) {', '}', () {
+            indent.writeln('$instanceVariableName = $valueExpression;');
+          });
+        } else {
+          indent.writeln('$instanceVariableName = $valueExpression;');
         }
       });
     });

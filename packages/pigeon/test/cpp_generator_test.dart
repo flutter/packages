@@ -144,7 +144,7 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
-      expect(code, contains('pointer_input_field'));
+      expect(code, contains('encodable_input_field'));
       expect(code, contains('Output::output_field()'));
       expect(code, contains('Output::set_output_field(bool value_arg)'));
       expect(code, contains('encodable_output_field'));

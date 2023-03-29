@@ -123,65 +123,29 @@ EncodableList AllTypes::ToEncodableList() const {
 
 AllTypes::AllTypes(const EncodableList& list) {
   auto& encodable_a_bool = list[0];
-  if (const bool* pointer_a_bool = std::get_if<bool>(&encodable_a_bool)) {
-    a_bool_ = *pointer_a_bool;
-  }
+  a_bool_ = std::get<bool>(encodable_a_bool);
   auto& encodable_an_int = list[1];
-  if (const int32_t* pointer_an_int = std::get_if<int32_t>(&encodable_an_int))
-    an_int_ = *pointer_an_int;
-  else if (const int64_t* pointer_an_int_64 =
-               std::get_if<int64_t>(&encodable_an_int))
-    an_int_ = *pointer_an_int_64;
+  an_int_ = encodable_an_int.LongValue();
   auto& encodable_an_int64 = list[2];
-  if (const int32_t* pointer_an_int64 =
-          std::get_if<int32_t>(&encodable_an_int64))
-    an_int64_ = *pointer_an_int64;
-  else if (const int64_t* pointer_an_int64_64 =
-               std::get_if<int64_t>(&encodable_an_int64))
-    an_int64_ = *pointer_an_int64_64;
+  an_int64_ = encodable_an_int64.LongValue();
   auto& encodable_a_double = list[3];
-  if (const double* pointer_a_double =
-          std::get_if<double>(&encodable_a_double)) {
-    a_double_ = *pointer_a_double;
-  }
+  a_double_ = std::get<double>(encodable_a_double);
   auto& encodable_a_byte_array = list[4];
-  if (const std::vector<uint8_t>* pointer_a_byte_array =
-          std::get_if<std::vector<uint8_t>>(&encodable_a_byte_array)) {
-    a_byte_array_ = *pointer_a_byte_array;
-  }
+  a_byte_array_ = std::get<std::vector<uint8_t>>(encodable_a_byte_array);
   auto& encodable_a4_byte_array = list[5];
-  if (const std::vector<int32_t>* pointer_a4_byte_array =
-          std::get_if<std::vector<int32_t>>(&encodable_a4_byte_array)) {
-    a4_byte_array_ = *pointer_a4_byte_array;
-  }
+  a4_byte_array_ = std::get<std::vector<int32_t>>(encodable_a4_byte_array);
   auto& encodable_a8_byte_array = list[6];
-  if (const std::vector<int64_t>* pointer_a8_byte_array =
-          std::get_if<std::vector<int64_t>>(&encodable_a8_byte_array)) {
-    a8_byte_array_ = *pointer_a8_byte_array;
-  }
+  a8_byte_array_ = std::get<std::vector<int64_t>>(encodable_a8_byte_array);
   auto& encodable_a_float_array = list[7];
-  if (const std::vector<double>* pointer_a_float_array =
-          std::get_if<std::vector<double>>(&encodable_a_float_array)) {
-    a_float_array_ = *pointer_a_float_array;
-  }
+  a_float_array_ = std::get<std::vector<double>>(encodable_a_float_array);
   auto& encodable_a_list = list[8];
-  if (const EncodableList* pointer_a_list =
-          std::get_if<EncodableList>(&encodable_a_list)) {
-    a_list_ = *pointer_a_list;
-  }
+  a_list_ = std::get<EncodableList>(encodable_a_list);
   auto& encodable_a_map = list[9];
-  if (const EncodableMap* pointer_a_map =
-          std::get_if<EncodableMap>(&encodable_a_map)) {
-    a_map_ = *pointer_a_map;
-  }
+  a_map_ = std::get<EncodableMap>(encodable_a_map);
   auto& encodable_an_enum = list[10];
-  if (const int32_t* pointer_an_enum = std::get_if<int32_t>(&encodable_an_enum))
-    an_enum_ = (AnEnum)*pointer_an_enum;
+  an_enum_ = (AnEnum)(std::get<int32_t>(encodable_an_enum));
   auto& encodable_a_string = list[11];
-  if (const std::string* pointer_a_string =
-          std::get_if<std::string>(&encodable_a_string)) {
-    a_string_ = *pointer_a_string;
-  }
+  a_string_ = std::get<std::string>(encodable_a_string);
 }
 
 // AllNullableTypes
@@ -476,84 +440,71 @@ EncodableList AllNullableTypes::ToEncodableList() const {
 
 AllNullableTypes::AllNullableTypes(const EncodableList& list) {
   auto& encodable_a_nullable_bool = list[0];
-  if (const bool* pointer_a_nullable_bool =
-          std::get_if<bool>(&encodable_a_nullable_bool)) {
-    a_nullable_bool_ = *pointer_a_nullable_bool;
+  if (!encodable_a_nullable_bool.IsNull()) {
+    a_nullable_bool_ = std::get<bool>(encodable_a_nullable_bool);
   }
   auto& encodable_a_nullable_int = list[1];
-  if (const int32_t* pointer_a_nullable_int =
-          std::get_if<int32_t>(&encodable_a_nullable_int))
-    a_nullable_int_ = *pointer_a_nullable_int;
-  else if (const int64_t* pointer_a_nullable_int_64 =
-               std::get_if<int64_t>(&encodable_a_nullable_int))
-    a_nullable_int_ = *pointer_a_nullable_int_64;
+  if (!encodable_a_nullable_int.IsNull()) {
+    a_nullable_int_ = encodable_a_nullable_int.LongValue();
+  }
   auto& encodable_a_nullable_int64 = list[2];
-  if (const int32_t* pointer_a_nullable_int64 =
-          std::get_if<int32_t>(&encodable_a_nullable_int64))
-    a_nullable_int64_ = *pointer_a_nullable_int64;
-  else if (const int64_t* pointer_a_nullable_int64_64 =
-               std::get_if<int64_t>(&encodable_a_nullable_int64))
-    a_nullable_int64_ = *pointer_a_nullable_int64_64;
+  if (!encodable_a_nullable_int64.IsNull()) {
+    a_nullable_int64_ = encodable_a_nullable_int64.LongValue();
+  }
   auto& encodable_a_nullable_double = list[3];
-  if (const double* pointer_a_nullable_double =
-          std::get_if<double>(&encodable_a_nullable_double)) {
-    a_nullable_double_ = *pointer_a_nullable_double;
+  if (!encodable_a_nullable_double.IsNull()) {
+    a_nullable_double_ = std::get<double>(encodable_a_nullable_double);
   }
   auto& encodable_a_nullable_byte_array = list[4];
-  if (const std::vector<uint8_t>* pointer_a_nullable_byte_array =
-          std::get_if<std::vector<uint8_t>>(&encodable_a_nullable_byte_array)) {
-    a_nullable_byte_array_ = *pointer_a_nullable_byte_array;
+  if (!encodable_a_nullable_byte_array.IsNull()) {
+    a_nullable_byte_array_ =
+        std::get<std::vector<uint8_t>>(encodable_a_nullable_byte_array);
   }
   auto& encodable_a_nullable4_byte_array = list[5];
-  if (const std::vector<int32_t>* pointer_a_nullable4_byte_array =
-          std::get_if<std::vector<int32_t>>(
-              &encodable_a_nullable4_byte_array)) {
-    a_nullable4_byte_array_ = *pointer_a_nullable4_byte_array;
+  if (!encodable_a_nullable4_byte_array.IsNull()) {
+    a_nullable4_byte_array_ =
+        std::get<std::vector<int32_t>>(encodable_a_nullable4_byte_array);
   }
   auto& encodable_a_nullable8_byte_array = list[6];
-  if (const std::vector<int64_t>* pointer_a_nullable8_byte_array =
-          std::get_if<std::vector<int64_t>>(
-              &encodable_a_nullable8_byte_array)) {
-    a_nullable8_byte_array_ = *pointer_a_nullable8_byte_array;
+  if (!encodable_a_nullable8_byte_array.IsNull()) {
+    a_nullable8_byte_array_ =
+        std::get<std::vector<int64_t>>(encodable_a_nullable8_byte_array);
   }
   auto& encodable_a_nullable_float_array = list[7];
-  if (const std::vector<double>* pointer_a_nullable_float_array =
-          std::get_if<std::vector<double>>(&encodable_a_nullable_float_array)) {
-    a_nullable_float_array_ = *pointer_a_nullable_float_array;
+  if (!encodable_a_nullable_float_array.IsNull()) {
+    a_nullable_float_array_ =
+        std::get<std::vector<double>>(encodable_a_nullable_float_array);
   }
   auto& encodable_a_nullable_list = list[8];
-  if (const EncodableList* pointer_a_nullable_list =
-          std::get_if<EncodableList>(&encodable_a_nullable_list)) {
-    a_nullable_list_ = *pointer_a_nullable_list;
+  if (!encodable_a_nullable_list.IsNull()) {
+    a_nullable_list_ = std::get<EncodableList>(encodable_a_nullable_list);
   }
   auto& encodable_a_nullable_map = list[9];
-  if (const EncodableMap* pointer_a_nullable_map =
-          std::get_if<EncodableMap>(&encodable_a_nullable_map)) {
-    a_nullable_map_ = *pointer_a_nullable_map;
+  if (!encodable_a_nullable_map.IsNull()) {
+    a_nullable_map_ = std::get<EncodableMap>(encodable_a_nullable_map);
   }
   auto& encodable_nullable_nested_list = list[10];
-  if (const EncodableList* pointer_nullable_nested_list =
-          std::get_if<EncodableList>(&encodable_nullable_nested_list)) {
-    nullable_nested_list_ = *pointer_nullable_nested_list;
+  if (!encodable_nullable_nested_list.IsNull()) {
+    nullable_nested_list_ =
+        std::get<EncodableList>(encodable_nullable_nested_list);
   }
   auto& encodable_nullable_map_with_annotations = list[11];
-  if (const EncodableMap* pointer_nullable_map_with_annotations =
-          std::get_if<EncodableMap>(&encodable_nullable_map_with_annotations)) {
-    nullable_map_with_annotations_ = *pointer_nullable_map_with_annotations;
+  if (!encodable_nullable_map_with_annotations.IsNull()) {
+    nullable_map_with_annotations_ =
+        std::get<EncodableMap>(encodable_nullable_map_with_annotations);
   }
   auto& encodable_nullable_map_with_object = list[12];
-  if (const EncodableMap* pointer_nullable_map_with_object =
-          std::get_if<EncodableMap>(&encodable_nullable_map_with_object)) {
-    nullable_map_with_object_ = *pointer_nullable_map_with_object;
+  if (!encodable_nullable_map_with_object.IsNull()) {
+    nullable_map_with_object_ =
+        std::get<EncodableMap>(encodable_nullable_map_with_object);
   }
   auto& encodable_a_nullable_enum = list[13];
-  if (const int32_t* pointer_a_nullable_enum =
-          std::get_if<int32_t>(&encodable_a_nullable_enum))
-    a_nullable_enum_ = (AnEnum)*pointer_a_nullable_enum;
+  if (!encodable_a_nullable_enum.IsNull()) {
+    a_nullable_enum_ = (AnEnum)(std::get<int32_t>(encodable_a_nullable_enum));
+  }
   auto& encodable_a_nullable_string = list[14];
-  if (const std::string* pointer_a_nullable_string =
-          std::get_if<std::string>(&encodable_a_nullable_string)) {
-    a_nullable_string_ = *pointer_a_nullable_string;
+  if (!encodable_a_nullable_string.IsNull()) {
+    a_nullable_string_ = std::get<std::string>(encodable_a_nullable_string);
   }
 }
 
@@ -578,10 +529,7 @@ EncodableList AllNullableTypesWrapper::ToEncodableList() const {
 
 AllNullableTypesWrapper::AllNullableTypesWrapper(const EncodableList& list) {
   auto& encodable_values = list[0];
-  if (const EncodableList* pointer_values =
-          std::get_if<EncodableList>(&encodable_values)) {
-    values_ = AllNullableTypes(*pointer_values);
-  }
+  values_ = AllNullableTypes(std::get<EncodableList>(encodable_values));
 }
 
 // TestMessage
@@ -612,9 +560,8 @@ EncodableList TestMessage::ToEncodableList() const {
 
 TestMessage::TestMessage(const EncodableList& list) {
   auto& encodable_test_list = list[0];
-  if (const EncodableList* pointer_test_list =
-          std::get_if<EncodableList>(&encodable_test_list)) {
-    test_list_ = *pointer_test_list;
+  if (!encodable_test_list.IsNull()) {
+    test_list_ = std::get<EncodableList>(encodable_test_list);
   }
 }
 
