@@ -8,7 +8,7 @@ import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart'
-    show CameraImageData, CameraImageFormat, CameraImagePlane, ImageFormatGroup;
+    show CameraImageData, ImageFormatGroup;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -145,13 +145,13 @@ void main() {
 
       ImageAnalysis.onStreamedFrameAvailableStreamController.stream
           .listen((CameraImageData cameraImageData) {
-        expect(cameraImageData.format!.group, equals(ImageFormatGroup.yuv420));
+        expect(cameraImageData.format.group, equals(ImageFormatGroup.yuv420));
         expect(cameraImageData.planes.first, isNotNull);
-        expect(cameraImageData.planes.first!.bytes, equals(bytes));
-        expect(cameraImageData.planes.first!.bytesPerRow, equals(bytesPerRow));
+        expect(cameraImageData.planes.first.bytes, equals(bytes));
+        expect(cameraImageData.planes.first.bytesPerRow, equals(bytesPerRow));
         expect(
-            cameraImageData.planes.first!.bytesPerPixel, equals(bytesPerPixel));
-        expect(cameraImageData.format!.raw, equals(format));
+            cameraImageData.planes.first.bytesPerPixel, equals(bytesPerPixel));
+        expect(cameraImageData.format.raw, equals(format));
         expect(cameraImageData.height, equals(height));
         expect(cameraImageData.width, equals(width));
       });

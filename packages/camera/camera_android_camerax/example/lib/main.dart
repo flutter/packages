@@ -13,7 +13,6 @@ import 'package:video_player/video_player.dart';
 
 import 'camera_controller.dart';
 import 'camera_preview.dart';
-import 'camera_image.dart';
 
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {

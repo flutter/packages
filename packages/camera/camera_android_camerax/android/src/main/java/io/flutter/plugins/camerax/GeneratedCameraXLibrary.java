@@ -209,6 +209,19 @@ public class GeneratedCameraXLibrary {
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class ImagePlaneInformation {
+    private @NonNull byte[] bytes;
+
+    public @NonNull byte[] getBytes() {
+      return bytes;
+    }
+
+    public void setBytes(@NonNull byte[] setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bytes\" is null.");
+      }
+      this.bytes = setterArg;
+    }
+
     private @NonNull Long bytesPerRow;
 
     public @NonNull Long getBytesPerRow() {
@@ -235,23 +248,17 @@ public class GeneratedCameraXLibrary {
       this.bytesPerPixel = setterArg;
     }
 
-    private @NonNull byte[] bytes;
-
-    public @NonNull byte[] getBytes() {
-      return bytes;
-    }
-
-    public void setBytes(@NonNull byte[] setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"bytes\" is null.");
-      }
-      this.bytes = setterArg;
-    }
-
     /** Constructor is private to enforce null safety; use Builder. */
     private ImagePlaneInformation() {}
 
     public static final class Builder {
+
+      private @Nullable byte[] bytes;
+
+      public @NonNull Builder setBytes(@NonNull byte[] setterArg) {
+        this.bytes = setterArg;
+        return this;
+      }
 
       private @Nullable Long bytesPerRow;
 
@@ -267,18 +274,11 @@ public class GeneratedCameraXLibrary {
         return this;
       }
 
-      private @Nullable byte[] bytes;
-
-      public @NonNull Builder setBytes(@NonNull byte[] setterArg) {
-        this.bytes = setterArg;
-        return this;
-      }
-
       public @NonNull ImagePlaneInformation build() {
         ImagePlaneInformation pigeonReturn = new ImagePlaneInformation();
+        pigeonReturn.setBytes(bytes);
         pigeonReturn.setBytesPerRow(bytesPerRow);
         pigeonReturn.setBytesPerPixel(bytesPerPixel);
-        pigeonReturn.setBytes(bytes);
         return pigeonReturn;
       }
     }
@@ -286,60 +286,34 @@ public class GeneratedCameraXLibrary {
     @NonNull
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(bytes);
       toListResult.add(bytesPerRow);
       toListResult.add(bytesPerPixel);
-      toListResult.add(bytes);
       return toListResult;
     }
 
     static @NonNull ImagePlaneInformation fromList(@NonNull ArrayList<Object> list) {
       ImagePlaneInformation pigeonResult = new ImagePlaneInformation();
-      Object bytesPerRow = list.get(0);
+      Object bytes = list.get(0);
+      pigeonResult.setBytes((byte[]) bytes);
+      Object bytesPerRow = list.get(1);
       pigeonResult.setBytesPerRow(
           (bytesPerRow == null)
               ? null
               : ((bytesPerRow instanceof Integer) ? (Integer) bytesPerRow : (Long) bytesPerRow));
-      Object bytesPerPixel = list.get(1);
+      Object bytesPerPixel = list.get(2);
       pigeonResult.setBytesPerPixel(
           (bytesPerPixel == null)
               ? null
               : ((bytesPerPixel instanceof Integer)
                   ? (Integer) bytesPerPixel
                   : (Long) bytesPerPixel));
-      Object bytes = list.get(2);
-      pigeonResult.setBytes((byte[]) bytes);
       return pigeonResult;
     }
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class ImageInformation {
-    private @NonNull Long width;
-
-    public @NonNull Long getWidth() {
-      return width;
-    }
-
-    public void setWidth(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"width\" is null.");
-      }
-      this.width = setterArg;
-    }
-
-    private @NonNull Long height;
-
-    public @NonNull Long getHeight() {
-      return height;
-    }
-
-    public void setHeight(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"height\" is null.");
-      }
-      this.height = setterArg;
-    }
-
     private @NonNull Long format;
 
     public @NonNull Long getFormat() {
@@ -366,24 +340,36 @@ public class GeneratedCameraXLibrary {
       this.imagePlanesInformation = setterArg;
     }
 
+    private @NonNull Long height;
+
+    public @NonNull Long getHeight() {
+      return height;
+    }
+
+    public void setHeight(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"height\" is null.");
+      }
+      this.height = setterArg;
+    }
+
+    private @NonNull Long width;
+
+    public @NonNull Long getWidth() {
+      return width;
+    }
+
+    public void setWidth(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"width\" is null.");
+      }
+      this.width = setterArg;
+    }
+
     /** Constructor is private to enforce null safety; use Builder. */
     private ImageInformation() {}
 
     public static final class Builder {
-
-      private @Nullable Long width;
-
-      public @NonNull Builder setWidth(@NonNull Long setterArg) {
-        this.width = setterArg;
-        return this;
-      }
-
-      private @Nullable Long height;
-
-      public @NonNull Builder setHeight(@NonNull Long setterArg) {
-        this.height = setterArg;
-        return this;
-      }
 
       private @Nullable Long format;
 
@@ -400,12 +386,26 @@ public class GeneratedCameraXLibrary {
         return this;
       }
 
+      private @Nullable Long height;
+
+      public @NonNull Builder setHeight(@NonNull Long setterArg) {
+        this.height = setterArg;
+        return this;
+      }
+
+      private @Nullable Long width;
+
+      public @NonNull Builder setWidth(@NonNull Long setterArg) {
+        this.width = setterArg;
+        return this;
+      }
+
       public @NonNull ImageInformation build() {
         ImageInformation pigeonReturn = new ImageInformation();
-        pigeonReturn.setWidth(width);
-        pigeonReturn.setHeight(height);
         pigeonReturn.setFormat(format);
         pigeonReturn.setImagePlanesInformation(imagePlanesInformation);
+        pigeonReturn.setHeight(height);
+        pigeonReturn.setWidth(width);
         return pigeonReturn;
       }
     }
@@ -413,30 +413,30 @@ public class GeneratedCameraXLibrary {
     @NonNull
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<Object>(4);
-      toListResult.add(width);
-      toListResult.add(height);
       toListResult.add(format);
       toListResult.add(imagePlanesInformation);
+      toListResult.add(height);
+      toListResult.add(width);
       return toListResult;
     }
 
     static @NonNull ImageInformation fromList(@NonNull ArrayList<Object> list) {
       ImageInformation pigeonResult = new ImageInformation();
-      Object width = list.get(0);
-      pigeonResult.setWidth(
-          (width == null) ? null : ((width instanceof Integer) ? (Integer) width : (Long) width));
-      Object height = list.get(1);
-      pigeonResult.setHeight(
-          (height == null)
-              ? null
-              : ((height instanceof Integer) ? (Integer) height : (Long) height));
-      Object format = list.get(2);
+      Object format = list.get(0);
       pigeonResult.setFormat(
           (format == null)
               ? null
               : ((format instanceof Integer) ? (Integer) format : (Long) format));
-      Object imagePlanesInformation = list.get(3);
+      Object imagePlanesInformation = list.get(1);
       pigeonResult.setImagePlanesInformation((List<ImagePlaneInformation>) imagePlanesInformation);
+      Object height = list.get(2);
+      pigeonResult.setHeight(
+          (height == null)
+              ? null
+              : ((height instanceof Integer) ? (Integer) height : (Long) height));
+      Object width = list.get(3);
+      pigeonResult.setWidth(
+          (width == null) ? null : ((width instanceof Integer) ? (Integer) width : (Long) width));
       return pigeonResult;
     }
   }

@@ -65,68 +65,68 @@ class CameraPermissionsErrorData {
 
 class ImagePlaneInformation {
   ImagePlaneInformation({
+    required this.bytes,
     required this.bytesPerRow,
     required this.bytesPerPixel,
-    required this.bytes,
   });
+
+  Uint8List bytes;
 
   int bytesPerRow;
 
   int bytesPerPixel;
 
-  Uint8List bytes;
-
   Object encode() {
     return <Object?>[
+      bytes,
       bytesPerRow,
       bytesPerPixel,
-      bytes,
     ];
   }
 
   static ImagePlaneInformation decode(Object result) {
     result as List<Object?>;
     return ImagePlaneInformation(
-      bytesPerRow: result[0]! as int,
-      bytesPerPixel: result[1]! as int,
-      bytes: result[2]! as Uint8List,
+      bytes: result[0]! as Uint8List,
+      bytesPerRow: result[1]! as int,
+      bytesPerPixel: result[2]! as int,
     );
   }
 }
 
 class ImageInformation {
   ImageInformation({
-    required this.width,
-    required this.height,
     required this.format,
     required this.imagePlanesInformation,
+    required this.height,
+    required this.width,
   });
-
-  int width;
-
-  int height;
 
   int format;
 
   List<ImagePlaneInformation?> imagePlanesInformation;
 
+  int height;
+
+  int width;
+
   Object encode() {
     return <Object?>[
-      width,
-      height,
       format,
       imagePlanesInformation,
+      height,
+      width,
     ];
   }
 
   static ImageInformation decode(Object result) {
     result as List<Object?>;
     return ImageInformation(
-      width: result[0]! as int,
-      height: result[1]! as int,
-      format: result[2]! as int,
+      format: result[0]! as int,
       imagePlanesInformation:
-          (result[3] as List<Object?>?)!.cast<ImagePlaneInformation?>(),
+          (result[1] as List<Object?>?)!.cast<ImagePlaneInformation?>(),
+      height: result[2]! as int,
+      width: result[3]! as int,
     );
   }
 }
