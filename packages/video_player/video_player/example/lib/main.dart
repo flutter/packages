@@ -316,9 +316,6 @@ class _ControlsOverlay extends StatelessWidget {
           onTap: () {
             controller.value.isPlaying ? controller.pause() : controller.play();
           },
-          onDoubleTap: () {
-            controller.toggleFullScreen();
-          },
         ),
         Align(
           alignment: Alignment.topLeft,

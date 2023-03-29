@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Adds fullscreen functionality (only for web-platform).
+
 ## 2.0.15
 
 * Clarifies explanation of endorsement in README.

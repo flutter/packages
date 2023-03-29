@@ -1,3 +1,7 @@
+## 6.2.0
+
+* Adds fullscreen functionality (only for web-platform).
+
 ## 6.1.0
 
 * Aligns Dart and Flutter SDK constraints.
