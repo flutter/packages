@@ -108,16 +108,6 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> enterFullScreen(int textureId) async {
-    return _player(textureId).enterFullscreen();
-  }
-
-  @override
-  Future<void> exitFullScreen(int textureId) async {
-    return _player(textureId).exitFullscreen();
-  }
-
-  @override
   Future<void> setVolume(int textureId, double volume) async {
     return _player(textureId).setVolume(volume);
   }
