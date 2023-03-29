@@ -1,3 +1,8 @@
+## 2.6.0
+
+* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.5.0
 
 * Adds NV21 as an image stream format (suitable for Android).

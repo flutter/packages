@@ -38,7 +38,7 @@ void main() {
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0),
-          ResolutionPreset.high,
+          mediaSettings: MediaSettings.low(),
         );
 
         // Assert
@@ -47,7 +47,10 @@ void main() {
             'create',
             arguments: <String, Object?>{
               'cameraName': 'Test',
-              'resolutionPreset': 'high',
+              'resolutionPreset': 'low',
+              'fps': 15,
+              'videoBitrate': 200000,
+              'audioBitrate': 32000,
               'enableAudio': false
             },
           ),
@@ -77,7 +80,7 @@ void main() {
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            ResolutionPreset.high,
+            mediaSettings: MediaSettings.low(),
           ),
           throwsA(
             isA<CameraException>()
@@ -111,7 +114,7 @@ void main() {
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            ResolutionPreset.high,
+            mediaSettings: MediaSettings.low(),
           ),
           throwsA(
             isA<CameraException>()
@@ -173,7 +176,7 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          mediaSettings: MediaSettings.low(),
         );
 
         // Act
@@ -220,7 +223,7 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          mediaSettings: MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -268,7 +271,7 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          mediaSettings: MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -438,7 +441,7 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          mediaSettings: MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(
