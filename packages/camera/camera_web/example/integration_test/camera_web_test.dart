@@ -540,7 +540,8 @@ void main() {
                 .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
-          final int cameraId = await CameraPlatform.instance.createCameraWithSettings(
+          final int cameraId =
+              await CameraPlatform.instance.createCameraWithSettings(
             cameraDescription,
             const MediaSettings(
               resolutionPreset: ResolutionPreset.ultraHigh,
@@ -584,7 +585,8 @@ void main() {
             () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
           ).thenReturn(maxResolutionSize);
 
-          final int cameraId = await CameraPlatform.instance.createCameraWithSettings(
+          final int cameraId =
+              await CameraPlatform.instance.createCameraWithSettings(
             cameraDescription,
             const MediaSettings(
               resolutionPreset: ResolutionPreset.max,

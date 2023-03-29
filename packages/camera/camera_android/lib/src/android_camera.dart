@@ -94,7 +94,8 @@ class AndroidCamera extends CameraPlatform {
   @override
   Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
-    MediaSettings? mediaSettings,) async {
+    MediaSettings? mediaSettings,
+  ) async {
     try {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{

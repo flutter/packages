@@ -230,7 +230,8 @@ class CameraPlugin extends CameraPlatform {
         cameraService: _cameraService,
         options: CameraOptions(
           audio: AudioConstraints(
-              enabled: mediaSettings?.enableAudio ?? true, bitrate: mediaSettings?.audioBitrate),
+              enabled: mediaSettings?.enableAudio ?? true,
+              bitrate: mediaSettings?.audioBitrate),
           video: VideoConstraints(
             bitrate: mediaSettings?.videoBitrate,
             facingMode:

@@ -127,7 +127,7 @@ class _CameraAppState extends State<CameraApp> {
   @override
   void initState() {
     super.initState();
-    controller = CameraController(
+    controller = CameraController.withSettings(
       _cameras[0],
       mediaSettings: MediaSettings.low(),
     );

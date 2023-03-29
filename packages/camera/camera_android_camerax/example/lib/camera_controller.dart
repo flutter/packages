@@ -241,7 +241,6 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// See also: [MediaSettings].
   final MediaSettings? mediaSettings;
 
-
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
   /// When null the imageFormat will fallback to the platforms default.

@@ -232,7 +232,6 @@ class CameraController extends ValueNotifier<CameraValue> {
         audioBitrate: 32000,
         enableAudio: enableAudio,
       ),
-
     );
 
     CameraPlatform.instance

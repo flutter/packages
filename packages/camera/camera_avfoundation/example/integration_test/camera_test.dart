@@ -168,7 +168,6 @@ void main() {
     final CameraController controller = CameraController.withSettings(
       cameras[0],
       mediaSettings: MediaSettings.low(enableAudio: false),
-
     );
 
     await controller.initialize();

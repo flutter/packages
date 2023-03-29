@@ -242,7 +242,7 @@ void main() {
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
         ),
-         MediaSettings.low(),
+        MediaSettings.low(),
       );
       final Future<void> initializeFuture = camera.initializeCamera(cameraId);
       camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -290,7 +290,7 @@ void main() {
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
         ),
-          MediaSettings.low(),
+        MediaSettings.low(),
       );
       final Future<void> initializeFuture = camera.initializeCamera(cameraId);
       camera.cameraEventStreamController.add(CameraInitializedEvent(

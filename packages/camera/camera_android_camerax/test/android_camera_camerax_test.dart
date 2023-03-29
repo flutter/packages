@@ -114,8 +114,8 @@ void main() {
         .thenAnswer((_) async => testSurfaceTextureId);
 
     expect(
-        await camera.createCameraWithSettings(testCameraDescription,
-            MediaSettings.low()),
+        await camera.createCameraWithSettings(
+            testCameraDescription, MediaSettings.low()),
         equals(testSurfaceTextureId));
 
     // Verify permissions are requested and the camera starts listening for device orientation changes.
@@ -149,12 +149,14 @@ void main() {
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const bool enableAudio = true;
 
-    await camera.createCameraWithSettings(testCameraDescription,
+    await camera.createCameraWithSettings(
+        testCameraDescription,
         const MediaSettings(
           resolutionPreset: testResolutionPreset,
           fps: 15,
           videoBitrate: 2000000,
-          audioBitrate: 64000,enableAudio: enableAudio,
+          audioBitrate: 64000,
+          enableAudio: enableAudio,
         ));
 
     verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
@@ -201,8 +203,10 @@ void main() {
     // Call createCamera.
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => cameraId);
-    await camera.createCameraWithSettings(testCameraDescription,
-        MediaSettings.low(), );
+    await camera.createCameraWithSettings(
+      testCameraDescription,
+      MediaSettings.low(),
+    );
 
     when(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
             <UseCase>[camera.testPreview, camera.testImageCapture]))
