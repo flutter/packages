@@ -193,7 +193,9 @@ import FlutterMacOS
           } else if (!hostDatatype.isBuiltin &&
               customEnumNames.contains(field.type.baseName)) {
             indent.writeln('var ${field.name}: $fieldType? = nil');
-            indent.write('if let ${field.name}RawValue = $listValue as! Int? ');
+            indent.writeln(
+                'let enumVal$index = ${_castForceUnwrap(listValue, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}');
+            indent.write('if let ${field.name}RawValue = enumVal$index');
             indent.addScoped('{', '}', () {
               indent.writeln(
                   '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
@@ -638,11 +640,23 @@ import FlutterMacOS
     });
   }
 
+  void _writeNilOrType(Indent indent) {
+    indent.format('''
+
+private func nilOrType(value: Any?) -> Any? {
+  if (value is NSNull) {
+    return nil 
+  }
+  return value
+}''');
+  }
+
   @override
   void writeGeneralUtilities(
       SwiftOptions generatorOptions, Root root, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
+    _writeNilOrType(indent);
   }
 }
 
@@ -679,7 +693,7 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
   } else if (type.isNullable) {
-    return '($value is NSNull) ? (nil as Any?) as! ${_swiftTypeForDartType(type)}$castUnwrap : $value as! ${_swiftTypeForDartType(type)}$castUnwrap';
+    return 'nilOrType(value: $value) as! ${_swiftTypeForDartType(type)}$castUnwrap';
   } else {
     return '$value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   }
