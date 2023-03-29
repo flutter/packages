@@ -44,10 +44,10 @@ class FlutterError {
 template <class T>
 class ErrorOr {
  public:
-  ErrorOr(const T& rhs) { new (&v_) T(rhs); }
-  ErrorOr(const T&& rhs) { v_ = std::move(rhs); }
-  ErrorOr(const FlutterError& rhs) { new (&v_) FlutterError(rhs); }
-  ErrorOr(const FlutterError&& rhs) { v_ = std::move(rhs); }
+  ErrorOr(const T& rhs) : v_(rhs) {}
+  ErrorOr(const T&& rhs) : v_(std::move(rhs)) {}
+  ErrorOr(const FlutterError& rhs) : v_(rhs) {}
+  ErrorOr(const FlutterError&& rhs) : v_(std::move(rhs)) {}
 
   bool has_error() const { return std::holds_alternative<FlutterError>(v_); }
   const T& value() const { return std::get<T>(v_); };
