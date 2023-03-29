@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -644,10 +645,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       await oldController.dispose();
     }
 
-    final CameraController cameraController = CameraController(
+    final CameraController cameraController = CameraController.withSettings(
       cameraDescription,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
-      enableAudio: enableAudio,
+      mediaSettings: MediaSettings.low(enableAudio: enableAudio),
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
 

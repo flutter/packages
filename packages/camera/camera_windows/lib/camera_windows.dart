@@ -64,18 +64,22 @@ class CameraWindows extends CameraPlatform {
   }
 
   @override
-  Future<int> createCamera(
+  Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
-    bool enableAudio = false,
-  }) async {
+    MediaSettings? mediaSettings,
+  ) async {
     try {
       // If resolutionPreset is not specified, plugin selects the highest resolution possible.
       final Map<String, dynamic>? reply = await pluginChannel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': _serializeResolutionPreset(resolutionPreset),
-        'enableAudio': enableAudio,
+        'resolutionPreset': null != mediaSettings?.resolutionPreset
+            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset)
+            : null,
+        'fps': mediaSettings?.fps,
+        'videoBitrate': mediaSettings?.videoBitrate,
+        'audioBitrate': mediaSettings?.audioBitrate,
+        'enableAudio': mediaSettings?.enableAudio ?? true,
       });
 
       if (reply == null) {

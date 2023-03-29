@@ -107,16 +107,15 @@ void main() {
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
-    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
-    const bool enableAudio = true;
+
     const int testSurfaceTextureId = 6;
 
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => testSurfaceTextureId);
 
     expect(
-        await camera.createCamera(testCameraDescription, testResolutionPreset,
-            enableAudio: enableAudio),
+        await camera.createCameraWithSettings(testCameraDescription,
+            MediaSettings.low()),
         equals(testSurfaceTextureId));
 
     // Verify permissions are requested and the camera starts listening for device orientation changes.
@@ -150,8 +149,13 @@ void main() {
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const bool enableAudio = true;
 
-    await camera.createCamera(testCameraDescription, testResolutionPreset,
-        enableAudio: enableAudio);
+    await camera.createCameraWithSettings(testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: testResolutionPreset,
+          fps: 15,
+          videoBitrate: 2000000,
+          audioBitrate: 64000,enableAudio: enableAudio,
+        ));
 
     verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
         <UseCase>[camera.testPreview, camera.testImageCapture]));
@@ -174,8 +178,6 @@ void main() {
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
-    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
-    const bool enableAudio = true;
     const int resolutionWidth = 350;
     const int resolutionHeight = 750;
     final Camera mockCamera = MockCamera();
@@ -199,8 +201,8 @@ void main() {
     // Call createCamera.
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => cameraId);
-    await camera.createCamera(testCameraDescription, testResolutionPreset,
-        enableAudio: enableAudio);
+    await camera.createCameraWithSettings(testCameraDescription,
+        MediaSettings.low(), );
 
     when(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
             <UseCase>[camera.testPreview, camera.testImageCapture]))

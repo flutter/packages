@@ -1,7 +1,3 @@
-## 2.5.1
-
-* CameraPlatform.createCameraWithSettings method for tune fps and bitrate of recorded video.
-
 ## 2.5.0
 
 * Adds NV21 as an image stream format (suitable for Android).

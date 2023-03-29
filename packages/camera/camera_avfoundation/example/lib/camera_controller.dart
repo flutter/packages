@@ -171,26 +171,27 @@ class CameraValue {
 /// outside of the overall example code.
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
+  /// Deprecated, use [withSettings].
   CameraController(
-    CameraDescription cameraDescription,
-    this.resolutionPreset, {
-    this.enableAudio = true,
-    this.imageFormatGroup,
-  }) : super(CameraValue.uninitialized(cameraDescription));
+      CameraDescription cameraDescription,
+      ResolutionPreset resolutionPreset, {
+        bool enableAudio = true,
+        this.imageFormatGroup,
+      })  : _mediaSettings = MediaSettings(
+      resolutionPreset: resolutionPreset, enableAudio: enableAudio,),
+        super(CameraValue.uninitialized(cameraDescription));
+
+  /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
+  CameraController.withSettings(
+      CameraDescription cameraDescription, {
+        MediaSettings? mediaSettings,
+        this.imageFormatGroup, }
+      ) : _mediaSettings = mediaSettings, super(CameraValue.uninitialized(cameraDescription));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
 
-  /// The resolution this controller is targeting.
-  ///
-  /// This resolution preset is not guaranteed to be available on the device,
-  /// if unavailable a lower resolution will be used.
-  ///
-  /// See also: [ResolutionPreset].
-  final ResolutionPreset resolutionPreset;
-
-  /// Whether to include audio when recording a video.
-  final bool enableAudio;
+  final MediaSettings? _mediaSettings;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
@@ -223,10 +224,8 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
     });
 
-    _cameraId = await CameraPlatform.instance.createCamera(
-      description,
-      resolutionPreset,
-      enableAudio: enableAudio,
+    _cameraId = await CameraPlatform.instance.createCameraWithSettings(
+      description, _mediaSettings,
     );
 
     CameraPlatform.instance

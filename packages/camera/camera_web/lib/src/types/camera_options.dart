@@ -58,25 +58,28 @@ class CameraOptions {
 class AudioConstraints {
   /// Creates a new instance of [AudioConstraints]
   /// with the given [enabled] constraint.
-  const AudioConstraints({this.enabled = false});
+  const AudioConstraints({this.bitrate, this.enabled = false});
 
   /// Whether the audio track should be enabled.
   final bool enabled;
 
+  /// Audio bitrate
+  final int? bitrate;
+
   /// Converts the current instance to a Map.
-  Object toJson() => enabled;
+  Map<String, dynamic> toJson() =>
+      <String, dynamic>{'enabled': enabled, 'bitrate': bitrate};
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    return other is AudioConstraints && other.enabled == enabled;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AudioConstraints &&
+          runtimeType == other.runtimeType &&
+          enabled == other.enabled &&
+          bitrate == other.bitrate;
 
   @override
-  int get hashCode => enabled.hashCode;
+  int get hashCode => enabled.hashCode ^ bitrate.hashCode;
 }
 
 /// Defines constraints that the video track must have
@@ -86,11 +89,15 @@ class VideoConstraints {
   /// Creates a new instance of [VideoConstraints]
   /// with the given constraints.
   const VideoConstraints({
+    this.bitrate,
     this.facingMode,
     this.width,
     this.height,
     this.deviceId,
   });
+
+  /// Video bitrate
+  final int? bitrate;
 
   /// The facing mode of the video track.
   final FacingModeConstraint? facingMode;
@@ -121,24 +128,29 @@ class VideoConstraints {
       json['deviceId'] = <String, Object>{'exact': deviceId!};
     }
 
+    json['bitrate'] = bitrate;
+
     return json;
   }
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    return other is VideoConstraints &&
-        other.facingMode == facingMode &&
-        other.width == width &&
-        other.height == height &&
-        other.deviceId == deviceId;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VideoConstraints &&
+          runtimeType == other.runtimeType &&
+          bitrate == other.bitrate &&
+          facingMode == other.facingMode &&
+          width == other.width &&
+          height == other.height &&
+          deviceId == other.deviceId;
 
   @override
-  int get hashCode => Object.hash(facingMode, width, height, deviceId);
+  int get hashCode =>
+      bitrate.hashCode ^
+      facingMode.hashCode ^
+      width.hashCode ^
+      height.hashCode ^
+      deviceId.hashCode;
 }
 
 /// The camera type used in [FacingModeConstraint].

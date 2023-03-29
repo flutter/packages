@@ -224,26 +224,33 @@ class CameraValue {
 /// To show the camera preview on the screen use a [CameraPreview] widget.
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
+  /// Deprecated, use [withSettings].
   CameraController(
     this.description,
-    this.resolutionPreset, {
-    this.enableAudio = true,
+    ResolutionPreset resolutionPreset, {
+    bool enableAudio = true,
+    this.imageFormatGroup,
+  })  : mediaSettings = MediaSettings(
+            resolutionPreset: resolutionPreset, enableAudio: enableAudio),
+        super(const CameraValue.uninitialized());
+
+  /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
+  CameraController.withSettings(
+    this.description, {
+    this.mediaSettings,
     this.imageFormatGroup,
   }) : super(const CameraValue.uninitialized());
 
   /// The properties of the camera device controlled by this controller.
   final CameraDescription description;
 
-  /// The resolution this controller is targeting.
+  /// The media settings this controller is targeting.
   ///
-  /// This resolution preset is not guaranteed to be available on the device,
+  /// This media settings are not guaranteed to be available on the device,
   /// if unavailable a lower resolution will be used.
   ///
-  /// See also: [ResolutionPreset].
-  final ResolutionPreset resolutionPreset;
-
-  /// Whether to include audio when recording a video.
-  final bool enableAudio;
+  /// See also: [MediaSettings].
+  final MediaSettings? mediaSettings;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
@@ -293,10 +300,9 @@ class CameraController extends ValueNotifier<CameraValue> {
         );
       });
 
-      _cameraId = await CameraPlatform.instance.createCamera(
+      _cameraId = await CameraPlatform.instance.createCameraWithSettings(
         description,
-        resolutionPreset,
-        enableAudio: enableAudio,
+        mediaSettings,
       );
 
       _unawaited(CameraPlatform.instance

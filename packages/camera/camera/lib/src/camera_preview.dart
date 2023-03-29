@@ -21,7 +21,7 @@ class CameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return controller.value.isInitialized
+    return (controller.value.isInitialized && !controller.value.isPreviewPaused)
         ? ValueListenableBuilder<CameraValue>(
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
@@ -32,7 +32,8 @@ class CameraPreview extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    _wrapInRotatedBox(child: controller.buildPreview()),
+                    if (!controller.value.isPreviewPaused)
+                      _wrapInRotatedBox(child: controller.buildPreview()),
                     child ?? Container(),
                   ],
                 ),

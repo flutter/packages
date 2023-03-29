@@ -38,7 +38,7 @@ void main() {
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0),
-          MediaSettings.low(),
+          MediaSettings.low(enableAudio: false),
         );
 
         // Assert

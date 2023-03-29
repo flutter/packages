@@ -52,7 +52,8 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
   }
 
   private boolean isPixel4A() {
-    return Build.BRAND.equals("google") && Build.MODEL.equals("Pixel 4a");
+    //Build.BRAND or Build.MODEL can be null.
+    return "google".equals(Build.BRAND) && "Pixel 4a".equals(Build.MODEL);
   }
 
   @Override

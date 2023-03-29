@@ -53,7 +53,7 @@ TEST(Camera, InitCameraCreatesCaptureController) {
       camera->InitCamera(std::move(capture_controller_factory),
                          std::make_unique<MockTextureRegistrar>().get(),
                          std::make_unique<MockBinaryMessenger>().get(), false,
-                         ResolutionPreset::kAuto);
+                         ResolutionPreset::kAuto, 5, 200000, 32000);
   EXPECT_TRUE(result);
   EXPECT_TRUE(camera->GetCaptureController() != nullptr);
 }
@@ -84,7 +84,7 @@ TEST(Camera, InitCameraReportsFailure) {
       camera->InitCamera(std::move(capture_controller_factory),
                          std::make_unique<MockTextureRegistrar>().get(),
                          std::make_unique<MockBinaryMessenger>().get(), false,
-                         ResolutionPreset::kAuto);
+                         ResolutionPreset::kAuto, 5, 200000, 32000);
   EXPECT_FALSE(result);
   EXPECT_TRUE(camera->GetCaptureController() != nullptr);
 }
@@ -490,7 +490,8 @@ TEST(Camera, OnVideoRecordSucceededInvokesCameraChannelEvent) {
   // Init camera with mock capture controller factory
   camera->InitCamera(std::move(capture_controller_factory),
                      std::make_unique<MockTextureRegistrar>().get(),
-                     binary_messenger.get(), false, ResolutionPreset::kAuto);
+                     binary_messenger.get(), false, ResolutionPreset::kAuto, 5,
+                     200000, 32000);
 
   // Pass camera id for camera
   camera->OnCreateCaptureEngineSucceeded(camera_id);

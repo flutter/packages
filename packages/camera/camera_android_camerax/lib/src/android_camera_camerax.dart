@@ -123,13 +123,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
   @override
-  Future<int> createCamera(
+  Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
-    bool enableAudio = false,
-  }) async {
+    MediaSettings? mediaSettings,
+  ) async {
     // Must obtain proper permissions before attempting to access a camera.
-    await requestCameraPermissions(enableAudio);
+    await requestCameraPermissions(mediaSettings?.enableAudio ?? true);
 
     // Save CameraSelector that matches cameraDescription.
     final int cameraSelectorLensDirection =
@@ -146,12 +145,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
-    _resolutionPreset = resolutionPreset;
+    _resolutionPreset = mediaSettings?.resolutionPreset;
+
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
+
     final ResolutionInfo? previewTargetResolution =
-        _getTargetResolutionForPreview(resolutionPreset);
+        null != mediaSettings?.resolutionPreset
+            ? _getTargetResolutionForPreview(mediaSettings!.resolutionPreset)
+            : null;
+
     preview = createPreview(targetRotation, previewTargetResolution);
+
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.

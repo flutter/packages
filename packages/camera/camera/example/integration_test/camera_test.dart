@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -80,8 +81,12 @@ void main() {
         bool previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller =
-              CameraController(cameraDescription, preset.key);
+          final CameraController controller = CameraController.withSettings(
+            cameraDescription,
+            mediaSettings: MediaSettings(
+              resolutionPreset: preset.key,
+            ),
+          );
           await controller.initialize();
           final bool presetExactlySupported =
               await testCaptureImageResolution(controller, preset.key);
@@ -132,8 +137,12 @@ void main() {
         bool previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller =
-              CameraController(cameraDescription, preset.key);
+          final CameraController controller = CameraController.withSettings(
+            cameraDescription,
+            mediaSettings: MediaSettings(
+              resolutionPreset: preset.key,
+            ),
+          );
           await controller.initialize();
           await controller.prepareForVideoRecording();
           final bool presetExactlySupported =
@@ -155,10 +164,9 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final CameraController controller = CameraController.withSettings(
       cameras[0],
-      ResolutionPreset.low,
-      enableAudio: false,
+      mediaSettings: MediaSettings.low(enableAudio: false),
     );
 
     await controller.initialize();
@@ -210,10 +218,9 @@ void main() {
         return;
       }
 
-      final CameraController controller = CameraController(
+      final CameraController controller = CameraController.withSettings(
         cameras[0],
-        ResolutionPreset.low,
-        enableAudio: false,
+        mediaSettings: MediaSettings.low(enableAudio: false),
       );
 
       await controller.initialize();
@@ -242,10 +249,9 @@ void main() {
   /// Start streaming with specifying the ImageFormatGroup.
   Future<CameraImage> startStreaming(List<CameraDescription> cameras,
       ImageFormatGroup? imageFormatGroup) async {
-    final CameraController controller = CameraController(
+    final CameraController controller = CameraController.withSettings(
       cameras.first,
-      ResolutionPreset.low,
-      enableAudio: false,
+      mediaSettings: MediaSettings.low(enableAudio: false),
       imageFormatGroup: imageFormatGroup,
     );
 

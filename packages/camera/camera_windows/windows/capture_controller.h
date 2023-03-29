@@ -88,7 +88,8 @@ class CaptureController {
   virtual bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                                  const std::string& device_id,
                                  bool record_audio,
-                                 ResolutionPreset resolution_preset) = 0;
+                                 ResolutionPreset resolution_preset, int fps,
+                                 int video_bitrate, int audio_bitrate) = 0;
 
   // Returns preview frame width
   virtual uint32_t GetPreviewWidth() const = 0;
@@ -137,7 +138,8 @@ class CaptureControllerImpl : public CaptureController,
   // CaptureController
   bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                          const std::string& device_id, bool record_audio,
-                         ResolutionPreset resolution_preset) override;
+                         ResolutionPreset resolution_preset, int fps,
+                         int video_bitrate, int audio_bitrate) override;
   uint32_t GetPreviewWidth() const override { return preview_frame_width_; }
   uint32_t GetPreviewHeight() const override { return preview_frame_height_; }
   void StartPreview() override;
@@ -246,6 +248,9 @@ class CaptureControllerImpl : public CaptureController,
   CaptureEngineState capture_engine_state_ =
       CaptureEngineState::kNotInitialized;
   ResolutionPreset resolution_preset_ = ResolutionPreset::kMedium;
+  int fps_ = -1;
+  int video_bitrate_ = -1;
+  int audio_bitrate_ = -1;
   ComPtr<IMFCaptureEngine> capture_engine_;
   ComPtr<CaptureEngineListener> capture_engine_callback_handler_;
   ComPtr<IMFDXGIDeviceManager> dxgi_device_manager_;

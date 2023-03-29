@@ -60,8 +60,11 @@ void main() {
   group('AudioConstraints', () {
     testWidgets('serializes correctly', (WidgetTester tester) async {
       expect(
-        const AudioConstraints(enabled: true).toJson(),
-        equals(true),
+        const AudioConstraints(enabled: true, bitrate: 28000).toJson(),
+        equals(<String, Object>{
+          'enabled': true,
+          'bitrate': 28000,
+        }),
       );
     });
 
@@ -80,6 +83,7 @@ void main() {
         width: const VideoSizeConstraint(ideal: 100, maximum: 100),
         height: const VideoSizeConstraint(ideal: 50, maximum: 50),
         deviceId: 'deviceId',
+        bitrate: 250000,
       );
 
       expect(
@@ -88,6 +92,7 @@ void main() {
           'facingMode': videoConstraints.facingMode!.toJson(),
           'width': videoConstraints.width!.toJson(),
           'height': videoConstraints.height!.toJson(),
+          'bitrate': videoConstraints.bitrate!,
           'deviceId': <String, Object>{
             'exact': 'deviceId',
           }

@@ -21,6 +21,16 @@ dependencies:
   quiver: ^3.0.0
   video_player: ^2.1.4
 
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+
+  camera_android: 
+    path: ../../../camera/camera_android
+  camera_platform_interface: 
+    path: ../../../camera/camera_platform_interface
+
 dev_dependencies:
   build_runner: ^2.1.10
   flutter_driver:

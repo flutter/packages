@@ -92,19 +92,20 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
-  Future<int> createCamera(
+  Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
-    bool enableAudio = false,
-  }) async {
+    MediaSettings? mediaSettings,) async {
     try {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': resolutionPreset != null
-            ? _serializeResolutionPreset(resolutionPreset)
+        'resolutionPreset': null != mediaSettings?.resolutionPreset
+            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset!)
             : null,
-        'enableAudio': enableAudio,
+        'fps': mediaSettings?.fps,
+        'videoBitrate': mediaSettings?.videoBitrate,
+        'audioBitrate': mediaSettings?.audioBitrate,
+        'enableAudio': mediaSettings?.enableAudio ?? true,
       });
 
       return reply!['cameraId']! as int;

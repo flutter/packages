@@ -14,6 +14,7 @@ import io.flutter.plugins.camera.features.exposurepoint.ExposurePointFeature;
 import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
 import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
+import io.flutter.plugins.camera.features.intfeature.IntFeature;
 import io.flutter.plugins.camera.features.noisereduction.NoiseReductionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
@@ -40,6 +41,9 @@ public class CameraFeatures {
   private static final String RESOLUTION = "RESOLUTION";
   private static final String SENSOR_ORIENTATION = "SENSOR_ORIENTATION";
   private static final String ZOOM_LEVEL = "ZOOM_LEVEL";
+  private static final String FPS = "FPS";
+  private static final String VIDEO_BITRATE = "VIDEO_BITRATE";
+  private static final String AUDIO_BITRATE = "AUDIO_BITRATE";
 
   public static CameraFeatures init(
       CameraFeatureFactory cameraFeatureFactory,
@@ -281,5 +285,29 @@ public class CameraFeatures {
    */
   public void setZoomLevel(ZoomLevelFeature zoomLevel) {
     this.featureMap.put(ZOOM_LEVEL, zoomLevel);
+  }
+
+  public void setFps(IntFeature fps) {
+    this.featureMap.put(FPS, fps);
+  }
+
+  public IntFeature getFps() {
+    return (IntFeature) featureMap.get(FPS);
+  }
+
+  public void setVideoBitrate(IntFeature videoBitrate) {
+    this.featureMap.put(VIDEO_BITRATE, videoBitrate);
+  }
+
+  public IntFeature getVideoBitrate() {
+    return (IntFeature) featureMap.get(VIDEO_BITRATE);
+  }
+
+  public void setAudioBitrate(IntFeature audioBitrate) {
+    this.featureMap.put(AUDIO_BITRATE, audioBitrate);
+  }
+
+  public IntFeature getAudioBitrate() {
+    return (IntFeature) featureMap.get(AUDIO_BITRATE);
   }
 }

@@ -100,6 +100,7 @@ Here is a small example flutter app displaying a full screen camera preview.
 <?code-excerpt "readme_full_example.dart (FullAppExample)"?>
 ```dart
 import 'package:camera/camera.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/material.dart';
 
 late List<CameraDescription> _cameras;
@@ -126,7 +127,10 @@ class _CameraAppState extends State<CameraApp> {
   @override
   void initState() {
     super.initState();
-    controller = CameraController(_cameras[0], ResolutionPreset.max);
+    controller = CameraController(
+      _cameras[0],
+      mediaSettings: MediaSettings.low(),
+    );
     controller.initialize().then((_) {
       if (!mounted) {
         return;
