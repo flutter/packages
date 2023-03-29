@@ -25,10 +25,12 @@ class GisSdkClient {
   GisSdkClient({
     required List<String> initialScopes,
     required String clientId,
+    required StreamController<GoogleSignInUserData?> userDataController,
     bool loggingEnabled = false,
     String? hostedDomain,
   })  : _initialScopes = initialScopes,
-        _loggingEnabled = loggingEnabled {
+        _loggingEnabled = loggingEnabled,
+        _userDataEventsController = userDataController {
     if (_loggingEnabled) {
       id.setLogLevel('debug');
     }
@@ -59,12 +61,14 @@ class GisSdkClient {
   void _configureStreams() {
     _tokenResponses = StreamController<TokenResponse>.broadcast();
     _credentialResponses = StreamController<CredentialResponse>.broadcast();
+
     _tokenResponses.stream.listen((TokenResponse response) {
       _lastTokenResponse = response;
     }, onError: (Object error) {
       _logIfEnabled('Error on TokenResponse:', <Object>[error.toString()]);
       _lastTokenResponse = null;
     });
+
     _credentialResponses.stream.listen((CredentialResponse response) {
       _lastCredentialResponse = response;
     }, onError: (Object error) {
@@ -73,13 +77,24 @@ class GisSdkClient {
     });
 
     // In the future, the userDataEvents could propagate null userDataEvents too.
-    userDataEvents = _credentialResponses.stream
+    _credentialResponses.stream
         .map(utils.gisResponsesToUserData)
-        .handleError(
-      (Object error) {
-        _logIfEnabled('Removing error from `userDataEvents`:',
-            <Object>[error.toString()]);
-      },
+        .handleError(_cleanCredentialResponsesStreamErrors)
+        .forEach(_userDataEventsController.add);
+  }
+
+  // This function handles the errors that on the _credentialResponses Stream.
+  //
+  // Most of the time, these errors are part of the flow (like when One Tap UX
+  // cannot be rendered), and the stream of userDataEvents doesn't care about
+  // them.
+  //
+  // (This has been separated to a function so the _configureStreams formatting
+  // looks a little bit better)
+  void _cleanCredentialResponsesStreamErrors(Object error) {
+    _logIfEnabled(
+      'Removing error from `userDataEvents`:',
+      <Object>[error.toString()],
     );
   }
 
@@ -325,7 +340,7 @@ class GisSdkClient {
   /// This validates that the `accessToken` is the same as the last seen
   /// token response, and uses that response to check if permissions are
   /// still granted.
-  Future<bool> canAccessScopes(String? accessToken, List<String> scopes) async {
+  Future<bool> canAccessScopes(List<String> scopes, String? accessToken) async {
     if (accessToken != null && _lastTokenResponse != null) {
       if (accessToken == _lastTokenResponse!.access_token) {
         return oauth2.hasGrantedAllScopes(_lastTokenResponse!, scopes);
@@ -354,8 +369,10 @@ class GisSdkClient {
   CredentialResponse? _lastCredentialResponse;
   TokenResponse? _lastTokenResponse;
 
-  /// The Stream of asynchronous User Authentication events.
-  late Stream<GoogleSignInUserData?> userDataEvents;
+  /// The StreamController onto which the GIS Client propagates user authentication events.
+  ///
+  /// This is provided by the implementation of the plugin.
+  final StreamController<GoogleSignInUserData?> _userDataEventsController;
 
   // If the user *authenticates* (signs in) through oauth2, the SDK doesn't return
   // identity information anymore, so we synthesize it by calling the PeopleAPI

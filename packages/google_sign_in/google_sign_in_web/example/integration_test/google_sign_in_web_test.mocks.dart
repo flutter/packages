@@ -38,23 +38,6 @@ class _FakeGoogleSignInTokenData_0 extends _i1.SmartFake
 /// See the documentation for Mockito's code generation for more information.
 class MockGisSdkClient extends _i1.Mock implements _i3.GisSdkClient {
   @override
-  _i4.Stream<_i2.GoogleSignInUserData?> get userDataEvents =>
-      (super.noSuchMethod(
-        Invocation.getter(#userDataEvents),
-        returnValue: _i4.Stream<_i2.GoogleSignInUserData?>.empty(),
-        returnValueForMissingStub:
-            _i4.Stream<_i2.GoogleSignInUserData?>.empty(),
-      ) as _i4.Stream<_i2.GoogleSignInUserData?>);
-  @override
-  set userDataEvents(_i4.Stream<_i2.GoogleSignInUserData?>? _userDataEvents) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #userDataEvents,
-          _userDataEvents,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   _i4.Future<_i2.GoogleSignInUserData?> signInSilently() => (super.noSuchMethod(
         Invocation.method(
           #signInSilently,
@@ -158,15 +141,15 @@ class MockGisSdkClient extends _i1.Mock implements _i3.GisSdkClient {
       ) as _i4.Future<bool>);
   @override
   _i4.Future<bool> canAccessScopes(
-    String? accessToken,
     List<String>? scopes,
+    String? accessToken,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #canAccessScopes,
           [
-            accessToken,
             scopes,
+            accessToken,
           ],
         ),
         returnValue: _i4.Future<bool>.value(false),
