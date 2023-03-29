@@ -1,14 +1,7 @@
-## 0.3.1+6
-
-* Fixed isPixel4A bug.
-
-## 0.3.1+5
+## 0.4.0
 
 * [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
-
-## 0.3.1+4
-
-* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 0.3.1+3
 
