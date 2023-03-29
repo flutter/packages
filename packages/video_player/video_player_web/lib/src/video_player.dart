@@ -135,6 +135,16 @@ class VideoPlayer {
     _videoElement.pause();
   }
 
+  /// The video enters in fullScreen (only available for web platform).
+  void enterFullscreen() {
+    _videoElement.enterFullscreen();
+  }
+
+  /// The video exits fullScreen (only available for web platform).
+  void exitFullscreen() {
+    _videoElement.exitFullscreen();
+  }
+
   /// Controls whether the video should start again after it finishes.
   // ignore: use_setters_to_change_properties
   void setLooping(bool value) {

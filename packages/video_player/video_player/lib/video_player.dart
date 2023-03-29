@@ -47,6 +47,7 @@ class VideoPlayerValue {
     this.isPlaying = false,
     this.isLooping = false,
     this.isBuffering = false,
+    this.isFullScreen = false,
     this.volume = 1.0,
     this.playbackSpeed = 1.0,
     this.rotationCorrection = 0,
@@ -92,6 +93,9 @@ class VideoPlayerValue {
 
   /// True if the video is playing. False if it's paused.
   final bool isPlaying;
+
+  /// True if the video is in fullscreen. False if it's not.
+  final bool isFullScreen;
 
   /// True if the video is looping.
   final bool isLooping;
@@ -151,6 +155,7 @@ class VideoPlayerValue {
     List<DurationRange>? buffered,
     bool? isInitialized,
     bool? isPlaying,
+    bool? isFullScreen,
     bool? isLooping,
     bool? isBuffering,
     double? volume,
@@ -167,6 +172,7 @@ class VideoPlayerValue {
       buffered: buffered ?? this.buffered,
       isInitialized: isInitialized ?? this.isInitialized,
       isPlaying: isPlaying ?? this.isPlaying,
+      isFullScreen: isFullScreen ?? this.isFullScreen,
       isLooping: isLooping ?? this.isLooping,
       isBuffering: isBuffering ?? this.isBuffering,
       volume: volume ?? this.volume,
@@ -475,6 +481,19 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// The video enters in fullscreen (only works for Web).
+  Future<void> toggleFullScreen() async {
+    if (kIsWeb) {
+      if (!value.isFullScreen) {
+        value = value.copyWith(isFullScreen: true);
+        await _applyFullScreen();
+      } else {
+        value = value.copyWith(isFullScreen: false);
+        await _applyExitFullScreen();
+      }
+    }
+  }
+
   Future<void> _applyLooping() async {
     if (_isDisposedOrNotInitialized) {
       return;
@@ -520,6 +539,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
     await _videoPlayerPlatform.setVolume(_textureId, value.volume);
+  }
+
+  Future<void> _applyFullScreen() async {
+    if (!kIsWeb || _isDisposedOrNotInitialized) {
+      return;
+    }
+    await _videoPlayerPlatform.enterFullScreen(_textureId);
+  }
+
+  Future<void> _applyExitFullScreen() async {
+    if (!kIsWeb || _isDisposedOrNotInitialized) {
+      return;
+    }
+    await _videoPlayerPlatform.exitFullScreen(_textureId);
   }
 
   Future<void> _applyPlaybackSpeed() async {
