@@ -1,3 +1,12 @@
+## 9.1.3
+
+* [cpp] Requires passing any non-nullable fields of generated data classes as
+  constructor arguments, similar to what is done in other languages. This may
+  require updates to existing code that creates data class instances on the
+  native side.
+* [cpp] Adds a convenience constructor to generated data classes to set all
+  fields during construction.
+
 ## 9.1.2
 
 * [cpp] Fixes class parameters to Flutter APIs.
