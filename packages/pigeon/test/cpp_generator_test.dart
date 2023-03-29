@@ -481,7 +481,12 @@ void main() {
       expect(code, contains('Nested();'));
       // There should be a convenience constructor.
       expect(
-          code, contains(RegExp(r'Nested\(\s*const bool\* nested_value\s*\)')));
+          code,
+          contains(
+              RegExp(r'explicit Nested\(\s*const bool\* nested_value\s*\)')));
+      // The deserialization constructor should be explicit.
+      expect(code,
+          contains('explicit Nested(const flutter::EncodableList& list);'));
 
       // Getters should return const pointers.
       expect(code, contains('const bool* nullable_bool()'));
@@ -649,7 +654,11 @@ void main() {
       // There should not be a default constructor.
       expect(code, isNot(contains('Nested();')));
       // There should be a convenience constructor.
-      expect(code, contains(RegExp(r'Nested\(\s*bool nested_value\s*\)')));
+      expect(code,
+          contains(RegExp(r'explicit Nested\(\s*bool nested_value\s*\)')));
+      // The deserialization constructor should be explicit.
+      expect(code,
+          contains('explicit Nested(const flutter::EncodableList& list);'));
 
       // POD getters should return copies references.
       expect(code, contains('bool non_nullable_bool()'));

@@ -222,7 +222,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       });
 
       indent.addScoped(' private:', '', () {
-        indent.writeln('${klass.name}(const flutter::EncodableList& list);');
+        indent.writeln(
+            'explicit ${klass.name}(const flutter::EncodableList& list);');
         indent.writeln('flutter::EncodableList ToEncodableList() const;');
         for (final Class friend in root.classes) {
           if (friend != klass &&
@@ -381,6 +382,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   void _writeClassConstructor(Root root, Indent indent, Class klass,
       Iterable<NamedType> params, String docComment) {
+    final String explicit = params.isEmpty ? '' : 'explicit ';
     String paramString = params.map((NamedType param) {
       final HostDatatype hostDatatype = getFieldHostDatatype(
           param, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
@@ -391,7 +393,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     }
     indent.format('''
 $_commentPrefix $docComment
-${klass.name}($paramString);
+$explicit${klass.name}($paramString);
 ''');
   }
 
