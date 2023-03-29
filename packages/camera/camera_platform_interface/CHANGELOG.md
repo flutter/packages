@@ -1,7 +1,6 @@
-## 2.6.0
+## 2.5.1
 
-* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
-* Aligns Dart and Flutter SDK constraints.
+* CameraPlatform.createCameraWithSettings method for tune fps and bitrate of recorded video.
 
 ## 2.5.0
 

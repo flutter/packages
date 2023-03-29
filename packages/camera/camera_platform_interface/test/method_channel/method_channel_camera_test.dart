@@ -33,12 +33,12 @@ void main() {
         final MethodChannelCamera camera = MethodChannelCamera();
 
         // Act
-        final int cameraId = await camera.createCamera(
+        final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0),
-          mediaSettings: MediaSettings.low(),
+          MediaSettings.low(),
         );
 
         // Assert
@@ -74,13 +74,13 @@ void main() {
 
         // Act
         expect(
-          () => camera.createCamera(
+          () => camera.createCameraWithSettings(
             const CameraDescription(
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            mediaSettings: MediaSettings.low(),
+            MediaSettings.low(),
           ),
           throwsA(
             isA<CameraException>()
@@ -108,13 +108,13 @@ void main() {
 
         // Act
         expect(
-          () => camera.createCamera(
+          () => camera.createCameraWithSettings(
             const CameraDescription(
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            mediaSettings: MediaSettings.low(),
+            MediaSettings.low(),
           ),
           throwsA(
             isA<CameraException>()
@@ -170,13 +170,13 @@ void main() {
               'initialize': null
             });
         final MethodChannelCamera camera = MethodChannelCamera();
-        final int cameraId = await camera.createCamera(
+        final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          mediaSettings: MediaSettings.low(),
+          MediaSettings.low(),
         );
 
         // Act
@@ -217,13 +217,13 @@ void main() {
             });
 
         final MethodChannelCamera camera = MethodChannelCamera();
-        final int cameraId = await camera.createCamera(
+        final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          mediaSettings: MediaSettings.low(),
+          MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -265,13 +265,13 @@ void main() {
           },
         );
         camera = MethodChannelCamera();
-        cameraId = await camera.createCamera(
+        cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          mediaSettings: MediaSettings.low(),
+          MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -435,13 +435,13 @@ void main() {
           },
         );
         camera = MethodChannelCamera();
-        cameraId = await camera.createCamera(
+        cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          mediaSettings: MediaSettings.low(),
+          MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(

@@ -84,11 +84,10 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
-  Future<int> createCamera(
-    CameraDescription cameraDescription, {
+  Future<int> createCameraWithSettings(
+    CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
-    bool enableAudio = false,
-  }) async {
+  ) async {
     try {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
@@ -99,7 +98,7 @@ class MethodChannelCamera extends CameraPlatform {
         'fps': mediaSettings?.fps,
         'videoBitrate': mediaSettings?.videoBitrate,
         'audioBitrate': mediaSettings?.audioBitrate,
-        'enableAudio': enableAudio,
+        'enableAudio': mediaSettings?.enableAudio ?? false,
       });
 
       return reply!['cameraId']! as int;

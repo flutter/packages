@@ -47,12 +47,26 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
   /// Creates an uninitialized camera instance and returns the cameraId.
+  /// Method will be deprecated. Use [createCameraWithSettings].
   Future<int> createCamera(
-    CameraDescription cameraDescription, {
-    MediaSettings? mediaSettings,
+    CameraDescription cameraDescription,
+    ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
-  }) {
-    throw UnimplementedError('createCamera() is not implemented.');
+  }) =>
+      createCameraWithSettings(
+        cameraDescription,
+        MediaSettings(
+          resolutionPreset: resolutionPreset,
+          enableAudio: enableAudio,
+        ),
+      );
+
+  /// Creates an uninitialized camera instance and returns the cameraId.
+  Future<int> createCameraWithSettings(
+    CameraDescription cameraDescription,
+    MediaSettings? mediaSettings,
+  ) {
+    throw UnimplementedError('createCameraWithSettings() is not implemented.');
   }
 
   /// Initializes the camera on the device.

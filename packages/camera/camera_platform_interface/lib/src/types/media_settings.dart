@@ -14,6 +14,7 @@ class MediaSettings {
     this.fps,
     this.videoBitrate,
     this.audioBitrate,
+    this.enableAudio = false,
   });
 
   /// Default low quality factory
@@ -36,6 +37,9 @@ class MediaSettings {
   /// recording audio bitrate
   final int? audioBitrate;
 
+  /// enable audio
+  final bool enableAudio;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -44,16 +48,18 @@ class MediaSettings {
           resolutionPreset == other.resolutionPreset &&
           fps == other.fps &&
           videoBitrate == other.videoBitrate &&
-          audioBitrate == other.audioBitrate;
+          audioBitrate == other.audioBitrate &&
+          enableAudio == other.enableAudio;
 
   @override
   int get hashCode =>
       resolutionPreset.hashCode ^
       fps.hashCode ^
       videoBitrate.hashCode ^
-      audioBitrate.hashCode;
+      audioBitrate.hashCode ^
+      enableAudio.hashCode;
 
   @override
   String toString() =>
-      'MediaSettings{resolutionPreset: $resolutionPreset, fps: $fps, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate}';
+      'MediaSettings{resolutionPreset: $resolutionPreset, fps: $fps, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate, enableAudio: $enableAudio}';
 }

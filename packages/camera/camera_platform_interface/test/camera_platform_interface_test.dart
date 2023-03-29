@@ -157,13 +157,13 @@ void main() {
 
       // Act & Assert
       expect(
-        () => cameraPlatform.createCamera(
+        () => cameraPlatform.createCameraWithSettings(
           const CameraDescription(
             name: 'back',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          mediaSettings: MediaSettings.low(),
+          MediaSettings.low(),
         ),
         throwsUnimplementedError,
       );
