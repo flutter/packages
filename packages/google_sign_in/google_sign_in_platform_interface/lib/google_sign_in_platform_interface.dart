@@ -140,8 +140,14 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
     throw UnimplementedError('requestScopes() has not been implmented.');
   }
 
-  /// Determines if the passed [accessToken] can access all [scopes].
-  Future<bool> canAccessScopes(String? accessToken, List<String> scopes) async {
+  /// Determines if the current user can access all [scopes].
+  ///
+  /// Optionally, an [accessToken] can be passed for applications where a
+  /// long-lived token may be cached (like the web).
+  Future<bool> canAccessScopes(
+    List<String> scopes, {
+    String? accessToken,
+  }) async {
     return isSignedIn();
   }
 
