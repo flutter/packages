@@ -27,6 +27,26 @@ using flutter::EncodableValue;
 
 // AllTypes
 
+AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
+                   double a_double, const std::vector<uint8_t>& a_byte_array,
+                   const std::vector<int32_t>& a4_byte_array,
+                   const std::vector<int64_t>& a8_byte_array,
+                   const std::vector<double>& a_float_array,
+                   const EncodableList& a_list, const EncodableMap& a_map,
+                   const AnEnum& an_enum, const std::string& a_string)
+    : a_bool_(a_bool),
+      an_int_(an_int),
+      an_int64_(an_int64),
+      a_double_(a_double),
+      a_byte_array_(a_byte_array),
+      a4_byte_array_(a4_byte_array),
+      a8_byte_array_(a8_byte_array),
+      a_float_array_(a_float_array),
+      a_list_(a_list),
+      a_map_(a_map),
+      an_enum_(an_enum),
+      a_string_(a_string) {}
+
 bool AllTypes::a_bool() const { return a_bool_; }
 void AllTypes::set_a_bool(bool value_arg) { a_bool_ = value_arg; }
 
@@ -101,8 +121,6 @@ EncodableList AllTypes::ToEncodableList() const {
   return list;
 }
 
-AllTypes::AllTypes() {}
-
 AllTypes::AllTypes(const EncodableList& list) {
   auto& encodable_a_bool = list[0];
   if (const bool* pointer_a_bool = std::get_if<bool>(&encodable_a_bool)) {
@@ -167,6 +185,69 @@ AllTypes::AllTypes(const EncodableList& list) {
 }
 
 // AllNullableTypes
+
+AllNullableTypes::AllNullableTypes() {}
+
+AllNullableTypes::AllNullableTypes(
+    const bool* a_nullable_bool, const int64_t* a_nullable_int,
+    const int64_t* a_nullable_int64, const double* a_nullable_double,
+    const std::vector<uint8_t>* a_nullable_byte_array,
+    const std::vector<int32_t>* a_nullable4_byte_array,
+    const std::vector<int64_t>* a_nullable8_byte_array,
+    const std::vector<double>* a_nullable_float_array,
+    const EncodableList* a_nullable_list, const EncodableMap* a_nullable_map,
+    const EncodableList* nullable_nested_list,
+    const EncodableMap* nullable_map_with_annotations,
+    const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
+    const std::string* a_nullable_string)
+    : a_nullable_bool_(a_nullable_bool ? std::optional<bool>(*a_nullable_bool)
+                                       : std::nullopt),
+      a_nullable_int_(a_nullable_int ? std::optional<int64_t>(*a_nullable_int)
+                                     : std::nullopt),
+      a_nullable_int64_(a_nullable_int64
+                            ? std::optional<int64_t>(*a_nullable_int64)
+                            : std::nullopt),
+      a_nullable_double_(a_nullable_double
+                             ? std::optional<double>(*a_nullable_double)
+                             : std::nullopt),
+      a_nullable_byte_array_(
+          a_nullable_byte_array
+              ? std::optional<std::vector<uint8_t>>(*a_nullable_byte_array)
+              : std::nullopt),
+      a_nullable4_byte_array_(
+          a_nullable4_byte_array
+              ? std::optional<std::vector<int32_t>>(*a_nullable4_byte_array)
+              : std::nullopt),
+      a_nullable8_byte_array_(
+          a_nullable8_byte_array
+              ? std::optional<std::vector<int64_t>>(*a_nullable8_byte_array)
+              : std::nullopt),
+      a_nullable_float_array_(
+          a_nullable_float_array
+              ? std::optional<std::vector<double>>(*a_nullable_float_array)
+              : std::nullopt),
+      a_nullable_list_(a_nullable_list
+                           ? std::optional<EncodableList>(*a_nullable_list)
+                           : std::nullopt),
+      a_nullable_map_(a_nullable_map
+                          ? std::optional<EncodableMap>(*a_nullable_map)
+                          : std::nullopt),
+      nullable_nested_list_(nullable_nested_list ? std::optional<EncodableList>(
+                                                       *nullable_nested_list)
+                                                 : std::nullopt),
+      nullable_map_with_annotations_(
+          nullable_map_with_annotations
+              ? std::optional<EncodableMap>(*nullable_map_with_annotations)
+              : std::nullopt),
+      nullable_map_with_object_(
+          nullable_map_with_object
+              ? std::optional<EncodableMap>(*nullable_map_with_object)
+              : std::nullopt),
+      a_nullable_enum_(a_nullable_enum ? std::optional<AnEnum>(*a_nullable_enum)
+                                       : std::nullopt),
+      a_nullable_string_(a_nullable_string
+                             ? std::optional<std::string>(*a_nullable_string)
+                             : std::nullopt) {}
 
 const bool* AllNullableTypes::a_nullable_bool() const {
   return a_nullable_bool_ ? &(*a_nullable_bool_) : nullptr;
@@ -393,8 +474,6 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   return list;
 }
 
-AllNullableTypes::AllNullableTypes() {}
-
 AllNullableTypes::AllNullableTypes(const EncodableList& list) {
   auto& encodable_a_nullable_bool = list[0];
   if (const bool* pointer_a_nullable_bool =
@@ -480,6 +559,9 @@ AllNullableTypes::AllNullableTypes(const EncodableList& list) {
 
 // AllNullableTypesWrapper
 
+AllNullableTypesWrapper::AllNullableTypesWrapper(const AllNullableTypes& values)
+    : values_(values) {}
+
 const AllNullableTypes& AllNullableTypesWrapper::values() const {
   return values_;
 }
@@ -494,8 +576,6 @@ EncodableList AllNullableTypesWrapper::ToEncodableList() const {
   return list;
 }
 
-AllNullableTypesWrapper::AllNullableTypesWrapper() {}
-
 AllNullableTypesWrapper::AllNullableTypesWrapper(const EncodableList& list) {
   auto& encodable_values = list[0];
   if (const EncodableList* pointer_values =
@@ -505,6 +585,12 @@ AllNullableTypesWrapper::AllNullableTypesWrapper(const EncodableList& list) {
 }
 
 // TestMessage
+
+TestMessage::TestMessage() {}
+
+TestMessage::TestMessage(const EncodableList* test_list)
+    : test_list_(test_list ? std::optional<EncodableList>(*test_list)
+                           : std::nullopt) {}
 
 const EncodableList* TestMessage::test_list() const {
   return test_list_ ? &(*test_list_) : nullptr;
@@ -523,8 +609,6 @@ EncodableList TestMessage::ToEncodableList() const {
   list.push_back(test_list_ ? EncodableValue(*test_list_) : EncodableValue());
   return list;
 }
-
-TestMessage::TestMessage() {}
 
 TestMessage::TestMessage(const EncodableList& list) {
   auto& encodable_test_list = list[0];

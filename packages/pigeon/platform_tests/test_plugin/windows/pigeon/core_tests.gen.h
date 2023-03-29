@@ -70,7 +70,16 @@ enum class AnEnum { one = 0, two = 1, three = 2 };
 // Generated class from Pigeon that represents data sent in messages.
 class AllTypes {
  public:
-  AllTypes();
+  // Constructs an object setting all fields.
+  AllTypes(bool a_bool, int64_t an_int, int64_t an_int64, double a_double,
+           const std::vector<uint8_t>& a_byte_array,
+           const std::vector<int32_t>& a4_byte_array,
+           const std::vector<int64_t>& a8_byte_array,
+           const std::vector<double>& a_float_array,
+           const flutter::EncodableList& a_list,
+           const flutter::EncodableMap& a_map, const AnEnum& an_enum,
+           const std::string& a_string);
+
   bool a_bool() const;
   void set_a_bool(bool value_arg);
 
@@ -138,7 +147,25 @@ class AllTypes {
 // Generated class from Pigeon that represents data sent in messages.
 class AllNullableTypes {
  public:
+  // Constructs an object setting all non-nullable fields.
   AllNullableTypes();
+
+  // Constructs an object setting all fields.
+  AllNullableTypes(const bool* a_nullable_bool, const int64_t* a_nullable_int,
+                   const int64_t* a_nullable_int64,
+                   const double* a_nullable_double,
+                   const std::vector<uint8_t>* a_nullable_byte_array,
+                   const std::vector<int32_t>* a_nullable4_byte_array,
+                   const std::vector<int64_t>* a_nullable8_byte_array,
+                   const std::vector<double>* a_nullable_float_array,
+                   const flutter::EncodableList* a_nullable_list,
+                   const flutter::EncodableMap* a_nullable_map,
+                   const flutter::EncodableList* nullable_nested_list,
+                   const flutter::EncodableMap* nullable_map_with_annotations,
+                   const flutter::EncodableMap* nullable_map_with_object,
+                   const AnEnum* a_nullable_enum,
+                   const std::string* a_nullable_string);
+
   const bool* a_nullable_bool() const;
   void set_a_nullable_bool(const bool* value_arg);
   void set_a_nullable_bool(bool value_arg);
@@ -236,7 +263,9 @@ class AllNullableTypes {
 // Generated class from Pigeon that represents data sent in messages.
 class AllNullableTypesWrapper {
  public:
-  AllNullableTypesWrapper();
+  // Constructs an object setting all fields.
+  AllNullableTypesWrapper(const AllNullableTypes& values);
+
   const AllNullableTypes& values() const;
   void set_values(const AllNullableTypes& value_arg);
 
@@ -262,7 +291,12 @@ class AllNullableTypesWrapper {
 // Generated class from Pigeon that represents data sent in messages.
 class TestMessage {
  public:
+  // Constructs an object setting all non-nullable fields.
   TestMessage();
+
+  // Constructs an object setting all fields.
+  TestMessage(const flutter::EncodableList* test_list);
+
   const flutter::EncodableList* test_list() const;
   void set_test_list(const flutter::EncodableList* value_arg);
   void set_test_list(const flutter::EncodableList& value_arg);

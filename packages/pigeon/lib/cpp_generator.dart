@@ -183,11 +183,24 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
+    final Iterable<NamedType> orderedFields =
+        getFieldsInSerializationOrder(klass);
+
     indent.write('class ${klass.name} ');
     indent.addScoped('{', '};', () {
       indent.addScoped(' public:', '', () {
-        indent.writeln('${klass.name}();');
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        final Iterable<NamedType> requiredFields =
+            orderedFields.where((NamedType type) => !type.type.isNullable);
+        // Minimal constructor, if needed.
+        if (requiredFields.length != orderedFields.length) {
+          _writeClassConstructor(root, indent, klass, requiredFields,
+              'Constructs an object setting all non-nullable fields.');
+        }
+        // All-field constructor.
+        _writeClassConstructor(root, indent, klass, orderedFields,
+            'Constructs an object setting all fields.');
+
+        for (final NamedType field in orderedFields) {
           addDocumentationComments(
               indent, field.documentationComments, _docCommentSpec);
           final HostDatatype baseDatatype = getFieldHostDatatype(
@@ -228,7 +241,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
           indent.writeln('friend class $testFixtureClass;');
         }
 
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        for (final NamedType field in orderedFields) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
               field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
           indent.writeln(
@@ -364,6 +377,22 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent.writeln('${api.name}() = default;');
       });
     }, nestCount: 0);
+  }
+
+  void _writeClassConstructor(Root root, Indent indent, Class klass,
+      Iterable<NamedType> params, String docComment) {
+    String paramString = params.map((NamedType param) {
+      final HostDatatype hostDatatype = getFieldHostDatatype(
+          param, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+      return '\t${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
+    }).join(',\n');
+    if (paramString.isNotEmpty) {
+      paramString = '\n$paramString';
+    }
+    indent.format('''
+$_commentPrefix $docComment
+${klass.name}($paramString);
+''');
   }
 
   void _writeCodec(
@@ -528,18 +557,25 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     indent.writeln('$_commentPrefix ${klass.name}');
     indent.newln();
 
+    final Iterable<NamedType> orderedFields =
+        getFieldsInSerializationOrder(klass);
+    final Iterable<NamedType> requiredFields =
+        orderedFields.where((NamedType type) => !type.type.isNullable);
+    // Minimal constructor, if needed.
+    if (requiredFields.length != orderedFields.length) {
+      _writeClassConstructor(root, indent, klass, requiredFields);
+    }
+    // All-field constructor.
+    _writeClassConstructor(root, indent, klass, orderedFields);
+
     // Getters and setters.
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+    for (final NamedType field in orderedFields) {
       _writeCppSourceClassField(generatorOptions, root, indent, klass, field);
     }
 
     // Serialization.
     writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
         customEnumNames);
-
-    // Default constructor.
-    indent.writeln('${klass.name}::${klass.name}() {}');
-    indent.newln();
 
     // Deserialization.
     writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
@@ -901,6 +937,37 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
     indent.newln();
   }
 
+  void _writeClassConstructor(
+      Root root, Indent indent, Class klass, Iterable<NamedType> params) {
+    final Iterable<_HostNamedType> hostParams = params.map((NamedType param) {
+      return _HostNamedType(
+          _makeVariableName(param),
+          getFieldHostDatatype(param, root.classes, root.enums,
+              _shortBaseCppTypeForBuiltinDartType),
+          param.type);
+    });
+
+    String paramString = hostParams
+        .map((_HostNamedType param) =>
+            '\t${_hostApiArgumentType(param.hostType)} ${param.name}')
+        .join(',\n');
+    if (paramString.isNotEmpty) {
+      paramString = '\n$paramString\n';
+    }
+
+    String initializerString = hostParams
+        .map((_HostNamedType param) =>
+            '${param.name}_(${_fieldValueExpression(param.hostType, param.name)})')
+        .join(',\n\t\t');
+    if (initializerString.isNotEmpty) {
+      initializerString = ' : $initializerString';
+    }
+
+    indent.format('''
+${klass.name}::${klass.name}($paramString)$initializerString {}
+''');
+  }
+
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
       Indent indent, Class klass, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(
@@ -918,11 +985,8 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
     // generating multiple setter variants.
     String makeSetter(HostDatatype type) {
       const String setterArgumentName = 'value_arg';
-      final String valueExpression = type.isNullable
-          ? '$setterArgumentName ? ${_valueType(type)}(*$setterArgumentName) : std::nullopt'
-          : setterArgumentName;
       return 'void $qualifiedSetterName(${_unownedArgumentType(type)} $setterArgumentName) '
-          '{ $instanceVariableName = $valueExpression; }';
+          '{ $instanceVariableName = ${_fieldValueExpression(type, setterArgumentName)}; }';
     }
 
     indent.writeln(
@@ -936,6 +1000,18 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
     }
 
     indent.newln();
+  }
+
+  /// Returns the value to use when setting a field of the given type from
+  /// an argument of that type.
+  ///
+  /// For non-nullable values this is just the variable itself, but for nullable
+  /// values this handles the conversion between an argument type (a pointer)
+  /// and the field type (a std::optional).
+  String _fieldValueExpression(HostDatatype type, String variable) {
+    return type.isNullable
+        ? '$variable ? ${_valueType(type)}(*$variable) : std::nullopt'
+        : variable;
   }
 
   String _wrapResponse(Indent indent, Root root, TypeDeclaration returnType,
