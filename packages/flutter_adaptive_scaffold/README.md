@@ -159,6 +159,11 @@ displayed and the entrance animation and exit animation.
               destinations: destinations
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
           Breakpoints.large: SlotLayout.from(
@@ -186,6 +191,11 @@ displayed and the entrance animation and exit animation.
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
               trailing: trailingNavRail,
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
         },

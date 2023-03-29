@@ -215,15 +215,12 @@ void main() {
   });
 }
 
-class FakeSharedPreferencesStore implements SharedPreferencesStorePlatform {
+class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   FakeSharedPreferencesStore(Map<String, Object> data)
       : backend = InMemorySharedPreferencesStore.withData(data);
 
   final InMemorySharedPreferencesStore backend;
   final List<MethodCall> log = <MethodCall>[];
-
-  @override
-  bool get isMock => true;
 
   @override
   Future<bool> clear() {

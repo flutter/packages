@@ -21,6 +21,25 @@ import 'test_camerax_library.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+/// A class which mocks [TestInstanceManagerHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestInstanceManagerHostApi extends _i1.Mock
+    implements _i2.TestInstanceManagerHostApi {
+  MockTestInstanceManagerHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void clear() => super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [TestSystemServicesHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.

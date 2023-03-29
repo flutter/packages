@@ -15,9 +15,12 @@ import 'package:mockito/mockito.dart';
 import 'system_services_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestSystemServicesHostApi])
+@GenerateMocks(<Type>[TestInstanceManagerHostApi, TestSystemServicesHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('SystemServices', () {
     tearDown(() => TestProcessCameraProviderHostApi.setup(null));

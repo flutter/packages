@@ -1,3 +1,12 @@
+## 9.1.2
+
+* [cpp] Fixes class parameters to Flutter APIs.
+
+## 9.1.1
+
+* [swift] Removes experimental tags.
+* [kotin] Removes experimental tags.
+
 ## 9.1.0
 
 * [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
