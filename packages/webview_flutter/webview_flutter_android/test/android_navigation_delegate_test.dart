@@ -469,6 +469,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onPageStarted,
     super.onReceivedError,
     super.onReceivedRequestError,
+    super.onRenderProcessGone,
     super.requestLoading,
     super.urlLoading,
     super.binaryMessenger,

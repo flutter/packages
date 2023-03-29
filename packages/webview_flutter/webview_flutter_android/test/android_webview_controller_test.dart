@@ -104,6 +104,11 @@ void main() {
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
                 )? requestLoading,
+                void Function(
+                  android_webview.WebView webView,
+                  bool didCrash,
+                  int rendererPriorityAtExit,
+                )? onRenderProcessGone,
                 void Function(android_webview.WebView webView, String url)?
                     urlLoading,
               }) =>

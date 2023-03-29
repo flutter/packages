@@ -710,6 +710,9 @@ class AndroidNavigationDelegateCreationParams
   final AndroidWebViewProxy androidWebViewProxy;
 }
 
+/// Signature for the `renderProcessGone` callback.
+typedef RenderProcessGoneCallback = void Function(bool didCrash, int rendererPriorityAtExit);
+
 /// A place to register callback methods responsible to handle navigation events
 /// triggered by the [android_webview.WebView].
 class AndroidNavigationDelegate extends PlatformNavigationDelegate {
@@ -762,6 +765,18 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
             failingUrl: failingUrl,
             isForMainFrame: true,
           ));
+        }
+      },
+      onRenderProcessGone: (
+        android_webview.WebView webView,
+        bool didCrash,
+        int rendererPriorityAtExit,
+      ) {
+        if (weakThis.target?._onRenderProcessGone != null) {
+          weakThis.target!._onRenderProcessGone!(
+            didCrash,
+            rendererPriorityAtExit,
+          );
         }
       },
       requestLoading: (
@@ -837,6 +852,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   PageEventCallback? _onPageStarted;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
+  RenderProcessGoneCallback? _onRenderProcessGone;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
 
@@ -918,5 +934,12 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     WebResourceErrorCallback onWebResourceError,
   ) async {
     _onWebResourceError = onWebResourceError;
+  }
+
+  Future<void> setOnRenderProcessGone(
+    RenderProcessGoneCallback onRenderProcessGone,
+  ) async {
+    _onRenderProcessGone = onRenderProcessGone;
+    _webViewClient.setSynchronousReturnValueForOnRenderProcessGone(true);
   }
 }

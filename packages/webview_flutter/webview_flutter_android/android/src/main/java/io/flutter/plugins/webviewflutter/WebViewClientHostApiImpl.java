@@ -13,6 +13,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.RenderProcessGoneDetail;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
@@ -34,6 +35,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
   public static class WebViewClientImpl extends WebViewClient {
     private final WebViewClientFlutterApiImpl flutterApi;
     private boolean returnValueForShouldOverrideUrlLoading = false;
+    private boolean returnValueForOnRenderProcessGone = false;
 
     /**
      * Creates a {@link WebViewClient} that passes arguments of callbacks methods to Dart.
@@ -57,6 +59,17 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @Override
     public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
       flutterApi.onReceivedRequestError(this, view, request, error, reply -> {});
+    }
+
+    @Override
+    public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+      flutterApi.onRenderProcessGone(this, view, detail, reply -> {});
+      return returnValueForOnRenderProcessGone;
+    }
+
+    /** Sets return value for {@link #onRenderProcessGone}. */
+    public void setReturnValueForOnRenderProcessGone(boolean value) {
+      returnValueForOnRenderProcessGone = value;
     }
 
     // Legacy codepath for < 23; newer versions use the variant above.
@@ -102,6 +115,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
   public static class WebViewClientCompatImpl extends WebViewClientCompat {
     private final WebViewClientFlutterApiImpl flutterApi;
     private boolean returnValueForShouldOverrideUrlLoading = false;
+    private boolean returnValueForOnRenderProcessGone = false;
 
     public WebViewClientCompatImpl(@NonNull WebViewClientFlutterApiImpl flutterApi) {
       this.flutterApi = flutterApi;
@@ -127,6 +141,18 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
         @NonNull WebResourceRequest request,
         @NonNull WebResourceErrorCompat error) {
       flutterApi.onReceivedRequestError(this, view, request, error, reply -> {});
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    @Override
+    public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+      flutterApi.onRenderProcessGone(this, view, detail, reply -> {});
+      return returnValueForOnRenderProcessGone;
+    }
+
+    /** Sets return value for {@link #onRenderProcessGone}. */
+    public void setReturnValueForOnRenderProcessGone(boolean value) {
+      returnValueForOnRenderProcessGone = value;
     }
 
     // Legacy codepath for versions that don't support the variant above.
@@ -227,6 +253,22 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     } else {
       throw new IllegalStateException(
           "This WebViewClient doesn't support setting the returnValueForShouldOverrideUrlLoading.");
+    }
+  }
+
+  @Override
+  public void setSynchronousReturnValueForOnRenderProcessGone(
+      @NonNull Long instanceId, @NonNull Boolean value) {
+    final WebViewClient webViewClient =
+        Objects.requireNonNull(instanceManager.getInstance(instanceId));
+    if (webViewClient instanceof WebViewClientCompatImpl) {
+      ((WebViewClientCompatImpl) webViewClient).setReturnValueForOnRenderProcessGone(value);
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+        && webViewClient instanceof WebViewClientImpl) {
+      ((WebViewClientImpl) webViewClient).setReturnValueForOnRenderProcessGone(value);
+    } else {
+      throw new IllegalStateException(
+          "This WebViewClient doesn't support setting the returnValueForOnRenderProcessGone.");
     }
   }
 }

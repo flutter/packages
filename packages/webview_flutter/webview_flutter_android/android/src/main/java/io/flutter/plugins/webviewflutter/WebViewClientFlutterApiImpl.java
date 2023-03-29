@@ -10,6 +10,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.RenderProcessGoneDetail;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -187,6 +188,28 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         getIdentifierForClient(webViewClient),
         webViewIdentifier,
         createWebResourceRequestData(request),
+        callback);
+  }
+
+  /**
+   * Passes arguments from {@link WebViewClient#onRenderProcessGone(WebView,
+   * WebResourceRequest)} to Dart.
+   */
+  @RequiresApi(api = Build.VERSION_CODES.O)
+  public void onRenderProcessGone(
+      WebViewClient webViewClient,
+      WebView webView,
+      RenderProcessGoneDetail detail,
+      Reply<Void> callback) {
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
+    onRenderProcessGone(
+        getIdentifierForClient(webViewClient),
+        webViewIdentifier,
+        detail.didCrash(),
+        (long) detail.rendererPriorityAtExit(),
         callback);
   }
 

@@ -695,6 +695,33 @@ void main() {
         );
       });
 
+      test('onRenderProcessGone', () {
+        late final List<Object> result;
+        when(mockWebViewClient.onRenderProcessGone).thenReturn(
+          (
+            WebView webView,
+            bool didCrash,
+            int rendererPriorityAtExit,
+          ) {
+            result = <Object>[webView, didCrash, rendererPriorityAtExit];
+          },
+        );
+
+        flutterApi.onRenderProcessGone(
+          mockWebViewClientInstanceId,
+          mockWebViewInstanceId,
+          true,
+          133,
+        );
+
+        expect(
+          result,
+          containsAllInOrder(
+            <Object?>[mockWebView, true, 133],
+          ),
+        );
+      });
+
       test('requestLoading', () {
         late final List<Object> result;
         when(mockWebViewClient.requestLoading).thenReturn(

@@ -83,6 +83,18 @@ public class WebViewClientTest {
   }
 
   @Test
+  public void onRenderProcessGone() {
+    webViewClient.onRenderProcessGone(mockWebView, true, 133);
+    verify(mockFlutterApi)
+        .onRenderProcessGone(
+            eq(webViewClient),
+            eq(mockWebView),
+            eq(true),
+            eq(133),
+            any());
+  }
+
+  @Test
   public void urlLoading() {
     webViewClient.shouldOverrideUrlLoading(mockWebView, "https://www.google.com");
     verify(mockFlutterApi)
@@ -122,5 +134,24 @@ public class WebViewClientTest {
     webViewClientHostApi.setSynchronousReturnValueForShouldOverrideUrlLoading(2L, false);
 
     verify(mockWebViewClient).setReturnValueForShouldOverrideUrlLoading(false);
+  }
+
+  @Test
+  public void setReturnValueForOnRenderProcessGone() {
+    final WebViewClientHostApiImpl webViewClientHostApi =
+        new WebViewClientHostApiImpl(
+            instanceManager,
+            new WebViewClientCreator() {
+              @Override
+              public WebViewClient createWebViewClient(WebViewClientFlutterApiImpl flutterApi) {
+                return mockWebViewClient;
+              }
+            },
+            mockFlutterApi);
+
+    instanceManager.addDartCreatedInstance(mockWebViewClient, 2);
+    webViewClientHostApi.setSynchronousReturnValueForOnRenderProcessGone(2L, false);
+
+    verify(mockWebViewClient).setReturnValueForOnRenderProcessGone(false);
   }
 }

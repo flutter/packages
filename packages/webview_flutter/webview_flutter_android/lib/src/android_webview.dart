@@ -689,6 +689,7 @@ class WebViewClient extends JavaObject {
     this.onPageFinished,
     this.onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
+    this.onRenderProcessGone,
     this.requestLoading,
     this.urlLoading,
     @visibleForTesting super.binaryMessenger,
@@ -708,6 +709,7 @@ class WebViewClient extends JavaObject {
     this.onPageFinished,
     this.onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
+    this.onRenderProcessGone,
     this.requestLoading,
     this.urlLoading,
     super.binaryMessenger,
@@ -841,6 +843,34 @@ class WebViewClient extends JavaObject {
     String failingUrl,
   )? onReceivedError;
 
+  /// Notify host application that the given WebView's render process has exited.
+  ///
+  /// Multiple WebView instances may be associated with a single render process;
+  /// onRenderProcessGone will be called for each WebView that was affected.
+  final void Function(
+    WebView webView,
+    bool didCrash,
+    int rendererPriorityAtExit,
+  )? onRenderProcessGone;
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebViewClient.onRenderProcessGone(...)`.
+  ///
+  /// The Java method, `WebViewClient.onRenderProcessGone(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Set this to true if the host application handled the situation that process has exited,
+  /// otherwise, application will crash if render process crashed,
+  /// or be killed if render process was killed by the system.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnRenderProcessGone(
+    bool value,
+  ) {
+    return api.setOnRenderProcessGoneReturnValueFromInstance(this, value);
+  }
+
   /// When the current [WebView] wants to load a URL.
   ///
   /// The value set by [setSynchronousReturnValueForShouldOverrideUrlLoading]
@@ -879,6 +909,7 @@ class WebViewClient extends JavaObject {
       onPageFinished: onPageFinished,
       onReceivedRequestError: onReceivedRequestError,
       onReceivedError: onReceivedError,
+      onRenderProcessGone: onRenderProcessGone,
       requestLoading: requestLoading,
       urlLoading: urlLoading,
       binaryMessenger: _api.binaryMessenger,

@@ -620,6 +620,21 @@ class MockTestWebViewClientHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  void setSynchronousReturnValueForOnRenderProcessGone(
+    int? instanceId,
+    bool? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnRenderProcessGone,
+          [
+            instanceId,
+            value,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestWebViewHostApi].
@@ -1346,6 +1361,17 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
     _i1.throwOnMissingStub(this);
   }
 
+  @override
+  _i5.Future<void> setSynchronousReturnValueForOnRenderProcessGone(
+          bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnRenderProcessGone,
+          [value],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
   @override
   _i5.Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
           bool? value) =>

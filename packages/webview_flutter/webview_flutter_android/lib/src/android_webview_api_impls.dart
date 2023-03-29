@@ -595,6 +595,17 @@ class WebViewClientHostApiImpl extends WebViewClientHostApi {
       value,
     );
   }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setOnRenderProcessGoneReturnValueFromInstance(
+    WebViewClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnRenderProcessGone(
+      instanceManager.getIdentifier(instance)!,
+      value,
+    );
+  }
 }
 
 /// Flutter api implementation for [WebViewClient].
@@ -671,6 +682,34 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         errorCode,
         description,
         failingUrl,
+      );
+    }
+  }
+
+  @override
+  void onRenderProcessGone(
+    int instanceId,
+    int webViewInstanceId,
+    bool didCrash,
+    int rendererPriorityAtExit,
+  ) {
+    final WebViewClient? instance = instanceManager
+        .getInstanceWithWeakReference(instanceId) as WebViewClient?;
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      instance != null,
+      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+    );
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+    );
+    if (instance!.onRenderProcessGone != null) {
+      instance.onRenderProcessGone!(
+        webViewInstance!,
+        didCrash,
+        rendererPriorityAtExit,
       );
     }
   }

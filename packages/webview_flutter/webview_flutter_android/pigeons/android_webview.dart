@@ -262,6 +262,11 @@ abstract class WebViewClientHostApi {
     int instanceId,
     bool value,
   );
+
+  void setSynchronousReturnValueForOnRenderProcessGone(
+    int instanceId,
+    bool value,
+  );
 }
 
 @FlutterApi()
@@ -283,6 +288,13 @@ abstract class WebViewClientFlutterApi {
     int errorCode,
     String description,
     String failingUrl,
+  );
+
+  void onRenderProcessGone(
+    int instanceId,
+    int webViewInstanceId,
+    bool didCrash,
+    int rendererPriorityAtExit,
   );
 
   void requestLoading(

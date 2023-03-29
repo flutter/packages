@@ -343,6 +343,27 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setOnRenderProcessGone(
+          _i8.RenderProcessGoneCallback? onRenderProcessGone) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnRenderProcessGone,
+          [onRenderProcessGone],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setOnUrlChange(_i3.UrlChangeCallback? onUrlChange) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnUrlChange,
+          [onUrlChange],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewController].
@@ -771,6 +792,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
     )? onReceivedRequestError,
     void Function(
       _i2.WebView,
+      bool,
+      int,
+    )? onRenderProcessGone,
+    void Function(
+      _i2.WebView,
       _i2.WebResourceRequest,
     )? requestLoading,
     void Function(
@@ -799,6 +825,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
+          void Function(
+            _i2.WebView,
+            bool,
+            int,
+          )? onRenderProcessGone,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
@@ -834,6 +865,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           )? onReceivedRequestError,
           void Function(
             _i2.WebView,
+            bool,
+            int,
+          )? onRenderProcessGone,
+          void Function(
+            _i2.WebView,
             _i2.WebResourceRequest,
           )? requestLoading,
           void Function(
@@ -865,6 +901,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           _i2.WebResourceRequest,
           _i2.WebResourceError,
         )? onReceivedRequestError,
+        void Function(
+          _i2.WebView,
+          bool,
+          int,
+        )? onRenderProcessGone,
         void Function(
           _i2.WebView,
           _i2.WebResourceRequest,
@@ -2080,6 +2121,17 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
+  @override
+  _i9.Future<void> setSynchronousReturnValueForOnRenderProcessGone(
+          bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnRenderProcessGone,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
   @override
   _i9.Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
           bool? value) =>
