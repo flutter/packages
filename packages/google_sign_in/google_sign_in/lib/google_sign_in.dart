@@ -189,7 +189,13 @@ class GoogleSignIn {
     this.clientId,
     this.serverClientId,
     this.forceCodeForRefreshToken = false,
-  });
+  }) {
+    // Start initializing.
+    // Async methods in the plugin will await for this to be done.
+    if (kIsWeb) {
+      unawaited(_ensureInitialized());
+    }
+  }
 
   /// Factory for creating default sign in user experience.
   factory GoogleSignIn.standard({
@@ -276,6 +282,7 @@ class GoogleSignIn {
         : null);
   }
 
+  // Sets the current user, and propagates it through the _currentUserController.
   GoogleSignInAccount? _setCurrentUser(GoogleSignInAccount? currentUser) {
     if (currentUser != _currentUser) {
       _currentUser = currentUser;
@@ -284,14 +291,23 @@ class GoogleSignIn {
     return _currentUser;
   }
 
-  // Ensure _ensureInitialized runs only once.
-  bool _initialized = false;
+  // Future that completes when we've finished calling `init` on the native side.
+  Future<void>? _initialization;
 
+  // Performs initialization, guarding it with the _initialization future.
   Future<void> _ensureInitialized() async {
-    if (_initialized) {
-      return;
-    }
+    return _initialization ??= _doInitialization()
+      ..catchError((dynamic _) {
+        // Invalidate initialization if it errors out.
+        _initialization = null;
+      });
+  }
 
+  // Actually performs the initialization.
+  //
+  // This method calls initWithParams, and then, if the plugin instance has a
+  // userDataEvents Stream, connects it to the [_setCurrentUser] method.
+  Future<void> _doInitialization() async {
     await GoogleSignInPlatform.instance.initWithParams(SignInInitParameters(
       signInOption: signInOption,
       scopes: scopes,
@@ -301,13 +317,10 @@ class GoogleSignIn {
       forceCodeForRefreshToken: forceCodeForRefreshToken,
     ));
 
-    // Connect the userDataEvents Stream to the core plugin, if it exists.
     GoogleSignInPlatform.instance.userDataEvents
         ?.map((GoogleSignInUserData? userData) {
       return userData != null ? GoogleSignInAccount._(this, userData) : null;
     }).forEach(_setCurrentUser);
-
-    _initialized = true;
   }
 
   /// The most recently scheduled method call.
@@ -433,9 +446,23 @@ class GoogleSignIn {
     return GoogleSignInPlatform.instance.requestScopes(scopes);
   }
 
-  /// Checks if the given `accessToken` authorized to access all `scopes`.
-  Future<bool> canAccessScopes(String? accessToken, List<String> scopes) async {
+  /// Checks if the [_currentUser] can access all the given [scopes].
+  ///
+  /// Optionally, an [accessToken] can be passed to perform this check. This
+  /// may be useful when an application holds on to a cached, potentially
+  /// long-lived [accessToken].
+  Future<bool> canAccessScopes(
+    List<String> scopes, {
+    String? accessToken,
+  }) async {
     await _ensureInitialized();
-    return GoogleSignInPlatform.instance.canAccessScopes(accessToken, scopes);
+
+    final String? token =
+        accessToken ?? (await _currentUser?.authentication)?.accessToken;
+
+    return GoogleSignInPlatform.instance.canAccessScopes(
+      scopes,
+      accessToken: token,
+    );
   }
 }

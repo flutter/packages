@@ -7,15 +7,15 @@
 import 'dart:async';
 import 'dart:convert' show json;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
 import 'src/sign_in_button.dart';
 
-/// The scopes that are needed to access the People API.
+/// The scopes required by this application.
 const List<String> scopes = <String>[
+  'email',
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
 
@@ -57,8 +57,7 @@ class _SignInDemoState extends State<SignInDemo> {
       // Check if the account can access scopes...
       bool isAuthorized = false;
       if (account != null) {
-        final String? accessToken = (await account.authentication).accessToken;
-        isAuthorized = await _googleSignIn.canAccessScopes(accessToken, scopes);
+        isAuthorized = await _googleSignIn.canAccessScopes(scopes);
       }
 
       setState(() {
@@ -73,12 +72,12 @@ class _SignInDemoState extends State<SignInDemo> {
       }
     });
 
-    // Ensure the plugin is fully setup (calls _ensureInitialized)
-    if (kIsWeb) {
-      _googleSignIn.isSignedIn();
-    } else {
-      _googleSignIn.signInSilently();
-    }
+    // In the web, _googleSignIn.signInSilently() triggers the One Tap UX.
+    //
+    // It is recommended by Google Identity Services to render both the One Tap UX
+    // and the Google Sign In button together to "reduce friction and improve
+    // sign-in rates" ([docs](https://developers.google.com/identity/gsi/web/guides/display-button#html)).
+    _googleSignIn.signInSilently();
   }
 
   // Calls the People API REST endpoint for the signed-in user to retrieve information.

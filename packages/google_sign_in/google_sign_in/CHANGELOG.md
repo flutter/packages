@@ -1,8 +1,9 @@
 ## 6.1.0
 
 * Exposes the new method `canAccessScopes`.
-* Updates example app to separate Authentication from Authentication for those
+* Updates example app to separate Authentication from Authorization for those
   platforms where scopes are not automatically granted upon signIn (like the web).
+  * Updates README with information about these changes.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 6.0.2

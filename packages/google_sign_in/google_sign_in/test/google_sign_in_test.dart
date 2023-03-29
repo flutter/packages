@@ -261,10 +261,13 @@ void main() {
     });
 
     test('can sign in after init failed before', () async {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-
+      // Web eagerly `initWithParams` when GoogleSignIn is created, so make sure
+      // the initWithParams is throwy ASAP.
       when(mockPlatform.initWithParams(any))
           .thenThrow(Exception('First init fails'));
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
       expect(googleSignIn.signIn(), throwsA(isInstanceOf<Exception>()));
 
       when(mockPlatform.initWithParams(any))
@@ -330,16 +333,23 @@ void main() {
 
     test('canAccessScopes forwards calls to platform', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn();
-      when(mockPlatform.canAccessScopes(any, any))
-          .thenAnswer((Invocation _) async => true);
+      when(mockPlatform.canAccessScopes(
+        any,
+        accessToken: anyNamed('accessToken'),
+      )).thenAnswer((Invocation _) async => true);
 
       await googleSignIn.signIn();
-      final bool result =
-          await googleSignIn.canAccessScopes('xyz', <String>['testScope']);
+      final bool result = await googleSignIn.canAccessScopes(
+        <String>['testScope'],
+        accessToken: 'xyz',
+      );
 
       expect(result, isTrue);
       _verifyInit(mockPlatform);
-      verify(mockPlatform.canAccessScopes('xyz', <String>['testScope']));
+      verify(mockPlatform.canAccessScopes(
+        <String>['testScope'],
+        accessToken: 'xyz',
+      ));
     });
 
     test('userDataEvents are forwarded through the onUserChanged stream',
