@@ -17,7 +17,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformView;
@@ -119,7 +118,8 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       if (focused && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         final FlutterView flutterView = tryFindFlutterView();
         if (flutterView != null) {
-          ((FlutterView) getParent().getParent()).setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES);
+          ((FlutterView) getParent().getParent())
+              .setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES);
         }
       }
     }
