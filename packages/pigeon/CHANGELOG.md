@@ -1,3 +1,7 @@
+## 9.1.2
+
+* [cpp] Fixes class parameters to Flutter APIs.
+
 ## 9.1.1
 
 * [swift] Removes experimental tags.
