@@ -149,12 +149,13 @@ void main() {
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const bool enableAudio = true;
 
-    await camera.createCamera(testCameraDescription, mediaSettings: const MediaSettings(
-      resolutionPreset: testResolutionPreset,
-      fps: 15,
-      videoBitrate: 2000000,
-      audioBitrate: 64000,
-    ),
+    await camera.createCamera(testCameraDescription,
+        mediaSettings: const MediaSettings(
+          resolutionPreset: testResolutionPreset,
+          fps: 15,
+          videoBitrate: 2000000,
+          audioBitrate: 64000,
+        ),
         enableAudio: enableAudio);
 
     verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
