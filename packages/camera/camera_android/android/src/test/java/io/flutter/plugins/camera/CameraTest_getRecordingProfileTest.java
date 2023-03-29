@@ -74,9 +74,9 @@ public class CameraTest_getRecordingProfileTest {
             mockCameraProperties,
             resolutionPreset,
             enableAudio,
-            15,
-            200000,
-            32000);
+            Integer.valueOf(15),
+            Integer.valueOf(200000),
+            Integer.valueOf(32000));
   }
 
   @Config(maxSdk = 30)

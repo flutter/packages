@@ -218,7 +218,7 @@ class Camera
         CameraFeatures.init(
             cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
 
-    if (null != fps && 0 < fps) {
+    if (null != fps && 0 < fps.intValue()) {
       final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
       fpsRange.setValue(new Range<>(fps, fps));
       this.cameraFeatures.setFpsRange(fpsRange);
@@ -226,11 +226,11 @@ class Camera
       this.cameraFeatures.setFps(new IntFeature(cameraProperties, fps));
     }
 
-    if (null != videoBitrate && 0 < videoBitrate) {
+    if (null != videoBitrate && 0 < videoBitrate.intValue()) {
       this.cameraFeatures.setVideoBitrate(new IntFeature(cameraProperties, videoBitrate));
     }
 
-    if (null != audioBitrate && 0 < audioBitrate) {
+    if (null != audioBitrate && 0 < audioBitrate.intValue()) {
       this.cameraFeatures.setAudioBitrate(new IntFeature(cameraProperties, audioBitrate));
     }
 

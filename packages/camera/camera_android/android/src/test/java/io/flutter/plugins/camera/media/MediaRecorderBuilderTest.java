@@ -86,8 +86,8 @@ public class MediaRecorderBuilderTest {
     inOrder.verify(recorder).setVideoSource(MediaRecorder.VideoSource.SURFACE);
     inOrder.verify(recorder).setOutputFormat(recorderProfile.fileFormat);
     inOrder.verify(recorder).setVideoEncoder(recorderProfile.videoCodec);
-    inOrder.verify(recorder).setVideoEncodingBitRate(recorderProfile.videoBitRate);
-    inOrder.verify(recorder).setVideoFrameRate(recorderProfile.videoFrameRate);
+    inOrder.verify(recorder).setVideoEncodingBitRate(200000);
+    inOrder.verify(recorder).setVideoFrameRate(15);
     inOrder
         .verify(recorder)
         .setVideoSize(recorderProfile.videoFrameWidth, recorderProfile.videoFrameHeight);
@@ -126,8 +126,8 @@ public class MediaRecorderBuilderTest {
     inOrder.verify(recorder).setVideoSource(MediaRecorder.VideoSource.SURFACE);
     inOrder.verify(recorder).setOutputFormat(recorderProfile.getRecommendedFileFormat());
     inOrder.verify(recorder).setVideoEncoder(videoProfile.getCodec());
-    inOrder.verify(recorder).setVideoEncodingBitRate(videoProfile.getBitrate());
-    inOrder.verify(recorder).setVideoFrameRate(videoProfile.getFrameRate());
+    inOrder.verify(recorder).setVideoEncodingBitRate(200000);
+    inOrder.verify(recorder).setVideoFrameRate(15);
     inOrder.verify(recorder).setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
     inOrder.verify(recorder).setOutputFile(outputFilePath);
     inOrder.verify(recorder).setOrientationHint(mediaOrientation);
@@ -177,11 +177,11 @@ public class MediaRecorderBuilderTest {
     inOrder.verify(recorder).setVideoSource(MediaRecorder.VideoSource.SURFACE);
     inOrder.verify(recorder).setOutputFormat(recorderProfile.fileFormat);
     inOrder.verify(recorder).setAudioEncoder(recorderProfile.audioCodec);
-    inOrder.verify(recorder).setAudioEncodingBitRate(recorderProfile.audioBitRate);
+    inOrder.verify(recorder).setAudioEncodingBitRate(32000);
     inOrder.verify(recorder).setAudioSamplingRate(recorderProfile.audioSampleRate);
     inOrder.verify(recorder).setVideoEncoder(recorderProfile.videoCodec);
-    inOrder.verify(recorder).setVideoEncodingBitRate(recorderProfile.videoBitRate);
-    inOrder.verify(recorder).setVideoFrameRate(recorderProfile.videoFrameRate);
+    inOrder.verify(recorder).setVideoEncodingBitRate(200000);
+    inOrder.verify(recorder).setVideoFrameRate(15);
     inOrder
         .verify(recorder)
         .setVideoSize(recorderProfile.videoFrameWidth, recorderProfile.videoFrameHeight);
@@ -222,11 +222,11 @@ public class MediaRecorderBuilderTest {
     inOrder.verify(recorder).setVideoSource(MediaRecorder.VideoSource.SURFACE);
     inOrder.verify(recorder).setOutputFormat(recorderProfile.getRecommendedFileFormat());
     inOrder.verify(recorder).setAudioEncoder(audioProfile.getCodec());
-    inOrder.verify(recorder).setAudioEncodingBitRate(audioProfile.getBitrate());
+    inOrder.verify(recorder).setAudioEncodingBitRate(32000);
     inOrder.verify(recorder).setAudioSamplingRate(audioProfile.getSampleRate());
     inOrder.verify(recorder).setVideoEncoder(videoProfile.getCodec());
-    inOrder.verify(recorder).setVideoEncodingBitRate(videoProfile.getBitrate());
-    inOrder.verify(recorder).setVideoFrameRate(videoProfile.getFrameRate());
+    inOrder.verify(recorder).setVideoEncodingBitRate(200000);
+    inOrder.verify(recorder).setVideoFrameRate(15);
     inOrder.verify(recorder).setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
     inOrder.verify(recorder).setOutputFile(outputFilePath);
     inOrder.verify(recorder).setOrientationHint(mediaOrientation);
