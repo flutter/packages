@@ -1,3 +1,7 @@
+## 3.4.4
+
+* Adds a workaround to support autofill.
+
 ## 3.4.3
 
 * Updates internal Java InstanceManager to be cleared on hot restart.
