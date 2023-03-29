@@ -267,7 +267,7 @@ void main() {
     expect(testStrings, 'test');
   });
 
-  test('passing errors via unimplemented withPrefix methods', () async {
+  test('unimplemented errors in withPrefix methods are updated', () async {
     final UnimplementedSharedPreferencesStore localStore =
         UnimplementedSharedPreferencesStore(<String, Object>{});
     SharedPreferencesStorePlatform.instance = localStore;
@@ -285,6 +285,24 @@ void main() {
         err.toString(),
         contains(
             "Shared Preferences doesn't yet support the setPrefix method"));
+  });
+
+  test('non-Unimplemented errors pass through withPrefix methods correctly',
+      () async {
+    final ThrowingSharedPreferencesStore localStore =
+        ThrowingSharedPreferencesStore(<String, Object>{});
+    SharedPreferencesStorePlatform.instance = localStore;
+    SharedPreferences.resetStatic();
+    SharedPreferences.setPrefix('');
+    Object? err;
+
+    try {
+      await SharedPreferences.getInstance();
+    } catch (e) {
+      err = e;
+    }
+    expect(err, isA<StateError>());
+    expect(err.toString(), contains('State Error'));
   });
 }
 
@@ -352,5 +370,38 @@ class UnimplementedSharedPreferencesStore
   @override
   Future<bool> setValue(String valueType, String key, Object value) {
     throw UnimplementedError();
+  }
+}
+
+class ThrowingSharedPreferencesStore extends SharedPreferencesStorePlatform {
+  ThrowingSharedPreferencesStore(Map<String, Object> data)
+      : backend = InMemorySharedPreferencesStore.withData(data);
+
+  final InMemorySharedPreferencesStore backend;
+  final List<MethodCall> log = <MethodCall>[];
+
+  @override
+  Future<bool> clear() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAll() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> remove(String key) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setValue(String valueType, String key, Object value) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    throw StateError('State Error');
   }
 }
