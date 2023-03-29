@@ -223,7 +223,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
       indent.addScoped(' private:', '', () {
         indent.writeln(
-            'explicit ${klass.name}(const flutter::EncodableList& list);');
+            'static ${klass.name} FromEncodableList(const flutter::EncodableList& list);');
         indent.writeln('flutter::EncodableList ToEncodableList() const;');
         for (final Class friend in root.classes) {
           if (friend != klass &&
@@ -619,43 +619,70 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    indent.write('${klass.name}::${klass.name}(const EncodableList& list) ');
+    // Returns the expression to convert the given EncodableValue to a field
+    // value.
+    String getValueExpression(NamedType field, String encodable) {
+      if (customEnumNames.contains(field.type.baseName)) {
+        return '(${field.type.baseName})(std::get<int32_t>($encodable))';
+      } else if (field.type.baseName == 'int') {
+        return '$encodable.LongValue()';
+      } else {
+        final HostDatatype hostDatatype = getFieldHostDatatype(field,
+            root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
+        if (!hostDatatype.isBuiltin &&
+            root.classes
+                .map((Class x) => x.name)
+                .contains(field.type.baseName)) {
+          return '${hostDatatype.datatype}::FromEncodableList(std::get<EncodableList>($encodable))';
+        } else {
+          return 'std::get<${hostDatatype.datatype}>($encodable)';
+        }
+      }
+    }
+
+    indent.write(
+        '${klass.name} ${klass.name}::FromEncodableList(const EncodableList& list) ');
     indent.addScoped('{', '}', () {
-      enumerate(getFieldsInSerializationOrder(klass),
-          (int index, final NamedType field) {
-        final String instanceVariableName = _makeInstanceVariableName(field);
+      const String instanceVariable = 'decoded';
+      final Iterable<_IndexedField> indexedFields = indexMap(
+          getFieldsInSerializationOrder(klass),
+          (int index, NamedType field) => _IndexedField(index, field));
+      final Iterable<_IndexedField> nullableFields = indexedFields
+          .where((_IndexedField field) => field.field.type.isNullable);
+      final Iterable<_IndexedField> nonNullableFields = indexedFields
+          .where((_IndexedField field) => !field.field.type.isNullable);
+
+      // Non-nullable fields must be set via the constructor.
+      String constructorArgs = nonNullableFields
+          .map((_IndexedField param) =>
+              getValueExpression(param.field, 'list[${param.index}]'))
+          .join(',\n\t');
+      if (constructorArgs.isNotEmpty) {
+        constructorArgs = '(\n\t$constructorArgs)';
+      }
+      indent.format('${klass.name} $instanceVariable$constructorArgs;');
+
+      // Add the nullable fields via setters, since converting the encodable
+      // values to the pointer types that the convenience constructor uses for
+      // nullable fields is non-trivial.
+      for (final _IndexedField entry in nullableFields) {
+        final NamedType field = entry.field;
+        final String setterName = _makeSetterName(field);
         final String encodableFieldName =
             '${_encodablePrefix}_${_makeVariableName(field)}';
-        indent.writeln('auto& $encodableFieldName = list[$index];');
+        indent.writeln('auto& $encodableFieldName = list[${entry.index}];');
 
-        final String valueExpression;
-        if (customEnumNames.contains(field.type.baseName)) {
-          valueExpression =
-              '(${field.type.baseName})(std::get<int32_t>($encodableFieldName))';
-        } else if (field.type.baseName == 'int') {
-          valueExpression = '$encodableFieldName.LongValue()';
-        } else {
-          final HostDatatype hostDatatype = getFieldHostDatatype(field,
-              root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
-          if (!hostDatatype.isBuiltin &&
-              root.classes
-                  .map((Class x) => x.name)
-                  .contains(field.type.baseName)) {
-            valueExpression =
-                '${hostDatatype.datatype}(std::get<EncodableList>($encodableFieldName))';
-          } else {
-            valueExpression =
-                'std::get<${hostDatatype.datatype}>($encodableFieldName)';
-          }
-        }
-        if (field.type.isNullable) {
-          indent.writeScoped('if (!$encodableFieldName.IsNull()) {', '}', () {
-            indent.writeln('$instanceVariableName = $valueExpression;');
-          });
-        } else {
-          indent.writeln('$instanceVariableName = $valueExpression;');
-        }
-      });
+        final String valueExpression =
+            getValueExpression(field, encodableFieldName);
+        indent.writeScoped('if (!$encodableFieldName.IsNull()) {', '}', () {
+          indent.writeln('$instanceVariable.$setterName($valueExpression);');
+        });
+      }
+
+      // This returns by value, relying on copy elision, since it makes the
+      // usage more convenient during deserialization than it would be with
+      // explicit transfer via unique_ptr.
+      indent.writeln('return $instanceVariable;');
     });
   }
 
@@ -902,7 +929,7 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
           indent.writeln('case ${customClass.enumeration}:');
           indent.nest(1, () {
             indent.writeln(
-                'return CustomEncodableValue(${customClass.name}(std::get<EncodableList>(ReadValue(stream))));');
+                'return CustomEncodableValue(${customClass.name}::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));');
           });
         }
         indent.writeln('default:');
@@ -1183,9 +1210,15 @@ class _HostNamedType {
   final TypeDeclaration originalType;
 }
 
+/// Contains a class field and its serialization index.
+class _IndexedField {
+  const _IndexedField(this.index, this.field);
+  final int index;
+  final NamedType field;
+}
+
 String _getCodecSerializerName(Api api) => '${api.name}CodecSerializer';
 
-const String _pointerPrefix = 'pointer';
 const String _encodablePrefix = 'encodable';
 
 String _getArgumentName(int count, NamedType argument) =>

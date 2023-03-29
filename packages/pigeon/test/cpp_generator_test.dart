@@ -144,10 +144,9 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
-      expect(code, contains('encodable_input_field'));
+      expect(code, contains('encodable_some_input'));
       expect(code, contains('Output::output_field()'));
       expect(code, contains('Output::set_output_field(bool value_arg)'));
-      expect(code, contains('encodable_output_field'));
     }
   });
 
@@ -484,9 +483,6 @@ void main() {
           code,
           contains(
               RegExp(r'explicit Nested\(\s*const bool\* nested_value\s*\)')));
-      // The deserialization constructor should be explicit.
-      expect(code,
-          contains('explicit Nested(const flutter::EncodableList& list);'));
 
       // Getters should return const pointers.
       expect(code, contains('const bool* nullable_bool()'));
@@ -656,9 +652,6 @@ void main() {
       // There should be a convenience constructor.
       expect(code,
           contains(RegExp(r'explicit Nested\(\s*bool nested_value\s*\)')));
-      // The deserialization constructor should be explicit.
-      expect(code,
-          contains('explicit Nested(const flutter::EncodableList& list);'));
 
       // POD getters should return copies references.
       expect(code, contains('bool non_nullable_bool()'));

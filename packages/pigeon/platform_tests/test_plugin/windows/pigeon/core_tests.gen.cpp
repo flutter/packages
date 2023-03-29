@@ -121,31 +121,16 @@ EncodableList AllTypes::ToEncodableList() const {
   return list;
 }
 
-AllTypes::AllTypes(const EncodableList& list) {
-  auto& encodable_a_bool = list[0];
-  a_bool_ = std::get<bool>(encodable_a_bool);
-  auto& encodable_an_int = list[1];
-  an_int_ = encodable_an_int.LongValue();
-  auto& encodable_an_int64 = list[2];
-  an_int64_ = encodable_an_int64.LongValue();
-  auto& encodable_a_double = list[3];
-  a_double_ = std::get<double>(encodable_a_double);
-  auto& encodable_a_byte_array = list[4];
-  a_byte_array_ = std::get<std::vector<uint8_t>>(encodable_a_byte_array);
-  auto& encodable_a4_byte_array = list[5];
-  a4_byte_array_ = std::get<std::vector<int32_t>>(encodable_a4_byte_array);
-  auto& encodable_a8_byte_array = list[6];
-  a8_byte_array_ = std::get<std::vector<int64_t>>(encodable_a8_byte_array);
-  auto& encodable_a_float_array = list[7];
-  a_float_array_ = std::get<std::vector<double>>(encodable_a_float_array);
-  auto& encodable_a_list = list[8];
-  a_list_ = std::get<EncodableList>(encodable_a_list);
-  auto& encodable_a_map = list[9];
-  a_map_ = std::get<EncodableMap>(encodable_a_map);
-  auto& encodable_an_enum = list[10];
-  an_enum_ = (AnEnum)(std::get<int32_t>(encodable_an_enum));
-  auto& encodable_a_string = list[11];
-  a_string_ = std::get<std::string>(encodable_a_string);
+AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
+  AllTypes decoded(
+      std::get<bool>(list[0]), list[1].LongValue(), list[2].LongValue(),
+      std::get<double>(list[3]), std::get<std::vector<uint8_t>>(list[4]),
+      std::get<std::vector<int32_t>>(list[5]),
+      std::get<std::vector<int64_t>>(list[6]),
+      std::get<std::vector<double>>(list[7]), std::get<EncodableList>(list[8]),
+      std::get<EncodableMap>(list[9]), (AnEnum)(std::get<int32_t>(list[10])),
+      std::get<std::string>(list[11]));
+  return decoded;
 }
 
 // AllNullableTypes
@@ -438,74 +423,82 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   return list;
 }
 
-AllNullableTypes::AllNullableTypes(const EncodableList& list) {
+AllNullableTypes AllNullableTypes::FromEncodableList(
+    const EncodableList& list) {
+  AllNullableTypes decoded;
   auto& encodable_a_nullable_bool = list[0];
   if (!encodable_a_nullable_bool.IsNull()) {
-    a_nullable_bool_ = std::get<bool>(encodable_a_nullable_bool);
+    decoded.set_a_nullable_bool(std::get<bool>(encodable_a_nullable_bool));
   }
   auto& encodable_a_nullable_int = list[1];
   if (!encodable_a_nullable_int.IsNull()) {
-    a_nullable_int_ = encodable_a_nullable_int.LongValue();
+    decoded.set_a_nullable_int(encodable_a_nullable_int.LongValue());
   }
   auto& encodable_a_nullable_int64 = list[2];
   if (!encodable_a_nullable_int64.IsNull()) {
-    a_nullable_int64_ = encodable_a_nullable_int64.LongValue();
+    decoded.set_a_nullable_int64(encodable_a_nullable_int64.LongValue());
   }
   auto& encodable_a_nullable_double = list[3];
   if (!encodable_a_nullable_double.IsNull()) {
-    a_nullable_double_ = std::get<double>(encodable_a_nullable_double);
+    decoded.set_a_nullable_double(
+        std::get<double>(encodable_a_nullable_double));
   }
   auto& encodable_a_nullable_byte_array = list[4];
   if (!encodable_a_nullable_byte_array.IsNull()) {
-    a_nullable_byte_array_ =
-        std::get<std::vector<uint8_t>>(encodable_a_nullable_byte_array);
+    decoded.set_a_nullable_byte_array(
+        std::get<std::vector<uint8_t>>(encodable_a_nullable_byte_array));
   }
   auto& encodable_a_nullable4_byte_array = list[5];
   if (!encodable_a_nullable4_byte_array.IsNull()) {
-    a_nullable4_byte_array_ =
-        std::get<std::vector<int32_t>>(encodable_a_nullable4_byte_array);
+    decoded.set_a_nullable4_byte_array(
+        std::get<std::vector<int32_t>>(encodable_a_nullable4_byte_array));
   }
   auto& encodable_a_nullable8_byte_array = list[6];
   if (!encodable_a_nullable8_byte_array.IsNull()) {
-    a_nullable8_byte_array_ =
-        std::get<std::vector<int64_t>>(encodable_a_nullable8_byte_array);
+    decoded.set_a_nullable8_byte_array(
+        std::get<std::vector<int64_t>>(encodable_a_nullable8_byte_array));
   }
   auto& encodable_a_nullable_float_array = list[7];
   if (!encodable_a_nullable_float_array.IsNull()) {
-    a_nullable_float_array_ =
-        std::get<std::vector<double>>(encodable_a_nullable_float_array);
+    decoded.set_a_nullable_float_array(
+        std::get<std::vector<double>>(encodable_a_nullable_float_array));
   }
   auto& encodable_a_nullable_list = list[8];
   if (!encodable_a_nullable_list.IsNull()) {
-    a_nullable_list_ = std::get<EncodableList>(encodable_a_nullable_list);
+    decoded.set_a_nullable_list(
+        std::get<EncodableList>(encodable_a_nullable_list));
   }
   auto& encodable_a_nullable_map = list[9];
   if (!encodable_a_nullable_map.IsNull()) {
-    a_nullable_map_ = std::get<EncodableMap>(encodable_a_nullable_map);
+    decoded.set_a_nullable_map(
+        std::get<EncodableMap>(encodable_a_nullable_map));
   }
   auto& encodable_nullable_nested_list = list[10];
   if (!encodable_nullable_nested_list.IsNull()) {
-    nullable_nested_list_ =
-        std::get<EncodableList>(encodable_nullable_nested_list);
+    decoded.set_nullable_nested_list(
+        std::get<EncodableList>(encodable_nullable_nested_list));
   }
   auto& encodable_nullable_map_with_annotations = list[11];
   if (!encodable_nullable_map_with_annotations.IsNull()) {
-    nullable_map_with_annotations_ =
-        std::get<EncodableMap>(encodable_nullable_map_with_annotations);
+    decoded.set_nullable_map_with_annotations(
+        std::get<EncodableMap>(encodable_nullable_map_with_annotations));
   }
   auto& encodable_nullable_map_with_object = list[12];
   if (!encodable_nullable_map_with_object.IsNull()) {
-    nullable_map_with_object_ =
-        std::get<EncodableMap>(encodable_nullable_map_with_object);
+    decoded.set_nullable_map_with_object(
+        std::get<EncodableMap>(encodable_nullable_map_with_object));
   }
   auto& encodable_a_nullable_enum = list[13];
   if (!encodable_a_nullable_enum.IsNull()) {
-    a_nullable_enum_ = (AnEnum)(std::get<int32_t>(encodable_a_nullable_enum));
+    decoded.set_a_nullable_enum(
+        (AnEnum)(std::get<int32_t>(encodable_a_nullable_enum)));
   }
   auto& encodable_a_nullable_string = list[14];
   if (!encodable_a_nullable_string.IsNull()) {
-    a_nullable_string_ = std::get<std::string>(encodable_a_nullable_string);
+    decoded.set_a_nullable_string(
+        std::get<std::string>(encodable_a_nullable_string));
   }
+  return decoded;
 }
 
 // AllNullableTypesWrapper
@@ -527,9 +520,11 @@ EncodableList AllNullableTypesWrapper::ToEncodableList() const {
   return list;
 }
 
-AllNullableTypesWrapper::AllNullableTypesWrapper(const EncodableList& list) {
-  auto& encodable_values = list[0];
-  values_ = AllNullableTypes(std::get<EncodableList>(encodable_values));
+AllNullableTypesWrapper AllNullableTypesWrapper::FromEncodableList(
+    const EncodableList& list) {
+  AllNullableTypesWrapper decoded(
+      AllNullableTypes::FromEncodableList(std::get<EncodableList>(list[0])));
+  return decoded;
 }
 
 // TestMessage
@@ -558,11 +553,13 @@ EncodableList TestMessage::ToEncodableList() const {
   return list;
 }
 
-TestMessage::TestMessage(const EncodableList& list) {
+TestMessage TestMessage::FromEncodableList(const EncodableList& list) {
+  TestMessage decoded;
   auto& encodable_test_list = list[0];
   if (!encodable_test_list.IsNull()) {
-    test_list_ = std::get<EncodableList>(encodable_test_list);
+    decoded.set_test_list(std::get<EncodableList>(encodable_test_list));
   }
+  return decoded;
 }
 
 HostIntegrationCoreApiCodecSerializer::HostIntegrationCoreApiCodecSerializer() {
@@ -571,17 +568,17 @@ EncodableValue HostIntegrationCoreApiCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 128:
-      return CustomEncodableValue(
-          AllNullableTypes(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     case 129:
-      return CustomEncodableValue(
-          AllNullableTypesWrapper(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(AllNullableTypesWrapper::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     case 130:
-      return CustomEncodableValue(
-          AllTypes(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(AllTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     case 131:
-      return CustomEncodableValue(
-          TestMessage(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(TestMessage::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
@@ -3043,17 +3040,17 @@ EncodableValue FlutterIntegrationCoreApiCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 128:
-      return CustomEncodableValue(
-          AllNullableTypes(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     case 129:
-      return CustomEncodableValue(
-          AllNullableTypesWrapper(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(AllNullableTypesWrapper::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     case 130:
-      return CustomEncodableValue(
-          AllTypes(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(AllTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     case 131:
-      return CustomEncodableValue(
-          TestMessage(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(TestMessage::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
@@ -3707,8 +3704,8 @@ EncodableValue FlutterSmallApiCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 128:
-      return CustomEncodableValue(
-          TestMessage(std::get<EncodableList>(ReadValue(stream))));
+      return CustomEncodableValue(TestMessage::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }

@@ -117,7 +117,7 @@ class AllTypes {
   void set_a_string(std::string_view value_arg);
 
  private:
-  explicit AllTypes(const flutter::EncodableList& list);
+  static AllTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
   friend class HostIntegrationCoreApiCodecSerializer;
@@ -228,7 +228,7 @@ class AllNullableTypes {
   void set_a_nullable_string(std::string_view value_arg);
 
  private:
-  explicit AllNullableTypes(const flutter::EncodableList& list);
+  static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class AllNullableTypesWrapper;
   friend class HostIntegrationCoreApi;
@@ -269,7 +269,8 @@ class AllNullableTypesWrapper {
   void set_values(const AllNullableTypes& value_arg);
 
  private:
-  explicit AllNullableTypesWrapper(const flutter::EncodableList& list);
+  static AllNullableTypesWrapper FromEncodableList(
+      const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
   friend class HostIntegrationCoreApiCodecSerializer;
@@ -301,7 +302,7 @@ class TestMessage {
   void set_test_list(const flutter::EncodableList& value_arg);
 
  private:
-  explicit TestMessage(const flutter::EncodableList& list);
+  static TestMessage FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
   friend class HostIntegrationCoreApiCodecSerializer;
