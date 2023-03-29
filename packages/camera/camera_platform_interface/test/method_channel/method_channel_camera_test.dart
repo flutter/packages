@@ -33,12 +33,12 @@ void main() {
         final MethodChannelCamera camera = MethodChannelCamera();
 
         // Act
-        final int cameraId = await camera.createCamera(
+        final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0),
-          ResolutionPreset.high,
+          MediaSettings.low(enableAudio: false),
         );
 
         // Assert
@@ -47,7 +47,10 @@ void main() {
             'create',
             arguments: <String, Object?>{
               'cameraName': 'Test',
-              'resolutionPreset': 'high',
+              'resolutionPreset': 'low',
+              'fps': 15,
+              'videoBitrate': 200000,
+              'audioBitrate': 32000,
               'enableAudio': false
             },
           ),
@@ -71,13 +74,13 @@ void main() {
 
         // Act
         expect(
-          () => camera.createCamera(
+          () => camera.createCameraWithSettings(
             const CameraDescription(
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            ResolutionPreset.high,
+            MediaSettings.low(),
           ),
           throwsA(
             isA<CameraException>()
@@ -105,13 +108,13 @@ void main() {
 
         // Act
         expect(
-          () => camera.createCamera(
+          () => camera.createCameraWithSettings(
             const CameraDescription(
               name: 'Test',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            ResolutionPreset.high,
+            MediaSettings.low(),
           ),
           throwsA(
             isA<CameraException>()
@@ -167,13 +170,13 @@ void main() {
               'initialize': null
             });
         final MethodChannelCamera camera = MethodChannelCamera();
-        final int cameraId = await camera.createCamera(
+        final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          MediaSettings.low(),
         );
 
         // Act
@@ -214,13 +217,13 @@ void main() {
             });
 
         final MethodChannelCamera camera = MethodChannelCamera();
-        final int cameraId = await camera.createCamera(
+        final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -262,13 +265,13 @@ void main() {
           },
         );
         camera = MethodChannelCamera();
-        cameraId = await camera.createCamera(
+        cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -432,13 +435,13 @@ void main() {
           },
         );
         camera = MethodChannelCamera();
-        cameraId = await camera.createCamera(
+        cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          MediaSettings.low(),
         );
         final Future<void> initializeFuture = camera.initializeCamera(cameraId);
         camera.cameraEventStreamController.add(
