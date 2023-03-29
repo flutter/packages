@@ -118,8 +118,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       if (focused && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         final FlutterView flutterView = tryFindFlutterView();
         if (flutterView != null) {
-          ((FlutterView) getParent().getParent())
-              .setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES);
+          flutterView.setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES);
         }
       }
     }
