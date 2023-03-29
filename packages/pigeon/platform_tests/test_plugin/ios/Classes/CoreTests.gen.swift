@@ -35,7 +35,7 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-private func nilOrType(value: Any?) -> Any? {
+private func nilOrValue(value: Any?) -> Any? {
   if (value is NSNull) {
     return nil 
   }
@@ -129,25 +129,25 @@ struct AllNullableTypes {
   var aNullableString: String? = nil
 
   static func fromList(_ list: [Any]) -> AllNullableTypes? {
-    let aNullableBool = nilOrType(value: list[0]) as! Bool? 
-    let aNullableInt = nilOrType(value: list[1]) as! Int64? 
-    let aNullableInt64 = nilOrType(value: list[2]) as! Int64? 
-    let aNullableDouble = nilOrType(value: list[3]) as! Double? 
-    let aNullableByteArray = nilOrType(value: list[4]) as! FlutterStandardTypedData? 
-    let aNullable4ByteArray = nilOrType(value: list[5]) as! FlutterStandardTypedData? 
-    let aNullable8ByteArray = nilOrType(value: list[6]) as! FlutterStandardTypedData? 
-    let aNullableFloatArray = nilOrType(value: list[7]) as! FlutterStandardTypedData? 
-    let aNullableList = nilOrType(value: list[8]) as! [Any]? 
-    let aNullableMap = nilOrType(value: list[9]) as! [AnyHashable: Any]? 
-    let nullableNestedList = nilOrType(value: list[10]) as! [[Bool?]?]? 
-    let nullableMapWithAnnotations = nilOrType(value: list[11]) as! [String?: String?]? 
-    let nullableMapWithObject = nilOrType(value: list[12]) as! [String?: Any?]? 
+    let aNullableBool = nilOrValue(value: list[0]) as! Bool? 
+    let aNullableInt = nilOrValue(value: list[1]) as! Int64? 
+    let aNullableInt64 = nilOrValue(value: list[2]) as! Int64? 
+    let aNullableDouble = nilOrValue(value: list[3]) as! Double? 
+    let aNullableByteArray = nilOrValue(value: list[4]) as! FlutterStandardTypedData? 
+    let aNullable4ByteArray = nilOrValue(value: list[5]) as! FlutterStandardTypedData? 
+    let aNullable8ByteArray = nilOrValue(value: list[6]) as! FlutterStandardTypedData? 
+    let aNullableFloatArray = nilOrValue(value: list[7]) as! FlutterStandardTypedData? 
+    let aNullableList = nilOrValue(value: list[8]) as! [Any]? 
+    let aNullableMap = nilOrValue(value: list[9]) as! [AnyHashable: Any]? 
+    let nullableNestedList = nilOrValue(value: list[10]) as! [[Bool?]?]? 
+    let nullableMapWithAnnotations = nilOrValue(value: list[11]) as! [String?: String?]? 
+    let nullableMapWithObject = nilOrValue(value: list[12]) as! [String?: Any?]? 
     var aNullableEnum: AnEnum? = nil
-    let enumVal13 = nilOrType(value: list[13]) as! Int?
+    let enumVal13 = nilOrValue(value: list[13]) as! Int?
     if let aNullableEnumRawValue = enumVal13{
       aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)
     }
-    let aNullableString = nilOrType(value: list[14]) as! String? 
+    let aNullableString = nilOrValue(value: list[14]) as! String? 
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -213,7 +213,7 @@ struct TestMessage {
   var testList: [Any]? = nil
 
   static func fromList(_ list: [Any]) -> TestMessage? {
-    let testList = nilOrType(value: list[0]) as! [Any]? 
+    let testList = nilOrValue(value: list[0]) as! [Any]? 
 
     return TestMessage(
       testList: testList
@@ -613,7 +613,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAllNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let everythingArg = nilOrType(value: args[0]) as! AllNullableTypes?
+        let everythingArg = nilOrValue(value: args[0]) as! AllNullableTypes?
         do {
           let result = try api.echo(everythingArg)
           reply(wrapResult(result))
@@ -647,7 +647,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       createNestedNullableStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let nullableStringArg = nilOrType(value: args[0]) as! String?
+        let nullableStringArg = nilOrValue(value: args[0]) as! String?
         do {
           let result = try api.createNestedObject(with: nullableStringArg)
           reply(wrapResult(result))
@@ -663,9 +663,9 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       sendMultipleNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableBoolArg = nilOrType(value: args[0]) as! Bool?
-        let aNullableIntArg = nilOrType(value: args[1]) as! Int64?
-        let aNullableStringArg = nilOrType(value: args[2]) as! String?
+        let aNullableBoolArg = nilOrValue(value: args[0]) as! Bool?
+        let aNullableIntArg = nilOrValue(value: args[1]) as! Int64?
+        let aNullableStringArg = nilOrValue(value: args[2]) as! String?
         do {
           let result = try api.sendMultipleNullableTypes(aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg)
           reply(wrapResult(result))
@@ -681,7 +681,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableIntArg = nilOrType(value: args[0]) as! Int64?
+        let aNullableIntArg = nilOrValue(value: args[0]) as! Int64?
         do {
           let result = try api.echo(aNullableIntArg)
           reply(wrapResult(result))
@@ -697,7 +697,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableDoubleArg = nilOrType(value: args[0]) as! Double?
+        let aNullableDoubleArg = nilOrValue(value: args[0]) as! Double?
         do {
           let result = try api.echo(aNullableDoubleArg)
           reply(wrapResult(result))
@@ -713,7 +713,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableBoolArg = nilOrType(value: args[0]) as! Bool?
+        let aNullableBoolArg = nilOrValue(value: args[0]) as! Bool?
         do {
           let result = try api.echo(aNullableBoolArg)
           reply(wrapResult(result))
@@ -729,7 +729,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableStringArg = nilOrType(value: args[0]) as! String?
+        let aNullableStringArg = nilOrValue(value: args[0]) as! String?
         do {
           let result = try api.echo(aNullableStringArg)
           reply(wrapResult(result))
@@ -745,7 +745,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableUint8ListArg = nilOrType(value: args[0]) as! FlutterStandardTypedData?
+        let aNullableUint8ListArg = nilOrValue(value: args[0]) as! FlutterStandardTypedData?
         do {
           let result = try api.echo(aNullableUint8ListArg)
           reply(wrapResult(result))
@@ -777,7 +777,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableListArg = nilOrType(value: args[0]) as! [Any?]?
+        let aNullableListArg = nilOrValue(value: args[0]) as! [Any?]?
         do {
           let result = try api.echoNullable(aNullableListArg)
           reply(wrapResult(result))
@@ -793,7 +793,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableMapArg = nilOrType(value: args[0]) as! [String?: Any?]?
+        let aNullableMapArg = nilOrValue(value: args[0]) as! [String?: Any?]?
         do {
           let result = try api.echoNullable(aNullableMapArg)
           reply(wrapResult(result))
@@ -1036,7 +1036,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableAllNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let everythingArg = nilOrType(value: args[0]) as! AllNullableTypes?
+        let everythingArg = nilOrValue(value: args[0]) as! AllNullableTypes?
         api.echoAsync(everythingArg) { result in
           switch result {
             case .success(let res):
@@ -1054,7 +1054,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg = nilOrType(value: args[0]) as! Int64?
+        let anIntArg = nilOrValue(value: args[0]) as! Int64?
         api.echoAsyncNullable(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1072,7 +1072,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aDoubleArg = nilOrType(value: args[0]) as! Double?
+        let aDoubleArg = nilOrValue(value: args[0]) as! Double?
         api.echoAsyncNullable(aDoubleArg) { result in
           switch result {
             case .success(let res):
@@ -1090,7 +1090,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aBoolArg = nilOrType(value: args[0]) as! Bool?
+        let aBoolArg = nilOrValue(value: args[0]) as! Bool?
         api.echoAsyncNullable(aBoolArg) { result in
           switch result {
             case .success(let res):
@@ -1108,7 +1108,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aStringArg = nilOrType(value: args[0]) as! String?
+        let aStringArg = nilOrValue(value: args[0]) as! String?
         api.echoAsyncNullable(aStringArg) { result in
           switch result {
             case .success(let res):
@@ -1126,7 +1126,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aUint8ListArg = nilOrType(value: args[0]) as! FlutterStandardTypedData?
+        let aUint8ListArg = nilOrValue(value: args[0]) as! FlutterStandardTypedData?
         api.echoAsyncNullable(aUint8ListArg) { result in
           switch result {
             case .success(let res):
@@ -1162,7 +1162,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aListArg = nilOrType(value: args[0]) as! [Any?]?
+        let aListArg = nilOrValue(value: args[0]) as! [Any?]?
         api.echoAsyncNullable(aListArg) { result in
           switch result {
             case .success(let res):
@@ -1180,7 +1180,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aMapArg = nilOrType(value: args[0]) as! [String?: Any?]?
+        let aMapArg = nilOrValue(value: args[0]) as! [String?: Any?]?
         api.echAsyncoNullable(aMapArg) { result in
           switch result {
             case .success(let res):
@@ -1259,9 +1259,9 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterSendMultipleNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableBoolArg = nilOrType(value: args[0]) as! Bool?
-        let aNullableIntArg = nilOrType(value: args[1]) as! Int64?
-        let aNullableStringArg = nilOrType(value: args[2]) as! String?
+        let aNullableBoolArg = nilOrValue(value: args[0]) as! Bool?
+        let aNullableIntArg = nilOrValue(value: args[1]) as! Int64?
+        let aNullableStringArg = nilOrValue(value: args[2]) as! String?
         api.callFlutterSendMultipleNullableTypes(aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg) { result in
           switch result {
             case .success(let res):
@@ -1397,7 +1397,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aBoolArg = nilOrType(value: args[0]) as! Bool?
+        let aBoolArg = nilOrValue(value: args[0]) as! Bool?
         api.callFlutterEchoNullable(aBoolArg) { result in
           switch result {
             case .success(let res):
@@ -1414,7 +1414,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg = nilOrType(value: args[0]) as! Int64?
+        let anIntArg = nilOrValue(value: args[0]) as! Int64?
         api.callFlutterEchoNullable(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1431,7 +1431,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aDoubleArg = nilOrType(value: args[0]) as! Double?
+        let aDoubleArg = nilOrValue(value: args[0]) as! Double?
         api.callFlutterEchoNullable(aDoubleArg) { result in
           switch result {
             case .success(let res):
@@ -1448,7 +1448,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aStringArg = nilOrType(value: args[0]) as! String?
+        let aStringArg = nilOrValue(value: args[0]) as! String?
         api.callFlutterEchoNullable(aStringArg) { result in
           switch result {
             case .success(let res):
@@ -1465,7 +1465,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aListArg = nilOrType(value: args[0]) as! FlutterStandardTypedData?
+        let aListArg = nilOrValue(value: args[0]) as! FlutterStandardTypedData?
         api.callFlutterEchoNullable(aListArg) { result in
           switch result {
             case .success(let res):
@@ -1482,7 +1482,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aListArg = nilOrType(value: args[0]) as! [Any?]?
+        let aListArg = nilOrValue(value: args[0]) as! [Any?]?
         api.callFlutterEchoNullable(aListArg) { result in
           switch result {
             case .success(let res):
@@ -1499,7 +1499,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aMapArg = nilOrType(value: args[0]) as! [String?: Any?]?
+        let aMapArg = nilOrValue(value: args[0]) as! [String?: Any?]?
         api.callFlutterEchoNullable(aMapArg) { result in
           switch result {
             case .success(let res):
@@ -1686,7 +1686,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Bool?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aBoolArg] as [Any?]) { response in
-      let result = nilOrType(value: response) as! Bool?
+      let result = nilOrValue(value: response) as! Bool?
       completion(result)
     }
   }
@@ -1694,7 +1694,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ anIntArg: Int64?, completion: @escaping (Int64?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anIntArg] as [Any?]) { response in
-      let result = nilOrType(value: response) as! Int64?
+      let result = nilOrValue(value: response) as! Int64?
       completion(result)
     }
   }
@@ -1702,7 +1702,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ aDoubleArg: Double?, completion: @escaping (Double?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aDoubleArg] as [Any?]) { response in
-      let result = nilOrType(value: response) as! Double?
+      let result = nilOrValue(value: response) as! Double?
       completion(result)
     }
   }
@@ -1710,7 +1710,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ aStringArg: String?, completion: @escaping (String?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
-      let result = nilOrType(value: response) as! String?
+      let result = nilOrValue(value: response) as! String?
       completion(result)
     }
   }
@@ -1718,7 +1718,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ aListArg: FlutterStandardTypedData?, completion: @escaping (FlutterStandardTypedData?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aListArg] as [Any?]) { response in
-      let result = nilOrType(value: response) as! FlutterStandardTypedData?
+      let result = nilOrValue(value: response) as! FlutterStandardTypedData?
       completion(result)
     }
   }
@@ -1726,7 +1726,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ aListArg: [Any?]?, completion: @escaping ([Any?]?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aListArg] as [Any?]) { response in
-      let result = nilOrType(value: response) as! [Any?]?
+      let result = nilOrValue(value: response) as! [Any?]?
       completion(result)
     }
   }
@@ -1734,7 +1734,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ aMapArg: [String?: Any?]?, completion: @escaping ([String?: Any?]?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aMapArg] as [Any?]) { response in
-      let result = nilOrType(value: response) as! [String?: Any?]?
+      let result = nilOrValue(value: response) as! [String?: Any?]?
       completion(result)
     }
   }

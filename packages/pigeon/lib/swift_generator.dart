@@ -643,7 +643,7 @@ import FlutterMacOS
   void _writeNilOrType(Indent indent) {
     indent.format('''
 
-private func nilOrType(value: Any?) -> Any? {
+private func nilOrValue(value: Any?) -> Any? {
   if (value is NSNull) {
     return nil 
   }
@@ -693,7 +693,7 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
   } else if (type.isNullable) {
-    return 'nilOrType(value: $value) as! ${_swiftTypeForDartType(type)}$castUnwrap';
+    return 'nilOrValue(value: $value) as! ${_swiftTypeForDartType(type)}$castUnwrap';
   } else {
     return '$value as! ${_swiftTypeForDartType(type)}$castUnwrap';
   }
