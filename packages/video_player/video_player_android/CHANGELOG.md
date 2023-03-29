@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Adds fullscreen functionality (only works on web-platform).
+
 ## 2.4.2
 
 * Bumps ExoPlayer version to 2.18.4.

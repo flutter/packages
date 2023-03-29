@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Adds fullscreen functionality (only works on web-platform).
+
 ## 2.6.0
 
 * Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
