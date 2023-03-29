@@ -21,8 +21,7 @@ abstract class TestInstanceManagerHostApi {
   /// This is typically only used after a hot restart.
   void clear();
 
-  static void setup(TestInstanceManagerHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestInstanceManagerHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.InstanceManagerHostApi.clear', codec,
@@ -45,8 +44,7 @@ abstract class TestJavaObjectHostApi {
 
   void dispose(int identifier);
 
-  static void setup(TestJavaObjectHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestJavaObjectHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.JavaObjectHostApi.dispose', codec,
@@ -56,7 +54,7 @@ abstract class TestJavaObjectHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.JavaObjectHostApi.dispose was null.');
+          'Argument for dev.flutter.pigeon.JavaObjectHostApi.dispose was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -74,24 +72,64 @@ abstract class TestCameraInfoHostApi {
 
   int getSensorRotationDegrees(int identifier);
 
-  static void setup(TestCameraInfoHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  int getExposureState(int identifier);
+
+  int getZoomState(int identifier);
+
+  static void setup(TestCameraInfoHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.CameraInfoHostApi.getSensorRotationDegrees',
-          codec,
+          'dev.flutter.pigeon.CameraInfoHostApi.getSensorRotationDegrees', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMockMessageHandler(null);
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.CameraInfoHostApi.getSensorRotationDegrees was null.');
+          'Argument for dev.flutter.pigeon.CameraInfoHostApi.getSensorRotationDegrees was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.CameraInfoHostApi.getSensorRotationDegrees was null, expected non-null int.');
           final int output = api.getSensorRotationDegrees(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraInfoHostApi.getExposureState', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.CameraInfoHostApi.getExposureState was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraInfoHostApi.getExposureState was null, expected non-null int.');
+          final int output = api.getExposureState(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraInfoHostApi.getZoomState', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.CameraInfoHostApi.getZoomState was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraInfoHostApi.getZoomState was null, expected non-null int.');
+          final int output = api.getZoomState(arg_identifier!);
           return <Object?>[output];
         });
       }
@@ -106,8 +144,7 @@ abstract class TestCameraSelectorHostApi {
 
   List<int?> filter(int identifier, List<int?> cameraInfoIds);
 
-  static void setup(TestCameraSelectorHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestCameraSelectorHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.CameraSelectorHostApi.create', codec,
@@ -117,7 +154,7 @@ abstract class TestCameraSelectorHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.CameraSelectorHostApi.create was null.');
+          'Argument for dev.flutter.pigeon.CameraSelectorHostApi.create was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -137,17 +174,15 @@ abstract class TestCameraSelectorHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.CameraSelectorHostApi.filter was null.');
+          'Argument for dev.flutter.pigeon.CameraSelectorHostApi.filter was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.CameraSelectorHostApi.filter was null, expected non-null int.');
-          final List<int?>? arg_cameraInfoIds =
-              (args[1] as List<Object?>?)?.cast<int?>();
+          final List<int?>? arg_cameraInfoIds = (args[1] as List<Object?>?)?.cast<int?>();
           assert(arg_cameraInfoIds != null,
               'Argument for dev.flutter.pigeon.CameraSelectorHostApi.filter was null, expected non-null List<int?>.');
-          final List<int?> output =
-              api.filter(arg_identifier!, arg_cameraInfoIds!);
+          final List<int?> output = api.filter(arg_identifier!, arg_cameraInfoIds!);
           return <Object?>[output];
         });
       }
@@ -162,8 +197,7 @@ abstract class TestProcessCameraProviderHostApi {
 
   List<int?> getAvailableCameraInfos(int identifier);
 
-  int bindToLifecycle(
-      int identifier, int cameraSelectorIdentifier, List<int?> useCaseIds);
+  int bindToLifecycle(int identifier, int cameraSelectorIdentifier, List<int?> useCaseIds);
 
   bool isBound(int identifier, int useCaseIdentifier);
 
@@ -171,8 +205,7 @@ abstract class TestProcessCameraProviderHostApi {
 
   void unbindAll(int identifier);
 
-  static void setup(TestProcessCameraProviderHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestProcessCameraProviderHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.ProcessCameraProviderHostApi.getInstance', codec,
@@ -189,36 +222,33 @@ abstract class TestProcessCameraProviderHostApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.ProcessCameraProviderHostApi.getAvailableCameraInfos',
-          codec,
+          'dev.flutter.pigeon.ProcessCameraProviderHostApi.getAvailableCameraInfos', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMockMessageHandler(null);
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.getAvailableCameraInfos was null.');
+          'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.getAvailableCameraInfos was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.getAvailableCameraInfos was null, expected non-null int.');
-          final List<int?> output =
-              api.getAvailableCameraInfos(arg_identifier!);
+          final List<int?> output = api.getAvailableCameraInfos(arg_identifier!);
           return <Object?>[output];
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.ProcessCameraProviderHostApi.bindToLifecycle',
-          codec,
+          'dev.flutter.pigeon.ProcessCameraProviderHostApi.bindToLifecycle', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMockMessageHandler(null);
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.bindToLifecycle was null.');
+          'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.bindToLifecycle was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -226,12 +256,10 @@ abstract class TestProcessCameraProviderHostApi {
           final int? arg_cameraSelectorIdentifier = (args[1] as int?);
           assert(arg_cameraSelectorIdentifier != null,
               'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.bindToLifecycle was null, expected non-null int.');
-          final List<int?>? arg_useCaseIds =
-              (args[2] as List<Object?>?)?.cast<int?>();
+          final List<int?>? arg_useCaseIds = (args[2] as List<Object?>?)?.cast<int?>();
           assert(arg_useCaseIds != null,
               'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.bindToLifecycle was null, expected non-null List<int?>.');
-          final int output = api.bindToLifecycle(
-              arg_identifier!, arg_cameraSelectorIdentifier!, arg_useCaseIds!);
+          final int output = api.bindToLifecycle(arg_identifier!, arg_cameraSelectorIdentifier!, arg_useCaseIds!);
           return <Object?>[output];
         });
       }
@@ -245,7 +273,7 @@ abstract class TestProcessCameraProviderHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.isBound was null.');
+          'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.isBound was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -253,8 +281,7 @@ abstract class TestProcessCameraProviderHostApi {
           final int? arg_useCaseIdentifier = (args[1] as int?);
           assert(arg_useCaseIdentifier != null,
               'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.isBound was null, expected non-null int.');
-          final bool output =
-              api.isBound(arg_identifier!, arg_useCaseIdentifier!);
+          final bool output = api.isBound(arg_identifier!, arg_useCaseIdentifier!);
           return <Object?>[output];
         });
       }
@@ -268,13 +295,12 @@ abstract class TestProcessCameraProviderHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.unbind was null.');
+          'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.unbind was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.unbind was null, expected non-null int.');
-          final List<int?>? arg_useCaseIds =
-              (args[1] as List<Object?>?)?.cast<int?>();
+          final List<int?>? arg_useCaseIds = (args[1] as List<Object?>?)?.cast<int?>();
           assert(arg_useCaseIds != null,
               'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.unbind was null, expected non-null List<int?>.');
           api.unbind(arg_identifier!, arg_useCaseIds!);
@@ -291,7 +317,7 @@ abstract class TestProcessCameraProviderHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.unbindAll was null.');
+          'Argument for dev.flutter.pigeon.ProcessCameraProviderHostApi.unbindAll was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -319,7 +345,7 @@ class _TestSystemServicesHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return CameraPermissionsErrorData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -330,48 +356,42 @@ class _TestSystemServicesHostApiCodec extends StandardMessageCodec {
 abstract class TestSystemServicesHostApi {
   static const MessageCodec<Object?> codec = _TestSystemServicesHostApiCodec();
 
-  Future<CameraPermissionsErrorData?> requestCameraPermissions(
-      bool enableAudio);
+  Future<CameraPermissionsErrorData?> requestCameraPermissions(bool enableAudio);
 
-  void startListeningForDeviceOrientationChange(
-      bool isFrontFacing, int sensorOrientation);
+  void startListeningForDeviceOrientationChange(bool isFrontFacing, int sensorOrientation);
 
   void stopListeningForDeviceOrientationChange();
 
-  static void setup(TestSystemServicesHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestSystemServicesHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.SystemServicesHostApi.requestCameraPermissions',
-          codec,
+          'dev.flutter.pigeon.SystemServicesHostApi.requestCameraPermissions', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMockMessageHandler(null);
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.SystemServicesHostApi.requestCameraPermissions was null.');
+          'Argument for dev.flutter.pigeon.SystemServicesHostApi.requestCameraPermissions was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final bool? arg_enableAudio = (args[0] as bool?);
           assert(arg_enableAudio != null,
               'Argument for dev.flutter.pigeon.SystemServicesHostApi.requestCameraPermissions was null, expected non-null bool.');
-          final CameraPermissionsErrorData? output =
-              await api.requestCameraPermissions(arg_enableAudio!);
+          final CameraPermissionsErrorData? output = await api.requestCameraPermissions(arg_enableAudio!);
           return <Object?>[output];
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.SystemServicesHostApi.startListeningForDeviceOrientationChange',
-          codec,
+          'dev.flutter.pigeon.SystemServicesHostApi.startListeningForDeviceOrientationChange', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMockMessageHandler(null);
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.SystemServicesHostApi.startListeningForDeviceOrientationChange was null.');
+          'Argument for dev.flutter.pigeon.SystemServicesHostApi.startListeningForDeviceOrientationChange was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final bool? arg_isFrontFacing = (args[0] as bool?);
           assert(arg_isFrontFacing != null,
@@ -379,16 +399,14 @@ abstract class TestSystemServicesHostApi {
           final int? arg_sensorOrientation = (args[1] as int?);
           assert(arg_sensorOrientation != null,
               'Argument for dev.flutter.pigeon.SystemServicesHostApi.startListeningForDeviceOrientationChange was null, expected non-null int.');
-          api.startListeningForDeviceOrientationChange(
-              arg_isFrontFacing!, arg_sensorOrientation!);
+          api.startListeningForDeviceOrientationChange(arg_isFrontFacing!, arg_sensorOrientation!);
           return <Object?>[];
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.SystemServicesHostApi.stopListeningForDeviceOrientationChange',
-          codec,
+          'dev.flutter.pigeon.SystemServicesHostApi.stopListeningForDeviceOrientationChange', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMockMessageHandler(null);
@@ -421,9 +439,9 @@ class _TestPreviewHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return ResolutionInfo.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return ResolutionInfo.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -442,8 +460,7 @@ abstract class TestPreviewHostApi {
 
   ResolutionInfo getResolutionInfo(int identifier);
 
-  static void setup(TestPreviewHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestPreviewHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.PreviewHostApi.create', codec,
@@ -453,14 +470,13 @@ abstract class TestPreviewHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PreviewHostApi.create was null.');
+          'Argument for dev.flutter.pigeon.PreviewHostApi.create was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.PreviewHostApi.create was null, expected non-null int.');
           final int? arg_rotation = (args[1] as int?);
-          final ResolutionInfo? arg_targetResolution =
-              (args[2] as ResolutionInfo?);
+          final ResolutionInfo? arg_targetResolution = (args[2] as ResolutionInfo?);
           api.create(arg_identifier!, arg_rotation, arg_targetResolution);
           return <Object?>[];
         });
@@ -475,7 +491,7 @@ abstract class TestPreviewHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PreviewHostApi.setSurfaceProvider was null.');
+          'Argument for dev.flutter.pigeon.PreviewHostApi.setSurfaceProvider was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -487,8 +503,7 @@ abstract class TestPreviewHostApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.PreviewHostApi.releaseFlutterSurfaceTexture',
-          codec,
+          'dev.flutter.pigeon.PreviewHostApi.releaseFlutterSurfaceTexture', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMockMessageHandler(null);
@@ -509,7 +524,7 @@ abstract class TestPreviewHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.PreviewHostApi.getResolutionInfo was null.');
+          'Argument for dev.flutter.pigeon.PreviewHostApi.getResolutionInfo was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -537,7 +552,7 @@ class _TestImageCaptureHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return ResolutionInfo.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -554,8 +569,7 @@ abstract class TestImageCaptureHostApi {
 
   Future<String> takePicture(int identifier);
 
-  static void setup(TestImageCaptureHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestImageCaptureHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.ImageCaptureHostApi.create', codec,
@@ -565,14 +579,13 @@ abstract class TestImageCaptureHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.create was null.');
+          'Argument for dev.flutter.pigeon.ImageCaptureHostApi.create was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ImageCaptureHostApi.create was null, expected non-null int.');
           final int? arg_flashMode = (args[1] as int?);
-          final ResolutionInfo? arg_targetResolution =
-              (args[2] as ResolutionInfo?);
+          final ResolutionInfo? arg_targetResolution = (args[2] as ResolutionInfo?);
           api.create(arg_identifier!, arg_flashMode, arg_targetResolution);
           return <Object?>[];
         });
@@ -587,7 +600,7 @@ abstract class TestImageCaptureHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.setFlashMode was null.');
+          'Argument for dev.flutter.pigeon.ImageCaptureHostApi.setFlashMode was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -609,12 +622,133 @@ abstract class TestImageCaptureHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.takePicture was null.');
+          'Argument for dev.flutter.pigeon.ImageCaptureHostApi.takePicture was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ImageCaptureHostApi.takePicture was null, expected non-null int.');
           final String output = await api.takePicture(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+  }
+}
+
+class _TestExposureStateHostApiCodec extends StandardMessageCodec {
+  const _TestExposureStateHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ExposureRange) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return ExposureRange.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class TestExposureStateHostApi {
+  static const MessageCodec<Object?> codec = _TestExposureStateHostApiCodec();
+
+  ExposureRange getExposureCompensationRange(int identifier);
+
+  double getExposureCompensationStep(int identifier);
+
+  static void setup(TestExposureStateHostApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ExposureStateHostApi.getExposureCompensationRange', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.ExposureStateHostApi.getExposureCompensationRange was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ExposureStateHostApi.getExposureCompensationRange was null, expected non-null int.');
+          final ExposureRange output = api.getExposureCompensationRange(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ExposureStateHostApi.getExposureCompensationStep', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.ExposureStateHostApi.getExposureCompensationStep was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ExposureStateHostApi.getExposureCompensationStep was null, expected non-null int.');
+          final double output = api.getExposureCompensationStep(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestExposureStateHostApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  double getMaxZoomRatio(int identifier);
+
+  double getMinZoomRatio(int identifier);
+
+  static void setup(TestExposureStateHostApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ZoomStateHostApi.getMaxZoomRatio', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.ZoomStateHostApi.getMaxZoomRatio was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ZoomStateHostApi.getMaxZoomRatio was null, expected non-null int.');
+          final double output = api.getMaxZoomRatio(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ZoomStateHostApi.getMinZoomRatio', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.ZoomStateHostApi.getMinZoomRatio was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ZoomStateHostApi.getMinZoomRatio was null, expected non-null int.');
+          final double output = api.getMinZoomRatio(arg_identifier!);
           return <Object?>[output];
         });
       }

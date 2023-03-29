@@ -241,6 +241,38 @@ class AndroidCameraCameraX extends CameraPlatform {
     });
   }
 
+  /// Gets the minimum supported exposure offset for the selected camera in EV units.
+  @override
+  Future<double> getMinExposureOffset(int cameraId) {
+    throw UnimplementedError('getMinExposureOffset() is not implemented.');
+  }
+
+  /// Gets the maximum supported exposure offset for the selected camera in EV units.
+  @override
+  Future<double> getMaxExposureOffset(int cameraId) {
+    throw UnimplementedError('getMaxExposureOffset() is not implemented.');
+  }
+
+  /// Gets the supported step size for exposure offset for the selected camera in EV units.
+  ///
+  /// Returns 0 when the camera supports using a free value without stepping.
+  @override
+  Future<double> getExposureOffsetStepSize(int cameraId) {
+    throw UnimplementedError('getMinExposureOffset() is not implemented.');
+  }
+
+  /// Gets the maximum supported zoom level for the selected camera.
+  @override
+  Future<double> getMaxZoomLevel(int cameraId) {
+    throw UnimplementedError('getMaxZoomLevel() is not implemented.');
+  }
+
+  /// Gets the minimum supported zoom level for the selected camera.
+  @override
+  Future<double> getMinZoomLevel(int cameraId) {
+    throw UnimplementedError('getMinZoomLevel() is not implemented.');
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {

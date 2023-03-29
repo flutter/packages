@@ -26,9 +26,17 @@ class CameraInfo extends JavaObject {
 
   late final CameraInfoHostApiImpl _api;
 
-  /// Gets sensor orientation degrees of camera.
+  /// Gets sensor orientation degrees of the camera.
   Future<int> getSensorRotationDegrees() =>
       _api.getSensorRotationDegreesFromInstance(this);
+
+  /// Gets the exposure state of the camera.
+  Future<ExposureState> getExposureState() =>
+      _api.getExposureStateFromInstance(this);
+
+  /// Gets the zoom state of the camera.
+  Future<ZoomState> getZoomState() =>
+      _api.getZoomStateFromInstance(this);
 }
 
 /// Host API implementation of [CameraInfo].
@@ -42,13 +50,33 @@ class CameraInfoHostApiImpl extends CameraInfoHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Gets sensor orientation degrees of [CameraInfo].
+  /// Gets sensor orientation degrees of the specified [CameraInfo] instance.
   Future<int> getSensorRotationDegreesFromInstance(
     CameraInfo instance,
   ) async {
     final int sensorRotationDegrees = await getSensorRotationDegrees(
         instanceManager.getIdentifier(instance)!);
     return sensorRotationDegrees;
+  }
+
+  /// Gets the [ExposureState] of the specified [CameraInfo] instance.
+  Future<ExposureState> getExposureStateFromInstance(CameraInfo instance) {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    assert(identifier != null,
+        'No CameraInfo has the identifer of that requested to get the resolution information for.');
+
+    final int exposureStateIdentifier = await getExposureState(identifier);
+    return instanceManager.getInstanceWithWeakReference<ExposureState>(exposureStateIdentifier!)!
+  }
+
+  /// Gets the [ZoomState] of the specified [CameraInfo] instance.
+  Future<Zoom> getExposureStateFromInstance(CameraInfo instance) {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    assert(identifier != null,
+        'No CameraInfo has the identifer of that requested to get the resolution information for.');
+
+    final int exposureStateIdentifier = await getZoomState(identifier);
+    return instanceManager.getInstanceWithWeakReference<ZoomState>(exposureStateIdentifier!)!
   }
 }
 
