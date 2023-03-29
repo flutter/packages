@@ -1,3 +1,11 @@
+## 0.3.1+5
+
+* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
+
+## 0.3.1+4
+
+* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
+
 ## 0.3.1+3
 
 * Clarifies explanation of endorsement in README.

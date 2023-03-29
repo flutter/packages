@@ -1,3 +1,11 @@
+## 2.5.2
+
+* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
+
+## 2.5.1
+
+* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
+
 ## 2.5.0
 
 * Adds NV21 as an image stream format (suitable for Android).

@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.3+4
 
+* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
 * Creates camera_android_camerax plugin for development.
 * Adds CameraInfo class and removes unnecessary code from plugin.
 * Adds CameraSelector class.

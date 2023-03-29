@@ -1,5 +1,10 @@
-## NEXT
+## 0.10.3+4
 
+* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
+
+## 0.10.3+3
+
+* [camera] MediaSettings are introduced to manage fps and bitrate of recorded video.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.10.3+2
