@@ -40,7 +40,7 @@ void main() {
     }
     for (final CameraDescription cameraDescription in availableCameras) {
       final CameraController controller =
-          CameraController(cameraDescription, ResolutionPreset.high);
+          CameraController(cameraDescription, mediaSettings: MediaSettings.low());
       await controller.initialize();
 
       // Take Picture

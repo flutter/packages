@@ -146,7 +146,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
-    _resolutionPreset = resolutionPreset;
+    _resolutionPreset = mediaSettings?.resolutionPreset;
+
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
 
