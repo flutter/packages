@@ -1,3 +1,8 @@
+## 9.1.2
+
+* [cpp] Fixes class parameters to Flutter APIs.
+* Updates minimum Flutter version to 3.3.
+
 ## 9.1.1
 
 * [swift] Removes experimental tags.
