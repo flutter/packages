@@ -40,7 +40,12 @@ void main() {
               name: 'Test',
               lensDirection: CameraLensDirection.front,
               sensorOrientation: 0),
-          MediaSettings.low(enableAudio: false),
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+          ),
         );
 
         // Assert
@@ -82,7 +87,13 @@ void main() {
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            MediaSettings.low(),
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.low,
+              fps: 15,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
+              enableAudio: true,
+            ),
           ),
           throwsA(
             isA<CameraException>()
@@ -147,7 +158,13 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          MediaSettings.low(),
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         );
 
         // Act
@@ -184,7 +201,13 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          MediaSettings.low(),
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         );
         await plugin.initializeCamera(cameraId);
 
@@ -226,7 +249,13 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          MediaSettings.low(),
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         );
         await plugin.initializeCamera(cameraId);
       });
@@ -305,7 +334,13 @@ void main() {
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          MediaSettings.low(),
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         );
         await plugin.initializeCamera(cameraId);
       });

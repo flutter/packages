@@ -115,7 +115,15 @@ void main() {
 
     expect(
         await camera.createCameraWithSettings(
-            testCameraDescription, MediaSettings.low()),
+          testCameraDescription,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
+        ),
         equals(testSurfaceTextureId));
 
     // Verify permissions are requested and the camera starts listening for device orientation changes.
@@ -205,7 +213,13 @@ void main() {
         .thenAnswer((_) async => cameraId);
     await camera.createCameraWithSettings(
       testCameraDescription,
-      MediaSettings.low(),
+      const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
     );
 
     when(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
@@ -271,7 +285,7 @@ void main() {
   });
 
   test(
-      'onDeviceOrientationChanged stream emits changes in device oreintation detected by system services',
+      'onDeviceOrientationChanged stream emits changes in device orientation detected by system services',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final Stream<DeviceOrientationChangedEvent> eventStream =

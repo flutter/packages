@@ -31,7 +31,13 @@ class _MyAppState extends State<MyApp> {
   bool _recordingTimed = false;
   bool _previewPaused = false;
   Size? _previewSize;
-  MediaSettings _mediaSettings = MediaSettings.low();
+  MediaSettings _mediaSettings = const MediaSettings(
+    resolutionPreset: ResolutionPreset.low,
+    fps: 15,
+    videoBitrate: 200000,
+    audioBitrate: 32000,
+    enableAudio: true,
+  );
   StreamSubscription<CameraErrorEvent>? _errorStreamSubscription;
   StreamSubscription<CameraClosingEvent>? _cameraClosingStreamSubscription;
 

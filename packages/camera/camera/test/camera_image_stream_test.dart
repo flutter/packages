@@ -21,11 +21,18 @@ void main() {
 
   test('startImageStream() throws $CameraException when uninitialized', () {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
 
     expect(
       () => cameraController.startImageStream((CameraImage image) => null),
@@ -48,11 +55,18 @@ void main() {
   test('startImageStream() throws $CameraException when recording videos',
       () async {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
 
     await cameraController.initialize();
 
@@ -71,11 +85,18 @@ void main() {
       'startImageStream() throws $CameraException when already streaming images',
       () async {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
     await cameraController.initialize();
 
     cameraController.value =
@@ -91,11 +112,18 @@ void main() {
 
   test('startImageStream() calls CameraPlatform', () async {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
     await cameraController.initialize();
 
     await cameraController.startImageStream((CameraImage image) => null);
@@ -106,11 +134,18 @@ void main() {
 
   test('stopImageStream() throws $CameraException when uninitialized', () {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
 
     expect(
       cameraController.stopImageStream,
@@ -133,11 +168,18 @@ void main() {
   test('stopImageStream() throws $CameraException when not streaming images',
       () async {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
     await cameraController.initialize();
 
     expect(
@@ -151,11 +193,18 @@ void main() {
 
   test('stopImageStream() intended behaviour', () async {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
     await cameraController.initialize();
     await cameraController.startImageStream((CameraImage image) => null);
     await cameraController.stopImageStream();
@@ -166,11 +215,18 @@ void main() {
 
   test('startVideoRecording() can stream images', () async {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
 
     await cameraController.initialize();
 
@@ -184,11 +240,18 @@ void main() {
 
   test('startVideoRecording() by default does not stream', () async {
     final CameraController cameraController = CameraController.withSettings(
-        const CameraDescription(
-            name: 'cam',
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 90),
-        mediaSettings: MediaSettings.low());
+      const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
 
     await cameraController.initialize();
 
