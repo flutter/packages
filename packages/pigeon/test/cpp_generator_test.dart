@@ -144,10 +144,9 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
-      expect(code, contains('pointer_input_field'));
+      expect(code, contains('encodable_some_input'));
       expect(code, contains('Output::output_field()'));
       expect(code, contains('Output::set_output_field(bool value_arg)'));
-      expect(code, contains('encodable_output_field'));
     }
   });
 
@@ -476,6 +475,15 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
+
+      // There should be a default constructor.
+      expect(code, contains('Nested();'));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(
+              RegExp(r'explicit Nested\(\s*const bool\* nested_value\s*\)')));
+
       // Getters should return const pointers.
       expect(code, contains('const bool* nullable_bool()'));
       expect(code, contains('const int64_t* nullable_int()'));
@@ -514,6 +522,16 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
+
+      // There should be a default constructor.
+      expect(code, contains('Nested::Nested() {}'));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(RegExp(r'Nested::Nested\(\s*const bool\* nested_value\s*\)'
+              r'\s*:\s*nested_value_\(nested_value \? '
+              r'std::optional<bool>\(\*nested_value\) : std::nullopt\)\s*{}')));
+
       // Getters extract optionals.
       expect(code,
           contains('return nullable_bool_ ? &(*nullable_bool_) : nullptr;'));
@@ -628,6 +646,13 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
+
+      // There should not be a default constructor.
+      expect(code, isNot(contains('Nested();')));
+      // There should be a convenience constructor.
+      expect(code,
+          contains(RegExp(r'explicit Nested\(\s*bool nested_value\s*\)')));
+
       // POD getters should return copies references.
       expect(code, contains('bool non_nullable_bool()'));
       expect(code, contains('int64_t non_nullable_int()'));
@@ -659,6 +684,15 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
+
+      // There should not be a default constructor.
+      expect(code, isNot(contains('Nested::Nested() {}')));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(RegExp(r'Nested::Nested\(\s*bool nested_value\s*\)'
+              r'\s*:\s*nested_value_\(nested_value\)\s*{}')));
+
       // Getters just return the value.
       expect(code, contains('return non_nullable_bool_;'));
       expect(code, contains('return non_nullable_int_;'));
