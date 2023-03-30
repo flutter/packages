@@ -62,11 +62,29 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   /// * Value type "StringList" must be passed if the value is of type `List<String>`.
   Future<bool> setValue(String valueType, String key, Object value);
 
-  /// Removes all keys and values in the store.
+  /// Removes all keys and values in the store where the key starts with 'flutter.'.
+  ///
+  /// This default behavior is for backwards compatibility with older versions of this
+  /// plugin, which did not support custom prefixes, and instead always used the
+  /// prefix 'flutter.'.
   Future<bool> clear();
 
-  /// Returns all key/value pairs persisted in this store.
+  /// Removes all keys and values in the store with given prefix.
+  Future<bool> clearWithPrefix(String prefix) {
+    throw UnimplementedError('clearWithPrefix is not implemented.');
+  }
+
+  /// Returns all key/value pairs persisted in this store where the key starts with 'flutter.'.
+  ///
+  /// This default behavior is for backwards compatibility with older versions of this
+  /// plugin, which did not support custom prefixes, and instead always used the
+  /// prefix 'flutter.'.
   Future<Map<String, Object>> getAll();
+
+  /// Returns all key/value pairs persisting in this store that have given [prefix].
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    throw UnimplementedError('getAllWithPrefix is not implemented.');
+  }
 }
 
 /// Stores data in memory.
@@ -81,16 +99,29 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
       : _data = Map<String, Object>.from(data);
 
   final Map<String, Object> _data;
+  static const String _defaultPrefix = 'flutter.';
 
   @override
   Future<bool> clear() async {
-    _data.clear();
+    return clearWithPrefix(_defaultPrefix);
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    _data.removeWhere((String key, _) => key.startsWith(prefix));
     return true;
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    return Map<String, Object>.from(_data);
+    return getAllWithPrefix(_defaultPrefix);
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    final Map<String, Object> preferences = Map<String, Object>.from(_data);
+    preferences.removeWhere((String key, _) => !key.startsWith(prefix));
+    return preferences;
   }
 
   @override
