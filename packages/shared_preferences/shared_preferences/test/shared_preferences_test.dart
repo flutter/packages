@@ -350,7 +350,6 @@ class UnimplementedSharedPreferencesStore
       : backend = InMemorySharedPreferencesStore.withData(data);
 
   final InMemorySharedPreferencesStore backend;
-  final List<MethodCall> log = <MethodCall>[];
 
   @override
   Future<bool> clear() {
@@ -378,7 +377,6 @@ class ThrowingSharedPreferencesStore extends SharedPreferencesStorePlatform {
       : backend = InMemorySharedPreferencesStore.withData(data);
 
   final InMemorySharedPreferencesStore backend;
-  final List<MethodCall> log = <MethodCall>[];
 
   @override
   Future<bool> clear() {
