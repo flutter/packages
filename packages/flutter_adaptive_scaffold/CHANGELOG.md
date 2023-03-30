@@ -1,4 +1,4 @@
-## 0.1.2+1
+## 0.2.0
 
 * Adds `transitionDuration` parameter for specifying how long the animation should be.
 
