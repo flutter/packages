@@ -1,5 +1,6 @@
-## NEXT
+## 3.5.0
 
+* Adds support for the native `onRenderProcessGone` callback.
 * Updates minimum Flutter version to 3.3.
 
 ## 3.4.3
