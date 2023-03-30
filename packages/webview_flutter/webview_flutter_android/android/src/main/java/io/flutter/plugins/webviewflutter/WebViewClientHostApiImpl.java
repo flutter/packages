@@ -61,6 +61,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
       flutterApi.onReceivedRequestError(this, view, request, error, reply -> {});
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
     @Override
     public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
       flutterApi.onRenderProcessGone(this, view, detail, reply -> {});
