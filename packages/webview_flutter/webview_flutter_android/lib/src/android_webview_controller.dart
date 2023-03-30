@@ -44,8 +44,7 @@ class AndroidWebViewControllerCreationParams
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
         AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting
-        android_webview.WebStorage? androidWebStorage,
+    @visibleForTesting android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -496,8 +495,7 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
-    @visibleForTesting
-        InstanceManager? instanceManager,
+    @visibleForTesting InstanceManager? instanceManager,
     @visibleForTesting
         this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =
@@ -711,7 +709,8 @@ class AndroidNavigationDelegateCreationParams
 }
 
 /// Signature for the `renderProcessGone` callback.
-typedef RenderProcessGoneCallback = void Function(bool didCrash, int rendererPriorityAtExit);
+typedef RenderProcessGoneCallback = void Function(
+    bool didCrash, int rendererPriorityAtExit);
 
 /// A place to register callback methods responsible to handle navigation events
 /// triggered by the [android_webview.WebView].

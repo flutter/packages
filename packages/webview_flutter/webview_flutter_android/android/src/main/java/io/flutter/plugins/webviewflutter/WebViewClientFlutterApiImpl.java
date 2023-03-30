@@ -6,11 +6,11 @@ package io.flutter.plugins.webviewflutter;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.RenderProcessGoneDetail;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -192,8 +192,8 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   /**
-   * Passes arguments from {@link WebViewClient#onRenderProcessGone(WebView,
-   * WebResourceRequest)} to Dart.
+   * Passes arguments from {@link WebViewClient#onRenderProcessGone(WebView, WebResourceRequest)} to
+   * Dart.
    */
   @RequiresApi(api = Build.VERSION_CODES.O)
   public void onRenderProcessGone(

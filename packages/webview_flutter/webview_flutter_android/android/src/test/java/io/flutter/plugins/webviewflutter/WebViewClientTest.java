@@ -12,10 +12,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.net.Uri;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.RenderProcessGoneDetail;
 import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCompatImpl;
 import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCreator;
 import java.util.HashMap;
@@ -91,11 +91,7 @@ public class WebViewClientTest {
 
     webViewClient.onRenderProcessGone(mockWebView, detail);
     verify(mockFlutterApi)
-        .onRenderProcessGone(
-            eq(webViewClient),
-            eq(mockWebView),
-            eq(detail),
-            any());
+        .onRenderProcessGone(eq(webViewClient), eq(mockWebView), eq(detail), any());
   }
 
   @Test
