@@ -232,9 +232,12 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       });
 
       indent.addScoped(' private:', '', () {
-        indent.writeln(
-            'static ${klass.name} FromEncodableList(const flutter::EncodableList& list);');
-        indent.writeln('flutter::EncodableList ToEncodableList() const;');
+        _writeFunctionDeclaration(indent, 'FromEncodableList',
+            returnType: klass.name,
+            parameters: <String>['const flutter::EncodableList& list'],
+            isStatic: true);
+        _writeFunctionDeclaration(indent, 'ToEncodableList',
+            returnType: 'flutter::EncodableList', isConst: true);
         for (final Class friend in root.classes) {
           if (friend != klass &&
               friend.fields.any(
@@ -285,11 +288,10 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
       });
       indent.addScoped(' public:', '', () {
-        indent
-            .write('${api.name}(flutter::BinaryMessenger* binary_messenger);');
-        indent.newln();
-        indent
-            .writeln('static const flutter::StandardMessageCodec& GetCodec();');
+        _writeFunctionDeclaration(indent, api.name,
+            parameters: <String>['flutter::BinaryMessenger* binary_messenger']);
+        _writeFunctionDeclaration(indent, 'GetCodec',
+            returnType: 'const flutter::StandardMessageCodec&', isStatic: true);
         for (final Method func in api.methods) {
           final HostDatatype returnType = getHostDatatype(func.returnType,
               root.classes, root.enums, _baseCppTypeForBuiltinDartType);
@@ -307,8 +309,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             ...map2(argTypes, argNames, (String x, String y) => '$x $y'),
             ..._flutterApiCallbackParameters(returnType),
           ];
-          indent.writeln(
-              'void ${_makeMethodName(func)}(${parameters.join(', ')});');
+          _writeFunctionDeclaration(indent, _makeMethodName(func),
+              returnType: _voidType, parameters: parameters);
         }
       });
     }, nestCount: 0);
@@ -334,8 +336,13 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     indent.write('class ${api.name} ');
     indent.addScoped('{', '};', () {
       indent.addScoped(' public:', '', () {
-        indent.writeln('${api.name}(const ${api.name}&) = delete;');
-        indent.writeln('${api.name}& operator=(const ${api.name}&) = delete;');
+        // Prevent copying/assigning.
+        _writeFunctionDeclaration(indent, api.name,
+            parameters: <String>['const ${api.name}&'], deleted: true);
+        _writeFunctionDeclaration(indent, 'operator=',
+            returnType: '${api.name}&',
+            parameters: <String>['const ${api.name}&'],
+            deleted: true);
         indent.writeln('virtual ~${api.name}() {}');
         for (final Method method in api.methods) {
           final HostDatatype returnType = getHostDatatype(method.returnType,
@@ -1444,16 +1451,21 @@ void _writeFunction(
   void Function()? body,
 }) {
   assert(body == null || type == _FunctionOutputType.definition);
-  final String scope = namespace == null ? '' : '$namespace::';
 
   // Set the initial indentation.
   indent.write('');
   // Write any starting annotations (e.g., 'static').
   for (final String annotation in startingAnnotations) {
-    indent.add(' $annotation');
+    indent.add('$annotation ');
   }
   // Write the signature.
-  indent.add('$scope$returnType $name');
+  if (returnType != null) {
+    indent.add('$returnType ');
+  }
+  if (namespace != null) {
+    indent.add('$namespace::');
+  }
+  indent.add(name);
   // Write the parameters.
   if (parameters.isEmpty) {
     indent.add('()');
@@ -1463,9 +1475,9 @@ void _writeFunction(
     indent.addScoped('(', null, () {
       enumerate(parameters, (int index, final String param) {
         if (index == parameters.length - 1) {
-          indent.writeln('$param,');
+          indent.write('$param)');
         } else {
-          indent.write(')');
+          indent.writeln('$param,');
         }
       });
     }, addTrailingNewline: false);
@@ -1495,6 +1507,7 @@ void _writeFunctionDeclaration(
   bool isVirtual = false,
   bool isConst = false,
   bool isOverride = false,
+  bool deleted = false,
 }) {
   assert(!(isVirtual && isOverride));
   _writeFunction(
@@ -1510,6 +1523,7 @@ void _writeFunctionDeclaration(
     trailingAnnotations: <String>[
       if (isConst) 'const',
       if (isOverride) 'override',
+      if (deleted) '= delete',
     ],
   );
 }
@@ -1530,7 +1544,9 @@ void _writeFunctionDefinition(
     namespace: namespace,
     returnType: returnType,
     parameters: parameters,
-    trailingAnnotations: <String>[if (isConst) 'const'],
+    trailingAnnotations: <String>[
+      if (isConst) 'const',
+    ],
     body: body,
   );
 }
