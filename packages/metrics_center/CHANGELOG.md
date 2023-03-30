@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
 ## 1.0.7
 
 * Updates code to fix strict-cast violations.
