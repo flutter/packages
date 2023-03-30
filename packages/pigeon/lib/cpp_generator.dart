@@ -284,9 +284,6 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         generatorComments: generatedMessages);
     indent.write('class ${api.name} ');
     indent.addScoped('{', '};', () {
-      indent.addScoped(' private:', '', () {
-        indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
-      });
       indent.addScoped(' public:', '', () {
         _writeFunctionDeclaration(indent, api.name,
             parameters: <String>['flutter::BinaryMessenger* binary_messenger']);
@@ -312,6 +309,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
           _writeFunctionDeclaration(indent, _makeMethodName(func),
               returnType: _voidType, parameters: parameters);
         }
+      });
+      indent.addScoped(' private:', null, () {
+        indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
       });
     }, nestCount: 0);
     indent.newln();
