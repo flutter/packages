@@ -183,11 +183,24 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent, klass.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
+    final Iterable<NamedType> orderedFields =
+        getFieldsInSerializationOrder(klass);
+
     indent.write('class ${klass.name} ');
     indent.addScoped('{', '};', () {
       indent.addScoped(' public:', '', () {
-        indent.writeln('${klass.name}();');
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        final Iterable<NamedType> requiredFields =
+            orderedFields.where((NamedType type) => !type.type.isNullable);
+        // Minimal constructor, if needed.
+        if (requiredFields.length != orderedFields.length) {
+          _writeClassConstructor(root, indent, klass, requiredFields,
+              'Constructs an object setting all non-nullable fields.');
+        }
+        // All-field constructor.
+        _writeClassConstructor(root, indent, klass, orderedFields,
+            'Constructs an object setting all fields.');
+
+        for (final NamedType field in orderedFields) {
           addDocumentationComments(
               indent, field.documentationComments, _docCommentSpec);
           final HostDatatype baseDatatype = getFieldHostDatatype(
@@ -209,7 +222,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       });
 
       indent.addScoped(' private:', '', () {
-        indent.writeln('${klass.name}(const flutter::EncodableList& list);');
+        indent.writeln(
+            'static ${klass.name} FromEncodableList(const flutter::EncodableList& list);');
         indent.writeln('flutter::EncodableList ToEncodableList() const;');
         for (final Class friend in root.classes) {
           if (friend != klass &&
@@ -228,7 +242,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
           indent.writeln('friend class $testFixtureClass;');
         }
 
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        for (final NamedType field in orderedFields) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
               field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
           indent.writeln(
@@ -366,6 +380,23 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     }, nestCount: 0);
   }
 
+  void _writeClassConstructor(Root root, Indent indent, Class klass,
+      Iterable<NamedType> params, String docComment) {
+    final String explicit = params.isEmpty ? '' : 'explicit ';
+    String paramString = params.map((NamedType param) {
+      final HostDatatype hostDatatype = getFieldHostDatatype(
+          param, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+      return '\t${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
+    }).join(',\n');
+    if (paramString.isNotEmpty) {
+      paramString = '\n$paramString';
+    }
+    indent.format('''
+$_commentPrefix $docComment
+$explicit${klass.name}($paramString);
+''');
+  }
+
   void _writeCodec(
       CppOptions generatorOptions, Root root, Indent indent, Api api) {
     assert(getCodecClasses(api, root).isNotEmpty);
@@ -423,12 +454,10 @@ class FlutterError {
 
 template<class T> class ErrorOr {
  public:
-\tErrorOr(const T& rhs) { new(&v_) T(rhs); }
-\tErrorOr(const T&& rhs) { v_ = std::move(rhs); }
-\tErrorOr(const FlutterError& rhs) {
-\t\tnew(&v_) FlutterError(rhs);
-\t}
-\tErrorOr(const FlutterError&& rhs) { v_ = std::move(rhs); }
+\tErrorOr(const T& rhs) : v_(rhs) {}
+\tErrorOr(const T&& rhs) : v_(std::move(rhs)) {}
+\tErrorOr(const FlutterError& rhs) : v_(rhs) {}
+\tErrorOr(const FlutterError&& rhs) : v_(std::move(rhs)) {}
 
 \tbool has_error() const { return std::holds_alternative<FlutterError>(v_); }
 \tconst T& value() const { return std::get<T>(v_); };
@@ -528,18 +557,25 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     indent.writeln('$_commentPrefix ${klass.name}');
     indent.newln();
 
+    final Iterable<NamedType> orderedFields =
+        getFieldsInSerializationOrder(klass);
+    final Iterable<NamedType> requiredFields =
+        orderedFields.where((NamedType type) => !type.type.isNullable);
+    // Minimal constructor, if needed.
+    if (requiredFields.length != orderedFields.length) {
+      _writeClassConstructor(root, indent, klass, requiredFields);
+    }
+    // All-field constructor.
+    _writeClassConstructor(root, indent, klass, orderedFields);
+
     // Getters and setters.
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+    for (final NamedType field in orderedFields) {
       _writeCppSourceClassField(generatorOptions, root, indent, klass, field);
     }
 
     // Serialization.
     writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
         customEnumNames);
-
-    // Default constructor.
-    indent.writeln('${klass.name}::${klass.name}() {}');
-    indent.newln();
 
     // Deserialization.
     writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
@@ -581,47 +617,70 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    indent.write('${klass.name}::${klass.name}(const EncodableList& list) ');
+    // Returns the expression to convert the given EncodableValue to a field
+    // value.
+    String getValueExpression(NamedType field, String encodable) {
+      if (customEnumNames.contains(field.type.baseName)) {
+        return '(${field.type.baseName})(std::get<int32_t>($encodable))';
+      } else if (field.type.baseName == 'int') {
+        return '$encodable.LongValue()';
+      } else {
+        final HostDatatype hostDatatype = getFieldHostDatatype(field,
+            root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
+        if (!hostDatatype.isBuiltin &&
+            root.classes
+                .map((Class x) => x.name)
+                .contains(field.type.baseName)) {
+          return '${hostDatatype.datatype}::FromEncodableList(std::get<EncodableList>($encodable))';
+        } else {
+          return 'std::get<${hostDatatype.datatype}>($encodable)';
+        }
+      }
+    }
+
+    indent.write(
+        '${klass.name} ${klass.name}::FromEncodableList(const EncodableList& list) ');
     indent.addScoped('{', '}', () {
-      enumerate(getFieldsInSerializationOrder(klass),
-          (int index, final NamedType field) {
-        final String instanceVariableName = _makeInstanceVariableName(field);
-        final String pointerFieldName =
-            '${_pointerPrefix}_${_makeVariableName(field)}';
+      const String instanceVariable = 'decoded';
+      final Iterable<_IndexedField> indexedFields = indexMap(
+          getFieldsInSerializationOrder(klass),
+          (int index, NamedType field) => _IndexedField(index, field));
+      final Iterable<_IndexedField> nullableFields = indexedFields
+          .where((_IndexedField field) => field.field.type.isNullable);
+      final Iterable<_IndexedField> nonNullableFields = indexedFields
+          .where((_IndexedField field) => !field.field.type.isNullable);
+
+      // Non-nullable fields must be set via the constructor.
+      String constructorArgs = nonNullableFields
+          .map((_IndexedField param) =>
+              getValueExpression(param.field, 'list[${param.index}]'))
+          .join(',\n\t');
+      if (constructorArgs.isNotEmpty) {
+        constructorArgs = '(\n\t$constructorArgs)';
+      }
+      indent.format('${klass.name} $instanceVariable$constructorArgs;');
+
+      // Add the nullable fields via setters, since converting the encodable
+      // values to the pointer types that the convenience constructor uses for
+      // nullable fields is non-trivial.
+      for (final _IndexedField entry in nullableFields) {
+        final NamedType field = entry.field;
+        final String setterName = _makeSetterName(field);
         final String encodableFieldName =
             '${_encodablePrefix}_${_makeVariableName(field)}';
-        indent.writeln('auto& $encodableFieldName = list[$index];');
-        if (customEnumNames.contains(field.type.baseName)) {
-          indent.writeln(
-              'if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))\t$instanceVariableName = (${field.type.baseName})*$pointerFieldName;');
-        } else {
-          final HostDatatype hostDatatype = getFieldHostDatatype(field,
-              root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
-          if (field.type.baseName == 'int') {
-            indent.format('''
-if (const int32_t* $pointerFieldName = std::get_if<int32_t>(&$encodableFieldName))
-\t$instanceVariableName = *$pointerFieldName;
-else if (const int64_t* ${pointerFieldName}_64 = std::get_if<int64_t>(&$encodableFieldName))
-\t$instanceVariableName = *${pointerFieldName}_64;''');
-          } else if (!hostDatatype.isBuiltin &&
-              root.classes
-                  .map((Class x) => x.name)
-                  .contains(field.type.baseName)) {
-            indent.write(
-                'if (const EncodableList* $pointerFieldName = std::get_if<EncodableList>(&$encodableFieldName)) ');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                  '$instanceVariableName = ${hostDatatype.datatype}(*$pointerFieldName);');
-            });
-          } else {
-            indent.write(
-                'if (const ${hostDatatype.datatype}* $pointerFieldName = std::get_if<${hostDatatype.datatype}>(&$encodableFieldName)) ');
-            indent.addScoped('{', '}', () {
-              indent.writeln('$instanceVariableName = *$pointerFieldName;');
-            });
-          }
-        }
-      });
+        indent.writeln('auto& $encodableFieldName = list[${entry.index}];');
+
+        final String valueExpression =
+            getValueExpression(field, encodableFieldName);
+        indent.writeScoped('if (!$encodableFieldName.IsNull()) {', '}', () {
+          indent.writeln('$instanceVariable.$setterName($valueExpression);');
+        });
+      }
+
+      // This returns by value, relying on copy elision, since it makes the
+      // usage more convenient during deserialization than it would be with
+      // explicit transfer via unique_ptr.
+      indent.writeln('return $instanceVariable;');
     });
   }
 
@@ -868,7 +927,7 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
           indent.writeln('case ${customClass.enumeration}:');
           indent.nest(1, () {
             indent.writeln(
-                'return CustomEncodableValue(${customClass.name}(std::get<EncodableList>(ReadValue(stream))));');
+                'return CustomEncodableValue(${customClass.name}::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));');
           });
         }
         indent.writeln('default:');
@@ -901,6 +960,42 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
     indent.newln();
   }
 
+  void _writeClassConstructor(
+      Root root, Indent indent, Class klass, Iterable<NamedType> params) {
+    final Iterable<_HostNamedType> hostParams = params.map((NamedType param) {
+      return _HostNamedType(
+        _makeVariableName(param),
+        getFieldHostDatatype(
+          param,
+          root.classes,
+          root.enums,
+          _shortBaseCppTypeForBuiltinDartType,
+        ),
+        param.type,
+      );
+    });
+
+    String paramString = hostParams
+        .map((_HostNamedType param) =>
+            '\t${_hostApiArgumentType(param.hostType)} ${param.name}')
+        .join(',\n');
+    if (paramString.isNotEmpty) {
+      paramString = '\n$paramString\n';
+    }
+
+    String initializerString = hostParams
+        .map((_HostNamedType param) =>
+            '${param.name}_(${_fieldValueExpression(param.hostType, param.name)})')
+        .join(',\n\t\t');
+    if (initializerString.isNotEmpty) {
+      initializerString = ' : $initializerString';
+    }
+
+    indent.format('''
+${klass.name}::${klass.name}($paramString)$initializerString {}
+''');
+  }
+
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
       Indent indent, Class klass, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(
@@ -918,11 +1013,8 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
     // generating multiple setter variants.
     String makeSetter(HostDatatype type) {
       const String setterArgumentName = 'value_arg';
-      final String valueExpression = type.isNullable
-          ? '$setterArgumentName ? ${_valueType(type)}(*$setterArgumentName) : std::nullopt'
-          : setterArgumentName;
       return 'void $qualifiedSetterName(${_unownedArgumentType(type)} $setterArgumentName) '
-          '{ $instanceVariableName = $valueExpression; }';
+          '{ $instanceVariableName = ${_fieldValueExpression(type, setterArgumentName)}; }';
     }
 
     indent.writeln(
@@ -936,6 +1028,18 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
     }
 
     indent.newln();
+  }
+
+  /// Returns the value to use when setting a field of the given type from
+  /// an argument of that type.
+  ///
+  /// For non-nullable values this is just the variable itself, but for nullable
+  /// values this handles the conversion between an argument type (a pointer)
+  /// and the field type (a std::optional).
+  String _fieldValueExpression(HostDatatype type, String variable) {
+    return type.isNullable
+        ? '$variable ? ${_valueType(type)}(*$variable) : std::nullopt'
+        : variable;
   }
 
   String _wrapResponse(Indent indent, Root root, TypeDeclaration returnType,
@@ -1109,9 +1213,15 @@ class _HostNamedType {
   final TypeDeclaration originalType;
 }
 
+/// Contains a class field and its serialization index.
+class _IndexedField {
+  const _IndexedField(this.index, this.field);
+  final int index;
+  final NamedType field;
+}
+
 String _getCodecSerializerName(Api api) => '${api.name}CodecSerializer';
 
-const String _pointerPrefix = 'pointer';
 const String _encodablePrefix = 'encodable';
 
 String _getArgumentName(int count, NamedType argument) =>
