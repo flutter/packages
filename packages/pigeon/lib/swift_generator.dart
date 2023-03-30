@@ -684,9 +684,7 @@ String _camelCase(String text) {
 
 String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
   if (isEnum(root, type)) {
-    final String nullableConditionPrefix = type.isNullable ? '' : '';
-    final String nullableConditionSuffix = type.isNullable ? '' : '!';
-    return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$nullableConditionSuffix';
+    return '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
