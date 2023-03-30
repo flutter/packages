@@ -62,9 +62,12 @@ abstract class TestHostApi {
           'dev.flutter.pigeon.MessageApi.initialize', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMockMessageHandler(null);
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockDecodedMessageHandler(channel, null);
       } else {
-        channel.setMockMessageHandler((Object? message) async {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           // ignore message
           api.initialize();
           return <Object?>[];
@@ -76,9 +79,12 @@ abstract class TestHostApi {
           'dev.flutter.pigeon.MessageApi.search', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMockMessageHandler(null);
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockDecodedMessageHandler(channel, null);
       } else {
-        channel.setMockMessageHandler((Object? message) async {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.MessageApi.search was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -142,9 +148,12 @@ abstract class TestNestedApi {
           'dev.flutter.pigeon.MessageNestedApi.search', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMockMessageHandler(null);
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockDecodedMessageHandler(channel, null);
       } else {
-        channel.setMockMessageHandler((Object? message) async {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.MessageNestedApi.search was null.');
           final List<Object?> args = (message as List<Object?>?)!;

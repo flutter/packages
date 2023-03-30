@@ -332,16 +332,17 @@ $resultAt != null
                 'binaryMessenger: binaryMessenger);',
               );
             });
-            final String messageHandlerSetter =
-                isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
+            final String messageHandlerSetter = isMockHandler
+                ? 'TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, '
+                : 'channel.setMessageHandler(';
             indent.write('if (api == null) ');
             indent.addScoped('{', '}', () {
-              indent.writeln('channel.$messageHandlerSetter(null);');
+              indent.writeln('${messageHandlerSetter}null);');
             }, addTrailingNewline: false);
             indent.add(' else ');
             indent.addScoped('{', '}', () {
               indent.write(
-                'channel.$messageHandlerSetter((Object? message) async ',
+                '$messageHandlerSetter(Object? message) async ',
               );
               indent.addScoped('{', '});', () {
                 final String returnType =
