@@ -384,16 +384,25 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         }
         indent.newln();
         indent.writeln('$_commentPrefix The codec used by ${api.name}.');
-        indent
-            .writeln('static const flutter::StandardMessageCodec& GetCodec();');
+        _writeFunctionDeclaration(indent, 'GetCodec',
+            returnType: 'const flutter::StandardMessageCodec&', isStatic: true);
         indent.writeln(
             '$_commentPrefix Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
-        indent.writeln(
-            'static void SetUp(flutter::BinaryMessenger* binary_messenger, ${api.name}* api);');
-        indent.writeln(
-            'static flutter::EncodableValue WrapError(std::string_view error_message);');
-        indent.writeln(
-            'static flutter::EncodableValue WrapError(const FlutterError& error);');
+        _writeFunctionDeclaration(indent, 'SetUp',
+            returnType: _voidType,
+            isStatic: true,
+            parameters: <String>[
+              'flutter::BinaryMessenger* binary_messenger',
+              '${api.name}* api',
+            ]);
+        _writeFunctionDeclaration(indent, 'WrapError',
+            returnType: 'flutter::EncodableValue',
+            isStatic: true,
+            parameters: <String>['std::string_view error_message']);
+        _writeFunctionDeclaration(indent, 'WrapError',
+            returnType: 'flutter::EncodableValue',
+            isStatic: true,
+            parameters: <String>['const FlutterError& error']);
       });
       indent.addScoped(' protected:', '', () {
         indent.writeln('${api.name}() = default;');
@@ -403,19 +412,15 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   void _writeClassConstructor(Root root, Indent indent, Class klass,
       Iterable<NamedType> params, String docComment) {
-    final String explicit = params.isEmpty ? '' : 'explicit ';
-    String paramString = params.map((NamedType param) {
+    final List<String> paramStrings = params.map((NamedType param) {
       final HostDatatype hostDatatype = getFieldHostDatatype(
           param, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
-      return '\t${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
-    }).join(',\n');
-    if (paramString.isNotEmpty) {
-      paramString = '\n$paramString';
-    }
-    indent.format('''
-$_commentPrefix $docComment
-$explicit${klass.name}($paramString);
-''');
+      return '${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
+    }).toList();
+    indent.writeln('$_commentPrefix $docComment');
+    _writeFunctionDeclaration(indent, klass.name,
+        isConstructor: true, parameters: paramStrings);
+    indent.newln();
   }
 
   void _writeCodec(
@@ -1509,6 +1514,7 @@ void _writeFunctionDeclaration(
   List<String> parameters = const <String>[],
   bool isStatic = false,
   bool isVirtual = false,
+  bool isConstructor = false,
   bool isPureVirtual = false,
   bool isConst = false,
   bool isOverride = false,
@@ -1517,6 +1523,8 @@ void _writeFunctionDeclaration(
 }) {
   assert(!(isVirtual && isOverride), 'virtual is redundant with override');
   assert(isVirtual || !isPureVirtual, 'pure virtual methods must be virtual');
+  assert(returnType == null || !isConstructor,
+      'constructors cannot have return types');
   _writeFunction(
     indent,
     inlineNoop
@@ -1528,6 +1536,7 @@ void _writeFunctionDeclaration(
     startingAnnotations: <String>[
       if (isStatic) 'static',
       if (isVirtual) 'virtual',
+      if (isConstructor && parameters.isNotEmpty) 'explicit'
     ],
     trailingAnnotations: <String>[
       if (isConst) 'const',
