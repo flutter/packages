@@ -38,6 +38,7 @@ class _CameraAppState extends State<CameraApp> {
         fps: 15,
         videoBitrate: 200000,
         audioBitrate: 32000,
+        enableAudio: true,
       ),
     );
     controller.initialize().then((_) {
