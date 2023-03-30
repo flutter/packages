@@ -628,7 +628,13 @@ void main() {
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            MediaSettings.low(),
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.low,
+              fps: 15,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
+              enableAudio: true,
+            ),
           ),
           throwsA(
             isA<CameraException>().having(
@@ -2455,7 +2461,7 @@ void main() {
 
           final FakeMediaError error = FakeMediaError(
             MediaError.MEDIA_ERR_NETWORK,
-            'A network error occured.',
+            'A network error occurred.',
           );
 
           final CameraErrorCode errorCode =

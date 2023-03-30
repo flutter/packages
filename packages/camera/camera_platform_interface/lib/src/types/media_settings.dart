@@ -17,15 +17,6 @@ class MediaSettings {
     this.enableAudio = false,
   });
 
-  /// Default low quality factory
-  static MediaSettings low({bool enableAudio = true}) => MediaSettings(
-        resolutionPreset: ResolutionPreset.low,
-        fps: 15,
-        videoBitrate: 200000,
-        audioBitrate: 32000,
-        enableAudio: enableAudio,
-      );
-
   /// resolution preset
   final ResolutionPreset? resolutionPreset;
 
