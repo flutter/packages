@@ -1,6 +1,10 @@
-## 0.10.4
+## 0.10.5
 
 * Allows camera to be switched while video recording.
+
+## 0.10.4
+
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.10.3+2
