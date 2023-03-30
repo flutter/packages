@@ -142,11 +142,7 @@ struct AllNullableTypes {
     let nullableNestedList = nilOrValue(value: list[10]) as! [[Bool?]?]? 
     let nullableMapWithAnnotations = nilOrValue(value: list[11]) as! [String?: String?]? 
     let nullableMapWithObject = nilOrValue(value: list[12]) as! [String?: Any?]? 
-    var aNullableEnum: AnEnum? = nil
-    let enumVal13 = nilOrValue(value: list[13]) as! Int?
-    if let aNullableEnumRawValue = enumVal13{
-      aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)
-    }
+    let aNullableEnum = nilOrValue(value: list[13]) != nil ? AnEnum(rawValue: list[13] as! Int) : nilOrValue(value: list[13]) as! AnEnum?
     let aNullableString = nilOrValue(value: list[14]) as! String? 
 
     return AllNullableTypes(

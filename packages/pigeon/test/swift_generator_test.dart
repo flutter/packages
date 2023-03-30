@@ -83,7 +83,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
-    expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)!'));
+    expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)'));
   });
 
   test('gen one host api', () {
@@ -915,10 +915,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            'let fooArg = (args[0] is NSNull) ? (nil as Any?) as! Int64? : args[0] as! Int64?'));
+    expect(code, contains('nilOrValue(value: args[0]) as! Int64?'));
   });
 
   test('nullable argument flutter', () {

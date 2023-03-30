@@ -192,14 +192,8 @@ import FlutterMacOS
             });
           } else if (!hostDatatype.isBuiltin &&
               customEnumNames.contains(field.type.baseName)) {
-            indent.writeln('var ${field.name}: $fieldType? = nil');
             indent.writeln(
-                'let enumVal$index = ${_castForceUnwrap(listValue, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}');
-            indent.write('if let ${field.name}RawValue = enumVal$index');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                  '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
-            });
+                'let ${field.name} = ${_castForceUnwrap(listValue, field.type, root)}');
           } else {
             indent.writeln(
                 'let ${field.name} = ${_castForceUnwrap(listValue, field.type, root)} ');
@@ -683,12 +677,15 @@ String _camelCase(String text) {
 }
 
 String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
-  final String forceUnwrap = type.isNullable ? '' : '!';
   final String castUnwrap = type.isNullable ? '?' : '';
   if (isEnum(root, type)) {
     final String nullableConditionPrefix =
-        type.isNullable ? '$value == nil ? nil : ' : '';
-    return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$forceUnwrap';
+        type.isNullable ? 'nilOrValue(value: $value) != nil ? ' : '';
+    final String nullableConditionSuffix = type.isNullable
+        ? ' : nilOrValue(value: $value) as! ${type.baseName}?'
+        : '';
+
+    return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$nullableConditionSuffix';
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
