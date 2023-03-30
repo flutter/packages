@@ -16,7 +16,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: MyHomePage());
+    return MaterialApp(
+      theme: ThemeData.light().copyWith(
+        navigationRailTheme: const NavigationRailThemeData(
+          selectedIconTheme: IconThemeData(
+            color: Colors.red,
+            size: 28,
+          ),
+          selectedLabelTextStyle: TextStyle(
+            fontSize: 16,
+            color: Colors.red,
+          ),
+          unselectedLabelTextStyle: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+          ),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          type: BottomNavigationBarType.fixed,
+        ),
+      ),
+      home: const MyHomePage(),
+    );
   }
 }
 

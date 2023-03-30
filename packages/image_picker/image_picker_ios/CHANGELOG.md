@@ -1,3 +1,7 @@
+## 0.8.7+2
+
+* Updates to `pigeon` version 9.
+
 ## 0.8.7+1
 
 * Clarifies explanation of endorsement in README.

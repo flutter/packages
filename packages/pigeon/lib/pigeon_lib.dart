@@ -1299,13 +1299,21 @@ ${_argParser.usage}''';
         help: 'The package that generated Java code will be in.')
     ..addFlag('java_use_generated_annotation',
         help: 'Adds the java.annotation.Generated annotation to the output.')
-    ..addOption('experimental_swift_out',
-        help: 'Path to generated Swift file (.swift).')
-    ..addOption('experimental_kotlin_out',
-        help: 'Path to generated Kotlin file (.kt). (experimental)')
-    ..addOption('experimental_kotlin_package',
-        help:
-            'The package that generated Kotlin code will be in. (experimental)')
+    ..addOption(
+      'swift_out',
+      help: 'Path to generated Swift file (.swift).',
+      aliases: const <String>['experimental_swift_out'],
+    )
+    ..addOption(
+      'kotlin_out',
+      help: 'Path to generated Kotlin file (.kt).',
+      aliases: const <String>['experimental_kotlin_out'],
+    )
+    ..addOption(
+      'kotlin_package',
+      help: 'The package that generated Kotlin code will be in.',
+      aliases: const <String>['experimental_kotlin_package'],
+    )
     ..addOption('experimental_cpp_header_out',
         help: 'Path to generated C++ header file (.h). (experimental)')
     ..addOption('experimental_cpp_source_out',
@@ -1351,10 +1359,10 @@ ${_argParser.usage}''';
         useGeneratedAnnotation:
             results['java_use_generated_annotation'] as bool?,
       ),
-      swiftOut: results['experimental_swift_out'] as String?,
-      kotlinOut: results['experimental_kotlin_out'] as String?,
+      swiftOut: results['swift_out'] as String?,
+      kotlinOut: results['kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
-        package: results['experimental_kotlin_package'] as String?,
+        package: results['kotlin_package'] as String?,
       ),
       cppHeaderOut: results['experimental_cpp_header_out'] as String?,
       cppSourceOut: results['experimental_cpp_source_out'] as String?,
