@@ -964,10 +964,15 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
       Root root, Indent indent, Class klass, Iterable<NamedType> params) {
     final Iterable<_HostNamedType> hostParams = params.map((NamedType param) {
       return _HostNamedType(
-          _makeVariableName(param),
-          getFieldHostDatatype(param, root.classes, root.enums,
-              _shortBaseCppTypeForBuiltinDartType),
-          param.type);
+        _makeVariableName(param),
+        getFieldHostDatatype(
+          param,
+          root.classes,
+          root.enums,
+          _shortBaseCppTypeForBuiltinDartType,
+        ),
+        param.type,
+      );
     });
 
     String paramString = hostParams
