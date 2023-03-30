@@ -915,7 +915,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('nilOrValue(value: args[0]) as! Int64?'));
+    expect(code, contains('(nilOrValue(value: args[0]) as Any) as! Int64?'));
   });
 
   test('nullable argument flutter', () {
