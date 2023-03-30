@@ -936,6 +936,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     _onWebResourceError = onWebResourceError;
   }
 
+  /// Invoked when a render process has exited.
   Future<void> setOnRenderProcessGone(
     RenderProcessGoneCallback onRenderProcessGone,
   ) async {
