@@ -15,13 +15,11 @@
 ## 3.4.3
 
 * Updates internal Java InstanceManager to be cleared on hot restart.
+* Adds onReceivedHttpError WebViewClient callback to support the onHttpError callback.
 
 ## 3.4.2
 
 * Clarifies explanation of endorsement in README.
-
-## 3.4.1
-* Adds onReceivedHttpError WebView callback to support the onPageError callback.
 
 ## 3.4.1
 

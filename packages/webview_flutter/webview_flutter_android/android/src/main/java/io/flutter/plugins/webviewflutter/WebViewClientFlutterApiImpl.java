@@ -118,10 +118,9 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       WebResourceRequest request,
       WebResourceResponse response,
       Reply<Void> callback) {
+    webViewFlutterApi.create(webView, reply -> {});
+
     final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
     onReceivedHttpError(
         getIdentifierForClient(webViewClient),
         webViewIdentifier,

@@ -7,6 +7,8 @@
 ## 3.2.3
 
 * Updates to `pigeon` version 7.
+* Adds `decidePolicyForNavigationResponse` to internal WKNavigationDelegate to support the
+  `onHttpError` callback.
 
 ## 3.2.2
 
@@ -20,7 +22,6 @@
 ## 3.2.0
 
 * Updates minimum Flutter version to 3.3 and iOS 11.
-* Adds decidePolicyForNavigationResponse WKWebView delegate to support the onPageError callback.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 3.2.0

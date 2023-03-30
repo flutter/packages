@@ -177,7 +177,7 @@ class WKNavigationAction {
   final WKNavigationType navigationType;
 }
 
-/// An object that contains information about the http error.
+/// An object that contains information about a response to a navigation request,.
 ///
 /// Wraps [WKNavigationResponse](https://developer.apple.com/documentation/webkit/wknavigationresponse?language=objc).
 @immutable

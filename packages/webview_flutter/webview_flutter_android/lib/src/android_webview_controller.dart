@@ -672,7 +672,8 @@ class AndroidWebResourceError extends WebResourceError {
   }
 }
 
-/// Error returned in `WebView.onWebResourceError` when a web resource loading error has occurred.
+/// Error returned in `AndroidNavigationDelegate.setOnHttpError` when an HTTP
+/// response error has been received.
 @immutable
 class AndroidHttpResponseError extends HttpResponseError {
   /// Creates a new [AndroidHttpResponseError].

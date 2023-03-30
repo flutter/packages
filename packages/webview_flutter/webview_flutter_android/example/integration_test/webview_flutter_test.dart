@@ -859,6 +859,73 @@ Future<void> main() async {
       await pageFinishCompleter.future;
     });
 
+    testWidgets('onHttpError', (WidgetTester tester) async {
+      final Completer<HttpResponseError> errorCompleter =
+          Completer<HttpResponseError>();
+
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      )
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setPlatformNavigationDelegate(
+          PlatformNavigationDelegate(
+            const PlatformNavigationDelegateCreationParams(),
+          )..setOnHttpError((HttpResponseError error) {
+              errorCompleter.complete(error);
+            }),
+        )
+        ..loadRequest(
+          LoadRequestParams(uri: Uri.parse('$prefixUrl/favicon.ico')),
+        );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      final HttpResponseError error = await errorCompleter.future;
+
+      expect(error, isNotNull);
+      expect(error.statusCode, 404);
+    });
+
+    testWidgets('onHttpError is not called when no HTTP error is received', (WidgetTester tester) async {
+      final Completer<HttpResponseError> errorCompleter =
+          Completer<HttpResponseError>();
+      final Completer<void> pageFinishCompleter = Completer<void>();
+
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      )
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setPlatformNavigationDelegate(
+          PlatformNavigationDelegate(
+            const PlatformNavigationDelegateCreationParams(),
+          )
+          ..setOnPageFinished((_) => pageFinishCompleter.complete())
+          ..setOnHttpError((HttpResponseError error) {
+              errorCompleter.complete(error);
+            }),
+        )
+        ..loadRequest(
+          LoadRequestParams(uri: Uri.parse('https://www.google.com')),
+        );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      expect(errorCompleter.future, doesNotComplete);
+      await pageFinishCompleter.future;
+    });
+
     testWidgets('can block requests', (WidgetTester tester) async {
       Completer<void> pageLoaded = Completer<void>();
 
