@@ -46,6 +46,8 @@ class _TestHostApiCodec extends StandardMessageCodec {
 ///
 /// This comment also tests multiple line comments.
 abstract class TestHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = _TestHostApiCodec();
 
   /// This comment is to test documentation comments.
@@ -62,10 +64,10 @@ abstract class TestHostApi {
           'dev.flutter.pigeon.MessageApi.initialize', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(channel,
                 (Object? message) async {
           // ignore message
@@ -79,10 +81,10 @@ abstract class TestHostApi {
           'dev.flutter.pigeon.MessageApi.search', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(channel,
                 (Object? message) async {
           assert(message != null,
@@ -135,6 +137,8 @@ class _TestNestedApiCodec extends StandardMessageCodec {
 
 /// This comment is to test api documentation comments.
 abstract class TestNestedApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = _TestNestedApiCodec();
 
   /// This comment is to test method documentation comments.
@@ -148,10 +152,10 @@ abstract class TestNestedApi {
           'dev.flutter.pigeon.MessageNestedApi.search', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
             .setMockDecodedMessageHandler<Object?>(channel,
                 (Object? message) async {
           assert(message != null,

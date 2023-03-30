@@ -296,6 +296,10 @@ $resultAt != null
 
     indent.write('abstract class ${api.name} ');
     indent.addScoped('{', '}', () {
+      if (isMockHandler) {
+        indent.writeln(
+            'static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;');
+      }
       indent
           .writeln('static const MessageCodec<Object?> codec = $codecName();');
       indent.newln();
@@ -333,7 +337,7 @@ $resultAt != null
               );
             });
             final String messageHandlerSetter = isMockHandler
-                ? 'TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, '
+                ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, '
                 : 'channel.setMessageHandler(';
             indent.write('if (api == null) ');
             indent.addScoped('{', '}', () {
