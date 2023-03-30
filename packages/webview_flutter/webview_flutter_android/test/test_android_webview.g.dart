@@ -1253,7 +1253,7 @@ abstract class TestAssetManagerHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.FlutterAssetManagerHostApi.list was null.');
+              'Argument for dev.flutter.pigeon.FlutterAssetManagerHostApi.list was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_path = (args[0] as String?);
           assert(arg_path != null,
@@ -1265,14 +1265,15 @@ abstract class TestAssetManagerHostApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterAssetManagerHostApi.getAssetFilePathByName', codec,
+          'dev.flutter.pigeon.FlutterAssetManagerHostApi.getAssetFilePathByName',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMockMessageHandler(null);
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.FlutterAssetManagerHostApi.getAssetFilePathByName was null.');
+              'Argument for dev.flutter.pigeon.FlutterAssetManagerHostApi.getAssetFilePathByName was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_name = (args[0] as String?);
           assert(arg_name != null,
@@ -1292,7 +1293,8 @@ abstract class TestWebStorageHostApi {
 
   void deleteAllData(int instanceId);
 
-  static void setup(TestWebStorageHostApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestWebStorageHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.WebStorageHostApi.create', codec,
@@ -1302,7 +1304,7 @@ abstract class TestWebStorageHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.WebStorageHostApi.create was null.');
+              'Argument for dev.flutter.pigeon.WebStorageHostApi.create was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_instanceId = (args[0] as int?);
           assert(arg_instanceId != null,
@@ -1321,7 +1323,7 @@ abstract class TestWebStorageHostApi {
       } else {
         channel.setMockMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.WebStorageHostApi.deleteAllData was null.');
+              'Argument for dev.flutter.pigeon.WebStorageHostApi.deleteAllData was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_instanceId = (args[0] as int?);
           assert(arg_instanceId != null,
