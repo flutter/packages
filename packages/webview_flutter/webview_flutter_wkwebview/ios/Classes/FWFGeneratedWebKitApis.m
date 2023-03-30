@@ -60,6 +60,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
+@interface FWFWKNavigationResponsePolicyEnumData ()
++ (FWFWKNavigationResponsePolicyEnumData *)fromList:(NSArray *)list;
++ (nullable FWFWKNavigationResponsePolicyEnumData *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @interface FWFNSHttpCookiePropertyKeyEnumData ()
 + (FWFNSHttpCookiePropertyKeyEnumData *)fromList:(NSArray *)list;
 + (nullable FWFNSHttpCookiePropertyKeyEnumData *)nullableFromList:(NSArray *)list;
@@ -72,6 +78,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
+@interface FWFNSHttpUrlResponseData ()
++ (FWFNSHttpUrlResponseData *)fromList:(NSArray *)list;
++ (nullable FWFNSHttpUrlResponseData *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @interface FWFWKUserScriptData ()
 + (FWFWKUserScriptData *)fromList:(NSArray *)list;
 + (nullable FWFWKUserScriptData *)nullableFromList:(NSArray *)list;
@@ -81,6 +93,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @interface FWFWKNavigationActionData ()
 + (FWFWKNavigationActionData *)fromList:(NSArray *)list;
 + (nullable FWFWKNavigationActionData *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface FWFWKNavigationResponseData ()
++ (FWFWKNavigationResponseData *)fromList:(NSArray *)list;
++ (nullable FWFWKNavigationResponseData *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -242,6 +260,29 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@implementation FWFWKNavigationResponsePolicyEnumData
++ (instancetype)makeWithValue:(FWFWKNavigationResponsePolicyEnum)value {
+  FWFWKNavigationResponsePolicyEnumData *pigeonResult =
+      [[FWFWKNavigationResponsePolicyEnumData alloc] init];
+  pigeonResult.value = value;
+  return pigeonResult;
+}
++ (FWFWKNavigationResponsePolicyEnumData *)fromList:(NSArray *)list {
+  FWFWKNavigationResponsePolicyEnumData *pigeonResult =
+      [[FWFWKNavigationResponsePolicyEnumData alloc] init];
+  pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
+  return pigeonResult;
+}
++ (nullable FWFWKNavigationResponsePolicyEnumData *)nullableFromList:(NSArray *)list {
+  return (list) ? [FWFWKNavigationResponsePolicyEnumData fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    @(self.value),
+  ];
+}
+@end
+
 @implementation FWFNSHttpCookiePropertyKeyEnumData
 + (instancetype)makeWithValue:(FWFNSHttpCookiePropertyKeyEnum)value {
   FWFNSHttpCookiePropertyKeyEnumData *pigeonResult =
@@ -296,6 +337,28 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.httpMethod ?: [NSNull null]),
     (self.httpBody ?: [NSNull null]),
     (self.allHttpHeaderFields ?: [NSNull null]),
+  ];
+}
+@end
+
+@implementation FWFNSHttpUrlResponseData
++ (instancetype)makeWithStatusCode:(NSNumber *)statusCode {
+  FWFNSHttpUrlResponseData *pigeonResult = [[FWFNSHttpUrlResponseData alloc] init];
+  pigeonResult.statusCode = statusCode;
+  return pigeonResult;
+}
++ (FWFNSHttpUrlResponseData *)fromList:(NSArray *)list {
+  FWFNSHttpUrlResponseData *pigeonResult = [[FWFNSHttpUrlResponseData alloc] init];
+  pigeonResult.statusCode = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.statusCode != nil, @"");
+  return pigeonResult;
+}
++ (nullable FWFNSHttpUrlResponseData *)nullableFromList:(NSArray *)list {
+  return (list) ? [FWFNSHttpUrlResponseData fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.statusCode ?: [NSNull null]),
   ];
 }
 @end
@@ -360,6 +423,34 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.request ? [self.request toList] : [NSNull null]),
     (self.targetFrame ? [self.targetFrame toList] : [NSNull null]),
     @(self.navigationType),
+  ];
+}
+@end
+
+@implementation FWFWKNavigationResponseData
++ (instancetype)makeWithResponse:(FWFNSHttpUrlResponseData *)response
+                    forMainFrame:(NSNumber *)forMainFrame {
+  FWFWKNavigationResponseData *pigeonResult = [[FWFWKNavigationResponseData alloc] init];
+  pigeonResult.response = response;
+  pigeonResult.forMainFrame = forMainFrame;
+  return pigeonResult;
+}
++ (FWFWKNavigationResponseData *)fromList:(NSArray *)list {
+  FWFWKNavigationResponseData *pigeonResult = [[FWFWKNavigationResponseData alloc] init];
+  pigeonResult.response =
+      [FWFNSHttpUrlResponseData nullableFromList:(GetNullableObjectAtIndex(list, 0))];
+  NSAssert(pigeonResult.response != nil, @"");
+  pigeonResult.forMainFrame = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.forMainFrame != nil, @"");
+  return pigeonResult;
+}
++ (nullable FWFWKNavigationResponseData *)nullableFromList:(NSArray *)list {
+  return (list) ? [FWFWKNavigationResponseData fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.response ? [self.response toList] : [NSNull null]),
+    (self.forMainFrame ?: [NSNull null]),
   ];
 }
 @end
@@ -1359,13 +1450,19 @@ void FWFWKNavigationDelegateHostApiSetup(id<FlutterBinaryMessenger> binaryMessen
     case 128:
       return [FWFNSErrorData fromList:[self readValue]];
     case 129:
-      return [FWFNSUrlRequestData fromList:[self readValue]];
+      return [FWFNSHttpUrlResponseData fromList:[self readValue]];
     case 130:
-      return [FWFWKFrameInfoData fromList:[self readValue]];
+      return [FWFNSUrlRequestData fromList:[self readValue]];
     case 131:
-      return [FWFWKNavigationActionData fromList:[self readValue]];
+      return [FWFWKFrameInfoData fromList:[self readValue]];
     case 132:
+      return [FWFWKNavigationActionData fromList:[self readValue]];
+    case 133:
       return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
+    case 134:
+      return [FWFWKNavigationResponseData fromList:[self readValue]];
+    case 135:
+      return [FWFWKNavigationResponsePolicyEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -1379,17 +1476,26 @@ void FWFWKNavigationDelegateHostApiSetup(id<FlutterBinaryMessenger> binaryMessen
   if ([value isKindOfClass:[FWFNSErrorData class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
+  } else if ([value isKindOfClass:[FWFNSHttpUrlResponseData class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
+  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
     [self writeByte:132];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
+    [self writeByte:133];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKNavigationResponseData class]]) {
+    [self writeByte:134];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKNavigationResponsePolicyEnumData class]]) {
+    [self writeByte:135];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -1487,6 +1593,30 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void) {
   ]
                  reply:^(id reply) {
                    FWFWKNavigationActionPolicyEnumData *output = reply;
+                   completion(output, nil);
+                 }];
+}
+- (void)
+    decidePolicyForNavigationResponseForDelegateWithIdentifier:(NSNumber *)arg_identifier
+                                             webViewIdentifier:(NSNumber *)arg_webViewIdentifier
+                                            navigationResponse:(FWFWKNavigationResponseData *)
+                                                                   arg_navigationResponse
+                                                    completion:
+                                                        (void (^)(
+                                                            FWFWKNavigationResponsePolicyEnumData
+                                                                *_Nullable,
+                                                            NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:
+          @"dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFWKNavigationDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[
+    arg_identifier ?: [NSNull null], arg_webViewIdentifier ?: [NSNull null],
+    arg_navigationResponse ?: [NSNull null]
+  ]
+                 reply:^(id reply) {
+                   FWFWKNavigationResponsePolicyEnumData *output = reply;
                    completion(output, nil);
                  }];
 }
@@ -1686,26 +1816,32 @@ void FWFNSObjectHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
     case 130:
       return [FWFNSHttpCookiePropertyKeyEnumData fromList:[self readValue]];
     case 131:
-      return [FWFNSKeyValueChangeKeyEnumData fromList:[self readValue]];
+      return [FWFNSHttpUrlResponseData fromList:[self readValue]];
     case 132:
-      return [FWFNSKeyValueObservingOptionsEnumData fromList:[self readValue]];
+      return [FWFNSKeyValueChangeKeyEnumData fromList:[self readValue]];
     case 133:
-      return [FWFNSUrlRequestData fromList:[self readValue]];
+      return [FWFNSKeyValueObservingOptionsEnumData fromList:[self readValue]];
     case 134:
-      return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
+      return [FWFNSUrlRequestData fromList:[self readValue]];
     case 135:
-      return [FWFWKFrameInfoData fromList:[self readValue]];
+      return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
     case 136:
-      return [FWFWKNavigationActionData fromList:[self readValue]];
+      return [FWFWKFrameInfoData fromList:[self readValue]];
     case 137:
-      return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
+      return [FWFWKNavigationActionData fromList:[self readValue]];
     case 138:
-      return [FWFWKScriptMessageData fromList:[self readValue]];
+      return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
     case 139:
-      return [FWFWKUserScriptData fromList:[self readValue]];
+      return [FWFWKNavigationResponseData fromList:[self readValue]];
     case 140:
-      return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
+      return [FWFWKNavigationResponsePolicyEnumData fromList:[self readValue]];
     case 141:
+      return [FWFWKScriptMessageData fromList:[self readValue]];
+    case 142:
+      return [FWFWKUserScriptData fromList:[self readValue]];
+    case 143:
+      return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
+    case 144:
       return [FWFWKWebsiteDataTypeEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1726,38 +1862,47 @@ void FWFNSObjectHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   } else if ([value isKindOfClass:[FWFNSHttpCookiePropertyKeyEnumData class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSKeyValueChangeKeyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSHttpUrlResponseData class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSKeyValueObservingOptionsEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSKeyValueChangeKeyEnumData class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
+  } else if ([value isKindOfClass:[FWFNSKeyValueObservingOptionsEnumData class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKAudiovisualMediaTypeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
+  } else if ([value isKindOfClass:[FWFWKAudiovisualMediaTypeEnumData class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationResponseData class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationResponsePolicyEnumData class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKWebsiteDataTypeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
     [self writeByte:141];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
+    [self writeByte:142];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
+    [self writeByte:143];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKWebsiteDataTypeEnumData class]]) {
+    [self writeByte:144];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -1845,26 +1990,32 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
     case 130:
       return [FWFNSHttpCookiePropertyKeyEnumData fromList:[self readValue]];
     case 131:
-      return [FWFNSKeyValueChangeKeyEnumData fromList:[self readValue]];
+      return [FWFNSHttpUrlResponseData fromList:[self readValue]];
     case 132:
-      return [FWFNSKeyValueObservingOptionsEnumData fromList:[self readValue]];
+      return [FWFNSKeyValueChangeKeyEnumData fromList:[self readValue]];
     case 133:
-      return [FWFNSUrlRequestData fromList:[self readValue]];
+      return [FWFNSKeyValueObservingOptionsEnumData fromList:[self readValue]];
     case 134:
-      return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
+      return [FWFNSUrlRequestData fromList:[self readValue]];
     case 135:
-      return [FWFWKFrameInfoData fromList:[self readValue]];
+      return [FWFWKAudiovisualMediaTypeEnumData fromList:[self readValue]];
     case 136:
-      return [FWFWKNavigationActionData fromList:[self readValue]];
+      return [FWFWKFrameInfoData fromList:[self readValue]];
     case 137:
-      return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
+      return [FWFWKNavigationActionData fromList:[self readValue]];
     case 138:
-      return [FWFWKScriptMessageData fromList:[self readValue]];
+      return [FWFWKNavigationActionPolicyEnumData fromList:[self readValue]];
     case 139:
-      return [FWFWKUserScriptData fromList:[self readValue]];
+      return [FWFWKNavigationResponseData fromList:[self readValue]];
     case 140:
-      return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
+      return [FWFWKNavigationResponsePolicyEnumData fromList:[self readValue]];
     case 141:
+      return [FWFWKScriptMessageData fromList:[self readValue]];
+    case 142:
+      return [FWFWKUserScriptData fromList:[self readValue]];
+    case 143:
+      return [FWFWKUserScriptInjectionTimeEnumData fromList:[self readValue]];
+    case 144:
       return [FWFWKWebsiteDataTypeEnumData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1885,38 +2036,47 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void) {
   } else if ([value isKindOfClass:[FWFNSHttpCookiePropertyKeyEnumData class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSKeyValueChangeKeyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSHttpUrlResponseData class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSKeyValueObservingOptionsEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSKeyValueChangeKeyEnumData class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
+  } else if ([value isKindOfClass:[FWFNSKeyValueObservingOptionsEnumData class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKAudiovisualMediaTypeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFNSUrlRequestData class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
+  } else if ([value isKindOfClass:[FWFWKAudiovisualMediaTypeEnumData class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
+  } else if ([value isKindOfClass:[FWFWKFrameInfoData class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionData class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationActionPolicyEnumData class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationResponseData class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKNavigationResponsePolicyEnumData class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FWFWKWebsiteDataTypeEnumData class]]) {
+  } else if ([value isKindOfClass:[FWFWKScriptMessageData class]]) {
     [self writeByte:141];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKUserScriptData class]]) {
+    [self writeByte:142];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKUserScriptInjectionTimeEnumData class]]) {
+    [self writeByte:143];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FWFWKWebsiteDataTypeEnumData class]]) {
+    [self writeByte:144];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

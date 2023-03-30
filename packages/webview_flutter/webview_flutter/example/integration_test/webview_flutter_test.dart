@@ -656,7 +656,9 @@ Future<void> main() async {
             NavigationDelegate(onHttpError: (HttpResponseError error) {
           errorCompleter.complete(error);
         }))
-        ..loadRequest(Uri.parse('$prefixUrl/favicon.ico'),);
+        ..loadRequest(
+          Uri.parse('$prefixUrl/favicon.ico'),
+        );
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 

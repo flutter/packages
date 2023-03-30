@@ -9,7 +9,6 @@
 
 * Adds support to track url changes. See `PlatformNavigationDelegate.setOnUrlChange`.
 * Aligns Dart and Flutter SDK constraints.
-* Adds platform interface for onPageError callback
 
 ## 2.0.2
 

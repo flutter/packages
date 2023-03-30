@@ -38,7 +38,8 @@ class WebKitProxy {
       String keyPath,
       NSObject object,
       Map<NSKeyValueChangeKey, Object?> change,
-    )? observeValue,
+    )?
+        observeValue,
     InstanceManager? instanceManager,
   }) createWebView;
 
@@ -52,7 +53,8 @@ class WebKitProxy {
     required void Function(
       WKUserContentController userContentController,
       WKScriptMessage message,
-    ) didReceiveScriptMessage,
+    )
+        didReceiveScriptMessage,
   }) createScriptMessageHandler;
 
   /// The default [WKWebsiteDataStore].
@@ -85,6 +87,7 @@ class WebKitProxy {
       WKWebView webView,
       WKWebViewConfiguration configuration,
       WKNavigationAction navigationAction,
-    )? onCreateWebView,
+    )?
+        onCreateWebView,
   }) createUIDelegate;
 }

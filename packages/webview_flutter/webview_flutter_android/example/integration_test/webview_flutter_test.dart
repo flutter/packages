@@ -892,7 +892,8 @@ Future<void> main() async {
       expect(error.statusCode, 404);
     });
 
-    testWidgets('onHttpError is not called when no HTTP error is received', (WidgetTester tester) async {
+    testWidgets('onHttpError is not called when no HTTP error is received',
+        (WidgetTester tester) async {
       final Completer<HttpResponseError> errorCompleter =
           Completer<HttpResponseError>();
       final Completer<void> pageFinishCompleter = Completer<void>();
@@ -905,8 +906,8 @@ Future<void> main() async {
           PlatformNavigationDelegate(
             const PlatformNavigationDelegateCreationParams(),
           )
-          ..setOnPageFinished((_) => pageFinishCompleter.complete())
-          ..setOnHttpError((HttpResponseError error) {
+            ..setOnPageFinished((_) => pageFinishCompleter.complete())
+            ..setOnHttpError((HttpResponseError error) {
               errorCompleter.complete(error);
             }),
         )

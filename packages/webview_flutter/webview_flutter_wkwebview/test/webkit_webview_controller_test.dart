@@ -45,8 +45,10 @@ void main() {
           String keyPath,
           NSObject object,
           Map<NSKeyValueChangeKey, Object?> change,
-        )? observeValue,
-      })? createMockWebView,
+        )?
+            observeValue,
+      })?
+          createMockWebView,
       MockWKWebViewConfiguration? mockWebViewConfiguration,
       InstanceManager? instanceManager,
     }) {
@@ -66,7 +68,8 @@ void main() {
               String keyPath,
               NSObject object,
               Map<NSKeyValueChangeKey, Object?> change,
-            )? observeValue,
+            )?
+                observeValue,
             InstanceManager? instanceManager,
           }) {
             nonNullMockWebView = createMockWebView == null
@@ -658,7 +661,8 @@ void main() {
           required void Function(
             WKUserContentController userContentController,
             WKScriptMessage message,
-          ) didReceiveScriptMessage,
+          )
+              didReceiveScriptMessage,
         }) {
           return WKScriptMessageHandler.detached(
             didReceiveScriptMessage: didReceiveScriptMessage,
@@ -703,7 +707,8 @@ void main() {
           required void Function(
             WKUserContentController userContentController,
             WKScriptMessage message,
-          ) didReceiveScriptMessage,
+          )
+              didReceiveScriptMessage,
         }) {
           return WKScriptMessageHandler.detached(
             didReceiveScriptMessage: didReceiveScriptMessage,
@@ -742,7 +747,8 @@ void main() {
           required void Function(
             WKUserContentController userContentController,
             WKScriptMessage message,
-          ) didReceiveScriptMessage,
+          )
+              didReceiveScriptMessage,
         }) {
           return WKScriptMessageHandler.detached(
             didReceiveScriptMessage: didReceiveScriptMessage,
@@ -832,7 +838,8 @@ void main() {
             String keyPath,
             NSObject object,
             Map<NSKeyValueChangeKey, Object?> change,
-          )? observeValue,
+          )?
+              observeValue,
         }) {
           webViewObserveValue = observeValue!;
           return mockWebView;
@@ -893,7 +900,8 @@ void main() {
             String keyPath,
             NSObject object,
             Map<NSKeyValueChangeKey, Object?> change,
-          )? observeValue,
+          )?
+              observeValue,
         }) {
           webViewObserveValue = observeValue!;
           return mockWebView;
@@ -958,7 +966,8 @@ void main() {
           required void Function(
             WKUserContentController userContentController,
             WKScriptMessage message,
-          ) didReceiveScriptMessage,
+          )
+              didReceiveScriptMessage,
         }) {
           messageHandler = WKScriptMessageHandler.detached(
             didReceiveScriptMessage: didReceiveScriptMessage,
