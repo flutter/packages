@@ -269,7 +269,7 @@ void main() {
 
   test('unimplemented errors in withPrefix methods are updated', () async {
     final UnimplementedSharedPreferencesStore localStore =
-        UnimplementedSharedPreferencesStore(<String, Object>{});
+        UnimplementedSharedPreferencesStore();
     SharedPreferencesStorePlatform.instance = localStore;
     SharedPreferences.resetStatic();
     SharedPreferences.setPrefix('');
@@ -290,7 +290,7 @@ void main() {
   test('non-Unimplemented errors pass through withPrefix methods correctly',
       () async {
     final ThrowingSharedPreferencesStore localStore =
-        ThrowingSharedPreferencesStore(<String, Object>{});
+        ThrowingSharedPreferencesStore();
     SharedPreferencesStorePlatform.instance = localStore;
     SharedPreferences.resetStatic();
     SharedPreferences.setPrefix('');
@@ -346,11 +346,6 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
 
 class UnimplementedSharedPreferencesStore
     extends SharedPreferencesStorePlatform {
-  UnimplementedSharedPreferencesStore(Map<String, Object> data)
-      : backend = InMemorySharedPreferencesStore.withData(data);
-
-  final InMemorySharedPreferencesStore backend;
-
   @override
   Future<bool> clear() {
     throw UnimplementedError();
@@ -373,11 +368,6 @@ class UnimplementedSharedPreferencesStore
 }
 
 class ThrowingSharedPreferencesStore extends SharedPreferencesStorePlatform {
-  ThrowingSharedPreferencesStore(Map<String, Object> data)
-      : backend = InMemorySharedPreferencesStore.withData(data);
-
-  final InMemorySharedPreferencesStore backend;
-
   @override
   Future<bool> clear() {
     throw UnimplementedError();
