@@ -330,6 +330,34 @@ abstract class TestProcessCameraProviderHostApi {
   }
 }
 
+abstract class TestCameraHostApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  int getCameraInfo(int identifier);
+
+  static void setup(TestCameraHostApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraHostApi.getCameraInfo', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.CameraHostApi.getCameraInfo was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraHostApi.getCameraInfo was null, expected non-null int.');
+          final int output = api.getCameraInfo(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+  }
+}
+
 class _TestSystemServicesHostApiCodec extends StandardMessageCodec {
   const _TestSystemServicesHostApiCodec();
   @override

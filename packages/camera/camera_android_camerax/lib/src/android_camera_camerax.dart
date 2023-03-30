@@ -19,6 +19,8 @@ import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
 
+// TODO(camsim99): Get camerainfo and update it every time camera is updated.
+
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
   /// Registers this class as the default instance of [CameraPlatform].
@@ -34,6 +36,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// bound to the lifecycle of the camera it manages.
   @visibleForTesting
   Camera? camera;
+
+  /// The [CameraInfo] instance that corresponds to the [camera] instance.
+  CameraInfo? cameraInfo;
 
   /// The [Preview] instance that can be configured to present a live camera preview.
   @visibleForTesting
@@ -117,7 +122,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// In the CameraX library, cameras are accessed by combining [UseCase]s
   /// to an instance of a [ProcessCameraProvider]. Thus, to create an
   /// unitialized camera instance, this method retrieves a
-  /// [ProcessCameraProvider] instance.
   ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
@@ -163,6 +167,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
+    cameraInfo = await camera.getCameraInfo();
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -243,34 +248,61 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
   @override
-  Future<double> getMinExposureOffset(int cameraId) {
-    throw UnimplementedError('getMinExposureOffset() is not implemented.');
+  Future<double> getMinExposureOffset(int cameraId) async {
+    assert(cameraInfo != null);
+
+    ExposureState exposureState = await cameraInfo.getExposureState();
+    ExposureRange exposureCompensationRange = await exposureState.getExposureCompensationRange();
+    double exposureCompensationStep = await exposureState.getExposureCompensationStep();
+
+    return exposureCompensationRange.minCompensation * exposureCompensationStep;
   }
 
   /// Gets the maximum supported exposure offset for the selected camera in EV units.
   @override
-  Future<double> getMaxExposureOffset(int cameraId) {
-    throw UnimplementedError('getMaxExposureOffset() is not implemented.');
+  Future<double> getMaxExposureOffset(int cameraId) async {
+    assert(cameraInfo != null);
+
+    ExposureState exposureState = await cameraInfo.getExposureState();
+    ExposureRange exposureCompensationRange = await exposureState.getExposureCompensationRange();
+    double exposureCompensationStep = await exposureState.getExposureCompensationStep();
+
+    return exposureCompensationRange.maxCompensation * exposureCompensationStep;
   }
 
   /// Gets the supported step size for exposure offset for the selected camera in EV units.
   ///
   /// Returns 0 when the camera supports using a free value without stepping.
   @override
-  Future<double> getExposureOffsetStepSize(int cameraId) {
-    throw UnimplementedError('getMinExposureOffset() is not implemented.');
+  Future<double> getExposureOffsetStepSize(int cameraId) async {
+    assert(cameraInfo != null);
+
+    ExposureState exposureState = await cameraInfo.getExposureState();
+    double exposureCompensationStep = await exposureState.getExposureCompensationStep();
+
+    return exposureCompensationStep;
   }
 
   /// Gets the maximum supported zoom level for the selected camera.
   @override
-  Future<double> getMaxZoomLevel(int cameraId) {
-    throw UnimplementedError('getMaxZoomLevel() is not implemented.');
+  Future<double> getMaxZoomLevel(int cameraId) async {
+    assert(cameraInfo != null);
+
+    ZoomState exposureState = await cameraInfo.getZoomState();
+    double maxZoomRatio = await exposureState.getMaxZoomRatio();
+
+    return maxZoomRatio;
   }
 
   /// Gets the minimum supported zoom level for the selected camera.
   @override
-  Future<double> getMinZoomLevel(int cameraId) {
-    throw UnimplementedError('getMinZoomLevel() is not implemented.');
+  Future<double> getMinZoomLevel(int cameraId) async {
+    assert(cameraInfo != null);
+
+    ZoomState exposureState = await cameraInfo.getZoomState();
+    double minZoomRatio = await exposureState.getMinZoomRatio();
+
+    return minZoomRatio;
   }
 
   /// The ui orientation changed.
@@ -349,6 +381,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
+    cameraInfo = await camera.getCameraInfo();
   }
 
   /// Unbinds [preview] instance to camera lifecycle controlled by the
