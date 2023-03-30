@@ -175,7 +175,8 @@ class NoTransitionPage<T> extends CustomTransitionPage<T> {
     super.key,
   }) : super(
           transitionsBuilder: _transitionsBuilder,
-          transitionDuration: const Duration(microseconds: 1),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         );
 
   static Widget _transitionsBuilder(
