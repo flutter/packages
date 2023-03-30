@@ -22,7 +22,8 @@ import 'test_util.dart';
   NullableCollectionReturnFlutterApi,
 ])
 void main() {
-  final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
+  final TestWidgetsFlutterBinding binding =
+      TestWidgetsFlutterBinding.ensureInitialized();
 
   test('with values filled', () {
     final FlutterSearchReply reply = FlutterSearchReply()
