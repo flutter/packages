@@ -726,11 +726,10 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     }
     indent.writeln(
         '$_commentPrefix Generated class from Pigeon that represents Flutter messages that can be called from C++.');
-    indent.write(
-        '${api.name}::${api.name}(flutter::BinaryMessenger* binary_messenger) ');
-    indent.addScoped('{', '}', () {
-      indent.writeln('this->binary_messenger_ = binary_messenger;');
-    });
+    _writeFunctionDefinition(indent, api.name,
+        namespace: api.name,
+        parameters: <String>['flutter::BinaryMessenger* binary_messenger'],
+        initializers: <String>['binary_messenger_(binary_messenger)']);
     indent.newln();
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
         ? _getCodecSerializerName(api)
