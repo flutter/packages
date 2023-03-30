@@ -6,7 +6,6 @@ package io.flutter.plugins.webviewflutter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.view.View;

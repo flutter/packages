@@ -15,7 +15,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Build;
 import android.view.View;
 import android.webkit.DownloadListener;
