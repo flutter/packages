@@ -192,8 +192,14 @@ import FlutterMacOS
             });
           } else if (!hostDatatype.isBuiltin &&
               customEnumNames.contains(field.type.baseName)) {
+            indent.writeln('var ${field.name}: $fieldType? = nil');
             indent.writeln(
-                'let ${field.name} = ${_castForceUnwrap(listValue, field.type, root)}');
+                'let enumVal$index = ${_castForceUnwrap(listValue, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}');
+            indent.write('if let ${field.name}RawValue = enumVal$index ');
+            indent.addScoped('{', '}', () {
+              indent.writeln(
+                  '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
+            });
           } else {
             indent.writeln(
                 'let ${field.name} = ${_castForceUnwrap(listValue, field.type, root)} ');
@@ -677,22 +683,17 @@ String _camelCase(String text) {
 }
 
 String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
-  final String castUnwrap = type.isNullable ? '?' : '';
   if (isEnum(root, type)) {
-    final String nullableConditionPrefix =
-        type.isNullable ? 'nilOrValue(value: $value) != nil ? ' : '';
-    final String nullableConditionSuffix = type.isNullable
-        ? ' : nilOrValue(value: $value) as! ${type.baseName}?'
-        : '';
-
+    final String nullableConditionPrefix = type.isNullable ? '' : '';
+    final String nullableConditionSuffix = type.isNullable ? '' : '!';
     return '$nullableConditionPrefix${_swiftTypeForDartType(type)}(rawValue: $value as! Int)$nullableConditionSuffix';
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
   } else if (type.isNullable) {
-    return 'nilOrValue(value: $value) as! ${_swiftTypeForDartType(type)}$castUnwrap';
+    return '(nilOrValue(value: $value) as Any) as! ${_swiftTypeForDartType(type)}?';
   } else {
-    return '$value as! ${_swiftTypeForDartType(type)}$castUnwrap';
+    return '$value as! ${_swiftTypeForDartType(type)}';
   }
 }
 

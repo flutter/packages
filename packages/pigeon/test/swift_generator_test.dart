@@ -83,7 +83,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
-    expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)'));
+    expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)!'));
   });
 
   test('gen one host api', () {
