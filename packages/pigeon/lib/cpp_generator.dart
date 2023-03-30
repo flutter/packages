@@ -343,13 +343,15 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             returnType: '${api.name}&',
             parameters: <String>['const ${api.name}&'],
             deleted: true);
-        indent.writeln('virtual ~${api.name}() {}');
+        // No-op virtual destructor.
+        _writeFunctionDeclaration(indent, '~${api.name}',
+            isVirtual: true, inlineNoop: true);
         for (final Method method in api.methods) {
           final HostDatatype returnType = getHostDatatype(method.returnType,
               root.classes, root.enums, _baseCppTypeForBuiltinDartType);
           final String returnTypeName = _hostApiReturnType(returnType);
 
-          final List<String> argSignature = <String>[];
+          final List<String> parameters = <String>[];
           if (method.arguments.isNotEmpty) {
             final Iterable<String> argTypes =
                 method.arguments.map((NamedType arg) {
@@ -359,7 +361,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             });
             final Iterable<String> argNames =
                 method.arguments.map((NamedType e) => _makeVariableName(e));
-            argSignature.addAll(
+            parameters.addAll(
                 map2(argTypes, argNames, (String argType, String argName) {
               return '$argType $argName';
             }));
@@ -367,16 +369,18 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
           addDocumentationComments(
               indent, method.documentationComments, _docCommentSpec);
-
+          final String methodReturn;
           if (method.isAsynchronous) {
-            argSignature
-                .add('std::function<void($returnTypeName reply)> result');
-            indent.writeln(
-                'virtual void ${_makeMethodName(method)}(${argSignature.join(', ')}) = 0;');
+            methodReturn = _voidType;
+            parameters.add('std::function<void($returnTypeName reply)> result');
           } else {
-            indent.writeln(
-                'virtual $returnTypeName ${_makeMethodName(method)}(${argSignature.join(', ')}) = 0;');
+            methodReturn = returnTypeName;
           }
+          _writeFunctionDeclaration(indent, _makeMethodName(method),
+              returnType: methodReturn,
+              parameters: parameters,
+              isVirtual: true,
+              isPureVirtual: true);
         }
         indent.newln();
         indent.writeln('$_commentPrefix The codec used by ${api.name}.');
@@ -1491,9 +1495,9 @@ void _writeFunction(
     indent.addln(';');
   } else {
     if (body != null) {
-      indent.addScoped('{', '}', body);
+      indent.addScoped(' {', '}', body);
     } else {
-      indent.addln('{}}');
+      indent.addln(' {}');
     }
   }
 }
@@ -1505,14 +1509,19 @@ void _writeFunctionDeclaration(
   List<String> parameters = const <String>[],
   bool isStatic = false,
   bool isVirtual = false,
+  bool isPureVirtual = false,
   bool isConst = false,
   bool isOverride = false,
   bool deleted = false,
+  bool inlineNoop = false,
 }) {
-  assert(!(isVirtual && isOverride));
+  assert(!(isVirtual && isOverride), 'virtual is redundant with override');
+  assert(isVirtual || !isPureVirtual, 'pure virtual methods must be virtual');
   _writeFunction(
     indent,
-    _FunctionOutputType.declaration,
+    inlineNoop
+        ? _FunctionOutputType.definition
+        : _FunctionOutputType.declaration,
     name: name,
     returnType: returnType,
     parameters: parameters,
@@ -1524,6 +1533,7 @@ void _writeFunctionDeclaration(
       if (isConst) 'const',
       if (isOverride) 'override',
       if (deleted) '= delete',
+      if (isPureVirtual) '= 0',
     ],
   );
 }
