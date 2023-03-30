@@ -647,7 +647,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     final CameraController cameraController = CameraController.withSettings(
       cameraDescription,
-      mediaSettings: MediaSettings.low(enableAudio: enableAudio),
+      mediaSettings: MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        enableAudio: enableAudio,
+      ),
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
 
