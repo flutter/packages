@@ -617,8 +617,10 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Set<String> customClassNames,
     Set<String> customEnumNames,
   ) {
-    indent.write('EncodableList ${klass.name}::ToEncodableList() const ');
-    indent.addScoped('{', '}', () {
+    _writeFunctionDefinition(indent, 'ToEncodableList',
+        namespace: klass.name,
+        returnType: 'EncodableList',
+        isConst: true, body: () {
       indent.writeln('EncodableList list;');
       indent.writeln('list.reserve(${klass.fields.length});');
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
@@ -664,9 +666,10 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       }
     }
 
-    indent.write(
-        '${klass.name} ${klass.name}::FromEncodableList(const EncodableList& list) ');
-    indent.addScoped('{', '}', () {
+    _writeFunctionDefinition(indent, 'FromEncodableList',
+        namespace: klass.name,
+        returnType: klass.name,
+        parameters: <String>['const EncodableList& list'], body: () {
       const String instanceVariable = 'decoded';
       final Iterable<_IndexedField> indexedFields = indexMap(
           getFieldsInSerializationOrder(klass),
@@ -1001,25 +1004,18 @@ EncodableValue ${api.name}::WrapError(const FlutterError& error) {
       );
     });
 
-    String paramString = hostParams
+    final List<String> paramStrings = hostParams
         .map((_HostNamedType param) =>
-            '\t${_hostApiArgumentType(param.hostType)} ${param.name}')
-        .join(',\n');
-    if (paramString.isNotEmpty) {
-      paramString = '\n$paramString\n';
-    }
-
-    String initializerString = hostParams
+            '${_hostApiArgumentType(param.hostType)} ${param.name}')
+        .toList();
+    final List<String> initializerStrings = hostParams
         .map((_HostNamedType param) =>
             '${param.name}_(${_fieldValueExpression(param.hostType, param.name)})')
-        .join(',\n\t\t');
-    if (initializerString.isNotEmpty) {
-      initializerString = ' : $initializerString';
-    }
-
-    indent.format('''
-${klass.name}::${klass.name}($paramString)$initializerString {}
-''');
+        .toList();
+    _writeFunctionDefinition(indent, klass.name,
+        namespace: klass.name,
+        parameters: paramStrings,
+        initializers: initializerStrings);
   }
 
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
@@ -1457,6 +1453,7 @@ void _writeFunction(
   List<String> parameters = const <String>[],
   List<String> startingAnnotations = const <String>[],
   List<String> trailingAnnotations = const <String>[],
+  List<String> initializers = const <String>[],
   void Function()? body,
 }) {
   assert(body == null || type == _FunctionOutputType.definition);
@@ -1494,6 +1491,17 @@ void _writeFunction(
   // Write any trailing annotations (e.g., 'const').
   for (final String annotation in trailingAnnotations) {
     indent.add(' $annotation');
+  }
+  // Write the initializer list, if any.
+  if (initializers.isNotEmpty) {
+    indent.newln();
+    indent.write(' : ');
+    // The first item goes on the same line as the ":", the rest go on their
+    // own lines indented two extra levels, with no comma or newline after the
+    // last one. The easiest way to express the special casing of the first and
+    // last is with a join+format.
+    indent.format(initializers.join(',\n\t\t'),
+        leadingSpace: false, trailingNewline: false);
   }
   // Write the body or end the declaration.
   if (type == _FunctionOutputType.declaration) {
@@ -1554,6 +1562,7 @@ void _writeFunctionDefinition(
   String? namespace,
   List<String> parameters = const <String>[],
   bool isConst = false,
+  List<String> initializers = const <String>[],
   void Function()? body,
 }) {
   _writeFunction(
@@ -1566,6 +1575,7 @@ void _writeFunctionDefinition(
     trailingAnnotations: <String>[
       if (isConst) 'const',
     ],
+    initializers: initializers,
     body: body,
   );
 }
