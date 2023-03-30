@@ -166,7 +166,7 @@ void main() {
 
     final CameraController controller = CameraController.withSettings(
       cameras[0],
-      mediaSettings: MediaSettings.low(enableAudio: false),
+      mediaSettings: const MediaSettings(resolutionPreset: ResolutionPreset.low),
     );
 
     await controller.initialize();
@@ -220,7 +220,7 @@ void main() {
 
       final CameraController controller = CameraController.withSettings(
         cameras[0],
-        mediaSettings: MediaSettings.low(enableAudio: false),
+        mediaSettings: const MediaSettings(resolutionPreset: ResolutionPreset.low),
       );
 
       await controller.initialize();
@@ -251,7 +251,7 @@ void main() {
       ImageFormatGroup? imageFormatGroup) async {
     final CameraController controller = CameraController.withSettings(
       cameras.first,
-      mediaSettings: MediaSettings.low(enableAudio: false),
+      mediaSettings: const MediaSettings(resolutionPreset: ResolutionPreset.low),
       imageFormatGroup: imageFormatGroup,
     );
 
