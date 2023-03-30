@@ -209,11 +209,14 @@ NSString *const errorMethod = @"error";
   if (_fps) {
     [_videoCaptureSession beginConfiguration];
     NSError *outError;
-    [_captureDevice lockForConfiguration:&outError];
-    _captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, [_fps intValue]);
-    _captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, [_fps intValue]);
-    [_videoCaptureSession commitConfiguration];
-    [_captureDevice unlockForConfiguration];
+    if ([_captureDevice lockForConfiguration:&outError]) {
+      _captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, [_fps intValue]);
+      _captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, [_fps intValue]);
+      [_videoCaptureSession commitConfiguration];
+      [_captureDevice unlockForConfiguration];
+    } else {
+      NSLog(@"error locking device for frame rate change (%@)", outError);
+    }
   }
 
   return connection;
@@ -1130,7 +1133,7 @@ NSString *const errorMethod = @"error";
       recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeMPEG4] mutableCopy];
 
   if (_videoBitrate || _fps) {
-    NSMutableDictionary *compressionProperties = [@{} mutableCopy];
+    NSMutableDictionary *compressionProperties = [[NSMutableDictionary alloc] init];
 
     if (_videoBitrate) {
       compressionProperties[AVVideoAverageBitRateKey] = _videoBitrate;
@@ -1169,7 +1172,6 @@ NSString *const errorMethod = @"error";
     } mutableCopy];
 
     if (_audioBitrate) {
-      // Both type of audio inputs causes output video file to be corrupted.
       audioOutputSettings[AVEncoderBitRateKey] = _audioBitrate;
     }
 
