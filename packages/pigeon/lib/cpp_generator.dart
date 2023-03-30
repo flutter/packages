@@ -11,6 +11,8 @@ import 'pigeon_lib.dart' show Error;
 /// General comment opening token.
 const String _commentPrefix = '//';
 
+const String _voidType = 'void';
+
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_commentPrefix);
@@ -205,17 +207,25 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
               indent, field.documentationComments, _docCommentSpec);
           final HostDatatype baseDatatype = getFieldHostDatatype(
               field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
-          indent.writeln(
-              '${_getterReturnType(baseDatatype)} ${_makeGetterName(field)}() const;');
-          indent.writeln(
-              'void ${_makeSetterName(field)}(${_unownedArgumentType(baseDatatype)} value_arg);');
+          // Declare a getter and setter.
+          _writeFunctionDeclaration(indent, _makeGetterName(field),
+              returnType: _getterReturnType(baseDatatype), isConst: true);
+          final String setterName = _makeSetterName(field);
+          _writeFunctionDeclaration(indent, setterName,
+              returnType: _voidType,
+              parameters: <String>[
+                '${_unownedArgumentType(baseDatatype)} value_arg'
+              ]);
           if (field.type.isNullable) {
             // Add a second setter that takes the non-nullable version of the
             // argument for convenience, since setting literal values with the
             // pointer version is non-trivial.
             final HostDatatype nonNullType = _nonNullableType(baseDatatype);
-            indent.writeln(
-                'void ${_makeSetterName(field)}(${_unownedArgumentType(nonNullType)} value_arg);');
+            _writeFunctionDeclaration(indent, setterName,
+                returnType: _voidType,
+                parameters: <String>[
+                  '${_unownedArgumentType(nonNullType)} value_arg'
+                ]);
           }
           indent.newln();
         }
@@ -1415,6 +1425,114 @@ void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
   for (final String header in headers) {
     indent.writeln('#include <$header>');
   }
+}
+
+enum _FunctionOutputType { declaration, definition }
+
+/// Writes a function declaration or definition to [indent].
+///
+/// If [parameters] are given, each should be a string of the form 'type name'.
+void _writeFunction(
+  Indent indent,
+  _FunctionOutputType type, {
+  required String name,
+  String? returnType,
+  String? namespace,
+  List<String> parameters = const <String>[],
+  List<String> startingAnnotations = const <String>[],
+  List<String> trailingAnnotations = const <String>[],
+  void Function()? body,
+}) {
+  assert(body == null || type == _FunctionOutputType.definition);
+  final String scope = namespace == null ? '' : '$namespace::';
+
+  // Set the initial indentation.
+  indent.write('');
+  // Write any starting annotations (e.g., 'static').
+  for (final String annotation in startingAnnotations) {
+    indent.add(' $annotation');
+  }
+  // Write the signature.
+  indent.add('$scope$returnType $name');
+  // Write the parameters.
+  if (parameters.isEmpty) {
+    indent.add('()');
+  } else if (parameters.length == 1) {
+    indent.add('(${parameters.first})');
+  } else {
+    indent.addScoped('(', null, () {
+      enumerate(parameters, (int index, final String param) {
+        if (index == parameters.length - 1) {
+          indent.writeln('$param,');
+        } else {
+          indent.write(')');
+        }
+      });
+    }, addTrailingNewline: false);
+  }
+  // Write any trailing annotations (e.g., 'const').
+  for (final String annotation in trailingAnnotations) {
+    indent.add(' $annotation');
+  }
+  // Write the body or end the declaration.
+  if (type == _FunctionOutputType.declaration) {
+    indent.addln(';');
+  } else {
+    if (body != null) {
+      indent.addScoped('{', '}', body);
+    } else {
+      indent.addln('{}}');
+    }
+  }
+}
+
+void _writeFunctionDeclaration(
+  Indent indent,
+  String name, {
+  String? returnType,
+  List<String> parameters = const <String>[],
+  bool isStatic = false,
+  bool isVirtual = false,
+  bool isConst = false,
+  bool isOverride = false,
+}) {
+  assert(!(isVirtual && isOverride));
+  _writeFunction(
+    indent,
+    _FunctionOutputType.declaration,
+    name: name,
+    returnType: returnType,
+    parameters: parameters,
+    startingAnnotations: <String>[
+      if (isStatic) 'static',
+      if (isVirtual) 'virtual',
+    ],
+    trailingAnnotations: <String>[
+      if (isConst) 'const',
+      if (isOverride) 'override',
+    ],
+  );
+}
+
+void _writeFunctionDefinition(
+  Indent indent,
+  String name, {
+  String? returnType,
+  String? namespace,
+  List<String> parameters = const <String>[],
+  bool isConst = false,
+  void Function()? body,
+}) {
+  _writeFunction(
+    indent,
+    _FunctionOutputType.definition,
+    name: name,
+    namespace: namespace,
+    returnType: returnType,
+    parameters: parameters,
+    trailingAnnotations: <String>[if (isConst) 'const'],
+    body: body,
+  );
 }
 
 /// Validates an AST to make sure the cpp generator supports everything.
