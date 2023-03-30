@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.RenderProcessGoneDetail;
 import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCompatImpl;
 import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCreator;
 import java.util.HashMap;
@@ -84,13 +85,16 @@ public class WebViewClientTest {
 
   @Test
   public void onRenderProcessGone() {
-    webViewClient.onRenderProcessGone(mockWebView, true, 133);
+    final RenderProcessGoneDetail detail = mock(RenderProcessGoneDetail.class);
+    when(detail.didCrash()).thenReturn(true);
+    when(detail.rendererPriorityAtExit()).thenReturn(133);
+
+    webViewClient.onRenderProcessGone(mockWebView, detail);
     verify(mockFlutterApi)
         .onRenderProcessGone(
             eq(webViewClient),
             eq(mockWebView),
-            eq(true),
-            eq(133),
+            eq(detail),
             any());
   }
 
