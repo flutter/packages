@@ -352,7 +352,7 @@ public class WebViewTest {
     when(webViewSpy.getParent()).thenReturn(mockFlutterView);
 
     TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.O);
-    webViewSpy.onFocusChanged(true, 0, new Rect());
+    webViewSpy.onAttachedToWindow();
 
     verify(mockFlutterView).setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_YES);
   }

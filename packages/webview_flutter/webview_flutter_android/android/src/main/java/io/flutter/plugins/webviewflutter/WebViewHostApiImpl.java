@@ -113,9 +113,9 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     // setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES_EXCLUDE_DESCENDANTS) which prevents this
     // view from automatically being traversed for autofill.
     @Override
-    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-      super.onFocusChanged(focused, direction, previouslyFocusedRect);
-      if (focused && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    protected void onAttachedToWindow() {
+      super.onAttachedToWindow();
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         final FlutterView flutterView = tryFindFlutterView();
         if (flutterView != null) {
           flutterView.setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES);
