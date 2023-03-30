@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
 ## 3.4.3
 
 * Updates internal Java InstanceManager to be cleared on hot restart.

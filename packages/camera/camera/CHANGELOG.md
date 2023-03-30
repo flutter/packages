@@ -1,6 +1,7 @@
 ## 0.10.3+3
 
 * CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.10.3+2
