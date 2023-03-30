@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
 ## 4.0.7
 
 * Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on

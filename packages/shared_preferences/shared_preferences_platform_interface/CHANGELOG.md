@@ -1,5 +1,6 @@
-## NEXT
+## 2.2.0
 
+* Adds `getAllWithPrefix` and `clearWithPrefix` method.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.1.1
