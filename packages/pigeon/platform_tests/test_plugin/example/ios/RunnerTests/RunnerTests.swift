@@ -10,21 +10,21 @@ class RunnerTests: XCTestCase {
   func testToListAndBack() throws {
     let reply = MessageSearchReply(result: "foobar")
     let dict = reply.toList()
-    let copy = MessageSearchReply.fromList(dict as [Any])
+    let copy = MessageSearchReply.fromList(dict)
     XCTAssertEqual(reply.result, copy?.result)
   }
 
   func testHandlesNull() throws {
     let reply = MessageSearchReply()
     let dict = reply.toList()
-    let copy = MessageSearchReply.fromList(dict as [Any])
+    let copy = MessageSearchReply.fromList(dict)
     XCTAssertNil(copy?.result)
   }
 
   func testHandlesNullFirst() throws {
     let reply = MessageSearchReply(error: "foobar")
     let dict = reply.toList()
-    let copy = MessageSearchReply.fromList(dict as [Any])
+    let copy = MessageSearchReply.fromList(dict)
     XCTAssertEqual(reply.error, copy?.error)
   }
 }
