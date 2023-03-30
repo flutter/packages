@@ -1,5 +1,6 @@
-## NEXT
+## 0.8.6+7
 
+* Add lint ignore.
 * Updates minimum Flutter version to 3.3.
 
 ## 0.8.6+6

@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.3+3
 
+* Add lint ignore.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 

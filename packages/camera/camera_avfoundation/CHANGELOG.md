@@ -1,3 +1,7 @@
+## 0.9.13+2
+
+* Add lint ignore.
+
 ## 0.9.13+1
 
 * Clarifies explanation of endorsement in README.

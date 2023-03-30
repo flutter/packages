@@ -1,3 +1,7 @@
+## 0.10.5+1
+
+* Add lint ignore.
+
 ## 0.10.5
 
 * Allows camera to be switched while video recording.
