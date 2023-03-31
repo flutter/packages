@@ -39,8 +39,8 @@ private func nilOrValue<T>(value: Any?) -> T? {
   if value is NSNull {
     return nil
   }
-  if let num = value as? T {
-    return num
+  if let convertedValue = value as? T {
+    return convertedValue
   }
   return (value as Any) as! T?
 }
