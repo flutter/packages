@@ -177,7 +177,22 @@ NSString *const errorMethod = @"error";
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  [self setCaptureSessionPreset:_resolutionPreset];
+  NSError *outError;
+  if ([_captureDevice lockForConfiguration:&outError]) {
+    [_videoCaptureSession beginConfiguration];
+
+    [self setCaptureSessionPreset:_resolutionPreset];
+
+    if (_fps) {
+      _captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, [_fps intValue]);
+      _captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, [_fps intValue]);
+    }
+    [_videoCaptureSession commitConfiguration];
+    [_captureDevice unlockForConfiguration];
+  } else {
+    NSLog(@"error locking device for frame rate change (%@)", outError);
+  }
+
   [self updateOrientation];
 
   return self;
@@ -204,19 +219,6 @@ NSString *const errorMethod = @"error";
                                              output:_captureVideoOutput];
   if ([_captureDevice position] == AVCaptureDevicePositionFront) {
     connection.videoMirrored = YES;
-  }
-
-  if (_fps) {
-    [_videoCaptureSession beginConfiguration];
-    NSError *outError;
-    if ([_captureDevice lockForConfiguration:&outError]) {
-      _captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, [_fps intValue]);
-      _captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, [_fps intValue]);
-      [_videoCaptureSession commitConfiguration];
-      [_captureDevice unlockForConfiguration];
-    } else {
-      NSLog(@"error locking device for frame rate change (%@)", outError);
-    }
   }
 
   return connection;
@@ -1139,7 +1141,7 @@ NSString *const errorMethod = @"error";
       compressionProperties[AVVideoAverageBitRateKey] = _videoBitrate;
     }
 
-    if (_videoBitrate) {
+    if (_fps) {
       compressionProperties[AVVideoExpectedSourceFrameRateKey] = _fps;
     }
 
