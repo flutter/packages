@@ -24,7 +24,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences_platform_interface: ^2.0.0
+  shared_preferences_platform_interface: ^2.2.0
 
 dev_dependencies:
   flutter_test:
