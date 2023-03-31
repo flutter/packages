@@ -130,7 +130,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final _NavigatorStateIterator iterator = _createNavigatorStateIterator();
     while (iterator.moveNext()) {
       if (iterator.current.canPop()) {
-        iterator.matchList.last.complete(result);
         iterator.current.pop<T>(result);
         return;
       }
@@ -152,10 +151,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }
     final Page<Object?> page = route.settings as Page<Object?>;
     final RouteMatch? match = builder.getRouteMatchForPage(page);
-    if (match == null) {
-      return true;
+    assert(match != null);
+    if (match is ImperativeRouteMatch) {
+      match.complete(result);
     }
-    _matchList.remove(match);
+    _matchList.remove(match!);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
