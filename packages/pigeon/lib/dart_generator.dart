@@ -336,17 +336,18 @@ $resultAt != null
                 'binaryMessenger: binaryMessenger);',
               );
             });
-            final String messageHandlerSetter = isMockHandler
+            final String messageHandlerSetterWithOpeningParentheses = isMockHandler
                 ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, '
                 : 'channel.setMessageHandler(';
             indent.write('if (api == null) ');
             indent.addScoped('{', '}', () {
-              indent.writeln('${messageHandlerSetter}null);');
+              indent.writeln(
+                  '${messageHandlerSetterWithOpeningParentheses}null);');
             }, addTrailingNewline: false);
             indent.add(' else ');
             indent.addScoped('{', '}', () {
               indent.write(
-                '$messageHandlerSetter(Object? message) async ',
+                '$messageHandlerSetterWithOpeningParentheses(Object? message) async ',
               );
               indent.addScoped('{', '});', () {
                 final String returnType =
