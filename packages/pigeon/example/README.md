@@ -39,7 +39,7 @@ flutter pub run pigeon \
   --objc_source_out ios/Runner/pigeon.m \
   --swift_out ios/Runner/Pigeon.swift \
   --kotlin_out ./android/app/src/main/kotlin/dev/flutter/pigeon/Pigeon.kt \
-  --experimental_kotlin_package "dev.flutter.pigeon" \
+  --kotlin_package "dev.flutter.pigeon" \
   --java_out ./android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
   --java_package "dev.flutter.pigeon"
 ```

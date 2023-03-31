@@ -1314,10 +1314,16 @@ ${_argParser.usage}''';
       help: 'The package that generated Kotlin code will be in.',
       aliases: const <String>['experimental_kotlin_package'],
     )
-    ..addOption('experimental_cpp_header_out',
-        help: 'Path to generated C++ header file (.h). (experimental)')
-    ..addOption('experimental_cpp_source_out',
-        help: 'Path to generated C++ classes file (.cpp). (experimental)')
+    ..addOption(
+      'cpp_header_out',
+      help: 'Path to generated C++ header file (.h).',
+      aliases: const <String>['experimental_cpp_header_out'],
+    )
+    ..addOption(
+      'cpp_source_out',
+      help: 'Path to generated C++ classes file (.cpp).',
+      aliases: const <String>['experimental_cpp_source_out'],
+    )
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
     ..addOption('objc_header_out',
@@ -1364,8 +1370,8 @@ ${_argParser.usage}''';
       kotlinOptions: KotlinOptions(
         package: results['kotlin_package'] as String?,
       ),
-      cppHeaderOut: results['experimental_cpp_header_out'] as String?,
-      cppSourceOut: results['experimental_cpp_source_out'] as String?,
+      cppHeaderOut: results['cpp_header_out'] as String?,
+      cppSourceOut: results['cpp_source_out'] as String?,
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'] as String?,
       ),
