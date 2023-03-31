@@ -352,7 +352,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Pauses the current camera preview
   Future<void> pausePreview() async {
-    if (value.isPreviewPaused || !value.isInitialized) {
+    if (value.isPreviewPaused || !value.isInitialized || _isDisposed) {
       return;
     }
 
