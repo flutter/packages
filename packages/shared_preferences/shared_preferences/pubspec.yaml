@@ -30,10 +30,10 @@ dependencies:
     sdk: flutter
   shared_preferences_android: ^2.1.0
   shared_preferences_foundation: ^2.2.0
-  shared_preferences_linux: ^2.1.0
+  shared_preferences_linux: ^2.2.0
   shared_preferences_platform_interface: ^2.2.0
   shared_preferences_web: ^2.1.0
-  shared_preferences_windows: ^2.1.0
+  shared_preferences_windows: ^2.2.0
 
 dev_dependencies:
   flutter_driver:
