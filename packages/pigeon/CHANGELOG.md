@@ -1,3 +1,7 @@
+## 9.1.5
+
+* [cpp] Minor changes to output style.
+
 ## 9.1.3
 
 * [cpp] Requires passing any non-nullable fields of generated data classes as
