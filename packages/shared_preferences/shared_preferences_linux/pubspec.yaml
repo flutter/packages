@@ -22,7 +22,7 @@ dependencies:
   path: ^1.8.0
   path_provider_linux: ^2.0.0
   path_provider_platform_interface: ^2.0.0
-  shared_preferences_platform_interface: ^2.0.0
+  shared_preferences_platform_interface: ^2.2.0
 
 dev_dependencies:
   flutter_test:

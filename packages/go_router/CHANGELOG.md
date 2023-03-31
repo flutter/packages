@@ -1,3 +1,7 @@
+## 6.5.2
+
+- NoTransitionPage now has an instant reverse transition
+
 ## 6.5.1
 
 - Fixes an issue where the params are removed after popping.
