@@ -83,7 +83,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
-    expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)!'));
+    expect(code, contains('let fooArg: Foo = Foo(rawValue: args[0] as! Int)!'));
   });
 
   test('gen one host api', () {
@@ -452,7 +452,7 @@ void main() {
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
     expect(code, contains('static func fromList(_ list: [Any]) -> Outer?'));
-    expect(code, contains('nested = Nested.fromList(nestedList as [Any])'));
+    expect(code, contains('nested = Nested.fromList(nestedList)'));
     expect(code, contains('func toList() -> [Any?]'));
   });
 
@@ -767,7 +767,7 @@ void main() {
     final String code = sink.toString();
     expect(
         code, contains('func doit(completion: @escaping ([Int64?]) -> Void'));
-    expect(code, contains('let result = response as! [Int64?]'));
+    expect(code, contains('let result: [Int64?] = response as! [Int64?]'));
     expect(code, contains('completion(result)'));
   });
 
@@ -797,8 +797,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('func add(x: Int64, y: Int64) throws -> Int64'));
     expect(code, contains('let args = message as! [Any]'));
-    expect(code, contains('let xArg = args[0] as! Int64'));
-    expect(code, contains('let yArg = args[1] as! Int64'));
+    expect(code, contains('let xArg: Int64 = args[0] as! Int64'));
+    expect(code, contains('let yArg: Int64 = args[1] as! Int64'));
     expect(code, contains('let result = try api.add(x: xArg, y: yArg)'));
     expect(code, contains('reply(wrapResult(result))'));
   });
@@ -828,7 +828,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
-    expect(code, contains('let result = response as! Int64'));
+    expect(code, contains('let result: Int64 = response as! Int64'));
     expect(code, contains('completion(result)'));
     expect(
         code,
@@ -915,7 +915,7 @@ void main() {
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('(nilOrValue(value: args[0]) as Any) as! Int64?'));
+    expect(code, contains('let fooArg: Int64? = nilOrValue(value: args[0])'));
   });
 
   test('nullable argument flutter', () {
