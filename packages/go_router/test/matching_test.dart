@@ -52,7 +52,7 @@ void main() {
 
     final RouteMatchList list1 = matcher.findMatch('/a');
     final RouteMatchList list2 = matcher.findMatch('/b');
-    list1.push(ImperativeRouteMatch(
+    list1.push(ImperativeRouteMatch<Object?>(
         pageKey: const ValueKey<String>('/b-p0'), matches: list2));
 
     final Object? encoded = codec.encodeMatchList(list1);

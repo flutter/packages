@@ -13,6 +13,7 @@ import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/file_utils.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/native_test_command.dart';
+import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
@@ -511,9 +512,11 @@ void main() {
       });
 
       test(
-          'ignores Java integration test files associated with integration_test',
+          'ignores Java integration test files using (or defining) DartIntegrationTest',
           () async {
-        createFakePlugin(
+        const String dartTestDriverRelativePath =
+            'android/app/src/androidTest/java/io/flutter/plugins/plugin/FlutterActivityTest.java';
+        final RepositoryPackage plugin = createFakePlugin(
           'plugin',
           packagesDir,
           platformSupport: <String, PlatformDetails>{
@@ -522,10 +525,23 @@ void main() {
           extraFiles: <String>[
             'example/android/gradlew',
             'example/android/app/src/androidTest/java/io/flutter/plugins/DartIntegrationTest.java',
-            'example/android/app/src/androidTest/java/io/flutter/plugins/plugin/FlutterActivityTest.java',
-            'example/android/app/src/androidTest/java/io/flutter/plugins/plugin/MainActivityTest.java',
+            'example/android/app/src/androidTest/java/io/flutter/plugins/DartIntegrationTest.kt',
+            'example/$dartTestDriverRelativePath',
           ],
         );
+
+        final File dartTestDriverFile = childFileWithSubcomponents(
+            plugin.getExamples().first.directory,
+            p.posix.split(dartTestDriverRelativePath));
+        dartTestDriverFile.writeAsStringSync('''
+import io.flutter.plugins.DartIntegrationTest;
+import org.junit.runner.RunWith;
+
+@DartIntegrationTest
+@RunWith(FlutterTestRunner.class)
+public class FlutterActivityTest {
+}
+''');
 
         await runCapturingPrint(
             runner, <String>['native-test', '--android', '--no-unit']);
@@ -536,6 +552,53 @@ void main() {
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[]),
         );
+      });
+
+      test(
+          'fails for Java integration tests Using FlutterTestRunner without @DartIntegrationTest',
+          () async {
+        const String dartTestDriverRelativePath =
+            'android/app/src/androidTest/java/io/flutter/plugins/plugin/FlutterActivityTest.java';
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformAndroid: const PlatformDetails(PlatformSupport.inline)
+          },
+          extraFiles: <String>[
+            'example/android/gradlew',
+            'example/$dartTestDriverRelativePath',
+          ],
+        );
+
+        final File dartTestDriverFile = childFileWithSubcomponents(
+            plugin.getExamples().first.directory,
+            p.posix.split(dartTestDriverRelativePath));
+        dartTestDriverFile.writeAsStringSync('''
+import io.flutter.plugins.DartIntegrationTest;
+import org.junit.runner.RunWith;
+
+@RunWith(FlutterTestRunner.class)
+public class FlutterActivityTest {
+}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['native-test', '--android', '--no-unit'],
+            errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            contains(
+                contains(misconfiguredJavaIntegrationTestErrorExplanation)));
+        expect(
+            output,
+            contains(contains(
+                'example/android/app/src/androidTest/java/io/flutter/plugins/plugin/FlutterActivityTest.java')));
       });
 
       test('runs all tests when present', () async {

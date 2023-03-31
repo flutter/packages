@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
 ## 0.4.0+7
 
 * Clarifies explanation of endorsement in README.

@@ -1,3 +1,12 @@
+## 3.4.4
+
+* Fixes a bug where the native `WebView` wouldn't be traversed for autofill automatically.
+* Updates minimum Flutter version to 3.3.
+
+## 3.4.3
+
+* Updates internal Java InstanceManager to be cleared on hot restart.
+
 ## 3.4.2
 
 * Clarifies explanation of endorsement in README.

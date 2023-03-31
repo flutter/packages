@@ -21,14 +21,14 @@ import 'test_helpers.dart';
 const bool enableLogs = false;
 final Logger log = Logger('GoRouter tests');
 
-Future<void> sendPlatformUrl(String url) async {
+Future<void> sendPlatformUrl(String url, WidgetTester tester) async {
   final Map<String, dynamic> testRouteInformation = <String, dynamic>{
     'location': url,
   };
   final ByteData message = const JSONMethodCodec().encodeMethodCall(
     MethodCall('pushRouteInformation', testRouteInformation),
   );
-  await ServicesBinding.instance.defaultBinaryMessenger
+  await tester.binding.defaultBinaryMessenger
       .handlePlatformMessage('flutter/navigation', message, (_) {});
 }
 
@@ -1495,7 +1495,7 @@ void main() {
 
       redirected = false;
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/login');
@@ -1528,7 +1528,7 @@ void main() {
 
       expect(router.location, '/');
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
       await tester.pumpAndSettle();
       expect(router.location, '/dummy');
     });
@@ -1631,7 +1631,7 @@ void main() {
       });
       redirected = false;
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/login');
@@ -2024,7 +2024,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
 
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy/dummy2');
+      await sendPlatformUrl('/dummy/dummy2', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/other');
@@ -2054,6 +2054,33 @@ void main() {
         initialLocation: '/dummy',
       );
       expect(router.location, '/dummy');
+    });
+
+    testWidgets('initial location with extra', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'dummy',
+              builder: (BuildContext context, GoRouterState state) {
+                return DummyScreen(key: ValueKey<Object?>(state.extra));
+              },
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/dummy',
+        initialExtra: 'extra',
+      );
+      expect(router.location, '/dummy');
+      expect(find.byKey(const ValueKey<Object?>('extra')), findsOneWidget);
     });
 
     testWidgets('initial location w/ redirection', (WidgetTester tester) async {
@@ -2106,6 +2133,22 @@ void main() {
       expect(router.routeInformationProvider.value.location, '/dummy');
       TestWidgetsFlutterBinding
           .instance.platformDispatcher.defaultRouteNameTestValue = '/';
+    });
+
+    test('throws assertion if initialExtra is set w/o initialLocation', () {
+      expect(
+        () => GoRouter(
+          routes: const <GoRoute>[],
+          initialExtra: 1,
+        ),
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError e) => e.message,
+            'error message',
+            'initialLocation must be set in order to use initialExtra',
+          ),
+        ),
+      );
     });
   });
 
@@ -2396,8 +2439,8 @@ void main() {
       expect(router.location, loc);
       expect(matches.matches, hasLength(2));
       expect(find.byType(PersonScreen), findsOneWidget);
-      final ImperativeRouteMatch imperativeRouteMatch =
-          matches.matches.last as ImperativeRouteMatch;
+      final ImperativeRouteMatch<Object?> imperativeRouteMatch =
+          matches.matches.last as ImperativeRouteMatch<Object?>;
       expect(imperativeRouteMatch.matches.pathParameters['fid'], fid);
       expect(imperativeRouteMatch.matches.pathParameters['pid'], pid);
     });
@@ -2736,6 +2779,26 @@ void main() {
       expect(router.extra, extra);
     });
 
+    testWidgets('calls [push] on closest GoRouter and waits for result',
+        (WidgetTester tester) async {
+      final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationProvider: router.routeInformationProvider,
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      final String? result = await router.push<String>(
+        location,
+        extra: extra,
+      );
+      expect(result, extra);
+      expect(router.myLocation, location);
+      expect(router.extra, extra);
+    });
+
     testWidgets('calls [pushNamed] on closest GoRouter',
         (WidgetTester tester) async {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
@@ -2755,6 +2818,30 @@ void main() {
       expect(router.params, params);
       expect(router.queryParams, queryParams);
       expect(router.extra, extra);
+    });
+
+    testWidgets('calls [pushNamed] on closest GoRouter and waits for result',
+        (WidgetTester tester) async {
+      final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routeInformationProvider: router.routeInformationProvider,
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          title: 'GoRouter Example',
+        ),
+      );
+      final String? result = await router.pushNamed<String>(
+        name,
+        params: params,
+        queryParams: queryParams,
+        extra: extra,
+      );
+      expect(result, extra);
+      expect(router.extra, extra);
+      expect(router.name, name);
+      expect(router.params, params);
+      expect(router.queryParams, queryParams);
     });
 
     testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {
@@ -4173,7 +4260,7 @@ void main() {
       expect(statefulWidgetKeyPushed.currentState?.counter, equals(2));
       // Verify that the page key is restored correctly
       expect(router.routerDelegate.matches.last.pageKey.value,
-          equals('/pushed-p1'));
+          equals('/pushed-p0'));
 
       router.pop();
       await tester.pumpAndSettle();
@@ -4188,7 +4275,7 @@ void main() {
       // Verify that the page key is incremented correctly after restore (i.e.
       // not starting at 0)
       expect(router.routerDelegate.matches.last.pageKey.value,
-          equals('/pushed-p2'));
+          equals('/pushed-p1'));
     });
 
     testWidgets('Restores state of branches in StatefulShellRoute correctly',

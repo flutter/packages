@@ -317,7 +317,7 @@ class RouteBuilder {
       name: name,
       path: path,
       fullpath: effectiveMatchList.fullpath,
-      params: effectiveMatchList.pathParameters,
+      params: Map<String, String>.from(effectiveMatchList.pathParameters),
       error: match.error,
       queryParams: effectiveMatchList.uri.queryParameters,
       queryParametersAll: effectiveMatchList.uri.queryParametersAll,
