@@ -190,7 +190,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
     indent.write('class ${klass.name} ');
     indent.addScoped('{', '};', () {
-      indent.addScoped(' public:', '', () {
+      _writeAccessBlock(indent, _ClassAccess.public, () {
         final Iterable<NamedType> requiredFields =
             orderedFields.where((NamedType type) => !type.type.isNullable);
         // Minimal constructor, if needed.
@@ -231,7 +231,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         }
       });
 
-      indent.addScoped(' private:', '', () {
+      _writeAccessBlock(indent, _ClassAccess.private, () {
         _writeFunctionDeclaration(indent, 'FromEncodableList',
             returnType: klass.name,
             parameters: <String>['const flutter::EncodableList& list'],
@@ -284,7 +284,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         generatorComments: generatedMessages);
     indent.write('class ${api.name} ');
     indent.addScoped('{', '};', () {
-      indent.addScoped(' public:', '', () {
+      _writeAccessBlock(indent, _ClassAccess.public, () {
         _writeFunctionDeclaration(indent, api.name,
             parameters: <String>['flutter::BinaryMessenger* binary_messenger']);
         _writeFunctionDeclaration(indent, 'GetCodec',
@@ -335,7 +335,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         generatorComments: generatedMessages);
     indent.write('class ${api.name} ');
     indent.addScoped('{', '};', () {
-      indent.addScoped(' public:', '', () {
+      _writeAccessBlock(indent, _ClassAccess.public, () {
         // Prevent copying/assigning.
         _writeFunctionDeclaration(indent, api.name,
             parameters: <String>['const ${api.name}&'], deleted: true);
@@ -404,7 +404,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             isStatic: true,
             parameters: <String>['const FlutterError& error']);
       });
-      indent.addScoped(' protected:', '', () {
+      _writeAccessBlock(indent, _ClassAccess.protected, () {
         indent.writeln('${api.name}() = default;');
       });
     }, nestCount: 0);
@@ -430,7 +430,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     indent
         .write('class $codeSerializerName : public $_defaultCodecSerializer ');
     indent.addScoped('{', '};', () {
-      indent.addScoped(' public:', '', () {
+      _writeAccessBlock(indent, _ClassAccess.public, () {
         _writeFunctionDeclaration(indent, codeSerializerName,
             isConstructor: true);
         _writeFunctionDeclaration(indent, 'GetInstance',
@@ -1620,6 +1620,25 @@ void _writeFunctionDefinition(
     body: body,
   );
   indent.newln();
+}
+
+enum _ClassAccess { public, protected, private }
+
+void _writeAccessBlock(
+    Indent indent, _ClassAccess access, void Function() body) {
+  final String accessLabel;
+  switch (access) {
+    case _ClassAccess.public:
+      accessLabel = 'public';
+      break;
+    case _ClassAccess.protected:
+      accessLabel = 'protected';
+      break;
+    case _ClassAccess.private:
+      accessLabel = 'private';
+      break;
+  }
+  indent.addScoped(' $accessLabel:', '', body);
 }
 
 /// Validates an AST to make sure the cpp generator supports everything.
