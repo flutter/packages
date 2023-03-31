@@ -742,11 +742,12 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
         ? _getCodecSerializerName(api)
         : _defaultCodecSerializer;
-    indent.format('''
-const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
-\treturn flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());
-}
-''');
+    _writeFunctionDefinition(indent, 'GetCodec',
+        scope: api.name,
+        returnType: 'const flutter::StandardMessageCodec&', body: () {
+      indent.writeln(
+          'return flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());');
+    });
     for (final Method func in api.methods) {
       final String channelName = makeChannelName(api, func);
       final HostDatatype returnType = getHostDatatype(func.returnType,
@@ -765,9 +766,10 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
             '${_flutterApiArgumentType(arg.hostType)} ${arg.name}'),
         ..._flutterApiCallbackParameters(returnType),
       ];
-      indent.write(
-          'void ${api.name}::${_makeMethodName(func)}(${parameters.join(', ')}) ');
-      indent.writeScoped('{', '}', () {
+      _writeFunctionDefinition(indent, _makeMethodName(func),
+          scope: api.name,
+          returnType: _voidType,
+          parameters: parameters, body: () {
         const String channel = 'channel';
         indent.writeln(
             'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger_, '
@@ -842,18 +844,15 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
         ], body: () {
       for (final Method method in api.methods) {
         final String channelName = makeChannelName(api, method);
-        indent.write('');
-        indent.addScoped('{', '}', () {
+        indent.writeScoped('{', '}', () {
           indent.writeln(
               'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, '
               '"$channelName", &GetCodec());');
-          indent.write('if (api != nullptr) ');
-          indent.addScoped('{', '} else {', () {
+          indent.writeScoped('if (api != nullptr) {', '} else {', () {
             indent.write(
                 'channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ');
             indent.addScoped('{', '});', () {
-              indent.write('try ');
-              indent.addScoped('{', '}', () {
+              indent.writeScoped('try {', '}', () {
                 final List<String> methodArgument = <String>[];
                 if (method.arguments.isNotEmpty) {
                   indent.writeln(
@@ -873,8 +872,8 @@ const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
                     indent.writeln(
                         'const auto& $encodableArgName = args.at($index);');
                     if (!arg.type.isNullable) {
-                      indent.write('if ($encodableArgName.IsNull()) ');
-                      indent.addScoped('{', '}', () {
+                      indent.writeScoped(
+                          'if ($encodableArgName.IsNull()) {', '}', () {
                         indent.writeln(
                             'reply(WrapError("$argName unexpectedly null."));');
                         indent.writeln('return;');
@@ -1048,30 +1047,44 @@ return EncodableValue(EncodableList{
     final HostDatatype hostDatatype = getFieldHostDatatype(
         field, root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
     final String instanceVariableName = _makeInstanceVariableName(field);
-    final String qualifiedGetterName =
-        '${klass.name}::${_makeGetterName(field)}';
-    final String qualifiedSetterName =
-        '${klass.name}::${_makeSetterName(field)}';
+    final String setterName = _makeSetterName(field);
     final String returnExpression = hostDatatype.isNullable
         ? '$instanceVariableName ? &(*$instanceVariableName) : nullptr'
         : instanceVariableName;
 
-    // Generates the string for a setter treating the type as [type], to allow
-    // generating multiple setter variants.
-    String makeSetter(HostDatatype type) {
+    // Writes a setter treating the type as [type], to allow generating multiple
+    // setter variants.
+    void writeSetter(HostDatatype type) {
       const String setterArgumentName = 'value_arg';
-      return 'void $qualifiedSetterName(${_unownedArgumentType(type)} $setterArgumentName) '
-          '{ $instanceVariableName = ${_fieldValueExpression(type, setterArgumentName)}; }';
+      _writeFunctionDefinition(
+        indent,
+        setterName,
+        scope: klass.name,
+        returnType: _voidType,
+        parameters: <String>[
+          '${_unownedArgumentType(type)} $setterArgumentName'
+        ],
+        body: () {
+          indent.writeln(
+              '$instanceVariableName = ${_fieldValueExpression(type, setterArgumentName)};');
+        },
+      );
     }
 
-    indent.writeln(
-        '${_getterReturnType(hostDatatype)} $qualifiedGetterName() const '
-        '{ return $returnExpression; }');
-    indent.writeln(makeSetter(hostDatatype));
+    _writeFunctionDefinition(
+      indent,
+      _makeGetterName(field),
+      scope: klass.name,
+      returnType: _getterReturnType(hostDatatype),
+      isConst: true,
+      body: () {
+        indent.writeln('return $returnExpression;');
+      },
+    );
+    writeSetter(hostDatatype);
     if (hostDatatype.isNullable) {
       // Write the non-nullable variant; see _writeCppHeaderDataClass.
-      final HostDatatype nonNullType = _nonNullableType(hostDatatype);
-      indent.writeln(makeSetter(nonNullType));
+      writeSetter(_nonNullableType(hostDatatype));
     }
 
     indent.newln();
