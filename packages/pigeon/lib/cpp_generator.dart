@@ -431,22 +431,32 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         .write('class $codeSerializerName : public $_defaultCodecSerializer ');
     indent.addScoped('{', '};', () {
       indent.addScoped(' public:', '', () {
+        _writeFunctionDeclaration(indent, codeSerializerName,
+            isConstructor: true);
+        _writeFunctionDeclaration(indent, 'GetInstance',
+            returnType: '$codeSerializerName&', isStatic: true, inlineBody: () {
+          indent.writeln('static $codeSerializerName sInstance;');
+          indent.writeln('return sInstance;');
+        });
         indent.newln();
-        indent.format('''
-inline static $codeSerializerName& GetInstance() {
-\tstatic $codeSerializerName sInstance;
-\treturn sInstance;
-}
-''');
-        indent.writeln('$codeSerializerName();');
-      });
-      indent.writeScoped(' public:', '', () {
-        indent.writeln(
-            'void WriteValue(const flutter::EncodableValue& value, flutter::ByteStreamWriter* stream) const override;');
+        _writeFunctionDeclaration(indent, 'WriteValue',
+            returnType: _voidType,
+            parameters: <String>[
+              'const flutter::EncodableValue& value',
+              'flutter::ByteStreamWriter* stream'
+            ],
+            isConst: true,
+            isOverride: true);
       });
       indent.writeScoped(' protected:', '', () {
-        indent.writeln(
-            'flutter::EncodableValue ReadValueOfType(uint8_t type, flutter::ByteStreamReader* stream) const override;');
+        _writeFunctionDeclaration(indent, 'ReadValueOfType',
+            returnType: 'flutter::EncodableValue',
+            parameters: <String>[
+              'uint8_t type',
+              'flutter::ByteStreamReader* stream'
+            ],
+            isConst: true,
+            isOverride: true);
       });
     }, nestCount: 0);
     indent.newln();
@@ -1543,6 +1553,7 @@ void _writeFunctionDeclaration(
   bool isOverride = false,
   bool deleted = false,
   bool inlineNoop = false,
+  void Function()? inlineBody,
 }) {
   assert(!(isVirtual && isOverride), 'virtual is redundant with override');
   assert(isVirtual || !isPureVirtual, 'pure virtual methods must be virtual');
@@ -1550,13 +1561,14 @@ void _writeFunctionDeclaration(
       'constructors cannot have return types');
   _writeFunction(
     indent,
-    inlineNoop
+    inlineNoop || (inlineBody != null)
         ? _FunctionOutputType.definition
         : _FunctionOutputType.declaration,
     name: name,
     returnType: returnType,
     parameters: parameters,
     startingAnnotations: <String>[
+      if (inlineBody != null) 'inline',
       if (isStatic) 'static',
       if (isVirtual) 'virtual',
       if (isConstructor && parameters.isNotEmpty) 'explicit'
@@ -1567,6 +1579,7 @@ void _writeFunctionDeclaration(
       if (deleted) '= delete',
       if (isPureVirtual) '= 0',
     ],
+    body: inlineBody,
   );
 }
 
