@@ -311,7 +311,6 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
 }
 
 /// The route match that represent route pushed through [GoRouter.push].
-// TODO(chunhtai): Removes this once imperative API no longer insert route match.
 class ImperativeRouteMatch<T> extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
   ImperativeRouteMatch({
@@ -329,7 +328,8 @@ class ImperativeRouteMatch<T> extends RouteMatch {
   /// The completer for the future returned by [GoRouter.push].
   final Completer<T?> _completer;
 
-  @override
+  /// Called when the corresponding [Route] associated with this route match is
+  /// completed.
   void complete([dynamic value]) {
     _completer.complete(value as T?);
   }
