@@ -181,6 +181,7 @@ import FlutterMacOS
         final String listValue = 'list[$index]';
         final String fieldType = _swiftTypeForDartType(field.type);
 
+        _writeDecodeCasting(root, indent, listValue, field.name, field.type);
         if (field.type.isNullable) {
           if (!hostDatatype.isBuiltin &&
               customClassNames.contains(field.type.baseName)) {
@@ -599,6 +600,16 @@ import FlutterMacOS
           'static let shared = $codecName(readerWriter: $readerWriterName())');
     });
     indent.newln();
+  }
+
+  void _writeDecodeCasting(
+    Root root,
+    Indent indent,
+    String value,
+    String variableName,
+    TypeDeclaration type,
+  ) {
+    //
   }
 
   void _writeWrapResult(Indent indent) {
