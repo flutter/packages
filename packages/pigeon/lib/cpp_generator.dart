@@ -827,12 +827,13 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     final String codeSerializerName = getCodecClasses(api, root).isNotEmpty
         ? _getCodecSerializerName(api)
         : _defaultCodecSerializer;
-    indent.format('''
-/// The codec used by ${api.name}.
-const flutter::StandardMessageCodec& ${api.name}::GetCodec() {
-\treturn flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());
-}
-''');
+    indent.writeln('/// The codec used by ${api.name}.');
+    _writeFunctionDefinition(indent, 'GetCodec',
+        scope: api.name,
+        returnType: 'const flutter::StandardMessageCodec&', body: () {
+      indent.writeln(
+          'return flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());');
+    });
     indent.writeln(
         '$_commentPrefix Sets up an instance of `${api.name}` to handle messages through the `binary_messenger`.');
     _writeFunctionDefinition(indent, 'SetUp',
