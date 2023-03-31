@@ -192,17 +192,11 @@ import FlutterMacOS
             });
           } else if (!hostDatatype.isBuiltin &&
               customEnumNames.contains(field.type.baseName)) {
-            indent.writeln('var ${field.name}: $fieldType? = nil');
             indent.writeln(
-                'let enumVal$index: Int? = ${_castForceUnwrap(listValue, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}');
-            indent.write('if let ${field.name}RawValue = enumVal$index ');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                  '${field.name} = $fieldType(rawValue: ${field.name}RawValue)');
-            });
+                'var ${field.name}: $fieldType? = ${_castForceUnwrap(listValue, field.type, root, variableName: field.name)}');
           } else {
             indent.writeln(
-                'let ${field.name}: $fieldType? = ${_castForceUnwrap(listValue, field.type, root)} ');
+                'let ${field.name}: $fieldType? = ${_castForceUnwrap(listValue, field.type, root, variableName: field.name)}');
           }
         } else {
           if (!hostDatatype.isBuiltin &&
@@ -211,7 +205,7 @@ import FlutterMacOS
                 'let ${field.name} = $fieldType.fromList($listValue as! [Any])!');
           } else {
             indent.writeln(
-                'let ${field.name}: $fieldType = ${_castForceUnwrap(listValue, field.type, root)}');
+                'let ${field.name} = ${_castForceUnwrap(listValue, field.type, root)}');
           }
         }
       });
@@ -637,10 +631,10 @@ import FlutterMacOS
     });
   }
 
-  void _writeNilOrType(Indent indent) {
+  void _writeNilOrValue(Indent indent) {
     indent.format('''
 
-private func nilOrValue<T>(value: Any?) -> T? {
+private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull {
     return nil
   }
@@ -656,7 +650,7 @@ private func nilOrValue<T>(value: Any?) -> T? {
       SwiftOptions generatorOptions, Root root, Indent indent) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
-    _writeNilOrType(indent);
+    _writeNilOrValue(indent);
   }
 }
 
@@ -682,14 +676,23 @@ String _camelCase(String text) {
   return pascal[0].toLowerCase() + pascal.substring(1);
 }
 
-String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
+String _castForceUnwrap(String value, TypeDeclaration type, Root root,
+    {String? variableName}) {
   if (isEnum(root, type)) {
+    if (type.isNullable) {
+      return '''
+nil
+    let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}
+    if let ${variableName}RawValue = ${variableName}EnumVal {
+      $variableName = ${_swiftTypeForDartType(type)}(rawValue: ${variableName}RawValue)!
+    }''';
+    }
     return '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
   } else if (type.isNullable) {
-    return 'nilOrValue(value: $value)';
+    return 'nilOrValue($value)';
   } else {
     return '$value as! ${_swiftTypeForDartType(type)}';
   }
