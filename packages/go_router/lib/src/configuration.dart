@@ -198,6 +198,20 @@ class RouteConfiguration {
     return initialLocation!;
   }
 
+  /// Returns the effective initial location of a StatefulShellBranch.
+  ///
+  /// If the initial location of the branch is null,
+  /// [findStatefulShellBranchDefaultLocation] is used to calculate the initial
+  /// location.
+  String effectiveInitialBranchLocation(StatefulShellBranch branch) {
+    final String? initialLocation = branch.initialLocation;
+    if (initialLocation != null) {
+      return initialLocation;
+    } else {
+      return findStatefulShellBranchDefaultLocation(branch);
+    }
+  }
+
   static String? _fullPathForRoute(
       RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
     for (final RouteBase route in routes) {

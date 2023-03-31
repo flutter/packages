@@ -27,7 +27,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
-  }) : _configuration = configuration {
+  })  : _configuration = configuration,
+        _restorablePropertiesRestorationId =
+            '${restorationScopeId ?? ''}._GoRouterDelegateRestorableProperties' {
     builder = RouteBuilder(
       configuration: configuration,
       builderWithNav: builderWithNav,
@@ -48,7 +50,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   RouteMatchList _matchList = RouteMatchList.empty;
 
-  /// Stores the number of times each route route has been pushed.
+  final RouteConfiguration _configuration;
+
+  final String _restorablePropertiesRestorationId;
+  final GlobalKey<_GoRouterDelegateRestorablePropertiesState>
+      _restorablePropertiesKey =
+      GlobalKey<_GoRouterDelegateRestorablePropertiesState>();
+
+  /// Increments the stored number of times each route route has been pushed.
   ///
   /// This is used to generate a unique key for each route.
   ///
@@ -59,8 +68,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///   'family/:fid': 2,
   /// }
   /// ```
-  final Map<String, int> _pushCounts = <String, int>{};
-  final RouteConfiguration _configuration;
+  int _incrementPushCount(String path) {
+    final _GoRouterDelegateRestorablePropertiesState?
+        restorablePropertiesState = _restorablePropertiesKey.currentState;
+    assert(restorablePropertiesState != null);
+
+    final Map<String, int> pushCounts =
+        restorablePropertiesState!.pushCount.value;
+    final int count = (pushCounts[path] ?? 0) + 1;
+    pushCounts[path] = count;
+    restorablePropertiesState.pushCount.value = pushCounts;
+    return count;
+  }
 
   _NavigatorStateIterator _createNavigatorStateIterator() =>
       _NavigatorStateIterator(_matchList, navigatorKey.currentState!);
@@ -82,15 +101,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     assert(matches.last.route is! ShellRouteBase);
 
     // Remap the pageKey to allow any number of the same page on the stack
-    final int count = (_pushCounts[matches.fullpath] ?? 0) + 1;
-    _pushCounts[matches.fullpath] = count;
+    final int count = _incrementPushCount(matches.fullpath);
     final ValueKey<String> pageKey =
         ValueKey<String>('${matches.fullpath}-p$count');
     final ImperativeRouteMatch newPageKeyMatch = ImperativeRouteMatch(
-      route: matches.last.route,
-      subloc: matches.last.subloc,
-      extra: matches.last.extra,
-      error: matches.last.error,
       pageKey: pageKey,
       matches: matches,
     );
@@ -169,10 +183,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Widget build(BuildContext context) {
-    return builder.build(
-      context,
-      _matchList,
-      routerNeglect,
+    return _GoRouterDelegateRestorableProperties(
+      key: _restorablePropertiesKey,
+      restorationId: _restorablePropertiesRestorationId,
+      builder: (BuildContext context) => builder.build(
+        context,
+        _matchList,
+        routerNeglect,
+      ),
     );
   }
 
@@ -274,14 +292,15 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
 // TODO(chunhtai): Removes this once imperative API no longer insert route match.
 class ImperativeRouteMatch extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
-  const ImperativeRouteMatch({
-    required super.route,
-    required super.subloc,
-    required super.extra,
-    required super.error,
+  ImperativeRouteMatch({
     required super.pageKey,
     required this.matches,
-  });
+  }) : super(
+          route: matches.last.route,
+          subloc: matches.last.subloc,
+          extra: matches.last.extra,
+          error: matches.last.error,
+        );
 
   /// The matches that produces this route match.
   final RouteMatchList matches;
@@ -294,9 +313,62 @@ class ImperativeRouteMatch extends RouteMatch {
     if (other is! ImperativeRouteMatch) {
       return false;
     }
-    return super == this && other.matches == matches;
+    return super == other &&
+        RouteMatchList.matchListEquals(other.matches, matches);
   }
 
   @override
   int get hashCode => Object.hash(super.hashCode, matches);
+}
+
+class _GoRouterDelegateRestorableProperties extends StatefulWidget {
+  const _GoRouterDelegateRestorableProperties(
+      {required super.key, required this.restorationId, required this.builder});
+
+  final String restorationId;
+  final WidgetBuilder builder;
+
+  @override
+  State<StatefulWidget> createState() =>
+      _GoRouterDelegateRestorablePropertiesState();
+}
+
+class _GoRouterDelegateRestorablePropertiesState
+    extends State<_GoRouterDelegateRestorableProperties> with RestorationMixin {
+  final _RestorablePushCount pushCount = _RestorablePushCount();
+
+  @override
+  String? get restorationId => widget.restorationId;
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(pushCount, 'push_count');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context);
+  }
+}
+
+class _RestorablePushCount extends RestorableValue<Map<String, int>> {
+  @override
+  Map<String, int> createDefaultValue() => <String, int>{};
+
+  @override
+  Map<String, int> fromPrimitives(Object? data) {
+    if (data is Map) {
+      return data.map<String, int>((Object? key, Object? value) =>
+          MapEntry<String, int>(key! as String, value! as int));
+    }
+    return <String, int>{};
+  }
+
+  @override
+  Object? toPrimitives() => value;
+
+  @override
+  void didUpdateValue(Map<String, int>? oldValue) {
+    notifyListeners();
+  }
 }

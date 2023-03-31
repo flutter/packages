@@ -80,8 +80,8 @@ void main() {
 
       final RouteMatchList matches = RouteMatchList(
         <RouteMatch>[
-          _createRouteMatch(config.routes.first, '/'),
-          _createRouteMatch(config.routes.first.routes.first, '/'),
+          createRouteMatch(config.routes.first, '/'),
+          createRouteMatch(config.routes.first.routes.first, '/'),
         ],
         Uri.parse('/'),
         const <String, String>{},
@@ -95,105 +95,6 @@ void main() {
       );
 
       expect(find.byType(_DetailsScreen), findsOneWidget);
-    });
-
-    testWidgets('Builds StatefulShellRoute', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> key =
-          GlobalKey<NavigatorState>(debugLabel: 'key');
-      final RouteConfiguration config = RouteConfiguration(
-        routes: <RouteBase>[
-          StatefulShellRoute(
-            builder: mockStatefulShellBuilder,
-            branches: <StatefulShellBranch>[
-              StatefulShellBranch(navigatorKey: key, routes: <RouteBase>[
-                GoRoute(
-                  path: '/nested',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return _DetailsScreen();
-                  },
-                ),
-              ]),
-            ],
-          ),
-        ],
-        redirectLimit: 10,
-        topRedirect: (_, __) => null,
-        navigatorKey: GlobalKey<NavigatorState>(),
-      );
-
-      final RouteMatchList matches = RouteMatchList(
-          <RouteMatch>[
-            _createRouteMatch(config.routes.first, '/nested'),
-            _createRouteMatch(config.routes.first.routes.first, '/nested'),
-          ],
-          Uri.parse('/nested'),
-          const <String, String>{});
-
-      await tester.pumpWidget(
-        _BuilderTestWidget(
-          routeConfiguration: config,
-          matches: matches,
-        ),
-      );
-
-      expect(find.byType(_DetailsScreen), findsOneWidget);
-      expect(find.byKey(key), findsOneWidget);
-    });
-
-    testWidgets('Builds StatefulShellRoute as a sub-route',
-        (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> key =
-          GlobalKey<NavigatorState>(debugLabel: 'key');
-      late GoRoute root;
-      late StatefulShellRoute shell;
-      late GoRoute nested;
-      final RouteConfiguration config = RouteConfiguration(
-        routes: <RouteBase>[
-          root = GoRoute(
-            path: '/root',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Text('Root'),
-            routes: <RouteBase>[
-              shell = StatefulShellRoute(
-                builder: mockStatefulShellBuilder,
-                branches: <StatefulShellBranch>[
-                  StatefulShellBranch(navigatorKey: key, routes: <RouteBase>[
-                    nested = GoRoute(
-                      path: 'nested',
-                      builder: (BuildContext context, GoRouterState state) {
-                        return _DetailsScreen();
-                      },
-                    ),
-                  ]),
-                ],
-              ),
-            ],
-          )
-        ],
-        redirectLimit: 10,
-        topRedirect: (_, __) => null,
-        navigatorKey: GlobalKey<NavigatorState>(),
-      );
-
-      final RouteMatchList matches = RouteMatchList(
-        <RouteMatch>[
-          _createRouteMatch(root, '/root'),
-          _createRouteMatch(shell, 'nested'),
-          _createRouteMatch(nested, '/root/nested'),
-        ],
-        Uri.parse('/root/nested'),
-        const <String, String>{},
-      );
-
-      await tester.pumpWidget(
-        _BuilderTestWidget(
-          routeConfiguration: config,
-          matches: matches,
-        ),
-      );
-
-      expect(find.byType(_DetailsScreen), findsOneWidget);
-      expect(find.byKey(key), findsOneWidget);
     });
 
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
@@ -404,8 +305,8 @@ void main() {
 
       final RouteMatchList matches = RouteMatchList(
           <RouteMatch>[
-            _createRouteMatch(config.routes.first, ''),
-            _createRouteMatch(config.routes.first.routes.first, '/a'),
+            createRouteMatch(config.routes.first, ''),
+            createRouteMatch(config.routes.first.routes.first, '/a'),
           ],
           Uri.parse('/b'),
           const <String, String>{});
@@ -435,6 +336,7 @@ void main() {
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           StatefulShellRoute(
+            restorationScopeId: 'shell',
             builder: (BuildContext context, StatefulShellRouteState state,
                     Widget child) =>
                 _HomeScreen(child: child),
@@ -546,14 +448,4 @@ class _BuilderTestWidget extends StatelessWidget {
       // builder: (context, child) => ,
     );
   }
-}
-
-RouteMatch _createRouteMatch(RouteBase route, String location) {
-  return RouteMatch(
-    route: route,
-    subloc: location,
-    extra: null,
-    error: null,
-    pageKey: ValueKey<String>(location),
-  );
 }

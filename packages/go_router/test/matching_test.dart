@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/configuration.dart';
+import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/router.dart';
 
@@ -26,5 +27,38 @@ void main() {
 
     final RouteMatchList matches = router.routerDelegate.matches;
     expect(matches.toString(), contains('/page-0'));
+  });
+
+  test('RouteMatchList is encoded and decoded correctly', () {
+    final RouteConfiguration configuration = RouteConfiguration(
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/a',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+        GoRoute(
+          path: '/b',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+      ],
+      redirectLimit: 0,
+      navigatorKey: GlobalKey<NavigatorState>(),
+      topRedirect: (_, __) => null,
+    );
+    final RouteMatcher matcher = RouteMatcher(configuration);
+    final RouteMatchListCodec codec = RouteMatchListCodec(matcher);
+
+    final RouteMatchList list1 = matcher.findMatch('/a');
+    final RouteMatchList list2 = matcher.findMatch('/b');
+    list1.push(ImperativeRouteMatch(
+        pageKey: const ValueKey<String>('/b-p0'), matches: list2));
+
+    final Object? encoded = codec.encodeMatchList(list1);
+    final RouteMatchList? decoded = codec.decodeMatchList(encoded);
+
+    expect(decoded, isNotNull);
+    expect(RouteMatchList.matchListEquals(decoded!, list1), isTrue);
   });
 }

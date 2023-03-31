@@ -30,6 +30,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// The route matcher.
   final RouteMatcher matcher;
 
+  late final RouteMatchListCodec _matchListCodec = RouteMatchListCodec(matcher);
+
   /// The route redirector.
   final RouteRedirector redirector;
 
@@ -56,11 +58,16 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   ) {
     late final RouteMatchList initialMatches;
     try {
-      if (routeInformation is PreParsedRouteInformation) {
-        initialMatches = routeInformation.matchlist;
+      final RouteMatchList? preParsedMatchList =
+          RouteMatchList.fromPreParsedRouteInformation(routeInformation);
+      if (preParsedMatchList != null) {
+        initialMatches = preParsedMatchList;
       } else {
-        initialMatches = matcher.findMatch(routeInformation.location!,
-            extra: routeInformation.state);
+        final RouteMatchList? decodedMatchList =
+            _matchListCodec.decodeMatchList(routeInformation.state);
+        initialMatches = decodedMatchList ??
+            matcher.findMatch(routeInformation.location!,
+                extra: routeInformation.state);
       }
     } on MatcherError {
       log.info('No initial matches: ${routeInformation.location}');
@@ -118,23 +125,15 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     if (configuration.isEmpty) {
       return null;
     }
+    final Object? encodedMatchList =
+        _matchListCodec.encodeMatchList(configuration);
     if (configuration.matches.last is ImperativeRouteMatch) {
       configuration =
           (configuration.matches.last as ImperativeRouteMatch).matches;
     }
     return RouteInformation(
       location: configuration.uri.toString(),
-      state: configuration.extra,
+      state: encodedMatchList,
     );
   }
-}
-
-/// Pre-parsed [RouteInformation] that contains a [RouteMatchList].
-class PreParsedRouteInformation extends RouteInformation {
-  /// Creates a [PreParsedRouteInformation].
-  PreParsedRouteInformation(
-      {super.location, super.state, required this.matchlist});
-
-  /// The pre-parsed [RouteMatchList].
-  final RouteMatchList matchlist;
 }

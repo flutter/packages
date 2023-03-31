@@ -160,10 +160,9 @@ void main() {
         const <String, String>{},
       );
 
-      final UnmodifiableRouteMatchList list1 = list.unmodifiableMatchList();
-      final UnmodifiableRouteMatchList list2 = list.unmodifiableMatchList();
+      final RouteMatchList list2 = list.clone();
 
-      expect(list1, equals(list2));
+      expect(RouteMatchList.matchListEquals(list, list2), true);
     });
   });
 }

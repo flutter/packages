@@ -68,10 +68,6 @@ class RouteBuilder {
   final Map<GlobalKey<NavigatorState>, HeroController> _goHeroCache =
       <GlobalKey<NavigatorState>, HeroController>{};
 
-  /// State for any active stateful shell routes
-  final Map<ShellRouteBase, Object?> _shellRouteState =
-      <ShellRouteBase, Object?>{};
-
   /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
     BuildContext context,
@@ -155,23 +151,27 @@ class RouteBuilder {
         _buildErrorPage(context, e, matchList),
       ];
     } finally {
-      /// Clean up previous cache to prevent memory leak.
-      _goHeroCache.removeWhere(
-          (GlobalKey<NavigatorState> key, _) => !keyToPage.keys.contains(key));
+      /// Clean up previous cache to prevent memory leak, making sure any nested
+      /// stateful shell routes for the current match list are kept.
+      final Iterable<StatefulShellRoute> matchListShellRoutes = matchList
+          .matches
+          .map((RouteMatch e) => e.route)
+          .whereType<StatefulShellRoute>();
 
-      /// Clean up cache of shell route states, but keep states for shell routes
-      /// in the current match list, as well as in any nested stateful shell
-      /// routes
-      if (_shellRouteState.isNotEmpty) {
-        Iterable<ShellRouteBase> shellRoutes = matchList.matches
-            .map((RouteMatch e) => e.route)
-            .whereType<ShellRouteBase>();
-        shellRoutes = RouteConfiguration.routesRecursively(shellRoutes)
-            .whereType<ShellRouteBase>();
-        _shellRouteState
-            .removeWhere((ShellRouteBase key, _) => !shellRoutes.contains(key));
-      }
+      final Set<Key> activeKeys = keyToPage.keys.toSet()
+        ..addAll(_nestedStatefulNavigatorKeys(matchListShellRoutes));
+      _goHeroCache.removeWhere(
+          (GlobalKey<NavigatorState> key, _) => !activeKeys.contains(key));
     }
+  }
+
+  Set<GlobalKey<NavigatorState>> _nestedStatefulNavigatorKeys(
+      Iterable<StatefulShellRoute> routes) {
+    return RouteConfiguration.routesRecursively(routes)
+        .whereType<StatefulShellRoute>()
+        .expand((StatefulShellRoute e) =>
+            e.branches.map((StatefulShellBranch b) => b.navigatorKey))
+        .toSet();
   }
 
   void _buildRecursive(
@@ -253,19 +253,12 @@ class RouteBuilder {
         );
       }
 
-      ShellRouteContext shellRouteContext = ShellRouteContext(
+      // Call the ShellRouteBase to create/update the shell route state
+      final ShellRouteContext shellRouteContext = ShellRouteContext(
         subRoute: subRoute,
         routeMatchList: matchList,
-        shellRouteState: _shellRouteState[route],
         navigatorBuilder: buildShellNavigator,
       );
-
-      // Call the ShellRouteBase to create/update the shell route state
-      final Object? shellRouteState =
-          route.updateShellState(context, state, shellRouteContext);
-      _shellRouteState[route] = shellRouteState;
-      shellRouteContext =
-          shellRouteContext.copyWith(shellRouteState: shellRouteState);
 
       // Build the Page for this route
       final Page<Object?> page = _buildPageForRoute(
