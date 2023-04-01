@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Adds `setPrefix` method.
+
 ## 2.0.20
 
 * Adds README discussion of `reload()`.

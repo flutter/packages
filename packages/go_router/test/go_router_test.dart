@@ -21,14 +21,14 @@ import 'test_helpers.dart';
 const bool enableLogs = false;
 final Logger log = Logger('GoRouter tests');
 
-Future<void> sendPlatformUrl(String url) async {
+Future<void> sendPlatformUrl(String url, WidgetTester tester) async {
   final Map<String, dynamic> testRouteInformation = <String, dynamic>{
     'location': url,
   };
   final ByteData message = const JSONMethodCodec().encodeMethodCall(
     MethodCall('pushRouteInformation', testRouteInformation),
   );
-  await ServicesBinding.instance.defaultBinaryMessenger
+  await tester.binding.defaultBinaryMessenger
       .handlePlatformMessage('flutter/navigation', message, (_) {});
 }
 
@@ -1495,7 +1495,7 @@ void main() {
 
       redirected = false;
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/login');
@@ -1528,7 +1528,7 @@ void main() {
 
       expect(router.location, '/');
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
       await tester.pumpAndSettle();
       expect(router.location, '/dummy');
     });
@@ -1631,7 +1631,7 @@ void main() {
       });
       redirected = false;
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/login');
@@ -2024,7 +2024,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
 
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy/dummy2');
+      await sendPlatformUrl('/dummy/dummy2', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/other');

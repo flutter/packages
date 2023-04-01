@@ -7,13 +7,16 @@ package io.flutter.plugins.webviewflutter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
+import android.os.Build;
 import android.view.View;
+import android.view.ViewParent;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewHostApi;
@@ -103,6 +106,35 @@ public class WebViewHostApiImpl implements WebViewHostApi {
 
     @Override
     public void dispose() {}
+
+    // TODO(bparrishMines): This should be removed once https://github.com/flutter/engine/pull/40771 makes it to stable.
+    // Temporary fix for https://github.com/flutter/flutter/issues/92165. The FlutterView is setting
+    // setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES_EXCLUDE_DESCENDANTS) which prevents this
+    // view from automatically being traversed for autofill.
+    @Override
+    protected void onAttachedToWindow() {
+      super.onAttachedToWindow();
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        final FlutterView flutterView = tryFindFlutterView();
+        if (flutterView != null) {
+          flutterView.setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES);
+        }
+      }
+    }
+
+    // Attempt to traverse the parents of this view until a FlutterView is found.
+    private FlutterView tryFindFlutterView() {
+      ViewParent currentView = this;
+
+      while (currentView.getParent() != null) {
+        currentView = currentView.getParent();
+        if (currentView instanceof FlutterView) {
+          return (FlutterView) currentView;
+        }
+      }
+
+      return null;
+    }
 
     @Override
     public void setWebViewClient(WebViewClient webViewClient) {

@@ -1,6 +1,10 @@
-## 9.1.4
+## 9.1.5
 
 * [swift] Fixes NSNull casting crash.
+
+## 9.1.4
+
+* Migrates off deprecated `BinaryMessenger` API.
 
 ## 9.1.3
 
