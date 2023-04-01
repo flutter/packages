@@ -24,7 +24,8 @@ void main() {
 
       Future<Camera> createApi() async {
         flutterApi.create(0);
-        return Future<Camera>.sync(() => instanceManager.getInstanceWithWeakReference(0)!);
+        return Future<Camera>.sync(
+            () => instanceManager.getInstanceWithWeakReference(0)!);
       }
 
       expectLater(createApi(), completion(isA<Camera>()));
