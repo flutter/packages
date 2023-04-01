@@ -1,3 +1,7 @@
+## 9.1.4
+
+* Migrates off deprecated `BinaryMessenger` API.
+
 ## 9.1.3
 
 * [cpp] Requires passing any non-nullable fields of generated data classes as
