@@ -39,10 +39,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull {
     return nil
   }
-  if let convertedValue = value as? T {
-    return convertedValue
+  if let value = value {
+    return value as! T?
   }
-  return (value as Any) as! T?
+  return value as! T?
 }
 
 enum AnEnum: Int {

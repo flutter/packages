@@ -176,39 +176,18 @@ import FlutterMacOS
     indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(klass),
           (int index, final NamedType field) {
-        final HostDatatype hostDatatype = _getHostDatatype(root, field);
-
         final String listValue = 'list[$index]';
-        final String fieldType = _swiftTypeForDartType(field.type);
 
-        _writeDecodeCasting(root, indent, listValue, field.name, field.type);
-        if (field.type.isNullable) {
-          if (!hostDatatype.isBuiltin &&
-              customClassNames.contains(field.type.baseName)) {
-            indent.writeln('var ${field.name}: $fieldType? = nil');
-            indent.write('if let ${field.name}List = $listValue as! [Any]? ');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                  '${field.name} = $fieldType.fromList(${field.name}List)');
-            });
-          } else if (!hostDatatype.isBuiltin &&
-              customEnumNames.contains(field.type.baseName)) {
-            indent.writeln(
-                'var ${field.name}: $fieldType? = ${_castForceUnwrap(listValue, field.type, root, variableName: field.name)}');
-          } else {
-            indent.writeln(
-                'let ${field.name}: $fieldType? = ${_castForceUnwrap(listValue, field.type, root, variableName: field.name)}');
-          }
-        } else {
-          if (!hostDatatype.isBuiltin &&
-              customClassNames.contains(field.type.baseName)) {
-            indent.writeln(
-                'let ${field.name} = $fieldType.fromList($listValue as! [Any])!');
-          } else {
-            indent.writeln(
-                'let ${field.name} = ${_castForceUnwrap(listValue, field.type, root)}');
-          }
-        }
+        _writeDecodeCasting(
+          root,
+          indent,
+          listValue,
+          field.name,
+          field.type,
+          field: field,
+          customClassNames: customClassNames,
+          customEnumNames: customEnumNames,
+        );
       });
 
       indent.newln();
@@ -340,8 +319,8 @@ import FlutterMacOS
             });
           } else {
             indent.addScoped('{ response in', '}', () {
-              indent.writeln(
-                  'let result: ${_nullsafeSwiftTypeForDartType(func.returnType)} = ${_castForceUnwrap("response", func.returnType, root)}');
+              _writeDecodeCasting(
+                  root, indent, 'response', 'result', func.returnType);
               indent.writeln('completion(result)');
             });
           }
@@ -456,9 +435,8 @@ import FlutterMacOS
                   final String argName =
                       _getSafeArgumentName(index, arg.namedType);
                   final String argIndex = 'args[$index]';
-                  indent.writeln(
-                      'let $argName: ${_nullsafeSwiftTypeForDartType(arg.type)} = ${_castForceUnwrap(argIndex, arg.type, root)}');
-
+                  _writeDecodeCasting(
+                      root, indent, argIndex, argName, arg.type);
                   if (arg.label == '_') {
                     methodArgument.add(argName);
                   } else {
@@ -607,9 +585,56 @@ import FlutterMacOS
     Indent indent,
     String value,
     String variableName,
-    TypeDeclaration type,
-  ) {
-    //
+    TypeDeclaration type, {
+    NamedType? field,
+    Set<String>? customClassNames,
+    Set<String>? customEnumNames,
+  }) {
+    if (field != null) {
+      final HostDatatype hostDatatype = _getHostDatatype(root, field);
+      final String fieldType = _swiftTypeForDartType(field.type);
+
+      if (field.type.isNullable) {
+        if (customClassNames != null &&
+            !hostDatatype.isBuiltin &&
+            customClassNames.contains(field.type.baseName)) {
+          indent.writeln('var $variableName: $fieldType? = nil');
+          indent.write('if let ${variableName}List = $value as! [Any]? ');
+          indent.addScoped('{', '}', () {
+            indent.writeln(
+                '$variableName = $fieldType.fromList(${variableName}List)');
+          });
+        } else if (customEnumNames != null &&
+            !hostDatatype.isBuiltin &&
+            customEnumNames.contains(field.type.baseName)) {
+          indent.writeln('var $variableName: $fieldType? = nil');
+          indent.writeln(
+              'let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}');
+          indent.write(
+              'if let ${variableName}RawValue = ${variableName}EnumVal ');
+          indent.addScoped('{', '}', () {
+            indent.writeln(
+                '$variableName = $fieldType(rawValue: ${variableName}RawValue)!');
+          });
+        } else {
+          indent.writeln(
+              'let $variableName: $fieldType? = ${_castForceUnwrap(value, field.type, root)}');
+        }
+      } else {
+        if (customClassNames != null &&
+            !hostDatatype.isBuiltin &&
+            customClassNames.contains(field.type.baseName)) {
+          indent.writeln(
+              'let $variableName = $fieldType.fromList($value as! [Any])!');
+        } else {
+          indent.writeln(
+              'let $variableName = ${_castForceUnwrap(value, field.type, root)}');
+        }
+      }
+      return;
+    }
+    indent.writeln(
+        'let $variableName: ${_nullsafeSwiftTypeForDartType(type)} = ${_castForceUnwrap(value, type, root)}');
   }
 
   void _writeWrapResult(Indent indent) {
@@ -649,10 +674,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull {
     return nil
   }
-  if let convertedValue = value as? T {
-    return convertedValue
+  if let value = value {
+    return value as! T?
   }
-  return (value as Any) as! T?
+  return value as! T?
 }''');
   }
 
@@ -687,17 +712,8 @@ String _camelCase(String text) {
   return pascal[0].toLowerCase() + pascal.substring(1);
 }
 
-String _castForceUnwrap(String value, TypeDeclaration type, Root root,
-    {String? variableName}) {
+String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
   if (isEnum(root, type)) {
-    if (type.isNullable) {
-      return '''
-nil
-    let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}
-    if let ${variableName}RawValue = ${variableName}EnumVal {
-      $variableName = ${_swiftTypeForDartType(type)}(rawValue: ${variableName}RawValue)!
-    }''';
-    }
     return '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
