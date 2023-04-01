@@ -1,5 +1,6 @@
 ## NEXT
 
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.10.3+2

@@ -4,3 +4,7 @@ targets:
       - integration_test/*.dart
       - lib/$lib$
       - $package$
+    builders:
+      mockito|mockBuilder:
+        generate_for:
+          - integration_test/**

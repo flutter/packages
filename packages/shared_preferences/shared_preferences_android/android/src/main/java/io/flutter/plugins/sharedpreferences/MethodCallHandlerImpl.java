@@ -106,16 +106,18 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
           // We've been committing the whole time.
           result.success(true);
           break;
-        case "getAll":
-          result.success(getAllPrefs());
+        case "getAllWithPrefix":
+          String prefix = call.argument("prefix");
+          result.success(getAllPrefs(prefix));
           return;
         case "remove":
           commitAsync(preferences.edit().remove(key), result);
           break;
-        case "clear":
-          Set<String> keySet = getAllPrefs().keySet();
+        case "clearWithPrefix":
+          String newPrefix = call.argument("prefix");
+          Set<String> keys = getAllPrefs(newPrefix).keySet();
           SharedPreferences.Editor clearEditor = preferences.edit();
-          for (String keyToDelete : keySet) {
+          for (String keyToDelete : keys) {
             clearEditor.remove(keyToDelete);
           }
           commitAsync(clearEditor, result);
@@ -181,12 +183,12 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     }
   }
 
-  // Filter preferences to only those set by the flutter app.
-  private Map<String, Object> getAllPrefs() throws IOException {
+  // Gets all shared preferences, filtered to only those set with the given prefix.
+  private Map<String, Object> getAllPrefs(String prefix) throws IOException {
     Map<String, ?> allPrefs = preferences.getAll();
     Map<String, Object> filteredPrefs = new HashMap<>();
     for (String key : allPrefs.keySet()) {
-      if (key.startsWith("flutter.")) {
+      if (key.startsWith(prefix)) {
         Object value = allPrefs.get(key);
         if (value instanceof String) {
           String stringValue = (String) value;
