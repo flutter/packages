@@ -485,11 +485,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> toggleFullScreen() async {
     if (kIsWeb) {
       if (!value.isFullScreen) {
-        value = value.copyWith(isFullScreen: true);
         await _applyFullScreen();
+        value = value.copyWith(isFullScreen: true);
       } else {
-        value = value.copyWith(isFullScreen: false);
         await _applyExitFullScreen();
+        value = value.copyWith(isFullScreen: false);
       }
     }
   }

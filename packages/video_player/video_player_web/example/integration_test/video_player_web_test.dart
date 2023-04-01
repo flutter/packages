@@ -125,6 +125,16 @@ void main() {
       expect(VideoPlayerPlatform.instance.pause(await textureId), completes);
     });
 
+    testWidgets('can enter fullscreen', (WidgetTester tester) async {
+      expect(VideoPlayerPlatform.instance.enterFullScreen(await textureId),
+          completes);
+    });
+
+    testWidgets('can exit fullscreen', (WidgetTester tester) async {
+      expect(VideoPlayerPlatform.instance.exitFullScreen(await textureId),
+          completes);
+    });
+
     testWidgets('can set volume', (WidgetTester tester) async {
       expect(
         VideoPlayerPlatform.instance.setVolume(await textureId, 0.8),

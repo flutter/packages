@@ -92,6 +92,32 @@ void main() {
     );
 
     testWidgets(
+      'can go fullscreen',
+      (WidgetTester tester) async {
+        await controller.initialize();
+        // Mute to allow playing without DOM interaction on Web.
+        // See https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
+        await controller.setVolume(0);
+
+        await controller.play();
+        await controller.toggleFullScreen();
+        await tester.pumpAndSettle(_playDuration);
+
+        expect(controller.value.isFullScreen, true);
+        expect(controller.value.position,
+            (Duration position) => position > Duration.zero);
+
+        await controller.toggleFullScreen();
+        await tester.pumpAndSettle(_playDuration);
+
+        expect(controller.value.isFullScreen, false);
+        expect(controller.value.position,
+            (Duration position) => position > Duration.zero);
+      },
+      skip: !kIsWeb,
+    );
+
+    testWidgets(
       'can seek',
       (WidgetTester tester) async {
         await controller.initialize();
