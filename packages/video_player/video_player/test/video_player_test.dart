@@ -80,6 +80,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
+
+  @override
+  Future<void> toggleFullScreen() async {}
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
