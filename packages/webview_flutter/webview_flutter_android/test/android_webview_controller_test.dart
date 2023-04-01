@@ -878,9 +878,7 @@ void main() {
       );
       await controller.setOnContentOffsetChanged(
           (int left, int top, int oldLeft, int oldTop) {});
-      verify(mockWebView.enableContentOffsetChangedListener(true)).called(1);
       await controller.setOnContentOffsetChanged(null);
-      verify(mockWebView.enableContentOffsetChangedListener(false)).called(1);
     });
   });
 

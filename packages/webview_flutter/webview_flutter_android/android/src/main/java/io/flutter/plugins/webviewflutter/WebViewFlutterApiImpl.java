@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewFlutterApi;
+import java.util.Objects;
 
 /**
  * Flutter API implementation for `WebView`.
@@ -26,7 +27,7 @@ public class WebViewFlutterApiImpl extends WebViewFlutterApi {
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public WebViewFContentOffsetChangedListener lutterApiImpl(
+  public WebViewFlutterApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     super(binaryMessenger);
     this.instanceManager = instanceManager;
@@ -51,5 +52,21 @@ public class WebViewFlutterApiImpl extends WebViewFlutterApi {
   @VisibleForTesting
   void setApi(@NonNull WebViewFlutterApi api) {
     this.api = api;
+  }
+
+  public void onScrollPosChange(
+      @NonNull WebView instance,
+      @NonNull Long xArg,
+      @NonNull Long yArg,
+      @NonNull Long oldXArg,
+      @NonNull Long oldYArg,
+      Reply<Void> callback) {
+    api.onScrollPosChange(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        xArg,
+        yArg,
+        oldXArg,
+        oldYArg,
+        callback);
   }
 }

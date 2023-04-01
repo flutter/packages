@@ -404,11 +404,6 @@ class WebView extends JavaObject {
     return api.setBackgroundColorFromInstance(this, color.value);
   }
 
-  ///Toggle scroll listener for this WebView
-  Future<void> enableContentOffsetChangedListener(bool enabled) {
-    return api.enableContentOffsetChangedListenerFromInstance(this, enabled);
-  }
-
   @override
   WebView copy() {
     return WebView.detached(useHybridComposition: useHybridComposition);

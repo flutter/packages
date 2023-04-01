@@ -6,7 +6,6 @@ package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,8 +39,6 @@ public class WebViewTest {
 
   @Mock WebViewHostApiImpl.WebViewProxy mockWebViewProxy;
 
-  @Mock public GeneratedAndroidWebView.WebViewFlutterApi mockWebViewFlutterApi;
-
   @Mock Context mockContext;
 
   @Mock BinaryMessenger mockBinaryMessenger;
@@ -60,7 +57,6 @@ public class WebViewTest {
             testInstanceManager,
             mockBinaryMessenger,
             mockWebViewProxy,
-            mockWebViewFlutterApi,
             mockContext,
             null);
     testHostApiImpl.create(0L, true);
@@ -345,19 +341,23 @@ public class WebViewTest {
   }
 
   @Test
-  public void disableContentOffsetChangedListener() {
-    testHostApiImpl.enableContentOffsetChangedListener(0L, false);
-    verify(mockWebView).setContentOffsetChangedListener(null);
-  }
+  public void onScrollPosChange() {
+    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
 
-  @Test
-  public void enableContentOffsetChangedListener() {
-    final ArgumentCaptor<ContentOffsetChangedListener> modeCaptor =
-        ArgumentCaptor.forClass(ContentOffsetChangedListener.class);
-    testHostApiImpl.enableContentOffsetChangedListener(0L, true);
-    verify(mockWebView).setContentOffsetChangedListener(modeCaptor.capture());
-    assertNotNull(modeCaptor.getValue());
-    modeCaptor.getValue().onContentOffsetChange(0, 1, 2, 3);
-    verify(mockWebViewFlutterApi).onScrollPosChange(eq(0L), eq(0L), eq(1L), eq(2L), eq(3L), any());
+    final WebViewFlutterApiImpl flutterApiImpl =
+        new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
+
+    final WebViewFlutterApi mockFlutterApi = mock(WebViewFlutterApi.class);
+    flutterApiImpl.setApi(mockFlutterApi);
+    flutterApiImpl.create(mockWebView, reply -> {});
+
+    flutterApiImpl.onScrollPosChange(mockWebView, 0L, 1L, 2L, 3L, reply -> {});
+
+    final long instanceIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
+    verify(mockFlutterApi)
+        .onScrollPosChange(eq(instanceIdentifier), eq(0L), eq(1L), eq(2L), eq(3L), any());
+
+    instanceManager.close();
   }
 }

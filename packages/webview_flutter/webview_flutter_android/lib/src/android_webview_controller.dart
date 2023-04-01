@@ -355,7 +355,6 @@ class AndroidWebViewController extends PlatformWebViewController {
       void Function(int left, int top, int oldLeft, int oldTop)?
           onOffsetChange) async {
     _webView.onScrollChanged = onOffsetChange;
-    _webView.enableContentOffsetChangedListener(onOffsetChange != null);
   }
 
   /// Sets the restrictions that apply on automatic media playback.
