@@ -32,6 +32,9 @@ class JavaObject {
   static InstanceManager _initInstanceManager() {
     WidgetsFlutterBinding.ensureInitialized();
     // Clears the native `InstanceManager` on initial use of the Dart one.
+    // TODO(camsim99): this unawaited call sometimes leads to failure in not async tests,
+    //  because of race condition.
+    //  `clear()` async event finishes after test execution, when platform channel is destroyed, throwing exception.
     InstanceManagerHostApi().clear();
     return InstanceManager(
       onWeakReferenceRemoved: (int identifier) {

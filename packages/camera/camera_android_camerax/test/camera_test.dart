@@ -18,9 +18,16 @@ void main() {
         instanceManager: instanceManager,
       );
 
-      flutterApi.create(0);
+      // InstanceManagerHostApi.clear() is async. It is called unawaited deep inside of `flutterApi.create(0)`.
+      // So `clear()` method body is queued and sometimes runs after test completion and fails.
+      // This trick ensures for `InstanceManagerHostApi.clear()` completion.
 
-      expect(instanceManager.getInstanceWithWeakReference(0), isA<Camera>());
+      Future<Camera> createApi() async {
+        flutterApi.create(0);
+        return Future<Camera>.sync(() => instanceManager.getInstanceWithWeakReference(0)!);
+      }
+
+      expectLater(createApi(), completion(isA<Camera>()));
     });
   });
 }

@@ -17,3 +17,4 @@
 * Fixes instance manager hot restart behavior and fixes Java casting issue.
 * Implements image capture.
 * Fixes cast of CameraInfo to fix integration test failure.
+* Fixes race condition in camera_test.dart
