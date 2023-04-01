@@ -134,16 +134,26 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
   final Map<String, WebViewAndroidJavaScriptChannel> _javaScriptChannels =
       <String, WebViewAndroidJavaScriptChannel>{};
 
-  late final android_webview.WebViewClient _webViewClient = withWeakReferenceTo(
-      this, (WeakReference<WebViewAndroidPlatformController> weakReference) {
-    return webViewProxy.createWebViewClient(
-      onPageStarted: (_, String url) {
+  late final android_webview.WebViewClient _webViewClient =
+      webViewProxy.createWebViewClient(
+    onPageStarted: withWeakReferenceTo(this, (
+      WeakReference<WebViewAndroidPlatformController> weakReference,
+    ) {
+      return (_, String url) {
         weakReference.target?.callbacksHandler.onPageStarted(url);
-      },
-      onPageFinished: (_, String url) {
+      };
+    }),
+    onPageFinished: withWeakReferenceTo(this, (
+      WeakReference<WebViewAndroidPlatformController> weakReference,
+    ) {
+      return (_, String url) {
         weakReference.target?.callbacksHandler.onPageFinished(url);
-      },
-      onReceivedError: (
+      };
+    }),
+    onReceivedError: withWeakReferenceTo(this, (
+      WeakReference<WebViewAndroidPlatformController> weakReference,
+    ) {
+      return (
         _,
         int errorCode,
         String description,
@@ -156,8 +166,12 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
           failingUrl: failingUrl,
           errorType: _errorCodeToErrorType(errorCode),
         ));
-      },
-      onReceivedRequestError: (
+      };
+    }),
+    onReceivedRequestError: withWeakReferenceTo(this, (
+      WeakReference<WebViewAndroidPlatformController> weakReference,
+    ) {
+      return (
         _,
         android_webview.WebResourceRequest request,
         android_webview.WebResourceError error,
@@ -171,21 +185,29 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             errorType: _errorCodeToErrorType(error.errorCode),
           ));
         }
-      },
-      urlLoading: (_, String url) {
+      };
+    }),
+    urlLoading: withWeakReferenceTo(this, (
+      WeakReference<WebViewAndroidPlatformController> weakReference,
+    ) {
+      return (_, String url) {
         weakReference.target?._handleNavigationRequest(
           url: url,
           isForMainFrame: true,
         );
-      },
-      requestLoading: (_, android_webview.WebResourceRequest request) {
+      };
+    }),
+    requestLoading: withWeakReferenceTo(this, (
+      WeakReference<WebViewAndroidPlatformController> weakReference,
+    ) {
+      return (_, android_webview.WebResourceRequest request) {
         weakReference.target?._handleNavigationRequest(
           url: request.url,
           isForMainFrame: request.isForMainFrame,
         );
-      },
-    );
-  });
+      };
+    }),
+  );
 
   bool _hasNavigationDelegate = false;
   bool _hasProgressTracking = false;

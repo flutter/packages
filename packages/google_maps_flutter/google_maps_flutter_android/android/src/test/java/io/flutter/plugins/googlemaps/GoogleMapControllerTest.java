@@ -14,6 +14,7 @@ import static org.mockito.Mockito.verify;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Looper;
 import androidx.activity.ComponentActivity;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
@@ -118,6 +120,7 @@ public class GoogleMapControllerTest {
 
       verify(mapView, never()).invalidate();
       argument.getValue().onMapLoaded();
+      Shadows.shadowOf(Looper.getMainLooper()).idle();
       verify(mapView).invalidate();
     }
   }
@@ -141,6 +144,7 @@ public class GoogleMapControllerTest {
 
     verify(mapView, never()).invalidate();
     argument.getValue().onMapLoaded();
+    Shadows.shadowOf(Looper.getMainLooper()).idle();
     verify(mapView).invalidate();
   }
 

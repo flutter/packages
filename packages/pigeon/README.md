@@ -5,8 +5,8 @@ host platform type-safe, easier and faster.
 
 ## Supported Platforms
 
-Currently Pigeon supports generating Objective-C and experimental Swift code
-for usage on iOS, Java and experimental Kotlin code for Android, 
+Currently Pigeon supports generating Objective-C and Swift code
+for usage on iOS, Java and Kotlin code for Android, 
 and has experimental support for C++ for Windows.
 The Objective-C code is
 [accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift)
@@ -37,18 +37,12 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Implement the generated iOS protocol for handling the calls on iOS, set it up
    as the handler for the messages.
 
-**Note:** Swift code generation for iOS is experimental while we get more usage and add more
-testing. Not all features may be supported.
-
 ### Flutter calling into Android Steps
 
 1) Add the generated Java or Kotlin code to your `./android/app/src/main/java` directory
    for compilation.
 1) Implement the generated Java or Kotlin interface for handling the calls on Android, set
    it up as the handler for the messages.
-
-**Note:** Kotlin code generation for Android is experimental while we get more usage and add more
-testing and works just with Flutter 3.3.0 or later. Not all features may be supported.
 
 ### Flutter calling into Windows Steps
 
@@ -112,7 +106,7 @@ abstract class Api2Host {
 Generates:
 
 ```objc
-// Objc
+// Objective-C
 @protocol Api2Host
 -(void)calculate:(nullable Value *)input 
       completion:(void(^)(Value *_Nullable, FlutterError *_Nullable))completion;
@@ -145,7 +139,7 @@ public interface Api2Host {
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
 interface Api2Host {
-   fun calculate(value: Value, callback: (Value) -> Unit)
+   fun calculate(value: Value, callback: (Result<Value>) -> Unit)
 }
 ```
 
@@ -224,6 +218,61 @@ abstract class Api2Host {
 }
 ```
 
+### Error Handling
+
+#### Kotlin, Java and Swift
+
+All Host API exceptions are translated into Flutter `PlatformException`.  
+* For synchronous methods, thrown exceptions will be caught and translated.  
+* For asynchronous methods, there is no default exception handling; errors should be returned via the provided callback.
+
+To pass custom details into `PlatformException` for error handling, use `FlutterError` in your Host API.
+For example:
+
+```kotlin
+// Kotlin
+class MyApi : GeneratedApi {
+  // For synchronous methods
+  override fun doSomething() {
+    throw FlutterError('error_code', 'message', 'details')
+  }
+
+  // For async methods
+  override fun doSomethingAsync(callback: (Result<Unit>) -> Unit) {
+    callback(Result.failure(FlutterError('error_code', 'message', 'details'))
+  }
+}
+```
+
+#### Objective-C and C++
+
+Likewise, Host API errors can be sent using the provided `FlutterError` class (translated into `PlatformException`).
+
+For synchronous methods:
+* Objective-C - Assign the `error` argument to a `FlutterError` reference.
+* C++ - Return a `FlutterError` directly (for void methods) or within an `ErrorOr` instance.
+
+For async methods:
+* Both - Return a `FlutterError` through the provided callback.
+
+#### Handling the errors
+
+Then you can implement error handling on the Flutter side:
+
+```dart
+// Dart
+void doSomething() {
+  try {
+    myApi.doSomething()
+  } catch (PlatformException e) {
+    if (e.code == 'error_code') {
+      // Perform custom error handling
+      assert(e.message == 'message')
+      assert(e.details == 'details')
+    }
+  }
+}
+```
 
 ## Feedback
 

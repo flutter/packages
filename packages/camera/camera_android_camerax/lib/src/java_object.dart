@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
@@ -26,19 +27,26 @@ class JavaObject {
         );
 
   /// Global instance of [InstanceManager].
-  static final InstanceManager globalInstanceManager = InstanceManager(
-    onWeakReferenceRemoved: (int identifier) {
-      JavaObjectHostApiImpl().dispose(identifier);
-    },
-  );
+  static final InstanceManager globalInstanceManager = _initInstanceManager();
 
-  /// Pigeon Host Api implementation for [JavaObject].
-  final JavaObjectHostApiImpl _api;
+  static InstanceManager _initInstanceManager() {
+    WidgetsFlutterBinding.ensureInitialized();
+    // Clears the native `InstanceManager` on initial use of the Dart one.
+    InstanceManagerHostApi().clear();
+    return InstanceManager(
+      onWeakReferenceRemoved: (int identifier) {
+        JavaObjectHostApiImpl().dispose(identifier);
+      },
+    );
+  }
 
-  /// Release the reference to a native Java instance.
+  /// Release the weak reference to the [instance].
   static void dispose(JavaObject instance) {
     instance._api.instanceManager.removeWeakReference(instance);
   }
+
+  // ignore: unused_field
+  final JavaObjectHostApiImpl _api;
 }
 
 /// Handles methods calls to the native Java Object class.

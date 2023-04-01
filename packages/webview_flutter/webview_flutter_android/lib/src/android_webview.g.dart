@@ -152,6 +152,42 @@ class WebViewPoint {
   }
 }
 
+/// Host API for managing the native `InstanceManager`.
+class InstanceManagerHostApi {
+  /// Constructor for [InstanceManagerHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  InstanceManagerHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Clear the native `InstanceManager`.
+  ///
+  /// This is typically only used after a hot restart.
+  Future<void> clear() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.InstanceManagerHostApi.clear', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
 /// Handles methods calls to the native Java Object class.
 ///
 /// Also handles calls to remove the reference to an instance with `dispose`.
