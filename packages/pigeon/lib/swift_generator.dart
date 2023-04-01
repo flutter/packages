@@ -671,13 +671,8 @@ import FlutterMacOS
     indent.format('''
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
-  if value is NSNull {
-    return nil
-  }
-  if let value = value {
-    return value as! T?
-  }
-  return value as! T?
+  if value is NSNull { return nil }
+  return (value as Any) as! T?
 }''');
   }
 
