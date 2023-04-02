@@ -5,3 +5,5 @@ tasks:
     script: .ci/scripts/create_simulator.sh
   - name: custom package tests
     script: .ci/scripts/custom_package_tests.sh
+  - name: remove simulator
+    script: .ci/scripts/remove_simulator.sh

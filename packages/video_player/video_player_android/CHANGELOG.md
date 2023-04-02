@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
+## 2.4.3
+
+* Bumps ExoPlayer version to 2.18.5.
+
+## 2.4.2
+
+* Bumps ExoPlayer version to 2.18.4.
+
 ## 2.4.1
 
 * Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.

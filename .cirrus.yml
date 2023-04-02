@@ -97,7 +97,7 @@ task:
         license_script: $PLUGIN_TOOL_COMMAND license-check
         # The major and minor version here should match the lowest version
         # analyzed in legacy_version_analyze.
-        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0
+        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0 --allow-dependencies=script/configs/allowed_unpinned_deps.yaml --allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml
         readme_script:
           - ./script/tool_runner.sh readme-check
           # Re-run with --require-excerpts, skipping packages that still need
@@ -324,8 +324,8 @@ task:
     - name: web_benchmarks_test
       env:
         matrix:
-          CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
           CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
+          CHROMIUM_BUILD: "1097615" # Chromium 111
       << : *INSTALL_CHROME_LINUX
       script:
         - cd packages/web_benchmarks/testing/test_app

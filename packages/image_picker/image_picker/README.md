@@ -1,4 +1,5 @@
 # Image Picker plugin for Flutter
+<?code-excerpt path-base="excerpts/packages/image_picker_example"?>
 
 [![pub package](https://img.shields.io/pub/v/image_picker.svg)](https://pub.dev/packages/image_picker)
 
@@ -42,22 +43,20 @@ If you require your picked image to be stored permanently, it is your responsibi
 
 ### Example
 
+<?code-excerpt "readme_excerpts.dart (Pick)"?>
 ``` dart
-import 'package:image_picker/image_picker.dart';
-
-    ...
-    final ImagePicker _picker = ImagePicker();
-    // Pick an image
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    // Capture a photo
-    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    // Pick a video
-    final XFile? image = await _picker.pickVideo(source: ImageSource.gallery);
-    // Capture a video
-    final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
-    // Pick multiple images
-    final List<XFile>? images = await _picker.pickMultiImage();
-    ...
+final ImagePicker picker = ImagePicker();
+// Pick an image.
+final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+// Capture a photo.
+final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+// Pick a video.
+final XFile? galleryVideo =
+    await picker.pickVideo(source: ImageSource.gallery);
+// Capture a video.
+final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
+// Pick multiple images.
+final List<XFile> images = await picker.pickMultiImage();
 ```
 
 ### Handling MainActivity destruction on Android
@@ -71,17 +70,17 @@ low on memory. When the intent finishes executing, Android will restart the
 application. Since the data is never returned to the original call use the
 `ImagePicker.retrieveLostData()` method to retrieve the lost data. For example:
 
+<?code-excerpt "readme_excerpts.dart (LostData)"?>
 ```dart
 Future<void> getLostData() async {
-  final LostDataResponse response =
-      await picker.retrieveLostData();
+  final ImagePicker picker = ImagePicker();
+  final LostDataResponse response = await picker.retrieveLostData();
   if (response.isEmpty) {
     return;
   }
-  if (response.files != null) {
-    for (final XFile file in response.files) {
-      _handleFile(file);
-    }
+  final List<XFile>? files = response.files;
+  if (files != null) {
+    _handleLostFiles(files);
   } else {
     _handleError(response.exception);
   }
@@ -95,7 +94,7 @@ complete example of handling this flow.
 
 ### Android Photo Picker
 
-This package has optional [Android Photo Picker](https://developer.android.com/training/data-storage/shared/photopicker) functionality. 
+This package has optional [Android Photo Picker](https://developer.android.com/training/data-storage/shared/photopicker) functionality.
 [Learn how to use it](https://pub.dev/packages/image_picker_android).
 
 ## Migrating to 0.8.2+
