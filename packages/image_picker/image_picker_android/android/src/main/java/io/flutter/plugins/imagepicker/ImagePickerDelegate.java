@@ -546,33 +546,31 @@ public class ImagePickerDelegate
 
   @Override
   public boolean onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-    // Off-load result handling to a separate thread as it almost always involves I/O operations.
-    executor.execute(
-        () -> {
-          switch (requestCode) {
-            case REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY:
-              handleChooseImageResult(resultCode, data);
-              break;
-            case REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY:
-              handleChooseMultiImageResult(resultCode, data);
-              break;
-            case REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA:
-              handleCaptureImageResult(resultCode);
-              break;
-            case REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY:
-              handleChooseVideoResult(resultCode, data);
-              break;
-            case REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA:
-              handleCaptureVideoResult(resultCode);
-              break;
-          }
-        });
+    Runnable handlerRunnable;
 
-    return requestCode == REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY
-        || requestCode == REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY
-        || requestCode == REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA
-        || requestCode == REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY
-        || requestCode == REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA;
+    switch (requestCode) {
+      case REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY:
+        handlerRunnable = () -> handleChooseImageResult(resultCode, data);
+        break;
+      case REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY:
+        handlerRunnable = () -> handleChooseMultiImageResult(resultCode, data);
+        break;
+      case REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA:
+        handlerRunnable = () -> handleCaptureImageResult(resultCode);
+        break;
+      case REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY:
+        handlerRunnable = () -> handleChooseVideoResult(resultCode, data);
+        break;
+      case REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA:
+        handlerRunnable = () -> handleCaptureVideoResult(resultCode);
+        break;
+      default:
+        return false;
+    }
+
+    executor.execute(handlerRunnable);
+
+    return true;
   }
 
   private void handleChooseImageResult(int resultCode, Intent data) {
