@@ -149,7 +149,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart update-dependency \
   --version=3.0.0 \
 ```
 
-If you don't provied a `--version`, the latest version from pub will be used.
+If a `--version` is not provided, the latest version from pub will be used.
 
 Currently this only updates the dependency itself in pubspec.yaml, but in the
 future this will also update any generated code for packages that use code
