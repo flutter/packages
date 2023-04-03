@@ -141,19 +141,11 @@ void main() {
       expect(log, tests.values);
     });
 
-    test('canAccessScopes is the same as isSignedIn', () async {
-      await googleSignIn.canAccessScopes(<String>['someScope']);
-      expect(log, <Matcher>[
-        isMethodCall('isSignedIn', arguments: null),
-      ]);
-    });
-
-    test('canAccessScopes can accept an optional accessToken', () async {
-      await googleSignIn
-          .canAccessScopes(<String>['someScope'], accessToken: 'token');
-      expect(log, <Matcher>[
-        isMethodCall('isSignedIn', arguments: null),
-      ]);
+    test('canAccessScopes is unimplemented', () async {
+      expect(() async {
+        await googleSignIn
+            .canAccessScopes(<String>['someScope'], accessToken: 'token');
+      }, throwsUnimplementedError);
     });
 
     test('userDataEvents returns null', () async {

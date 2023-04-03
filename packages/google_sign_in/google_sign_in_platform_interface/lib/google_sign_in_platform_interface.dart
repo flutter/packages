@@ -148,7 +148,7 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
     List<String> scopes, {
     String? accessToken,
   }) async {
-    return isSignedIn();
+    throw UnimplementedError('canAccessScopes() has not been implmented.');
   }
 
   /// Returns a stream of [GoogleSignInUserData] authentication events.
