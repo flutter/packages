@@ -580,6 +580,9 @@ import FlutterMacOS
     indent.newln();
   }
 
+  /// Writes decode and casting code for any type.
+  ///
+  /// Optional parameters are necessary for class decoding only.
   void _writeDecodeCasting(
     Root root,
     Indent indent,
@@ -633,6 +636,7 @@ import FlutterMacOS
       }
       return;
     }
+
     indent.writeln(
         'let $variableName: ${_nullsafeSwiftTypeForDartType(type)} = ${_castForceUnwrap(value, type, root)}');
   }
