@@ -9,22 +9,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  google_identity_services_web: ^0.2.0
-  google_sign_in_platform_interface: ^2.2.0
+  google_identity_services_web: ^0.2.1
+  google_sign_in_platform_interface: ^2.4.0
   google_sign_in_web:
     path: ../
 
 flutter:
   uses-material-design: true
-
-dependency_overrides:
-  google_identity_services_web:
-    git:
-      url: https://github.com/ditman/flutter-packages.git
-      ref: gis-web-fix-render-button-api
-      path: packages/google_identity_services_web
-  google_sign_in_platform_interface:
-    path: ../../google_sign_in_platform_interface
 
 dev_dependencies:
   build_runner: ^2.1.1

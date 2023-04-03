@@ -5,7 +5,7 @@
     authentication mechanism.
   * Prepares a `userDataEvents` Stream, so the Google Sign In Button can propagate
     authentication changes to the core plugin.
-  * `signInSilently` now returns an authenticated (but not authorized) user.
+  * **Breaking Change:** `signInSilently` now returns an authenticated (but not authorized) user.
 * Authorization:
   * Implements the new `canAccessScopes` method.
   * Ensures that the `requestScopes` call doesn't trigger user selection when the
