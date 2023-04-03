@@ -13,6 +13,34 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:webview_flutter_android/src/android_webview.g.dart';
 
+/// Host API for managing the native `InstanceManager`.
+abstract class TestInstanceManagerHostApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Clear the native `InstanceManager`.
+  ///
+  /// This is typically only used after a hot restart.
+  void clear();
+
+  static void setup(TestInstanceManagerHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.InstanceManagerHostApi.clear', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMockMessageHandler(null);
+      } else {
+        channel.setMockMessageHandler((Object? message) async {
+          // ignore message
+          api.clear();
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
 /// Handles methods calls to the native Java Object class.
 ///
 /// Also handles calls to remove the reference to an instance with `dispose`.

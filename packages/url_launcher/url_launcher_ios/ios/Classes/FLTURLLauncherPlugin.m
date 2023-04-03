@@ -5,10 +5,15 @@
 #import <SafariServices/SafariServices.h>
 
 #import "FLTURLLauncherPlugin.h"
+#import "FLTURLLauncherPlugin_Test.h"
+#import "FULLauncher.h"
+#import "messages.g.h"
+
+typedef void (^OpenInSafariVCResponse)(NSNumber *_Nullable, FlutterError *_Nullable);
 
 @interface FLTURLLaunchSession : NSObject <SFSafariViewControllerDelegate>
 
-@property(copy, nonatomic) FlutterResult flutterResult;
+@property(copy, nonatomic) OpenInSafariVCResponse completion;
 @property(strong, nonatomic) NSURL *url;
 @property(strong, nonatomic) SFSafariViewController *safari;
 @property(nonatomic, copy) void (^didFinish)(void);
@@ -17,11 +22,11 @@
 
 @implementation FLTURLLaunchSession
 
-- (instancetype)initWithUrl:url withFlutterResult:result {
+- (instancetype)initWithURL:url completion:completion {
   self = [super init];
   if (self) {
     self.url = url;
-    self.flutterResult = result;
+    self.completion = completion;
     self.safari = [[SFSafariViewController alloc] initWithURL:url];
     self.safari.delegate = self;
   }
@@ -31,12 +36,13 @@
 - (void)safariViewController:(SFSafariViewController *)controller
       didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
   if (didLoadSuccessfully) {
-    self.flutterResult(@YES);
+    self.completion(@YES, nil);
   } else {
-    self.flutterResult([FlutterError
-        errorWithCode:@"Error"
-              message:[NSString stringWithFormat:@"Error while launching %@", self.url]
-              details:nil]);
+    self.completion(
+        nil, [FlutterError
+                 errorWithCode:@"Error"
+                       message:[NSString stringWithFormat:@"Error while launching %@", self.url]
+                       details:nil]);
   }
 }
 
@@ -51,64 +57,86 @@
 
 @end
 
+#pragma mark -
+
+/// Default implementation of FULLancher, using UIApplication.
+@interface FULUIApplicationLauncher : NSObject <FULLauncher>
+@end
+
+@implementation FULUIApplicationLauncher
+- (BOOL)canOpenURL:(nonnull NSURL *)url {
+  return [[UIApplication sharedApplication] canOpenURL:url];
+}
+
+- (void)openURL:(nonnull NSURL *)url
+              options:(nonnull NSDictionary<UIApplicationOpenExternalURLOptionsKey, id> *)options
+    completionHandler:(void (^_Nullable)(BOOL))completion {
+  [[UIApplication sharedApplication] openURL:url options:options completionHandler:completion];
+}
+
+@end
+
+#pragma mark -
+
 @interface FLTURLLauncherPlugin ()
 
 @property(strong, nonatomic) FLTURLLaunchSession *currentSession;
+@property(strong, nonatomic) NSObject<FULLauncher> *launcher;
 
 @end
 
 @implementation FLTURLLauncherPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/url_launcher_ios"
-                                  binaryMessenger:registrar.messenger];
   FLTURLLauncherPlugin *plugin = [[FLTURLLauncherPlugin alloc] init];
-  [registrar addMethodCallDelegate:plugin channel:channel];
+  FULUrlLauncherApiSetup(registrar.messenger, plugin);
 }
 
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  NSString *url = call.arguments[@"url"];
-  if ([@"canLaunch" isEqualToString:call.method]) {
-    result(@([self canLaunchURL:url]));
-  } else if ([@"launch" isEqualToString:call.method]) {
-    NSNumber *useSafariVC = call.arguments[@"useSafariVC"];
-    if (useSafariVC.boolValue) {
-      [self launchURLInVC:url result:result];
-    } else {
-      [self launchURL:url call:call result:result];
-    }
-  } else if ([@"closeWebView" isEqualToString:call.method]) {
-    [self closeWebViewWithResult:result];
-  } else {
-    result(FlutterMethodNotImplemented);
+- (instancetype)init {
+  return [self initWithLauncher:[[FULUIApplicationLauncher alloc] init]];
+}
+
+- (instancetype)initWithLauncher:(NSObject<FULLauncher> *)launcher {
+  if (self = [super init]) {
+    _launcher = launcher;
   }
+  return self;
 }
 
-- (BOOL)canLaunchURL:(NSString *)urlString {
+- (nullable NSNumber *)canLaunchURL:(NSString *)urlString
+                              error:(FlutterError *_Nullable *_Nonnull)error {
   NSURL *url = [NSURL URLWithString:urlString];
-  UIApplication *application = [UIApplication sharedApplication];
-  return [application canOpenURL:url];
+  if (!url) {
+    *error = [self invalidURLErrorForURLString:urlString];
+    return nil;
+  }
+  return @([self.launcher canOpenURL:url]);
 }
 
 - (void)launchURL:(NSString *)urlString
-             call:(FlutterMethodCall *)call
-           result:(FlutterResult)result {
+    universalLinksOnly:(NSNumber *)universalLinksOnly
+            completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   NSURL *url = [NSURL URLWithString:urlString];
-  UIApplication *application = [UIApplication sharedApplication];
-
-  NSNumber *universalLinksOnly = call.arguments[@"universalLinksOnly"] ?: @0;
+  if (!url) {
+    completion(nil, [self invalidURLErrorForURLString:urlString]);
+    return;
+  }
   NSDictionary *options = @{UIApplicationOpenURLOptionUniversalLinksOnly : universalLinksOnly};
-  [application openURL:url
-                options:options
-      completionHandler:^(BOOL success) {
-        result(@(success));
-      }];
+  [self.launcher openURL:url
+                 options:options
+       completionHandler:^(BOOL success) {
+         completion(@(success), nil);
+       }];
 }
 
-- (void)launchURLInVC:(NSString *)urlString result:(FlutterResult)result {
+- (void)openSafariViewControllerWithURL:(NSString *)urlString
+                             completion:(OpenInSafariVCResponse)completion {
   NSURL *url = [NSURL URLWithString:urlString];
-  self.currentSession = [[FLTURLLaunchSession alloc] initWithUrl:url withFlutterResult:result];
+  if (!url) {
+    completion(nil, [self invalidURLErrorForURLString:urlString]);
+    return;
+  }
+  self.currentSession = [[FLTURLLaunchSession alloc] initWithURL:url completion:completion];
   __weak typeof(self) weakSelf = self;
   self.currentSession.didFinish = ^(void) {
     weakSelf.currentSession = nil;
@@ -118,11 +146,8 @@
                                      completion:nil];
 }
 
-- (void)closeWebViewWithResult:(FlutterResult)result {
-  if (self.currentSession != nil) {
-    [self.currentSession close];
-  }
-  result(nil);
+- (void)closeSafariViewControllerWithError:(FlutterError *_Nullable *_Nonnull)error {
+  [self.currentSession close];
 }
 
 - (UIViewController *)topViewController {
@@ -161,5 +186,17 @@
     return [self topViewControllerFromViewController:viewController.presentedViewController];
   }
   return viewController;
+}
+
+/**
+ * Creates an error for an invalid URL string.
+ *
+ * @param url The invalid URL string
+ * @return The error to return
+ */
+- (FlutterError *)invalidURLErrorForURLString:(NSString *)url {
+  return [FlutterError errorWithCode:@"argument_error"
+                             message:@"Unable to parse URL"
+                             details:[NSString stringWithFormat:@"Provided URL: %@", url]];
 }
 @end

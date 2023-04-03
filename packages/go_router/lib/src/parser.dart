@@ -11,7 +11,9 @@ import 'configuration.dart';
 import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
+import 'match.dart';
 import 'matching.dart';
+import 'path_utils.dart';
 import 'redirection.dart';
 
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
@@ -63,7 +65,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
       // If there is a matching error for the initial location, we should
       // still try to process the top-level redirects.
-      initialMatches = RouteMatchList.empty;
+      initialMatches = RouteMatchList(
+        <RouteMatch>[],
+        Uri.parse(canonicalUri(routeInformation.location!)),
+        const <String, String>{},
+      );
     }
     Future<RouteMatchList> processRedirectorResult(RouteMatchList matches) {
       if (matches.isEmpty) {
@@ -104,7 +110,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
     if (configuration.matches.last is ImperativeRouteMatch) {
       configuration =
-          (configuration.matches.last as ImperativeRouteMatch).matches;
+          (configuration.matches.last as ImperativeRouteMatch<Object?>).matches;
     }
     return RouteInformation(
       location: configuration.uri.toString(),
