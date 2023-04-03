@@ -7,6 +7,7 @@
 import 'dart:async';
 import 'dart:convert' show json;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -54,9 +55,10 @@ class _SignInDemoState extends State<SignInDemo> {
 
     _googleSignIn.onCurrentUserChanged
         .listen((GoogleSignInAccount? account) async {
-      // Check if the account can access scopes...
-      bool isAuthorized = false;
-      if (account != null) {
+      // In mobile, being authenticated means being authorized...
+      bool isAuthorized = account != null;
+      // However, in the web...
+      if (kIsWeb && account != null) {
         isAuthorized = await _googleSignIn.canAccessScopes(scopes);
       }
 

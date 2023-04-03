@@ -155,6 +155,8 @@ For more details, take a look at the
 
 ## Working with scopes, and incremental authorization.
 
+If your app supports both mobile and web, read this section!
+
 ### Checking if scopes have been granted
 
 Users may (or may *not*) grant all the scopes that your application requests at
@@ -170,6 +172,8 @@ There's a new method that allows your app to check this:
 ```dart
 final bool isAuthorized = await _googleSignIn.canAccessScopes(scopes);
 ```
+
+(Only implemented in the web from version 6.1.0)
 
 ### Requesting more scopes when needed
 
