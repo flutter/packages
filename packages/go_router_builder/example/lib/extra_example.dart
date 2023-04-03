@@ -65,7 +65,6 @@ class OptionalExtraRoute extends GoRouteData {
       OptionalExtraScreen(extra: $extra);
 }
 
-
 class OptionalExtraScreen extends StatelessWidget {
   const OptionalExtraScreen({super.key, this.extra});
 
@@ -80,7 +79,6 @@ class OptionalExtraScreen extends StatelessWidget {
   }
 }
 
-
 @TypedGoRoute<SplashRoute>(path: '/splash')
 class SplashRoute extends GoRouteData {
   const SplashRoute();
@@ -88,7 +86,6 @@ class SplashRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) => const Splash();
 }
-
 
 class Splash extends StatelessWidget {
   const Splash({super.key});
@@ -102,11 +99,13 @@ class Splash extends StatelessWidget {
         children: [
           const Placeholder(),
           ElevatedButton(
-            onPressed: () => const RequiredExtraRoute($extra: Extra(1)).go(context),
+            onPressed: () =>
+                const RequiredExtraRoute($extra: Extra(1)).go(context),
             child: const Text('Required Extra'),
           ),
           ElevatedButton(
-            onPressed: () => const OptionalExtraRoute($extra: Extra(2)).go(context),
+            onPressed: () =>
+                const OptionalExtraRoute($extra: Extra(2)).go(context),
             child: const Text('Optional Extra'),
           ),
           ElevatedButton(

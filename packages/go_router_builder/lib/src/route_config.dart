@@ -198,7 +198,10 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
 
   String get _newFromState {
     final StringBuffer buffer = StringBuffer('=>');
-    if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty && _extraParam == null) {
+    if (_ctor.isConst &&
+        _ctorParams.isEmpty &&
+        _ctorQueryParams.isEmpty &&
+        _extraParam == null) {
       buffer.writeln('const ');
     }
 
