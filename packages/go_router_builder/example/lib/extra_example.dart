@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, always_specify_types
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

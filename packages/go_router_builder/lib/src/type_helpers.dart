@@ -86,6 +86,7 @@ String encodeField(PropertyAccessorElement element) {
   );
 }
 
+/// Maps the [type] to a [String] representation of the enum.
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
 String _stateValueAccess(ParameterElement element) {
