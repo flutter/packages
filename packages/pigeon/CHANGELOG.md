@@ -1,3 +1,7 @@
+## 9.2.0
+
+* [cpp] Removes experimental tags.
+
 ## 9.1.4
 
 * Migrates off deprecated `BinaryMessenger` API.
