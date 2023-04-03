@@ -1,3 +1,6 @@
+## 1.1.8
+* Supports opt-in required extra parameters. [#117261]
+
 ## 1.1.7
 
 * Supports default values for `Set`, `List` and `Iterable` route parameters.
