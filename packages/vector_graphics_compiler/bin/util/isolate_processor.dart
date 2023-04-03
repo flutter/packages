@@ -34,6 +34,7 @@ class IsolateProcessor {
     required bool overdrawOptimizerEnabled,
     required bool tessellate,
     required bool dumpDebug,
+    required bool useHalfPrecisionControlPoints,
   }) async {
     _total = pairs.length;
     _current = 0;
@@ -48,6 +49,7 @@ class IsolateProcessor {
           overdrawOptimizerEnabled: overdrawOptimizerEnabled,
           tessellate: tessellate,
           dumpDebug: dumpDebug,
+          useHalfPrecisionControlPoints: useHalfPrecisionControlPoints,
           libpathops: _libpathops,
           libtessellator: _libtessellator,
         ).catchError((dynamic error, [StackTrace? stackTrace]) {
@@ -86,6 +88,7 @@ class IsolateProcessor {
     required bool overdrawOptimizerEnabled,
     required bool tessellate,
     required bool dumpDebug,
+    required bool useHalfPrecisionControlPoints,
     required String? libpathops,
     required String? libtessellator,
     SvgTheme theme = const SvgTheme(),
@@ -110,6 +113,7 @@ class IsolateProcessor {
           enableMaskingOptimizer: maskingOptimizerEnabled,
           enableClippingOptimizer: clippingOptimizerEnabled,
           enableOverdrawOptimizer: overdrawOptimizerEnabled,
+          useHalfPrecisionControlPoints: useHalfPrecisionControlPoints,
         );
         File(pair.outputPath).writeAsBytesSync(bytes);
         if (dumpDebug) {

@@ -49,6 +49,7 @@ void main() {
         overdrawOptimizerEnabled: false,
         tessellate: false,
         dumpDebug: false,
+        useHalfPrecisionControlPoints: false,
       );
       expect(result, isTrue);
       expect(output.existsSync(), isTrue);
@@ -71,6 +72,7 @@ void main() {
         overdrawOptimizerEnabled: false,
         tessellate: false,
         dumpDebug: true,
+        useHalfPrecisionControlPoints: false,
       );
       expect(result, isTrue);
       expect(output.existsSync(), isTrue);

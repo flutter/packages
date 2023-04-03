@@ -5,6 +5,8 @@
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'src/fp16.dart' as fp16;
+
 /// enumeration of the types of control points accepted by [VectorGraphicsCodec.writePath].
 abstract class ControlPointTypes {
   const ControlPointTypes._();
@@ -94,6 +96,7 @@ class VectorGraphicsCodec {
   static const int _patternTag = 49;
   static const int _textPositionTag = 50;
   static const int _updateTextPositionTag = 51;
+  static const int _pathTagHalfPrecision = 52;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -150,7 +153,10 @@ class VectorGraphicsCodec {
           _readStrokePaint(buffer, listener);
           continue;
         case _pathTag:
-          _readPath(buffer, listener);
+          _readPath(buffer, listener, half: false);
+          continue;
+        case _pathTagHalfPrecision:
+          _readPath(buffer, listener, half: true);
           continue;
         case _drawPathTag:
           _readDrawPath(buffer, listener);
@@ -675,26 +681,56 @@ class VectorGraphicsCodec {
   ///
   /// [controlTypes] is a buffer of the types of control points in order.
   /// [controlPoints] is a buffer of the control points in order.
+  ///
+  /// If [half] is true, control points will be written to the buffer using
+  /// half precision floating point values. This will reduce the binary
+  /// size at the cost of reduced precision. This option defaults to `false`.
   int writePath(
     VectorGraphicsBuffer buffer,
     Uint8List controlTypes,
     Float32List controlPoints,
-    int fillType,
-  ) {
+    int fillType, {
+    bool half = false,
+  }) {
     buffer._checkPhase(_CurrentSection.paths);
     assert(buffer._nextPathId < kMaxId);
 
     final int id = buffer._nextPathId;
     buffer._nextPathId += 1;
 
-    buffer._putUint8(_pathTag);
+    buffer._putUint8(half ? _pathTagHalfPrecision : _pathTag);
     buffer._putUint8(fillType);
     buffer._putUint16(id);
     buffer._putUint32(controlTypes.length);
     buffer._putUint8List(controlTypes);
     buffer._putUint32(controlPoints.length);
-    buffer._putFloat32List(controlPoints);
+    if (half) {
+      buffer._putUint16List(_encodeToHalfPrecision(controlPoints));
+    } else {
+      buffer._putFloat32List(controlPoints);
+    }
     return id;
+  }
+
+  Uint16List _encodeToHalfPrecision(Float32List list) {
+    var output = Uint16List(list.length);
+    ByteData buffer = ByteData(8);
+    for (int i = 0; i < list.length; i++) {
+      buffer.setFloat32(0, list[i]);
+      fp16.toHalf(buffer);
+      output[i] = buffer.getInt16(0);
+    }
+    return output;
+  }
+
+  Float32List _decodeFromHalfPrecision(Uint16List list) {
+    var output = Float32List(list.length);
+    ByteData buffer = ByteData(8);
+    for (int i = 0; i < list.length; i++) {
+      buffer.setUint16(0, list[i]);
+      output[i] = fp16.toDouble(buffer);
+    }
+    return output;
   }
 
   /// Write an image to the [buffer], returning the identifier
@@ -746,14 +782,20 @@ class VectorGraphicsCodec {
 
   void _readPath(
     _ReadBuffer buffer,
-    VectorGraphicsCodecListener? listener,
-  ) {
+    VectorGraphicsCodecListener? listener, {
+    required bool half,
+  }) {
     final int fillType = buffer.getUint8();
     final int id = buffer.getUint16();
     final int tagLength = buffer.getUint32();
     final Uint8List tags = buffer.getUint8List(tagLength);
     final int pointLength = buffer.getUint32();
-    final Float32List points = buffer.getFloat32List(pointLength);
+    final Float32List points;
+    if (half) {
+      points = _decodeFromHalfPrecision(buffer.getUint16List(pointLength));
+    } else {
+      points = buffer.getFloat32List(pointLength);
+    }
     listener?.onPathStart(id, fillType);
     for (int i = 0, j = 0; i < tagLength; i += 1) {
       switch (tags[i]) {

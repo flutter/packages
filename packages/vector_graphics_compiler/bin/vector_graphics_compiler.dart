@@ -87,7 +87,11 @@ final ArgParser argParser = ArgParser()
     help:
         'The path to a file where the resulting vector_graphic will be written.\n'
         'If not provided, defaults to <input-file>.vec',
-  );
+  )
+  ..addFlag('use-half-precision-control-points',
+      help:
+          'Convert path control points into  IEEE 754-2008 half precision floating point values.\n'
+          'This reduces file size at the cost of lost precision at larger values.');
 
 void validateOptions(ArgResults results) {
   if (results.wasParsed('input-dir') &&
@@ -155,6 +159,8 @@ Future<void> main(List<String> args) async {
   final bool overdrawOptimizerEnabled = results['optimize-overdraw'] == true;
   final bool tessellate = results['tessellate'] == true;
   final bool dumpDebug = results['dump-debug'] == true;
+  final bool useHalfPrecisionControlPoints =
+      results['use-half-precision-control-points'] == true;
   final int concurrency;
   if (results.wasParsed('concurrency')) {
     concurrency = int.parse(results['concurrency'] as String);
@@ -175,6 +181,7 @@ Future<void> main(List<String> args) async {
     overdrawOptimizerEnabled: overdrawOptimizerEnabled,
     tessellate: tessellate,
     dumpDebug: dumpDebug,
+    useHalfPrecisionControlPoints: useHalfPrecisionControlPoints,
   )) {
     exit(1);
   }

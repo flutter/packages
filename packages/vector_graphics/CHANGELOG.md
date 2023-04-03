@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.1.5
+
+- Support for decoding control points as IEEE 754-2008 half precision
+  floating point values.
+
 ## 1.1.4
 
 - Support more image formats and malformed MIME types.

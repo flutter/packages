@@ -136,21 +136,28 @@ Uint8List encodeSvg({
   bool enableClippingOptimizer = true,
   bool enableOverdrawOptimizer = true,
   bool warningsAsErrors = false,
+  bool useHalfPrecisionControlPoints = false,
   ColorMapper? colorMapper,
 }) {
-  return _encodeInstructions(parse(
-    xml,
-    key: debugName,
-    theme: theme,
-    enableMaskingOptimizer: enableMaskingOptimizer,
-    enableClippingOptimizer: enableClippingOptimizer,
-    enableOverdrawOptimizer: enableOverdrawOptimizer,
-    warningsAsErrors: warningsAsErrors,
-    colorMapper: colorMapper,
-  ));
+  return _encodeInstructions(
+    parse(
+      xml,
+      key: debugName,
+      theme: theme,
+      enableMaskingOptimizer: enableMaskingOptimizer,
+      enableClippingOptimizer: enableClippingOptimizer,
+      enableOverdrawOptimizer: enableOverdrawOptimizer,
+      warningsAsErrors: warningsAsErrors,
+      colorMapper: colorMapper,
+    ),
+    useHalfPrecisionControlPoints,
+  );
 }
 
-Uint8List _encodeInstructions(VectorInstructions instructions) {
+Uint8List _encodeInstructions(
+  VectorInstructions instructions,
+  bool useHalfPrecisionControlPoints,
+) {
   const VectorGraphicsCodec codec = VectorGraphicsCodec();
   final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
 
@@ -241,6 +248,7 @@ Uint8List _encodeInstructions(VectorInstructions instructions) {
       Uint8List.fromList(controlPointTypes),
       Float32List.fromList(controlPoints),
       path.fillType.index,
+      half: useHalfPrecisionControlPoints,
     );
     pathIds[nextPathId] = id;
     nextPathId += 1;

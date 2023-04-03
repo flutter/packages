@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.1.5
+
+- Support for encoding path control points as IEEE 754-2008 half precision
+  floating point values using the option `--use-half-precision-control-points`.
+
 ## 1.1.4
 
 - Support more image formats and malformed MIME types.

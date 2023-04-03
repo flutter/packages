@@ -748,6 +748,66 @@ void main() {
       OnDrawImage(imageId, 1, 2, 100, 100, null),
     ]);
   });
+
+  test('Basic message encode and decode with half precision path', () {
+    final buffer = VectorGraphicsBuffer();
+    final TestListener listener = TestListener();
+
+    final int fillId = codec.writeFill(buffer, 23, 0);
+    final int strokeId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
+    final int pathId = codec.writePath(
+      buffer,
+      Uint8List.fromList(<int>[
+        ControlPointTypes.moveTo,
+        ControlPointTypes.lineTo,
+        ControlPointTypes.lineTo,
+        ControlPointTypes.close
+      ]),
+      Float32List.fromList(<double>[1.25, 24.5, 200.10, -32.4, -10000, 2500.2]),
+      0,
+      half: true,
+    );
+    codec.writeDrawPath(buffer, pathId, fillId, null);
+    codec.writeDrawPath(buffer, pathId, strokeId, null);
+
+    final ByteData data = buffer.done();
+
+    DecodeResponse response = codec.decode(data, listener);
+
+    expect(response.complete, true);
+    expect(listener.commands, [
+      OnPaintObject(
+        color: 23,
+        strokeCap: null,
+        strokeJoin: null,
+        blendMode: 0,
+        strokeMiterLimit: null,
+        strokeWidth: null,
+        paintStyle: 0,
+        id: fillId,
+        shaderId: null,
+      ),
+      OnPaintObject(
+        color: 44,
+        strokeCap: 1,
+        strokeJoin: 2,
+        blendMode: 3,
+        strokeMiterLimit: 4.0,
+        strokeWidth: 6.0,
+        paintStyle: 1,
+        id: strokeId,
+        shaderId: null,
+      ),
+      OnPathStart(pathId, 0),
+      const OnPathMoveTo(1.25, 24.5),
+      const OnPathLineTo(200.125, -32.40625),
+      const OnPathLineTo(-10000, 2500.0),
+      const OnPathClose(),
+      const OnPathFinished(),
+      const OnDrawPath(0, 0, null),
+      const OnDrawPath(0, 1, null),
+    ]);
+  });
 }
 
 class TestListener extends VectorGraphicsCodecListener {
