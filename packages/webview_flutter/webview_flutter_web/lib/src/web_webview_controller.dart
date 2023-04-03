@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:html' as html;
 
@@ -57,6 +58,9 @@ class WebWebViewController extends PlatformWebViewController {
   WebWebViewControllerCreationParams get _webWebViewParams =>
       params as WebWebViewControllerCreationParams;
 
+  /// Mapping between channel names and message event handlers.
+  HashMap<String, Null Function(html.Event)> javascriptChannels = HashMap<String, Null Function(html.Event)>();
+
   @override
   Future<void> loadHtmlString(String html, {String? baseUrl}) async {
     // ignore: unsafe_html
@@ -105,6 +109,37 @@ class WebWebViewController extends PlatformWebViewController {
       mimeType: contentType.mimeType,
       encoding: encoding,
     ).toString();
+  }
+
+  @override
+  Future<void> addJavaScriptChannel(
+    JavaScriptChannelParams javaScriptChannelParams,
+  ) {
+    Null Function(html.Event) handler = (html.Event event) {
+      if (event is html.MessageEvent) {
+        javaScriptChannelParams.onMessageReceived(JavaScriptMessage(message: event.data));
+      }
+    };
+
+    javascriptChannels[javaScriptChannelParams.name] = handler;
+    html.window.addEventListener('message', handler);
+    
+    // TODO: what to return?
+    return Future.wait([]);
+  }
+
+  @override
+  Future<void> removeJavaScriptChannel(
+    String javaScriptChannelName
+  ) {
+    final handler = javascriptChannels[javaScriptChannelName];
+
+    if (handler != null) {
+      html.window.removeEventListener('message', handler);
+    }
+
+    // TODO: what to return?
+    return Future.wait([]);
   }
 }
 
