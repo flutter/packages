@@ -10,7 +10,6 @@ REM changing this file.
 
 CD packages/animations
 CALL flutter analyze --no-fatal-infos
-set USE_FLUTTER_TEST_FONT=1
 CALL flutter test
 
 REM We don't run the tests in packages/rfw because those tests are
