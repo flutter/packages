@@ -382,7 +382,8 @@ dev_dependencies:
       );
     });
 
-    test('warns when regerating pigeon if there are no pigeon files', () async {
+    test('warns when regenerating pigeon if there are no pigeon files',
+        () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
       addDependency(package, 'pigeon', version: '1.0.0');
