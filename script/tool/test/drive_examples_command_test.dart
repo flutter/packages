@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
@@ -65,7 +64,9 @@ void main() {
           MockProcess(stdout: output, stdoutEncoding: utf8);
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[mockDevicesProcess];
+          <FakeProcessInfo>[
+        FakeProcessInfo(mockDevicesProcess, <String>['devices'])
+      ];
     }
 
     test('fails if no platforms are provided', () async {
@@ -152,7 +153,9 @@ void main() {
       // Simulate failure from `flutter devices`.
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[MockProcess(exitCode: 1)];
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['devices'])
+      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -1055,10 +1058,12 @@ void main() {
       // Simulate failure from `flutter drive`.
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[
+          <FakeProcessInfo>[
         // No mock for 'devices', since it's running for macOS.
-        MockProcess(exitCode: 1), // 'drive' #1
-        MockProcess(exitCode: 1), // 'drive' #2
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['drive']), // 'drive' #1
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['drive']), // 'drive' #2
       ];
 
       Error? commandError;
