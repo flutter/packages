@@ -603,7 +603,8 @@ import FlutterMacOS
   }) {
     String castForceUnwrap(String value, TypeDeclaration type, Root root) {
       if (isEnum(root, type)) {
-        assert(!type.isNullable);
+        assert(!type.isNullable,
+            'nullable enums require special code that this helper does not supply');
         return '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
       } else if (type.baseName == 'Object') {
         // Special-cased to avoid warnings about using 'as' with Any.
