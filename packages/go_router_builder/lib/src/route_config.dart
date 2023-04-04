@@ -106,7 +106,10 @@ class RouteConfig {
       path ?? '',
       classElement,
       parent,
-      _decodeKey(classElement),
+      _generateNavigatorKeyGetterCode(
+        classElement,
+        keyName: isShellRoute ? r'$navigatorKey' : r'$parentNavigatorKey',
+      ),
       isShellRoute,
     );
 
@@ -123,9 +126,12 @@ class RouteConfig {
   final String? _key;
   final bool _isShellRoute;
 
-  static String? _decodeKey(InterfaceElement classElement) {
+  static String? _generateNavigatorKeyGetterCode(
+    InterfaceElement classElement, {
+    required String keyName,
+  }) {
     bool whereStatic(FieldElement element) => element.isStatic;
-    bool whereKeyName(FieldElement element) => element.name == r'$navigatorKey';
+    bool whereKeyName(FieldElement element) => element.name == keyName;
     final String? fieldDisplayName = classElement.fields
         .where(whereStatic)
         .where(whereKeyName)
