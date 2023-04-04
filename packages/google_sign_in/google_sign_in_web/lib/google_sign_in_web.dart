@@ -206,7 +206,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     await initialized;
 
     // The new user is being injected from the `userDataEvents` Stream.
-    return _gisClient!.signInSilently(); //.then((_) => null);
+    return _gisClient!.signInSilently();
   }
 
   @override

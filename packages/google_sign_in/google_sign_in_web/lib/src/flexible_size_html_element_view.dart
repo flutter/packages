@@ -104,7 +104,7 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
     _mutationObserver!.observe(
       root!,
       childList: true,
-    ); //subtree: true);
+    );
   }
 
   @override
