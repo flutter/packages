@@ -609,9 +609,9 @@ import FlutterMacOS
         return value;
       } else if (type.baseName == 'int') {
         if (type.isNullable) {
-          // Nullable ints need to check for NSNull, nil, and Int32 before casting can be done safely.
+          // Nullable ints need to check for NSNull, and Int32 before casting can be done safely.
           // This nested ternary is a necessary evil to avoid less efficient conversions.
-          return '$value is NSNull ? nil : ($value is Int64 ? $value as! Int64? : Int64($value as! Int32))';
+          return '$value is NSNull ? nil : ($value is Int64? ? $value as! Int64? : Int64($value as! Int32))';
         } else {
           return '$value is Int64 ? $value as! Int64 : Int64($value as! Int32)';
         }
