@@ -608,9 +608,13 @@ import FlutterMacOS
         // Special-cased to avoid warnings about using 'as' with Any.
         return value;
       } else if (type.baseName == 'int') {
-        final String orString =
-            type.isNullable ? 'nilOrValue($value)' : '$value as! Int64';
-        return '($value is Int32) ? Int64($value as! Int32) : $orString';
+        if (type.isNullable) {
+          // Nullable ints need to check for NSNull, nil, and Int32 before casting can be done safely.
+          // This nested ternary is a necessary evil to avoid less efficient conversions.
+          return '$value is NSNull ? nil : ($value is Int64 ? $value as! Int64? : Int64($value as! Int32))';
+        } else {
+          return '$value is Int64 ? $value as! Int64 : Int64($value as! Int32)';
+        }
       } else if (type.isNullable) {
         return 'nilOrValue($value)';
       } else {
