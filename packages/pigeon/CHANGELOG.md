@@ -1,3 +1,7 @@
+## 9.2.2
+
+* [cpp] Minor changes to output style.
+
 ## 9.2.1
 
 * [swift] Fixes NSNull casting crash.
