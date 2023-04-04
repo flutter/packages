@@ -137,7 +137,7 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// Scopes should come from the full  list
   /// [here](https://developers.google.com/identity/protocols/googlescopes).
   Future<bool> requestScopes(List<String> scopes) async {
-    throw UnimplementedError('requestScopes() has not been implmented.');
+    throw UnimplementedError('requestScopes() has not been implemented.');
   }
 
   /// Determines if the current user can access all [scopes].
@@ -148,7 +148,7 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
     List<String> scopes, {
     String? accessToken,
   }) async {
-    throw UnimplementedError('canAccessScopes() has not been implmented.');
+    throw UnimplementedError('canAccessScopes() has not been implemented.');
   }
 
   /// Returns a stream of [GoogleSignInUserData] authentication events.
