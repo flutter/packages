@@ -425,7 +425,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAllTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let everythingArg: AllTypes = args[0] as! AllTypes
+        let everythingArg = args[0] as! AllTypes
         do {
           let result = try api.echo(everythingArg)
           reply(wrapResult(result))
@@ -483,7 +483,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg: Int64 = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
+        let anIntArg = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
         do {
           let result = try api.echo(anIntArg)
           reply(wrapResult(result))
@@ -499,7 +499,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aDoubleArg: Double = args[0] as! Double
+        let aDoubleArg = args[0] as! Double
         do {
           let result = try api.echo(aDoubleArg)
           reply(wrapResult(result))
@@ -515,7 +515,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aBoolArg: Bool = args[0] as! Bool
+        let aBoolArg = args[0] as! Bool
         do {
           let result = try api.echo(aBoolArg)
           reply(wrapResult(result))
@@ -531,7 +531,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aStringArg: String = args[0] as! String
+        let aStringArg = args[0] as! String
         do {
           let result = try api.echo(aStringArg)
           reply(wrapResult(result))
@@ -547,7 +547,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aUint8ListArg: FlutterStandardTypedData = args[0] as! FlutterStandardTypedData
+        let aUint8ListArg = args[0] as! FlutterStandardTypedData
         do {
           let result = try api.echo(aUint8ListArg)
           reply(wrapResult(result))
@@ -563,7 +563,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoObjectChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anObjectArg: Any = args[0]
+        let anObjectArg = args[0]
         do {
           let result = try api.echo(anObjectArg)
           reply(wrapResult(result))
@@ -579,7 +579,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aListArg: [Any?] = args[0] as! [Any?]
+        let aListArg = args[0] as! [Any?]
         do {
           let result = try api.echo(aListArg)
           reply(wrapResult(result))
@@ -595,7 +595,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aMapArg: [String?: Any?] = args[0] as! [String?: Any?]
+        let aMapArg = args[0] as! [String?: Any?]
         do {
           let result = try api.echo(aMapArg)
           reply(wrapResult(result))
@@ -628,7 +628,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       extractNestedNullableStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let wrapperArg: AllNullableTypesWrapper = args[0] as! AllNullableTypesWrapper
+        let wrapperArg = args[0] as! AllNullableTypesWrapper
         do {
           let result = try api.extractNestedNullableString(from: wrapperArg)
           reply(wrapResult(result))
@@ -824,7 +824,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg: Int64 = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
+        let anIntArg = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
         api.echoAsync(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -842,7 +842,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aDoubleArg: Double = args[0] as! Double
+        let aDoubleArg = args[0] as! Double
         api.echoAsync(aDoubleArg) { result in
           switch result {
             case .success(let res):
@@ -860,7 +860,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aBoolArg: Bool = args[0] as! Bool
+        let aBoolArg = args[0] as! Bool
         api.echoAsync(aBoolArg) { result in
           switch result {
             case .success(let res):
@@ -878,7 +878,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aStringArg: String = args[0] as! String
+        let aStringArg = args[0] as! String
         api.echoAsync(aStringArg) { result in
           switch result {
             case .success(let res):
@@ -896,7 +896,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aUint8ListArg: FlutterStandardTypedData = args[0] as! FlutterStandardTypedData
+        let aUint8ListArg = args[0] as! FlutterStandardTypedData
         api.echoAsync(aUint8ListArg) { result in
           switch result {
             case .success(let res):
@@ -914,7 +914,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncObjectChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anObjectArg: Any = args[0]
+        let anObjectArg = args[0]
         api.echoAsync(anObjectArg) { result in
           switch result {
             case .success(let res):
@@ -932,7 +932,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aListArg: [Any?] = args[0] as! [Any?]
+        let aListArg = args[0] as! [Any?]
         api.echoAsync(aListArg) { result in
           switch result {
             case .success(let res):
@@ -950,7 +950,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aMapArg: [String?: Any?] = args[0] as! [String?: Any?]
+        let aMapArg = args[0] as! [String?: Any?]
         api.echoAsync(aMapArg) { result in
           switch result {
             case .success(let res):
@@ -1016,7 +1016,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncAllTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let everythingArg: AllTypes = args[0] as! AllTypes
+        let everythingArg = args[0] as! AllTypes
         api.echoAsync(everythingArg) { result in
           switch result {
             case .success(let res):
@@ -1240,7 +1240,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoAllTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let everythingArg: AllTypes = args[0] as! AllTypes
+        let everythingArg = args[0] as! AllTypes
         api.callFlutterEcho(everythingArg) { result in
           switch result {
             case .success(let res):
@@ -1276,7 +1276,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aBoolArg: Bool = args[0] as! Bool
+        let aBoolArg = args[0] as! Bool
         api.callFlutterEcho(aBoolArg) { result in
           switch result {
             case .success(let res):
@@ -1293,7 +1293,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg: Int64 = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
+        let anIntArg = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
         api.callFlutterEcho(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1310,7 +1310,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aDoubleArg: Double = args[0] as! Double
+        let aDoubleArg = args[0] as! Double
         api.callFlutterEcho(aDoubleArg) { result in
           switch result {
             case .success(let res):
@@ -1327,7 +1327,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aStringArg: String = args[0] as! String
+        let aStringArg = args[0] as! String
         api.callFlutterEcho(aStringArg) { result in
           switch result {
             case .success(let res):
@@ -1344,7 +1344,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aListArg: FlutterStandardTypedData = args[0] as! FlutterStandardTypedData
+        let aListArg = args[0] as! FlutterStandardTypedData
         api.callFlutterEcho(aListArg) { result in
           switch result {
             case .success(let res):
@@ -1361,7 +1361,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoListChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aListArg: [Any?] = args[0] as! [Any?]
+        let aListArg = args[0] as! [Any?]
         api.callFlutterEcho(aListArg) { result in
           switch result {
             case .success(let res):
@@ -1378,7 +1378,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aMapArg: [String?: Any?] = args[0] as! [String?: Any?]
+        let aMapArg = args[0] as! [String?: Any?]
         api.callFlutterEcho(aMapArg) { result in
           switch result {
             case .success(let res):
@@ -1602,7 +1602,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ everythingArg: AllTypes, completion: @escaping (AllTypes) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([everythingArg] as [Any?]) { response in
-      let result: AllTypes = response as! AllTypes
+      let result = response as! AllTypes
       completion(result)
     }
   }
@@ -1610,7 +1610,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ everythingArg: AllNullableTypes, completion: @escaping (AllNullableTypes) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([everythingArg] as [Any?]) { response in
-      let result: AllNullableTypes = response as! AllNullableTypes
+      let result = response as! AllNullableTypes
       completion(result)
     }
   }
@@ -1620,7 +1620,7 @@ class FlutterIntegrationCoreApi {
   func sendMultipleNullableTypes(aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?, aString aNullableStringArg: String?, completion: @escaping (AllNullableTypes) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aNullableBoolArg, aNullableIntArg, aNullableStringArg] as [Any?]) { response in
-      let result: AllNullableTypes = response as! AllNullableTypes
+      let result = response as! AllNullableTypes
       completion(result)
     }
   }
@@ -1628,7 +1628,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ aBoolArg: Bool, completion: @escaping (Bool) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aBoolArg] as [Any?]) { response in
-      let result: Bool = response as! Bool
+      let result = response as! Bool
       completion(result)
     }
   }
@@ -1636,7 +1636,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ anIntArg: Int64, completion: @escaping (Int64) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anIntArg] as [Any?]) { response in
-      let result: Int64 = (response is Int32) ? Int64(response as! Int32) : response as! Int64
+      let result = (response is Int32) ? Int64(response as! Int32) : response as! Int64
       completion(result)
     }
   }
@@ -1644,7 +1644,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ aDoubleArg: Double, completion: @escaping (Double) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aDoubleArg] as [Any?]) { response in
-      let result: Double = response as! Double
+      let result = response as! Double
       completion(result)
     }
   }
@@ -1652,7 +1652,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ aStringArg: String, completion: @escaping (String) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
-      let result: String = response as! String
+      let result = response as! String
       completion(result)
     }
   }
@@ -1660,7 +1660,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ aListArg: FlutterStandardTypedData, completion: @escaping (FlutterStandardTypedData) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aListArg] as [Any?]) { response in
-      let result: FlutterStandardTypedData = response as! FlutterStandardTypedData
+      let result = response as! FlutterStandardTypedData
       completion(result)
     }
   }
@@ -1668,7 +1668,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ aListArg: [Any?], completion: @escaping ([Any?]) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aListArg] as [Any?]) { response in
-      let result: [Any?] = response as! [Any?]
+      let result = response as! [Any?]
       completion(result)
     }
   }
@@ -1676,7 +1676,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ aMapArg: [String?: Any?], completion: @escaping ([String?: Any?]) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aMapArg] as [Any?]) { response in
-      let result: [String?: Any?] = response as! [String?: Any?]
+      let result = response as! [String?: Any?]
       completion(result)
     }
   }
@@ -1748,7 +1748,7 @@ class FlutterIntegrationCoreApi {
   func echoAsync(_ aStringArg: String, completion: @escaping (String) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
-      let result: String = response as! String
+      let result = response as! String
       completion(result)
     }
   }
@@ -1797,7 +1797,7 @@ class HostSmallApiSetup {
     if let api = api {
       echoChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aStringArg: String = args[0] as! String
+        let aStringArg = args[0] as! String
         api.echo(aString: aStringArg) { result in
           switch result {
             case .success(let res):
@@ -1877,7 +1877,7 @@ class FlutterSmallApi {
   func echo(_ msgArg: TestMessage, completion: @escaping (TestMessage) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterSmallApi.echoWrappedList", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([msgArg] as [Any?]) { response in
-      let result: TestMessage = response as! TestMessage
+      let result = response as! TestMessage
       completion(result)
     }
   }
