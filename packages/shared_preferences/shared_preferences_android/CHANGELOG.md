@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Adds `getAllWithPrefix` and `clearWithPrefix` methods.
+
 ## 2.0.17
 
 * Clarifies explanation of endorsement in README.

@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
+## 3.2.3
+
+* Updates to `pigeon` version 7.
+
 ## 3.2.2
 
 * Changes Objective-C to use relative imports.

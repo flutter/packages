@@ -1,6 +1,7 @@
 ## 0.10.4
 
 * Adds NV21 as an image streaming option for Android.
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.10.3+2

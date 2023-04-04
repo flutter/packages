@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
 ## 0.8.6+6
 
 * Bumps androidx.core:core from 1.8.0 to 1.9.0.
