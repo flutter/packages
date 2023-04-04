@@ -27,7 +27,8 @@ id.GsiButtonConfiguration? convertButtonConfiguration(
 
 /// A class to configure the Google Sign-In Button for web.
 ///
-/// https://developers.google.com/identity/gsi/web/reference/js-reference#GsiButtonConfiguration
+/// See:
+/// * https://developers.google.com/identity/gsi/web/reference/js-reference#GsiButtonConfiguration
 class GSIButtonConfiguration {
   /// Constructs a button configuration object.
   GSIButtonConfiguration({
@@ -84,7 +85,8 @@ class GSIButtonConfiguration {
 
 /// The type of button to be rendered.
 ///
-/// https://developers.google.com/identity/gsi/web/reference/js-reference#type
+/// See:
+/// * https://developers.google.com/identity/gsi/web/reference/js-reference#type
 enum GSIButtonType {
   /// A button with text or personalized information.
   standard,
@@ -101,7 +103,8 @@ const Map<GSIButtonType, id.ButtonType> _idType =
 
 /// The theme of the button to be rendered.
 ///
-/// https://developers.google.com/identity/gsi/web/reference/js-reference#theme
+/// See:
+/// * https://developers.google.com/identity/gsi/web/reference/js-reference#theme
 enum GSIButtonTheme {
   /// A standard button theme.
   outline,
@@ -122,7 +125,8 @@ const Map<GSIButtonTheme, id.ButtonTheme> _idTheme =
 
 /// The size of the button to be rendered.
 ///
-/// https://developers.google.com/identity/gsi/web/reference/js-reference#size
+/// See:
+/// * https://developers.google.com/identity/gsi/web/reference/js-reference#size
 enum GSIButtonSize {
   /// A large button (about 40px tall).
   large,
@@ -143,7 +147,8 @@ const Map<GSIButtonSize, id.ButtonSize> _idSize =
 
 /// The button text.
 ///
-/// https://developers.google.com/identity/gsi/web/reference/js-reference#text
+/// See:
+/// * https://developers.google.com/identity/gsi/web/reference/js-reference#text
 enum GSIButtonText {
   /// The button text is "Sign in with Google".
   signinWith,
@@ -168,7 +173,8 @@ const Map<GSIButtonText, id.ButtonText> _idText =
 
 /// The button shape.
 ///
-/// https://developers.google.com/identity/gsi/web/reference/js-reference#shape
+/// See:
+/// * https://developers.google.com/identity/gsi/web/reference/js-reference#shape
 enum GSIButtonShape {
   /// The rectangular-shaped button.
   rectangular,
@@ -186,7 +192,8 @@ const Map<GSIButtonShape, id.ButtonShape> _idShape =
 
 /// The alignment of the Google logo. The default value is left. This attribute only applies to the standard button type.
 ///
-/// https://developers.google.com/identity/gsi/web/reference/js-reference#logo_alignment
+/// See:
+/// * https://developers.google.com/identity/gsi/web/reference/js-reference#logo_alignment
 enum GSIButtonLogoAlignment {
   /// Left-aligns the Google logo.
   left,
