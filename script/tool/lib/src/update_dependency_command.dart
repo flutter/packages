@@ -12,6 +12,7 @@ import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
+import 'common/process_runner.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -28,10 +29,11 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
   UpdateDependencyCommand(
     Directory packagesDir, {
+    ProcessRunner processRunner = const ProcessRunner(),
     http.Client? httpClient,
   })  : _pubVersionFinder =
             PubVersionFinder(httpClient: httpClient ?? http.Client()),
-        super(packagesDir) {
+        super(packagesDir, processRunner: processRunner) {
     argParser.addOption(
       _pubPackageFlag,
       help: 'A pub package to update.',
@@ -249,7 +251,7 @@ ${response.httpResponse.body}
           'dart', <String>['run', 'pigeon', '--input', relativePath],
           workingDir: package.directory);
       if (pigeonResult.exitCode != 0) {
-        printError('dart pub get failed (${pigeonResult.exitCode}):\n'
+        printError('dart run pigeon failed (${pigeonResult.exitCode}):\n'
             '${pigeonResult.stdout}\n${pigeonResult.stderr}\n');
         return false;
       }
