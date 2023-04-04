@@ -196,6 +196,38 @@ void main() {
         'Exception: no routes for location: /def');
   });
 
+  testWidgets(
+      'GoRouteInformationParser calls redirector with correct uri when unknown route',
+      (WidgetTester tester) async {
+    String? lastRedirectLocation;
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'abc',
+            builder: (_, __) => const Placeholder(),
+          ),
+        ],
+      ),
+    ];
+    final GoRouteInformationParser parser = await createParser(
+      tester,
+      routes: routes,
+      redirectLimit: 100,
+      redirect: (_, GoRouterState state) {
+        lastRedirectLocation = state.location;
+        return null;
+      },
+    );
+
+    final BuildContext context = tester.element(find.byType(Router<Object>));
+    await parser.parseRouteInformationWithDependencies(
+        const RouteInformation(location: '/def'), context);
+    expect(lastRedirectLocation, '/def');
+  });
+
   testWidgets('GoRouteInformationParser can work with route parameters',
       (WidgetTester tester) async {
     final List<GoRoute> routes = <GoRoute>[
