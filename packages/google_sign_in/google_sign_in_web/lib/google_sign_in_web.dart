@@ -44,8 +44,6 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   /// Constructs the plugin immediately and begins initializing it in the
   /// background.
   ///
-  /// The plugin is completely initialized when [initialized] completed.
-  ///
   /// For tests, the plugin can skip its loading process with [debugOverrideLoader],
   /// and the implementation of the underlying GIS SDK client through [debugOverrideGisSdkClient].
   GoogleSignInPlugin({
@@ -97,7 +95,10 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     }
   }
 
-  /// A future that resolves when the SDK has been correctly loaded.
+  /// A future that resolves when the plugin is fully initialized.
+  ///
+  /// This ensures that the SDK has been loaded, and that the `initWithParams`
+  /// method has finished running.
   @visibleForTesting
   Future<void> get initialized {
     _assertIsInitCalled();
