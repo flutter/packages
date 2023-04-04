@@ -327,3 +327,42 @@ class FancyRoute extends GoRouteData {
     ),
 }
 ```
+
+## TypedShellRoute and navigator keys
+
+There may be situations were a child route of a shell needs to be displayed on a
+different navigator. This kind of scenarios can be achieved by declaring a
+**static** navigator key named:
+
+- `$navigatorKey` for ShellRoutes
+- `$parentNavigatorKey` for GoRoutes
+
+Example:
+
+```dart
+// For ShellRoutes:
+final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
+
+class MyShellRouteData extends ShellRouteData {
+  const MyShellRouteData();
+
+  static final GlobalKey<NavigatorState> $navigatorKey = shellNavigatorKey;
+
+  @override
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
+    // ...
+  }
+}
+
+// For GoRoutes:
+class MyGoRouteData extends GoRouteData {
+  const MyGoRouteData();
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    // ...
+  }
+}
+```
