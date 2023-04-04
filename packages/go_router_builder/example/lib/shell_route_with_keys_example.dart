@@ -34,7 +34,9 @@ class App extends StatelessWidget {
     TypedGoRoute<HomeRouteData>(path: '/home'),
     TypedGoRoute<UsersRouteData>(
       path: '/users',
-      routes: [TypedGoRoute<UserRouteData>(path: ':id')],
+      routes: <TypedGoRoute<UserRouteData>>[
+        TypedGoRoute<UserRouteData>(path: ':id'),
+      ],
     ),
   ],
 )
@@ -92,7 +94,7 @@ class MyShellRouteScreen extends StatelessWidget {
               }
             },
           ),
-          VerticalDivider(thickness: 1, width: 1),
+          const VerticalDivider(thickness: 1, width: 1),
           Expanded(child: child),
         ],
       ),
@@ -126,7 +128,7 @@ class UsersRouteData extends GoRouteData {
   }
 }
 
-class DialogPage extends Page {
+class DialogPage extends Page<void> {
   /// A page to display a dialog.
   const DialogPage({required this.child, super.key});
 
@@ -134,11 +136,11 @@ class DialogPage extends Page {
   final Widget child;
 
   @override
-  Route createRoute(BuildContext context) {
-    return DialogRoute(
+  Route<void> createRoute(BuildContext context) {
+    return DialogRoute<void>(
       context: context,
       settings: this,
-      builder: (context) => child,
+      builder: (BuildContext context) => child,
     );
   }
 }
