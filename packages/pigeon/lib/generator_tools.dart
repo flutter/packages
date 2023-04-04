@@ -11,7 +11,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '9.2.1';
+const String pigeonVersion = '9.2.2';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -74,11 +74,12 @@ class Indent {
     for (int i = 0; i < lines.length; ++i) {
       final String line = lines[i];
       if (i == 0 && !leadingSpace) {
-        addln(line.replaceAll('\t', tab));
-      } else if (i == lines.length - 1 && !trailingNewline) {
+        add(line.replaceAll('\t', tab));
+      } else if (line.isNotEmpty) {
         write(line.replaceAll('\t', tab));
-      } else {
-        writeln(line.replaceAll('\t', tab));
+      }
+      if (trailingNewline || i < lines.length - 1) {
+        addln('');
       }
     }
   }
