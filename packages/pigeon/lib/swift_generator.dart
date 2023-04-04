@@ -75,9 +75,7 @@ import Flutter
 import FlutterMacOS
 #else
 #error("Unsupported platform.")
-#endif
-''');
-    indent.newln();
+#endif''');
   }
 
   @override
@@ -184,8 +182,8 @@ import FlutterMacOS
           value: listValue,
           variableName: field.name,
           type: field.type,
-          customClassNames: customClassNames,
-          customEnumNames: customEnumNames,
+          listEncodedClassNames: customClassNames,
+          listEncodedEnumNames: customEnumNames,
         );
       });
 
@@ -598,8 +596,8 @@ import FlutterMacOS
     required String value,
     required String variableName,
     required TypeDeclaration type,
-    Set<String>? customClassNames,
-    Set<String>? customEnumNames,
+    Set<String>? listEncodedClassNames,
+    Set<String>? listEncodedEnumNames,
   }) {
     String castForceUnwrap(String value, TypeDeclaration type, Root root) {
       if (isEnum(root, type)) {
@@ -623,16 +621,16 @@ import FlutterMacOS
     final String fieldType = _swiftTypeForDartType(type);
 
     if (type.isNullable) {
-      if (customClassNames != null &&
-          customClassNames.contains(type.baseName)) {
+      if (listEncodedClassNames != null &&
+          listEncodedClassNames.contains(type.baseName)) {
         indent.writeln('var $variableName: $fieldType? = nil');
         indent.write('if let ${variableName}List = $value as! [Any]? ');
         indent.addScoped('{', '}', () {
           indent.writeln(
               '$variableName = $fieldType.fromList(${variableName}List)');
         });
-      } else if (customEnumNames != null &&
-          customEnumNames.contains(type.baseName)) {
+      } else if (listEncodedEnumNames != null &&
+          listEncodedEnumNames.contains(type.baseName)) {
         indent.writeln('var $variableName: $fieldType? = nil');
         indent.writeln(
             'let ${variableName}EnumVal: Int? = ${castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}');
@@ -647,8 +645,8 @@ import FlutterMacOS
             'let $variableName: $fieldType? = ${castForceUnwrap(value, type, root)}');
       }
     } else {
-      if (customClassNames != null &&
-          customClassNames.contains(type.baseName)) {
+      if (listEncodedClassNames != null &&
+          listEncodedClassNames.contains(type.baseName)) {
         indent.writeln(
             'let $variableName = $fieldType.fromList($value as! [Any])!');
       } else {

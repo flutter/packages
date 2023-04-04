@@ -14,8 +14,6 @@ import FlutterMacOS
 #error("Unsupported platform.")
 #endif
 
-
-
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
