@@ -63,8 +63,8 @@ struct AllTypes {
 
   static func fromList(_ list: [Any]) -> AllTypes? {
     let aBool = list[0] as! Bool
-    let anInt = list[1] as! Int64
-    let anInt64 = list[2] as! Int64
+    let anInt = (list[1] is Int32) ? Int64(list[1] as! Int32) : list[1] as! Int64
+    let anInt64 = (list[2] is Int32) ? Int64(list[2] as! Int32) : list[2] as! Int64
     let aDouble = list[3] as! Double
     let aByteArray = list[4] as! FlutterStandardTypedData
     let a4ByteArray = list[5] as! FlutterStandardTypedData
@@ -128,8 +128,8 @@ struct AllNullableTypes {
 
   static func fromList(_ list: [Any]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
-    let aNullableInt: Int64? = nilOrValue(list[1])
-    let aNullableInt64: Int64? = nilOrValue(list[2])
+    let aNullableInt: Int64? = (list[1] is Int32) ? Int64(list[1] as! Int32) : nilOrValue(list[1])
+    let aNullableInt64: Int64? = (list[2] is Int32) ? Int64(list[2] as! Int32) : nilOrValue(list[2])
     let aNullableDouble: Double? = nilOrValue(list[3])
     let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(list[4])
     let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(list[5])
@@ -483,7 +483,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg: Int64 = args[0] as! Int64
+        let anIntArg: Int64 = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
         do {
           let result = try api.echo(anIntArg)
           reply(wrapResult(result))
@@ -662,7 +662,7 @@ class HostIntegrationCoreApiSetup {
       sendMultipleNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
-        let aNullableIntArg: Int64? = nilOrValue(args[1])
+        let aNullableIntArg: Int64? = (args[1] is Int32) ? Int64(args[1] as! Int32) : nilOrValue(args[1])
         let aNullableStringArg: String? = nilOrValue(args[2])
         do {
           let result = try api.sendMultipleNullableTypes(aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg)
@@ -679,7 +679,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let aNullableIntArg: Int64? = nilOrValue(args[0])
+        let aNullableIntArg: Int64? = (args[0] is Int32) ? Int64(args[0] as! Int32) : nilOrValue(args[0])
         do {
           let result = try api.echo(aNullableIntArg)
           reply(wrapResult(result))
@@ -824,7 +824,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg: Int64 = args[0] as! Int64
+        let anIntArg: Int64 = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
         api.echoAsync(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1052,7 +1052,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg: Int64? = nilOrValue(args[0])
+        let anIntArg: Int64? = (args[0] is Int32) ? Int64(args[0] as! Int32) : nilOrValue(args[0])
         api.echoAsyncNullable(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1258,7 +1258,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterSendMultipleNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
-        let aNullableIntArg: Int64? = nilOrValue(args[1])
+        let aNullableIntArg: Int64? = (args[1] is Int32) ? Int64(args[1] as! Int32) : nilOrValue(args[1])
         let aNullableStringArg: String? = nilOrValue(args[2])
         api.callFlutterSendMultipleNullableTypes(aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg) { result in
           switch result {
@@ -1293,7 +1293,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg: Int64 = args[0] as! Int64
+        let anIntArg: Int64 = (args[0] is Int32) ? Int64(args[0] as! Int32) : args[0] as! Int64
         api.callFlutterEcho(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1412,7 +1412,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let anIntArg: Int64? = nilOrValue(args[0])
+        let anIntArg: Int64? = (args[0] is Int32) ? Int64(args[0] as! Int32) : nilOrValue(args[0])
         api.callFlutterEchoNullable(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1636,7 +1636,7 @@ class FlutterIntegrationCoreApi {
   func echo(_ anIntArg: Int64, completion: @escaping (Int64) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anIntArg] as [Any?]) { response in
-      let result: Int64 = response as! Int64
+      let result: Int64 = (response is Int32) ? Int64(response as! Int32) : response as! Int64
       completion(result)
     }
   }
@@ -1692,7 +1692,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ anIntArg: Int64?, completion: @escaping (Int64?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anIntArg] as [Any?]) { response in
-      let result: Int64? = nilOrValue(response)
+      let result: Int64? = (response is Int32) ? Int64(response as! Int32) : nilOrValue(response)
       completion(result)
     }
   }

@@ -179,11 +179,11 @@ import FlutterMacOS
         final String listValue = 'list[$index]';
 
         _writeDecodeCasting(
-          root,
-          indent,
-          listValue,
-          field.name,
-          field.type,
+          root: root,
+          indent: indent,
+          value: listValue,
+          variableName: field.name,
+          type: field.type,
           field: field,
           customClassNames: customClassNames,
           customEnumNames: customEnumNames,
@@ -320,7 +320,12 @@ import FlutterMacOS
           } else {
             indent.addScoped('{ response in', '}', () {
               _writeDecodeCasting(
-                  root, indent, 'response', 'result', func.returnType);
+                root: root,
+                indent: indent,
+                value: 'response',
+                variableName: 'result',
+                type: func.returnType,
+              );
               indent.writeln('completion(result)');
             });
           }
@@ -436,7 +441,12 @@ import FlutterMacOS
                       _getSafeArgumentName(index, arg.namedType);
                   final String argIndex = 'args[$index]';
                   _writeDecodeCasting(
-                      root, indent, argIndex, argName, arg.type);
+                    root: root,
+                    indent: indent,
+                    value: argIndex,
+                    variableName: argName,
+                    type: arg.type,
+                  );
                   if (arg.label == '_') {
                     methodArgument.add(argName);
                   } else {
@@ -583,12 +593,12 @@ import FlutterMacOS
   /// Writes decode and casting code for any type.
   ///
   /// Optional parameters are necessary for class decoding only.
-  void _writeDecodeCasting(
-    Root root,
-    Indent indent,
-    String value,
-    String variableName,
-    TypeDeclaration type, {
+  void _writeDecodeCasting({
+    required Root root,
+    required Indent indent,
+    required String value,
+    required String variableName,
+    required TypeDeclaration type,
     NamedType? field,
     Set<String>? customClassNames,
     Set<String>? customEnumNames,
@@ -713,10 +723,15 @@ String _camelCase(String text) {
 
 String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
   if (isEnum(root, type)) {
+    assert(!type.isNullable);
     return '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
   } else if (type.baseName == 'Object') {
     // Special-cased to avoid warnings about using 'as' with Any.
     return value;
+  } else if (type.baseName == 'int') {
+    final String orString =
+        type.isNullable ? 'nilOrValue($value)' : '$value as! Int64';
+    return '($value is Int32) ? Int64($value as! Int32) : $orString';
   } else if (type.isNullable) {
     return 'nilOrValue($value)';
   } else {
