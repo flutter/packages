@@ -324,8 +324,8 @@ task:
     - name: web_benchmarks_test
       env:
         matrix:
-          CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
           CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
+          CHROMIUM_BUILD: "1097615" # Chromium 111
       << : *INSTALL_CHROME_LINUX
       script:
         - cd packages/web_benchmarks/testing/test_app

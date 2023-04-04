@@ -1,6 +1,18 @@
-## 9.1.5
+## 9.2.2
 
 * [cpp] Minor changes to output style.
+
+## 9.2.1
+
+* [swift] Fixes NSNull casting crash.
+
+## 9.2.0
+
+* [cpp] Removes experimental tags.
+
+## 9.1.4
+
+* Migrates off deprecated `BinaryMessenger` API.
 
 ## 9.1.3
 

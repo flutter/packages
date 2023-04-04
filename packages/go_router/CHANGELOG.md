@@ -1,3 +1,11 @@
+## 6.5.3
+
+- Fixes redirect being called with an empty location for unknown routes.
+
+## 6.5.2
+
+- NoTransitionPage now has an instant reverse transition
+
 ## 6.5.1
 
 - Fixes an issue where the params are removed after popping.
