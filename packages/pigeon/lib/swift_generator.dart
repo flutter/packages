@@ -589,7 +589,7 @@ import FlutterMacOS
 
   /// Writes decode and casting code for any type.
   ///
-  /// Optional parameters are necessary for class decoding only.
+  /// Optional parameters should only be used for class decoding.
   void _writeDecodeCasting({
     required Root root,
     required Indent indent,
