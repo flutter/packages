@@ -75,7 +75,7 @@ void main() {
       expect(callbackUrl, 'https://www.google.com');
     });
 
-    test('setOnPageError from decidePolicyForNavigationResponse', () {
+    test('setOnHttpError from decidePolicyForNavigationResponse', () {
       final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(

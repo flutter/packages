@@ -209,7 +209,7 @@ class NSHttpUrlResponse {
     required this.statusCode,
   });
 
-  /// The URL being requested.
+  /// The response’s HTTP status code.
   final int statusCode;
 }
 
