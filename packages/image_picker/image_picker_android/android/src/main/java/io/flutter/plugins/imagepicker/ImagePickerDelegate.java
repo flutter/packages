@@ -392,18 +392,6 @@ public class ImagePickerDelegate
       pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
       pickImageIntent.setType("image/*");
     }
-    String[] mimeTypes = {
-      "image/png",
-      "image/gif",
-      "image/jpeg",
-      "image/avif",
-      "image/webp",
-      "image/heic",
-      "image/heif",
-      "image/bmp",
-      "image/x-ms-bmp"
-    };
-    pickImageIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
     activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY);
   }
 
@@ -424,18 +412,6 @@ public class ImagePickerDelegate
         pickMultiImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
       }
     }
-    String[] mimeTypes = {
-      "image/png",
-      "image/gif",
-      "image/jpeg",
-      "image/avif",
-      "image/webp",
-      "image/heic",
-      "image/heif",
-      "image/bmp",
-      "image/x-ms-bmp"
-    };
-    pickMultiImageIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
     activity.startActivityForResult(
         pickMultiImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
   }

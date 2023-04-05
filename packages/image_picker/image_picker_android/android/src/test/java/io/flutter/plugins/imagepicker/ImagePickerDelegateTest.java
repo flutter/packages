@@ -6,9 +6,7 @@ package io.flutter.plugins.imagepicker;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -160,58 +158,6 @@ public class ImagePickerDelegateTest {
     verify(mockActivity)
         .startActivityForResult(
             any(Intent.class), eq(ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY));
-  }
-
-  @Test
-  public void chooseImageFromGallery_launchesChooseFromGalleryIntent_checkMimeTypes_filePicker() {
-    String[] mimeTypes = {
-      "image/png",
-      "image/gif",
-      "image/jpeg",
-      "image/avif",
-      "image/webp",
-      "image/heic",
-      "image/heif",
-      "image/bmp",
-      "image/x-ms-bmp"
-    };
-    ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseImageFromGallery(new ImageOutputOptions(null, null, null), false, mockResult);
-
-    ArgumentCaptor<Intent> argument = ArgumentCaptor.forClass(Intent.class);
-    verify(mockActivity)
-        .startActivityForResult(
-            argument.capture(), eq(ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY));
-    Intent capturedIntent = argument.getValue();
-    String[] capturedMimeTypes = capturedIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
-    assertNotNull(capturedMimeTypes);
-    assertArrayEquals(mimeTypes, capturedMimeTypes);
-  }
-
-  @Test
-  public void chooseImageFromGallery_launchesChooseFromGalleryIntent_checkMimeTypes_photoPicker() {
-    String[] mimeTypes = {
-      "image/png",
-      "image/gif",
-      "image/jpeg",
-      "image/avif",
-      "image/webp",
-      "image/heic",
-      "image/heif",
-      "image/bmp",
-      "image/x-ms-bmp"
-    };
-    ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseImageFromGallery(new ImageOutputOptions(null, null, null), true, mockResult);
-
-    ArgumentCaptor<Intent> argument = ArgumentCaptor.forClass(Intent.class);
-    verify(mockActivity)
-        .startActivityForResult(
-            argument.capture(), eq(ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY));
-    Intent capturedIntent = argument.getValue();
-    String[] capturedMimeTypes = capturedIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
-    assertNotNull(capturedMimeTypes);
-    assertArrayEquals(mimeTypes, capturedMimeTypes);
   }
 
   @Test
