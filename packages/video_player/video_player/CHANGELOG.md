@@ -1,3 +1,7 @@
+## 2.6.2
+
+* Removes added listener before unmounting widget in example
+
 ## 2.6.1
 
 * Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
