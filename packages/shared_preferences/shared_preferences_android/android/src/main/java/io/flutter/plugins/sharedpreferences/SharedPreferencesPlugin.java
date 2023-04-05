@@ -77,12 +77,12 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @Override
-  public Map<String, Object> getAll() throws RuntimeException {
-    return preferences.getAll();
+  public Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
+    return preferences.getAllWithPrefix(prefix);
   }
 
   @Override
-  public Boolean clear() throws RuntimeException {
-    return preferences.clear();
+  public Boolean clearWithPrefix(String prefix) throws RuntimeException {
+    return preferences.clearWithPrefix(prefix);
   }
 }

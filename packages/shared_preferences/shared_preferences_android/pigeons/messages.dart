@@ -10,7 +10,7 @@ import 'package:pigeon/pigeon.dart';
       'android/src/main/java/io/flutter/plugins/sharedpreferences/Messages.java',
   javaOptions: JavaOptions(
       className: 'Messages', package: 'io.flutter.plugins.sharedpreferences'),
-  dartOut: 'lib/messages.g.dart',
+  dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/messages_test.g.dart',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
@@ -29,7 +29,7 @@ abstract class SharedPreferencesApi {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setStringList(String key, List<String> value);
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool clear();
+  bool clearWithPrefix(String prefix);
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  Map<String, dynamic> getAll();
+  Map<String, Object> getAllWithPrefix(String prefix);
 }

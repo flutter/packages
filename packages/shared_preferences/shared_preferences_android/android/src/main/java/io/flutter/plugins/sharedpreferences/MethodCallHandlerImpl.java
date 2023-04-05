@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 /** Helper class to save data to `android.content.SharedPreferences` */
-
-// Rename class and file to match it's purpose, preferably SharedPreferencesHelper
 @SuppressWarnings("unchecked")
 class MethodCallHandlerImpl {
 
@@ -76,8 +74,8 @@ class MethodCallHandlerImpl {
     return success;
   }
 
-  public Map<String, Object> getAll() throws RuntimeException {
-    Map<String, Object> data = getAllPrefs();
+  public Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
+    Map<String, Object> data = getAllPrefs(prefix);
     return data;
   }
 
@@ -85,8 +83,8 @@ class MethodCallHandlerImpl {
     return preferences.edit().remove(key).commit();
   }
 
-  public Boolean clear() throws RuntimeException {
-    Set<String> keySet = getAllPrefs().keySet();
+  public Boolean clearWithPrefix(String prefix) throws RuntimeException {
+    Set<String> keySet = getAllPrefs(prefix).keySet();
     SharedPreferences.Editor clearEditor = preferences.edit();
     for (String keyToDelete : keySet) {
       clearEditor.remove(keyToDelete);
@@ -96,7 +94,7 @@ class MethodCallHandlerImpl {
 
   // Filter preferences to only those set by the flutter app.
   @SuppressWarnings("unchecked")
-  private Map<String, Object> getAllPrefs() throws RuntimeException {
+  private Map<String, Object> getAllPrefs(String prefix) throws RuntimeException {
     Map<String, ?> allPrefs = preferences.getAll();
     Map<String, Object> filteredPrefs = new HashMap<>();
     for (String key : allPrefs.keySet()) {
