@@ -120,9 +120,7 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
                   instanceManager.getInstance(((Number) useCaseIds.get(i)).longValue()));
     }
 
-    Camera camera =
-        processCameraProvider.bindToLifecycle(
-            (LifecycleOwner) lifecycleOwner, cameraSelector, useCases);
+    Camera camera = processCameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, useCases);
 
     final CameraFlutterApiImpl cameraFlutterApi =
         new CameraFlutterApiImpl(binaryMessenger, instanceManager);
@@ -131,6 +129,15 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
     }
 
     return instanceManager.getIdentifierForStrongReference(camera);
+  }
+
+  @Override
+  public Boolean isBound(@NonNull Long identifier, @NonNull Long useCaseIdentifier) {
+    ProcessCameraProvider processCameraProvider =
+        (ProcessCameraProvider) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    UseCase useCase =
+        (UseCase) Objects.requireNonNull(instanceManager.getInstance(useCaseIdentifier));
+    return processCameraProvider.isBound(useCase);
   }
 
   @Override

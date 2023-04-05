@@ -11,7 +11,7 @@ import '../widgets/author_list.dart';
 /// A screen that displays a list of authors.
 class AuthorsScreen extends StatelessWidget {
   /// Creates an [AuthorsScreen].
-  const AuthorsScreen({Key? key}) : super(key: key);
+  const AuthorsScreen({super.key});
 
   /// The title of the screen.
   static const String title = 'Authors';

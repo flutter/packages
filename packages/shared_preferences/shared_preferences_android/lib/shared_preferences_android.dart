@@ -20,6 +20,8 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
     SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid();
   }
 
+  static const String _defaultPrefix = 'flutter.';
+
   @override
   Future<bool> remove(String key) async {
     return _api.remove(key);

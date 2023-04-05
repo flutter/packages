@@ -71,6 +71,10 @@ void main() {
       expect(anchor.getAttribute('href'),
           urlStrategy?.prepareExternalUrl(uri3.toString()));
       expect(anchor.getAttribute('target'), '_self');
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
     });
 
     testWidgets('sizes itself correctly', (WidgetTester tester) async {
@@ -103,6 +107,10 @@ void main() {
       // `ConstrainedBox` widget.
       expect(containerSize.width, 100.0);
       expect(containerSize.height, 100.0);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
     });
 
     // See: https://github.com/flutter/plugins/pull/3522#discussion_r574703724
@@ -122,6 +130,10 @@ void main() {
 
       final html.Element anchor = _findSingleAnchor();
       expect(anchor.hasAttribute('href'), false);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
     });
 
     testWidgets('can be created and disposed', (WidgetTester tester) async {
@@ -152,6 +164,10 @@ void main() {
         800,
         maxScrolls: 1000,
       );
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
     });
   });
 }

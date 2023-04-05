@@ -1,5 +1,11 @@
-## NEXT
+## 0.9.1+2
 
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.9.1+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates example code for `use_build_context_synchronously` lint.
 * Updates minimum Flutter version to 3.0.
 

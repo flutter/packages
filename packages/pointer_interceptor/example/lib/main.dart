@@ -53,7 +53,7 @@ void main() {
 /// Main app
 class MyApp extends StatelessWidget {
   /// Creates main app.
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
 /// First page
 class MyHomePage extends StatefulWidget {
   /// Creates first page.
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -202,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
 /// Initialize the videoPlayer, then render the corresponding view...
 class HtmlElement extends StatelessWidget {
   /// Constructor
-  const HtmlElement({Key? key, required this.onClick}) : super(key: key);
+  const HtmlElement({super.key, required this.onClick});
 
   /// A function to run when the element is clicked
   final VoidCallback onClick;

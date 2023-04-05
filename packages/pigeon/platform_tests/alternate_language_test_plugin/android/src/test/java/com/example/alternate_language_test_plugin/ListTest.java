@@ -28,7 +28,9 @@ public class ListTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList args = (ArrayList) FlutterSmallApi.getCodec().decodeMessage(message);
+              @SuppressWarnings("unchecked")
+              ArrayList<Object> args =
+                  (ArrayList<Object>) FlutterSmallApi.getCodec().decodeMessage(message);
               ByteBuffer replyData = FlutterSmallApi.getCodec().encodeMessage(args.get(0));
               replyData.position(0);
               reply.reply(replyData);

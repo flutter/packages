@@ -186,10 +186,10 @@ For query parameters with a **non-nullable** type, you can define a default valu
 ```dart
 class MyRoute extends GoRouteData {
   MyRoute({this.queryParameter = 'defaultValue'});
-  final String from;
+  final String queryParameter;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => MyScreen(from: from);
+  Widget build(BuildContext context, GoRouterState state) => MyScreen(queryParameter: queryParameter);
 }
 ```
 
@@ -327,3 +327,44 @@ class FancyRoute extends GoRouteData {
     ),
 }
 ```
+
+## TypedShellRoute and navigator keys
+
+There may be situations were a child route of a shell needs to be displayed on a
+different navigator. This kind of scenarios can be achieved by declaring a
+**static** navigator key named:
+
+- `$navigatorKey` for ShellRoutes
+- `$parentNavigatorKey` for GoRoutes
+
+Example:
+
+```dart
+// For ShellRoutes:
+final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
+
+class MyShellRouteData extends ShellRouteData {
+  const MyShellRouteData();
+
+  static final GlobalKey<NavigatorState> $navigatorKey = shellNavigatorKey;
+
+  @override
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
+    // ...
+  }
+}
+
+// For GoRoutes:
+class MyGoRouteData extends GoRouteData {
+  const MyGoRouteData();
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    // ...
+  }
+}
+```
+
+An example is available [here](https://github.com/flutter/packages/blob/main/packages/go_router_builder/example/lib/shell_route_with_keys_example.dart).

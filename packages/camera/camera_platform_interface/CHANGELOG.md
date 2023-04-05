@@ -1,3 +1,12 @@
+## 2.5.0
+
+* Adds NV21 as an image stream format (suitable for Android).
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.4.1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 2.4.0
 
 * Allows camera to be switched while video recording.

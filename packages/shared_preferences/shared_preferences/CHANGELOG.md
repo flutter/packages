@@ -1,5 +1,19 @@
-## NEXT
+## 2.1.0
 
+* Adds `setPrefix` method.
+
+## 2.0.20
+
+* Adds README discussion of `reload()`.
+
+## 2.0.19
+
+* Updates README to use code excerpts.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.0.18
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
 
 ## 2.0.17

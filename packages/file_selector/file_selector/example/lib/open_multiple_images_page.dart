@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 /// Screen that shows an example of openFiles
 class OpenMultipleImagesPage extends StatelessWidget {
   /// Default Constructor
-  const OpenMultipleImagesPage({Key? key}) : super(key: key);
+  const OpenMultipleImagesPage({super.key});
 
   Future<void> _openImageFile(BuildContext context) async {
     // #docregion MultiOpen
@@ -71,7 +71,7 @@ class OpenMultipleImagesPage extends StatelessWidget {
 /// Widget that displays a text file in a dialog
 class MultipleImagesDisplay extends StatelessWidget {
   /// Default Constructor
-  const MultipleImagesDisplay(this.files, {Key? key}) : super(key: key);
+  const MultipleImagesDisplay(this.files, {super.key});
 
   /// The files containing the images
   final List<XFile> files;

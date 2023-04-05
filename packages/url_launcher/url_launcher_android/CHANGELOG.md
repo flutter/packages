@@ -1,5 +1,19 @@
 ## NEXT
 
+* Updates minimum Flutter version to 3.3.
+
+## 6.0.26
+
+* Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+
+## 6.0.25
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 6.0.24
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
 * Updates minimum Flutter version to 3.0.
 
 ## 6.0.23

@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.2.2+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 0.2.2
 
 * Updates `WebWebViewController.loadRequest` to only set the src of the iFrame

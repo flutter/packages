@@ -67,6 +67,41 @@ void main() {
       expect(find.text('1 /a', skipOffstage: false), findsOneWidget);
     });
 
+    testWidgets('path parameter persists after page is popped',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (_, __) {
+              return Builder(builder: (BuildContext context) {
+                return Text('1 ${GoRouterState.of(context).location}');
+              });
+            },
+            routes: <GoRoute>[
+              GoRoute(
+                  path: ':id',
+                  builder: (_, __) {
+                    return Builder(builder: (BuildContext context) {
+                      return Text(
+                          '2 ${GoRouterState.of(context).params['id']}');
+                    });
+                  }),
+            ]),
+      ];
+      final GoRouter router = await createRouter(routes, tester);
+      await tester.pumpAndSettle();
+      expect(find.text('1 /'), findsOneWidget);
+
+      router.go('/123');
+      await tester.pumpAndSettle();
+      expect(find.text('2 123'), findsOneWidget);
+      router.pop();
+      await tester.pump();
+      // Page 2 is in popping animation but should still be on screen with the
+      // correct path parameter.
+      expect(find.text('2 123'), findsOneWidget);
+    });
+
     testWidgets('registry retains GoRouterState for exiting route',
         (WidgetTester tester) async {
       final UniqueKey key = UniqueKey();

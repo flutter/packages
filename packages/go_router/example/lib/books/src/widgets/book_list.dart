@@ -12,8 +12,8 @@ class BookList extends StatelessWidget {
   const BookList({
     required this.books,
     this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The list of books to be displayed.
   final List<Book> books;

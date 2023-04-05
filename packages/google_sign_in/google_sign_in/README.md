@@ -2,13 +2,9 @@
 
 A Flutter plugin for [Google Sign In](https://developers.google.com/identity/).
 
-_Note_: This plugin is still under development, and some APIs might not be
-available yet. [Feedback](https://github.com/flutter/flutter/issues) and
-[Pull Requests](https://github.com/flutter/plugins/pulls) are most welcome!
-
-|             | Android | iOS    | Web |
-|-------------|---------|--------|-----|
-| **Support** | SDK 16+ | iOS 9+ | Any |
+|             | Android | iOS     | Web |
+|-------------|---------|---------|-----|
+| **Support** | SDK 16+ | iOS 11+ | Any |
 
 ## Platform integration
 
@@ -31,8 +27,6 @@ Otherwise, you may encounter `APIException` errors.
 
 ### iOS integration
 
-This plugin requires iOS 9.0 or higher.
-
 1. [First register your application](https://firebase.google.com/docs/ios/setup).
 2. Make sure the file you download in step 1 is named
    `GoogleService-Info.plist`.
@@ -43,7 +37,7 @@ This plugin requires iOS 9.0 or higher.
 5. Select `GoogleService-Info.plist` from the file manager.
 6. A dialog will show up and ask you to select the targets, select the `Runner`
    target.
-7. If you need to authenticate to a backend server you can add a 
+7. If you need to authenticate to a backend server you can add a
    `SERVER_CLIENT_ID` key value pair in your `GoogleService-Info.plist`.
    ```xml
    <key>SERVER_CLIENT_ID</key>
@@ -71,7 +65,7 @@ This plugin requires iOS 9.0 or higher.
 <!-- End of the Google Sign-in Section -->
 ```
 
-As an alternative to adding `GoogleService-Info.plist` to your Xcode project, 
+As an alternative to adding `GoogleService-Info.plist` to your Xcode project,
 you can instead configure your app in Dart code. In this case, skip steps 3 to 7
  and pass `clientId` and `serverClientId` to the `GoogleSignIn` constructor:
 
@@ -148,4 +142,4 @@ Future<void> _handleSignIn() async {
 ## Example
 
 Find the example wiring in the
-[Google sign-in example application](https://github.com/flutter/plugins/blob/main/packages/google_sign_in/google_sign_in/example/lib/main.dart).
+[Google sign-in example application](https://github.com/flutter/packages/blob/main/packages/google_sign_in/google_sign_in/example/lib/main.dart).

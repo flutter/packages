@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
 import '../android_webview.dart';
+import '../instance_manager.dart';
 import 'webview_android_widget.dart';
 
 /// Builds an Android webview.
@@ -20,6 +21,15 @@ import 'webview_android_widget.dart';
 /// an [AndroidView] to embed the webview in the widget hierarchy, and uses a method channel to
 /// communicate with the platform code.
 class AndroidWebView implements WebViewPlatform {
+  /// Constructs an [AndroidWebView].
+  AndroidWebView({@visibleForTesting InstanceManager? instanceManager})
+      : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Maintains instances used to communicate with the native objects they
+  /// represent.
+  @protected
+  final InstanceManager instanceManager;
+
   @override
   Widget build({
     required BuildContext context,
@@ -30,7 +40,6 @@ class AndroidWebView implements WebViewPlatform {
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
   }) {
     return WebViewAndroidWidget(
-      useHybridComposition: false,
       creationParams: creationParams,
       callbacksHandler: webViewPlatformCallbacksHandler,
       javascriptChannelRegistry: javascriptChannelRegistry,
@@ -55,8 +64,7 @@ class AndroidWebView implements WebViewPlatform {
             gestureRecognizers: gestureRecognizers,
             layoutDirection:
                 Directionality.maybeOf(context) ?? TextDirection.rtl,
-            creationParams: JavaObject.globalInstanceManager
-                .getIdentifier(controller.webView),
+            creationParams: instanceManager.getIdentifier(controller.webView),
             creationParamsCodec: const StandardMessageCodec(),
           ),
         );

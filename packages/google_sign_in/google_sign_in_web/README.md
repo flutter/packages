@@ -124,7 +124,11 @@ The GIS SDK limits authorization token duration to one hour (3600 seconds).
 
 This package is [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin),
 which means you can simply use `google_sign_in`
-normally. This package will be automatically included in your app when you do.
+normally. This package will be automatically included in your app when you do,
+so you do not need to add it to your `pubspec.yaml`.
+
+However, if you `import` this package to use any of its APIs directly, you
+should add it to your `pubspec.yaml` as usual.
 
 ### Web integration
 
@@ -172,19 +176,19 @@ Note that the **`serverClientId` parameter of the `GoogleSignIn` constructor is 
 
 ## Example
 
-Find the example wiring in the [Google sign-in example application](https://github.com/flutter/plugins/blob/main/packages/google_sign_in/google_sign_in/example/lib/main.dart).
+Find the example wiring in the [Google sign-in example application](https://github.com/flutter/packages/blob/main/packages/google_sign_in/google_sign_in/example/lib/main.dart).
 
 ## API details
 
-See [google_sign_in.dart](https://github.com/flutter/plugins/blob/main/packages/google_sign_in/google_sign_in/lib/google_sign_in.dart) for more API details.
+See [google_sign_in.dart](https://github.com/flutter/packages/blob/main/packages/google_sign_in/google_sign_in/lib/google_sign_in.dart) for more API details.
 
 ## Contributions and Testing
 
 Tests are crucial for contributions to this package. All new contributions should be reasonably tested.
 
-**Check the [`test/README.md` file](https://github.com/flutter/plugins/blob/main/packages/google_sign_in/google_sign_in_web/test/README.md)** for more information on how to run tests on this package.
+**Check the [`test/README.md` file](https://github.com/flutter/packages/blob/main/packages/google_sign_in/google_sign_in_web/test/README.md)** for more information on how to run tests on this package.
 
-Contributions to this package are welcome. Read the [Contributing to Flutter Plugins](https://github.com/flutter/plugins/blob/main/CONTRIBUTING.md) guide to get started.
+Contributions to this package are welcome. Read the [Contributing to Flutter Plugins](https://github.com/flutter/packages/blob/main/CONTRIBUTING.md) guide to get started.
 
 ## Issues and feedback
 

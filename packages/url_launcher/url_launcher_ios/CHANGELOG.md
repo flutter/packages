@@ -1,3 +1,15 @@
+## 6.1.3
+
+* Switches to Pigeon for internal implementation.
+
+## 6.1.2
+
+* Clarifies explanation of endorsement in README.
+
+## 6.1.1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
 ## 6.1.0
 
 * Updates minimum Flutter version to 3.3 and iOS 11.

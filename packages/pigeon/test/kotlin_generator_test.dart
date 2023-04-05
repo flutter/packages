@@ -185,12 +185,12 @@ void main() {
     expect(code, contains('''
         if (api != null) {
           channel.setMessageHandler { message, reply ->
-            var wrapped = listOf<Any?>()
             val args = message as List<Any?>
             val inputArg = args[0] as Input
+            var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.doSomething(inputArg))
-            } catch (exception: Error) {
+            } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
             reply.reply(wrapped)
@@ -348,7 +348,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aNullableInt = list[9].let { if (it is Int) it.toLong() else it as? Long }'));
+            'val aNullableInt = list[9].let { if (it is Int) it.toLong() else it as Long? }'));
   });
 
   test('gen one flutter api', () {
@@ -617,7 +617,7 @@ void main() {
     expect(code, contains('val nested: Nested? = null'));
     expect(code, contains('fun fromList(list: List<Any?>): Outer'));
     expect(
-        code, contains('val nested: Nested? = (list[0] as? List<Any?>)?.let'));
+        code, contains('val nested: Nested? = (list[0] as List<Any?>?)?.let'));
     expect(code, contains('Nested.fromList(it)'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
@@ -1095,7 +1095,7 @@ void main() {
     expect(
         code,
         contains(
-            'val fooArg = args[0].let { if (it is Int) it.toLong() else it as? Long }'));
+            'val fooArg = args[0].let { if (it is Int) it.toLong() else it as Long? }'));
   });
 
   test('nullable argument flutter', () {
@@ -1328,5 +1328,30 @@ void main() {
     generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains(' : StandardMessageCodec() '));
+  });
+
+  test('creates api error class for custom errors', () {
+    final Method method = Method(
+        name: 'doSomething',
+        returnType: const TypeDeclaration.voidDeclaration(),
+        arguments: <NamedType>[]);
+    final Api api = Api(
+        name: 'SomeApi', location: ApiLocation.host, methods: <Method>[method]);
+    final Root root = Root(
+      apis: <Api>[api],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions =
+        KotlinOptions(errorClassName: 'SomeError');
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class SomeError'));
+    expect(code, contains('if (exception is SomeError)'));
+    expect(code, contains('exception.code,'));
+    expect(code, contains('exception.message,'));
+    expect(code, contains('exception.details'));
   });
 }

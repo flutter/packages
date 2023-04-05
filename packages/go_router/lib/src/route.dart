@@ -292,11 +292,13 @@ class GoRoute extends RouteBase {
   /// re-evaluation will be triggered if the [InheritedWidget] changes.
   final GoRouterRedirect? redirect;
 
+  /// {@template go_router.GoRoute.parentNavigatorKey}
   /// An optional key specifying which Navigator to display this route's screen
   /// onto.
   ///
   /// Specifying the root Navigator will stack this route onto that
   /// Navigator instead of the nearest ShellRoute ancestor.
+  /// {@endtemplate}
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
@@ -323,8 +325,8 @@ class GoRoute extends RouteBase {
 /// A route that displays a UI shell around the matching child route.
 ///
 /// When a ShellRoute is added to the list of routes on GoRouter or GoRoute, a
-/// new Navigator that is used to display any matching sub-routes, instead of
-/// placing them on the root Navigator.
+/// new Navigator is used to display any matching sub-routes instead of placing
+/// them on the root Navigator.
 ///
 /// To display a child route on a different Navigator, provide it with a
 /// [parentNavigatorKey] that matches the key provided to either the [GoRouter]
@@ -454,8 +456,10 @@ class ShellRoute extends RouteBase {
   /// sub-route's observers.
   final List<NavigatorObserver>? observers;
 
+  /// {@template go_router.ShellRoute.navigatorKey}
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
+  /// {@endtemplate}
   final GlobalKey<NavigatorState> navigatorKey;
 }

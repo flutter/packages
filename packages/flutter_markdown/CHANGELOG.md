@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.6.14
 
 * Require `markdown: ^7.0.0`
