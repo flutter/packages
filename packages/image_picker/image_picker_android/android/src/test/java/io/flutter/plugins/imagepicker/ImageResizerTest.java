@@ -89,9 +89,12 @@ public class ImageResizerTest {
     String nonBitmapImagePath = svgImageFile.getPath();
 
     // Mock the static method
-    try (MockedStatic<BitmapFactory> mockedBitmapFactory = Mockito.mockStatic(BitmapFactory.class)) {
+    try (MockedStatic<BitmapFactory> mockedBitmapFactory =
+        Mockito.mockStatic(BitmapFactory.class)) {
       // Configure the method to return null when called with a non-bitmap image
-      mockedBitmapFactory.when(() -> BitmapFactory.decodeFile(nonBitmapImagePath, null)).thenReturn(null);
+      mockedBitmapFactory
+          .when(() -> BitmapFactory.decodeFile(nonBitmapImagePath, null))
+          .thenReturn(null);
 
       String resizedImagePath = resizer.resizeImageIfNeeded(nonBitmapImagePath, null, null, 100);
 
