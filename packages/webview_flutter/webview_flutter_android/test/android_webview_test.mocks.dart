@@ -632,17 +632,10 @@ class MockTestWebViewHostApi extends _i1.Mock
   }
 
   @override
-  void create(
-    int? instanceId,
-    bool? useHybridComposition,
-  ) =>
-      super.noSuchMethod(
+  void create(int? instanceId) => super.noSuchMethod(
         Invocation.method(
           #create,
-          [
-            instanceId,
-            useHybridComposition,
-          ],
+          [instanceId],
         ),
         returnValueForMissingStub: null,
       );
@@ -1035,11 +1028,6 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
     _i1.throwOnMissingStub(this);
   }
 
-  @override
-  bool get useHybridComposition => (super.noSuchMethod(
-        Invocation.getter(#useHybridComposition),
-        returnValue: false,
-      ) as bool);
   @override
   _i2.WebSettings get settings => (super.noSuchMethod(
         Invocation.getter(#settings),

@@ -694,20 +694,17 @@ class MockAndroidWebViewController extends _i1.Mock
 class MockAndroidWebViewProxy extends _i1.Mock
     implements _i10.AndroidWebViewProxy {
   @override
-  _i2.WebView Function({required bool useHybridComposition})
-      get createAndroidWebView => (super.noSuchMethod(
-            Invocation.getter(#createAndroidWebView),
-            returnValue: ({required bool useHybridComposition}) =>
-                _FakeWebView_7(
-              this,
-              Invocation.getter(#createAndroidWebView),
-            ),
-            returnValueForMissingStub: ({required bool useHybridComposition}) =>
-                _FakeWebView_7(
-              this,
-              Invocation.getter(#createAndroidWebView),
-            ),
-          ) as _i2.WebView Function({required bool useHybridComposition}));
+  _i2.WebView Function() get createAndroidWebView => (super.noSuchMethod(
+        Invocation.getter(#createAndroidWebView),
+        returnValue: () => _FakeWebView_7(
+          this,
+          Invocation.getter(#createAndroidWebView),
+        ),
+        returnValueForMissingStub: () => _FakeWebView_7(
+          this,
+          Invocation.getter(#createAndroidWebView),
+        ),
+      ) as _i2.WebView Function());
   @override
   _i2.WebChromeClient Function({
     void Function(
@@ -1757,12 +1754,6 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockWebView extends _i1.Mock implements _i2.WebView {
-  @override
-  bool get useHybridComposition => (super.noSuchMethod(
-        Invocation.getter(#useHybridComposition),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
   @override
   _i2.WebSettings get settings => (super.noSuchMethod(
         Invocation.getter(#settings),

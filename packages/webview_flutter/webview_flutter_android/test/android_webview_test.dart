@@ -110,7 +110,7 @@ void main() {
       });
 
       test('create', () {
-        verify(mockPlatformHostApi.create(webViewInstanceId, false));
+        verify(mockPlatformHostApi.create(webViewInstanceId));
       });
 
       test('setWebContentsDebuggingEnabled true', () {
