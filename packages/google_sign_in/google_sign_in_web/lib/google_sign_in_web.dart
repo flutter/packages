@@ -86,7 +86,9 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   // A convenience getter to avoid using ! when accessing _gisSdkClient, and
   // providing a slightly better error message when it is Null.
   GisSdkClient get _gisClient {
-    assert(_gisSdkClient != null, 'GIS Client not initialized. '
+    assert(
+      _gisSdkClient != null,
+      'GIS Client not initialized. '
       'GoogleSignInPlugin::init() or GoogleSignInPlugin::initWithParams() '
       'must be called before any other method in this plugin.',
     );
