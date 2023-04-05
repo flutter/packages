@@ -2,6 +2,7 @@
 
 * Updates minimum Flutter version to 3.3.
 * Fixes common typos in tests and documentation.
+* Adds platform interface for onHttpError callback
 
 ## 2.1.0
 
