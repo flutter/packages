@@ -54,7 +54,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     @visibleForTesting
         StreamController<GoogleSignInUserData?>?
             debugOverrideUserDataController,
-  })  : _gisClient = debugOverrideGisSdkClient,
+  })  : _gisSdkClient = debugOverrideGisSdkClient,
         _userDataController = debugOverrideUserDataController ??
             StreamController<GoogleSignInUserData?>.broadcast() {
     autoDetectedClientId = html
@@ -81,7 +81,17 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   final StreamController<GoogleSignInUserData?> _userDataController;
 
   // The instance of [GisSdkClient] backing the plugin.
-  GisSdkClient? _gisClient;
+  GisSdkClient? _gisSdkClient;
+
+  // A convenience getter to avoid using ! when accessing _gisSdkClient, and
+  // providing a slightly better error message when it is Null.
+  GisSdkClient get _gisClient {
+    assert(_gisSdkClient != null, 'GIS Client not initialized. '
+      'GoogleSignInPlugin::init() or GoogleSignInPlugin::initWithParams() '
+      'must be called before any other method in this plugin.',
+    );
+    return _gisSdkClient!;
+  }
 
   // This method throws if init or initWithParams hasn't been called at some
   // point in the past. It is used by the [initialized] getter to ensure that
@@ -152,7 +162,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
     await _jsSdkLoadedFuture;
 
-    _gisClient ??= GisSdkClient(
+    _gisSdkClient ??= GisSdkClient(
       clientId: appClientId!,
       hostedDomain: params.hostedDomain,
       initialScopes: List<String>.from(params.scopes),
@@ -194,7 +204,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
                     domDocument.querySelector('#sign_in_button_$viewId');
                 assert(element != null,
                     'Cannot render GSI button. DOM is not ready!');
-                _gisClient!.renderButton(element!, config);
+                _gisClient.renderButton(element!, config);
               });
         }
         return const Text('Getting ready');
@@ -207,7 +217,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     await initialized;
 
     // The new user is being injected from the `userDataEvents` Stream.
-    return _gisClient!.signInSilently();
+    return _gisClient.signInSilently();
   }
 
   @override
@@ -221,7 +231,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     // This method will synthesize authentication information from the People API
     // if needed (or use the last identity seen from signInSilently).
     try {
-      return _gisClient!.signIn();
+      return _gisClient.signIn();
     } catch (reason) {
       throw PlatformException(
         code: reason.toString(),
@@ -239,42 +249,42 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   }) async {
     await initialized;
 
-    return _gisClient!.getTokens();
+    return _gisClient.getTokens();
   }
 
   @override
   Future<void> signOut() async {
     await initialized;
 
-    _gisClient!.signOut();
+    _gisClient.signOut();
   }
 
   @override
   Future<void> disconnect() async {
     await initialized;
 
-    _gisClient!.disconnect();
+    _gisClient.disconnect();
   }
 
   @override
   Future<bool> isSignedIn() async {
     await initialized;
 
-    return _gisClient!.isSignedIn();
+    return _gisClient.isSignedIn();
   }
 
   @override
   Future<void> clearAuthCache({required String token}) async {
     await initialized;
 
-    _gisClient!.clearAuthCache();
+    _gisClient.clearAuthCache();
   }
 
   @override
   Future<bool> requestScopes(List<String> scopes) async {
     await initialized;
 
-    return _gisClient!.requestScopes(scopes);
+    return _gisClient.requestScopes(scopes);
   }
 
   @override
@@ -282,7 +292,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       {String? accessToken}) async {
     await initialized;
 
-    return _gisClient!.canAccessScopes(scopes, accessToken);
+    return _gisClient.canAccessScopes(scopes, accessToken);
   }
 
   @override

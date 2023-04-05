@@ -2,7 +2,7 @@
 
 The web implementation of [google_sign_in](https://pub.dev/packages/google_sign_in)
 
-## Migrating to v0.11 (Google Identity Services)
+## Migrating to v0.11 and v0.12 (Google Identity Services)
 
 The `google_sign_in_web` plugin is backed by the new Google Identity Services
 (GIS) JS SDK since version 0.11.0.
@@ -27,12 +27,12 @@ quickly and easily sign users into your app suing their Google accounts.
     flows will not return authentication information.
 * The GIS SDK no longer has direct access to previously-seen users upon initialization.
   * `signInSilently` now displays the One Tap UX for web.
-* The GIS SDK only provides an `idToken` (JWT-encoded info) when the user
-  successfully completes an authentication flow.
+* **Since 0.12** The plugin provides an `idToken` (JWT-encoded info) when the
+  user successfully completes an authentication flow:
   * In the plugin: `signInSilently` and through the web-only `renderButton` widget.
 * The plugin `signIn` method uses the Oauth "Implicit Flow" to Authorize the requested `scopes`.
   * This method only provides an `accessToken`, and not an `idToken`, so if your
-    app needs an `idToken`, this method **should be avoided**.
+    app needs an `idToken`, this method **should be avoided on the web**.
 * The GIS SDK no longer handles sign-in state and user sessions, it only provides
   Authentication credentials for the moment the user did authenticate.
 * The GIS SDK no longer is able to renew Authorization sessions on the web.
@@ -73,15 +73,15 @@ for a simple implementation of this (look at the `isAuthorized` variable).)_
 Only if the scopes required by an App are different from the
 [OpenID Connect scopes](https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect).
 
-If an App only needs an `idToken`, or the OpenID Connect scopes, the "Sign In"
+If an App only needs an `idToken`, or the OpenID Connect scopes, the Authentication
 bits of the plugin should be enough for your app (`signInSilently` and `renderButton`).
 
 #### What happened to the `signIn` method on the web?
 
 Because the GIS SDK for web no longer provides users with the ability to create
 their own Sign-In buttons, or an API to start the sign in flow, the current
-implementation of `signIn` (that does authorization and authentication) is impossible
-to implement on the web.
+implementation of `signIn` (that does authorization and authentication) is no
+longer feasible on the web.
 
 The web plugin attempts to simulate the old `signIn` behavior by using the 
 [Oauth Implicit pop-up flow](https://developers.google.com/identity/oauth2/web/guides/use-token-model), which authenticates and authorizes users.
@@ -89,8 +89,8 @@ The web plugin attempts to simulate the old `signIn` behavior by using the
 The drawback of this approach is that the Oauth flow **only returns an `accessToken`**,
 and a synthetic version of the User Data, that does **not include an `idToken`**.
 
-The solution to this is to migrate your custom "Sign In" buttons in the web to
-the Button Widget provided by this package: `Widget renderButton`.
+The solution to this is to **migrate your custom "Sign In" buttons in the web to
+the Button Widget provided by this package: `Widget renderButton()`.**
 
 _(Check the [package:google_sign_in example app](https://pub.dev/packages/google_sign_in/example)
 for an example on how to mix the `renderButton` widget on the web, with a custom
@@ -151,6 +151,9 @@ so you do not need to add it to your `pubspec.yaml`.
 
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
+
+For example, you need to import this package directly if you plan to use the
+web-only `Widget renderButton()` method.
 
 ### Web integration
 
