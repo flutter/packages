@@ -116,8 +116,7 @@ ErrorOr<AllNullableTypesWrapper> TestPlugin::CreateNestedNullableString(
   } else {
     inner_object.set_a_nullable_string(nullptr);
   }
-  AllNullableTypesWrapper wrapper;
-  wrapper.set_values(inner_object);
+  AllNullableTypesWrapper wrapper(inner_object);
   return wrapper;
 }
 

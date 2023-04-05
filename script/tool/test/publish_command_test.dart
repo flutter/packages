@@ -86,8 +86,10 @@ void main() {
       final RepositoryPackage plugin =
           createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable['git-status'] = <io.Process>[
-        MockProcess(stdout: '?? ${plugin.directory.childFile('tmp').path}\n')
+      processRunner.mockProcessesForExecutable['git-status'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
+            stdout: '?? ${plugin.directory.childFile('tmp').path}\n'))
       ];
 
       Error? commandError;
@@ -116,8 +118,9 @@ void main() {
     test("fails immediately if the remote doesn't exist", () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable['git-remote'] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['git-remote'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;
@@ -142,16 +145,19 @@ void main() {
       createFakePlugin('plugin1', packagesDir, examples: <String>[]);
       createFakePlugin('plugin2', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] = <io.Process>[
-        MockProcess(
-            stdout: 'Foo',
-            stderr: 'Bar',
-            stdoutEncoding: utf8,
-            stderrEncoding: utf8), // pub publish for plugin1
-        MockProcess(
-            stdout: 'Baz',
-            stdoutEncoding: utf8,
-            stderrEncoding: utf8), // pub publish for plugin1
+      processRunner.mockProcessesForExecutable[flutterCommand] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(
+                stdout: 'Foo',
+                stderr: 'Bar',
+                stdoutEncoding: utf8,
+                stderrEncoding: utf8),
+            <String>['pub', 'publish']), // publish for plugin1
+        FakeProcessInfo(
+            MockProcess(
+                stdout: 'Baz', stdoutEncoding: utf8, stderrEncoding: utf8),
+            <String>['pub', 'publish']), // publish for plugin2
       ];
 
       final List<String> output = await runCapturingPrint(
@@ -256,8 +262,9 @@ void main() {
     test('throws if pub publish fails', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] = <io.Process>[
-        MockProcess(exitCode: 128) // pub publish
+      processRunner.mockProcessesForExecutable[flutterCommand] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 128), <String>['pub', 'publish'])
       ];
 
       Error? commandError;
@@ -341,8 +348,9 @@ void main() {
     test('only if publishing succeeded', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] = <io.Process>[
-        MockProcess(exitCode: 128) // pub publish
+      processRunner.mockProcessesForExecutable[flutterCommand] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 128), <String>['pub', 'publish']),
       ];
 
       Error? commandError;
@@ -483,10 +491,10 @@ void main() {
         'plugin2',
         packagesDir.childDirectory('plugin2'),
       );
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
       mockStdin.readLineOutput = 'y';
 
@@ -541,13 +549,13 @@ void main() {
 
       // Git results for plugin0 having been released already, and plugin1 and
       // plugin2 being new.
-      processRunner.mockProcessesForExecutable['git-tag'] = <io.Process>[
-        MockProcess(stdout: 'plugin0-v0.0.1\n')
+      processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'plugin0-v0.0.1\n'))
       ];
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
 
       mockStdin.readLineOutput = 'y';
@@ -589,10 +597,10 @@ void main() {
       final RepositoryPackage plugin2 =
           createFakePlugin('plugin2', packagesDir.childDirectory('plugin2'));
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
       mockStdin.readLineOutput = 'y';
 
@@ -642,10 +650,10 @@ void main() {
           'plugin2', packagesDir.childDirectory('plugin2'),
           version: '0.0.2');
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
 
       mockStdin.readLineOutput = 'y';
@@ -691,10 +699,10 @@ void main() {
           createFakePlugin('plugin2', packagesDir.childDirectory('plugin2'));
       plugin2.directory.deleteSync(recursive: true);
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
 
       mockStdin.readLineOutput = 'y';
@@ -737,15 +745,15 @@ void main() {
           'plugin2', packagesDir.childDirectory('plugin2'),
           version: '0.0.2');
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
-      processRunner.mockProcessesForExecutable['git-tag'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: 'plugin1-v0.0.2\n'
-                'plugin2-v0.0.2\n')
+                'plugin2-v0.0.2\n'))
       ];
 
       final List<String> output = await runCapturingPrint(commandRunner,
@@ -787,10 +795,10 @@ void main() {
           'plugin2', packagesDir.childDirectory('plugin2'),
           version: '0.0.2');
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
 
       Error? commandError;
@@ -823,10 +831,10 @@ void main() {
       final RepositoryPackage plugin2 =
           createFakePlugin('plugin2', packagesDir.childDirectory('plugin2'));
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.libDirectory.childFile('plugin1.dart').path}\n'
-                '${plugin2.libDirectory.childFile('plugin2.dart').path}\n')
+                '${plugin2.libDirectory.childFile('plugin2.dart').path}\n'))
       ];
 
       final List<String> output = await runCapturingPrint(commandRunner,
@@ -847,8 +855,9 @@ void main() {
 
       final RepositoryPackage flutterPluginTools =
           createFakePlugin('flutter_plugin_tools', packagesDir);
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(stdout: flutterPluginTools.pubspecFile.path)
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(stdout: flutterPluginTools.pubspecFile.path))
       ];
 
       final List<String> output = await runCapturingPrint(commandRunner,

@@ -87,8 +87,7 @@ void main() {
                         onGeolocationPermissionsShowPrompt,
                   }) =>
                       MockWebChromeClient(),
-              createAndroidWebView: ({required bool useHybridComposition}) =>
-                  nonNullMockWebView,
+              createAndroidWebView: () => nonNullMockWebView,
               createAndroidWebViewClient: ({
                 void Function(android_webview.WebView webView, String url)?
                     onPageFinished,

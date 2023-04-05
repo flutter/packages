@@ -1,3 +1,15 @@
+## 6.5.3
+
+- Fixes redirect being called with an empty location for unknown routes.
+
+## 6.5.2
+
+- NoTransitionPage now has an instant reverse transition
+
+## 6.5.1
+
+- Fixes an issue where the params are removed after popping.
+
 ## 6.5.0
 
 - Supports returning values on pop.
@@ -20,7 +32,7 @@
 
 ## 6.2.0
 
-- Export supertypes in route_data.dart library
+- Exports supertypes in route_data.dart library.
 
 ## 6.1.0
 

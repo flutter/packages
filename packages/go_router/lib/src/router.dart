@@ -88,6 +88,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
 
     _routeInformationProvider = GoRouteInformationProvider(
       initialRouteInformation: RouteInformation(
+        // TODO(chunhtai): remove this ignore and migrate the code
+        // https://github.com/flutter/flutter/issues/124045.
+        // ignore: deprecated_member_use
         location: _effectiveInitialLocation(initialLocation),
         state: initialExtra,
       ),
@@ -193,6 +196,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       return true;
     }());
     _routeInformationProvider.value =
+        // TODO(chunhtai): remove this ignore and migrate the code
+        // https://github.com/flutter/flutter/issues/124045.
+        // ignore: deprecated_member_use
         RouteInformation(location: location, state: extra);
   }
 
@@ -226,6 +232,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     }());
     final RouteMatchList matches =
         await _routeInformationParser.parseRouteInformationWithDependencies(
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       RouteInformation(location: location, state: extra),
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112
@@ -260,6 +269,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   void pushReplacement(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       RouteInformation(location: location, state: extra),
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112
@@ -302,6 +314,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   void replace(String location, {Object? extra}) {
     routeInformationParser
         .parseRouteInformationWithDependencies(
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       RouteInformation(location: location, state: extra),
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112

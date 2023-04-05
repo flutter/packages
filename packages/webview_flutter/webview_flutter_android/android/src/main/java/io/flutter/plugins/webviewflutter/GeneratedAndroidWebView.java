@@ -784,7 +784,7 @@ public class GeneratedAndroidWebView {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebViewHostApi {
 
-    void create(@NonNull Long instanceId, @NonNull Boolean useHybridComposition);
+    void create(@NonNull Long instanceId);
 
     void loadData(
         @NonNull Long instanceId,
@@ -872,11 +872,8 @@ public class GeneratedAndroidWebView {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number instanceIdArg = (Number) args.get(0);
-                Boolean useHybridCompositionArg = (Boolean) args.get(1);
                 try {
-                  api.create(
-                      (instanceIdArg == null) ? null : instanceIdArg.longValue(),
-                      useHybridCompositionArg);
+                  api.create((instanceIdArg == null) ? null : instanceIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

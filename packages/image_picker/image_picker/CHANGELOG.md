@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
 ## 0.8.7+1
 
 * Updates README to use code excerpts.

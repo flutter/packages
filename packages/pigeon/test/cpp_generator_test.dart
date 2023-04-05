@@ -73,8 +73,9 @@ void main() {
       expect(code, contains('Output::Output'));
       expect(
           code,
-          contains(
-              'void Api::SetUp(flutter::BinaryMessenger* binary_messenger, Api* api)'));
+          contains(RegExp(r'void Api::SetUp\(\s*'
+              r'flutter::BinaryMessenger\* binary_messenger,\s*'
+              r'Api\* api\s*\)')));
     }
   });
 
@@ -144,10 +145,9 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
-      expect(code, contains('pointer_input_field'));
+      expect(code, contains('encodable_some_input'));
       expect(code, contains('Output::output_field()'));
       expect(code, contains('Output::set_output_field(bool value_arg)'));
-      expect(code, contains('encodable_output_field'));
     }
   });
 
@@ -476,6 +476,15 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
+
+      // There should be a default constructor.
+      expect(code, contains('Nested();'));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(
+              RegExp(r'explicit Nested\(\s*const bool\* nested_value\s*\)')));
+
       // Getters should return const pointers.
       expect(code, contains('const bool* nullable_bool()'));
       expect(code, contains('const int64_t* nullable_int()'));
@@ -514,6 +523,16 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
+
+      // There should be a default constructor.
+      expect(code, contains('Nested::Nested() {}'));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(RegExp(r'Nested::Nested\(\s*const bool\* nested_value\s*\)'
+              r'\s*:\s*nested_value_\(nested_value \? '
+              r'std::optional<bool>\(\*nested_value\) : std::nullopt\)\s*{}')));
+
       // Getters extract optionals.
       expect(code,
           contains('return nullable_bool_ ? &(*nullable_bool_) : nullptr;'));
@@ -628,6 +647,13 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
+
+      // There should not be a default constructor.
+      expect(code, isNot(contains('Nested();')));
+      // There should be a convenience constructor.
+      expect(code,
+          contains(RegExp(r'explicit Nested\(\s*bool nested_value\s*\)')));
+
       // POD getters should return copies references.
       expect(code, contains('bool non_nullable_bool()'));
       expect(code, contains('int64_t non_nullable_int()'));
@@ -659,6 +685,15 @@ void main() {
       );
       generator.generate(generatorOptions, root, sink);
       final String code = sink.toString();
+
+      // There should not be a default constructor.
+      expect(code, isNot(contains('Nested::Nested() {}')));
+      // There should be a convenience constructor.
+      expect(
+          code,
+          contains(RegExp(r'Nested::Nested\(\s*bool nested_value\s*\)'
+              r'\s*:\s*nested_value_\(nested_value\)\s*{}')));
+
       // Getters just return the value.
       expect(code, contains('return non_nullable_bool_;'));
       expect(code, contains('return non_nullable_int_;'));
@@ -970,13 +1005,14 @@ void main() {
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(const bool* a_bool, '
-              'const int64_t* an_int, '
-              'const std::string* a_string, '
-              'const flutter::EncodableList* a_list, '
-              'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object, '
-              'const flutter::EncodableValue* a_generic_object)'));
+          contains(RegExp(r'DoSomething\(\s*'
+              r'const bool\* a_bool,\s*'
+              r'const int64_t\* an_int,\s*'
+              r'const std::string\* a_string,\s*'
+              r'const flutter::EncodableList\* a_list,\s*'
+              r'const flutter::EncodableMap\* a_map,\s*'
+              r'const ParameterObject\* an_object,\s*'
+              r'const flutter::EncodableValue\* a_generic_object\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1113,13 +1149,14 @@ void main() {
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(bool a_bool, '
-              'int64_t an_int, '
-              'const std::string& a_string, '
-              'const flutter::EncodableList& a_list, '
-              'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object, '
-              'const flutter::EncodableValue& a_generic_object)'));
+          contains(RegExp(r'DoSomething\(\s*'
+              r'bool a_bool,\s*'
+              r'int64_t an_int,\s*'
+              r'const std::string& a_string,\s*'
+              r'const flutter::EncodableList& a_list,\s*'
+              r'const flutter::EncodableMap& a_map,\s*'
+              r'const ParameterObject& an_object,\s*'
+              r'const flutter::EncodableValue& a_generic_object\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1261,20 +1298,22 @@ void main() {
       // would need to be considered.
       expect(
           code,
-          contains('DoSomething(const bool* a_bool, '
-              'const int64_t* an_int, '
+          contains(RegExp(r'DoSomething\(\s*'
+              r'const bool\* a_bool,\s*'
+              r'const int64_t\* an_int,\s*'
               // Nullable strings use std::string* rather than std::string_view*
               // since there's no implicit conversion for pointer types.
-              'const std::string* a_string, '
-              'const flutter::EncodableList* a_list, '
-              'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object, '
-              'const flutter::EncodableValue* a_generic_object, '));
+              r'const std::string\* a_string,\s*'
+              r'const flutter::EncodableList\* a_list,\s*'
+              r'const flutter::EncodableMap\* a_map,\s*'
+              r'const ParameterObject\* an_object,\s*'
+              r'const flutter::EncodableValue\* a_generic_object,')));
       // The callback should pass a pointer as well.
       expect(
           code,
-          contains('std::function<void(const bool*)>&& on_success, '
-              'std::function<void(const FlutterError&)>&& on_error)'));
+          contains(
+              RegExp(r'std::function<void\(const bool\*\)>&& on_success,\s*'
+                  r'std::function<void\(const FlutterError&\)>&& on_error\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1312,7 +1351,7 @@ void main() {
       expect(
           code,
           contains(
-              'an_object_arg ? EncodableValue(an_object_arg->ToEncodableList()) : EncodableValue()'));
+              'an_object_arg ? CustomEncodableValue(*an_object_arg) : EncodableValue()'));
     }
   });
 
@@ -1400,21 +1439,22 @@ void main() {
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(bool a_bool, '
-              'int64_t an_int, '
+          contains(RegExp(r'DoSomething\(\s*'
+              r'bool a_bool,\s*'
+              r'int64_t an_int,\s*'
               // Non-nullable strings use std::string for consistency with
               // nullable strings.
-              'const std::string& a_string, '
+              r'const std::string& a_string,\s*'
               // Non-POD types use const references.
-              'const flutter::EncodableList& a_list, '
-              'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object, '
-              'const flutter::EncodableValue& a_generic_object, '));
+              r'const flutter::EncodableList& a_list,\s*'
+              r'const flutter::EncodableMap& a_map,\s*'
+              r'const ParameterObject& an_object,\s*'
+              r'const flutter::EncodableValue& a_generic_object,\s*')));
       // The callback should pass a value.
       expect(
           code,
-          contains('std::function<void(bool)>&& on_success, '
-              'std::function<void(const FlutterError&)>&& on_error)'));
+          contains(RegExp(r'std::function<void\(bool\)>&& on_success,\s*'
+              r'std::function<void\(const FlutterError&\)>&& on_error\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1433,7 +1473,7 @@ void main() {
       expect(code, contains('EncodableValue(a_list_arg)'));
       expect(code, contains('EncodableValue(a_map_arg)'));
       // Class types use ToEncodableList.
-      expect(code, contains('EncodableValue(an_object_arg.ToEncodableList())'));
+      expect(code, contains('CustomEncodableValue(an_object_arg)'));
     }
   });
 

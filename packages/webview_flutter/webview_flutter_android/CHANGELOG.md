@@ -3,6 +3,15 @@
 * Adds support for handling geolocation permissions. See
   `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
 
+## 3.4.5
+
+* Removes unused internal `WebView` field and Java class.
+
+## 3.4.4
+
+* Fixes a bug where the native `WebView` wouldn't be traversed for autofill automatically.
+* Updates minimum Flutter version to 3.3.
+
 ## 3.4.3
 
 * Updates internal Java InstanceManager to be cleared on hot restart.

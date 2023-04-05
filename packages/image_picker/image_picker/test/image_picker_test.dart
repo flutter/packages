@@ -13,16 +13,17 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'image_picker_test.mocks.dart' as base_mock;
 
 // Add the mixin to make the platform interface accept the mock.
-class MockImagePickerPlatform extends base_mock.MockImagePickerPlatform
+class _MockImagePickerPlatform extends base_mock.MockImagePickerPlatform
     with MockPlatformInterfaceMixin {}
 
-@GenerateMocks(<Type>[ImagePickerPlatform])
+@GenerateMocks(<Type>[],
+    customMocks: <MockSpec<dynamic>>[MockSpec<ImagePickerPlatform>()])
 void main() {
   group('ImagePicker', () {
-    late MockImagePickerPlatform mockPlatform;
+    late _MockImagePickerPlatform mockPlatform;
 
     setUp(() {
-      mockPlatform = MockImagePickerPlatform();
+      mockPlatform = _MockImagePickerPlatform();
       ImagePickerPlatform.instance = mockPlatform;
     });
 

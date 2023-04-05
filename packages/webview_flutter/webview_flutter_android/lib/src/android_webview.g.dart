@@ -381,13 +381,12 @@ class WebViewHostApi {
 
   static const MessageCodec<Object?> codec = _WebViewHostApiCodec();
 
-  Future<void> create(int arg_instanceId, bool arg_useHybridComposition) async {
+  Future<void> create(int arg_instanceId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.WebViewHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_instanceId, arg_useHybridComposition])
-            as List<Object?>?;
+        await channel.send(<Object?>[arg_instanceId]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

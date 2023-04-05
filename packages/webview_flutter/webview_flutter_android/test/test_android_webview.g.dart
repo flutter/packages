@@ -113,7 +113,7 @@ abstract class TestWebViewHostApi {
       TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = _TestWebViewHostApiCodec();
 
-  void create(int instanceId, bool useHybridComposition);
+  void create(int instanceId);
 
   void loadData(
       int instanceId, String data, String? mimeType, String? encoding);
@@ -186,10 +186,7 @@ abstract class TestWebViewHostApi {
           final int? arg_instanceId = (args[0] as int?);
           assert(arg_instanceId != null,
               'Argument for dev.flutter.pigeon.WebViewHostApi.create was null, expected non-null int.');
-          final bool? arg_useHybridComposition = (args[1] as bool?);
-          assert(arg_useHybridComposition != null,
-              'Argument for dev.flutter.pigeon.WebViewHostApi.create was null, expected non-null bool.');
-          api.create(arg_instanceId!, arg_useHybridComposition!);
+          api.create(arg_instanceId!);
           return <Object?>[];
         });
       }
