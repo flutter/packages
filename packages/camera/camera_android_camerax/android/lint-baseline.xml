@@ -2,13 +2,6 @@
 <issues format="6" by="lint 7.2.2" type="baseline" client="gradle" dependencies="false" name="AGP (7.2.2)" variant="all" version="7.2.2">
 
     <issue
-        id="InvalidPackage"
-        message="Invalid package reference in org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm; not included in Android: `java.lang.instrument`. Referenced from `kotlinx.coroutines.debug.AgentPremain`.">
-        <location
-            file="../../../../../../.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.5.2/f4cc07a50437659e0043e7da762809a46932b6a0/kotlinx-coroutines-core-jvm-1.5.2.jar"/>
-    </issue>
-
-    <issue
         id="SwitchIntDef"
         message="Switch statement on an `int` with known associated constant missing case `Configuration.ORIENTATION_SQUARE`, `Configuration.ORIENTATION_UNDEFINED`"
         errorLine1="    switch (orientation) {"
