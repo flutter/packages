@@ -73,8 +73,9 @@ void main() {
       expect(code, contains('Output::Output'));
       expect(
           code,
-          contains(
-              'void Api::SetUp(flutter::BinaryMessenger* binary_messenger, Api* api)'));
+          contains(RegExp(r'void Api::SetUp\(\s*'
+              r'flutter::BinaryMessenger\* binary_messenger,\s*'
+              r'Api\* api\s*\)')));
     }
   });
 
@@ -1004,13 +1005,14 @@ void main() {
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(const bool* a_bool, '
-              'const int64_t* an_int, '
-              'const std::string* a_string, '
-              'const flutter::EncodableList* a_list, '
-              'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object, '
-              'const flutter::EncodableValue* a_generic_object)'));
+          contains(RegExp(r'DoSomething\(\s*'
+              r'const bool\* a_bool,\s*'
+              r'const int64_t\* an_int,\s*'
+              r'const std::string\* a_string,\s*'
+              r'const flutter::EncodableList\* a_list,\s*'
+              r'const flutter::EncodableMap\* a_map,\s*'
+              r'const ParameterObject\* an_object,\s*'
+              r'const flutter::EncodableValue\* a_generic_object\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1147,13 +1149,14 @@ void main() {
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(bool a_bool, '
-              'int64_t an_int, '
-              'const std::string& a_string, '
-              'const flutter::EncodableList& a_list, '
-              'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object, '
-              'const flutter::EncodableValue& a_generic_object)'));
+          contains(RegExp(r'DoSomething\(\s*'
+              r'bool a_bool,\s*'
+              r'int64_t an_int,\s*'
+              r'const std::string& a_string,\s*'
+              r'const flutter::EncodableList& a_list,\s*'
+              r'const flutter::EncodableMap& a_map,\s*'
+              r'const ParameterObject& an_object,\s*'
+              r'const flutter::EncodableValue& a_generic_object\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1295,20 +1298,22 @@ void main() {
       // would need to be considered.
       expect(
           code,
-          contains('DoSomething(const bool* a_bool, '
-              'const int64_t* an_int, '
+          contains(RegExp(r'DoSomething\(\s*'
+              r'const bool\* a_bool,\s*'
+              r'const int64_t\* an_int,\s*'
               // Nullable strings use std::string* rather than std::string_view*
               // since there's no implicit conversion for pointer types.
-              'const std::string* a_string, '
-              'const flutter::EncodableList* a_list, '
-              'const flutter::EncodableMap* a_map, '
-              'const ParameterObject* an_object, '
-              'const flutter::EncodableValue* a_generic_object, '));
+              r'const std::string\* a_string,\s*'
+              r'const flutter::EncodableList\* a_list,\s*'
+              r'const flutter::EncodableMap\* a_map,\s*'
+              r'const ParameterObject\* an_object,\s*'
+              r'const flutter::EncodableValue\* a_generic_object,')));
       // The callback should pass a pointer as well.
       expect(
           code,
-          contains('std::function<void(const bool*)>&& on_success, '
-              'std::function<void(const FlutterError&)>&& on_error)'));
+          contains(
+              RegExp(r'std::function<void\(const bool\*\)>&& on_success,\s*'
+                  r'std::function<void\(const FlutterError&\)>&& on_error\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1434,21 +1439,22 @@ void main() {
       final String code = sink.toString();
       expect(
           code,
-          contains('DoSomething(bool a_bool, '
-              'int64_t an_int, '
+          contains(RegExp(r'DoSomething\(\s*'
+              r'bool a_bool,\s*'
+              r'int64_t an_int,\s*'
               // Non-nullable strings use std::string for consistency with
               // nullable strings.
-              'const std::string& a_string, '
+              r'const std::string& a_string,\s*'
               // Non-POD types use const references.
-              'const flutter::EncodableList& a_list, '
-              'const flutter::EncodableMap& a_map, '
-              'const ParameterObject& an_object, '
-              'const flutter::EncodableValue& a_generic_object, '));
+              r'const flutter::EncodableList& a_list,\s*'
+              r'const flutter::EncodableMap& a_map,\s*'
+              r'const ParameterObject& an_object,\s*'
+              r'const flutter::EncodableValue& a_generic_object,\s*')));
       // The callback should pass a value.
       expect(
           code,
-          contains('std::function<void(bool)>&& on_success, '
-              'std::function<void(const FlutterError&)>&& on_error)'));
+          contains(RegExp(r'std::function<void\(bool\)>&& on_success,\s*'
+              r'std::function<void\(const FlutterError&\)>&& on_error\s*\)')));
     }
     {
       final StringBuffer sink = StringBuffer();
