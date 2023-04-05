@@ -14,6 +14,7 @@ import 'package:flutter/widgets.dart'
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
+import 'package:simple_ast/annotations.dart';
 import 'instance_manager.dart';
 
 export 'android_webview_api_impls.dart' show FileChooserMode;
@@ -60,6 +61,50 @@ class JavaObject with Copyable {
   @override
   JavaObject copy() {
     return JavaObject.detached();
+  }
+}
+
+/// A callback interface used by the host application to set the Geolocation
+/// permission state for an origin.
+///
+/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+@immutable
+class GeolocationPermissionsCallback extends JavaObject {
+  /// Instantiates a [GeolocationPermissionsCallback] without creating and
+  /// attaching to an instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy.
+  @protected
+  GeolocationPermissionsCallback.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _geolocationPermissionsCallbackApi =
+            GeolocationPermissionsCallbackHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  final GeolocationPermissionsCallbackHostApiImpl
+      _geolocationPermissionsCallbackApi;
+
+  /// Sets the Geolocation permission state for the supplied origin.
+  Future<void> invoke(String origin, bool allow, bool retain) {
+    return _geolocationPermissionsCallbackApi.invokeFromInstances(
+      this,
+      origin,
+      allow,
+      retain,
+    );
+  }
+
+  @override
+  GeolocationPermissionsCallback copy() {
+    return GeolocationPermissionsCallback.detached(
+      binaryMessenger: _geolocationPermissionsCallbackApi.binaryMessenger,
+      instanceManager: _geolocationPermissionsCallbackApi.instanceManager,
+    );
   }
 }
 
@@ -936,12 +981,14 @@ class DownloadListener extends JavaObject {
 }
 
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
+@SimpleClassAnnotation()
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
   WebChromeClient({
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onGeolocationPermissionsShowPrompt,
+    this.onGeolocationPermissionsHidePrompt,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -959,6 +1006,7 @@ class WebChromeClient extends JavaObject {
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onGeolocationPermissionsShowPrompt,
+    this.onGeolocationPermissionsHidePrompt,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -987,6 +1035,12 @@ class WebChromeClient extends JavaObject {
   final Future<GeoPermissionsHandleResultProxy> Function(
     String origin,
   )? onGeolocationPermissionsShowPrompt;
+
+  /// Notify the host application that a request for Geolocation permissions,
+  /// made with a previous call to [onGeolocationPermissionsShowPrompt] has been
+  /// canceled.
+  final void Function(WebChromeClient instance)?
+      onGeolocationPermissionsHidePrompt;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -1023,6 +1077,7 @@ class WebChromeClient extends JavaObject {
       onProgressChanged: onProgressChanged,
       onShowFileChooser: onShowFileChooser,
       onGeolocationPermissionsShowPrompt: onGeolocationPermissionsShowPrompt,
+      onGeolocationPermissionsHidePrompt: onGeolocationPermissionsHidePrompt,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );

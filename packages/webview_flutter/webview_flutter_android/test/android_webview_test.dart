@@ -18,6 +18,7 @@ import 'test_android_webview.g.dart';
   DownloadListener,
   JavaScriptChannel,
   TestDownloadListenerHostApi,
+  TestGeolocationPermissionsCallbackHostApi,
   TestInstanceManagerHostApi,
   TestJavaObjectHostApi,
   TestJavaScriptChannelHostApi,
@@ -1043,6 +1044,60 @@ void main() {
 
     test('copy', () {
       expect(WebStorage.detached().copy(), isA<WebStorage>());
+    });
+  });
+
+  group('GeolocationPermissionsCallback', () {
+    tearDown(() {
+      TestGeolocationPermissionsCallbackHostApi.setup(null);
+    });
+
+    test('invoke', () async {
+      final MockTestGeolocationPermissionsCallbackHostApi mockApi =
+          MockTestGeolocationPermissionsCallbackHostApi();
+      TestGeolocationPermissionsCallbackHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final GeolocationPermissionsCallback instance =
+          GeolocationPermissionsCallback.detached(
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      const String origin = 'testString';
+      const bool allow = true;
+      const bool retain = true;
+
+      await instance.invoke(
+        origin,
+        allow,
+        retain,
+      );
+
+      verify(mockApi.invoke(instanceIdentifier, origin, allow, retain));
+    });
+
+    test('FlutterAPI create', () {
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final GeolocationPermissionsCallbackFlutterApiImpl api =
+          GeolocationPermissionsCallbackFlutterApiImpl(
+        instanceManager: instanceManager,
+      );
+
+      const int instanceIdentifier = 0;
+      api.create(instanceIdentifier);
+
+      expect(
+        instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+        isA<GeolocationPermissionsCallback>(),
+      );
     });
   });
 }

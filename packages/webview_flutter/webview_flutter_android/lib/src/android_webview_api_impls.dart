@@ -971,3 +971,72 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
     );
   }
 }
+
+/// Host api implementation for [GeolocationPermissionsCallback].
+class GeolocationPermissionsCallbackHostApiImpl
+    extends GeolocationPermissionsCallbackHostApi {
+  /// Constructs a [GeolocationPermissionsCallbackHostApiImpl].
+  GeolocationPermissionsCallbackHostApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with java objects.
+  final InstanceManager instanceManager;
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> invokeFromInstances(
+    GeolocationPermissionsCallback instance,
+    String origin,
+    bool allow,
+    bool retain,
+  ) {
+    return invoke(
+      instanceManager.getIdentifier(instance)!,
+      origin,
+      allow,
+      retain,
+    );
+  }
+}
+
+/// Flutter API implementation for [GeolocationPermissionsCallback].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+class GeolocationPermissionsCallbackFlutterApiImpl
+    implements GeolocationPermissionsCallbackFlutterApi {
+  /// Constructs a [GeolocationPermissionsCallbackFlutterApiImpl].
+  GeolocationPermissionsCallbackFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(int identifier) {
+    instanceManager.addHostCreatedInstance(
+      GeolocationPermissionsCallback.detached(
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+}
