@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' as io;
+
 import 'package:file/file.dart';
 import 'package:http/http.dart' as http;
 import 'package:pub_semver/pub_semver.dart';
@@ -10,6 +12,7 @@ import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
+import 'common/process_runner.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -26,10 +29,11 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
   UpdateDependencyCommand(
     Directory packagesDir, {
+    ProcessRunner processRunner = const ProcessRunner(),
     http.Client? httpClient,
   })  : _pubVersionFinder =
             PubVersionFinder(httpClient: httpClient ?? http.Client()),
-        super(packagesDir) {
+        super(packagesDir, processRunner: processRunner) {
     argParser.addOption(
       _pubPackageFlag,
       help: 'A pub package to update.',
@@ -129,6 +133,7 @@ ${response.httpResponse.body}
       return PackageResult.skip('$dependency in not a hosted dependency');
     }
 
+    // Determine the target version constraint.
     final String sectionKey = dependencyInfo.type == _PubDependencyType.dev
         ? 'dev_dependencies'
         : 'dependencies';
@@ -147,6 +152,7 @@ ${response.httpResponse.body}
       versionString = '^$minVersion';
     }
 
+    // Update pubspec.yaml with the new version.
     print('${indentation}Updating to "$versionString"');
     if (versionString == dependencyInfo.constraintString) {
       return PackageResult.skip('Already depends on $versionString');
@@ -159,8 +165,14 @@ ${response.httpResponse.body}
     );
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
 
-    // TODO(stuartmorgan): Add additionally handling of known packages that
-    // do file generation (mockito, pigeon, etc.).
+    // Do any dependency-specific extra processing.
+    if (dependency == 'pigeon') {
+      if (!await _regeneratePigeonFiles(package)) {
+        return PackageResult.fail(<String>['Failed to update pigeon files']);
+      }
+    }
+    // TODO(stuartmorgan): Add additional handling of known packages that
+    // do file generation (mockito, etc.).
 
     return PackageResult.success();
   }
@@ -192,6 +204,59 @@ ${response.httpResponse.body}
       );
     }
     return _PubDependencyInfo(type, pinned: false, hosted: false);
+  }
+
+  /// Returns all of the files in [package] that are, according to repository
+  /// convention, Pigeon input files.
+  Iterable<File> _getPigeonInputFiles(RepositoryPackage package) {
+    // Repo convention is that the Pigeon input files are the Dart files in a
+    // top-level "pigeons" directory.
+    final Directory pigeonsDir = package.directory.childDirectory('pigeons');
+    if (!pigeonsDir.existsSync()) {
+      return <File>[];
+    }
+    return pigeonsDir
+        .listSync()
+        .whereType<File>()
+        .where((File file) => file.basename.endsWith('.dart'));
+  }
+
+  /// Re-runs Pigeon generation for [package].
+  ///
+  /// This assumes that all output configuration is set in the input files, so
+  /// no additional arguments are needed. If that assumption stops holding true,
+  /// the tooling will need a way for packages to control the generation (e.g.,
+  /// with a script file with a known name in the pigeons/ directory.)
+  Future<bool> _regeneratePigeonFiles(RepositoryPackage package) async {
+    final Iterable<File> inputs = _getPigeonInputFiles(package);
+    if (inputs.isEmpty) {
+      logWarning('No pigeon input files found.');
+      return true;
+    }
+
+    print('${indentation}Running pub get...');
+    final io.ProcessResult getResult = await processRunner
+        .run('dart', <String>['pub', 'get'], workingDir: package.directory);
+    if (getResult.exitCode != 0) {
+      printError('dart pub get failed (${getResult.exitCode}):\n'
+          '${getResult.stdout}\n${getResult.stderr}\n');
+      return false;
+    }
+
+    print('${indentation}Updating Pigeon files...');
+    for (final File input in inputs) {
+      final String relativePath =
+          getRelativePosixPath(input, from: package.directory);
+      final io.ProcessResult pigeonResult = await processRunner.run(
+          'dart', <String>['run', 'pigeon', '--input', relativePath],
+          workingDir: package.directory);
+      if (pigeonResult.exitCode != 0) {
+        printError('dart run pigeon failed (${pigeonResult.exitCode}):\n'
+            '${pigeonResult.stdout}\n${pigeonResult.stderr}\n');
+        return false;
+      }
+    }
+    return true;
   }
 }
 
