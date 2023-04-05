@@ -25,6 +25,6 @@ values of the Google Sign In Button Widget.
 
 To run that example:
 
-```
-flutter run -d chrome --target=lib/button_tester.dart
+```console
+$ flutter run -d chrome --target=lib/button_tester.dart
 ```
