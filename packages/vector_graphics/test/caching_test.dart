@@ -356,7 +356,7 @@ class TestLocalizationsDelegate
   }
 }
 
-class TestWidgetsLocalizations extends WidgetsLocalizations {
+class TestWidgetsLocalizations extends DefaultWidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 }

@@ -4,6 +4,7 @@
 
 - Support for decoding control points as IEEE 754-2008 half precision
   floating point values.
+- Migrate the test to extend DefaultWidgetsLocalizations.
 
 ## 1.1.4
 
