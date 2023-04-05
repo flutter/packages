@@ -1,3 +1,7 @@
+## 9.2.3
+
+* [java] Fixes `UnknownNullability` and `SyntheticAccessor` warnings.
+
 ## 9.2.2
 
 * [cpp] Minor changes to output style.
