@@ -396,9 +396,9 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
   late VideoPlayerController _videoPlayerController;
   bool startedPlaying = false;
 
-  void listener() {
+  void _onVideoControllerValueUpdated() {
     if (startedPlaying && !_videoPlayerController.value.isPlaying) {
-      _videoPlayerController.removeListener(listener);
+      _videoPlayerController.removeListener(_onVideoControllerValueUpdated);
       Navigator.pop(context);
     }
   }
@@ -409,7 +409,7 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
 
     _videoPlayerController =
         VideoPlayerController.asset('assets/Butterfly-209.mp4');
-    _videoPlayerController.addListener(listener);
+    _videoPlayerController.addListener(_onVideoControllerValueUpdated);
   }
 
   @override
