@@ -1,3 +1,7 @@
+## 6.5.5
+
+- Fixes an issue when popping pageless route would accidentally complete imperative page.
+
 ## 6.5.4
 
 - Remove navigator keys from `TypedGoRoute` and `TypedShellRoute`.
@@ -8,7 +12,7 @@
 
 ## 6.5.2
 
-- NoTransitionPage now has an instant reverse transition
+- NoTransitionPage now has an instant reverse transition.
 
 ## 6.5.1
 
