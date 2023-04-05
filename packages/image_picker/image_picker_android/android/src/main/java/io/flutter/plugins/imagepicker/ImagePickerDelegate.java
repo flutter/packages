@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -191,7 +192,7 @@ public class ImagePickerDelegate
           }
         },
         new FileUtils(),
-        new ThreadPoolExecutor(0, 1, 1L, TimeUnit.SECONDS, new LinkedBlockingQueue<>()));
+        Executors.newSingleThreadExecutor());
   }
 
   /**
@@ -697,7 +698,7 @@ public class ImagePickerDelegate
     finishWithSuccess(path);
   }
 
-  private boolean setPendingOptionsAndResult(
+  private synchronized boolean setPendingOptionsAndResult(
       @Nullable ImageSelectionOptions imageOptions,
       @Nullable VideoSelectionOptions videoOptions,
       @NonNull Messages.Result<List<String>> result) {
