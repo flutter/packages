@@ -164,6 +164,8 @@ void expectLinkTap(MarkdownLink? actual, MarkdownLink expected) {
 }
 
 String dumpRenderView() {
+  // TODO(goderbauer): Migrate to rootElement once v3.9.0 is the oldest supported Flutter version.
+  // ignore: deprecated_member_use
   return WidgetsBinding.instance.renderViewElement!.toStringDeep().replaceAll(
         RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
         'SliverChildListDelegate',

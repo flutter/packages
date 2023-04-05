@@ -61,6 +61,54 @@ final List<String>? items = prefs.getStringList('items');
 await prefs.remove('counter');
 ```
 
+### Multiple instances
+
+In order to make preference lookup via the `get*` methods synchronous,
+`shared_preferences` uses a cache on the Dart side, which is normally only
+updated by the `set*` methods. Usually this is an implementation detail that
+does not affect callers, but it can cause issues in a few cases:
+- If you are using `shared_preferences` from multiple isolates, since each
+  isolate has its own `SharedPreferences` singleton and cache.
+- If you are using `shared_preferences` in multiple engine instances (including
+  those created by plugins that create background contexts on mobile devices,
+  such as `firebase_messaging`).
+- If you are modifying the underlying system preference store through something
+  other than the `shared_preferences` plugin, such as native code.
+
+If you need to read a preference value that may have been changed by anything
+other than the `SharedPreferences` instance you are reading it from, you should
+call `reload()` on the instance before reading from it to update its cache with
+any external changes.
+
+If this is problematic for your use case, you can thumbs up
+[this issue](https://github.com/flutter/flutter/issues/123078) to express
+interest in APIs that provide direct (asynchronous) access to the underlying
+preference store, and/or subscribe to it for updates.
+
+### Migration and Prefixes
+
+By default, the `SharedPreferences` plugin will only read (and write) preferences
+that begin with the prefix `flutter.`. This is all handled internally by the plugin
+and does not require manually adding this prefix.
+
+Alternatively, `SharedPreferences` can be configured to use any prefix by adding 
+a call to `setPrefix` before any instances of `SharedPreferences` are instantiated.
+Calling `setPrefix` after an instance of `SharedPreferences` is  created will fail.
+Setting the prefix to an empty string `''` will allow access to all preferences created
+by any non-flutter versions of the app (for migrating from a native app to flutter).
+
+If the prefix is set to a value such as `''` that causes it to read values that were 
+not originally stored by the `SharedPreferences`, initializing `SharedPreferences` 
+may fail if any of the values are of types that are not supported by `SharedPreferences`.
+
+If you decide to remove the prefix entirely, you can still access previously created
+preferences by manually adding the previous prefix `flutter.` to the beginning of 
+the preference key.
+
+If you have been using `SharedPreferences` with the default prefix but wish to change
+to a new prefix, you will need to transform your current preferences manually to add 
+the new prefix otherwise the old preferences will be inaccessible.
+
 ### Testing
 
 In tests, you can replace the standard `SharedPreferences` implementation with
