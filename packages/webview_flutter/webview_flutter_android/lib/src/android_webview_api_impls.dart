@@ -906,6 +906,17 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
       ),
     );
   }
+
+  @override
+  void onGeolocationPermissionsHidePrompt(int instanceId) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+    if (instance.onGeolocationPermissionsHidePrompt != null) {
+      return instance.onGeolocationPermissionsHidePrompt!(
+        instance,
+      );
+    }
+  }
 }
 
 /// Host api implementation for [WebStorage].
@@ -1030,13 +1041,13 @@ class GeolocationPermissionsCallbackFlutterApiImpl
   final InstanceManager instanceManager;
 
   @override
-  void create(int identifier) {
+  void create(int instanceId) {
     instanceManager.addHostCreatedInstance(
       GeolocationPermissionsCallback.detached(
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),
-      identifier,
+      instanceId,
     );
   }
 }

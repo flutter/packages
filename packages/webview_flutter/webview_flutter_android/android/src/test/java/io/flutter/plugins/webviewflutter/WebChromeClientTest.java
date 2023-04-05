@@ -112,4 +112,10 @@ public class WebChromeClientTest {
             mockOnCreateWindowWebView, mockRequest));
     verify(mockWebView).loadUrl("https://www.google.com");
   }
+
+  @Test
+  public void onGeolocationPermissionsHidePrompt() {
+    webChromeClient.onGeolocationPermissionsHidePrompt();
+    verify(mockFlutterApi).onGeolocationPermissionsHidePrompt(eq(webChromeClient), any());
+  }
 }

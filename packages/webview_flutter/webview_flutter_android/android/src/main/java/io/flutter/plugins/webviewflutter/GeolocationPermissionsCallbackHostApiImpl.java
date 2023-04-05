@@ -5,10 +5,9 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.webkit.GeolocationPermissions;
-
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.GeolocationPermissionsCallbackHostApi;
 import androidx.annotation.NonNull;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.GeolocationPermissionsCallbackHostApi;
 import java.util.Objects;
 
 /**

@@ -14,7 +14,6 @@ import 'package:flutter/widgets.dart'
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
-import 'package:simple_ast/annotations.dart';
 import 'instance_manager.dart';
 
 export 'android_webview_api_impls.dart' show FileChooserMode;
@@ -981,7 +980,6 @@ class DownloadListener extends JavaObject {
 }
 
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
-@SimpleClassAnnotation()
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
   WebChromeClient({

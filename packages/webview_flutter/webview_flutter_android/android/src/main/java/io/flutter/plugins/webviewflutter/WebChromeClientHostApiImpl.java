@@ -62,6 +62,11 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
           });
     }
 
+    @Override
+    public void onGeolocationPermissionsHidePrompt() {
+      flutterApi.onGeolocationPermissionsHidePrompt(this, reply -> {});
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onShowFileChooser(
@@ -179,7 +184,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   /** Handles creating {@link WebChromeClient}s for a {@link WebChromeClientHostApiImpl}. */
   public static class WebChromeClientCreator {
     /**
-     * Creates a {@link DownloadListenerHostApiImpl.DownloadListenerImpl}.
+     * Creates a {@link WebChromeClientHostApiImpl.WebChromeClientImpl}.
      *
      * @param flutterApi handles sending messages to Dart
      * @return the created {@link WebChromeClientHostApiImpl.WebChromeClientImpl}

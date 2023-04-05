@@ -968,6 +968,29 @@ void main() {
         );
       });
 
+      test('onGeolocationPermissionsHidePrompt', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WebChromeClient instance = WebChromeClient.detached(
+          onGeolocationPermissionsHidePrompt: (WebChromeClient instance) {
+            callbackParameters = <Object?>[instance];
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WebChromeClientFlutterApiImpl flutterApi =
+            WebChromeClientFlutterApiImpl(instanceManager: instanceManager);
+
+        flutterApi.onGeolocationPermissionsHidePrompt(instanceIdentifier);
+
+        expect(callbackParameters, <Object?>[instance]);
+      });
+
       test('copy', () {
         expect(WebChromeClient.detached().copy(), isA<WebChromeClient>());
       });

@@ -355,6 +355,9 @@ abstract class WebChromeClientFlutterApi {
     int instanceId,
     String origin,
   );
+
+  /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`.
+  void onGeolocationPermissionsHidePrompt(int identifier);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebStorageHostApi')

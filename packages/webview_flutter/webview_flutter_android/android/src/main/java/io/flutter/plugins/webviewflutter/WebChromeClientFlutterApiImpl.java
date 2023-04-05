@@ -7,6 +7,7 @@ package io.flutter.plugins.webviewflutter;
 import android.os.Build;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebChromeClientFlutterApi;
@@ -75,6 +76,17 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     onGeolocationPermissionsShowPrompt(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
         origin,
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onGeolocationPermissionsHidePrompt` on the
+   * Dart object representing `instance`.
+   */
+  public void onGeolocationPermissionsHidePrompt(
+      @NonNull WebChromeClient instance, @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    super.onGeolocationPermissionsHidePrompt(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         callback);
   }
 
