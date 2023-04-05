@@ -2130,6 +2130,9 @@ void main() {
         routes,
         tester,
       );
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       expect(router.routeInformationProvider.value.location, '/dummy');
       TestWidgetsFlutterBinding
           .instance.platformDispatcher.defaultRouteNameTestValue = '/';
