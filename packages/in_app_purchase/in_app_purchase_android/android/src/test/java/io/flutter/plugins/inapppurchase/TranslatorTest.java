@@ -26,9 +26,6 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
-// TODO(stuartmorgan): Migrate this code. See TODO on MethodCallHandlerImpl.querySkuDetailsAsync.
-// This is supressed at the class level since until the code is migrated, the tests will be
-// full of deprecation warnings.
 @SuppressWarnings("deprecation")
 public class TranslatorTest {
   private static final String SKU_DETAIL_EXAMPLE_JSON =

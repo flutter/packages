@@ -32,16 +32,15 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
         "BillingClient#startConnection(BillingClientStateListener)";
     static final String END_CONNECTION = "BillingClient#endConnection()";
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
-    static final String QUERY_SKU_DETAILS =
-        "BillingClient#querySkuDetailsAsync(SkuDetailsParams, SkuDetailsResponseListener)";
+    static final String QUERY_PRODUCT_DETAILS =
+        "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
     static final String LAUNCH_BILLING_FLOW =
         "BillingClient#launchBillingFlow(Activity, BillingFlowParams)";
     static final String ON_PURCHASES_UPDATED =
         "PurchasesUpdatedListener#onPurchasesUpdated(int, List<Purchase>)";
     static final String QUERY_PURCHASES = "BillingClient#queryPurchases(String)";
     static final String QUERY_PURCHASES_ASYNC = "BillingClient#queryPurchasesAsync(String)";
-    static final String QUERY_PURCHASE_HISTORY_ASYNC =
-        "BillingClient#queryPurchaseHistoryAsync(String, PurchaseHistoryResponseListener)";
+    static final String QUERY_PURCHASE_HISTORY_ASYNC = "BillingClient#queryPurchaseHistoryAsync(String)";
     static final String CONSUME_PURCHASE_ASYNC =
         "BillingClient#consumeAsync(String, ConsumeResponseListener)";
     static final String ACKNOWLEDGE_PURCHASE =

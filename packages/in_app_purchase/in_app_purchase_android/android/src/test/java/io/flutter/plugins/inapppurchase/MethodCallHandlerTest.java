@@ -9,12 +9,12 @@ import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.C
 import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.END_CONNECTION;
 import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.IS_FEATURE_SUPPORTED;
 import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.IS_READY;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.LAUNCH_BILLING_FLOW;
+import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.LAUNCH_BILLING_FLOW_V4;
 import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.LAUNCH_PRICE_CHANGE_CONFIRMATION_FLOW;
 import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.ON_DISCONNECT;
 import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.ON_PURCHASES_UPDATED;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.QUERY_PURCHASES_ASYNC;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
+import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.QUERY_PURCHASES_ASYNC_V4;
+import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC_V4;
 import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.QUERY_SKU_DETAILS;
 import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.START_CONNECTION;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
@@ -77,9 +77,6 @@ import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-// TODO(stuartmorgan): Migrate this code. See TODO on MethodCallHandlerImpl.querySkuDetailsAsync.
-// This is supressed at the class level since until the code is migrated, the tests will be
-// full of deprecation warnings.
 @SuppressWarnings("deprecation")
 public class MethodCallHandlerTest {
   private MethodCallHandlerImpl methodChannelHandler;
@@ -285,7 +282,7 @@ public class MethodCallHandlerTest {
     arguments.put("sku", skuId);
     arguments.put("accountId", null);
     arguments.put("obfuscatedProfileId", null);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -317,7 +314,7 @@ public class MethodCallHandlerTest {
     arguments.put("sku", skuId);
     arguments.put("accountId", accountId);
     arguments.put("oldSku", null);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -349,7 +346,7 @@ public class MethodCallHandlerTest {
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("sku", skuId);
     arguments.put("accountId", accountId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
     methodChannelHandler.onMethodCall(launchCall, result);
 
     // Verify we pass the response code to result
@@ -368,7 +365,7 @@ public class MethodCallHandlerTest {
     arguments.put("sku", skuId);
     arguments.put("accountId", accountId);
     arguments.put("oldSku", oldSkuId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -399,7 +396,7 @@ public class MethodCallHandlerTest {
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("sku", skuId);
     arguments.put("accountId", accountId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -436,7 +433,7 @@ public class MethodCallHandlerTest {
     arguments.put("oldSku", oldSkuId);
     arguments.put("purchaseToken", purchaseToken);
     arguments.put("prorationMode", prorationMode);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -472,7 +469,7 @@ public class MethodCallHandlerTest {
     arguments.put("accountId", accountId);
     arguments.put("oldSku", oldSkuId);
     arguments.put("prorationMode", prorationMode);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -507,7 +504,7 @@ public class MethodCallHandlerTest {
     arguments.put("oldSku", oldSkuId);
     arguments.put("purchaseToken", purchaseToken);
     arguments.put("prorationMode", prorationMode);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     // Launch the billing flow
     BillingResult billingResult =
@@ -539,7 +536,7 @@ public class MethodCallHandlerTest {
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("sku", skuId);
     arguments.put("accountId", accountId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     methodChannelHandler.onMethodCall(launchCall, result);
 
@@ -557,7 +554,7 @@ public class MethodCallHandlerTest {
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("sku", skuId);
     arguments.put("accountId", accountId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     methodChannelHandler.onMethodCall(launchCall, result);
 
@@ -578,7 +575,7 @@ public class MethodCallHandlerTest {
     arguments.put("sku", skuId);
     arguments.put("accountId", accountId);
     arguments.put("oldSku", oldSkuId);
-    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW, arguments);
+    MethodCall launchCall = new MethodCall(LAUNCH_BILLING_FLOW_V4, arguments);
 
     methodChannelHandler.onMethodCall(launchCall, result);
 
@@ -594,7 +591,7 @@ public class MethodCallHandlerTest {
 
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("skuType", BillingClient.SkuType.INAPP);
-    methodChannelHandler.onMethodCall(new MethodCall(QUERY_PURCHASES_ASYNC, arguments), result);
+    methodChannelHandler.onMethodCall(new MethodCall(QUERY_PURCHASES_ASYNC_V4, arguments), result);
 
     // Assert that we sent an error back.
     verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());
@@ -637,7 +634,7 @@ public class MethodCallHandlerTest {
 
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("skuType", BillingClient.SkuType.INAPP);
-    methodChannelHandler.onMethodCall(new MethodCall(QUERY_PURCHASES_ASYNC, arguments), result);
+    methodChannelHandler.onMethodCall(new MethodCall(QUERY_PURCHASES_ASYNC_V4, arguments), result);
 
     lock.await(5000, TimeUnit.MILLISECONDS);
 
@@ -672,7 +669,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(PurchaseHistoryResponseListener.class);
 
     methodChannelHandler.onMethodCall(
-        new MethodCall(QUERY_PURCHASE_HISTORY_ASYNC, arguments), result);
+        new MethodCall(QUERY_PURCHASE_HISTORY_ASYNC_V4, arguments), result);
 
     // Verify we pass the data to result
     verify(mockBillingClient)
@@ -693,7 +690,7 @@ public class MethodCallHandlerTest {
     HashMap<String, Object> arguments = new HashMap<>();
     arguments.put("skuType", BillingClient.SkuType.INAPP);
     methodChannelHandler.onMethodCall(
-        new MethodCall(QUERY_PURCHASE_HISTORY_ASYNC, arguments), result);
+        new MethodCall(QUERY_PURCHASE_HISTORY_ASYNC_V4, arguments), result);
 
     // Assert that we sent an error back.
     verify(result).error(contains("UNAVAILABLE"), contains("BillingClient"), any());

@@ -66,44 +66,53 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
         .runWithClientNonRetryable((BillingClient client) => client.isReady());
   }
 
+  /// Performs a network query for the details of products available.
   @override
   Future<ProductDetailsResponse> queryProductDetails(
-      Set<String> identifiers) async {
-    List<SkuDetailsResponseWrapper> responses;
+    Set<String> identifiers,
+  ) async {
+    List<ProductDetailsResponseWrapper>? productResponses;
     PlatformException? exception;
 
-    Future<SkuDetailsResponseWrapper> querySkuDetails(SkuType type) {
-      return billingClientManager.runWithClient(
-        (BillingClient client) => client.querySkuDetails(
-          skuType: type,
-          skusList: identifiers.toList(),
-        ),
-      );
-    }
-
     try {
-      responses = await Future.wait(<Future<SkuDetailsResponseWrapper>>[
-        querySkuDetails(SkuType.inapp),
-        querySkuDetails(SkuType.subs),
-      ]);
+      productResponses = await Future.wait(
+        <Future<ProductDetailsResponseWrapper>>[
+          billingClientManager.runWithClient(
+            (BillingClient client) => client.queryProductDetails(
+              productList: identifiers
+                  .map((String productId) =>
+                      Product(id: productId, type: ProductType.subs))
+                  .toList(),
+            ),
+          ),
+          billingClientManager.runWithClient(
+            (BillingClient client) => client.queryProductDetails(
+              productList: identifiers
+                  .map((String productId) =>
+                      Product(id: productId, type: ProductType.inapp))
+                  .toList(),
+            ),
+          ),
+        ],
+      );
     } on PlatformException catch (e) {
       exception = e;
-      // ignore: invalid_use_of_visible_for_testing_member
-      final SkuDetailsResponseWrapper response = SkuDetailsResponseWrapper(
-        billingResult: BillingResultWrapper(
-          responseCode: BillingResponse.error,
-          debugMessage: e.code,
-        ),
-        skuDetailsList: const <SkuDetailsWrapper>[],
-      );
-      // Error response for both queries should be the same, so we can reuse it.
-      responses = <SkuDetailsResponseWrapper>[response, response];
+      productResponses = <ProductDetailsResponseWrapper>[
+        ProductDetailsResponseWrapper(
+            billingResult: BillingResultWrapper(
+                responseCode: BillingResponse.error, debugMessage: e.code),
+            productDetailsList: const <ProductDetailsWrapper>[]),
+        ProductDetailsResponseWrapper(
+            billingResult: BillingResultWrapper(
+                responseCode: BillingResponse.error, debugMessage: e.code),
+            productDetailsList: const <ProductDetailsWrapper>[])
+      ];
     }
     final List<ProductDetails> productDetailsList =
-        responses.expand((SkuDetailsResponseWrapper response) {
-      return response.skuDetailsList;
-    }).map((SkuDetailsWrapper skuDetailWrapper) {
-      return GooglePlayProductDetails.fromSkuDetails(skuDetailWrapper);
+        productResponses.expand((ProductDetailsResponseWrapper response) {
+      return response.productDetailsList;
+    }).expand((ProductDetailsWrapper productDetailWrapper) {
+      return GooglePlayProductDetails.fromProductDetails(productDetailWrapper);
     }).toList();
 
     final Set<String> successIDS = productDetailsList
@@ -131,17 +140,40 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
       changeSubscriptionParam = purchaseParam.changeSubscriptionParam;
     }
 
-    final BillingResultWrapper billingResultWrapper =
-        await billingClientManager.runWithClient(
-      (BillingClient client) => client.launchBillingFlow(
-        sku: purchaseParam.productDetails.id,
-        accountId: purchaseParam.applicationUserName,
-        oldSku: changeSubscriptionParam?.oldPurchaseDetails.productID,
-        purchaseToken: changeSubscriptionParam
-            ?.oldPurchaseDetails.verificationData.serverVerificationData,
-        prorationMode: changeSubscriptionParam?.prorationMode,
-      ),
+    String? offerToken;
+    if (purchaseParam.productDetails is GooglePlayProductDetails) {
+      offerToken =
+          (purchaseParam.productDetails as GooglePlayProductDetails).offerToken;
+    }
+
+    final bool isSupported =
+        await billingClientManager.runWithClientNonRetryable(
+      (BillingClient client) =>
+          client.isFeatureSupported(BillingClientFeature.productDetails),
     );
+    final BillingResultWrapper billingResultWrapper;
+    if (isSupported) {
+      billingResultWrapper = await billingClientManager.runWithClient(
+        (BillingClient client) => client.launchBillingFlow(
+            product: purchaseParam.productDetails.id,
+            offerToken: offerToken,
+            accountId: purchaseParam.applicationUserName,
+            oldProduct: changeSubscriptionParam?.oldPurchaseDetails.productID,
+            purchaseToken: changeSubscriptionParam
+                ?.oldPurchaseDetails.verificationData.serverVerificationData,
+            prorationMode: changeSubscriptionParam?.prorationMode),
+      );
+    } else {
+      billingResultWrapper = await billingClientManager.runWithClient(
+        (BillingClient client) => client.launchBillingFlow(
+            product: purchaseParam.productDetails.id,
+            accountId: purchaseParam.applicationUserName,
+            oldProduct: changeSubscriptionParam?.oldPurchaseDetails.productID,
+            purchaseToken: changeSubscriptionParam
+                ?.oldPurchaseDetails.verificationData.serverVerificationData,
+            prorationMode: changeSubscriptionParam?.prorationMode),
+      );
+    }
     return billingResultWrapper.responseCode == BillingResponse.ok;
   }
 
@@ -188,10 +220,10 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
 
     responses = await Future.wait(<Future<PurchasesResultWrapper>>[
       billingClientManager.runWithClient(
-        (BillingClient client) => client.queryPurchases(SkuType.inapp),
+        (BillingClient client) => client.queryPurchases(ProductType.inapp),
       ),
       billingClientManager.runWithClient(
-        (BillingClient client) => client.queryPurchases(SkuType.subs),
+        (BillingClient client) => client.queryPurchases(ProductType.subs),
       ),
     ]);
 

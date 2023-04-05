@@ -194,7 +194,7 @@ void main() {
       const String profileId = 'hashedProfileId';
 
       expect(
-          await billingClient.launchBillingFlow(
+          await billingClient.launchBillingFlowV4(
               sku: skuDetails.sku,
               accountId: accountId,
               obfuscatedProfileId: profileId),
@@ -223,7 +223,7 @@ void main() {
       const String profileId = 'hashedProfileId';
 
       expect(
-          billingClient.launchBillingFlow(
+          billingClient.launchBillingFlowV4(
               sku: skuDetails.sku,
               accountId: accountId,
               obfuscatedProfileId: profileId,
@@ -231,7 +231,7 @@ void main() {
           throwsAssertionError);
 
       expect(
-          billingClient.launchBillingFlow(
+          billingClient.launchBillingFlowV4(
               sku: skuDetails.sku,
               accountId: accountId,
               obfuscatedProfileId: profileId,
@@ -255,7 +255,7 @@ void main() {
       const String profileId = 'hashedProfileId';
 
       expect(
-          await billingClient.launchBillingFlow(
+          await billingClient.launchBillingFlowV4(
               sku: skuDetails.sku,
               accountId: accountId,
               obfuscatedProfileId: profileId,
@@ -291,7 +291,7 @@ void main() {
           ProrationMode.immediateAndChargeProratedPrice;
 
       expect(
-          await billingClient.launchBillingFlow(
+          await billingClient.launchBillingFlowV4(
               sku: skuDetails.sku,
               accountId: accountId,
               obfuscatedProfileId: profileId,
@@ -330,7 +330,7 @@ void main() {
           ProrationMode.immediateAndChargeFullPrice;
 
       expect(
-          await billingClient.launchBillingFlow(
+          await billingClient.launchBillingFlowV4(
               sku: skuDetails.sku,
               accountId: accountId,
               obfuscatedProfileId: profileId,
@@ -362,7 +362,7 @@ void main() {
       );
       const SkuDetailsWrapper skuDetails = dummySkuDetails;
 
-      expect(await billingClient.launchBillingFlow(sku: skuDetails.sku),
+      expect(await billingClient.launchBillingFlowV4(sku: skuDetails.sku),
           equals(expectedBillingResult));
       final Map<dynamic, dynamic> arguments = stubPlatform
           .previousCallMatching(launchMethodName)
@@ -377,7 +377,7 @@ void main() {
       );
       const SkuDetailsWrapper skuDetails = dummySkuDetails;
       expect(
-          await billingClient.launchBillingFlow(sku: skuDetails.sku),
+          await billingClient.launchBillingFlowV4(sku: skuDetails.sku),
           equals(const BillingResultWrapper(
               responseCode: BillingResponse.error,
               debugMessage: kInvalidBillingResultErrorMessage)));
@@ -406,7 +406,7 @@ void main() {
       });
 
       final PurchasesResultWrapper response =
-          await billingClient.queryPurchases(SkuType.inapp);
+          await billingClient.queryPurchasesV4(SkuType.inapp);
 
       expect(response.billingResult, equals(expectedBillingResult));
       expect(response.responseCode, equals(expectedCode));
@@ -426,7 +426,7 @@ void main() {
       });
 
       final PurchasesResultWrapper response =
-          await billingClient.queryPurchases(SkuType.inapp);
+          await billingClient.queryPurchasesV4(SkuType.inapp);
 
       expect(response.billingResult, equals(expectedBillingResult));
       expect(response.responseCode, equals(expectedCode));
@@ -438,7 +438,7 @@ void main() {
         name: queryPurchasesMethodName,
       );
       final PurchasesResultWrapper response =
-          await billingClient.queryPurchases(SkuType.inapp);
+          await billingClient.queryPurchasesV4(SkuType.inapp);
 
       expect(
           response.billingResult,
@@ -474,7 +474,7 @@ void main() {
           });
 
       final PurchasesHistoryResult response =
-          await billingClient.queryPurchaseHistory(SkuType.inapp);
+          await billingClient.queryPurchaseHistoryV4(SkuType.inapp);
       expect(response.billingResult, equals(expectedBillingResult));
       expect(response.purchaseHistoryRecordList, equals(expectedList));
     });
@@ -492,7 +492,7 @@ void main() {
           });
 
       final PurchasesHistoryResult response =
-          await billingClient.queryPurchaseHistory(SkuType.inapp);
+          await billingClient.queryPurchaseHistoryV4(SkuType.inapp);
 
       expect(response.billingResult, equals(expectedBillingResult));
       expect(response.purchaseHistoryRecordList, isEmpty);
@@ -503,7 +503,7 @@ void main() {
         name: queryPurchaseHistoryMethodName,
       );
       final PurchasesHistoryResult response =
-          await billingClient.queryPurchaseHistory(SkuType.inapp);
+          await billingClient.queryPurchaseHistoryV4(SkuType.inapp);
 
       expect(
           response.billingResult,

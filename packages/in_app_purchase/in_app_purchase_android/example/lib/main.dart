@@ -260,7 +260,7 @@ class _MyAppState extends State<_MyApp> {
                           InAppPurchasePlatformAddition.instance!
                               as InAppPurchaseAndroidPlatformAddition;
                       final SkuDetailsWrapper skuDetails =
-                          (productDetails as GooglePlayProductDetails)
+                          (productDetails as GooglePlayProductDetailsV4)
                               .skuDetails;
                       addition
                           .launchPriceChangeConfirmationFlow(
@@ -283,7 +283,7 @@ class _MyAppState extends State<_MyApp> {
                       // inside the app may not be accurate.
                       final GooglePlayPurchaseDetails? oldSubscription =
                           _getOldSubscription(
-                              productDetails as GooglePlayProductDetails,
+                              productDetails as GooglePlayProductDetailsV4,
                               purchases);
                       final GooglePlayPurchaseParam purchaseParam =
                           GooglePlayPurchaseParam(
@@ -434,7 +434,7 @@ class _MyAppState extends State<_MyApp> {
   }
 
   GooglePlayPurchaseDetails? _getOldSubscription(
-      GooglePlayProductDetails productDetails,
+      GooglePlayProductDetailsV4 productDetails,
       Map<String, PurchaseDetails> purchases) {
     // This is just to demonstrate a subscription upgrade or downgrade.
     // This method assumes that you have only 2 subscriptions under a group, 'subscription_silver' & 'subscription_gold'.
@@ -503,6 +503,8 @@ class _FeatureCard extends StatelessWidget {
         return 'inAppItemsOnVR';
       case BillingClientFeature.priceChangeConfirmation:
         return 'priceChangeConfirmation';
+      case BillingClientFeature.productDetails:
+        return 'productDetails';
       case BillingClientFeature.subscriptions:
         return 'subscriptions';
       case BillingClientFeature.subscriptionsOnVR:

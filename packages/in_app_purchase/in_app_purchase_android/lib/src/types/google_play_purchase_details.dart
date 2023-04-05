@@ -26,7 +26,7 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
   factory GooglePlayPurchaseDetails.fromPurchase(PurchaseWrapper purchase) {
     final GooglePlayPurchaseDetails purchaseDetails = GooglePlayPurchaseDetails(
       purchaseID: purchase.orderId,
-      productID: purchase.sku,
+      productID: purchase.products.isNotEmpty ? purchase.products.first : '',
       verificationData: PurchaseVerificationData(
           localVerificationData: purchase.originalJson,
           serverVerificationData: purchase.purchaseToken,

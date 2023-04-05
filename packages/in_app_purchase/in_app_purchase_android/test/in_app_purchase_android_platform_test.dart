@@ -370,7 +370,7 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails: GooglePlayProductDetailsV4.fromSkuDetails(skuDetails),
           applicationUserName: accountId);
       final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
           purchaseParam: purchaseParam);
@@ -414,7 +414,7 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails: GooglePlayProductDetailsV4.fromSkuDetails(skuDetails),
           applicationUserName: accountId);
       await iapAndroidPlatform.buyNonConsumable(purchaseParam: purchaseParam);
       final PurchaseDetails result = await completer.future;
@@ -487,7 +487,7 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails: GooglePlayProductDetailsV4.fromSkuDetails(skuDetails),
           applicationUserName: accountId);
       final bool launchResult =
           await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
@@ -516,7 +516,7 @@ void main() {
       final bool result = await iapAndroidPlatform.buyNonConsumable(
           purchaseParam: GooglePlayPurchaseParam(
               productDetails:
-                  GooglePlayProductDetails.fromSkuDetails(dummySkuDetails)));
+                  GooglePlayProductDetailsV4.fromSkuDetails(dummySkuDetails)));
 
       // Verify that the failure has been converted and returned
       expect(result, isFalse);
@@ -536,7 +536,7 @@ void main() {
       final bool result = await iapAndroidPlatform.buyConsumable(
           purchaseParam: GooglePlayPurchaseParam(
               productDetails:
-                  GooglePlayProductDetails.fromSkuDetails(dummySkuDetails)));
+                  GooglePlayProductDetailsV4.fromSkuDetails(dummySkuDetails)));
 
       // Verify that the failure has been converted and returned
       expect(result, isFalse);
@@ -602,7 +602,7 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails: GooglePlayProductDetailsV4.fromSkuDetails(skuDetails),
           applicationUserName: accountId);
       await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
 
@@ -677,7 +677,7 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails: GooglePlayProductDetailsV4.fromSkuDetails(skuDetails),
           applicationUserName: accountId);
       await iapAndroidPlatform.buyConsumable(
           purchaseParam: purchaseParam, autoConsume: false);
@@ -746,7 +746,7 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails: GooglePlayProductDetailsV4.fromSkuDetails(skuDetails),
           applicationUserName: accountId);
       await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
 
@@ -790,7 +790,7 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails: GooglePlayProductDetailsV4.fromSkuDetails(skuDetails),
           applicationUserName: accountId,
           changeSubscriptionParam: ChangeSubscriptionParam(
             oldPurchaseDetails: GooglePlayPurchaseDetails.fromPurchase(
