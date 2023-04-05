@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -186,8 +184,8 @@ ${warningsConfigured ? warningConfig : ''}
           .platformDirectory(FlutterPlatform.android)
           .childFile('gradlew')
           .path;
-      processRunner.mockProcessesForExecutable[gradlewPath] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;
