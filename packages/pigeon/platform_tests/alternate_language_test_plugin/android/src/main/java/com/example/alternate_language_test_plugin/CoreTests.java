@@ -43,7 +43,7 @@ public class CoreTests {
   }
 
   @NonNull
-  private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
+  protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     ArrayList<Object> errorList = new ArrayList<Object>(3);
     if (exception instanceof FlutterError) {
       FlutterError error = (FlutterError) exception;
@@ -64,7 +64,7 @@ public class CoreTests {
     TWO(1),
     THREE(2);
 
-    private final int index;
+    final int index;
 
     private AnEnum(final int index) {
       this.index = index;
@@ -229,8 +229,8 @@ public class CoreTests {
       this.aString = setterArg;
     }
 
-    /** Constructor is private to enforce null safety; use Builder. */
-    private AllTypes() {}
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AllTypes() {}
 
     public static final class Builder {
 
@@ -750,8 +750,8 @@ public class CoreTests {
       this.values = setterArg;
     }
 
-    /** Constructor is private to enforce null safety; use Builder. */
-    private AllNullableTypesWrapper() {}
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AllNullableTypesWrapper() {}
 
     public static final class Builder {
 

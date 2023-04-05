@@ -163,7 +163,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             '${camelToSnake(member.name)}($index)${index == anEnum.members.length - 1 ? ';' : ','}');
       });
       indent.newln();
-      indent.writeln('private final int index;');
+      // This uses default access (package-private), because private causes
+      // SyntheticAccessor warnings in the serialization code.
+      indent.writeln('final int index;');
       indent.newln();
       indent.write('private ${anEnum.name}(final int index) ');
       indent.addScoped('{', '}', () {
@@ -199,8 +201,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
-            '$_docCommentPrefix Constructor is private to enforce null safety; use Builder.$_docCommentSuffix');
-        indent.writeln('private ${klass.name}() {}');
+            '$_docCommentPrefix Constructor is non-public to enforce null safety; use Builder.$_docCommentSuffix');
+        indent.writeln('${klass.name}() {}');
         indent.newln();
       }
 
@@ -794,7 +796,7 @@ Result<$returnType> $resultName =
   void _writeWrapError(Indent indent) {
     indent.format('''
 @NonNull
-private static ArrayList<Object> wrapError(@NonNull Throwable exception) {
+protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 \tArrayList<Object> errorList = new ArrayList<Object>(3);
 \tif (exception instanceof FlutterError) {
 \t\tFlutterError error = (FlutterError) exception;
