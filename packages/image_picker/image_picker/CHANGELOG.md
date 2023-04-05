@@ -1,3 +1,7 @@
+## Next
+
+* Updates minimum Flutter version to 3.3.
+
 ## 0.8.7+2
 
 * Returns the path of unsupported image types.
