@@ -45,6 +45,7 @@ class AndroidWebViewFlutterApis {
     WebChromeClientFlutterApiImpl? webChromeClientFlutterApi,
     JavaScriptChannelFlutterApiImpl? javaScriptChannelFlutterApi,
     FileChooserParamsFlutterApiImpl? fileChooserParamsFlutterApi,
+    WebViewFlutterApiImpl? webViewFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -58,6 +59,7 @@ class AndroidWebViewFlutterApis {
         javaScriptChannelFlutterApi ?? JavaScriptChannelFlutterApiImpl();
     this.fileChooserParamsFlutterApi =
         fileChooserParamsFlutterApi ?? FileChooserParamsFlutterApiImpl();
+    this.webViewFlutterApi = webViewFlutterApi ?? WebViewFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -85,6 +87,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [FileChooserParams].
   late final FileChooserParamsFlutterApiImpl fileChooserParamsFlutterApi;
 
+  /// Flutter Api for [WebView].
+  late final WebViewFlutterApiImpl webViewFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -94,6 +99,7 @@ class AndroidWebViewFlutterApis {
       WebChromeClientFlutterApi.setup(webChromeClientFlutterApi);
       JavaScriptChannelFlutterApi.setup(javaScriptChannelFlutterApi);
       FileChooserParamsFlutterApi.setup(fileChooserParamsFlutterApi);
+      WebViewFlutterApi.setup(webViewFlutterApi);
       _haveBeenSetUp = true;
     }
   }
