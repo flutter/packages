@@ -366,3 +366,5 @@ class MyGoRouteData extends GoRouteData {
   }
 }
 ```
+
+An example is available [here](https://github.com/flutter/packages/blob/main/packages/go_router_builder/example/lib/shell_route_with_keys_example.dart).
