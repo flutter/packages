@@ -30,6 +30,9 @@ android {
     }
 
     lintOptions {
+        // See https://sites.google.com/a/android.com/tools/tips/lint-checks for all available
+        // android lint checks.
+        error 'ViewConstructor'
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
     }
 
