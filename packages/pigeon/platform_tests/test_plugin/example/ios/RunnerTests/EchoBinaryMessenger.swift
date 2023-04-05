@@ -28,8 +28,7 @@ class EchoBinaryMessenger: NSObject, FlutterBinaryMessenger {
     
     guard
       let args = self.codec.decode(message) as? [Any?],
-      let firstArg = args.first,
-      !(firstArg is NSNull)
+      let firstArg: Any? = nilOrValue(args.first)
     else {
       callback(self.defaultReturn.flatMap { self.codec.encode($0) })
       return
@@ -48,5 +47,10 @@ class EchoBinaryMessenger: NSObject, FlutterBinaryMessenger {
   
   func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {
     // Method not implemented because this messenger is just for echoing    
+  }
+
+  private func nilOrValue<T>(_ value: Any?) -> T? {
+    if value is NSNull { return nil }
+    return (value as Any) as! T?
   }
 }
