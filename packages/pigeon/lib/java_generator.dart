@@ -555,7 +555,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       final String resultType = method.returnType.isVoid
           ? 'Void'
           : _javaTypeForDartType(method.returnType);
-      argSignature.add('Result<$resultType> result');
+      argSignature.add('@NonNull Result<$resultType> result');
     }
     if (method.documentationComments.isNotEmpty) {
       addDocumentationComments(
