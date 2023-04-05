@@ -401,7 +401,6 @@ class AndroidWebViewController extends PlatformWebViewController {
     );
   }
 
-  ///
   /// Notify the host application that web content from the specified origin is attempting to use the Geolocation API,
   /// but no permission state is currently set for that origin.
   /// The host application should invoke the specified callback with the desired permission state.
@@ -411,8 +410,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// this method is only called for requests originating from secure origins such as https.
   /// On non-secure origins geolocation requests are automatically denied.
   ///
-  /// see https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsShowPrompt(java.lang.String,%20android.webkit.GeolocationPermissions.Callback)
-  ///
+  /// See https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsShowPrompt(java.lang.String,%20android.webkit.GeolocationPermissions.Callback)
   Future<void> setOnGeolocationPermissionsShowPrompt(
       Future<GeolocationPermissionsResult> Function(String origin)?
           onGeolocationPermissionsShowPrompt) async {

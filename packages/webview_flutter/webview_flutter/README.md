@@ -130,14 +130,6 @@ if (controller.platform is AndroidWebViewController) {
   AndroidWebViewController.enableDebugging(true);
   (controller.platform as AndroidWebViewController)
       .setMediaPlaybackRequiresUserGesture(false);
-  (controller.platform as AndroidWebViewController)
-      .setOnGeolocationPermissionsShowPrompt((String origin) async {
-    return GeolocationPermissionsResult(
-      origin: origin,
-      isAllow: true,
-      isRetain: false,
-    );
-  });
 }
 ```
 

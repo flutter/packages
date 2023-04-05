@@ -1,7 +1,7 @@
-## 3.4.4
+## 3.5.0
 
-* Adds support for handling geolocation permissions.
-* See `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
+* Adds support for handling geolocation permissions. See
+  `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
 
 ## 3.4.3
 
