@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -62,8 +60,8 @@ void main() {
 
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[
-        MockProcess(exitCode: 1) // flutter pub get
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['build'])
       ];
 
       Error? commandError;
@@ -91,8 +89,8 @@ void main() {
 
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[
-        MockProcess(exitCode: 1) // flutter pub get
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
       ];
 
       Error? commandError;

@@ -116,9 +116,9 @@ void main() {
     expect(opts.kotlinOptions?.package, equals('com.google.foo'));
   });
 
-  test('parse args - experimental_cpp_header_out', () {
+  test('parse args - cpp_header_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_cpp_header_out', 'foo.h']);
+        Pigeon.parseArgs(<String>['--cpp_header_out', 'foo.h']);
     expect(opts.cppHeaderOut, equals('foo.h'));
   });
 
@@ -128,9 +128,9 @@ void main() {
     expect(opts.javaOptions!.useGeneratedAnnotation, isTrue);
   });
 
-  test('parse args - experimental_cpp_source_out', () {
+  test('parse args - cpp_source_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_cpp_source_out', 'foo.cpp']);
+        Pigeon.parseArgs(<String>['--cpp_source_out', 'foo.cpp']);
     expect(opts.cppSourceOut, equals('foo.cpp'));
   });
 

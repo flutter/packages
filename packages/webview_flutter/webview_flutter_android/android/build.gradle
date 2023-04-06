@@ -30,12 +30,15 @@ android {
     }
 
     lintOptions {
+        // See https://sites.google.com/a/android.com/tools/tips/lint-checks for all available
+        // android lint checks.
+        error 'ViewConstructor'
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
     }
 
     dependencies {
         implementation 'androidx.annotation:annotation:1.5.0'
-        implementation 'androidx.webkit:webkit:1.6.0'
+        implementation 'androidx.webkit:webkit:1.6.1'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.mockito:mockito-inline:5.1.0'
         testImplementation 'androidx.test:core:1.3.0'

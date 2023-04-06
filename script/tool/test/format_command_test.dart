@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -149,8 +147,8 @@ void main() {
     ];
     createFakePlugin('a_plugin', packagesDir, extraFiles: files);
 
-    processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-      MockProcess(exitCode: 1)
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['format'])
     ];
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -202,8 +200,8 @@ void main() {
     ];
     createFakePlugin('a_plugin', packagesDir, extraFiles: files);
 
-    processRunner.mockProcessesForExecutable['java'] = <io.Process>[
-      MockProcess(exitCode: 1)
+    processRunner.mockProcessesForExecutable['java'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['-version'])
     ];
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -228,9 +226,10 @@ void main() {
     ];
     createFakePlugin('a_plugin', packagesDir, extraFiles: files);
 
-    processRunner.mockProcessesForExecutable['java'] = <io.Process>[
-      MockProcess(), // check for working java
-      MockProcess(exitCode: 1), // format
+    processRunner.mockProcessesForExecutable['java'] = <FakeProcessInfo>[
+      FakeProcessInfo(
+          MockProcess(), <String>['-version']), // check for working java
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['-jar']), // format
     ];
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -315,9 +314,8 @@ void main() {
     ];
     createFakePlugin('a_plugin', packagesDir, extraFiles: files);
 
-    processRunner.mockProcessesForExecutable['clang-format'] = <io.Process>[
-      MockProcess(exitCode: 1)
-    ];
+    processRunner.mockProcessesForExecutable['clang-format'] =
+        <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
     Error? commandError;
     final List<String> output = await runCapturingPrint(
         runner, <String>['format'], errorHandler: (Error e) {
@@ -344,15 +342,17 @@ void main() {
       extraFiles: files,
     );
 
-    processRunner.mockProcessesForExecutable['clang-format'] = <io.Process>[
-      MockProcess(exitCode: 1)
-    ];
-    processRunner.mockProcessesForExecutable['which'] = <io.Process>[
-      MockProcess(
-          stdout: '/usr/local/bin/clang-format\n/path/to/working-clang-format')
+    processRunner.mockProcessesForExecutable['clang-format'] =
+        <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
+    processRunner.mockProcessesForExecutable['which'] = <FakeProcessInfo>[
+      FakeProcessInfo(
+          MockProcess(
+              stdout:
+                  '/usr/local/bin/clang-format\n/path/to/working-clang-format'),
+          <String>['-a', 'clang-format'])
     ];
     processRunner.mockProcessesForExecutable['/usr/local/bin/clang-format'] =
-        <io.Process>[MockProcess(exitCode: 1)];
+        <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
     await runCapturingPrint(runner, <String>['format']);
 
     expect(
@@ -407,9 +407,11 @@ void main() {
     ];
     createFakePlugin('a_plugin', packagesDir, extraFiles: files);
 
-    processRunner.mockProcessesForExecutable['clang-format'] = <io.Process>[
-      MockProcess(), // check for working clang-format
-      MockProcess(exitCode: 1), // format
+    processRunner.mockProcessesForExecutable['clang-format'] =
+        <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(),
+          <String>['--version']), // check for working clang-format
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['-i']), // format
     ];
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -492,8 +494,9 @@ void main() {
     createFakePlugin('a_plugin', packagesDir, extraFiles: files);
 
     const String changedFilePath = 'packages/a_plugin/linux/foo_plugin.cc';
-    processRunner.mockProcessesForExecutable['git'] = <io.Process>[
-      MockProcess(stdout: changedFilePath),
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(
+          MockProcess(stdout: changedFilePath), <String>['ls-files']),
     ];
 
     Error? commandError;
@@ -520,8 +523,8 @@ void main() {
     ];
     createFakePlugin('a_plugin', packagesDir, extraFiles: files);
 
-    processRunner.mockProcessesForExecutable['git'] = <io.Process>[
-      MockProcess(exitCode: 1)
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['ls-files'])
     ];
     Error? commandError;
     final List<String> output =
@@ -546,9 +549,10 @@ void main() {
     createFakePlugin('a_plugin', packagesDir, extraFiles: files);
 
     const String changedFilePath = 'packages/a_plugin/linux/foo_plugin.cc';
-    processRunner.mockProcessesForExecutable['git'] = <io.Process>[
-      MockProcess(stdout: changedFilePath), // ls-files
-      MockProcess(exitCode: 1), // diff
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(
+          MockProcess(stdout: changedFilePath), <String>['ls-files']),
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['diff']),
     ];
 
     Error? commandError;
