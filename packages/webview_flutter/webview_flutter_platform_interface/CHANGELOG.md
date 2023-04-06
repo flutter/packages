@@ -2,6 +2,7 @@
 
 * Adds support to receive permission requests. See
   `PlatformWebViewController.setOnPlatformPermissionRequest`.
+* Updates minimum Flutter version to 3.3.
 
 ## 2.1.0
 

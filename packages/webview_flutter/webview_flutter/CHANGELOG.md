@@ -1,6 +1,7 @@
 ## 4.1.0
 
 * Adds support to receive permission requests. See `WebViewController.setOnPermissionRequest`.
+* Updates minimum Flutter version to 3.3.
 
 ## 4.0.7
 
