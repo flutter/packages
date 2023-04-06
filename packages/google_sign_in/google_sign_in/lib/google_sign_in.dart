@@ -191,8 +191,10 @@ class GoogleSignIn {
     this.forceCodeForRefreshToken = false,
   }) {
     // Start initializing.
-    // Async methods in the plugin will await for this to be done.
     if (kIsWeb) {
+      // Start initializing the plugin ASAP, so the `userDataEvents` Stream for
+      // the web can be used without calling any other methods of the plugin
+      // (like `silentSignIn` or `isSignedIn`).
       unawaited(_ensureInitialized());
     }
   }
