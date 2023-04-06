@@ -1,5 +1,10 @@
-## 1.1.8
+## 1.2.1
+
 * Supports opt-in required extra parameters. [#117261]
+
+## 1.2.0
+
+* Adds Support for ShellRoute
 
 ## 1.1.7
 

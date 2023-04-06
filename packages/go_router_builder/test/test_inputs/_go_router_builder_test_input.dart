@@ -63,7 +63,7 @@ class MissingPathParam extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $enumParam => GoRouteData.$route(
+RouteBase get $enumParam => GoRouteData.$route(
       path: '/:y',
       factory: $EnumParamExtension._fromState,
     );
@@ -112,7 +112,7 @@ enum EnumTest {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $defaultValueRoute => GoRouteData.$route(
+RouteBase get $defaultValueRoute => GoRouteData.$route(
       path: '/default-value-route',
       factory: $DefaultValueRouteExtension._fromState,
     );
@@ -153,7 +153,7 @@ class DefaultValueRoute extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $extraValueRoute => GoRouteData.$route(
+RouteBase get $extraValueRoute => GoRouteData.$route(
       path: '/default-value-route',
       factory: $ExtraValueRouteExtension._fromState,
     );
@@ -236,7 +236,7 @@ class NullableDefaultValueRoute extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $iterableWithEnumRoute => GoRouteData.$route(
+RouteBase get $iterableWithEnumRoute => GoRouteData.$route(
       path: '/iterable-with-enum',
       factory: $IterableWithEnumRouteExtension._fromState,
     );
@@ -290,7 +290,7 @@ enum EnumOnlyUsedInIterable {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $iterableDefaultValueRoute => GoRouteData.$route(
+RouteBase get $iterableDefaultValueRoute => GoRouteData.$route(
       path: '/iterable-default-value-route',
       factory: $IterableDefaultValueRouteExtension._fromState,
     );
