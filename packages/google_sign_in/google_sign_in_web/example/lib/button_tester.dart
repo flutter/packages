@@ -10,7 +10,7 @@ import 'src/button_configuration_column.dart';
 
 // The instance of the plugin is automatically created by Flutter before calling
 // our main code, let's grab it directly from the Platform interface of the plugin.
-GoogleSignInPlugin _plugin =
+final GoogleSignInPlugin _plugin =
     GoogleSignInPlatform.instance as GoogleSignInPlugin;
 
 Future<void> main() async {
