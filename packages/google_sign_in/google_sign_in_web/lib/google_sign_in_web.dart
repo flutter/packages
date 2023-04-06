@@ -73,9 +73,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   // A future that completes when the JS loader is done.
   late Future<void> _jsSdkLoadedFuture;
   // A future that completes when the `init` call is done.
-  final Completer<void> _initDone = Completer<void>();
-  // A (synchronous) marker to assert that `init` has been called.
-  bool _isInitCalled = false;
+  Completer<void>? _initCalled;
 
   // A StreamController to communicate status changes from the GisSdkClient.
   final StreamController<GoogleSignInUserData?> _userDataController;
@@ -99,7 +97,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   // point in the past. It is used by the [initialized] getter to ensure that
   // users can't await on a Future that will never resolve.
   void _assertIsInitCalled() {
-    if (!_isInitCalled) {
+    if (_initCalled == null) {
       throw StateError(
         'GoogleSignInPlugin::init() or GoogleSignInPlugin::initWithParams() '
         'must be called before any other method in this plugin.',
@@ -115,7 +113,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<void> get initialized {
     _assertIsInitCalled();
     return Future.wait<void>(
-        <Future<void>>[_jsSdkLoadedFuture, _initDone.future]);
+        <Future<void>>[_jsSdkLoadedFuture, _initCalled!.future]);
   }
 
   /// Stores the client ID if it was set in a meta-tag of the page.
@@ -160,7 +158,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
         'Check https://developers.google.com/identity/protocols/googlescopes '
         'for a list of valid OAuth 2.0 scopes.');
 
-    _isInitCalled = true; // Mark `init` ASAP before going async.
+    _initCalled = Completer<void>();
 
     await _jsSdkLoadedFuture;
 
@@ -172,7 +170,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       loggingEnabled: kDebugMode,
     );
 
-    _initDone.complete(); // Signal that `init` is fully done.
+    _initCalled!.complete(); // Signal that `init` is fully done.
   }
 
   // Register a factory for the Button HtmlElementView.
@@ -224,6 +222,12 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   @override
   Future<GoogleSignInUserData?> signIn() async {
+    if (kDebugMode) {
+      domConsole.warn(
+          "The `signIn` method is discouraged on the web because it can't reliably provide an `idToken`.\n"
+          'Use `signInSilently` and `renderButton` to authenticate your users instead.\n'
+          'Read more: https://pub.dev/packages/google_sign_in_web');
+    }
     await initialized;
 
     // This method mainly does oauth2 authorization, which happens to also do
