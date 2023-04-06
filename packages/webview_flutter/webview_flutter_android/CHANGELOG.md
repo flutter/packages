@@ -2,6 +2,8 @@
 
 * Adds support for handling geolocation permissions. See
   `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
+* Bumps androidx.webkit:webkit from 1.6.0 to 1.6.1.
+
 
 ## 3.4.5
 
