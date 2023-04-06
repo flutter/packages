@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
 ## 0.9.0+7
 
 * Updates to `pigeon` version 9.

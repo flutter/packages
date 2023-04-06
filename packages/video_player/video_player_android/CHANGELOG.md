@@ -1,3 +1,8 @@
+## 2.4.4
+
+* Synchronizes `VideoPlayerValue.isPlaying` with `ExoPlayer`.
+* Updates minimum Flutter version to 3.3.
+
 ## 2.4.3
 
 * Bumps ExoPlayer version to 2.18.5.
