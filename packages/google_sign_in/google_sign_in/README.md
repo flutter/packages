@@ -97,9 +97,9 @@ be an option.
 ### Web integration
 
 The new SDK used by the web has fully separated Authentication from Authorization,
-so `signIn` and `signInSilently` no longer authorize Oauth `scopes`.
+so `signIn` and `signInSilently` no longer authorize OAuth `scopes`.
 
-Flutter Apps must be able to detect what scopes have been granted by their users,
+Flutter apps must be able to detect what scopes have been granted by their users,
 and if the grants are still valid.
 
 Read below about **Working with scopes, and incremental authorization** for
@@ -122,7 +122,7 @@ Add the following import to your Dart code:
 import 'package:google_sign_in/google_sign_in.dart';
 ```
 
-Initialize GoogleSignIn with the scopes you want:
+Initialize `GoogleSignIn` with the scopes you want:
 
 ```dart
 GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -159,27 +159,28 @@ If your app supports both mobile and web, read this section!
 
 ### Checking if scopes have been granted
 
-Users may (or may *not*) grant all the scopes that your application requests at
-Sign In. In fact, in the web, no scopes are granted by signIn or silentSignIn anymore.
+Users may (or may *not*) grant all the scopes that an application requests at
+Sign In. In fact, in the web, no scopes are granted by `signIn`, `silentSignIn`
+or the `renderButton` widget anymore.
 
-Your app must be able to:
+Applications must be able to:
 
-* Detect if the authenticated user has authorized the scopes your app needs.
-* Detect if the scopes that were granted a few minutes ago are still valid.
+* Detect if the authenticated user has authorized the scopes they need.
+* Determine if the scopes that were granted a few minutes ago are still valid.
 
-There's a new method that allows your app to check this:
+There's a new method that enables the checks above, `canAccessScopes`:
 
 ```dart
 final bool isAuthorized = await _googleSignIn.canAccessScopes(scopes);
 ```
 
-(Only implemented in the web from version 6.1.0)
+_(Only implemented in the web platform, from version 6.1.0 of this package)_
 
 ### Requesting more scopes when needed
 
-If your app determines that the user hasn't granted the scopes it requires, it
-should initiate an Authorization request **from an user interaction** (like a
-button press).
+If an app determines that the user hasn't granted the scopes it requires, it
+should initiate an Authorization request. (Remember that in the web platform,
+this request **must be initiated from an user interaction**, like a button press).
 
 ```dart
 Future<void> _handleAuthorizeScopes() async {
@@ -209,15 +210,19 @@ the `canAccessScopes` and `requestScopes` methods described above.
 For more details, take a look at the
 [`google_sign_in_web` package](https://pub.dev/packages/google_sign_in_web).
 
-### My app didn't need any of this, what gives!?
+### Does an app always need to check `canAccessScopes`?
 
-The new web SDK implicitly grant access to `email`, `profile` and `openid` when
-users complete the sign-in process (either via the One Tap UX or the Google Sign
-In button).
+The new web SDK implicitly grant access to the `email`, `profile` and `openid` 
+scopes when users complete the sign-in process (either via the One Tap UX or the
+Google Sign In button).
 
-If your app only needs an `idToken`, or only requests permissions to some of the
-[OpenID Connect scopes](https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect),
-you might not need to implement any of the scope handling above.
+If an app only needs an `idToken`, or only requests permissions to any/all of
+the three scopes mentioned above 
+([OpenID Connect scopes](https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect)),
+it won't need to implement any additional scope handling.
+
+If an app needs any scope other than `email`, `profile` and `openid`, it **must**
+implement a more complete scope handling, as described above.
 
 ## Example
 
