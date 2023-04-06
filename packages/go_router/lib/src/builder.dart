@@ -153,10 +153,9 @@ class RouteBuilder {
     } finally {
       /// Clean up previous cache to prevent memory leak, making sure any nested
       /// stateful shell routes for the current match list are kept.
-      final Iterable<StatefulShellRoute> matchListShellRoutes = matchList
-          .matches
+      final Iterable<StackedShellRoute> matchListShellRoutes = matchList.matches
           .map((RouteMatch e) => e.route)
-          .whereType<StatefulShellRoute>();
+          .whereType<StackedShellRoute>();
 
       final Set<Key> activeKeys = keyToPage.keys.toSet()
         ..addAll(_nestedStatefulNavigatorKeys(matchListShellRoutes));
@@ -166,11 +165,11 @@ class RouteBuilder {
   }
 
   Set<GlobalKey<NavigatorState>> _nestedStatefulNavigatorKeys(
-      Iterable<StatefulShellRoute> routes) {
+      Iterable<StackedShellRoute> routes) {
     return RouteConfiguration.routesRecursively(routes)
-        .whereType<StatefulShellRoute>()
-        .expand((StatefulShellRoute e) =>
-            e.branches.map((StatefulShellBranch b) => b.navigatorKey))
+        .whereType<StackedShellRoute>()
+        .expand((StackedShellRoute e) =>
+            e.branches.map((StackedShellBranch b) => b.navigatorKey))
         .toSet();
   }
 

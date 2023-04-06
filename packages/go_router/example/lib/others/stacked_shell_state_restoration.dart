@@ -11,24 +11,24 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
 final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabANav');
 
-void main() => runApp(RestorableStatefulShellRouteExampleApp());
+void main() => runApp(RestorableStackedShellRouteExampleApp());
 
-/// An example demonstrating how to use StatefulShellRoute with state
+/// An example demonstrating how to use StackedShellRoute with state
 /// restoration.
-class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
+class RestorableStackedShellRouteExampleApp extends StatelessWidget {
   /// Creates a NestedTabNavigationExampleApp
-  RestorableStatefulShellRouteExampleApp({super.key});
+  RestorableStackedShellRouteExampleApp({super.key});
 
   final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/a',
     restorationScopeId: 'router',
     routes: <RouteBase>[
-      StatefulShellRoute(
+      StackedShellRoute(
         restorationScopeId: 'shell1',
-        branches: <StatefulShellBranch>[
+        branches: <StackedShellBranch>[
           /// The route branch for the first tab of the bottom navigation bar.
-          StatefulShellBranch(
+          StackedShellBranch(
             navigatorKey: _tabANavigatorKey,
             restorationScopeId: 'branchA',
             routes: <RouteBase>[
@@ -59,16 +59,16 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
           ),
 
           /// The route branch for the third tab of the bottom navigation bar.
-          StatefulShellBranch(
+          StackedShellBranch(
             restorationScopeId: 'branchB',
             routes: <RouteBase>[
-              StatefulShellRoute(
+              StackedShellRoute(
                 restorationScopeId: 'shell2',
 
                 /// This bottom tab uses a nested shell, wrapping sub routes in a
                 /// top TabBar.
-                branches: <StatefulShellBranch>[
-                  StatefulShellBranch(
+                branches: <StackedShellBranch>[
+                  StackedShellBranch(
                       restorationScopeId: 'branchB1',
                       routes: <GoRoute>[
                         GoRoute(
@@ -96,7 +96,7 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
                           ],
                         ),
                       ]),
-                  StatefulShellBranch(
+                  StackedShellBranch(
                       restorationScopeId: 'branchB2',
                       routes: <GoRoute>[
                         GoRoute(
@@ -126,13 +126,13 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
                       ]),
                 ],
                 pageBuilder: (BuildContext context,
-                    StatefulShellRouteState state, Widget child) {
+                    StackedShellRouteState state, Widget child) {
                   return MaterialPage<void>(
                       restorationId: 'shellWidget2',
-                      child: StatefulNavigationShell(
+                      child: StackedNavigationShell(
                         shellRouteState: state,
                         containerBuilder: (BuildContext context,
-                                StatefulShellRouteState state,
+                                StackedShellRouteState state,
                                 List<Widget> children) =>
                             TabbedRootScreen(
                                 shellState: state, children: children),
@@ -142,8 +142,8 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
             ],
           ),
         ],
-        pageBuilder: (BuildContext context, StatefulShellRouteState state,
-            Widget child) {
+        pageBuilder:
+            (BuildContext context, StackedShellRouteState state, Widget child) {
           return MaterialPage<void>(
               restorationId: 'shellWidget1',
               child: ScaffoldWithNavBar(shellState: state, body: child));
@@ -175,8 +175,8 @@ class ScaffoldWithNavBar extends StatelessWidget {
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
-  /// The current state of the parent StatefulShellRoute.
-  final StatefulShellRouteState shellState;
+  /// The current state of the parent StackedShellRoute.
+  final StackedShellRouteState shellState;
 
   /// Body, i.e. the container for the branch Navigators.
   final Widget body;
@@ -346,8 +346,8 @@ class TabbedRootScreen extends StatefulWidget {
   const TabbedRootScreen(
       {required this.shellState, required this.children, super.key});
 
-  /// The current state of the parent StatefulShellRoute.
-  final StatefulShellRouteState shellState;
+  /// The current state of the parent StackedShellRoute.
+  final StackedShellRouteState shellState;
 
   /// The children (Navigators) to display in the [TabBarView].
   final List<Widget> children;

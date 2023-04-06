@@ -292,7 +292,8 @@ class RouteMatchListCodec {
           final RouteMatchList imperativeMatchList = _matcher.findMatch(
               match[_locationKey] as String,
               extra: match[_stateKey]);
-          final ImperativeRouteMatch<Object?> imperativeMatch = ImperativeRouteMatch<Object?>(
+          final ImperativeRouteMatch<Object?> imperativeMatch =
+              ImperativeRouteMatch<Object?>(
             pageKey: pageKey,
             matches: imperativeMatchList,
           );

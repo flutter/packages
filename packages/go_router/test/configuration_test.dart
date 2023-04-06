@@ -83,7 +83,7 @@ void main() {
     });
 
     test(
-        'throws when StatefulShellRoute sub-route uses incorrect parentNavigatorKey',
+        'throws when StackedShellRoute sub-route uses incorrect parentNavigatorKey',
         () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -97,8 +97,8 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute(branches: <StatefulShellBranch>[
-                StatefulShellBranch(
+              StackedShellRoute(branches: <StackedShellBranch>[
+                StackedShellBranch(
                   navigatorKey: keyA,
                   routes: <RouteBase>[
                     GoRoute(
@@ -112,7 +112,7 @@ void main() {
                         ]),
                   ],
                 ),
-              ], builder: mockStatefulShellBuilder),
+              ], builder: mockStackedShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -125,7 +125,7 @@ void main() {
     });
 
     test(
-        'does not throw when StatefulShellRoute sub-route uses correct parentNavigatorKeys',
+        'does not throw when StackedShellRoute sub-route uses correct parentNavigatorKeys',
         () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -135,8 +135,8 @@ void main() {
       RouteConfiguration(
         navigatorKey: root,
         routes: <RouteBase>[
-          StatefulShellRoute(branches: <StatefulShellBranch>[
-            StatefulShellBranch(
+          StackedShellRoute(branches: <StackedShellBranch>[
+            StackedShellBranch(
               navigatorKey: keyA,
               routes: <RouteBase>[
                 GoRoute(
@@ -150,7 +150,7 @@ void main() {
                     ]),
               ],
             ),
-          ], builder: mockStatefulShellBuilder),
+          ], builder: mockStackedShellBuilder),
         ],
         redirectLimit: 10,
         topRedirect: (BuildContext context, GoRouterState state) {
@@ -160,7 +160,7 @@ void main() {
     });
 
     test(
-        'throws when a sub-route of StatefulShellRoute has a parentNavigatorKey',
+        'throws when a sub-route of StackedShellRoute has a parentNavigatorKey',
         () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -171,8 +171,8 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute(branches: <StatefulShellBranch>[
-                StatefulShellBranch(
+              StackedShellRoute(branches: <StackedShellBranch>[
+                StackedShellBranch(
                   routes: <RouteBase>[
                     GoRoute(
                         path: '/a',
@@ -185,7 +185,7 @@ void main() {
                         ]),
                   ],
                 ),
-                StatefulShellBranch(
+                StackedShellBranch(
                   routes: <RouteBase>[
                     GoRoute(
                         path: '/b',
@@ -193,7 +193,7 @@ void main() {
                         parentNavigatorKey: someNavigatorKey),
                   ],
                 ),
-              ], builder: mockStatefulShellBuilder),
+              ], builder: mockStackedShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -205,7 +205,7 @@ void main() {
       );
     });
 
-    test('throws when StatefulShellRoute has duplicate navigator keys', () {
+    test('throws when StackedShellRoute has duplicate navigator keys', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
       final GlobalKey<NavigatorState> keyA =
@@ -221,9 +221,9 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute(branches: <StatefulShellBranch>[
-                StatefulShellBranch(routes: shellRouteChildren)
-              ], builder: mockStatefulShellBuilder),
+              StackedShellRoute(branches: <StackedShellBranch>[
+                StackedShellBranch(routes: shellRouteChildren)
+              ], builder: mockStackedShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -236,7 +236,7 @@ void main() {
     });
 
     test(
-        'throws when a child of StatefulShellRoute has an incorrect '
+        'throws when a child of StackedShellRoute has an incorrect '
         'parentNavigatorKey', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -257,14 +257,14 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute(branches: <StatefulShellBranch>[
-                StatefulShellBranch(
+              StackedShellRoute(branches: <StackedShellBranch>[
+                StackedShellBranch(
                     routes: <RouteBase>[routeA],
                     navigatorKey: sectionANavigatorKey),
-                StatefulShellBranch(
+                StackedShellBranch(
                     routes: <RouteBase>[routeB],
                     navigatorKey: sectionBNavigatorKey),
-              ], builder: mockStatefulShellBuilder),
+              ], builder: mockStackedShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -277,7 +277,7 @@ void main() {
     });
 
     test(
-        'throws when a branch of a StatefulShellRoute has an incorrect '
+        'throws when a branch of a StackedShellRoute has an incorrect '
         'initialLocation', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -290,8 +290,8 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute(branches: <StatefulShellBranch>[
-                StatefulShellBranch(
+              StackedShellRoute(branches: <StackedShellBranch>[
+                StackedShellBranch(
                   initialLocation: '/x',
                   navigatorKey: sectionANavigatorKey,
                   routes: <RouteBase>[
@@ -301,7 +301,7 @@ void main() {
                     ),
                   ],
                 ),
-                StatefulShellBranch(
+                StackedShellBranch(
                   navigatorKey: sectionBNavigatorKey,
                   routes: <RouteBase>[
                     GoRoute(
@@ -310,7 +310,7 @@ void main() {
                     ),
                   ],
                 ),
-              ], builder: mockStatefulShellBuilder),
+              ], builder: mockStackedShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -323,7 +323,7 @@ void main() {
     });
 
     test(
-        'throws when a branch of a StatefulShellRoute has a initialLocation '
+        'throws when a branch of a StackedShellRoute has a initialLocation '
         'that is not a descendant of the same branch', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -336,8 +336,8 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StatefulShellRoute(branches: <StatefulShellBranch>[
-                StatefulShellBranch(
+              StackedShellRoute(branches: <StackedShellBranch>[
+                StackedShellBranch(
                   initialLocation: '/b',
                   navigatorKey: sectionANavigatorKey,
                   routes: <RouteBase>[
@@ -347,12 +347,12 @@ void main() {
                     ),
                   ],
                 ),
-                StatefulShellBranch(
+                StackedShellBranch(
                   initialLocation: '/b',
                   navigatorKey: sectionBNavigatorKey,
                   routes: <RouteBase>[
-                    StatefulShellRoute(branches: <StatefulShellBranch>[
-                      StatefulShellBranch(
+                    StackedShellRoute(branches: <StackedShellBranch>[
+                      StackedShellBranch(
                         routes: <RouteBase>[
                           GoRoute(
                             path: '/b',
@@ -360,10 +360,10 @@ void main() {
                           ),
                         ],
                       ),
-                    ], builder: mockStatefulShellBuilder),
+                    ], builder: mockStackedShellBuilder),
                   ],
                 ),
-              ], builder: mockStatefulShellBuilder),
+              ], builder: mockStackedShellBuilder),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -376,7 +376,7 @@ void main() {
     });
 
     test(
-        'does not throw when a branch of a StatefulShellRoute has correctly '
+        'does not throw when a branch of a StackedShellRoute has correctly '
         'configured initialLocations', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -384,8 +384,8 @@ void main() {
       RouteConfiguration(
         navigatorKey: root,
         routes: <RouteBase>[
-          StatefulShellRoute(branches: <StatefulShellBranch>[
-            StatefulShellBranch(
+          StackedShellRoute(branches: <StackedShellBranch>[
+            StackedShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                     path: '/a',
@@ -398,7 +398,7 @@ void main() {
                     ]),
               ],
             ),
-            StatefulShellBranch(
+            StackedShellBranch(
               initialLocation: '/b/detail',
               routes: <RouteBase>[
                 GoRoute(
@@ -412,11 +412,11 @@ void main() {
                     ]),
               ],
             ),
-            StatefulShellBranch(
+            StackedShellBranch(
               initialLocation: '/c/detail',
               routes: <RouteBase>[
-                StatefulShellRoute(branches: <StatefulShellBranch>[
-                  StatefulShellBranch(
+                StackedShellRoute(branches: <StackedShellBranch>[
+                  StackedShellBranch(
                     routes: <RouteBase>[
                       GoRoute(
                           path: '/c',
@@ -429,7 +429,7 @@ void main() {
                           ]),
                     ],
                   ),
-                  StatefulShellBranch(
+                  StackedShellBranch(
                     initialLocation: '/d/detail',
                     routes: <RouteBase>[
                       GoRoute(
@@ -443,10 +443,10 @@ void main() {
                           ]),
                     ],
                   ),
-                ], builder: mockStatefulShellBuilder),
+                ], builder: mockStackedShellBuilder),
               ],
             ),
-            StatefulShellBranch(routes: <RouteBase>[
+            StackedShellBranch(routes: <RouteBase>[
               ShellRoute(
                 builder: _mockShellBuilder,
                 routes: <RouteBase>[
@@ -462,7 +462,7 @@ void main() {
                 ],
               ),
             ]),
-          ], builder: mockStatefulShellBuilder),
+          ], builder: mockStackedShellBuilder),
         ],
         redirectLimit: 10,
         topRedirect: (BuildContext context, GoRouterState state) {
@@ -472,19 +472,19 @@ void main() {
     });
 
     test(
-      'derives the correct initialLocation for a StatefulShellBranch',
+      'derives the correct initialLocation for a StackedShellBranch',
       () {
-        final StatefulShellBranch branchA;
-        final StatefulShellBranch branchY;
-        final StatefulShellBranch branchB;
+        final StackedShellBranch branchA;
+        final StackedShellBranch branchY;
+        final StackedShellBranch branchB;
 
         final RouteConfiguration config = RouteConfiguration(
           navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'root'),
           routes: <RouteBase>[
-            StatefulShellRoute(
-              builder: mockStatefulShellBuilder,
-              branches: <StatefulShellBranch>[
-                branchA = StatefulShellBranch(routes: <RouteBase>[
+            StackedShellRoute(
+              builder: mockStackedShellBuilder,
+              branches: <StackedShellBranch>[
+                branchA = StackedShellBranch(routes: <RouteBase>[
                   GoRoute(
                     path: '/a',
                     builder: _mockScreenBuilder,
@@ -493,11 +493,11 @@ void main() {
                         path: 'x',
                         builder: _mockScreenBuilder,
                         routes: <RouteBase>[
-                          StatefulShellRoute(
-                              builder: mockStatefulShellBuilder,
-                              branches: <StatefulShellBranch>[
+                          StackedShellRoute(
+                              builder: mockStackedShellBuilder,
+                              branches: <StackedShellBranch>[
                                 branchY =
-                                    StatefulShellBranch(routes: <RouteBase>[
+                                    StackedShellBranch(routes: <RouteBase>[
                                   ShellRoute(
                                       builder: _mockShellBuilder,
                                       routes: <RouteBase>[
@@ -517,7 +517,7 @@ void main() {
                     ],
                   ),
                 ]),
-                branchB = StatefulShellBranch(routes: <RouteBase>[
+                branchB = StackedShellBranch(routes: <RouteBase>[
                   ShellRoute(
                     builder: _mockShellBuilder,
                     routes: <RouteBase>[
@@ -546,10 +546,10 @@ void main() {
           },
         );
 
-        expect('/a', config.findStatefulShellBranchDefaultLocation(branchA));
+        expect('/a', config.findStackedShellBranchDefaultLocation(branchA));
         expect(
-            '/a/x/y1', config.findStatefulShellBranchDefaultLocation(branchY));
-        expect('/b1', config.findStatefulShellBranchDefaultLocation(branchB));
+            '/a/x/y1', config.findStackedShellBranchDefaultLocation(branchY));
+        expect('/b1', config.findStackedShellBranchDefaultLocation(branchB));
       },
     );
 

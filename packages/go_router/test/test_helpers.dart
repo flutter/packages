@@ -292,8 +292,8 @@ GoRouterPageBuilder createPageBuilder(
     (BuildContext context, GoRouterState state) =>
         MaterialPage<dynamic>(restorationId: restorationId, child: child);
 
-StatefulShellRouteBuilder mockStatefulShellBuilder =
-    (BuildContext context, StatefulShellRouteState state, Widget child) {
+StackedShellRouteBuilder mockStackedShellBuilder =
+    (BuildContext context, StackedShellRouteState state, Widget child) {
   return child;
 };
 

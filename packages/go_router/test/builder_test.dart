@@ -325,7 +325,7 @@ void main() {
           'scope1');
     });
 
-    testWidgets('Uses the correct restorationScopeId for StatefulShellRoute',
+    testWidgets('Uses the correct restorationScopeId for StackedShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -335,13 +335,13 @@ void main() {
         initialLocation: '/a',
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
-          StatefulShellRoute(
+          StackedShellRoute(
             restorationScopeId: 'shell',
-            builder: (BuildContext context, StatefulShellRouteState state,
+            builder: (BuildContext context, StackedShellRouteState state,
                     Widget child) =>
                 _HomeScreen(child: child),
-            branches: <StatefulShellBranch>[
-              StatefulShellBranch(
+            branches: <StackedShellBranch>[
+              StackedShellBranch(
                 navigatorKey: shellNavigatorKey,
                 restorationScopeId: 'scope1',
                 routes: <RouteBase>[

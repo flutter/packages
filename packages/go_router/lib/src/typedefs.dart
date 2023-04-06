@@ -34,17 +34,17 @@ typedef ShellRoutePageBuilder = Page<dynamic> Function(
   Widget child,
 );
 
-/// The widget builder for [StatefulShellRoute].
-typedef StatefulShellRouteBuilder = Widget Function(
+/// The widget builder for [StackedShellRoute].
+typedef StackedShellRouteBuilder = Widget Function(
   BuildContext context,
-  StatefulShellRouteState state,
+  StackedShellRouteState state,
   Widget child,
 );
 
-/// The page builder for [StatefulShellRoute].
-typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
+/// The page builder for [StackedShellRoute].
+typedef StackedShellRoutePageBuilder = Page<dynamic> Function(
   BuildContext context,
-  StatefulShellRouteState state,
+  StackedShellRouteState state,
   Widget child,
 );
 

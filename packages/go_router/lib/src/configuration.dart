@@ -27,7 +27,7 @@ class RouteConfiguration {
             _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
         assert(_debugCheckParentNavigatorKeys(
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
-    assert(_debugCheckStatefulShellBranchDefaultLocations(
+    assert(_debugCheckStackedShellBranchDefaultLocations(
         routes, RouteMatcher(this)));
     _cacheNameToPath('', routes);
     log.info(_debugKnownRoutes());
@@ -90,11 +90,11 @@ class RouteConfiguration {
           route.routes,
           <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
         );
-      } else if (route is StatefulShellRoute) {
-        for (final StatefulShellBranch branch in route.branches) {
+      } else if (route is StackedShellRoute) {
+        for (final StackedShellBranch branch in route.branches) {
           assert(
               !allowedKeys.contains(branch.navigatorKey),
-              'StatefulShellBranch must not reuse an ancestor navigatorKey '
+              'StackedShellBranch must not reuse an ancestor navigatorKey '
               '(${branch.navigatorKey})');
 
           _debugCheckParentNavigatorKeys(
@@ -130,18 +130,18 @@ class RouteConfiguration {
     return true;
   }
 
-  // Check to see that the configured initialLocation of StatefulShellBranches
+  // Check to see that the configured initialLocation of StackedShellBranches
   // points to a descendant route of the route branch.
-  bool _debugCheckStatefulShellBranchDefaultLocations(
+  bool _debugCheckStackedShellBranchDefaultLocations(
       List<RouteBase> routes, RouteMatcher matcher) {
     try {
       for (final RouteBase route in routes) {
-        if (route is StatefulShellRoute) {
-          for (final StatefulShellBranch branch in route.branches) {
+        if (route is StackedShellRoute) {
+          for (final StackedShellBranch branch in route.branches) {
             if (branch.initialLocation == null) {
               // Recursively search for the first GoRoute descendant. Will
               // throw assertion error if not found.
-              findStatefulShellBranchDefaultLocation(branch);
+              findStackedShellBranchDefaultLocation(branch);
             } else {
               final RouteBase initialLocationRoute =
                   matcher.findMatch(branch.initialLocation!).last.route;
@@ -151,17 +151,17 @@ class RouteConfiguration {
               assert(
                   match != null,
                   'The initialLocation (${branch.initialLocation}) of '
-                  'StatefulShellBranch must match a descendant route of the '
+                  'StackedShellBranch must match a descendant route of the '
                   'branch');
             }
           }
         }
-        _debugCheckStatefulShellBranchDefaultLocations(route.routes, matcher);
+        _debugCheckStackedShellBranchDefaultLocations(route.routes, matcher);
       }
     } on MatcherError catch (e) {
       assert(
           false,
-          'initialLocation (${e.location}) of StatefulShellBranch must '
+          'initialLocation (${e.location}) of StackedShellBranch must '
           'be a valid location');
     }
     return true;
@@ -185,30 +185,30 @@ class RouteConfiguration {
           {required RouteBase ancestor, required RouteBase route}) =>
       ancestor == route || routesRecursively(ancestor.routes).contains(route);
 
-  /// Recursively traverses the routes of the provided StatefulShellBranch to
+  /// Recursively traverses the routes of the provided StackedShellBranch to
   /// find the first GoRoute, from which a full path will be derived.
-  String findStatefulShellBranchDefaultLocation(StatefulShellBranch branch) {
+  String findStackedShellBranchDefaultLocation(StackedShellBranch branch) {
     final GoRoute? route = _findFirstGoRoute(branch.routes);
     final String? initialLocation =
         route != null ? _fullPathForRoute(route, '', routes) : null;
     assert(
         initialLocation != null,
-        'The initial location of a StatefulShellBranch must be derivable from '
+        'The initial location of a StackedShellBranch must be derivable from '
         'GoRoute descendant');
     return initialLocation!;
   }
 
-  /// Returns the effective initial location of a StatefulShellBranch.
+  /// Returns the effective initial location of a StackedShellBranch.
   ///
   /// If the initial location of the branch is null,
-  /// [findStatefulShellBranchDefaultLocation] is used to calculate the initial
+  /// [findStackedShellBranchDefaultLocation] is used to calculate the initial
   /// location.
-  String effectiveInitialBranchLocation(StatefulShellBranch branch) {
+  String effectiveInitialBranchLocation(StackedShellBranch branch) {
     final String? initialLocation = branch.initialLocation;
     if (initialLocation != null) {
       return initialLocation;
     } else {
-      return findStatefulShellBranchDefaultLocation(branch);
+      return findStackedShellBranchDefaultLocation(branch);
     }
   }
 
