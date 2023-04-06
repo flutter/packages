@@ -169,7 +169,7 @@ import FlutterMacOS
     Set<String> customEnumNames,
   ) {
     final String className = klass.name;
-    indent.write('static func fromList(_ list: [Any]) -> $className? ');
+    indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
     indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(klass),
@@ -524,7 +524,7 @@ import FlutterMacOS
               indent.writeln('case ${customClass.enumeration}:');
               indent.nest(1, () {
                 indent.writeln(
-                    'return ${customClass.name}.fromList(self.readValue() as! [Any])');
+                    'return ${customClass.name}.fromList(self.readValue() as! [Any?])');
               });
             }
             indent.writeln('default:');
@@ -628,7 +628,7 @@ import FlutterMacOS
       if (listEncodedClassNames != null &&
           listEncodedClassNames.contains(type.baseName)) {
         indent.writeln('var $variableName: $fieldType? = nil');
-        indent.write('if let ${variableName}List = $value as! [Any]? ');
+        indent.write('if let ${variableName}List = $value as! [Any?]? ');
         indent.addScoped('{', '}', () {
           indent.writeln(
               '$variableName = $fieldType.fromList(${variableName}List)');
@@ -652,7 +652,7 @@ import FlutterMacOS
       if (listEncodedClassNames != null &&
           listEncodedClassNames.contains(type.baseName)) {
         indent.writeln(
-            'let $variableName = $fieldType.fromList($value as! [Any])!');
+            'let $variableName = $fieldType.fromList($value as! [Any?])!');
       } else {
         indent.writeln(
             'let $variableName = ${castForceUnwrap(value, type, root)}');
@@ -695,7 +695,7 @@ import FlutterMacOS
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
-  return (value as Any) as! T?
+  return value as! T?
 }''');
   }
 

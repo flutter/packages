@@ -35,7 +35,7 @@ private func wrapError(_ error: Any) -> [Any?] {
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
-  return (value as Any) as! T?
+  return value as! T?
 }
 
 enum AnEnum: Int {
@@ -59,7 +59,7 @@ struct AllTypes {
   var anEnum: AnEnum
   var aString: String
 
-  static func fromList(_ list: [Any]) -> AllTypes? {
+  static func fromList(_ list: [Any?]) -> AllTypes? {
     let aBool = list[0] as! Bool
     let anInt = list[1] is Int64 ? list[1] as! Int64 : Int64(list[1] as! Int32)
     let anInt64 = list[2] is Int64 ? list[2] as! Int64 : Int64(list[2] as! Int32)
@@ -124,7 +124,7 @@ struct AllNullableTypes {
   var aNullableEnum: AnEnum? = nil
   var aNullableString: String? = nil
 
-  static func fromList(_ list: [Any]) -> AllNullableTypes? {
+  static func fromList(_ list: [Any?]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
     let aNullableInt: Int64? = list[1] is NSNull ? nil : (list[1] is Int64? ? list[1] as! Int64? : Int64(list[1] as! Int32))
     let aNullableInt64: Int64? = list[2] is NSNull ? nil : (list[2] is Int64? ? list[2] as! Int64? : Int64(list[2] as! Int32))
@@ -188,8 +188,8 @@ struct AllNullableTypes {
 struct AllNullableTypesWrapper {
   var values: AllNullableTypes
 
-  static func fromList(_ list: [Any]) -> AllNullableTypesWrapper? {
-    let values = AllNullableTypes.fromList(list[0] as! [Any])!
+  static func fromList(_ list: [Any?]) -> AllNullableTypesWrapper? {
+    let values = AllNullableTypes.fromList(list[0] as! [Any?])!
 
     return AllNullableTypesWrapper(
       values: values
@@ -208,7 +208,7 @@ struct AllNullableTypesWrapper {
 struct TestMessage {
   var testList: [Any]? = nil
 
-  static func fromList(_ list: [Any]) -> TestMessage? {
+  static func fromList(_ list: [Any?]) -> TestMessage? {
     let testList: [Any]? = nilOrValue(list[0])
 
     return TestMessage(
@@ -226,13 +226,13 @@ private class HostIntegrationCoreApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return AllNullableTypes.fromList(self.readValue() as! [Any])
+        return AllNullableTypes.fromList(self.readValue() as! [Any?])
       case 129:
-        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])
+        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any?])
       case 130:
-        return AllTypes.fromList(self.readValue() as! [Any])
+        return AllTypes.fromList(self.readValue() as! [Any?])
       case 131:
-        return TestMessage.fromList(self.readValue() as! [Any])
+        return TestMessage.fromList(self.readValue() as! [Any?])
       default:
         return super.readValue(ofType: type)
     }
@@ -1514,13 +1514,13 @@ private class FlutterIntegrationCoreApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return AllNullableTypes.fromList(self.readValue() as! [Any])
+        return AllNullableTypes.fromList(self.readValue() as! [Any?])
       case 129:
-        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any])
+        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any?])
       case 130:
-        return AllTypes.fromList(self.readValue() as! [Any])
+        return AllTypes.fromList(self.readValue() as! [Any?])
       case 131:
-        return TestMessage.fromList(self.readValue() as! [Any])
+        return TestMessage.fromList(self.readValue() as! [Any?])
       default:
         return super.readValue(ofType: type)
     }
@@ -1829,7 +1829,7 @@ private class FlutterSmallApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return TestMessage.fromList(self.readValue() as! [Any])
+        return TestMessage.fromList(self.readValue() as! [Any?])
       default:
         return super.readValue(ofType: type)
     }
