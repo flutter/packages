@@ -25,4 +25,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^9.2.2
+  pigeon: ^9.2.3

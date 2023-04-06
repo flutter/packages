@@ -5,24 +5,19 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
-import 'package:shared_preferences_platform_interface/method_channel_shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
-import '../test/messages_test.g.dart';
+import 'messages_test.g.dart';
 
-// Mock Implementation of the SharedPreferencesApi
-class _MockAPI extends TestSharedPreferencesApi {
+class _MockSharedPreferencesApi implements TestSharedPreferencesApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  bool clear() {
-    items.clear();
-    return true;
-  }
-
-  @override
-  Map<String?, dynamic> getAll() {
-    return items;
+  Map<String?, Object?> getAllWithPrefix(String prefix) {
+    return <String?, Object?>{
+      for (final String key in items.keys)
+        if (key.startsWith(prefix)) key: items[key]
+    };
   }
 
   @override
@@ -40,6 +35,16 @@ class _MockAPI extends TestSharedPreferencesApi {
   @override
   bool setDouble(String key, double value) {
     items[key] = value;
+    return true;
+  }
+
+  @override
+  bool clearWithPrefix(String prefix) {
+    items.keys.toList().forEach((String key) {
+      if (key.startsWith(prefix)) {
+        items.remove(key);
+      }
+    });
     return true;
   }
 
@@ -64,77 +69,142 @@ class _MockAPI extends TestSharedPreferencesApi {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  late _MockAPI api;
+  late _MockSharedPreferencesApi api;
 
-  group(MethodChannelSharedPreferencesStore, () {
-    setUp(() async {
-      api = _MockAPI();
-      TestSharedPreferencesApi.setup(api);
-    });
+  const Map<String, Object> flutterTestValues = <String, Object>{
+    'flutter.String': 'hello world',
+    'flutter.Bool': true,
+    'flutter.Int': 42,
+    'flutter.Double': 3.14159,
+    'flutter.StringList': <String>['foo', 'bar'],
+  };
 
-    test('registered instance', () {
-      SharedPreferencesAndroid.registerWith();
-      expect(SharedPreferencesStorePlatform.instance,
-          isA<SharedPreferencesAndroid>());
-    });
-    test('remove', () async {
-      final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
-      api.items['flutter.hi'] = 'world';
-      expect(await plugin.remove('flutter.hi'), isTrue);
-      expect(api.items.containsKey('flutter.hi'), isFalse);
-    });
+  const Map<String, Object> prefixTestValues = <String, Object>{
+    'prefix.String': 'hello world',
+    'prefix.Bool': true,
+    'prefix.Int': 42,
+    'prefix.Double': 3.14159,
+    'prefix.StringList': <String>['foo', 'bar'],
+  };
 
-    test('clear', () async {
-      final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
-      api.items['flutter.hi'] = 'world';
-      expect(await plugin.clear(), isTrue);
-      expect(api.items.containsKey('flutter.hi'), isFalse);
-    });
+  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+    'String': 'hello world',
+    'Bool': true,
+    'Int': 42,
+    'Double': 3.14159,
+    'StringList': <String>['foo', 'bar'],
+  };
 
-    test('getAll', () async {
-      final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
-      api.items['flutter.aBool'] = true;
-      api.items['flutter.aDouble'] = 3.14;
-      api.items['flutter.anInt'] = 42;
-      api.items['flutter.aString'] = 'hello world';
-      api.items['flutter.aStringList'] = <String>['hello', 'world'];
-      final Map<String?, Object?> all = await plugin.getAll();
-      expect(all.length, 5);
-      expect(all['flutter.aBool'], api.items['flutter.aBool']);
-      expect(all['flutter.aDouble'],
-          closeTo(api.items['flutter.aDouble']! as num, 0.0001));
-      expect(all['flutter.anInt'], api.items['flutter.anInt']);
-      expect(all['flutter.aString'], api.items['flutter.aString']);
-      expect(all['flutter.aStringList'], api.items['flutter.aStringList']);
-    });
+  final Map<String, Object> allTestValues = <String, Object>{};
 
-    test('setValue', () async {
-      final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
-      expect(await plugin.setValue('Bool', 'flutter.Bool', true), isTrue);
-      expect(api.items['flutter.Bool'], true);
-      expect(await plugin.setValue('Double', 'flutter.Double', 1.5), isTrue);
-      expect(api.items['flutter.Double'], 1.5);
-      expect(await plugin.setValue('Int', 'flutter.Int', 12), isTrue);
-      expect(api.items['flutter.Int'], 12);
-      expect(await plugin.setValue('String', 'flutter.String', 'hi'), isTrue);
-      expect(api.items['flutter.String'], 'hi');
-      expect(
-          await plugin
-              .setValue('StringList', 'flutter.StringList', <String>['hi']),
-          isTrue);
-      expect(api.items['flutter.StringList'], <String>['hi']);
-    });
-    test('setValue with unsupported type', () {
-      final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
-      expect(() async {
-        await plugin.setValue('Map', 'flutter.key', <String, String>{});
-      }, throwsA(isA<PlatformException>()));
-    });
+  allTestValues.addAll(flutterTestValues);
+  allTestValues.addAll(prefixTestValues);
+  allTestValues.addAll(nonPrefixTestValues);
+
+  setUp(() {
+    api = _MockSharedPreferencesApi();
+    TestSharedPreferencesApi.setup(api);
+  });
+
+  test('registerWith', () {
+    SharedPreferencesAndroid.registerWith();
+    expect(SharedPreferencesStorePlatform.instance,
+        isA<SharedPreferencesAndroid>());
+  });
+
+  test('remove', () async {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    api.items['flutter.hi'] = 'world';
+    expect(await plugin.remove('flutter.hi'), isTrue);
+    expect(api.items.containsKey('flutter.hi'), isFalse);
+  });
+
+  test('clear', () async {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    api.items['flutter.hi'] = 'world';
+    expect(await plugin.clear(), isTrue);
+    expect(api.items.containsKey('flutter.hi'), isFalse);
+  });
+
+  test('clearWithPrefix', () async {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 5);
+    await plugin.clearWithPrefix('prefix.');
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 0);
+  });
+
+  test('getAll', () async {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    for (final String key in flutterTestValues.keys) {
+      api.items[key] = flutterTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAll();
+    expect(all.length, 5);
+    expect(all, flutterTestValues);
+  });
+
+  test('getAllWithPrefix', () async {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 5);
+    expect(all, prefixTestValues);
+  });
+
+  test('setValue', () async {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    expect(await plugin.setValue('Bool', 'flutter.Bool', true), isTrue);
+    expect(api.items['flutter.Bool'], true);
+    expect(await plugin.setValue('Double', 'flutter.Double', 1.5), isTrue);
+    expect(api.items['flutter.Double'], 1.5);
+    expect(await plugin.setValue('Int', 'flutter.Int', 12), isTrue);
+    expect(api.items['flutter.Int'], 12);
+    expect(await plugin.setValue('String', 'flutter.String', 'hi'), isTrue);
+    expect(api.items['flutter.String'], 'hi');
+    expect(
+        await plugin
+            .setValue('StringList', 'flutter.StringList', <String>['hi']),
+        isTrue);
+    expect(api.items['flutter.StringList'], <String>['hi']);
+  });
+
+  test('setValue with unsupported type', () {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    expect(() async {
+      await plugin.setValue('Map', 'flutter.key', <String, String>{});
+    }, throwsA(isA<PlatformException>()));
+  });
+
+  test('getAllWithNoPrefix', () async {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    expect(all, allTestValues);
+  });
+
+  test('clearWithNoPrefix', () async {
+    final SharedPreferencesAndroid plugin = SharedPreferencesAndroid();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    await plugin.clearWithPrefix('');
+    all = await plugin.getAllWithPrefix('');
+    expect(all.length, 0);
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

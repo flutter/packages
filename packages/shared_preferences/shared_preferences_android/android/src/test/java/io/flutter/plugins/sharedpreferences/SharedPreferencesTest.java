@@ -7,69 +7,14 @@ package io.flutter.plugins.sharedpreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import androidx.annotation.NonNull;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
-// Class Mocking SharedPreferencesAPI
-class MockAPI implements Messages.SharedPreferencesApi {
-
-  Map<String, Object> items = new HashMap<String, Object>();
-
-  @Override
-  public Boolean remove(@NonNull String key) {
-    items.remove(key);
-    return true;
-  }
-
-  @Override
-  public Boolean setBool(@NonNull String key, @NonNull Boolean value) {
-    items.put(key, value);
-    return true;
-  }
-
-  @Override
-  public Boolean setString(@NonNull String key, @NonNull String value) {
-    items.put(key, value);
-    return true;
-  }
-
-  @Override
-  public Boolean setInt(@NonNull String key, @NonNull Object value) {
-    items.put(key, value);
-    return true;
-  }
-
-  @Override
-  public Boolean setDouble(@NonNull String key, @NonNull Double value) {
-    items.put(key, value);
-    return true;
-  }
-
-  @Override
-  public Boolean setStringList(@NonNull String key, @NonNull List<String> value) {
-    items.put(key, value);
-    return true;
-  }
-
-  @Override
-  public Boolean clear() {
-    items.clear();
-    return true;
-  }
-
-  @Override
-  public Map<String, Object> getAll() {
-    return items;
-  }
-}
-
 public class SharedPreferencesTest {
 
-  MockAPI api = new MockAPI();
+  SharedPreferencesPlugin plugin;
 
   Map<String, Object> data =
       new HashMap<String, Object>() {
@@ -79,56 +24,84 @@ public class SharedPreferencesTest {
           put("Pie", 3.14);
           put("Names", Arrays.asList("Flutter", "Dart"));
           put("NewToFlutter", false);
+          put("flutter.Language", "Java");
+          put("flutter.Counter", 0);
+          put("flutter.Pie", 3.14);
+          put("flutter.Names", Arrays.asList("Flutter", "Dart"));
+          put("flutter.NewToFlutter", false);
+          put("prefix.Language", "Java");
+          put("prefix.Counter", 0);
+          put("prefix.Pie", 3.14);
+          put("prefix.Names", Arrays.asList("Flutter", "Dart"));
+          put("prefix.NewToFlutter", false);
         }
       };
 
   @Test
   public void initPluginDoesNotThrow() {
-    final SharedPreferencesPlugin plugin = new SharedPreferencesPlugin();
+    plugin = new SharedPreferencesPlugin();
   }
 
   @Test
-  public void testAddValues() {
-    assertEquals(api.getAll().size(), 0);
+  public void getAllWithPrefix() {
+    plugin.clearWithPrefix("");
 
-    addData(api);
+    assertEquals(plugin.getAllWithPrefix("").size(), 0);
 
-    assertEquals(api.getAll().size(), 5);
-    assertEquals(api.getAll().get("Language"), "Java");
-    assertEquals(api.getAll().get("Counter"), 0);
-    assertEquals(api.getAll().get("Pie"), 3.14);
-    assertEquals(api.getAll().get("Names"), Arrays.asList("Flutter", "Dart"));
-    assertEquals(api.getAll().get("NewToFlutter"), false);
+    addData();
+
+    Map<String, Object> flutterData = plugin.getAllWithPrefix("flutter.");
+
+    assertEquals(flutterData.size(), 5);
+    assertEquals(flutterData.get("flutter.Language"), "Java");
+    assertEquals(flutterData.get("flutter.Counter"), 0);
+    assertEquals(flutterData.get("flutter.Pie"), 3.14);
+    assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart"));
+    assertEquals(flutterData.get("flutter.NewToFlutter"), false);
+
+    Map<String, Object> allData = plugin.getAllWithPrefix("");
+
+    assertEquals(allData, data);
   }
 
   @Test
-  public void testGetAllData() {
-    assertEquals(api.getAll(), new HashMap<String, Object>());
-    addData(api);
+  public void clearWithPrefix() {
+    plugin.clearWithPrefix("");
 
-    assertEquals(api.getAll(), data);
-  }
+    addData();
 
-  @Test
-  public void testClear() {
-    addData(api);
-    assertEquals(api.getAll().size(), 5);
-    api.clear();
-    assertEquals(api.getAll().size(), 0);
+    assertEquals(plugin.getAllWithPrefix("").size(), 15);
+
+    plugin.clearWithPrefix("flutter.");
+
+    assertEquals(plugin.getAllWithPrefix("").size(), 10);
   }
 
   @Test
   public void testRemove() {
-    api.setBool("isJava", true);
-    api.remove("isJava");
-    assertFalse(api.getAll().containsKey("isJava"));
+    plugin.clearWithPrefix("");
+
+    plugin.setBool("isJava", true);
+    assert (plugin.getAllWithPrefix("").containsKey("isJava"));
+    plugin.remove("isJava");
+    assertFalse(plugin.getAllWithPrefix("").containsKey("isJava"));
   }
 
-  public void addData(MockAPI api) {
-    api.setString("Language", "Java");
-    api.setInt("Counter", 0);
-    api.setDouble("Pie", 3.14);
-    api.setStringList("Names", Arrays.asList("Flutter", "Dart"));
-    api.setBool("NewToFlutter", false);
+  public void addData() {
+    plugin.setString("Language", "Java");
+    plugin.setInt("Counter", 0);
+    plugin.setDouble("Pie", 3.14);
+    plugin.setStringList("Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setBool("NewToFlutter", false);
+    plugin.setString("flutter.Language", "Java");
+    plugin.setInt("flutter.Counter", 0);
+    plugin.setDouble("flutter.Pie", 3.14);
+    plugin.setStringList("flutter.Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setBool("flutter.NewToFlutter", false);
+    plugin.setString("prefix.Language", "Java");
+    plugin.setInt("prefix.Counter", 0);
+    plugin.setDouble("prefix.Pie", 3.14);
+    plugin.setStringList("prefix.Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setBool("prefix.NewToFlutter", false);
   }
 }
