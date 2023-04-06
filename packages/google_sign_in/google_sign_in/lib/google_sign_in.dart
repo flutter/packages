@@ -293,7 +293,7 @@ class GoogleSignIn {
     return _currentUser;
   }
 
-  // Future that completes when we've finished calling `init` on the native side.
+  // Future that completes when `init` has completed on the native side.
   Future<void>? _initialization;
 
   // Performs initialization, guarding it with the _initialization future.
