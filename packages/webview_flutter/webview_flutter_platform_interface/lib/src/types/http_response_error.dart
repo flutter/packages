@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 
 /// Error returned in `PlatformNavigationDelegate.setOnHttpError` when an HTTP
 /// response error has been received.
-/// 
+///
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
