@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class SharedPreferencesTest {
 
-  SharedPreferencesPlugin plugin;
+  SharedPreferencesPlugin plugin = new SharedPreferencesPlugin();
 
   Map<String, Object> data =
       new HashMap<String, Object>() {
@@ -36,11 +36,6 @@ public class SharedPreferencesTest {
           put("prefix.NewToFlutter", false);
         }
       };
-
-  @Test
-  public void initPluginDoesNotThrow() {
-    plugin = new SharedPreferencesPlugin();
-  }
 
   @Test
   public void getAllWithPrefix() {
