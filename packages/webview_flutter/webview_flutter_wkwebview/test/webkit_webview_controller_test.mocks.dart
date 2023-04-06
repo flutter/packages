@@ -5,10 +5,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 import 'dart:math' as _i2;
+import 'dart:ui' as _i6;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart'
-    as _i6;
+    as _i7;
 import 'package:webview_flutter_wkwebview/src/ui_kit/ui_kit.dart' as _i3;
 import 'package:webview_flutter_wkwebview/src/web_kit/web_kit.dart' as _i4;
 
@@ -165,7 +166,7 @@ class MockUIScrollView extends _i1.Mock implements _i3.UIScrollView {
         ),
       ) as _i3.UIScrollView);
   @override
-  _i5.Future<void> setBackgroundColor(dynamic color) => (super.noSuchMethod(
+  _i5.Future<void> setBackgroundColor(_i6.Color? color) => (super.noSuchMethod(
         Invocation.method(
           #setBackgroundColor,
           [color],
@@ -184,9 +185,9 @@ class MockUIScrollView extends _i1.Mock implements _i3.UIScrollView {
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> addObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
-    required Set<_i6.NSKeyValueObservingOptions>? options,
+    required Set<_i7.NSKeyValueObservingOptions>? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -202,7 +203,7 @@ class MockUIScrollView extends _i1.Mock implements _i3.UIScrollView {
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> removeObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
   }) =>
       (super.noSuchMethod(
@@ -250,9 +251,9 @@ class MockWKPreferences extends _i1.Mock implements _i4.WKPreferences {
       ) as _i4.WKPreferences);
   @override
   _i5.Future<void> addObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
-    required Set<_i6.NSKeyValueObservingOptions>? options,
+    required Set<_i7.NSKeyValueObservingOptions>? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -268,7 +269,7 @@ class MockWKPreferences extends _i1.Mock implements _i4.WKPreferences {
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> removeObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
   }) =>
       (super.noSuchMethod(
@@ -362,9 +363,9 @@ class MockWKUserContentController extends _i1.Mock
       ) as _i4.WKUserContentController);
   @override
   _i5.Future<void> addObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
-    required Set<_i6.NSKeyValueObservingOptions>? options,
+    required Set<_i7.NSKeyValueObservingOptions>? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -380,7 +381,7 @@ class MockWKUserContentController extends _i1.Mock
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> removeObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
   }) =>
       (super.noSuchMethod(
@@ -443,9 +444,9 @@ class MockWKWebsiteDataStore extends _i1.Mock
       ) as _i4.WKWebsiteDataStore);
   @override
   _i5.Future<void> addObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
-    required Set<_i6.NSKeyValueObservingOptions>? options,
+    required Set<_i7.NSKeyValueObservingOptions>? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -461,7 +462,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> removeObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
   }) =>
       (super.noSuchMethod(
@@ -537,7 +538,7 @@ class MockWKWebView extends _i1.Mock implements _i4.WKWebView {
         returnValue: _i5.Future<double>.value(0.0),
       ) as _i5.Future<double>);
   @override
-  _i5.Future<void> loadRequest(_i6.NSUrlRequest? request) =>
+  _i5.Future<void> loadRequest(_i7.NSUrlRequest? request) =>
       (super.noSuchMethod(
         Invocation.method(
           #loadRequest,
@@ -677,7 +678,7 @@ class MockWKWebView extends _i1.Mock implements _i4.WKWebView {
         ),
       ) as _i4.WKWebView);
   @override
-  _i5.Future<void> setBackgroundColor(dynamic color) => (super.noSuchMethod(
+  _i5.Future<void> setBackgroundColor(_i6.Color? color) => (super.noSuchMethod(
         Invocation.method(
           #setBackgroundColor,
           [color],
@@ -696,9 +697,9 @@ class MockWKWebView extends _i1.Mock implements _i4.WKWebView {
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> addObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
-    required Set<_i6.NSKeyValueObservingOptions>? options,
+    required Set<_i7.NSKeyValueObservingOptions>? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -714,7 +715,7 @@ class MockWKWebView extends _i1.Mock implements _i4.WKWebView {
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> removeObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
   }) =>
       (super.noSuchMethod(
@@ -799,9 +800,9 @@ class MockWKWebViewConfiguration extends _i1.Mock
       ) as _i4.WKWebViewConfiguration);
   @override
   _i5.Future<void> addObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
-    required Set<_i6.NSKeyValueObservingOptions>? options,
+    required Set<_i7.NSKeyValueObservingOptions>? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -817,7 +818,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> removeObserver(
-    _i6.NSObject? observer, {
+    _i7.NSObject? observer, {
     required String? keyPath,
   }) =>
       (super.noSuchMethod(
