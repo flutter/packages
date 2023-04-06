@@ -1,6 +1,11 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
 ## 2.1.0
 
 * Adds support to track url changes. See `PlatformNavigationDelegate.setOnUrlChange`.
+* Aligns Dart and Flutter SDK constraints.
 
 ## 2.0.2
 

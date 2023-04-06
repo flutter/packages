@@ -4,6 +4,7 @@
 
 import 'package:colorize/colorize.dart';
 import 'package:file/file.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 /// The signature for a print handler for commands that allow overriding the
 /// print destination.
@@ -33,6 +34,20 @@ const String kEnableExperiment = 'enable-experiment';
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
 enum FlutterPlatform { android, ios, linux, macos, web, windows }
+
+// Flutter->Dart SDK version mapping. Any time a command fails to look up a
+// corresponding version, this map should be updated.
+final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
+  Version(3, 0, 0): Version(2, 17, 0),
+  Version(3, 0, 5): Version(2, 17, 6),
+  Version(3, 3, 0): Version(2, 18, 0),
+  Version(3, 7, 0): Version(2, 19, 0),
+};
+
+/// Returns the version of the Dart SDK that shipped with the given Flutter
+/// SDK.
+Version? getDartSdkForFlutterSdk(Version flutterVersion) =>
+    _dartSdkForFlutterSdk[flutterVersion];
 
 /// Returns whether the given directory is a Dart package.
 bool isPackage(FileSystemEntity entity) {

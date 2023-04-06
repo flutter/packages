@@ -111,6 +111,7 @@ Future<void> main(List<String> args) async {
     mockHandlerTests,
     commandLineTests,
     androidJavaUnitTests,
+    androidJavaLint,
     androidKotlinUnitTests,
     // TODO(stuartmorgan): Include these once CI supports running simulator
     // tests. Currently these tests aren't run in CI.
@@ -164,7 +165,14 @@ Future<void> main(List<String> args) async {
   // configurations have different setups (e.g., different clang-format versions
   // or no clang-format at all).
   if (Platform.isLinux) {
-    await _validateGeneratedTestFiles();
+    // Only run on master, since Dart format can change between versions.
+    // TODO(stuartmorgan): Make a more generic way to run this check only on
+    // master; this currently won't work for anything but Cirrus.
+    if (Platform.environment['CHANNEL'] == 'stable') {
+      print('Skipping generated file validation on stable.');
+    } else {
+      await _validateGeneratedTestFiles();
+    }
   }
 
   final List<String> testsToRun;

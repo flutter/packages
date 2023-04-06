@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+
+## 6.0.2
+
+* Updates iOS minimum version in README.
+
 ## 6.0.1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

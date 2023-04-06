@@ -1,3 +1,20 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
+## 0.8.7+2
+
+* Updates to `pigeon` version 9.
+
+## 0.8.7+1
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.8.7
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
 ## 0.8.6+9
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

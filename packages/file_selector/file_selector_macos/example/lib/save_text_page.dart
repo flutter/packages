@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 /// then writes text to a file at that location.
 class SaveTextPage extends StatelessWidget {
   /// Default Constructor
-  SaveTextPage({Key? key}) : super(key: key);
+  SaveTextPage({super.key});
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();

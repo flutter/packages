@@ -1,3 +1,78 @@
+## 9.2.3
+
+* [java] Fixes `UnknownNullability` and `SyntheticAccessor` warnings.
+
+## 9.2.2
+
+* [cpp] Minor changes to output style.
+
+## 9.2.1
+
+* [swift] Fixes NSNull casting crash.
+
+## 9.2.0
+
+* [cpp] Removes experimental tags.
+
+## 9.1.4
+
+* Migrates off deprecated `BinaryMessenger` API.
+
+## 9.1.3
+
+* [cpp] Requires passing any non-nullable fields of generated data classes as
+  constructor arguments, similar to what is done in other languages. This may
+  require updates to existing code that creates data class instances on the
+  native side.
+* [cpp] Adds a convenience constructor to generated data classes to set all
+  fields during construction.
+
+## 9.1.2
+
+* [cpp] Fixes class parameters to Flutter APIs.
+* Updates minimum Flutter version to 3.3.
+
+## 9.1.1
+
+* [swift] Removes experimental tags.
+* [kotin] Removes experimental tags.
+
+## 9.1.0
+
+* [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
+* [kotlin] Adds a `FlutterError` exception for passing custom error details (code, message, details).
+* [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
+* [java] Removes legacy try catch from async apis.
+* [java] Removes legacy null check on non-nullable method arguments.
+* [cpp] Fixes wrong order of items in `FlutterError`.
+* Adds `FlutterError` handling integration tests for all platforms.
+
+## 9.0.7
+
+* [swift] Changes all ints to int64.
+  May require code updates to existing code.
+* Adds integration tests for int64.
+
+## 9.0.6
+
+* [kotlin] Removes safe casting from decode process.
+* [swift] Removes safe casting from decode process.
+
+## 9.0.5
+
+* Removes the unnecessary Flutter constraint.
+* Removes an unnecessary null check.
+* Aligns Dart and Flutter SDK constraints.
+
+## 9.0.4
+
+* Adds parameter to generate Kotlin code in example README.
+
+## 9.0.3
+
+* [kotlin] Fixes compiler warnings in generated output.
+* [swift] Fixes compiler warnings in generated output.
+
 ## 9.0.2
 
 * [swift] Removes safe casting from decode process.
@@ -673,7 +748,7 @@ class Foo {
 
 ## 0.1.0-experimental.3
 
-* Added support for for Android Java.
+* Added support for Android Java.
 
 ## 0.1.0-experimental.2
 

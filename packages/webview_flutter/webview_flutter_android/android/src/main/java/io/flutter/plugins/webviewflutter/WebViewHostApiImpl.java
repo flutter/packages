@@ -7,13 +7,17 @@ package io.flutter.plugins.webviewflutter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
+import android.os.Build;
 import android.view.View;
+import android.view.ViewParent;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewHostApi;
@@ -28,8 +32,6 @@ import java.util.Objects;
 public class WebViewHostApiImpl implements WebViewHostApi {
   private final InstanceManager instanceManager;
   private final WebViewProxy webViewProxy;
-  // Only used with WebView using virtual displays.
-  @Nullable private final View containerView;
   private final BinaryMessenger binaryMessenger;
 
   private Context context;
@@ -51,22 +53,6 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     }
 
     /**
-     * Creates a {@link InputAwareWebViewPlatformView}.
-     *
-     * @param context an Activity Context to access application assets
-     * @param containerView parent View of the WebView
-     * @return the created {@link InputAwareWebViewPlatformView}
-     */
-    public InputAwareWebViewPlatformView createInputAwareWebView(
-        Context context,
-        BinaryMessenger binaryMessenger,
-        InstanceManager instanceManager,
-        @Nullable View containerView) {
-      return new InputAwareWebViewPlatformView(
-          context, binaryMessenger, instanceManager, containerView);
-    }
-
-    /**
      * Forwards call to {@link WebView#setWebContentsDebuggingEnabled}.
      *
      * @param enabled whether debugging should be enabled
@@ -77,7 +63,12 @@ public class WebViewHostApiImpl implements WebViewHostApi {
   }
 
   /** Implementation of {@link WebView} that can be used as a Flutter {@link PlatformView}s. */
+  @SuppressLint("ViewConstructor")
   public static class WebViewPlatformView extends WebView implements PlatformView {
+    // To ease adding callback methods, this value is added prematurely.
+    @SuppressWarnings("unused")
+    private WebViewFlutterApiImpl api;
+
     private WebViewClient currentWebViewClient;
     private WebChromeClientHostApiImpl.SecureWebChromeClient currentWebChromeClient;
 
@@ -91,6 +82,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       super(context);
       currentWebViewClient = new WebViewClient();
       currentWebChromeClient = new WebChromeClientHostApiImpl.SecureWebChromeClient();
+      api = new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
 
       setWebViewClient(currentWebViewClient);
       setWebChromeClient(currentWebChromeClient);
@@ -103,6 +95,35 @@ public class WebViewHostApiImpl implements WebViewHostApi {
 
     @Override
     public void dispose() {}
+
+    // TODO(bparrishMines): This should be removed once https://github.com/flutter/engine/pull/40771 makes it to stable.
+    // Temporary fix for https://github.com/flutter/flutter/issues/92165. The FlutterView is setting
+    // setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES_EXCLUDE_DESCENDANTS) which prevents this
+    // view from automatically being traversed for autofill.
+    @Override
+    protected void onAttachedToWindow() {
+      super.onAttachedToWindow();
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        final FlutterView flutterView = tryFindFlutterView();
+        if (flutterView != null) {
+          flutterView.setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES);
+        }
+      }
+    }
+
+    // Attempt to traverse the parents of this view until a FlutterView is found.
+    private FlutterView tryFindFlutterView() {
+      ViewParent currentView = this;
+
+      while (currentView.getParent() != null) {
+        currentView = currentView.getParent();
+        if (currentView instanceof FlutterView) {
+          return (FlutterView) currentView;
+        }
+      }
+
+      return null;
+    }
 
     @Override
     public void setWebViewClient(WebViewClient webViewClient) {
@@ -129,82 +150,16 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     public WebChromeClient getWebChromeClient() {
       return currentWebChromeClient;
     }
-  }
-
-  /**
-   * Implementation of {@link InputAwareWebView} that can be used as a Flutter {@link
-   * PlatformView}s.
-   */
-  @SuppressLint("ViewConstructor")
-  public static class InputAwareWebViewPlatformView extends InputAwareWebView
-      implements PlatformView {
-    private WebViewClient currentWebViewClient;
-    private WebChromeClientHostApiImpl.SecureWebChromeClient currentWebChromeClient;
 
     /**
-     * Creates a {@link InputAwareWebViewPlatformView}.
+     * Flutter API used to send messages back to Dart.
      *
-     * @param context an Activity Context to access application assets. This value cannot be null.
+     * <p>This is only visible for testing.
      */
-    public InputAwareWebViewPlatformView(
-        Context context,
-        BinaryMessenger binaryMessenger,
-        InstanceManager instanceManager,
-        View containerView) {
-      super(context, containerView);
-      currentWebViewClient = new WebViewClient();
-      currentWebChromeClient = new WebChromeClientHostApiImpl.SecureWebChromeClient();
-
-      setWebViewClient(currentWebViewClient);
-      setWebChromeClient(currentWebChromeClient);
-    }
-
-    @Override
-    public View getView() {
-      return this;
-    }
-
-    @Override
-    public void onFlutterViewAttached(@NonNull View flutterView) {
-      setContainerView(flutterView);
-    }
-
-    @Override
-    public void onFlutterViewDetached() {
-      setContainerView(null);
-    }
-
-    @Override
-    public void dispose() {
-      super.dispose();
-      destroy();
-    }
-
-    @Override
-    public void onInputConnectionLocked() {
-      lockInputConnection();
-    }
-
-    @Override
-    public void onInputConnectionUnlocked() {
-      unlockInputConnection();
-    }
-
-    @Override
-    public void setWebViewClient(WebViewClient webViewClient) {
-      super.setWebViewClient(webViewClient);
-      currentWebViewClient = webViewClient;
-      currentWebChromeClient.setWebViewClient(webViewClient);
-    }
-
-    @Override
-    public void setWebChromeClient(WebChromeClient client) {
-      super.setWebChromeClient(client);
-      if (!(client instanceof WebChromeClientHostApiImpl.SecureWebChromeClient)) {
-        throw new AssertionError("Client must be a SecureWebChromeClient.");
-      }
-      currentWebChromeClient = (WebChromeClientHostApiImpl.SecureWebChromeClient) client;
-      currentWebChromeClient.setWebViewClient(currentWebViewClient);
+    @SuppressWarnings("unused")
+    @VisibleForTesting
+    void setApi(WebViewFlutterApiImpl api) {
+      this.api = api;
     }
   }
 
@@ -215,19 +170,16 @@ public class WebViewHostApiImpl implements WebViewHostApi {
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param webViewProxy handles creating {@link WebView}s and calling its static methods
    * @param context an Activity Context to access application assets. This value cannot be null.
-   * @param containerView parent of the webView
    */
   public WebViewHostApiImpl(
       InstanceManager instanceManager,
       BinaryMessenger binaryMessenger,
       WebViewProxy webViewProxy,
-      Context context,
-      @Nullable View containerView) {
+      Context context) {
     this.instanceManager = instanceManager;
     this.binaryMessenger = binaryMessenger;
     this.webViewProxy = webViewProxy;
     this.context = context;
-    this.containerView = containerView;
   }
 
   /**
@@ -240,17 +192,13 @@ public class WebViewHostApiImpl implements WebViewHostApi {
   }
 
   @Override
-  public void create(Long instanceId, Boolean useHybridComposition) {
+  public void create(@NonNull Long instanceId) {
     DisplayListenerProxy displayListenerProxy = new DisplayListenerProxy();
     DisplayManager displayManager =
         (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
     displayListenerProxy.onPreWebViewInitialization(displayManager);
 
-    final WebView webView =
-        useHybridComposition
-            ? webViewProxy.createWebView(context, binaryMessenger, instanceManager)
-            : webViewProxy.createInputAwareWebView(
-                context, binaryMessenger, instanceManager, containerView);
+    final WebView webView = webViewProxy.createWebView(context, binaryMessenger, instanceManager);
 
     displayListenerProxy.onPostWebViewInitialization(displayManager);
     instanceManager.addDartCreatedInstance(webView, instanceId);

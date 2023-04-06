@@ -12,8 +12,8 @@ class PointerInterceptor extends StatelessWidget {
     required this.child,
     this.intercepting = true,
     this.debug = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The `Widget` that is being wrapped by this `PointerInterceptor`.
   final Widget child;

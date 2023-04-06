@@ -117,6 +117,7 @@ code changes across many packages:
 cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \
   --version=minimal \
+  --base-branch=upstream/main \
   --changelog="Fixes violations of new analysis option some_new_option."
 ```
 
@@ -124,9 +125,35 @@ The `minimal` option for `--version` will skip unchanged packages, and treat
 each changed package as either `bugfix` or `next` depending on the files that
 have changed in that package, so it is often the best choice for a bulk change.
 
-For cases where you know the change time, `minor` or `bugfix` will make the
+For cases where you know the change type, `minor` or `bugfix` will make the
 corresponding version bump, or `next` will update only `CHANGELOG.md` without
 changing the version.
+
+If you have a standard repository setup, `--base-branch=upstream/main` will
+usually give the behavior you want, finding all packages changed relative to
+the branch point from `upstream/main`. For more complex use cases where you want
+a different diff point, you can pass a different `--base-branch`, or use
+`--base-sha` to pick the exact diff point.
+
+### Update a dependency
+
+`update-dependency` will update a pub dependency to a new version.
+
+For instance, to updated to version 3.0.0 of `some_package` in every package
+that depends on it:
+
+```sh
+cd <repository root>
+dart run script/tool/bin/flutter_plugin_tools.dart update-dependency \
+  --pub-package=some_package \
+  --version=3.0.0 \
+```
+
+If a `--version` is not provided, the latest version from pub will be used.
+
+Currently this only updates the dependency itself in pubspec.yaml, but in the
+future this will also update any generated code for packages that use code
+generation (e.g., regenerating mocks when updating `mockito`).
 
 ### Publish a Release
 

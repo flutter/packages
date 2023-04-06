@@ -1,6 +1,16 @@
 ## 4.1.0
 
 * Adds support to track URL changes. See `NavigationDelegate(onUrlChange)`.
+* Updates minimum Flutter version to 3.3.
+
+## 4.0.7
+
+* Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on
+  Android.
+
+## 4.0.6
+
+* Updates iOS minimum version in README.
 
 ## 4.0.5
 

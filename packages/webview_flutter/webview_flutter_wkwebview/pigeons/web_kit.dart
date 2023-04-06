@@ -8,22 +8,13 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/common/web_kit.g.dart',
     dartTestOut: 'test/src/common/test_web_kit.g.dart',
-    dartOptions: DartOptions(copyrightHeader: <String>[
-      'Copyright 2013 The Flutter Authors. All rights reserved.',
-      'Use of this source code is governed by a BSD-style license that can be',
-      'found in the LICENSE file.',
-    ]),
     objcHeaderOut: 'ios/Classes/FWFGeneratedWebKitApis.h',
     objcSourceOut: 'ios/Classes/FWFGeneratedWebKitApis.m',
     objcOptions: ObjcOptions(
-      header: 'ios/Classes/FWFGeneratedWebKitApis.h',
+      headerIncludePath: 'ios/Classes/FWFGeneratedWebKitApis.h',
       prefix: 'FWF',
-      copyrightHeader: <String>[
-        'Copyright 2013 The Flutter Authors. All rights reserved.',
-        'Use of this source code is governed by a BSD-style license that can be',
-        'found in the LICENSE file.',
-      ],
     ),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
 

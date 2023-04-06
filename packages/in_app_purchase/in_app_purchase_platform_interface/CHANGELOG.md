@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 1.3.3
 
 * Updates links for the merge of flutter/plugins into flutter/packages.

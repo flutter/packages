@@ -14,7 +14,7 @@ import 'package:video_player/video_player.dart';
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {
   /// Default Constructor
-  const CameraExampleHome({Key? key}) : super(key: key);
+  const CameraExampleHome({super.key});
 
   @override
   State<CameraExampleHome> createState() {
@@ -1056,7 +1056,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 /// CameraApp is the Main Application.
 class CameraApp extends StatelessWidget {
   /// Default Constructor
-  const CameraApp({Key? key}) : super(key: key);
+  const CameraApp({super.key});
 
   @override
   Widget build(BuildContext context) {

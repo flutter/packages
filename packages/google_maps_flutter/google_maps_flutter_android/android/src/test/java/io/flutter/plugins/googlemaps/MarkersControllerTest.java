@@ -42,14 +42,14 @@ public class MarkersControllerTest {
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
     final LatLng latLng = new LatLng(1.1, 2.2);
-    final Map<String, String> markerOptions = new HashMap();
+    final Map<String, String> markerOptions = new HashMap<>();
     markerOptions.put("markerId", googleMarkerId);
 
     final List<Object> markers = Arrays.<Object>asList(markerOptions);
     controller.addMarkers(markers);
     controller.onMarkerDragStart(googleMarkerId, latLng);
 
-    final List<Double> points = new ArrayList();
+    final List<Double> points = new ArrayList<>();
     points.add(latLng.latitude);
     points.add(latLng.longitude);
 
@@ -75,14 +75,14 @@ public class MarkersControllerTest {
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
     final LatLng latLng = new LatLng(1.1, 2.2);
-    final Map<String, String> markerOptions = new HashMap();
+    final Map<String, String> markerOptions = new HashMap<>();
     markerOptions.put("markerId", googleMarkerId);
 
     final List<Object> markers = Arrays.<Object>asList(markerOptions);
     controller.addMarkers(markers);
     controller.onMarkerDragEnd(googleMarkerId, latLng);
 
-    final List<Double> points = new ArrayList();
+    final List<Double> points = new ArrayList<>();
     points.add(latLng.latitude);
     points.add(latLng.longitude);
 
@@ -108,14 +108,14 @@ public class MarkersControllerTest {
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
     final LatLng latLng = new LatLng(1.1, 2.2);
-    final Map<String, String> markerOptions = new HashMap();
+    final Map<String, String> markerOptions = new HashMap<>();
     markerOptions.put("markerId", googleMarkerId);
 
     final List<Object> markers = Arrays.<Object>asList(markerOptions);
     controller.addMarkers(markers);
     controller.onMarkerDrag(googleMarkerId, latLng);
 
-    final List<Double> points = new ArrayList();
+    final List<Double> points = new ArrayList<>();
     points.add(latLng.latitude);
     points.add(latLng.longitude);
 

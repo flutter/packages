@@ -16,7 +16,7 @@ class PolylineId extends MapsObjectId<Polyline> {
   /// Creates an immutable object representing a [PolylineId] among [GoogleMap] polylines.
   ///
   /// An [AssertionError] will be thrown if [value] is null.
-  const PolylineId(String value) : super(value);
+  const PolylineId(super.value);
 }
 
 /// Draws a line through geographical locations on the map.

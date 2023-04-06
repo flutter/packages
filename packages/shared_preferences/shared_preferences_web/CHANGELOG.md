@@ -1,3 +1,12 @@
+## 2.1.0
+
+* Adds `getAllWithPrefix` and `clearWithPrefix` methods.
+
+## 2.0.6
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.0.5
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
