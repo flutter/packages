@@ -93,7 +93,7 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
         'setOnPageFinished is not implemented on the current platform.');
   }
 
-  /// Invoked when an error has occurred during loading.
+  /// Invoked when an HTTP error has occurred during loading.
   ///
   /// See [PlatformWebViewController.setPlatformNavigationDelegate].
   Future<void> setOnHttpError(
