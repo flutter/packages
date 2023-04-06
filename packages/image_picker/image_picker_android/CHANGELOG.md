@@ -1,9 +1,6 @@
 ## 0.8.6+7
 
 * Non-bitmap images return path instead of null.
-
-## NEXT
-
 * Updates minimum Flutter version to 3.3.
 
 ## 0.8.6+6
