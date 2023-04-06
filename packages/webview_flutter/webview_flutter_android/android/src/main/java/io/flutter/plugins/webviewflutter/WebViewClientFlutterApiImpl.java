@@ -209,10 +209,10 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       String url,
       boolean isReload,
       Reply<Void> callback) {
-    final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);
-    if (webViewIdentifier == null) {
-      throw new IllegalStateException("Could not find identifier for WebView.");
-    }
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     doUpdateVisitedHistory(
         getIdentifierForClient(webViewClient), webViewIdentifier, url, isReload, callback);
   }
