@@ -20,7 +20,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  webview_flutter_platform_interface: ^2.0.0
+  webview_flutter_platform_interface: ^2.1.0
 
 dev_dependencies:
   build_runner: ^2.1.4
@@ -30,9 +30,3 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.0
   pigeon: ^9.0.4
-
-
-# FOR TESTING ONLY. DO NOT MERGE.
-dependency_overrides:
-  webview_flutter_platform_interface:
-    path: ../../webview_flutter/webview_flutter_platform_interface
