@@ -16,6 +16,8 @@ extension DomConsoleExtension on DomConsole {
       js_util.callMethod(this, 'debug', <Object?>[message, ...?more]);
   void info(String message, [List<Object?>? more]) =>
       js_util.callMethod(this, 'info', <Object?>[message, ...?more]);
+  void warn(String message, [List<Object?>? more]) =>
+      js_util.callMethod(this, 'warn', <Object?>[message, ...?more]);
 }
 
 @JS()
