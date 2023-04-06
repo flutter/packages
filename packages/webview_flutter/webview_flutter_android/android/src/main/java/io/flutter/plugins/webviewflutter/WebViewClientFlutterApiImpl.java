@@ -202,6 +202,21 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
     urlLoading(getIdentifierForClient(webViewClient), webViewIdentifier, urlArg, callback);
   }
 
+  /** Passes arguments from {@link WebViewClient#doUpdateVisitedHistory} to Dart. */
+  public void doUpdateVisitedHistory(
+      WebViewClient webViewClient,
+      WebView webView,
+      String url,
+      boolean isReload,
+      Reply<Void> callback) {
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
+    doUpdateVisitedHistory(
+        getIdentifierForClient(webViewClient), webViewIdentifier, url, isReload, callback);
+  }
+
   private long getIdentifierForClient(WebViewClient webViewClient) {
     final Long identifier = instanceManager.getIdentifierForStrongReference(webViewClient);
     if (identifier == null) {

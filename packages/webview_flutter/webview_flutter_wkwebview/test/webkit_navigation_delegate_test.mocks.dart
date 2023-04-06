@@ -4,7 +4,6 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
-import 'dart:ui' as _i6;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart'
@@ -256,7 +255,7 @@ class MockWKWebView extends _i1.Mock implements _i2.WKWebView {
         ),
       ) as _i2.WKWebView);
   @override
-  _i4.Future<void> setBackgroundColor(_i6.Color? color) => (super.noSuchMethod(
+  _i4.Future<void> setBackgroundColor(dynamic color) => (super.noSuchMethod(
         Invocation.method(
           #setBackgroundColor,
           [color],

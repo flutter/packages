@@ -1,5 +1,6 @@
-## NEXT
+## 3.3.0
 
+* Adds support for `PlatformNavigationDelegate.onUrlChange`.
 * Updates minimum Flutter version to 3.3.
 
 ## 3.2.3
