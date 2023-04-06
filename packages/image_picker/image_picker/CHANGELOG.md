@@ -1,4 +1,4 @@
-## NEXT
+## 0.8.7+2
 
 * Returns the path of unsupported image types.
 * Example file showcases how to display an error placeholder whenever an unsupported image type is selected.
