@@ -30,7 +30,7 @@ quickly and easily sign users into your app suing their Google accounts.
 * **Since 0.12** The plugin provides an `idToken` (JWT-encoded info) when the
   user successfully completes an authentication flow:
   * In the plugin: `signInSilently` and through the web-only `renderButton` widget.
-* The plugin `signIn` method uses the Oauth "Implicit Flow" to Authorize the requested `scopes`.
+* The plugin `signIn` method uses the OAuth "Implicit Flow" to Authorize the requested `scopes`.
   * This method only provides an `accessToken`, and not an `idToken`, so if your
     app needs an `idToken`, this method **should be avoided on the web**.
 * The GIS SDK no longer handles sign-in state and user sessions, it only provides
@@ -58,8 +58,8 @@ user may not have permissions to access the `scopes` it requires to function.
 The Google Sign In plugin has a new `canAccessScopes` method that can be used to
 check if a user is Authorized or not.
 
-It is also possible that Authorizations expire while users are using an App
-(after 3600 seconds), so Apps should monitor response failures from the APIs, and
+It is also possible that Authorizations expire while users are using an app
+(after 3600 seconds), so apps should monitor response failures from the APIs, and
 prompt users (interactively) to grant permissions again.
 
 Check the "Integration considerations > [UX separation for authentication and authorization](https://developers.google.com/identity/gsi/web/guides/integrate#ux_separation_for_authentication_and_authorization)
@@ -70,13 +70,13 @@ for a simple implementation of this (look at the `isAuthorized` variable).)_
 
 #### Is this separation *always required*?
 
-Only if the scopes required by an App are different from the
+Only if the scopes required by an app are different from the
 [OpenID Connect scopes](https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect).
 
-If an App only needs an `idToken`, or the OpenID Connect scopes, the Authentication
+If an app only needs an `idToken`, or the OpenID Connect scopes, the Authentication
 bits of the plugin should be enough for your app (`signInSilently` and `renderButton`).
 
-#### What happened to the `signIn` method on the web?
+### What happened to the `signIn` method on the web?
 
 Because the GIS SDK for web no longer provides users with the ability to create
 their own Sign-In buttons, or an API to start the sign in flow, the current
@@ -84,9 +84,10 @@ implementation of `signIn` (that does authorization and authentication) is no
 longer feasible on the web.
 
 The web plugin attempts to simulate the old `signIn` behavior by using the 
-[Oauth Implicit pop-up flow](https://developers.google.com/identity/oauth2/web/guides/use-token-model), which authenticates and authorizes users.
+[OAuth Implicit pop-up flow](https://developers.google.com/identity/oauth2/web/guides/use-token-model),
+which authenticates and authorizes users.
 
-The drawback of this approach is that the Oauth flow **only returns an `accessToken`**,
+The drawback of this approach is that the OAuth flow **only returns an `accessToken`**,
 and a synthetic version of the User Data, that does **not include an `idToken`**.
 
 The solution to this is to **migrate your custom "Sign In" buttons in the web to
@@ -109,7 +110,7 @@ This is **not recommended**. Ideally, your web application should use a mix of
 users, and then `canAccessScopes` and `requestScopes` to authorize the `scopes`
 that are needed.
 
-#### Why is the `idToken` `null` after `signIn`
+#### Why is the `idToken` missing after `signIn`?
 
 The `idToken` is cryptographically signed by Google Identity Services, and
 this plugin can't spoof that signature.
