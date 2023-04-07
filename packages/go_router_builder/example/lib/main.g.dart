@@ -33,6 +33,10 @@ RouteBase get $homeRoute => GoRouteData.$route(
             ),
           ],
         ),
+        GoRouteData.$route(
+          path: 'family-count/:count',
+          factory: $FamilyCountRouteExtension._fromState,
+        ),
       ],
     );
 
@@ -106,6 +110,23 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+}
+
+extension $FamilyCountRouteExtension on FamilyCountRoute {
+  static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
+        int.parse(state.params['count']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/family-count/${Uri.encodeComponent(count.toString())}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 const _$PersonDetailsEnumMap = {
