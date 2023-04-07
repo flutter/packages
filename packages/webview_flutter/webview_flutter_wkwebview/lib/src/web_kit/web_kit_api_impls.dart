@@ -10,7 +10,8 @@ import '../common/web_kit.g.dart';
 import '../foundation/foundation.dart';
 import 'web_kit.dart';
 
-export '../common/web_kit.g.dart' show WKNavigationType;
+export '../common/web_kit.g.dart'
+    show WKNavigationType, WKPermissionDecision, WKMediaCaptureType;
 
 Iterable<WKWebsiteDataTypeEnumData> _toWKWebsiteDataTypeEnumData(
     Iterable<WKWebsiteDataType> types) {
@@ -227,6 +228,12 @@ extension _NSUrlRequestConverter on NSUrlRequest {
       httpBody: httpBody,
       allHttpHeaderFields: allHttpHeaderFields,
     );
+  }
+}
+
+extension _WKSecurityOriginConverter on WKSecurityOriginData {
+  WKSecurityOrigin toWKSecurityOrigin() {
+    return WKSecurityOrigin(host: host, port: port, protocol: protocol);
   }
 }
 
@@ -718,6 +725,34 @@ class WKUIDelegateFlutterApiImpl extends WKUIDelegateFlutterApi {
           as WKWebViewConfiguration,
       navigationAction.toNavigationAction(),
     );
+  }
+
+  @override
+  Future<WKPermissionDecisionData> requestMediaCapturePermission(
+    int identifier,
+    int webViewIdentifier,
+    WKSecurityOriginData origin,
+    WKFrameInfoData frame,
+    WKMediaCaptureTypeData type,
+  ) async {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+
+    late final WKPermissionDecision decision;
+    if (instance.requestMediaCapturePermission != null) {
+      decision = await instance.requestMediaCapturePermission!(
+        instance,
+        instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
+            as WKWebView,
+        origin.toWKSecurityOrigin(),
+        frame.toWKFrameInfo(),
+        type.value,
+      );
+    } else {
+      decision = WKPermissionDecision.deny;
+    }
+
+    return WKPermissionDecisionData(value: decision);
   }
 }
 
