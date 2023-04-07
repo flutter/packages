@@ -18,6 +18,7 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         PlatformWebViewCookieManagerCreationParams,
         PlatformWebViewWidgetCreationParams,
         ProgressCallback,
+        WebViewPermissionResourceType,
         WebResourceError,
         WebResourceErrorCallback,
         WebResourceErrorType,

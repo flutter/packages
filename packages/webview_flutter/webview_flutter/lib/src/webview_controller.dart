@@ -326,7 +326,10 @@ class WebViewController {
   ) {
     return platform.setOnPlatformPermissionRequest(
       (PlatformWebViewPermissionRequest request) {
-        onPermissionRequest(WebViewPermissionRequest._(request));
+        onPermissionRequest(WebViewPermissionRequest._(
+          request,
+          types: request.types,
+        ));
       },
     );
   }
@@ -336,8 +339,12 @@ class WebViewController {
 ///
 /// A response MUST be provided by calling [grant], [deny], or a method of
 /// [platform].
+@immutable
 class WebViewPermissionRequest {
-  WebViewPermissionRequest._(this.platform);
+  const WebViewPermissionRequest._(this.platform, {required this.types});
+
+  /// All resources access has been requested for.
+  final List<WebViewPermissionResourceType> types;
 
   /// Implementation of [PlatformWebViewPermissionRequest] for the current
   /// platform.
