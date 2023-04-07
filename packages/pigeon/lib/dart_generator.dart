@@ -81,7 +81,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
       '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
@@ -607,7 +607,7 @@ if (replyList == null) {
     if (opt.copyrightHeader != null) {
       addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
       '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import',
