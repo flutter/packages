@@ -707,7 +707,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   /// ...
   /// @interface FooHostApiCodecReaderWriter : FlutterStandardReaderWriter
   /// ...
-  /// NSObject<FlutterMessageCodec> *FooHostApiCodecGetCodec() {...}
+  /// NSObject<FlutterMessageCodec> *FooHostApiCodecGetCodec(void) {...}
   void _writeCodec(
       Indent indent, String name, ObjcOptions options, Api api, Root root) {
     assert(getCodecClasses(api, root).isNotEmpty);
@@ -779,7 +779,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     final String readerWriterName = '${name}ReaderWriter';
 
     indent.write(
-        'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}() ');
+        'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void) ');
     indent.addScoped('{', '}', () {
       indent
           .writeln('static FlutterStandardMessageCodec *sSharedObject = nil;');
