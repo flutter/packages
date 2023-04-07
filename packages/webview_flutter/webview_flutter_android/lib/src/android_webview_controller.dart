@@ -103,7 +103,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     }),
     onGeolocationPermissionsShowPrompt: withWeakReferenceTo(this,
         (WeakReference<AndroidWebViewController> weakReference) {
-          return (String origin,
+      return (String origin,
           android_webview.GeolocationPermissionsCallback callback) {
         if (weakReference.target?._onGeolocationPermissionsShowPrompt != null) {
           weakReference.target!._onGeolocationPermissionsShowPrompt!(

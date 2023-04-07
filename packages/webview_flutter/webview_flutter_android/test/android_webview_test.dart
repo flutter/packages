@@ -864,10 +864,9 @@ void main() {
 
       test('onGeolocationPermissionsShowPrompt', () async {
         const String origin = 'https://www.xxx.com';
-        final GeolocationPermissionsCallback callback = GeolocationPermissionsCallback
-            .detached();
-        final int paramsId =
-            instanceManager.addDartCreatedInstance(callback);
+        final GeolocationPermissionsCallback callback =
+            GeolocationPermissionsCallback.detached();
+        final int paramsId = instanceManager.addDartCreatedInstance(callback);
         late final GeolocationPermissionsCallback outerCallback;
         when(mockWebChromeClient.onGeolocationPermissionsShowPrompt).thenReturn(
           (String origin, GeolocationPermissionsCallback callback) {
@@ -875,9 +874,9 @@ void main() {
           },
         );
         flutterApi.onGeolocationPermissionsShowPrompt(
-            mockWebChromeClientInstanceId,
-            paramsId,
-            origin,
+          mockWebChromeClientInstanceId,
+          paramsId,
+          origin,
         );
         await expectLater(
           outerCallback,
