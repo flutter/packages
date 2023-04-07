@@ -196,7 +196,7 @@ class ExtraValueRoute extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $requiredExtraValueRoute => GoRouteData.$route(
+RouteBase get $requiredExtraValueRoute => GoRouteData.$route(
       path: '/default-value-route',
       factory: $RequiredExtraValueRouteExtension._fromState,
     );
