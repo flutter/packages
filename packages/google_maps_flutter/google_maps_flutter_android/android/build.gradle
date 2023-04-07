@@ -29,7 +29,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        baseline file("lint-baseline.xml")
     }
 
     dependencies {
