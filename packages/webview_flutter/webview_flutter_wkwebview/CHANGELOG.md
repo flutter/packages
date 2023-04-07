@@ -1,5 +1,6 @@
-## NEXT
+## 3.2.4
 
+* Updates pigeon to fix warnings with clang 15.
 * Updates minimum Flutter version to 3.3.
 * Fixes common typos in tests and documentation.
 
