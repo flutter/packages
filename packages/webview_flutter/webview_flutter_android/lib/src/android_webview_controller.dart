@@ -32,8 +32,7 @@ class AndroidWebViewControllerCreationParams
   /// Creates a new [AndroidWebViewControllerCreationParams] instance.
   AndroidWebViewControllerCreationParams({
     @visibleForTesting this.androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting
-        android_webview.WebStorage? androidWebStorage,
+    @visibleForTesting android_webview.WebStorage? androidWebStorage,
   })  : androidWebStorage =
             androidWebStorage ?? android_webview.WebStorage.instance,
         super();
@@ -45,7 +44,8 @@ class AndroidWebViewControllerCreationParams
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
         AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting android_webview.WebStorage? androidWebStorage,
+    @visibleForTesting
+        android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
