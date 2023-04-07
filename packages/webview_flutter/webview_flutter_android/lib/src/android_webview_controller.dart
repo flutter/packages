@@ -138,7 +138,7 @@ class AndroidWebViewController extends PlatformWebViewController {
           final void Function(PlatformWebViewPermissionRequest)? callback =
               weakReference.target?._onPermissionRequestCallback;
           if (callback == null) {
-            await request.deny();
+            return request.deny();
           } else {
             final List<WebViewPermissionResourceType> types = request.resources
                 .map<WebViewPermissionResourceType?>((String type) {
@@ -159,6 +159,10 @@ class AndroidWebViewController extends PlatformWebViewController {
                 })
                 .whereType<WebViewPermissionResourceType>()
                 .toList();
+
+            if (types.isEmpty) {
+              return request.deny();
+            }
 
             callback(AndroidWebViewPermissionRequest._(
               types: types,
@@ -437,7 +441,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   }
 }
 
-/// Android implementation of [WebViewPermissionRequest].
+/// Android implementation of [PlatformWebViewPermissionRequest].
 class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   const AndroidWebViewPermissionRequest._({
     required super.types,
