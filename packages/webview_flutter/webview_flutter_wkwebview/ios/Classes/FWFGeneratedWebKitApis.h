@@ -402,7 +402,7 @@ extern void FWFWKWebViewConfigurationHostApiSetup(
 /// The codec used by FWFWKWebViewConfigurationFlutterApi.
 NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationFlutterApiGetCodec(void);
 
-/// Handles callbacks from an WKWebViewConfiguration instance.
+/// Handles callbacks from a WKWebViewConfiguration instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
 @interface FWFWKWebViewConfigurationFlutterApi : NSObject
@@ -479,7 +479,7 @@ extern void FWFWKScriptMessageHandlerHostApiSetup(
 /// The codec used by FWFWKScriptMessageHandlerFlutterApi.
 NSObject<FlutterMessageCodec> *FWFWKScriptMessageHandlerFlutterApiGetCodec(void);
 
-/// Handles callbacks from an WKScriptMessageHandler instance.
+/// Handles callbacks from a WKScriptMessageHandler instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
 @interface FWFWKScriptMessageHandlerFlutterApi : NSObject
@@ -507,7 +507,7 @@ extern void FWFWKNavigationDelegateHostApiSetup(
 /// The codec used by FWFWKNavigationDelegateFlutterApi.
 NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void);
 
-/// Handles callbacks from an WKNavigationDelegate instance.
+/// Handles callbacks from a WKNavigationDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
 @interface FWFWKNavigationDelegateFlutterApi : NSObject
@@ -670,7 +670,7 @@ extern void FWFWKUIDelegateHostApiSetup(id<FlutterBinaryMessenger> binaryMesseng
 /// The codec used by FWFWKUIDelegateFlutterApi.
 NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void);
 
-/// Handles callbacks from an WKUIDelegate instance.
+/// Handles callbacks from a WKUIDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
 @interface FWFWKUIDelegateFlutterApi : NSObject
