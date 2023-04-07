@@ -136,11 +136,6 @@ Page resource error:
       ..loadRequest(LoadRequestParams(
         uri: Uri.parse('https://flutter.dev'),
       ));
-    if (_controller is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (_controller as AndroidWebViewController)
-          .setOnGeolocationPermissionsHidePrompt(() {});
-    }
   }
 
   @override
