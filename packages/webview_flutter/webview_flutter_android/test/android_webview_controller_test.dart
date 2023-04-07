@@ -57,17 +57,14 @@ void main() {
       Future<List<String>> Function(
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
-      )?
-          onShowFileChooser,
+      )? onShowFileChooser,
       void Function(
         String origin,
         android_webview.GeolocationPermissionsCallback callback,
-      )?
-          onGeolocationPermissionsShowPrompt,
+      )? onGeolocationPermissionsShowPrompt,
       void Function(android_webview.WebChromeClient instance)?
           onGeolocationPermissionsHidePrompt,
-    })?
-        createWebChromeClient,
+    })? createWebChromeClient,
     android_webview.WebView? mockWebView,
     android_webview.WebViewClient? mockWebViewClient,
     android_webview.WebStorage? mockWebStorage,
@@ -87,14 +84,12 @@ void main() {
                           Future<List<String>> Function(
                             android_webview.WebView webView,
                             android_webview.FileChooserParams params,
-                          )?
-                              onShowFileChooser,
+                          )? onShowFileChooser,
                           void Function(
                             String origin,
                             android_webview.GeolocationPermissionsCallback
                                 callback,
-                          )?
-                              onGeolocationPermissionsShowPrompt,
+                          )? onGeolocationPermissionsShowPrompt,
                           void Function(
                                   android_webview.WebChromeClient instance)?
                               onGeolocationPermissionsHidePrompt}) =>
@@ -111,19 +106,16 @@ void main() {
                   int errorCode,
                   String description,
                   String failingUrl,
-                )?
-                        onReceivedError,
+                )? onReceivedError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
                   android_webview.WebResourceError error,
-                )?
-                    onReceivedRequestError,
+                )? onReceivedRequestError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
-                )?
-                    requestLoading,
+                )? requestLoading,
                 void Function(android_webview.WebView webView, String url)?
                     urlLoading,
               }) =>
@@ -584,8 +576,7 @@ void main() {
           Future<List<String>> Function(
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
-          )?
-              onShowFileChooser,
+          )? onShowFileChooser,
           void Function(String origin,
                   android_webview.GeolocationPermissionsCallback callback)?
               onGeolocationPermissionsShowPrompt,
@@ -639,8 +630,7 @@ void main() {
           Future<List<String>> Function(
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
-          )?
-              onShowFileChooser,
+          )? onShowFileChooser,
           void Function(String origin,
                   android_webview.GeolocationPermissionsCallback callback)?
               onGeolocationPermissionsShowPrompt,
