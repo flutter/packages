@@ -279,7 +279,7 @@ class NSObject with Copyable {
   /// Otherwise, use [NSObject.dispose] to release the associated Objective-C
   /// object manually.
   ///
-  /// See [withWeakRefenceTo].
+  /// See [withWeakReferenceTo].
   /// {@endtemplate}
   final void Function(
     String keyPath,
