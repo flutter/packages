@@ -158,7 +158,7 @@ Future<int> runPigeon({
   String? objcSourceOut,
   bool suppressVersion = false,
 }) async {
-  // Temporarily suppress the version output via the global flag if requseted.
+  // Temporarily suppress the version output via the global flag if requested.
   // This is done because having the version in all the generated test output
   // means every version bump updates every test file, which is problematic in
   // review. For files where CI validates that this generation is up to date,
