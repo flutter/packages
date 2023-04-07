@@ -173,27 +173,29 @@ class HomeScreen extends StatelessWidget {
         title: const Text(App.title),
         centerTitle: true,
         actions: <Widget>[
-          PopupMenuButton(
+          PopupMenuButton<String>(
             itemBuilder: (BuildContext context) {
               return <PopupMenuItem<String>>[
                 PopupMenuItem<String>(
                   value: '1',
                   child: const Text('Push w/o return value'),
-                  onTap: () => PersonRoute('f1', 1).push(context),
+                  onTap: () => const PersonRoute('f1', 1).push(context),
                 ),
                 PopupMenuItem<String>(
                   value: '2',
                   child: const Text('Push w/ return value'),
                   onTap: () async {
-                    final result =
-                        await FamilyCountRoute(familyData.length).push(context);
-
-                    if (result == null) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Age was: $result'),
-                      ),
-                    );
+                    FamilyCountRoute(familyData.length)
+                        .push<int>(context)
+                        .then((int? value) {
+                      if (value != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Age was: $value'),
+                          ),
+                        );
+                      }
+                    });
                   },
                 ),
                 PopupMenuItem<String>(
@@ -323,7 +325,7 @@ class FamilyCountScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+            children: <Widget>[
               Center(
                 child: Text(
                   'There are $count families',

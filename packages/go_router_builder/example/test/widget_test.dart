@@ -52,8 +52,8 @@ void main() {
   });
 }
 
-Future _openPopupMenu(WidgetTester tester) async {
-  final moreButton = find.byIcon(Icons.more_vert);
+Future<void> _openPopupMenu(WidgetTester tester) async {
+  final Finder moreButton = find.byIcon(Icons.more_vert);
   expect(moreButton, findsOneWidget);
 
   await tester.tap(moreButton);
