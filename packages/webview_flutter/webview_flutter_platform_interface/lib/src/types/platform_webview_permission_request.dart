@@ -5,12 +5,27 @@
 import 'package:flutter/cupertino.dart';
 
 /// Types of resources that can require permissions.
-enum WebViewPermissionResourceType {
+@immutable
+class WebViewPermissionResourceType {
+  /// Constructs a [WebViewPermissionResourceType].
+  ///
+  /// This should only be used by this class and subclasses in platform
+  /// implementations.
+  @protected
+  const WebViewPermissionResourceType(this.name);
+
+  /// Unique name of resource type.
+  ///
+  /// For platform implementations, this should match the name of variable.
+  final String name;
+
   /// A media device that can capture video.
-  camera,
+  static const WebViewPermissionResourceType camera =
+      WebViewPermissionResourceType('camera');
 
   /// A media device that can capture audio.
-  microphone,
+  static const WebViewPermissionResourceType microphone =
+      WebViewPermissionResourceType('microphone');
 }
 
 /// Permissions request when web content requests access to protected resources.
@@ -49,7 +64,7 @@ abstract class PlatformWebViewPermissionRequest {
   /// Creates a [PlatformWebViewPermissionRequest].
   const PlatformWebViewPermissionRequest({required this.types});
 
-  /// All resources requested access.
+  /// All resources access has been requested for.
   final List<WebViewPermissionResourceType> types;
 
   /// Grant permission for the requested resource(s).

@@ -1058,6 +1058,12 @@ class PermissionRequest extends JavaObject {
   /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_VIDEO_CAPTURE.
   static const String videoCapture = 'android.webkit.resource.VIDEO_CAPTURE';
 
+  /// Resource belongs to protected media identifier.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_VIDEO_CAPTURE.
+  static const String protectedMediaId =
+      'android.webkit.resource.PROTECTED_MEDIA_ID';
+
   final PermissionRequestHostApiImpl _permissionRequestApi;
 
   /// Resources the web page is trying to access.

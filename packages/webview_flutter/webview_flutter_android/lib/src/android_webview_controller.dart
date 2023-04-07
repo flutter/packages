@@ -64,6 +64,21 @@ class AndroidWebViewControllerCreationParams
   final android_webview.WebStorage androidWebStorage;
 }
 
+/// Android-specific resources that can require permissions.
+class AndroidWebViewPermissionResourceType
+    extends WebViewPermissionResourceType {
+  const AndroidWebViewPermissionResourceType._(super.name);
+
+  /// A resource that will allow sysex messages to be sent to or received from
+  /// MIDI devices.
+  static const AndroidWebViewPermissionResourceType midiSysex =
+      AndroidWebViewPermissionResourceType._('midiSysex');
+
+  /// A resource that belongs to a protected media identifier.
+  static const AndroidWebViewPermissionResourceType protectedMediaId =
+      AndroidWebViewPermissionResourceType._('protectedMediaId');
+}
+
 /// Implementation of the [PlatformWebViewController] with the Android WebView API.
 class AndroidWebViewController extends PlatformWebViewController {
   /// Creates a new [AndroidWebViewCookieManager].
@@ -120,35 +135,35 @@ class AndroidWebViewController extends PlatformWebViewController {
       this,
       (WeakReference<AndroidWebViewController> weakReference) {
         return (_, android_webview.PermissionRequest request) async {
-          final List<String> interfaceSupportedTypes =
-              request.resources.where((String type) {
-            return type == android_webview.PermissionRequest.audioCapture ||
-                type == android_webview.PermissionRequest.videoCapture;
-          }).toList();
-
-          if (interfaceSupportedTypes.isEmpty ||
-              weakReference.target?._onPermissionRequestCallback == null) {
-            request.deny();
+          final void Function(PlatformWebViewPermissionRequest)? callback =
+              weakReference.target?._onPermissionRequestCallback;
+          if (callback == null) {
+            await request.deny();
           } else {
-            final AndroidWebViewPermissionRequest permissionRequest =
-                AndroidWebViewPermissionRequest._(
-              types: interfaceSupportedTypes
-                  .map<WebViewPermissionResourceType>((String type) {
-                switch (type) {
-                  case android_webview.PermissionRequest.audioCapture:
-                    return WebViewPermissionResourceType.microphone;
-                  case android_webview.PermissionRequest.videoCapture:
-                    return WebViewPermissionResourceType.camera;
-                  default:
-                    throw UnsupportedError('Type `$type` is unsupported.');
-                }
-              }).toList(),
-              request: request,
-            );
+            final List<WebViewPermissionResourceType> types = request.resources
+                .map<WebViewPermissionResourceType?>((String type) {
+                  switch (type) {
+                    case android_webview.PermissionRequest.videoCapture:
+                      return WebViewPermissionResourceType.camera;
+                    case android_webview.PermissionRequest.audioCapture:
+                      return WebViewPermissionResourceType.microphone;
+                    case android_webview.PermissionRequest.midiSysex:
+                      return AndroidWebViewPermissionResourceType.midiSysex;
+                    case android_webview.PermissionRequest.protectedMediaId:
+                      return AndroidWebViewPermissionResourceType
+                          .protectedMediaId;
+                  }
 
-            weakReference.target!._onPermissionRequestCallback!(
-              permissionRequest,
-            );
+                  // Type not supported.
+                  return null;
+                })
+                .whereType<WebViewPermissionResourceType>()
+                .toList();
+
+            callback(AndroidWebViewPermissionRequest._(
+              types: types,
+              request: request,
+            ));
           }
         };
       },
@@ -433,10 +448,24 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 
   @override
   Future<void> grant(WebViewPermissionGrantParams params) {
-    return _request.grant(_request.resources
-        .where((String type) =>
-            type == android_webview.PermissionRequest.videoCapture ||
-            type == android_webview.PermissionRequest.audioCapture)
+    return _request.grant(types
+        .map<String?>((WebViewPermissionResourceType type) {
+          switch (type) {
+            case WebViewPermissionResourceType.camera:
+              return android_webview.PermissionRequest.videoCapture;
+            case WebViewPermissionResourceType.microphone:
+              return android_webview.PermissionRequest.audioCapture;
+            case AndroidWebViewPermissionResourceType.midiSysex:
+              return android_webview.PermissionRequest.midiSysex;
+            case AndroidWebViewPermissionResourceType.protectedMediaId:
+              return android_webview.PermissionRequest.protectedMediaId;
+          }
+
+          throw UnsupportedError(
+            'Resource of type `${type.name}` is not supported.',
+          );
+        })
+        .whereType<String>()
         .toList());
   }
 
