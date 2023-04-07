@@ -133,9 +133,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     final WeakReference<WebKitWebViewController> weakThis =
         WeakReference<WebKitWebViewController>(this);
-    _uiDelegate = (this.params as WebKitNavigationDelegateCreationParams)
-        .webKitProxy
-        .createUIDelegate(
+    _uiDelegate = _webKitParams.webKitProxy.createUIDelegate(
       onCreateWebView: (
         WKWebView webView,
         WKWebViewConfiguration configuration,
