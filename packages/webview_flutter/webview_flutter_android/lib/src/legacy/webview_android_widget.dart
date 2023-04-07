@@ -26,7 +26,8 @@ class WebViewAndroidWidget extends StatefulWidget {
         this.webViewProxy = const WebViewProxy(),
     @visibleForTesting
         this.flutterAssetManager = const android_webview.FlutterAssetManager(),
-    @visibleForTesting this.webStorage,
+    @visibleForTesting
+        this.webStorage,
   });
 
   /// Initial parameters used to setup the WebView.

@@ -735,8 +735,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebView,
       int,
-    )?
-        onProgressChanged,
+    )? onProgressChanged,
     _i9.Future<List<String>> Function(
       _i2.WebView,
       _i2.FileChooserParams,
@@ -753,13 +752,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             int,
-          )?
-              onProgressChanged,
+          )? onProgressChanged,
           _i9.Future<List<String>> Function(
             _i2.WebView,
             _i2.FileChooserParams,
-          )?
-              onShowFileChooser,
+          )? onShowFileChooser,
         }) =>
             _FakeWebChromeClient_0(
           this,
@@ -775,13 +772,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             int,
-          )?
-              onProgressChanged,
+          )? onProgressChanged,
           _i9.Future<List<String>> Function(
             _i2.WebView,
             _i2.FileChooserParams,
-          )?
-              onShowFileChooser,
+          )? onShowFileChooser,
         }) =>
             _FakeWebChromeClient_0(
           this,
@@ -807,8 +802,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageFinished,
+    )? onPageFinished,
     void Function(
       _i2.WebView,
       String,
@@ -976,8 +970,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
         String,
         String,
         int,
-      )
-          onDownloadStart}) get createDownloadListener => (super.noSuchMethod(
+      ) onDownloadStart}) get createDownloadListener => (super.noSuchMethod(
         Invocation.getter(#createDownloadListener),
         returnValue: (
                 {required void Function(
@@ -1083,8 +1076,8 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
       (super.noSuchMethod(
         Invocation.getter(#gestureRecognizers),
         returnValue: <_i11.Factory<_i12.OneSequenceGestureRecognizer>>{},
-        returnValueForMissingStub: <
-            _i11.Factory<_i12.OneSequenceGestureRecognizer>>{},
+        returnValueForMissingStub: <_i11
+            .Factory<_i12.OneSequenceGestureRecognizer>>{},
       ) as Set<_i11.Factory<_i12.OneSequenceGestureRecognizer>>);
 }
 
