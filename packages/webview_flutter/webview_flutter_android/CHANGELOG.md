@@ -1,3 +1,12 @@
+## NEXT
+
+* Bumps androidx.webkit:webkit from 1.6.0 to 1.6.1.
+* Fixes common typos in tests and documentation.
+
+## 3.4.5
+
+* Removes unused internal `WebView` field and Java class.
+
 ## 3.4.4
 
 * Fixes a bug where the native `WebView` wouldn't be traversed for autofill automatically.

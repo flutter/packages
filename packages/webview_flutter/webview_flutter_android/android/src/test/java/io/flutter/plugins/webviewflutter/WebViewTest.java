@@ -59,8 +59,8 @@ public class WebViewTest {
         .thenReturn(mockWebView);
     testHostApiImpl =
         new WebViewHostApiImpl(
-            testInstanceManager, mockBinaryMessenger, mockWebViewProxy, mockContext, null);
-    testHostApiImpl.create(0L, true);
+            testInstanceManager, mockBinaryMessenger, mockWebViewProxy, mockContext);
+    testHostApiImpl.create(0L);
   }
 
   @After

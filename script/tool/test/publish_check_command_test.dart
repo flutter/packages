@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
@@ -117,8 +116,9 @@ void main() {
     test('fail on negative test', () async {
       createFakePlugin('plugin_tools_test_package_a', packagesDir);
 
-      processRunner.mockProcessesForExecutable['flutter'] = <io.Process>[
-        MockProcess(exitCode: 1, stdout: 'Some error from pub')
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
+            <String>['pub', 'publish'])
       ];
 
       Error? commandError;
@@ -204,8 +204,8 @@ void main() {
           stdout: 'Package has 1 warning.\n'
               'Packages with an SDK constraint on a pre-release of the Dart '
               'SDK should themselves be published as a pre-release version.');
-      processRunner.mockProcessesForExecutable['flutter'] = <io.Process>[
-        process,
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(process, <String>['pub', 'publish'])
       ];
 
       expect(
@@ -222,8 +222,8 @@ void main() {
           stdout: 'Package has 1 warning.\n'
               'Packages with an SDK constraint on a pre-release of the Dart '
               'SDK should themselves be published as a pre-release version.');
-      processRunner.mockProcessesForExecutable['flutter'] = <io.Process>[
-        process,
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(process, <String>['pub', 'publish'])
       ];
 
       Error? commandError;
@@ -246,8 +246,9 @@ void main() {
     test('Success message on stderr is not printed as an error', () async {
       createFakePlugin('d', packagesDir);
 
-      processRunner.mockProcessesForExecutable['flutter'] = <io.Process>[
-        MockProcess(stdout: 'Package has 0 warnings.'),
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'Package has 0 warnings.'),
+            <String>['pub', 'publish']),
       ];
 
       final List<String> output =
@@ -284,8 +285,9 @@ void main() {
       runner.addCommand(PublishCheckCommand(packagesDir,
           processRunner: processRunner, httpClient: mockClient));
 
-      processRunner.mockProcessesForExecutable['flutter'] = <io.Process>[
-        MockProcess(exitCode: 1, stdout: 'Some error from pub')
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
+            <String>['pub', 'publish'])
       ];
 
       Error? commandError;

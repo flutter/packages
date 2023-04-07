@@ -340,7 +340,7 @@ abstract class WKWebViewConfigurationHostApi {
   );
 }
 
-/// Handles callbacks from an WKWebViewConfiguration instance.
+/// Handles callbacks from a WKWebViewConfiguration instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
 @FlutterApi()
@@ -410,7 +410,7 @@ abstract class WKScriptMessageHandlerHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKScriptMessageHandler instance.
+/// Handles callbacks from a WKScriptMessageHandler instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
 @FlutterApi()
@@ -434,7 +434,7 @@ abstract class WKNavigationDelegateHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKNavigationDelegate instance.
+/// Handles callbacks from a WKNavigationDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
 @FlutterApi()
@@ -615,7 +615,7 @@ abstract class WKUIDelegateHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKUIDelegate instance.
+/// Handles callbacks from a WKUIDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
 @FlutterApi()

@@ -37,7 +37,7 @@ void main() {
     expect(
         code,
         contains(RegExp(
-            r'@NonNull\s*private static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
+            r'@NonNull\s*protected static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
     expect(code, isNot(contains('ArrayList ')));
     expect(code, isNot(contains('ArrayList<>')));
   });
@@ -65,7 +65,7 @@ void main() {
     expect(code, contains('    ONE(0),'));
     expect(code, contains('    TWO_THREE_FOUR(1),'));
     expect(code, contains('    REMOTE_DB(2);'));
-    expect(code, contains('private final int index;'));
+    expect(code, contains('final int index;'));
     expect(code, contains('private Foobar(final int index) {'));
     expect(code, contains('      this.index = index;'));
   });
@@ -387,7 +387,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('doSomething(Reply<Output>'));
+    expect(code, contains('doSomething(@NonNull Reply<Output>'));
     expect(code, contains(RegExp(r'channel.send\(\s*null')));
   });
 
@@ -518,11 +518,11 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
     expect(code, contains('public interface Result<T> {'));
-    expect(code, contains('void error(Throwable error);'));
+    expect(code, contains('void error(@NonNull Throwable error);'));
     expect(
         code,
         contains(
-            'void doSomething(@NonNull Input arg, Result<Output> result);'));
+            'void doSomething(@NonNull Input arg, @NonNull Result<Output> result);'));
     expect(code, contains('api.doSomething(argArg, resultCallback);'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
@@ -606,7 +606,7 @@ void main() {
     expect(code, contains('    ONE(0),'));
     expect(code, contains('    TWO_THREE_FOUR(1),'));
     expect(code, contains('    REMOTE_DB(2);'));
-    expect(code, contains('private final int index;'));
+    expect(code, contains('final int index;'));
     expect(code, contains('private Enum1(final int index) {'));
     expect(code, contains('      this.index = index;'));
 
@@ -833,7 +833,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('doit(Reply<List<Long>> callback)'));
+    expect(code, contains('doit(@NonNull Reply<List<Long>> callback)'));
     expect(code, contains('List<Long> output ='));
   });
 
@@ -857,7 +857,7 @@ void main() {
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
     final String code = sink.toString();
-    expect(code, contains('doit(Reply<Long> callback)'));
+    expect(code, contains('doit(@NonNull Reply<Long> callback)'));
     expect(
         code,
         contains(
@@ -953,7 +953,7 @@ void main() {
     expect(
         code,
         contains(
-            'public void add(@NonNull Long xArg, @NonNull Long yArg, Reply<Long> callback)'));
+            'public void add(@NonNull Long xArg, @NonNull Long yArg, @NonNull Reply<Long> callback)'));
     expect(
         code,
         contains(RegExp(
@@ -1092,7 +1092,7 @@ void main() {
     expect(
         code,
         contains(
-            'public void doit(@Nullable Long fooArg, Reply<Void> callback) {'));
+            'public void doit(@Nullable Long fooArg, @NonNull Reply<Void> callback) {'));
   });
 
   test('background platform channel', () {

@@ -932,7 +932,7 @@ class WKWebViewConfigurationHostApi {
   }
 }
 
-/// Handles callbacks from an WKWebViewConfiguration instance.
+/// Handles callbacks from a WKWebViewConfiguration instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
 abstract class WKWebViewConfigurationFlutterApi {
@@ -1272,7 +1272,7 @@ class _WKScriptMessageHandlerFlutterApiCodec extends StandardMessageCodec {
   }
 }
 
-/// Handles callbacks from an WKScriptMessageHandler instance.
+/// Handles callbacks from a WKScriptMessageHandler instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
 abstract class WKScriptMessageHandlerFlutterApi {
@@ -1394,7 +1394,7 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
   }
 }
 
-/// Handles callbacks from an WKNavigationDelegate instance.
+/// Handles callbacks from a WKNavigationDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
 abstract class WKNavigationDelegateFlutterApi {
@@ -2454,7 +2454,7 @@ class _WKUIDelegateFlutterApiCodec extends StandardMessageCodec {
   }
 }
 
-/// Handles callbacks from an WKUIDelegate instance.
+/// Handles callbacks from a WKUIDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
 abstract class WKUIDelegateFlutterApi {
