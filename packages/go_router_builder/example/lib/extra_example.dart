@@ -100,7 +100,7 @@ class Splash extends StatelessWidget {
       appBar: AppBar(title: const Text('Splash')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           const Placeholder(),
           ElevatedButton(
             onPressed: () =>
