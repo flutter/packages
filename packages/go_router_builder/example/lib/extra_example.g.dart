@@ -8,13 +8,13 @@ part of 'extra_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<GoRoute> get $appRoutes => [
+List<RouteBase> get $appRoutes => [
       $requiredExtraRoute,
       $optionalExtraRoute,
       $splashRoute,
     ];
 
-GoRoute get $requiredExtraRoute => GoRouteData.$route(
+RouteBase get $requiredExtraRoute => GoRouteData.$route(
       path: '/requiredExtra',
       factory: $RequiredExtraRouteExtension._fromState,
     );
@@ -37,7 +37,7 @@ extension $RequiredExtraRouteExtension on RequiredExtraRoute {
       context.pushReplacement(location, extra: $extra);
 }
 
-GoRoute get $optionalExtraRoute => GoRouteData.$route(
+RouteBase get $optionalExtraRoute => GoRouteData.$route(
       path: '/optionalExtra',
       factory: $OptionalExtraRouteExtension._fromState,
     );
@@ -60,7 +60,7 @@ extension $OptionalExtraRouteExtension on OptionalExtraRoute {
       context.pushReplacement(location, extra: $extra);
 }
 
-GoRoute get $splashRoute => GoRouteData.$route(
+RouteBase get $splashRoute => GoRouteData.$route(
       path: '/splash',
       factory: $SplashRouteExtension._fromState,
     );
