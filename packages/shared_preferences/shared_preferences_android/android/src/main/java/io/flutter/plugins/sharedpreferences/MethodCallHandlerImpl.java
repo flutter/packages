@@ -69,9 +69,7 @@ class MethodCallHandlerImpl {
   }
 
   public Boolean setStringList(String key, List<String> value) throws RuntimeException {
-    Boolean success =
-        preferences.edit().putString(key, LIST_IDENTIFIER + encodeList(value)).commit();
-    return success;
+    return preferences.edit().putString(key, LIST_IDENTIFIER + encodeList(value)).commit();
   }
 
   public Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
@@ -92,7 +90,7 @@ class MethodCallHandlerImpl {
     return clearEditor.commit();
   }
 
-  // Filter preferences to only those set by the flutter app.
+  // Gets all shared preferences, filtered to only those set with the given prefix.
   @SuppressWarnings("unchecked")
   private Map<String, Object> getAllPrefs(String prefix) throws RuntimeException {
     Map<String, ?> allPrefs = preferences.getAll();

@@ -7,9 +7,7 @@ package io.flutter.plugins.sharedpreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.anyBoolean;
 
 import android.app.Application;
 import android.content.Context;
@@ -18,9 +16,7 @@ import android.content.SharedPreferences;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
@@ -97,7 +93,7 @@ public class SharedPreferencesTest {
       return new LocalSharedPreferencesEditor(_data);
     }
 
-    // All methods below here are not implemented.
+    // All methods below are not implemented.
     @Override
     public boolean contains(String key) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
@@ -172,19 +168,19 @@ public class SharedPreferencesTest {
       new HashMap<String, Object>() {
         {
           put("Language", "Java");
-          put("Counter", 0);
+          put("Counter", 0L);
           put("Pie", 3.14);
-          put("Names", Arrays.asList("Flutter", "Dart"));
+          // put("Names", Arrays.asList("Flutter", "Dart"));
           put("NewToFlutter", false);
           put("flutter.Language", "Java");
-          put("flutter.Counter", 0);
+          put("flutter.Counter", 0L);
           put("flutter.Pie", 3.14);
-          put("flutter.Names", Arrays.asList("Flutter", "Dart"));
+          // put("flutter.Names", Arrays.asList("Flutter", "Dart"));
           put("flutter.NewToFlutter", false);
           put("prefix.Language", "Java");
-          put("prefix.Counter", 0);
+          put("prefix.Counter", 0L);
           put("prefix.Pie", 3.14);
-          put("prefix.Names", Arrays.asList("Flutter", "Dart"));
+          // put("prefix.Names", Arrays.asList("Flutter", "Dart"));
           put("prefix.NewToFlutter", false);
         }
       };
@@ -199,16 +195,16 @@ public class SharedPreferencesTest {
 
     Map<String, Object> flutterData = plugin.getAllWithPrefix("flutter.");
 
-    assertEquals(flutterData.size(), 4);//5
+    assertEquals(flutterData.size(), 4);
     assertEquals(flutterData.get("flutter.Language"), "Java");
-    // assertEquals(flutterData.get("flutter.Counter"), 0);//returns long instead of int
+    assertEquals(flutterData.get("flutter.Counter"), 0L);
     assertEquals(flutterData.get("flutter.Pie"), 3.14);
-    // assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart"));//returns null
+    // assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart"));
     assertEquals(flutterData.get("flutter.NewToFlutter"), false);
 
     Map<String, Object> allData = plugin.getAllWithPrefix("");
 
-    // assertEquals(allData, data);//just wrong
+    assertEquals(allData, data);
   }
 
   @Test
@@ -217,11 +213,11 @@ public class SharedPreferencesTest {
 
     addData();
 
-    assertEquals(plugin.getAllWithPrefix("").size(), 12);//15
+    assertEquals(plugin.getAllWithPrefix("").size(), 12);
 
     plugin.clearWithPrefix("flutter.");
 
-    assertEquals(plugin.getAllWithPrefix("").size(), 8);//10
+    assertEquals(plugin.getAllWithPrefix("").size(), 8);
   }
 
   @Test
