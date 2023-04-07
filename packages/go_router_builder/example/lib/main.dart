@@ -329,7 +329,7 @@ class FamilyCountScreen extends StatelessWidget {
               Center(
                 child: Text(
                   'There are $count families',
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ),
               ElevatedButton(
