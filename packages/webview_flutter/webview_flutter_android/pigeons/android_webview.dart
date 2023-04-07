@@ -95,17 +95,6 @@ class WebViewPoint {
   int y;
 }
 
-class GeoPermissionsHandleResult {
-  GeoPermissionsHandleResult({
-    this.origin = '',
-    this.isAllow = false,
-    this.isRetain = false,
-  });
-  String origin;
-  bool isAllow;
-  bool isRetain;
-}
-
 /// Handles methods calls to the native Java Object class.
 ///
 /// Also handles calls to remove the reference to an instance with `dispose`.
@@ -350,9 +339,9 @@ abstract class WebChromeClientFlutterApi {
     int paramsInstanceId,
   );
 
-  @async
-  GeoPermissionsHandleResult onGeolocationPermissionsShowPrompt(
+  void onGeolocationPermissionsShowPrompt(
     int instanceId,
+    int paramsInstanceId,
     String origin,
   );
 

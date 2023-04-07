@@ -45,6 +45,8 @@ class AndroidWebViewFlutterApis {
     WebChromeClientFlutterApiImpl? webChromeClientFlutterApi,
     JavaScriptChannelFlutterApiImpl? javaScriptChannelFlutterApi,
     FileChooserParamsFlutterApiImpl? fileChooserParamsFlutterApi,
+    GeolocationPermissionsCallbackFlutterApiImpl?
+        geolocationPermissionsCallbackFlutterApi,
     WebViewFlutterApiImpl? webViewFlutterApi,
   }) {
     this.javaObjectFlutterApi =
@@ -59,6 +61,9 @@ class AndroidWebViewFlutterApis {
         javaScriptChannelFlutterApi ?? JavaScriptChannelFlutterApiImpl();
     this.fileChooserParamsFlutterApi =
         fileChooserParamsFlutterApi ?? FileChooserParamsFlutterApiImpl();
+    this.geolocationPermissionsCallbackFlutterApi =
+        geolocationPermissionsCallbackFlutterApi ??
+            GeolocationPermissionsCallbackFlutterApiImpl();
     this.webViewFlutterApi = webViewFlutterApi ?? WebViewFlutterApiImpl();
   }
 
@@ -87,6 +92,10 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [FileChooserParams].
   late final FileChooserParamsFlutterApiImpl fileChooserParamsFlutterApi;
 
+  /// Flutter Api for [GeolocationPermissionsCallback].
+  late final GeolocationPermissionsCallbackFlutterApiImpl
+      geolocationPermissionsCallbackFlutterApi;
+
   /// Flutter Api for [WebView].
   late final WebViewFlutterApiImpl webViewFlutterApi;
 
@@ -99,6 +108,8 @@ class AndroidWebViewFlutterApis {
       WebChromeClientFlutterApi.setup(webChromeClientFlutterApi);
       JavaScriptChannelFlutterApi.setup(javaScriptChannelFlutterApi);
       FileChooserParamsFlutterApi.setup(fileChooserParamsFlutterApi);
+      GeolocationPermissionsCallbackFlutterApi.setup(
+          geolocationPermissionsCallbackFlutterApi);
       WebViewFlutterApi.setup(webViewFlutterApi);
       _haveBeenSetUp = true;
     }
@@ -890,24 +901,16 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
   }
 
   @override
-  Future<GeoPermissionsHandleResult> onGeolocationPermissionsShowPrompt(
-      int instanceId, String origin) {
+  void onGeolocationPermissionsShowPrompt(
+      int instanceId, int paramsInstanceId, String origin) {
     final WebChromeClient instance =
         instanceManager.getInstanceWithWeakReference(instanceId)!;
+    final GeolocationPermissionsCallback callback =
+        instanceManager.getInstanceWithWeakReference(paramsInstanceId)!
+            as GeolocationPermissionsCallback;
     if (instance.onGeolocationPermissionsShowPrompt != null) {
-      return instance.onGeolocationPermissionsShowPrompt!(origin).then(
-        // Get the real transfer Object
-        (GeoPermissionsHandleResultProxy value) =>
-            value.geoPermissionsHandleResult,
-      );
+      instance.onGeolocationPermissionsShowPrompt!(origin, callback);
     }
-    return Future<GeoPermissionsHandleResult>.value(
-      GeoPermissionsHandleResult(
-        origin: origin,
-        isAllow: false,
-        isRetain: false,
-      ),
-    );
   }
 
   @override
@@ -915,9 +918,7 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     final WebChromeClient instance =
         instanceManager.getInstanceWithWeakReference(identifier)!;
     if (instance.onGeolocationPermissionsHidePrompt != null) {
-      return instance.onGeolocationPermissionsHidePrompt!(
-        instance,
-      );
+      return instance.onGeolocationPermissionsHidePrompt!(instance);
     }
   }
 }

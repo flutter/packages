@@ -864,25 +864,24 @@ void main() {
 
       test('onGeolocationPermissionsShowPrompt', () async {
         const String origin = 'https://www.xxx.com';
-        final GeoPermissionsHandleResult uniObj = GeoPermissionsHandleResult(
-          origin: origin,
-          isAllow: true,
-          isRetain: false,
-        );
+        final GeolocationPermissionsCallback callback = GeolocationPermissionsCallback
+            .detached();
+        final int paramsId =
+            instanceManager.addDartCreatedInstance(callback);
+        late final GeolocationPermissionsCallback outerCallback;
         when(mockWebChromeClient.onGeolocationPermissionsShowPrompt).thenReturn(
-          (String origin) async {
-            return GeoPermissionsHandleResultProxy.instance(
-              result: uniObj,
-            );
+          (String origin, GeolocationPermissionsCallback callback) {
+            outerCallback = callback;
           },
         );
-
-        await expectLater(
-          flutterApi.onGeolocationPermissionsShowPrompt(
+        flutterApi.onGeolocationPermissionsShowPrompt(
             mockWebChromeClientInstanceId,
+            paramsId,
             origin,
-          ),
-          completion(uniObj),
+        );
+        await expectLater(
+          outerCallback,
+          callback,
         );
       });
 

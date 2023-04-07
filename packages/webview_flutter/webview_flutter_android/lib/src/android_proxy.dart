@@ -35,9 +35,9 @@ class AndroidWebViewProxy {
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
       )? onShowFileChooser,
-      Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-        String origin,
-      )? onGeolocationPermissionsShowPrompt,
+      void Function(String origin,
+        android_webview.GeolocationPermissionsCallback callback)?
+        onGeolocationPermissionsShowPrompt,
       void Function(android_webview.WebChromeClient instance)?
           onGeolocationPermissionsHidePrompt}) createAndroidWebChromeClient;
 

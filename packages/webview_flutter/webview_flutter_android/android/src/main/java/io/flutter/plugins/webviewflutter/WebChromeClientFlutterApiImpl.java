@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
+import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
@@ -70,13 +71,15 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
 
   /** Passes arguments from {@link WebChromeClient#onGeolocationPermissionsShowPrompt} to Dart. */
   public void onGeolocationPermissionsShowPrompt(
-      WebChromeClient webChromeClient,
-      String origin,
-      Reply<GeneratedAndroidWebView.GeoPermissionsHandleResult> callback) {
+      WebChromeClient webChromeClient, String origin, GeolocationPermissions.Callback callback) {
+
+    new GeolocationPermissionsCallbackFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(callback, reply -> {});
     onGeolocationPermissionsShowPrompt(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(callback)),
         origin,
-        callback);
+        reply -> {});
   }
 
   /**

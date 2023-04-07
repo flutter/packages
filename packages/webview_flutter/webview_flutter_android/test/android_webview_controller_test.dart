@@ -58,8 +58,9 @@ void main() {
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
       )? onShowFileChooser,
-      Future<android_webview.GeoPermissionsHandleResultProxy> Function(
+      void Function(
         String origin,
+        android_webview.GeolocationPermissionsCallback callback,
       )? onGeolocationPermissionsShowPrompt,
       void Function(android_webview.WebChromeClient instance)?
           onGeolocationPermissionsHidePrompt,
@@ -84,11 +85,11 @@ void main() {
                             android_webview.WebView webView,
                             android_webview.FileChooserParams params,
                           )? onShowFileChooser,
-                          Future<
-                                      android_webview
-                                          .GeoPermissionsHandleResultProxy>
-                                  Function(String origin)?
-                              onGeolocationPermissionsShowPrompt,
+                          void Function(
+                            String origin,
+                            android_webview.GeolocationPermissionsCallback
+                                callback,
+                          )? onGeolocationPermissionsShowPrompt,
                           void Function(
                                   android_webview.WebChromeClient instance)?
                               onGeolocationPermissionsHidePrompt}) =>
@@ -576,8 +577,8 @@ void main() {
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
           )? onShowFileChooser,
-          Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-                  String origin)?
+          void Function(String origin,
+                  android_webview.GeolocationPermissionsCallback callback)?
               onGeolocationPermissionsShowPrompt,
           void Function(android_webview.WebChromeClient instance)?
               onGeolocationPermissionsHidePrompt,
@@ -616,43 +617,9 @@ void main() {
     });
 
     test('setOnGeolocationPermissionsShowPrompt', () async {
-      late final Future<android_webview.GeoPermissionsHandleResultProxy>
-          Function(String origin) onGeoPermissionHandle;
-      final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
-      final AndroidWebViewController controller = createControllerWithMocks(
-        createWebChromeClient: ({
-          dynamic onProgressChanged,
-          Future<List<String>> Function(
-            android_webview.WebView webView,
-            android_webview.FileChooserParams params,
-          )? onShowFileChooser,
-          Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-            String origin,
-          )? onGeolocationPermissionsShowPrompt,
-          void Function(android_webview.WebChromeClient instance)?
-              onGeolocationPermissionsHidePrompt,
-        }) {
-          onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
-          return mockWebChromeClient;
-        },
-      );
-
-      late final String outOrigin;
-      controller.setOnGeolocationPermissionsShowPrompt((String origin) async {
-        outOrigin = origin;
-        return GeolocationPermissionsResult(
-          origin: origin,
-          isAllow: true,
-          isRetain: false,
-        );
-      });
-
-      onGeoPermissionHandle('https://www.xxx.com');
-
-      expect(outOrigin, 'https://www.xxx.com');
-    });
-
-    test('setOnGeolocationPermissionsHidePrompt', () async {
+      late final void Function(String origin,
+              android_webview.GeolocationPermissionsCallback callback)
+          onGeoPermissionHandle;
       late final void Function(android_webview.WebChromeClient instance)
           onGeoPermissionHidePromptHandle;
       String testValue = 'origin';
@@ -664,23 +631,42 @@ void main() {
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
           )? onShowFileChooser,
-          Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-            String origin,
-          )? onGeolocationPermissionsShowPrompt,
+          void Function(String origin,
+                  android_webview.GeolocationPermissionsCallback callback)?
+              onGeolocationPermissionsShowPrompt,
           void Function(android_webview.WebChromeClient instance)?
               onGeolocationPermissionsHidePrompt,
         }) {
+          onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
           onGeoPermissionHidePromptHandle = onGeolocationPermissionsHidePrompt!;
           return mockWebChromeClient;
         },
       );
 
-      controller.setOnGeolocationPermissionsHidePrompt(() {
-        testValue = 'changed';
-      });
+      late final android_webview.GeolocationPermissionsCallback outerCallback;
+      late final String outOrigin;
+      controller.setGeolocationPermissionsPromptCallbacks(
+        onShowPrompt: (String origin,
+            android_webview.GeolocationPermissionsCallback callback) {
+          outOrigin = origin;
+          outerCallback = callback;
+        },
+        onHidePrompt: () {
+          testValue = 'changed';
+        },
+      );
+
+      final android_webview.GeolocationPermissionsCallback testCallback =
+          android_webview.GeolocationPermissionsCallback.detached();
+      onGeoPermissionHandle(
+        'https://www.xxx.com',
+        testCallback,
+      );
+
+      expect(outOrigin, 'https://www.xxx.com');
+      expect(testCallback, outerCallback);
 
       onGeoPermissionHidePromptHandle(mockWebChromeClient);
-
       expect(testValue, 'changed');
     });
 

@@ -687,24 +687,21 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-  _i9.Future<void> setOnGeolocationPermissionsShowPrompt(
-          _i9.Future<_i8.GeolocationPermissionsResult> Function(String)?
-              onGeolocationPermissionsShowPrompt) =>
+  _i9.Future<void> setGeolocationPermissionsPromptCallbacks({
+    void Function(
+      String,
+      _i2.GeolocationPermissionsCallback,
+    )? onShowPrompt,
+    void Function()? onHidePrompt,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setOnGeolocationPermissionsShowPrompt,
-          [onGeolocationPermissionsShowPrompt],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-  @override
-  _i9.Future<void> setOnGeolocationPermissionsHidePrompt(
-          void Function()? onGeolocationPermissionsHidePrompt) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnGeolocationPermissionsHidePrompt,
-          [onGeolocationPermissionsHidePrompt],
+          #setGeolocationPermissionsPromptCallbacks,
+          [],
+          {
+            #onShowPrompt: onShowPrompt,
+            #onHidePrompt: onHidePrompt,
+          },
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
@@ -731,8 +728,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
   @override
   _i2.WebChromeClient Function({
     void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
-    _i9.Future<_i2.GeoPermissionsHandleResultProxy> Function(String)?
-        onGeolocationPermissionsShowPrompt,
+    void Function(
+      String,
+      _i2.GeolocationPermissionsCallback,
+    )? onGeolocationPermissionsShowPrompt,
     void Function(
       _i2.WebView,
       int,
@@ -746,8 +745,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
         returnValue: ({
           void Function(_i2.WebChromeClient)?
               onGeolocationPermissionsHidePrompt,
-          _i9.Future<_i2.GeoPermissionsHandleResultProxy> Function(String)?
-              onGeolocationPermissionsShowPrompt,
+          void Function(
+            String,
+            _i2.GeolocationPermissionsCallback,
+          )? onGeolocationPermissionsShowPrompt,
           void Function(
             _i2.WebView,
             int,
@@ -764,8 +765,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
         returnValueForMissingStub: ({
           void Function(_i2.WebChromeClient)?
               onGeolocationPermissionsHidePrompt,
-          _i9.Future<_i2.GeoPermissionsHandleResultProxy> Function(String)?
-              onGeolocationPermissionsShowPrompt,
+          void Function(
+            String,
+            _i2.GeolocationPermissionsCallback,
+          )? onGeolocationPermissionsShowPrompt,
           void Function(
             _i2.WebView,
             int,
@@ -781,8 +784,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
         ),
       ) as _i2.WebChromeClient Function({
         void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
-        _i9.Future<_i2.GeoPermissionsHandleResultProxy> Function(String)?
-            onGeolocationPermissionsShowPrompt,
+        void Function(
+          String,
+          _i2.GeolocationPermissionsCallback,
+        )? onGeolocationPermissionsShowPrompt,
         void Function(
           _i2.WebView,
           int,

@@ -1016,9 +1016,8 @@ class WebChromeClient extends JavaObject {
   )? onShowFileChooser;
 
   /// Indicates the client should handle geolocation permissions.
-  final Future<GeoPermissionsHandleResultProxy> Function(
-    String origin,
-  )? onGeolocationPermissionsShowPrompt;
+  final void Function(String origin, GeolocationPermissionsCallback callback)?
+      onGeolocationPermissionsShowPrompt;
 
   /// Notify the host application that a request for Geolocation permissions,
   /// made with a previous call to [onGeolocationPermissionsShowPrompt] has been
@@ -1066,41 +1065,6 @@ class WebChromeClient extends JavaObject {
       instanceManager: _api.instanceManager,
     );
   }
-}
-
-/// The result of the user handle geo permissions.
-/// Used to convert Dart data to Java Object.
-///
-/// see https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback
-class GeoPermissionsHandleResultProxy {
-  /// Used to convert Dart data to Java Object.
-  ///
-  /// [origin] the origin for which permissions are set
-  ///
-  /// [isAllow] whether or not the origin should be allowed to use the Geolocation API
-  ///
-  /// [isRetain] whether the permission should be retained beyond the lifetime of a page currently being displayed by a WebView
-  ///
-  GeoPermissionsHandleResultProxy.proxy({
-    required String origin,
-    required bool isAllow,
-    required bool isRetain,
-  })  : geoPermissionsHandleResult = GeoPermissionsHandleResult(
-          origin: origin,
-          isAllow: isAllow,
-          isRetain: isRetain,
-        ),
-        super();
-
-  /// only for test
-  @visibleForTesting
-  GeoPermissionsHandleResultProxy.instance({
-    required GeoPermissionsHandleResult result,
-  })  : geoPermissionsHandleResult = result,
-        super();
-
-  /// The Java Object to transfer.
-  final GeoPermissionsHandleResult geoPermissionsHandleResult;
 }
 
 /// Parameters received when a [WebChromeClient] should show a file chooser.
