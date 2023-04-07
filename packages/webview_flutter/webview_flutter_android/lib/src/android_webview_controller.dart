@@ -126,6 +126,14 @@ class AndroidWebViewController extends PlatformWebViewController {
         ));
       };
     }),
+    onGeolocationPermissionsHidePrompt: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (android_webview.WebChromeClient instance) {
+        if (weakReference.target?._onGeolocationPermissionsHidePrompt != null) {
+          weakReference.target!._onGeolocationPermissionsHidePrompt!();
+        }
+      };
+    }),
     onShowFileChooser: withWeakReferenceTo(this,
         (WeakReference<AndroidWebViewController> weakReference) {
       return (android_webview.WebView webView,
@@ -154,6 +162,8 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<GeolocationPermissionsResult> Function(String)?
       _onGeolocationPermissionsShowPrompt;
+
+  void Function()? _onGeolocationPermissionsHidePrompt;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -410,6 +420,16 @@ class AndroidWebViewController extends PlatformWebViewController {
           onGeolocationPermissionsShowPrompt) async {
     _onGeolocationPermissionsShowPrompt = onGeolocationPermissionsShowPrompt;
   }
+
+  /// Notify the host application that a request for Geolocation permissions,
+  /// made with a previous call to onGeolocationPermissionsShowPrompt() has been canceled.
+  /// Any related UI should therefore be hidden.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsHidePrompt()
+  void setOnGeolocationPermissionsHidePrompt(
+      void Function()? onGeolocationPermissionsHidePrompt) {
+    _onGeolocationPermissionsHidePrompt = onGeolocationPermissionsHidePrompt;
+  }
 }
 
 /// The result of the user handle geo permissions.
@@ -557,8 +577,7 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
-    @visibleForTesting
-        InstanceManager? instanceManager,
+    @visibleForTesting InstanceManager? instanceManager,
     @visibleForTesting
         this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =

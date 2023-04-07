@@ -698,6 +698,16 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  void setOnGeolocationPermissionsHidePrompt(
+          void Function()? onGeolocationPermissionsHidePrompt) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setOnGeolocationPermissionsHidePrompt,
+          [onGeolocationPermissionsHidePrompt],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [AndroidWebViewProxy].
@@ -719,6 +729,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
       ) as _i2.WebView Function());
   @override
   _i2.WebChromeClient Function({
+    void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
     _i9.Future<_i2.GeoPermissionsHandleResultProxy> Function(String)?
         onGeolocationPermissionsShowPrompt,
     void Function(
@@ -732,6 +743,8 @@ class MockAndroidWebViewProxy extends _i1.Mock
   }) get createAndroidWebChromeClient => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebChromeClient),
         returnValue: ({
+          void Function(_i2.WebChromeClient)?
+              onGeolocationPermissionsHidePrompt,
           _i9.Future<_i2.GeoPermissionsHandleResultProxy> Function(String)?
               onGeolocationPermissionsShowPrompt,
           void Function(
@@ -748,6 +761,8 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebChromeClient),
         ),
         returnValueForMissingStub: ({
+          void Function(_i2.WebChromeClient)?
+              onGeolocationPermissionsHidePrompt,
           _i9.Future<_i2.GeoPermissionsHandleResultProxy> Function(String)?
               onGeolocationPermissionsShowPrompt,
           void Function(
@@ -764,6 +779,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebChromeClient),
         ),
       ) as _i2.WebChromeClient Function({
+        void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
         _i9.Future<_i2.GeoPermissionsHandleResultProxy> Function(String)?
             onGeolocationPermissionsShowPrompt,
         void Function(
