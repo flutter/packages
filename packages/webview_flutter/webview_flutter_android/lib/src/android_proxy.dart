@@ -34,10 +34,12 @@ class AndroidWebViewProxy {
       Future<List<String>> Function(
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
-      )? onShowFileChooser,
+      )?
+          onShowFileChooser,
       Future<android_webview.GeoPermissionsHandleResultProxy> Function(
         String origin,
-      )? onGeolocationPermissionsShowPrompt,
+      )?
+          onGeolocationPermissionsShowPrompt,
       void Function(android_webview.WebChromeClient instance)?
           onGeolocationPermissionsHidePrompt}) createAndroidWebChromeClient;
 
@@ -49,18 +51,21 @@ class AndroidWebViewProxy {
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
       android_webview.WebResourceError error,
-    )? onReceivedRequestError,
+    )?
+        onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.')
         void Function(
       android_webview.WebView webView,
       int errorCode,
       String description,
       String failingUrl,
-    )? onReceivedError,
+    )?
+            onReceivedError,
     void Function(
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
-    )? requestLoading,
+    )?
+        requestLoading,
     void Function(android_webview.WebView webView, String url)? urlLoading,
   }) createAndroidWebViewClient;
 
@@ -82,7 +87,8 @@ class AndroidWebViewProxy {
       String contentDisposition,
       String mimetype,
       int contentLength,
-    ) onDownloadStart,
+    )
+        onDownloadStart,
   }) createDownloadListener;
 
   /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.

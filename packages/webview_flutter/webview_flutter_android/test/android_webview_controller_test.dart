@@ -57,13 +57,16 @@ void main() {
       Future<List<String>> Function(
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
-      )? onShowFileChooser,
+      )?
+          onShowFileChooser,
       Future<android_webview.GeoPermissionsHandleResultProxy> Function(
         String origin,
-      )? onGeolocationPermissionsShowPrompt,
+      )?
+          onGeolocationPermissionsShowPrompt,
       void Function(android_webview.WebChromeClient instance)?
-                onGeolocationPermissionsHidePrompt,
-    })? createWebChromeClient,
+          onGeolocationPermissionsHidePrompt,
+    })?
+        createWebChromeClient,
     android_webview.WebView? mockWebView,
     android_webview.WebViewClient? mockWebViewClient,
     android_webview.WebStorage? mockWebStorage,
@@ -77,19 +80,22 @@ void main() {
             androidWebStorage: mockWebStorage ?? MockWebStorage(),
             androidWebViewProxy: AndroidWebViewProxy(
               createAndroidWebChromeClient: createWebChromeClient ??
-                  ({
-                    void Function(android_webview.WebView, int)?
-                        onProgressChanged,
-                    Future<List<String>> Function(
-                      android_webview.WebView webView,
-                      android_webview.FileChooserParams params,
-                    )? onShowFileChooser,
-                    Future<android_webview.GeoPermissionsHandleResultProxy>
-                            Function(String origin)?
-                        onGeolocationPermissionsShowPrompt,
-                    void Function(android_webview.WebChromeClient instance)?
-                        onGeolocationPermissionsHidePrompt
-                  }) =>
+                  (
+                          {void Function(android_webview.WebView, int)?
+                              onProgressChanged,
+                          Future<List<String>> Function(
+                            android_webview.WebView webView,
+                            android_webview.FileChooserParams params,
+                          )?
+                              onShowFileChooser,
+                          Future<
+                                      android_webview
+                                          .GeoPermissionsHandleResultProxy>
+                                  Function(String origin)?
+                              onGeolocationPermissionsShowPrompt,
+                          void Function(
+                                  android_webview.WebChromeClient instance)?
+                              onGeolocationPermissionsHidePrompt}) =>
                       MockWebChromeClient(),
               createAndroidWebView: () => nonNullMockWebView,
               createAndroidWebViewClient: ({
@@ -103,16 +109,19 @@ void main() {
                   int errorCode,
                   String description,
                   String failingUrl,
-                )? onReceivedError,
+                )?
+                        onReceivedError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
                   android_webview.WebResourceError error,
-                )? onReceivedRequestError,
+                )?
+                    onReceivedRequestError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
-                )? requestLoading,
+                )?
+                    requestLoading,
                 void Function(android_webview.WebView webView, String url)?
                     urlLoading,
               }) =>
@@ -573,7 +582,8 @@ void main() {
           Future<List<String>> Function(
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
-          )? onShowFileChooser,
+          )?
+              onShowFileChooser,
           Future<android_webview.GeoPermissionsHandleResultProxy> Function(
                   String origin)?
               onGeolocationPermissionsShowPrompt,
@@ -623,12 +633,14 @@ void main() {
           Future<List<String>> Function(
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
-          )? onShowFileChooser,
+          )?
+              onShowFileChooser,
           Future<android_webview.GeoPermissionsHandleResultProxy> Function(
             String origin,
-          )? onGeolocationPermissionsShowPrompt,
+          )?
+              onGeolocationPermissionsShowPrompt,
           void Function(android_webview.WebChromeClient instance)?
-          onGeolocationPermissionsHidePrompt,
+              onGeolocationPermissionsHidePrompt,
         }) {
           onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
           return mockWebChromeClient;
@@ -652,21 +664,23 @@ void main() {
 
     test('setOnGeolocationPermissionsHidePrompt', () async {
       late final void Function(android_webview.WebChromeClient instance)
-        onGeoPermissionHidePromptHandle;
+          onGeoPermissionHidePromptHandle;
       String testValue = 'origin';
       final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
       final AndroidWebViewController controller = createControllerWithMocks(
         createWebChromeClient: ({
           dynamic onProgressChanged,
           Future<List<String>> Function(
-              android_webview.WebView webView,
-              android_webview.FileChooserParams params,
-              )? onShowFileChooser,
+            android_webview.WebView webView,
+            android_webview.FileChooserParams params,
+          )?
+              onShowFileChooser,
           Future<android_webview.GeoPermissionsHandleResultProxy> Function(
-              String origin,
-              )? onGeolocationPermissionsShowPrompt,
+            String origin,
+          )?
+              onGeolocationPermissionsShowPrompt,
           void Function(android_webview.WebChromeClient instance)?
-          onGeolocationPermissionsHidePrompt,
+              onGeolocationPermissionsHidePrompt,
         }) {
           onGeoPermissionHidePromptHandle = onGeolocationPermissionsHidePrompt!;
           return mockWebChromeClient;

@@ -44,8 +44,7 @@ class AndroidWebViewControllerCreationParams
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
         AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting
-        android_webview.WebStorage? androidWebStorage,
+    @visibleForTesting android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -426,8 +425,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// Any related UI should therefore be hidden.
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsHidePrompt()
-  void setOnGeolocationPermissionsHidePrompt(
-      void Function()? onGeolocationPermissionsHidePrompt) {
+  Future<void> setOnGeolocationPermissionsHidePrompt(
+      void Function()? onGeolocationPermissionsHidePrompt) async {
     _onGeolocationPermissionsHidePrompt = onGeolocationPermissionsHidePrompt;
   }
 }

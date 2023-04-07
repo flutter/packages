@@ -911,9 +911,9 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
   }
 
   @override
-  void onGeolocationPermissionsHidePrompt(int instanceId) {
+  void onGeolocationPermissionsHidePrompt(int identifier) {
     final WebChromeClient instance =
-        instanceManager.getInstanceWithWeakReference(instanceId)!;
+        instanceManager.getInstanceWithWeakReference(identifier)!;
     if (instance.onGeolocationPermissionsHidePrompt != null) {
       return instance.onGeolocationPermissionsHidePrompt!(
         instance,
