@@ -29,7 +29,7 @@ dependencies:
   path_provider_foundation: ^2.1.0
   path_provider_linux: ^2.0.1
   path_provider_platform_interface: ^2.0.0
-  path_provider_windows: ^2.0.2
+  path_provider_windows: ^2.1.5
 
 dev_dependencies:
   flutter_driver:
