@@ -104,7 +104,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('$_commentPrefix $generatedCodeWarning');
+    indent.writeln('$_commentPrefix ${getGeneratedCodeWarning()}');
     indent.writeln('$_commentPrefix $seeAlsoWarning');
     indent.newln();
   }
@@ -531,7 +531,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('$_commentPrefix $generatedCodeWarning');
+    indent.writeln('$_commentPrefix ${getGeneratedCodeWarning()}');
     indent.writeln('$_commentPrefix $seeAlsoWarning');
     indent.newln();
     indent.addln('#undef _HAS_EXCEPTIONS');

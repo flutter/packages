@@ -406,6 +406,34 @@ void main() {
           ]));
     });
 
+    test('building for Android with alias', () async {
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformAndroid: const PlatformDetails(PlatformSupport.inline),
+          });
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'build-examples',
+        '--android',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          '\nBUILDING plugin/example for Android (apk)',
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform),
+                const <String>['build', 'apk'], pluginExampleDirectory.path),
+          ]));
+    });
+
     test('enable-experiment flag for Android', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           platformSupport: <String, PlatformDetails>{

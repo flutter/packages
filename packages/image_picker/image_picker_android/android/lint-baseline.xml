@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 7.1.2" type="baseline" client="gradle" dependencies="false" name="AGP (7.1.2)" variant="all" version="7.1.2">
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `PendingCallState` requires synthetic accessor"
+        errorLine1="          new PendingCallState(pendingImageOptions, pendingVideoOptions, result);"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="213"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `handleImageResult` of class `ImagePickerDelegate` requires synthetic accessor"
+        errorLine1="              handleImageResult(path, true);"
+        errorLine2="              ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="614"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `handleVideoResult` of class `ImagePickerDelegate` requires synthetic accessor"
+        errorLine1="              handleVideoResult(path);"
+        errorLine2="              ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="633"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `PendingCallState` requires synthetic accessor"
+        errorLine1="    pendingCallState = new PendingCallState(imageOptions, videoOptions, result);"
+        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="697"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `activityState` of class `ImagePickerPlugin` requires synthetic accessor"
+        errorLine1="        activityState.getDelegate().saveStateBeforeResult();"
+        errorLine2="        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerPlugin.java"
+            line="89"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `ImageSelectionOptions` requires synthetic accessor"
+        errorLine1="        ImageSelectionOptions pigeonReturn = new ImageSelectionOptions();"
+        errorLine2="                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="164"
+            column="46"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `SourceSpecification` requires synthetic accessor"
+        errorLine1="        SourceSpecification pigeonReturn = new SourceSpecification();"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="298"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `index` of class `SourceType` requires synthetic accessor"
+        errorLine1="      toListResult.add(type == null ? null : type.index);"
+        errorLine2="                                                  ~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="308"
+            column="51"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `index` of class `SourceCamera` requires synthetic accessor"
+        errorLine1="      toListResult.add(camera == null ? null : camera.index);"
+        errorLine2="                                                      ~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="309"
+            column="55"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `CacheRetrievalError` requires synthetic accessor"
+        errorLine1="        CacheRetrievalError pigeonReturn = new CacheRetrievalError();"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="374"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `CacheRetrievalResult` requires synthetic accessor"
+        errorLine1="        CacheRetrievalResult pigeonReturn = new CacheRetrievalResult();"
+        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="476"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `index` of class `CacheRetrievalType` requires synthetic accessor"
+        errorLine1="      toListResult.add(type == null ? null : type.index);"
+        errorLine2="                                                  ~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="487"
+            column="51"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                        ArrayList&lt;Object> wrappedError = wrapError(error);"
+        errorLine2="                                                         ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="615"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                        ArrayList&lt;Object> wrappedError = wrapError(error);"
+        errorLine2="                                                         ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="648"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
+        errorLine2="                                                   ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="674"
+            column="52"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      final Activity activity,"
+        errorLine2="            ~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="139"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      final File externalFilesDirectory,"
+        errorLine2="            ~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="140"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      final ImageResizer imageResizer,"
+        errorLine2="            ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="141"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      final ImagePickerCache cache) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="142"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      VideoSelectionOptions options, boolean usePhotoPicker, Messages.Result&lt;List&lt;String>> result) {"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="280"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      VideoSelectionOptions options, boolean usePhotoPicker, Messages.Result&lt;List&lt;String>> result) {"
+        errorLine2="                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="280"
+            column="62"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      VideoSelectionOptions options, Messages.Result&lt;List&lt;String>> result) {"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="308"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      VideoSelectionOptions options, Messages.Result&lt;List&lt;String>> result) {"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="308"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      Messages.Result&lt;List&lt;String>> result) {"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="360"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      Messages.Result&lt;List&lt;String>> result) {"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="372"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      @NonNull ImageSelectionOptions options, Messages.Result&lt;List&lt;String>> result) {"
+        errorLine2="                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="421"
+            column="47"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public boolean onActivityResult(int requestCode, int resultCode, Intent data) {"
+        errorLine2="                                                                   ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerDelegate.java"
+            line="541"
+            column="68"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerPlugin.java"
+            line="182"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      Result&lt;List&lt;String>> result) {"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerPlugin.java"
+            line="308"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      Result&lt;List&lt;String>> result) {"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/ImagePickerPlugin.java"
+            line="338"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    void error(Throwable error);"
+        errorLine2="               ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="509"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="        Result&lt;List&lt;String>> result);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="571"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="        Result&lt;List&lt;String>> result);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="583"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="589"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    static void setup(BinaryMessenger binaryMessenger, ImagePickerApi api) {"
+        errorLine2="                      ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="593"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    static void setup(BinaryMessenger binaryMessenger, ImagePickerApi api) {"
+        errorLine2="                                                       ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/imagepicker/Messages.java"
+            line="593"
+            column="56"/>
+    </issue>
+
+</issues>
