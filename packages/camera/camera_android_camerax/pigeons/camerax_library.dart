@@ -46,6 +46,14 @@ class CameraPermissionsErrorData {
   String description;
 }
 
+@HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
+abstract class InstanceManagerHostApi {
+  /// Clear the native `InstanceManager`.
+  ///
+  /// This is typically only used after a hot restart.
+  void clear();
+}
+
 @HostApi(dartHostTestHandler: 'TestJavaObjectHostApi')
 abstract class JavaObjectHostApi {
   void dispose(int identifier);
@@ -87,6 +95,8 @@ abstract class ProcessCameraProviderHostApi {
 
   int bindToLifecycle(
       int identifier, int cameraSelectorIdentifier, List<int> useCaseIds);
+
+  bool isBound(int identifier, int useCaseIdentifier);
 
   void unbind(int identifier, List<int> useCaseIds);
 
@@ -130,4 +140,14 @@ abstract class PreviewHostApi {
   void releaseFlutterSurfaceTexture();
 
   ResolutionInfo getResolutionInfo(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')
+abstract class ImageCaptureHostApi {
+  void create(int identifier, int? flashMode, ResolutionInfo? targetResolution);
+
+  void setFlashMode(int identifier, int flashMode);
+
+  @async
+  String takePicture(int identifier);
 }

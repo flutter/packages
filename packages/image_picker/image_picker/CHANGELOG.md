@@ -1,5 +1,14 @@
 ## NEXT
 
+* Updates minimum Flutter version to 3.3.
+
+## 0.8.7+1
+
+* Updates README to use code excerpts.
+
+## 0.8.7
+
+* Adds `usePhotoPickerAndroid` options.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.8.6+4

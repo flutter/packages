@@ -61,7 +61,7 @@ class Method extends Node {
   /// Specifies how handlers are dispatched with respect to threading.
   TaskQueueType taskQueueType;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -101,7 +101,7 @@ class Api extends Node {
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -194,7 +194,7 @@ class NamedType extends Node {
   /// The offset in the source file where the [NamedType] appears.
   int? offset;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -222,7 +222,7 @@ class Class extends Node {
   /// All the fields contained in the class.
   List<NamedType> fields;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -250,7 +250,7 @@ class Enum extends Node {
   /// All of the members of the enum.
   List<EnumMember> members;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -274,7 +274,7 @@ class EnumMember extends Node {
   /// The name of the enum member.
   final String name;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.

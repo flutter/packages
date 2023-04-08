@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
+## 2.2.1
+
+* Updates to `pigeon` version 9.
+
+## 2.2.0
+
+* Adds support for `getContainerPath` on iOS.
+
 ## 2.1.3
 
 * Clarifies explanation of endorsement in README.

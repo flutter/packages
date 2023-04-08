@@ -44,7 +44,8 @@ class AndroidWebViewControllerCreationParams
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
         AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting android_webview.WebStorage? androidWebStorage,
+    @visibleForTesting
+        android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -87,13 +88,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// The native [android_webview.WebView] being controlled.
   late final android_webview.WebView _webView =
-      _androidWebViewParams.androidWebViewProxy.createAndroidWebView(
-    // Due to changes in Flutter 3.0 the `useHybridComposition` doesn't have
-    // any effect and is purposefully not exposed publicly by the
-    // [AndroidWebViewController]. More info here:
-    // https://github.com/flutter/flutter/issues/108106
-    useHybridComposition: true,
-  );
+      _androidWebViewParams.androidWebViewProxy.createAndroidWebView();
 
   late final android_webview.WebChromeClient _webChromeClient =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebChromeClient(
@@ -495,7 +490,8 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
-    @visibleForTesting InstanceManager? instanceManager,
+    @visibleForTesting
+        InstanceManager? instanceManager,
     @visibleForTesting
         this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =

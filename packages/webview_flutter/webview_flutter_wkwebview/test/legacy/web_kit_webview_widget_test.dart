@@ -221,8 +221,7 @@ void main() {
         );
 
         verify(mockWebViewConfiguration
-            .setMediaTypesRequiringUserActionForPlayback(<
-                WKAudiovisualMediaType>{
+            .setMediaTypesRequiringUserActionForPlayback(<WKAudiovisualMediaType>{
           WKAudiovisualMediaType.all,
         }));
       });
@@ -240,8 +239,7 @@ void main() {
         );
 
         verify(mockWebViewConfiguration
-            .setMediaTypesRequiringUserActionForPlayback(<
-                WKAudiovisualMediaType>{
+            .setMediaTypesRequiringUserActionForPlayback(<WKAudiovisualMediaType>{
           WKAudiovisualMediaType.none,
         }));
       });
@@ -658,7 +656,7 @@ void main() {
         // objects to strings before returning them to Dart. This verifies
         // double is represented the way it is in Objective-C. If a double
         // doesn't contain any decimal values, it gets truncated to an int.
-        // This should be happenning because NSNumber convertes float values
+        // This should be happening because NSNumber converts float values
         // with no decimals to an int when using `NSNumber.description`.
         expect(
           testController.evaluateJavascript('runJavaScript'),

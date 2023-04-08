@@ -376,7 +376,7 @@ void main() {
     test('skips unsupported Dart versions when requested', () async {
       final RepositoryPackage excluded = createFakePackage(
           'excluded_package', packagesDir,
-          dartConstraint: '>=2.17.0 <3.0.0');
+          dartConstraint: '>=2.17.0 <4.0.0');
       final RepositoryPackage included =
           createFakePackage('a_package', packagesDir);
 
