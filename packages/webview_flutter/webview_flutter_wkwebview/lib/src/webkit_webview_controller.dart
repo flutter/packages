@@ -197,7 +197,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   /// The WebKit WebView being controlled.
   late final WKWebView _webView = _webKitParams.webKitProxy.createWebView(
     _webKitParams._configuration,
-    observeValue: withWeakRefenceTo(this, (
+    observeValue: withWeakReferenceTo(this, (
       WeakReference<WebKitWebViewController> weakReference,
     ) {
       return (
@@ -513,7 +513,7 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
     @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
   })  : assert(name.isNotEmpty),
         _messageHandler = webKitProxy.createScriptMessageHandler(
-          didReceiveScriptMessage: withWeakRefenceTo(
+          didReceiveScriptMessage: withWeakReferenceTo(
             onMessageReceived,
             (WeakReference<void Function(JavaScriptMessage)> weakReference) {
               return (

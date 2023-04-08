@@ -393,7 +393,7 @@ void main() {
       });
 
       testWidgets(
-          'loadFlutterAsset throws ArgumentError when asset does not exists',
+          'loadFlutterAsset throws ArgumentError when asset does not exist',
           (WidgetTester tester) async {
         await buildWidget(tester);
         const String assetKey = 'test_assets/index.html';
