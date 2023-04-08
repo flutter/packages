@@ -302,3 +302,28 @@ class IterableDefaultValueRoute extends GoRouteData {
   IterableDefaultValueRoute({this.param = const <int>[0]});
   final Iterable<int> param;
 }
+
+@ShouldGenerate(r'''
+GoRoute get $namedRoute => GoRouteData.$route(
+      path: '/named-route',
+      name: 'namedRoute',
+      factory: $NamedRouteExtension._fromState,
+    );
+
+extension $NamedRouteExtension on NamedRoute {
+  static NamedRoute _fromState(GoRouterState state) => NamedRoute();
+
+  String get location => GoRouteData.$location(
+        '/named-route',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  void push(BuildContext context) => context.push(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+''')
+@TypedGoRoute<NamedRoute>(path: '/named-route', name: 'namedRoute')
+class NamedRoute extends GoRouteData {}

@@ -280,7 +280,7 @@ routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}]
     return '''
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
-      name: ${_name == null ? null : escapeDartString(_name!)},
+      ${_name != null ? 'name: ${escapeDartString(_name!)},' : ''}
       factory: $_extensionName._fromState,
       $routesBit
 )
