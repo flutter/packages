@@ -77,6 +77,7 @@ void main() {
                   );
             return nonNullMockWebView;
           },
+          createUIDelegate: CapturingUIDelegate.new,
         ),
         instanceManager: instanceManager,
       );
@@ -873,6 +874,30 @@ void main() {
       );
 
       expect(callbackProgress, 0);
+    });
+
+    test('Requests to open a new window loads request in same window', () {
+      // Reset last created delegate.
+      CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate();
+
+      // Create a new WebKitWebViewController that sets
+      // CapturingUIDelegate.lastCreatedDelegate.
+      createControllerWithMocks();
+
+      final MockWKWebView mockWebView = MockWKWebView();
+      const NSUrlRequest request = NSUrlRequest(url: 'https://www.google.com');
+
+      CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
+        mockWebView,
+        WKWebViewConfiguration.detached(),
+        const WKNavigationAction(
+          request: request,
+          targetFrame: WKFrameInfo(isMainFrame: false),
+          navigationType: WKNavigationType.linkActivated,
+        ),
+      );
+
+      verify(mockWebView.loadRequest(request));
     });
 
     test(
