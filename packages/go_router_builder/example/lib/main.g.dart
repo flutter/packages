@@ -15,18 +15,22 @@ List<GoRoute> get $appRoutes => [
 
 GoRoute get $homeRoute => GoRouteData.$route(
       path: '/',
+      name: null,
       factory: $HomeRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
           path: 'family/:fid',
+          name: null,
           factory: $FamilyRouteExtension._fromState,
           routes: [
             GoRouteData.$route(
               path: 'person/:pid',
+              name: null,
               factory: $PersonRouteExtension._fromState,
               routes: [
                 GoRouteData.$route(
                   path: 'details/:details',
+                  name: null,
                   factory: $PersonDetailsRouteExtension._fromState,
                 ),
               ],
@@ -120,6 +124,7 @@ extension<T extends Enum> on Map<T, String> {
 
 GoRoute get $loginRoute => GoRouteData.$route(
       path: '/login',
+      name: null,
       factory: $LoginRouteExtension._fromState,
     );
 

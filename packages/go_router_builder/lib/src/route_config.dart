@@ -37,6 +37,7 @@ class InfoIterable extends IterableBase<String> {
 class RouteConfig {
   RouteConfig._(
     this._path,
+    this._name,
     this._routeDataClass,
     this._parent,
   );
@@ -74,7 +75,10 @@ class RouteConfig {
       );
     }
 
+    final ConstantReader nameValue = reader.read('name');
+
     final String path = pathValue.stringValue;
+    final String? name = nameValue.isNull ? null : nameValue.stringValue;
 
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
     final DartType typeParamType = type.typeArguments.single;
@@ -93,7 +97,7 @@ class RouteConfig {
     // ignore: deprecated_member_use
     final InterfaceElement classElement = typeParamType.element;
 
-    final RouteConfig value = RouteConfig._(path, classElement, parent);
+    final RouteConfig value = RouteConfig._(path, name, classElement, parent);
 
     value._children.addAll(reader.read('routes').listValue.map((DartObject e) =>
         RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
@@ -103,6 +107,7 @@ class RouteConfig {
 
   final List<RouteConfig> _children = <RouteConfig>[];
   final String _path;
+  final String? _name;
   final InterfaceElement _routeDataClass;
   final RouteConfig? _parent;
 
@@ -275,6 +280,7 @@ routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}]
     return '''
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
+      name: ${_name == null ? null : escapeDartString(_name!)},
       factory: $_extensionName._fromState,
       $routesBit
 )

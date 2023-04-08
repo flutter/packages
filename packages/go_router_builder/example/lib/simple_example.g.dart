@@ -14,10 +14,12 @@ List<GoRoute> get $appRoutes => [
 
 GoRoute get $homeRoute => GoRouteData.$route(
       path: '/',
+      name: 'Home',
       factory: $HomeRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
           path: 'family/:familyId',
+          name: null,
           factory: $FamilyRouteExtension._fromState,
         ),
       ],
