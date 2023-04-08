@@ -1,3 +1,7 @@
+## 1.1.8
+
+* Supports name parameter for `TypedGoRoute`. 
+
 ## 1.1.7
 
 * Supports default values for `Set`, `List` and `Iterable` route parameters.

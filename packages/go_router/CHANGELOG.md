@@ -1,3 +1,7 @@
+## 6.5.3
+
+- Adds name parameter to `TypedGoRoute`
+
 ## 6.5.2
 
 - NoTransitionPage now has an instant reverse transition
