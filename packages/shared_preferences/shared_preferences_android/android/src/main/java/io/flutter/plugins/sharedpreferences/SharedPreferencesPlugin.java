@@ -6,16 +6,64 @@ package io.flutter.plugins.sharedpreferences;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
+import android.util.Base64;
+import android.util.Log;import java.io.IOException;
+import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.sharedpreferences.Messages.SharedPreferencesApi;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
 
 /** SharedPreferencesPlugin */
 public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
   final String TAG = "SharedPreferencesPlugin.java";
+
+  SharedPreferencesListEncoder listEncoder;
+
+  class ListEncoder implements SharedPreferencesListEncoder {
+    @Override
+    public String encode(List<String> list) throws RuntimeException {
+      try {
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        ObjectOutputStream stream = new ObjectOutputStream(byteStream);
+        stream.writeObject(list);
+        stream.flush();
+        String data = Base64.encodeToString(byteStream.toByteArray(), 0);
+        if (stream != null) {
+          stream.close();
+        }
+        return data;
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> decode(String listString) throws RuntimeException {
+      try {
+        ObjectInputStream stream =
+            new ObjectInputStream(new ByteArrayInputStream(Base64.decode(listString, 0)));
+        return (List<String>) stream.readObject();
+      } catch (IOException | ClassNotFoundException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  SharedPreferencesPlugin() {
+    listEncoder = new ListEncoder();
+  }
+
+  @VisibleForTesting
+  SharedPreferencesPlugin(SharedPreferencesListEncoder testListEncoder) {
+    listEncoder = testListEncoder;
+  }
 
   // SharedPreferences Helper Object, exposes SharedPreferences methods
   private MethodCallHandlerImpl preferences;
@@ -28,7 +76,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
 
   @SuppressLint("LongLogTag")
   private void setup(BinaryMessenger messenger, Context context) {
-    preferences = new MethodCallHandlerImpl(context);
+    preferences = new MethodCallHandlerImpl(context, listEncoder);
     try {
       SharedPreferencesApi.setup(messenger, this);
     } catch (Exception ex) {

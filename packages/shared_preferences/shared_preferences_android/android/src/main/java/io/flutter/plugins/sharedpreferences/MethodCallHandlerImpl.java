@@ -6,12 +6,6 @@ package io.flutter.plugins.sharedpreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Base64;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +17,8 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 class MethodCallHandlerImpl {
 
+  SharedPreferencesListEncoder listEncoder;
+
   private static final String SHARED_PREFERENCES_NAME = "FlutterSharedPreferences";
 
   // Fun fact: The following is a base64 encoding of the string "This is the prefix for a list."
@@ -32,8 +28,9 @@ class MethodCallHandlerImpl {
 
   private final android.content.SharedPreferences preferences;
 
-  MethodCallHandlerImpl(Context context) {
+  MethodCallHandlerImpl(Context context, SharedPreferencesListEncoder listEncoderClass) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+    listEncoder = listEncoderClass;
   }
 
   public Boolean setBool(String key, Boolean value) {
@@ -133,37 +130,11 @@ class MethodCallHandlerImpl {
     return filteredPrefs;
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> decodeList(String encodedList) throws RuntimeException {
-    ObjectInputStream stream = null;
-    try {
-      stream = new ObjectInputStream(new ByteArrayInputStream(Base64.decode(encodedList, 0)));
-      List<String> data = (List<String>) stream.readObject();
-      if (stream != null) {
-        stream.close();
-      }
-
-      return data;
-    } catch (IOException | ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    }
+    return listEncoder.decode(encodedList);
   }
 
   private String encodeList(List<String> list) throws RuntimeException {
-    ObjectOutputStream stream = null;
-    try {
-      ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-      stream = new ObjectOutputStream(byteStream);
-      stream.writeObject(list);
-      stream.flush();
-      String data = Base64.encodeToString(byteStream.toByteArray(), 0);
-      if (stream != null) {
-        stream.close();
-      }
-
-      return data;
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return listEncoder.encode(list);
   }
 }

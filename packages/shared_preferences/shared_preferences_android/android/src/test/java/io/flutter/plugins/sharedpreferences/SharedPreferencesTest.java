@@ -17,6 +17,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
@@ -142,6 +143,18 @@ public class SharedPreferencesTest {
     };
   }
 
+  class ListEncoder implements SharedPreferencesListEncoder {
+    @Override
+    public String encode(List<String> list) {
+      return list.toString();
+    }
+
+    @Override
+    public List<String> decode(String listString) {
+      return Arrays.asList(s.substring(1, s.length() - 1).split(", "));
+    }
+  }
+
   SharedPreferencesPlugin plugin;
 
   @Mock BinaryMessenger mockMessenger;
@@ -160,7 +173,7 @@ public class SharedPreferencesTest {
     Mockito.when(flutterPluginBinding.getApplicationContext()).thenReturn(context);
     Mockito.when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPrefs);
 
-    plugin = new SharedPreferencesPlugin();
+    plugin = new SharedPreferencesPlugin(new ListEncoder());
     plugin.onAttachedToEngine(flutterPluginBinding);
   }
 
