@@ -39,11 +39,28 @@ class LintAndroidCommand extends PackageLoopingCommand {
     }
 
     bool failed = false;
+
+    // Ensure that the plugin has a strict Gradle-driven lint configuration, so
+    // that this test actually catches most issues.
+    if (!_mainGradleHasLintConfig(package)) {
+      failed = true;
+      printError('This plugin is not configured to enable all Gradle-driven '
+          'lint warnings and treat them as errors. '
+          'Please add the following to the lintOptions section of '
+          'android/build.gradle:');
+      print('''
+        checkAllWarnings true
+        warningsAsErrors true
+''');
+    }
+
     for (final RepositoryPackage example in package.getExamples()) {
       final GradleProject project = GradleProject(example,
           processRunner: processRunner, platform: platform);
 
       if (!project.isConfigured()) {
+        // TODO(stuartmorgan): Replace this with a --config-only build once
+        // that's available on stable.
         return PackageResult.fail(<String>['Build examples before linting']);
       }
 
@@ -61,25 +78,13 @@ class LintAndroidCommand extends PackageLoopingCommand {
         failed = true;
       }
 
-      // In addition to running the Gradle lint step, also ensure that the
-      // example project is configured to build with javac lints enabled and
+      // In addition to running the Gradle-driven lint step, also ensure that
+      // the example project is configured to build with javac lints enabled and
       // treated as errors.
-      final List<String> gradleBuildContents = example
-          .platformDirectory(FlutterPlatform.android)
-          .childFile('build.gradle')
-          .readAsLinesSync();
-      // The check here is intentionally somewhat loose, to allow for the
-      // possibility of variations (e.g., not using Xlint:all in some cases, or
-      // passing other arguments).
-      if (!gradleBuildContents.any(
-              (String line) => line.contains('project(":$packageName")')) ||
-          !gradleBuildContents.any((String line) =>
-              line.contains('options.compilerArgs') &&
-              line.contains('-Xlint') &&
-              line.contains('-Werror'))) {
+      if (!_exampleGradleHasJavacLintConfig(example, packageName)) {
         failed = true;
         printError('The example '
-            '${getRelativePosixPath(example.directory, from: package.directory)} '
+            '"${getRelativePosixPath(example.directory, from: package.directory)}" '
             'is not configured to treat javac lints and warnings as errors. '
             'Please add the following to its build.gradle:');
         print('''
@@ -95,5 +100,37 @@ gradle.projectsEvaluated {
     }
 
     return failed ? PackageResult.fail() : PackageResult.success();
+  }
+
+  /// Returns whether the plugin project is configured to enable all Gradle
+  /// lints and treat them as errors.
+  bool _mainGradleHasLintConfig(RepositoryPackage package) {
+    final List<String> gradleBuildContents = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle')
+        .readAsLinesSync();
+    return gradleBuildContents
+            .any((String line) => line.contains('checkAllWarnings true')) &&
+        gradleBuildContents
+            .any((String line) => line.contains('warningsAsErrors true'));
+  }
+
+  /// Returns whether the example project is configured to build with javac
+  /// lints enabled and treated as errors.
+  bool _exampleGradleHasJavacLintConfig(
+      RepositoryPackage example, String pluginPackageName) {
+    final List<String> gradleBuildContents = example
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle')
+        .readAsLinesSync();
+    // The check here is intentionally somewhat loose, to allow for the
+    // possibility of variations (e.g., not using Xlint:all in some cases, or
+    // passing other arguments).
+    return gradleBuildContents.any(
+            (String line) => line.contains('project(":$pluginPackageName")')) &&
+        gradleBuildContents.any((String line) =>
+            line.contains('options.compilerArgs') &&
+            line.contains('-Xlint') &&
+            line.contains('-Werror'));
   }
 }

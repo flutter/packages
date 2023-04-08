@@ -1,6 +1,10 @@
-## 1.1.8
+## 1.2.1
 
 * Supports name parameter for `TypedGoRoute`. 
+
+## 1.2.0
+
+* Adds Support for ShellRoute
 
 ## 1.1.7
 

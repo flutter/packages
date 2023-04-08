@@ -8,11 +8,11 @@ part of 'all_types.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<GoRoute> get $appRoutes => [
+List<RouteBase> get $appRoutes => [
       $allTypesBaseRoute,
     ];
 
-GoRoute get $allTypesBaseRoute => GoRouteData.$route(
+RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       path: '/',
       name: null,
       factory: $AllTypesBaseRouteExtension._fromState,
