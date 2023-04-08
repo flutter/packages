@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -6,6 +7,15 @@ void main() {
   setUp(() {
     svg.cache.clear();
     svg.cache.maximumSize = 100;
+  });
+
+  test('ColorMapper updates the cache', () async {
+    const TestLoader loaderA = TestLoader();
+    const TestLoader loaderB = TestLoader(colorMapper: _TestColorMapper());
+    final ByteData bytesA = await loaderA.loadBytes(null);
+    final ByteData bytesB = await loaderB.loadBytes(null);
+    expect(identical(bytesA, bytesB), false);
+    expect(svg.cache.count, 2);
   });
 
   test('SvgTheme updates the cache', () async {
@@ -61,10 +71,28 @@ class TestBundle extends Fake implements AssetBundle {
 }
 
 class TestLoader extends SvgLoader<void> {
-  const TestLoader({super.theme, super.colorMapper});
+  const TestLoader({this.keyName = 'A', super.theme, super.colorMapper});
+
+  final String keyName;
 
   @override
   String provideSvg(void message) {
     return '<svg width="10" height="10"></svg>';
+  }
+
+  @override
+  SvgCacheKey cacheKey(BuildContext? context) {
+    return SvgCacheKey(
+        theme: theme, colorMapper: colorMapper, keyData: keyName);
+  }
+}
+
+class _TestColorMapper extends ColorMapper {
+  const _TestColorMapper();
+
+  @override
+  Color substitute(
+      String? id, String elementName, String attributeName, Color color) {
+    return color;
   }
 }

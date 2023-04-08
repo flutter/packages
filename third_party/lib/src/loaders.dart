@@ -73,7 +73,14 @@ class SvgTheme {
 }
 
 /// A class that transforms from one color to another during SVG parsing.
+///
+/// This object must be immutable so that it is suitable for use in the
+/// [svg.cache].
+@immutable
 abstract class ColorMapper {
+  /// Allows const constructors on subclasses.
+  const ColorMapper();
+
   /// Returns a new color to use in place of [color] during SVG parsing.
   ///
   /// The SVG parser will call this method every time it parses a color
@@ -153,7 +160,7 @@ abstract class SvgLoader<T> extends BytesLoader {
 
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
-    return SvgCacheKey(keyData: this, theme: theme);
+    return SvgCacheKey(keyData: this, theme: theme, colorMapper: colorMapper);
   }
 }
 
@@ -164,7 +171,11 @@ abstract class SvgLoader<T> extends BytesLoader {
 @immutable
 class SvgCacheKey {
   /// See [SvgCacheKey].
-  const SvgCacheKey({required this.theme, required this.keyData});
+  const SvgCacheKey({
+    required this.theme,
+    required this.keyData,
+    required this.colorMapper,
+  });
 
   /// The theme for this cached SVG.
   final SvgTheme theme;
@@ -174,14 +185,18 @@ class SvgCacheKey {
   /// For most loaders, using the loader object itself is suitable.
   final Object keyData;
 
+  /// The color mapper for the SVG, if any.
+  final ColorMapper? colorMapper;
+
   @override
-  int get hashCode => Object.hash(theme, keyData);
+  int get hashCode => Object.hash(theme, keyData, colorMapper);
 
   @override
   bool operator ==(Object other) {
     return other is SvgCacheKey &&
         other.theme == theme &&
-        other.keyData == keyData;
+        other.keyData == keyData &&
+        other.colorMapper == colorMapper;
   }
 }
 
@@ -352,6 +367,7 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
   SvgCacheKey cacheKey(BuildContext? context) {
     return SvgCacheKey(
       theme: theme,
+      colorMapper: colorMapper,
       keyData: _AssetByteLoaderCacheKey(
         assetName,
         packageName,
