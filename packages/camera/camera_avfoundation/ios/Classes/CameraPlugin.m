@@ -147,15 +147,12 @@
 
           NSString *combined = [NSString stringWithFormat:@"%@/%@/%@", fStop, ISO, shutterSpeed];
 
-          _dispatchQueue = nil;
           result(combined);
       } else if ([@"getCameraWhiteBalance" isEqualToString:call.method]) {
           printf("getCameraWhiteBalance Called.");
           NSNumber *value = 0;
           @try{
               AVCaptureWhiteBalanceTemperatureAndTintValues tempAndTint = [_camera.captureDevice temperatureAndTintValuesForDeviceWhiteBalanceGains:[_camera.captureDevice deviceWhiteBalanceGains]];
-
-               _dispatchQueue = nil;
                value = @(tempAndTint.temperature);
           }@catch(NSException *e){
               NSLog(@"Stack trace : %@",[NSThread callStackSymbols]);
