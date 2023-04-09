@@ -26,7 +26,7 @@ class RouteConfiguration {
         assert(_debugCheckParentNavigatorKeys(
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
     _cacheNameToPath('', routes);
-    log.info(_debugKnownRoutes());
+    log.info(debugKnownRoutes());
   }
 
   static bool _debugCheckPath(List<RouteBase> routes, bool isTopLevel) {
@@ -172,7 +172,9 @@ class RouteConfiguration {
     return 'RouterConfiguration: $routes';
   }
 
-  String _debugKnownRoutes() {
+  /// Returns full paths of all routes and known full paths of route names.
+  @visibleForTesting
+  String debugKnownRoutes() {
     final StringBuffer sb = StringBuffer();
     sb.writeln('Full paths for routes:');
     _debugFullPathsFor(routes, '', 0, sb);
