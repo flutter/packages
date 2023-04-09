@@ -139,7 +139,30 @@
     [result sendSuccessWithData:reply];
   } else if ([@"create" isEqualToString:call.method]) {
     [self handleCreateMethodCall:call result:result];
-  } else if ([@"startImageStream" isEqualToString:call.method]) {
+  }  else if ([@"getCameraSettings" isEqualToString:call.method]) {
+          printf("getCameraSettings Called");
+          NSString *fStop = [NSString stringWithFormat:@"%.20lf", _camera.captureDevice.lensAperture];
+          NSString *ISO = [NSString stringWithFormat:@"%.20lf", _camera.captureDevice.ISO];
+          NSString *shutterSpeed = [NSString stringWithFormat:@"%.20lf", ((double)_camera.captureDevice.exposureDuration.value/(double)_camera.captureDevice.exposureDuration.timescale)];
+
+          NSString *combined = [NSString stringWithFormat:@"%@/%@/%@", fStop, ISO, shutterSpeed];
+
+          _dispatchQueue = nil;
+          result(combined);
+      } else if ([@"getCameraWhiteBalance" isEqualToString:call.method]) {
+          printf("getCameraWhiteBalance Called.");
+          NSNumber *value = 0;
+          @try{
+              AVCaptureWhiteBalanceTemperatureAndTintValues tempAndTint = [_camera.captureDevice temperatureAndTintValuesForDeviceWhiteBalanceGains:[_camera.captureDevice deviceWhiteBalanceGains]];
+
+               _dispatchQueue = nil;
+               value = @(tempAndTint.temperature);
+          }@catch(NSException *e){
+              NSLog(@"Stack trace : %@",[NSThread callStackSymbols]);
+          }
+          result(value);
+
+      } else if ([@"startImageStream" isEqualToString:call.method]) {
     [_camera startImageStreamWithMessenger:_messenger];
     [result sendSuccess];
   } else if ([@"stopImageStream" isEqualToString:call.method]) {
