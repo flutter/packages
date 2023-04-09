@@ -147,7 +147,7 @@
 
           NSString *combined = [NSString stringWithFormat:@"%@/%@/%@", fStop, ISO, shutterSpeed];
 
-          [result value];
+         [result sendSuccessWithData:@(value)];
       } else if ([@"getCameraWhiteBalance" isEqualToString:call.method]) {
           printf("getCameraWhiteBalance Called.");
           NSNumber *value = 0;
@@ -157,7 +157,7 @@
           }@catch(NSException *e){
               NSLog(@"Stack trace : %@",[NSThread callStackSymbols]);
           }
-          [result value];
+          [result sendSuccessWithData:@(value)];
 
       } else if ([@"startImageStream" isEqualToString:call.method]) {
     [_camera startImageStreamWithMessenger:_messenger];
