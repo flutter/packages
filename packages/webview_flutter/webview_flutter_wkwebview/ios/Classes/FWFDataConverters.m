@@ -235,3 +235,34 @@ FWFWKNavigationType FWFWKNavigationTypeFromWKNavigationType(WKNavigationType typ
       return FWFWKNavigationTypeOther;
   }
 }
+
+FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromWKSecurityOrigin(WKSecurityOrigin *info) {
+  return [FWFWKSecurityOriginData makeWithHost:info.host port:@(info.port) protocol:info.protocol];
+}
+
+WKPermissionDecision FWFWKPermissionDecisionFromData(FWFWKPermissionDecisionData *data) {
+  switch (data.value) {
+    case FWFWKPermissionDecisionDeny:
+      return WKPermissionDecisionDeny;
+    case FWFWKPermissionDecisionGrant:
+      return WKPermissionDecisionGrant;
+    case FWFWKPermissionDecisionPrompt:
+      return WKPermissionDecisionPrompt;
+  }
+
+  return -1;
+}
+
+FWFWKMediaCaptureTypeData *FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(
+    WKMediaCaptureType type) {
+  switch (type) {
+    case WKMediaCaptureTypeCamera:
+      return [FWFWKMediaCaptureTypeData makeWithValue:FWFWKMediaCaptureTypeCamera];
+    case WKMediaCaptureTypeMicrophone:
+      return [FWFWKMediaCaptureTypeData makeWithValue:FWFWKMediaCaptureTypeMicrophone];
+    case WKMediaCaptureTypeCameraAndMicrophone:
+      return [FWFWKMediaCaptureTypeData makeWithValue:FWFWKMediaCaptureTypeCameraAndMicrophone];
+  }
+
+  return nil;
+}

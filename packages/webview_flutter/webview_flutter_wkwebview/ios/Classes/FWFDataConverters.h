@@ -159,4 +159,34 @@ extern FWFWKScriptMessageData *FWFWKScriptMessageDataFromWKScriptMessage(WKScrip
  */
 extern FWFWKNavigationType FWFWKNavigationTypeFromWKNavigationType(WKNavigationType type);
 
+/**
+ * Converts a WKSecurityOrigin to an FWFWKSecurityOriginData.
+ *
+ * @param info The object containing information to create an FWFWKSecurityOriginData.
+ *
+ * @return An FWFWKSecurityOriginData.
+ */
+extern FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromWKSecurityOrigin(WKSecurityOrigin *info);
+
+/**
+ * Converts an FWFWKPermissionDecisionData to a WKPermissionDecision.
+ *
+ * @param data The data object containing information to create a WKPermissionDecision.
+ *
+ * @return A WKPermissionDecision or -1 if data could not be converted.
+ */
+API_AVAILABLE(ios(15.0))
+extern WKPermissionDecision FWFWKPermissionDecisionFromData(FWFWKPermissionDecisionData *data);
+
+/**
+ * Converts an WKMediaCaptureType to a FWFWKMediaCaptureTypeData.
+ *
+ * @param type The data object containing information to create a FWFWKMediaCaptureTypeData.
+ *
+ * @return A FWFWKMediaCaptureTypeData or nil if data could not be converted.
+ */
+API_AVAILABLE(ios(15.0))
+extern FWFWKMediaCaptureTypeData *FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(
+    WKMediaCaptureType type);
+
 NS_ASSUME_NONNULL_END

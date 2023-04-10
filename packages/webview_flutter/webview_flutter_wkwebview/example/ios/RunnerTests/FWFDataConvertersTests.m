@@ -117,4 +117,40 @@
   XCTAssertEqualObjects(data.name, @"name");
   XCTAssertEqualObjects(data.body, @"message");
 }
+
+- (void)testFWFWKSecurityOriginDataFromWKSecurityOrigin {
+  WKSecurityOrigin *mockSecurityOrigin = OCMClassMock([WKSecurityOrigin class]);
+  OCMStub([mockSecurityOrigin host]).andReturn(@"host");
+  OCMStub([mockSecurityOrigin port]).andReturn(2);
+  OCMStub([mockSecurityOrigin protocol]).andReturn(@"protocol");
+
+  FWFWKSecurityOriginData *data = FWFWKSecurityOriginDataFromWKSecurityOrigin(mockSecurityOrigin);
+  XCTAssertEqualObjects(data.host, @"host");
+  XCTAssertEqualObjects(data.port, @(2));
+  XCTAssertEqualObjects(data.protocol, @"protocol");
+}
+
+- (void)testFWFWKPermissionDecisionFromData API_AVAILABLE(ios(15.0)) {
+  XCTAssertEqual(FWFWKPermissionDecisionFromData(
+                     [FWFWKPermissionDecisionData makeWithValue:FWFWKPermissionDecisionDeny]),
+                 WKPermissionDecisionDeny);
+  XCTAssertEqual(FWFWKPermissionDecisionFromData(
+                     [FWFWKPermissionDecisionData makeWithValue:FWFWKPermissionDecisionGrant]),
+                 WKPermissionDecisionGrant);
+  XCTAssertEqual(FWFWKPermissionDecisionFromData(
+                     [FWFWKPermissionDecisionData makeWithValue:FWFWKPermissionDecisionPrompt]),
+                 WKPermissionDecisionPrompt);
+}
+
+- (void)testFWFWKMediaCaptureTypeDataFromWKMediaCaptureType {
+  XCTAssertEqualObjects(
+      FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(WKMediaCaptureTypeCamera).value,
+      FWFWKMediaCaptureTypeCamera);
+  XCTAssertEqualObjects(
+      FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(WKMediaCaptureTypeMicrophone).value,
+      FWFWKMediaCaptureTypeMicrophone);
+  XCTAssertEqualObjects(
+      FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(WKMediaCaptureTypeCamera).value,
+      FWFWKMediaCaptureTypeCameraAndMicrophone);
+}
 @end

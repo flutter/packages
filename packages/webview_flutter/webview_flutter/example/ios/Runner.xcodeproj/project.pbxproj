@@ -12,6 +12,21 @@
 		334734022669319400DCC49E /* FLTWKNavigationDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 686B4BF82548DBC7000AEA36 /* FLTWKNavigationDelegateTests.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		63D2F2FB307F1F037702C198 /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEC8CD326B252E47ABE6C037 /* libPods-RunnerTests.a */; };
+		8F160CDF29E477120011C553 /* FWFScriptMessageHandlerHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD029E477110011C553 /* FWFScriptMessageHandlerHostApiTests.m */; };
+		8F160CE029E477120011C553 /* FWFWebsiteDataStoreHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD129E477110011C553 /* FWFWebsiteDataStoreHostApiTests.m */; };
+		8F160CE129E477120011C553 /* FWFWebViewConfigurationHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD229E477110011C553 /* FWFWebViewConfigurationHostApiTests.m */; };
+		8F160CE229E477120011C553 /* FWFUIViewHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD329E477110011C553 /* FWFUIViewHostApiTests.m */; };
+		8F160CE329E477120011C553 /* FWFPreferencesHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD429E477110011C553 /* FWFPreferencesHostApiTests.m */; };
+		8F160CE429E477120011C553 /* FWFScrollViewHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD529E477110011C553 /* FWFScrollViewHostApiTests.m */; };
+		8F160CE529E477120011C553 /* FWFNavigationDelegateHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD629E477110011C553 /* FWFNavigationDelegateHostApiTests.m */; };
+		8F160CE629E477120011C553 /* FWFUIDelegateHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD729E477110011C553 /* FWFUIDelegateHostApiTests.m */; };
+		8F160CE729E477120011C553 /* FWFInstanceManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD829E477110011C553 /* FWFInstanceManagerTests.m */; };
+		8F160CE829E477120011C553 /* FWFWebViewHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CD929E477110011C553 /* FWFWebViewHostApiTests.m */; };
+		8F160CE929E477120011C553 /* FWFHTTPCookieStoreHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CDA29E477110011C553 /* FWFHTTPCookieStoreHostApiTests.m */; };
+		8F160CEA29E477120011C553 /* FWFUserContentControllerHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CDB29E477110011C553 /* FWFUserContentControllerHostApiTests.m */; };
+		8F160CEB29E477120011C553 /* FWFWebViewFlutterWKWebViewExternalAPITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CDC29E477110011C553 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */; };
+		8F160CEC29E477120011C553 /* FWFDataConvertersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CDD29E477110011C553 /* FWFDataConvertersTests.m */; };
+		8F160CED29E477120011C553 /* FWFObjectHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F160CDE29E477110011C553 /* FWFObjectHostApiTests.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -66,6 +81,21 @@
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8F160CD029E477110011C553 /* FWFScriptMessageHandlerHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFScriptMessageHandlerHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFScriptMessageHandlerHostApiTests.m; sourceTree = "<group>"; };
+		8F160CD129E477110011C553 /* FWFWebsiteDataStoreHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFWebsiteDataStoreHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFWebsiteDataStoreHostApiTests.m; sourceTree = "<group>"; };
+		8F160CD229E477110011C553 /* FWFWebViewConfigurationHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFWebViewConfigurationHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFWebViewConfigurationHostApiTests.m; sourceTree = "<group>"; };
+		8F160CD329E477110011C553 /* FWFUIViewHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFUIViewHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFUIViewHostApiTests.m; sourceTree = "<group>"; };
+		8F160CD429E477110011C553 /* FWFPreferencesHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFPreferencesHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFPreferencesHostApiTests.m; sourceTree = "<group>"; };
+		8F160CD529E477110011C553 /* FWFScrollViewHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFScrollViewHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFScrollViewHostApiTests.m; sourceTree = "<group>"; };
+		8F160CD629E477110011C553 /* FWFNavigationDelegateHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFNavigationDelegateHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFNavigationDelegateHostApiTests.m; sourceTree = "<group>"; };
+		8F160CD729E477110011C553 /* FWFUIDelegateHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFUIDelegateHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFUIDelegateHostApiTests.m; sourceTree = "<group>"; };
+		8F160CD829E477110011C553 /* FWFInstanceManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFInstanceManagerTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFInstanceManagerTests.m; sourceTree = "<group>"; };
+		8F160CD929E477110011C553 /* FWFWebViewHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFWebViewHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFWebViewHostApiTests.m; sourceTree = "<group>"; };
+		8F160CDA29E477110011C553 /* FWFHTTPCookieStoreHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFHTTPCookieStoreHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFHTTPCookieStoreHostApiTests.m; sourceTree = "<group>"; };
+		8F160CDB29E477110011C553 /* FWFUserContentControllerHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFUserContentControllerHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFUserContentControllerHostApiTests.m; sourceTree = "<group>"; };
+		8F160CDC29E477110011C553 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFWebViewFlutterWKWebViewExternalAPITests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFWebViewFlutterWKWebViewExternalAPITests.m; sourceTree = "<group>"; };
+		8F160CDD29E477110011C553 /* FWFDataConvertersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFDataConvertersTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFDataConvertersTests.m; sourceTree = "<group>"; };
+		8F160CDE29E477110011C553 /* FWFObjectHostApiTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FWFObjectHostApiTests.m; path = ../../../../webview_flutter_wkwebview/example/ios/RunnerTests/FWFObjectHostApiTests.m; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -120,6 +150,21 @@
 		68BDCAEA23C3F7CB00D9C032 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				8F160CDD29E477110011C553 /* FWFDataConvertersTests.m */,
+				8F160CDA29E477110011C553 /* FWFHTTPCookieStoreHostApiTests.m */,
+				8F160CD829E477110011C553 /* FWFInstanceManagerTests.m */,
+				8F160CD629E477110011C553 /* FWFNavigationDelegateHostApiTests.m */,
+				8F160CDE29E477110011C553 /* FWFObjectHostApiTests.m */,
+				8F160CD429E477110011C553 /* FWFPreferencesHostApiTests.m */,
+				8F160CD029E477110011C553 /* FWFScriptMessageHandlerHostApiTests.m */,
+				8F160CD529E477110011C553 /* FWFScrollViewHostApiTests.m */,
+				8F160CD729E477110011C553 /* FWFUIDelegateHostApiTests.m */,
+				8F160CD329E477110011C553 /* FWFUIViewHostApiTests.m */,
+				8F160CDB29E477110011C553 /* FWFUserContentControllerHostApiTests.m */,
+				8F160CD129E477110011C553 /* FWFWebsiteDataStoreHostApiTests.m */,
+				8F160CD229E477110011C553 /* FWFWebViewConfigurationHostApiTests.m */,
+				8F160CDC29E477110011C553 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */,
+				8F160CD929E477110011C553 /* FWFWebViewHostApiTests.m */,
 				686B4BF82548DBC7000AEA36 /* FLTWKNavigationDelegateTests.m */,
 				68BDCAF523C3F97800D9C032 /* FLTWebViewTests.m */,
 				68BDCAED23C3F7CB00D9C032 /* Info.plist */,
@@ -193,7 +238,6 @@
 				3CEFE8F0E91B9792E4EE427B /* Pods-RunnerTests.debug.xcconfig */,
 				5D19D984A61169BB95DB0FED /* Pods-RunnerTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -421,8 +465,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F160CE029E477120011C553 /* FWFWebsiteDataStoreHostApiTests.m in Sources */,
 				334734012669319100DCC49E /* FLTWebViewTests.m in Sources */,
+				8F160CED29E477120011C553 /* FWFObjectHostApiTests.m in Sources */,
+				8F160CE929E477120011C553 /* FWFHTTPCookieStoreHostApiTests.m in Sources */,
+				8F160CE129E477120011C553 /* FWFWebViewConfigurationHostApiTests.m in Sources */,
+				8F160CE529E477120011C553 /* FWFNavigationDelegateHostApiTests.m in Sources */,
 				334734022669319400DCC49E /* FLTWKNavigationDelegateTests.m in Sources */,
+				8F160CE329E477120011C553 /* FWFPreferencesHostApiTests.m in Sources */,
+				8F160CEB29E477120011C553 /* FWFWebViewFlutterWKWebViewExternalAPITests.m in Sources */,
+				8F160CEA29E477120011C553 /* FWFUserContentControllerHostApiTests.m in Sources */,
+				8F160CDF29E477120011C553 /* FWFScriptMessageHandlerHostApiTests.m in Sources */,
+				8F160CE629E477120011C553 /* FWFUIDelegateHostApiTests.m in Sources */,
+				8F160CE729E477120011C553 /* FWFInstanceManagerTests.m in Sources */,
+				8F160CE429E477120011C553 /* FWFScrollViewHostApiTests.m in Sources */,
+				8F160CE829E477120011C553 /* FWFWebViewHostApiTests.m in Sources */,
+				8F160CEC29E477120011C553 /* FWFDataConvertersTests.m in Sources */,
+				8F160CE229E477120011C553 /* FWFUIViewHostApiTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,7 +545,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
@@ -500,7 +563,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
@@ -625,7 +692,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -648,7 +718,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -664,7 +737,11 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -677,7 +754,11 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
