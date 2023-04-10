@@ -1,9 +1,6 @@
-## NEXT
-
-* Updates minimum Flutter version to 3.3.
-
 ## 0.8.7+2
 
+* Updates minimum Flutter version to 3.3.
 * Fixed a broken link in the example related to `image_picker_for_web`.
 
 ## 0.8.7+1
