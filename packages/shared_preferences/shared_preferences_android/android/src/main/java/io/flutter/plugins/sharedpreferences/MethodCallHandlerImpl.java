@@ -34,11 +34,11 @@ class MethodCallHandlerImpl {
     listEncoder = listEncoderClass;
   }
 
-  public @NonNull Boolean setBool(String key, Boolean value) {
+  public @NonNull Boolean setBool(@NonNull String key, @NonNull Boolean value) {
     return preferences.edit().putBoolean(key, value).commit();
   }
 
-  public @NonNull Boolean setString(String key, String value) {
+  public @NonNull Boolean setString(@NonNull String key, @NonNull String value) {
     if (value.startsWith(LIST_IDENTIFIER)
         || value.startsWith(BIG_INTEGER_PREFIX)
         || value.startsWith(DOUBLE_PREFIX)) {
@@ -48,29 +48,29 @@ class MethodCallHandlerImpl {
     return preferences.edit().putString(key, value).commit();
   }
 
-  public @NonNull Boolean setInt(String key, Object value) {
+  public @NonNull Boolean setInt(@NonNull String key, @NonNull Object value) {
     Number number = (Number) value;
     return preferences.edit().putLong(key, number.longValue()).commit();
   }
 
-  public @NonNull Boolean setDouble(String key, Double value) {
+  public @NonNull Boolean setDouble(@NonNull String key, @NonNull Double value) {
     String doubleValueStr = Double.toString(value);
     return preferences.edit().putString(key, DOUBLE_PREFIX + doubleValueStr).commit();
   }
 
-  public @NonNull Boolean setStringList(String key, List<String> value) throws RuntimeException {
+  public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value) throws RuntimeException {
     return preferences.edit().putString(key, LIST_IDENTIFIER + encodeList(value)).commit();
   }
 
-  public @NonNull Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
+  public @NonNull Map<String, Object> getAllWithPrefix(@NonNull String prefix) throws RuntimeException {
     return getAllPrefs(prefix);
   }
 
-  public @NonNull Boolean remove(String key) {
+  public @NonNull Boolean remove(@NonNull String key) {
     return preferences.edit().remove(key).commit();
   }
 
-  public @NonNull Boolean clearWithPrefix(String prefix) throws RuntimeException {
+  public @NonNull Boolean clearWithPrefix(@NonNull String prefix) throws RuntimeException {
     Set<String> keySet = getAllPrefs(prefix).keySet();
     SharedPreferences.Editor clearEditor = preferences.edit();
     for (String keyToDelete : keySet) {
@@ -81,7 +81,7 @@ class MethodCallHandlerImpl {
 
   // Gets all shared preferences, filtered to only those set with the given prefix.
   @SuppressWarnings("unchecked")
-  private @NonNull Map<String, Object> getAllPrefs(String prefix) throws RuntimeException {
+  private @NonNull Map<String, Object> getAllPrefs(@NonNull String prefix) throws RuntimeException {
     Map<String, ?> allPrefs = preferences.getAll();
     Map<String, Object> filteredPrefs = new HashMap<>();
     for (String key : allPrefs.keySet()) {
@@ -93,7 +93,7 @@ class MethodCallHandlerImpl {
     return filteredPrefs;
   }
 
-  private Object transformPref(String key, Object value) {
+  private Object transformPref(@NonNull String key, @NonNull Object value) {
     if (value instanceof String) {
       String stringValue = (String) value;
       if (stringValue.startsWith(LIST_IDENTIFIER)) {
@@ -121,11 +121,11 @@ class MethodCallHandlerImpl {
     return value;
   }
 
-  private @NonNull List<String> decodeList(String encodedList) throws RuntimeException {
+  private @NonNull List<String> decodeList(@NonNull String encodedList) throws RuntimeException {
     return listEncoder.decode(encodedList);
   }
 
-  private @NonNull String encodeList(List<String> list) throws RuntimeException {
+  private @NonNull String encodeList(@NonNull List<String> list) throws RuntimeException {
     return listEncoder.encode(list);
   }
 }

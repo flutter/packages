@@ -29,7 +29,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
 
   static class ListEncoder implements SharedPreferencesListEncoder {
     @Override
-    public @NonNull String encode(List<String> list) throws RuntimeException {
+    public @NonNull String encode(@NonNull List<String> list) throws RuntimeException {
       try {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         ObjectOutputStream stream = new ObjectOutputStream(byteStream);
@@ -43,7 +43,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NonNull List<String> decode(String listString) throws RuntimeException {
+    public @NonNull List<String> decode(@NonNull String listString) throws RuntimeException {
       try {
         ObjectInputStream stream =
             new ObjectInputStream(new ByteArrayInputStream(Base64.decode(listString, 0)));
@@ -67,13 +67,13 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   private MethodCallHandlerImpl preferences;
 
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(@NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     final SharedPreferencesPlugin plugin = new SharedPreferencesPlugin();
     plugin.setup(registrar.messenger(), registrar.context());
   }
 
   @SuppressLint("LongLogTag")
-  private void setup(BinaryMessenger messenger, Context context) {
+  private void setup(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     preferences = new MethodCallHandlerImpl(context, listEncoder);
     try {
       SharedPreferencesApi.setup(messenger, this);
@@ -83,52 +83,52 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @Override
-  public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding binding) {
+  public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
     setup(binding.getBinaryMessenger(), binding.getApplicationContext());
   }
 
   @Override
-  public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
+  public void onDetachedFromEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
     SharedPreferencesApi.setup(binding.getBinaryMessenger(), null);
   }
 
   @Override
-  public @NonNull Boolean setBool(String key, Boolean value) {
+  public @NonNull Boolean setBool(@NonNull String key, @NonNull Boolean value) {
     return preferences.setBool(key, value);
   }
 
   @Override
-  public @NonNull Boolean setString(String key, String value) {
+  public @NonNull Boolean setString(@NonNull String key, @NonNull String value) {
     return preferences.setString(key, value);
   }
 
   @Override
-  public @NonNull Boolean setInt(String key, Object value) {
+  public @NonNull Boolean setInt(@NonNull String key, @NonNull Object value) {
     return preferences.setInt(key, value);
   }
 
   @Override
-  public @NonNull Boolean setDouble(String key, Double value) {
+  public @NonNull Boolean setDouble(@NonNull String key,@NonNull  Double value) {
     return preferences.setDouble(key, value);
   }
 
   @Override
-  public @NonNull Boolean remove(String key) {
+  public @NonNull Boolean remove(@NonNull String key) {
     return preferences.remove(key);
   }
 
   @Override
-  public @NonNull Boolean setStringList(String key, List<String> value) throws RuntimeException {
+  public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value) throws RuntimeException {
     return preferences.setStringList(key, value);
   }
 
   @Override
-  public @NonNull Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
+  public @NonNull Map<String, Object> getAllWithPrefix(@NonNull String prefix) throws RuntimeException {
     return preferences.getAllWithPrefix(prefix);
   }
 
   @Override
-  public @NonNull Boolean clearWithPrefix(String prefix) throws RuntimeException {
+  public @NonNull Boolean clearWithPrefix(@NonNull String prefix) throws RuntimeException {
     return preferences.clearWithPrefix(prefix);
   }
 }

@@ -29,48 +29,48 @@ public class SharedPreferencesTest {
   public static class LocalSharedPreferencesEditor implements SharedPreferences.Editor {
     private final Map<String, Object> sharedPrefData;
 
-    LocalSharedPreferencesEditor(Map<String, Object> data) {
+    LocalSharedPreferencesEditor(@NonNull Map<String, Object> data) {
       sharedPrefData = data;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putString(String key, String value) {
+    public @NonNull SharedPreferences.Editor putString(@NonNull String key, @NonNull String value) {
       sharedPrefData.put(key, value);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putStringSet(String key, Set<String> values) {
+    public @NonNull SharedPreferences.Editor putStringSet(@NonNull String key, @NonNull Set<String> values) {
       sharedPrefData.put(key, values);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putBoolean(String key, boolean value) {
+    public @NonNull SharedPreferences.Editor putBoolean(@NonNull String key, @NonNull boolean value) {
       sharedPrefData.put(key, value);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putInt(String key, int value) {
+    public @NonNull SharedPreferences.Editor putInt(@NonNull String key, @NonNull int value) {
       sharedPrefData.put(key, value);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putLong(String key, long value) {
+    public @NonNull SharedPreferences.Editor putLong(@NonNull String key, @NonNull long value) {
       sharedPrefData.put(key, value);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putFloat(String key, float value) {
+    public @NonNull SharedPreferences.Editor putFloat(@NonNull String key, @NonNull float value) {
       sharedPrefData.put(key, value);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor remove(String key) {
+    public @NonNull SharedPreferences.Editor remove(@NonNull String key) {
       sharedPrefData.remove(key);
       return this;
     }
@@ -107,61 +107,61 @@ public class SharedPreferencesTest {
 
     // All methods below are not implemented.
     @Override
-    public @NonNull boolean contains(String key) {
+    public @NonNull boolean contains(@NonNull String key) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull boolean getBoolean(String key, boolean defValue) {
+    public @NonNull boolean getBoolean(@NonNull String key, @NonNull boolean defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull float getFloat(String key, float defValue) {
+    public @NonNull float getFloat(@NonNull String key, @NonNull float defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull int getInt(String key, int defValue) {
+    public @NonNull int getInt(@NonNull String key, @NonNull int defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull long getLong(String key, long defValue) {
+    public @NonNull long getLong(@NonNull String key, @NonNull long defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull String getString(String key, String defValue) {
+    public @NonNull String getString(@NonNull String key, @NonNull String defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull Set<String> getStringSet(String key, Set<String> defValues) {
+    public @NonNull Set<String> getStringSet(@NonNull String key, @NonNull Set<String> defValues) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(
-        SharedPreferences.OnSharedPreferenceChangeListener listener) {
+      @NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(
-        SharedPreferences.OnSharedPreferenceChangeListener listener) {
+      @NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
   }
 
   static class ListEncoder implements SharedPreferencesListEncoder {
     @Override
-    public @NonNull String encode(List<String> list) {
+    public @NonNull String encode(@NonNull List<String> list) {
       return list.toString();
     }
 
     @Override
-    public @NonNull List<String> decode(String listString) {
+    public @NonNull List<String> decode(@NonNull String listString) {
       return Arrays.asList(listString.substring(1, listString.length() - 1).split(", "));
     }
   }
