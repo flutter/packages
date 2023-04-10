@@ -22,7 +22,7 @@ class FlutterWebViewFactory extends PlatformViewFactory {
   @NonNull
   @Override
   public PlatformView create(Context context, int viewId, @Nullable Object args) {
-    final Long identifier = (Long) args;
+    final Integer identifier = (Integer) args;
     if (identifier == null) {
       throw new IllegalStateException("An identifier is required to retrieve WebView instance.");
     }
