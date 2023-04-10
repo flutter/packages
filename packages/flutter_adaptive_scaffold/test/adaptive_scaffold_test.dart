@@ -506,7 +506,6 @@ void main() {
   testWidgets(
       'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
       (WidgetTester tester) async {
-    await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
     const List<NavigationRailDestination> destinations =
         <NavigationRailDestination>[
       NavigationRailDestination(
