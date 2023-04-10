@@ -25,13 +25,7 @@ class AndroidWebViewProxy {
   });
 
   /// Constructs a [android_webview.WebView].
-  ///
-  /// Due to changes in Flutter 3.0 the [useHybridComposition] doesn't have
-  /// any effect and should not be exposed publicly. More info here:
-  /// https://github.com/flutter/flutter/issues/108106
-  final android_webview.WebView Function({
-    required bool useHybridComposition,
-  }) createAndroidWebView;
+  final android_webview.WebView Function() createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
   final android_webview.WebChromeClient Function({

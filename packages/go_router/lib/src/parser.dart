@@ -58,15 +58,24 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   ) {
     late final RouteMatchList initialMatches;
     try {
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use, unnecessary_non_null_assertion
       initialMatches = matcher.findMatch(routeInformation.location!,
           extra: routeInformation.state);
     } on MatcherError {
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       log.info('No initial matches: ${routeInformation.location}');
 
       // If there is a matching error for the initial location, we should
       // still try to process the top-level redirects.
       initialMatches = RouteMatchList(
         <RouteMatch>[],
+        // TODO(chunhtai): remove this ignore and migrate the code
+        // https://github.com/flutter/flutter/issues/124045.
+        // ignore: deprecated_member_use, unnecessary_non_null_assertion
         Uri.parse(canonicalUri(routeInformation.location!)),
         const <String, String>{},
       );
@@ -74,7 +83,13 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     Future<RouteMatchList> processRedirectorResult(RouteMatchList matches) {
       if (matches.isEmpty) {
         return SynchronousFuture<RouteMatchList>(errorScreen(
+            // TODO(chunhtai): remove this ignore and migrate the code
+            // https://github.com/flutter/flutter/issues/124045.
+            // ignore: deprecated_member_use, unnecessary_non_null_assertion
             Uri.parse(routeInformation.location!),
+            // TODO(chunhtai): remove this ignore and migrate the code
+            // https://github.com/flutter/flutter/issues/124045.
+            // ignore: deprecated_member_use, unnecessary_non_null_assertion
             MatcherError('no routes for location', routeInformation.location!)
                 .toString()));
       }
@@ -113,6 +128,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           (configuration.matches.last as ImperativeRouteMatch<Object?>).matches;
     }
     return RouteInformation(
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       location: configuration.uri.toString(),
       state: configuration.extra,
     );
