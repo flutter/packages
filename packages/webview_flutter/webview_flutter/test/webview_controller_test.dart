@@ -366,19 +366,17 @@ void main() {
     ));
   });
 
-  test('setOnPermissionRequest', () async {
+  test('onPermissionRequest', () async {
     bool permissionRequestCallbackCalled = false;
-    void onPermissionRequest(WebViewPermissionRequest request) {
-      permissionRequestCallbackCalled = true;
-    }
 
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
-    final WebViewController webViewController = WebViewController.fromPlatform(
+    WebViewController.fromPlatform(
       mockPlatformWebViewController,
+      onPermissionRequest: (WebViewPermissionRequest request) {
+        permissionRequestCallbackCalled = true;
+      },
     );
-
-    webViewController.setOnPermissionRequest(onPermissionRequest);
 
     final void Function(PlatformWebViewPermissionRequest request)
         requestCallback = verify(mockPlatformWebViewController

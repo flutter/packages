@@ -43,15 +43,25 @@ import 'webview_widget.dart';
 class WebViewController {
   /// Constructs a [WebViewController].
   ///
+  /// `onPermissionRequest`: Sets a callback that notifies the host application
+  /// that web content is requesting permission to access the specified
+  /// resources.
+  ///
   /// See [WebViewController.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
-  WebViewController()
-      : this.fromPlatformCreationParams(
+  WebViewController({
+    void Function(WebViewPermissionRequest request)? onPermissionRequest,
+  }) : this.fromPlatformCreationParams(
           const PlatformWebViewControllerCreationParams(),
+          onPermissionRequest: onPermissionRequest,
         );
 
   /// Constructs a [WebViewController] from creation params for a specific
   /// platform.
+  ///
+  /// `onPermissionRequest`: Sets a callback that notifies the host application
+  /// that web content is requesting permission to access the specified
+  /// resources.
   ///
   /// {@template webview_flutter.WebViewCookieManager.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
@@ -80,11 +90,33 @@ class WebViewController {
   /// ```
   /// {@endtemplate}
   WebViewController.fromPlatformCreationParams(
-    PlatformWebViewControllerCreationParams params,
-  ) : this.fromPlatform(PlatformWebViewController(params));
+    PlatformWebViewControllerCreationParams params, {
+    void Function(WebViewPermissionRequest request)? onPermissionRequest,
+  }) : this.fromPlatform(
+          PlatformWebViewController(params),
+          onPermissionRequest: onPermissionRequest,
+        );
 
   /// Constructs a [WebViewController] from a specific platform implementation.
-  WebViewController.fromPlatform(this.platform);
+  ///
+  /// `onPermissionRequest`: Sets a callback that notifies the host application
+  /// that web content is requesting permission to access the specified
+  /// resources.
+  WebViewController.fromPlatform(
+    this.platform, {
+    void Function(WebViewPermissionRequest request)? onPermissionRequest,
+  }) {
+    if (onPermissionRequest != null) {
+      platform.setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) {
+          onPermissionRequest(WebViewPermissionRequest._(
+            request,
+            types: request.types,
+          ));
+        },
+      );
+    }
+  }
 
   /// Implementation of [PlatformWebViewController] for the current platform.
   final PlatformWebViewController platform;
@@ -317,21 +349,6 @@ class WebViewController {
   /// Sets the value used for the HTTP `User-Agent:` request header.
   Future<void> setUserAgent(String? userAgent) {
     return platform.setUserAgent(userAgent);
-  }
-
-  /// Sets a callback that notifies the host application that web content is
-  /// requesting permission to access the specified resources.
-  Future<void> setOnPermissionRequest(
-    void Function(WebViewPermissionRequest request) onPermissionRequest,
-  ) {
-    return platform.setOnPlatformPermissionRequest(
-      (PlatformWebViewPermissionRequest request) {
-        onPermissionRequest(WebViewPermissionRequest._(
-          request,
-          types: request.types,
-        ));
-      },
-    );
   }
 }
 

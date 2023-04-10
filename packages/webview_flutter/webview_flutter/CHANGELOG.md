@@ -1,6 +1,6 @@
 ## 4.1.0
 
-* Adds support to receive permission requests. See `WebViewController.setOnPermissionRequest`.
+* Adds support to receive permission requests. See `WebViewController(onPermissionRequest)`.
 * Updates minimum Flutter version to 3.3.
 * Fixes common typos in tests and documentation.
 
