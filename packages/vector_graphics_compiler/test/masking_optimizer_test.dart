@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:core';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/masking_optimizer.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';

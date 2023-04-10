@@ -61,6 +61,7 @@ Future<PictureInfo> decodeVectorGraphics(
   required TextDirection? textDirection,
   required bool clipViewbox,
   required BytesLoader loader,
+  VectorGraphicsErrorListener? onError,
 }) {
   try {
     // We might be in a test that's using a fake async zone. Make sure that any
@@ -84,6 +85,7 @@ Future<PictureInfo> decodeVectorGraphics(
         locale: locale,
         textDirection: textDirection,
         clipViewbox: clipViewbox,
+        onError: onError,
       );
       DecodeResponse response = _codec.decode(data, listener);
       if (response.complete) {
@@ -204,6 +206,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     bool clipViewbox = true,
     @visibleForTesting
         PictureFactory pictureFactory = const _DefaultPictureFactory(),
+    VectorGraphicsErrorListener? onError,
   }) {
     final PictureRecorder recorder = pictureFactory.createPictureRecorder();
     return FlutterVectorGraphicsListener._(
@@ -214,6 +217,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       locale,
       textDirection,
       clipViewbox,
+      onError: onError,
     );
   }
 
@@ -224,8 +228,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     this._canvas,
     this._locale,
     this._textDirection,
-    this._clipViewbox,
-  );
+    this._clipViewbox, {
+    this.onError,
+  });
 
   final int _id;
 
@@ -237,6 +242,9 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   final PictureRecorder _recorder;
   final Canvas _canvas;
+
+  /// This variable will receive the Signature for the error
+  final VectorGraphicsErrorListener? onError;
 
   final List<Paint> _paints = <Paint>[];
   final List<Path> _paths = <Path>[];
@@ -700,7 +708,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onImage(int imageId, int format, Uint8List data) {
+  void onImage(
+    int imageId,
+    int format,
+    Uint8List data, {
+    VectorGraphicsErrorListener? onError,
+  }) {
     assert(format == 0); // Only PNG is supported.
     final Completer<void> completer = Completer<void>();
     _pendingImages.add(completer.future);
@@ -728,11 +741,30 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       return;
     }
     late ImageStreamListener listener;
-    listener = ImageStreamListener((ImageInfo image, bool synchronousCall) {
-      cacheCompleter.removeListener(listener);
-      _images[imageId] = image.image;
-      completer.complete();
-    });
+    listener = ImageStreamListener(
+      (ImageInfo image, bool synchronousCall) {
+        cacheCompleter.removeListener(listener);
+        _images[imageId] = image.image;
+        completer.complete();
+      },
+      onError: (Object exception, StackTrace? stackTrace) {
+        if (!completer.isCompleted) {
+          completer.complete();
+        }
+        cacheCompleter.removeListener(listener);
+        if (onError != null) {
+          onError(exception, stackTrace);
+        } else {
+          FlutterError.reportError(FlutterErrorDetails(
+            context: ErrorDescription('Failed to load image'),
+            library: 'image resource service',
+            exception: exception,
+            stack: stackTrace,
+            silent: true,
+          ));
+        }
+      },
+    );
     cacheCompleter.addListener(listener);
   }
 

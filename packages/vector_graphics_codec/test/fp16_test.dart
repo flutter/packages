@@ -4,7 +4,7 @@
 
 import 'dart:typed_data';
 
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_codec/src/fp16.dart';
 
 double convert(double value) {

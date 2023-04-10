@@ -168,7 +168,7 @@ Uint8List _encodeInstructions(
   final Map<Gradient, int> shaderIds = <Gradient, int>{};
 
   for (final ImageData data in instructions.images) {
-    codec.writeImage(buffer, 0, data.data);
+    codec.writeImage(buffer, data.format, data.data);
   }
 
   for (final Paint paint in instructions.paints) {

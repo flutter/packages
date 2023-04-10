@@ -31,9 +31,18 @@ const int kOverlineMask = 0x2;
 /// The mask constant for a line through or strike text decoration.
 const int kLineThroughMask = 0x4;
 
+/// The signature for an error callback if an error occurs during image
+/// decoding.
+///
+/// See [VectorGraphicsCodecListener.onImage].
+typedef VectorGraphicsErrorListener = void Function(
+  Object error,
+  StackTrace? stackTrace,
+);
+
 /// Enumeration of the types of image data accepted by [VectorGraphicsCodec.writeImage].
 ///
-/// Currently only PNG encoding is supported.
+// Must match ImageFormat from vector_graphics_compiler.
 abstract class ImageFormatTypes {
   /// PNG format.
   ///
@@ -51,6 +60,20 @@ abstract class ImageFormatTypes {
   ///  * <https://en.wikipedia.org/wiki/Portable_Network_Graphics>, the Wikipedia page on PNG.
   ///  * <https://tools.ietf.org/rfc/rfc2083.txt>, the PNG standard.
   static const int png = 0;
+
+  /// A JPEG format image.
+  ///
+  /// This library does not support JPEG 2000.
+  static const int jpeg = 1;
+
+  /// A WebP format image.
+  static const int webp = 2;
+
+  /// A Graphics Interchange Format image.
+  static const int gif = 3;
+
+  /// A Windows Bitmap format image.
+  static const int bmp = 4;
 }
 
 class DecodeResponse {
@@ -1118,12 +1141,18 @@ abstract class VectorGraphicsCodecListener {
     int? patternId,
   );
 
-  /// An image has been decoded.
+  /// An encoded image has been decoded.
+  ///
+  /// The format is one of the values in [ImageFormatTypes].
+  ///
+  /// If the [onError] callback is not null, it must be called if an error
+  /// occurs while attempting to decode the image [data].
   void onImage(
     int imageId,
     int format,
-    Uint8List data,
-  );
+    Uint8List data, {
+    VectorGraphicsErrorListener? onError,
+  });
 
   /// An image should be drawn at the provided location.
   void onDrawImage(

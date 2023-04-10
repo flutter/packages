@@ -1,4 +1,4 @@
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/src/svg/numbers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';

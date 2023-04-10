@@ -43,6 +43,13 @@ enum RenderingStrategy {
   picture,
 }
 
+/// The signature that [VectorGraphic.errorBuilder] uses to report exceptions.
+typedef VectorGraphicsErrorWidget = Widget Function(
+  BuildContext context,
+  Object error,
+  StackTrace stackTrace,
+);
+
 /// A vector graphic/flutter_svg compatibility shim.
 VectorGraphic createCompatVectorGraphic({
   Key? key,
@@ -55,6 +62,7 @@ VectorGraphic createCompatVectorGraphic({
   bool excludeFromSemantics = false,
   Clip clipBehavior = Clip.hardEdge,
   WidgetBuilder? placeholderBuilder,
+  VectorGraphicsErrorWidget? errorBuilder,
   ColorFilter? colorFilter,
   Animation<double>? opacity,
   RenderingStrategy strategy = RenderingStrategy.picture,
@@ -71,6 +79,7 @@ VectorGraphic createCompatVectorGraphic({
     excludeFromSemantics: excludeFromSemantics,
     clipBehavior: clipBehavior,
     placeholderBuilder: placeholderBuilder,
+    errorBuilder: errorBuilder,
     colorFilter: colorFilter,
     opacity: opacity,
     strategy: strategy,
@@ -105,6 +114,7 @@ class VectorGraphic extends StatefulWidget {
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
     this.placeholderBuilder,
+    this.errorBuilder,
     this.colorFilter,
     this.opacity,
     this.clipViewbox = true,
@@ -122,6 +132,7 @@ class VectorGraphic extends StatefulWidget {
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
     this.placeholderBuilder,
+    this.errorBuilder,
     this.colorFilter,
     this.opacity,
     this.strategy = RenderingStrategy.picture,
@@ -193,6 +204,9 @@ class VectorGraphic extends StatefulWidget {
 
   /// The placeholder to use while fetching, decoding, and parsing the vector_graphics data.
   final WidgetBuilder? placeholderBuilder;
+
+  /// A callback that fires if some exception happens during data acquisition or decoding.
+  final VectorGraphicsErrorWidget? errorBuilder;
 
   /// If provided, a color filter to apply to the vector graphic when painting.
   ///
@@ -278,6 +292,8 @@ class _PictureKey {
 
 class _VectorGraphicWidgetState extends State<VectorGraphic> {
   _PictureData? _pictureInfo;
+  Object? _error;
+  StackTrace? _stackTrace;
   Locale? locale;
   TextDirection? textDirection;
 
@@ -320,7 +336,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     }
   }
 
-  static Future<_PictureData> _loadPicture(
+  Future<_PictureData> _loadPicture(
       BuildContext context, _PictureKey key, BytesLoader loader) {
     if (_pendingPictures.containsKey(key)) {
       return _pendingPictures[key]!;
@@ -333,6 +349,12 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         textDirection: key.textDirection,
         clipViewbox: key.clipViewbox,
         loader: loader,
+        onError: (Object error, StackTrace? stackTrace) {
+          return _handleError(
+            error,
+            stackTrace,
+          );
+        },
       );
     }).then((PictureInfo pictureInfo) {
       return _PictureData(pictureInfo, 0, key);
@@ -342,6 +364,13 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       _pendingPictures.remove(key);
     });
     return result;
+  }
+
+  void _handleError(Object error, StackTrace? stackTrace) {
+    setState(() {
+      _error = error;
+      _stackTrace = stackTrace;
+    });
   }
 
   void _loadAssetBytes() {
@@ -449,9 +478,18 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           ),
         ),
       );
+    } else if (_error != null && widget.errorBuilder != null) {
+      child = widget.errorBuilder!(
+        context,
+        _error!,
+        _stackTrace ?? StackTrace.empty,
+      );
     } else {
       child = widget.placeholderBuilder?.call(context) ??
-          SizedBox(width: widget.width, height: widget.height);
+          SizedBox(
+            width: widget.width,
+            height: widget.height,
+          );
     }
 
     if (!widget.excludeFromSemantics) {
@@ -620,6 +658,7 @@ class VectorGraphicUtilities {
     BytesLoader loader,
     BuildContext? context, {
     bool clipViewbox = true,
+    VectorGraphicsErrorListener? onError,
   }) async {
     TextDirection textDirection = TextDirection.ltr;
     Locale locale = ui.PlatformDispatcher.instance.locale;
@@ -635,6 +674,7 @@ class VectorGraphicUtilities {
           textDirection: textDirection,
           loader: loader,
           clipViewbox: clipViewbox,
+          onError: onError,
         );
       } catch (e) {
         debugPrint('Failed to decode $loader');

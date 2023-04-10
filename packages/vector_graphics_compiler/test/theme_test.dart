@@ -7,7 +7,7 @@
 import 'package:vector_graphics_compiler/src/paint.dart';
 import 'package:vector_graphics_compiler/src/svg/theme.dart';
 
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('SvgTheme', () {

@@ -4,7 +4,7 @@
 
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Point tests', () {

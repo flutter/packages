@@ -8,7 +8,7 @@ import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/src/svg/parsers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Colors', () {

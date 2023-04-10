@@ -4,7 +4,7 @@
 
 import 'dart:typed_data';
 
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 const codec = VectorGraphicsCodec();
@@ -1008,11 +1008,17 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onImage(int imageId, int format, Uint8List data) {
+  void onImage(
+    int imageId,
+    int format,
+    Uint8List data, {
+    VectorGraphicsErrorListener? onError,
+  }) {
     commands.add(OnImage(
       imageId,
       format,
       data,
+      onError: onError,
     ));
   }
 
@@ -1495,20 +1501,22 @@ class OnDrawText {
 }
 
 class OnImage {
-  const OnImage(this.id, this.format, this.data);
+  const OnImage(this.id, this.format, this.data, {this.onError});
 
   final int id;
   final int format;
   final List<int> data;
+  final VectorGraphicsErrorListener? onError;
 
   @override
-  int get hashCode => Object.hash(id, format, data);
+  int get hashCode => Object.hash(id, format, data, onError);
 
   @override
   bool operator ==(Object other) =>
       other is OnImage &&
       other.id == id &&
       other.format == format &&
+      other.onError == onError &&
       _listEquals(other.data, data);
 
   @override
@@ -1548,6 +1556,7 @@ class OnDrawImage {
 class OnPatternStart {
   const OnPatternStart(
       this.patternId, this.x, this.y, this.width, this.height, this.transform);
+
   final int patternId;
   final double x;
   final double y;

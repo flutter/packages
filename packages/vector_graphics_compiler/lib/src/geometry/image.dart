@@ -20,9 +20,6 @@ class ImageData {
   final Uint8List data;
 
   /// The encoding format of the [data].
-  ///
-  /// Currently only `0` - corresponding to PNG encoding is
-  /// supported.
   final int format;
 }
 

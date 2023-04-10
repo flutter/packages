@@ -6,7 +6,7 @@ import 'dart:math' as math;
 
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('SVG Path tests', () {
