@@ -40,13 +40,15 @@ public class SharedPreferencesTest {
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putStringSet(@NonNull String key, @NonNull Set<String> values) {
+    public @NonNull SharedPreferences.Editor putStringSet(
+        @NonNull String key, @NonNull Set<String> values) {
       sharedPrefData.put(key, values);
       return this;
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putBoolean(@NonNull String key, @NonNull boolean value) {
+    public @NonNull SharedPreferences.Editor putBoolean(
+        @NonNull String key, @NonNull boolean value) {
       sharedPrefData.put(key, value);
       return this;
     }
@@ -143,13 +145,13 @@ public class SharedPreferencesTest {
 
     @Override
     public void registerOnSharedPreferenceChangeListener(
-      @NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        @NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(
-      @NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        @NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
   }

@@ -67,7 +67,8 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   private MethodCallHandlerImpl preferences;
 
   @SuppressWarnings("deprecation")
-  public static void registerWith(@NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     final SharedPreferencesPlugin plugin = new SharedPreferencesPlugin();
     plugin.setup(registrar.messenger(), registrar.context());
   }
@@ -108,7 +109,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @Override
-  public @NonNull Boolean setDouble(@NonNull String key,@NonNull  Double value) {
+  public @NonNull Boolean setDouble(@NonNull String key, @NonNull Double value) {
     return preferences.setDouble(key, value);
   }
 
@@ -118,12 +119,14 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @Override
-  public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value) throws RuntimeException {
+  public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value)
+      throws RuntimeException {
     return preferences.setStringList(key, value);
   }
 
   @Override
-  public @NonNull Map<String, Object> getAllWithPrefix(@NonNull String prefix) throws RuntimeException {
+  public @NonNull Map<String, Object> getAllWithPrefix(@NonNull String prefix)
+      throws RuntimeException {
     return preferences.getAllWithPrefix(prefix);
   }
 

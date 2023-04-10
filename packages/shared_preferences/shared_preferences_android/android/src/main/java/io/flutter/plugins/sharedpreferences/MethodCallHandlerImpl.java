@@ -58,11 +58,13 @@ class MethodCallHandlerImpl {
     return preferences.edit().putString(key, DOUBLE_PREFIX + doubleValueStr).commit();
   }
 
-  public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value) throws RuntimeException {
+  public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value)
+      throws RuntimeException {
     return preferences.edit().putString(key, LIST_IDENTIFIER + encodeList(value)).commit();
   }
 
-  public @NonNull Map<String, Object> getAllWithPrefix(@NonNull String prefix) throws RuntimeException {
+  public @NonNull Map<String, Object> getAllWithPrefix(@NonNull String prefix)
+      throws RuntimeException {
     return getAllPrefs(prefix);
   }
 
