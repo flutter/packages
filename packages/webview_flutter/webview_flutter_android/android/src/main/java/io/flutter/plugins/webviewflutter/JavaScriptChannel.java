@@ -42,9 +42,7 @@ public class JavaScriptChannel {
   @JavascriptInterface
   public void postMessage(final String message) {
     final Runnable postMessageRunnable =
-        () -> {
-          flutterApi.postMessage(JavaScriptChannel.this, message, reply -> {});
-        };
+        () -> flutterApi.postMessage(JavaScriptChannel.this, message, reply -> {});
 
     if (platformThreadHandler.getLooper() == Looper.myLooper()) {
       postMessageRunnable.run();

@@ -130,8 +130,6 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
               return true;
             }
 
-            // Legacy codepath for < N.
-            @SuppressWarnings("deprecation")
             @Override
             public boolean shouldOverrideUrlLoading(WebView windowWebView, String url) {
               if (!webViewClient.shouldOverrideUrlLoading(view, url)) {
@@ -167,7 +165,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   /** Handles creating {@link WebChromeClient}s for a {@link WebChromeClientHostApiImpl}. */
   public static class WebChromeClientCreator {
     /**
-     * Creates a {@link DownloadListenerHostApiImpl.DownloadListenerImpl}.
+     * Creates a {@link WebChromeClientHostApiImpl.WebChromeClientImpl}.
      *
      * @param flutterApi handles sending messages to Dart
      * @return the created {@link WebChromeClientHostApiImpl.WebChromeClientImpl}
@@ -194,7 +192,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   }
 
   @Override
-  public void create(Long instanceId) {
+  public void create(@NonNull Long instanceId) {
     final WebChromeClient webChromeClient =
         webChromeClientCreator.createWebChromeClient(flutterApi);
     instanceManager.addDartCreatedInstance(webChromeClient, instanceId);

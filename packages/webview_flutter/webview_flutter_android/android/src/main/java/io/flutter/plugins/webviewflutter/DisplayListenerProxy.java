@@ -6,7 +6,6 @@ package io.flutter.plugins.webviewflutter;
 
 import static android.hardware.display.DisplayManager.DisplayListener;
 
-import android.annotation.TargetApi;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.util.Log;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
  * first initialization of a webview within the process the difference between the lists is the
  * webview's display listener.
  */
-@TargetApi(Build.VERSION_CODES.KITKAT)
 class DisplayListenerProxy {
   private static final String TAG = "DisplayListenerProxy";
 
@@ -118,9 +116,11 @@ class DisplayListenerProxy {
       return new ArrayList<>();
     }
     try {
+      //noinspection JavaReflectionMemberAccess
       Field displayManagerGlobalField = DisplayManager.class.getDeclaredField("mGlobal");
       displayManagerGlobalField.setAccessible(true);
       Object displayManagerGlobal = displayManagerGlobalField.get(displayManager);
+      //noinspection ConstantConditions
       Field displayListenersField =
           displayManagerGlobal.getClass().getDeclaredField("mDisplayListeners");
       displayListenersField.setAccessible(true);
@@ -129,6 +129,7 @@ class DisplayListenerProxy {
 
       Field listenerField = null;
       ArrayList<DisplayManager.DisplayListener> listeners = new ArrayList<>();
+      //noinspection ConstantConditions
       for (Object delegate : delegates) {
         if (listenerField == null) {
           listenerField = delegate.getClass().getField("mListener");
