@@ -71,7 +71,7 @@ public class CookieManagerHostApiImplTest {
   }
 
   @Test
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings({"deprecation", "RedundantSuppression"})
   public void clearCookiesShouldCallRemoveAllCookieBelowAndroidL() {
     // Setup
     TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.KITKAT_WATCH);

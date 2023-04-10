@@ -60,6 +60,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onReceivedError(
         WebView view, int errorCode, String description, String failingUrl) {
       flutterApi.onReceivedError(
@@ -73,6 +74,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
       flutterApi.urlLoading(this, view, url, reply -> {});
       return returnValueForShouldOverrideUrlLoading;
@@ -126,6 +128,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onReceivedError(
         WebView view, int errorCode, String description, String failingUrl) {
       flutterApi.onReceivedError(
@@ -141,6 +144,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
       flutterApi.urlLoading(this, view, url, reply -> {});
       return returnValueForShouldOverrideUrlLoading;

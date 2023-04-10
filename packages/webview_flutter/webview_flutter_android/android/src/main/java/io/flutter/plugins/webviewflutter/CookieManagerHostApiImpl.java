@@ -32,7 +32,7 @@ class CookieManagerHostApiImpl implements CookieManagerHostApi {
    * @param cookieManager The cookie manager to clear all cookies from.
    * @return Whether any cookies were removed.
    */
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings({"deprecation", "RedundantSuppression"})
   private boolean removeCookiesPreL(CookieManager cookieManager) {
     final boolean hasCookies = cookieManager.hasCookies();
     if (hasCookies) {
