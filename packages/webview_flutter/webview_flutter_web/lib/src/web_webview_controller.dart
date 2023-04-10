@@ -59,8 +59,8 @@ class WebWebViewController extends PlatformWebViewController {
       params as WebWebViewControllerCreationParams;
 
   /// Mapping between channel names and message event handlers.
-  HashMap<String, Null Function(html.Event)> javascriptChannels =
-      HashMap<String, Null Function(html.Event)>();
+  HashMap<String, void Function(html.Event)> javascriptChannels =
+      HashMap<String, void Function(html.Event)>();
 
   @override
   Future<void> loadHtmlString(String html, {String? baseUrl}) async {
@@ -116,7 +116,7 @@ class WebWebViewController extends PlatformWebViewController {
   Future<void> addJavaScriptChannel(
     JavaScriptChannelParams javaScriptChannelParams,
   ) async {
-    final Null Function(html.Event) handler = (html.Event event) {
+    final void Function(html.Event) handler = (html.Event event) {
       if (event is html.MessageEvent) {
         javaScriptChannelParams.onMessageReceived(
             JavaScriptMessage(message: event.data.toString()));
@@ -129,7 +129,7 @@ class WebWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> removeJavaScriptChannel(String javaScriptChannelName) async {
-    final Null Function(html.Event)? handler =
+    final void Function(html.Event)? handler =
         javascriptChannels[javaScriptChannelName];
 
     if (handler != null) {
