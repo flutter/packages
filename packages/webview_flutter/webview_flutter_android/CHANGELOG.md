@@ -2,6 +2,7 @@
 
 * Bumps androidx.webkit:webkit from 1.6.0 to 1.6.1.
 * Fixes common typos in tests and documentation.
+* Updates pigeon dev dependency to `9.2.4`.
 * Fixes Android lint warnings.
 
 ## 3.4.5
