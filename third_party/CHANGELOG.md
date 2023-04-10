@@ -1,5 +1,10 @@
 # CHANGES
 
+## 2.0.5
+
+- Allow malformed UTF-8 in loaders.
+- Make the cache respect the SvgTheme and ColorMapper, if present.
+
 ## 2.0.4
 
 - Newer version of vector_graphics.
