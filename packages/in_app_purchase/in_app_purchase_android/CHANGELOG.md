@@ -1,6 +1,12 @@
-## 0.2.4+4
+## 0.2.5+1
 
 * Updates androidx.annotation:annotation from 1.5.0 to 1.6.0.
+
+## 0.2.5
+
+* Fixes the management of `BillingClient` connection by handling `BillingResponse.serviceDisconnected`.
+* Introduces `BillingClientManager`.
+* Updates minimum Flutter version to 3.3.
 
 ## 0.2.4+3
 

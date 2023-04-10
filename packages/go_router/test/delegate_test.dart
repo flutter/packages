@@ -141,7 +141,7 @@ void main() {
         reason: 'The last match should have been removed',
       );
       expect(
-        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch)
+        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch<Object?>)
             .matches
             .uri
             .toString(),
@@ -270,7 +270,7 @@ void main() {
         reason: 'The last match should have been removed',
       );
       expect(
-        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch)
+        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch<Object?>)
             .matches
             .uri
             .toString(),
@@ -393,7 +393,7 @@ void main() {
         reason: 'The last match should have been removed',
       );
       expect(
-        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch)
+        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch<Object?>)
             .matches
             .uri
             .toString(),

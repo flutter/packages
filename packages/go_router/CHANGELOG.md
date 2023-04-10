@@ -1,6 +1,34 @@
+## 6.5.5
+
+- Fixes an issue when popping pageless route would accidentally complete imperative page.
+
+## 6.5.4
+
+- Remove navigator keys from `TypedGoRoute` and `TypedShellRoute`.
+
+## 6.5.3
+
+- Fixes redirect being called with an empty location for unknown routes.
+
+## 6.5.2
+
+- NoTransitionPage now has an instant reverse transition.
+
+## 6.5.1
+
+- Fixes an issue where the params are removed after popping.
+
+## 6.5.0
+
+- Supports returning values on pop.
+
+## 6.4.1
+
+- Adds `initialExtra` to **GoRouter** to pass extra data alongside `initialRoute`.
+
 ## 6.4.0
 
-- Adds `replace` method to that replaces the current route with a new one and keeps the same page key. This is useful for when you want to update the query params without changing the page key ([#115902]https://github.com/flutter/flutter/issues/115902).
+- Adds `replace` method to that replaces the current route with a new one and keeps the same page key. This is useful for when you want to update the query params without changing the page key ([#115902](https://github.com/flutter/flutter/issues/115902)).
 
 ## 6.3.0
 
@@ -13,7 +41,7 @@
 
 ## 6.2.0
 
-- Export supertypes in route_data.dart library
+- Exports supertypes in route_data.dart library.
 
 ## 6.1.0
 
@@ -202,8 +230,8 @@
 
 ## 4.2.9
 
-* Updates text theme parameters to avoid deprecation issues.
-* Fixes lint warnings.
+- Updates text theme parameters to avoid deprecation issues.
+- Fixes lint warnings.
 
 ## 4.2.8
 

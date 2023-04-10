@@ -8,22 +8,13 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/common/web_kit.g.dart',
     dartTestOut: 'test/src/common/test_web_kit.g.dart',
-    dartOptions: DartOptions(copyrightHeader: <String>[
-      'Copyright 2013 The Flutter Authors. All rights reserved.',
-      'Use of this source code is governed by a BSD-style license that can be',
-      'found in the LICENSE file.',
-    ]),
     objcHeaderOut: 'ios/Classes/FWFGeneratedWebKitApis.h',
     objcSourceOut: 'ios/Classes/FWFGeneratedWebKitApis.m',
     objcOptions: ObjcOptions(
-      header: 'ios/Classes/FWFGeneratedWebKitApis.h',
+      headerIncludePath: 'ios/Classes/FWFGeneratedWebKitApis.h',
       prefix: 'FWF',
-      copyrightHeader: <String>[
-        'Copyright 2013 The Flutter Authors. All rights reserved.',
-        'Use of this source code is governed by a BSD-style license that can be',
-        'found in the LICENSE file.',
-      ],
     ),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
 
@@ -349,7 +340,7 @@ abstract class WKWebViewConfigurationHostApi {
   );
 }
 
-/// Handles callbacks from an WKWebViewConfiguration instance.
+/// Handles callbacks from a WKWebViewConfiguration instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
 @FlutterApi()
@@ -419,7 +410,7 @@ abstract class WKScriptMessageHandlerHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKScriptMessageHandler instance.
+/// Handles callbacks from a WKScriptMessageHandler instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
 @FlutterApi()
@@ -443,7 +434,7 @@ abstract class WKNavigationDelegateHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKNavigationDelegate instance.
+/// Handles callbacks from a WKNavigationDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
 @FlutterApi()
@@ -624,7 +615,7 @@ abstract class WKUIDelegateHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKUIDelegate instance.
+/// Handles callbacks from a WKUIDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
 @FlutterApi()

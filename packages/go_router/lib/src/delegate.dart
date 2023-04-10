@@ -82,8 +82,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return ValueKey<String>('$path-p$count');
   }
 
-  void _push(RouteMatchList matches, ValueKey<String> pageKey) {
-    final ImperativeRouteMatch newPageKeyMatch = ImperativeRouteMatch(
+  Future<T?> _push<T extends Object?>(
+      RouteMatchList matches, ValueKey<String> pageKey) async {
+    final ImperativeRouteMatch<T> newPageKeyMatch = ImperativeRouteMatch<T>(
       route: matches.last.route,
       subloc: matches.last.subloc,
       extra: matches.last.extra,
@@ -93,6 +94,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     );
 
     _matchList.push(newPageKeyMatch);
+    return newPageKeyMatch._future;
   }
 
   /// Pushes the given location onto the page stack.
@@ -103,12 +105,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  void push(RouteMatchList matches) {
+  Future<T?> push<T extends Object?>(RouteMatchList matches) async {
     assert(matches.last.route is! ShellRoute);
 
     final ValueKey<String> pageKey = _getNewKeyForPath(matches.fullpath);
-    _push(matches, pageKey);
+    final Future<T?> future = _push(matches, pageKey);
     notifyListeners();
+    return future;
   }
 
   /// Returns `true` if the active Navigator can pop.
@@ -148,10 +151,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }
     final Page<Object?> page = route.settings as Page<Object?>;
     final RouteMatch? match = builder.getRouteMatchForPage(page);
-    if (match == null) {
-      return true;
+    assert(match != null);
+    if (match is ImperativeRouteMatch) {
+      match.complete(result);
     }
-    _matchList.remove(match);
+    _matchList.remove(match!);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
@@ -307,8 +311,7 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
 }
 
 /// The route match that represent route pushed through [GoRouter.push].
-// TODO(chunhtai): Removes this once imperative API no longer insert route match.
-class ImperativeRouteMatch extends RouteMatch {
+class ImperativeRouteMatch<T> extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
   ImperativeRouteMatch({
     required super.route,
@@ -317,8 +320,21 @@ class ImperativeRouteMatch extends RouteMatch {
     required super.error,
     required super.pageKey,
     required this.matches,
-  });
+  }) : _completer = Completer<T?>();
 
   /// The matches that produces this route match.
   final RouteMatchList matches;
+
+  /// The completer for the future returned by [GoRouter.push].
+  final Completer<T?> _completer;
+
+  /// Called when the corresponding [Route] associated with this route match is
+  /// completed.
+  void complete([dynamic value]) {
+    _completer.complete(value as T?);
+  }
+
+  /// The future of the [RouteMatch] completer.
+  /// When the future completes, this will return the value passed to [complete].
+  Future<T?> get _future => _completer.future;
 }

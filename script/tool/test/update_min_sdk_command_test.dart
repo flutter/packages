@@ -41,7 +41,7 @@ void main() {
   test('updates Dart when only Dart is present', () async {
     final RepositoryPackage package = createFakePackage(
         'a_package', packagesDir,
-        dartConstraint: '>=2.12.0 <3.0.0');
+        dartConstraint: '>=2.12.0 <4.0.0');
 
     await runCapturingPrint(runner, <String>[
       'update-min-sdk',
@@ -51,13 +51,13 @@ void main() {
 
     final String dartVersion =
         package.parsePubspec().environment?['sdk'].toString() ?? '';
-    expect(dartVersion, '>=2.18.0 <3.0.0');
+    expect(dartVersion, '>=2.18.0 <4.0.0');
   });
 
   test('does not update Dart if it is already higher', () async {
     final RepositoryPackage package = createFakePackage(
         'a_package', packagesDir,
-        dartConstraint: '>=2.19.0 <3.0.0');
+        dartConstraint: '>=2.19.0 <4.0.0');
 
     await runCapturingPrint(runner, <String>[
       'update-min-sdk',
@@ -67,14 +67,14 @@ void main() {
 
     final String dartVersion =
         package.parsePubspec().environment?['sdk'].toString() ?? '';
-    expect(dartVersion, '>=2.19.0 <3.0.0');
+    expect(dartVersion, '>=2.19.0 <4.0.0');
   });
 
   test('updates both Dart and Flutter when both are present', () async {
     final RepositoryPackage package = createFakePackage(
         'a_package', packagesDir,
         isFlutter: true,
-        dartConstraint: '>=2.12.0 <3.0.0',
+        dartConstraint: '>=2.12.0 <4.0.0',
         flutterConstraint: '>=2.10.0');
 
     await runCapturingPrint(runner, <String>[
@@ -87,7 +87,7 @@ void main() {
         package.parsePubspec().environment?['sdk'].toString() ?? '';
     final String flutterVersion =
         package.parsePubspec().environment?['flutter'].toString() ?? '';
-    expect(dartVersion, '>=2.18.0 <3.0.0');
+    expect(dartVersion, '>=2.18.0 <4.0.0');
     expect(flutterVersion, '>=3.3.0');
   });
 
@@ -95,7 +95,7 @@ void main() {
     final RepositoryPackage package = createFakePackage(
         'a_package', packagesDir,
         isFlutter: true,
-        dartConstraint: '>=2.19.0 <3.0.0',
+        dartConstraint: '>=2.19.0 <4.0.0',
         flutterConstraint: '>=3.7.0');
 
     await runCapturingPrint(runner, <String>[
@@ -108,7 +108,7 @@ void main() {
         package.parsePubspec().environment?['sdk'].toString() ?? '';
     final String flutterVersion =
         package.parsePubspec().environment?['flutter'].toString() ?? '';
-    expect(dartVersion, '>=2.19.0 <3.0.0');
+    expect(dartVersion, '>=2.19.0 <4.0.0');
     expect(flutterVersion, '>=3.7.0');
   });
 }

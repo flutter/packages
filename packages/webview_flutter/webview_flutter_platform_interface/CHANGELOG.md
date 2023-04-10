@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+* Fixes common typos in tests and documentation.
+
 ## 2.1.0
 
 * Adds support to track url changes. See `PlatformNavigationDelegate.setOnUrlChange`.

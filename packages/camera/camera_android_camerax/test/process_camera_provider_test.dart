@@ -15,9 +15,13 @@ import 'package:mockito/mockito.dart';
 import 'process_camera_provider_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestProcessCameraProviderHostApi])
+@GenerateMocks(
+    <Type>[TestInstanceManagerHostApi, TestProcessCameraProviderHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ProcessCameraProvider', () {
     tearDown(() => TestProcessCameraProviderHostApi.setup(null));
@@ -127,6 +131,38 @@ void main() {
               .bindToLifecycle(fakeCameraSelector, <UseCase>[fakeUseCase]),
           equals(fakeCamera));
       verify(mockApi.bindToLifecycle(0, 1, <int>[2]));
+    });
+
+    test('isBoundTest', () async {
+      final MockTestProcessCameraProviderHostApi mockApi =
+          MockTestProcessCameraProviderHostApi();
+      TestProcessCameraProviderHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final ProcessCameraProvider processCameraProvider =
+          ProcessCameraProvider.detached(
+        instanceManager: instanceManager,
+      );
+      final UseCase fakeUseCase =
+          UseCase.detached(instanceManager: instanceManager);
+
+      instanceManager.addHostCreatedInstance(
+        processCameraProvider,
+        0,
+        onCopy: (_) => ProcessCameraProvider.detached(),
+      );
+      instanceManager.addHostCreatedInstance(
+        fakeUseCase,
+        27,
+        onCopy: (_) => UseCase.detached(),
+      );
+
+      when(mockApi.isBound(0, 27)).thenReturn(true);
+
+      expect(await processCameraProvider.isBound(fakeUseCase), isTrue);
+      verify(mockApi.isBound(0, 27));
     });
 
     test('unbindTest', () async {
