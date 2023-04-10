@@ -56,6 +56,38 @@
                                 navigationAction:navigationActionData
                                       completion:completion];
 }
+
+- (void)requestMediaCapturePermissionForDelegateWithIdentifier:(FWFUIDelegate *)instance
+                                                       webView:(WKWebView *)webView
+                                                        origin:(WKSecurityOrigin *)origin
+                                                         frame:(WKFrameInfo *)frame
+                                                          type:(FWFWKMediaCaptureType)type
+                                                    completion:
+                                                        (void (^)(WKPermissionDecision))completion
+    API_AVAILABLE(ios(15.0)) {
+  [self
+      requestMediaCapturePermissionForDelegateWithIdentifier:@([self
+                                                                 identifierForDelegate:instance])
+                                           webViewIdentifier:
+                                               @([self.instanceManager
+                                                   identifierWithStrongReferenceForInstance:
+                                                       webView])
+                                                      origin:
+                                                          FWFWKSecurityOriginDataFromWKSecurityOrigin(
+                                                              origin)
+                                                       frame:FWFWKFrameInfoDataFromWKFrameInfo(
+                                                                 frame)
+                                                        type:
+                                                            FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(
+                                                                type)
+                                                  completion:^(
+                                                      FWFWKPermissionDecisionData *decision,
+                                                      FlutterError *error) {
+                                                    NSAssert(!error, @"%@", error);
+                                                    completion(
+                                                        FWFWKPermissionDecisionFromData(decision));
+                                                  }];
+}
 @end
 
 @implementation FWFUIDelegate
@@ -81,6 +113,23 @@
                                         NSAssert(!error, @"%@", error);
                                       }];
   return nil;
+}
+
+- (void)webView:(WKWebView *)webView
+    requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin
+                          initiatedByFrame:(WKFrameInfo *)frame
+                                      type:(WKMediaCaptureType)type
+                           decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
+    API_AVAILABLE(ios(15.0)) {
+  [self.UIDelegateAPI
+      requestMediaCapturePermissionForDelegateWithIdentifier:self
+                                                     webView:webView
+                                                      origin:origin
+                                                       frame:frame
+                                                        type:type
+                                                  completion:^(WKPermissionDecision decision) {
+                                                    decisionHandler(decision);
+                                                  }];
 }
 @end
 
