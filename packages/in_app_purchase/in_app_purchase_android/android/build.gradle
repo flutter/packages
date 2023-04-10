@@ -52,6 +52,7 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.6.0'
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     implementation 'com.android.billingclient:billing:5.1.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.json:json:20230227'
