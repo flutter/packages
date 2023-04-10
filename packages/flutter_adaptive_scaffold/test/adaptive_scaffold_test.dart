@@ -500,9 +500,9 @@ void main() {
     },
   );
 
-// This test checks whether AdaptiveScaffold.standardNavigationRail function
-// creates a NavigationRail widget as expected with groupAlignment provided,
-// and checks whether the NavigationRail's groupAlignment matches the expected value.
+  // This test checks whether AdaptiveScaffold.standardNavigationRail function
+  // creates a NavigationRail widget as expected with groupAlignment provided,
+  // and checks whether the NavigationRail's groupAlignment matches the expected value.
   testWidgets(
       'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
       (WidgetTester tester) async {
