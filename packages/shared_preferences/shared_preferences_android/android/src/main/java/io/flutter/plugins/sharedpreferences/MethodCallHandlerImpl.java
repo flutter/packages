@@ -33,11 +33,11 @@ class MethodCallHandlerImpl {
     listEncoder = listEncoderClass;
   }
 
-  public Boolean setBool(String key, Boolean value) {
+  public @NonNull Boolean setBool(String key, Boolean value) {
     return preferences.edit().putBoolean(key, value).commit();
   }
 
-  public Boolean setString(String key, String value) {
+  public @NonNull Boolean setString(String key, String value) {
     if (value.startsWith(LIST_IDENTIFIER)
         || value.startsWith(BIG_INTEGER_PREFIX)
         || value.startsWith(DOUBLE_PREFIX)) {
@@ -47,38 +47,29 @@ class MethodCallHandlerImpl {
     return preferences.edit().putString(key, value).commit();
   }
 
-  public Boolean setInt(String key, Object value) {
+  public @NonNull Boolean setInt(String key, Object value) {
     Number number = (Number) value;
-    if (number instanceof BigInteger) {
-      BigInteger integerValue = (BigInteger) number;
-      return preferences
-          .edit()
-          .putString(key, BIG_INTEGER_PREFIX + integerValue.toString(Character.MAX_RADIX))
-          .commit();
-    } else {
-      return preferences.edit().putLong(key, number.longValue()).commit();
-    }
+    return preferences.edit().putLong(key, number.longValue()).commit();
   }
 
-  public Boolean setDouble(String key, Double value) {
+  public @NonNull Boolean setDouble(String key, Double value) {
     String doubleValueStr = Double.toString(value);
     return preferences.edit().putString(key, DOUBLE_PREFIX + doubleValueStr).commit();
   }
 
-  public Boolean setStringList(String key, List<String> value) throws RuntimeException {
+  public @NonNull Boolean setStringList(String key, List<String> value) throws RuntimeException {
     return preferences.edit().putString(key, LIST_IDENTIFIER + encodeList(value)).commit();
   }
 
-  public Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
-    Map<String, Object> data = getAllPrefs(prefix);
-    return data;
+  public @NonNull Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
+    return getAllPrefs(prefix);
   }
 
-  public Boolean remove(String key) {
+  public @NonNull Boolean remove(String key) {
     return preferences.edit().remove(key).commit();
   }
 
-  public Boolean clearWithPrefix(String prefix) throws RuntimeException {
+  public @NonNull Boolean clearWithPrefix(String prefix) throws RuntimeException {
     Set<String> keySet = getAllPrefs(prefix).keySet();
     SharedPreferences.Editor clearEditor = preferences.edit();
     for (String keyToDelete : keySet) {
@@ -89,52 +80,51 @@ class MethodCallHandlerImpl {
 
   // Gets all shared preferences, filtered to only those set with the given prefix.
   @SuppressWarnings("unchecked")
-  private Map<String, Object> getAllPrefs(String prefix) throws RuntimeException {
+  private @NonNull Map<String, Object> getAllPrefs(String prefix) throws RuntimeException {
     Map<String, ?> allPrefs = preferences.getAll();
     Map<String, Object> filteredPrefs = new HashMap<>();
     for (String key : allPrefs.keySet()) {
       if (key.startsWith(prefix)) {
-        Object value = allPrefs.get(key);
-        if (value instanceof String) {
-          String stringValue = (String) value;
-          if (stringValue.startsWith(LIST_IDENTIFIER)) {
-            value = decodeList(stringValue.substring(LIST_IDENTIFIER.length()));
-          } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
-            String encoded = stringValue.substring(BIG_INTEGER_PREFIX.length());
-            value = new BigInteger(encoded, Character.MAX_RADIX);
-          } else if (stringValue.startsWith(DOUBLE_PREFIX)) {
-            String doubleStr = stringValue.substring(DOUBLE_PREFIX.length());
-            value = Double.valueOf(doubleStr);
-          }
-        } else if (value instanceof Set) {
-          // This only happens for previous usage of setStringSet. The app expects a list.
-          List<String> listValue = new ArrayList<String>((Set<String>) value);
-          // Let's migrate the value too while we are at it.
-          try {
-            preferences
-                .edit()
-                .remove(key)
-                .putString(key, LIST_IDENTIFIER + encodeList(listValue))
-                .commit();
-          } catch (RuntimeException e) {
-            // If we are unable to migrate the existing preferences, it means we potentially lost them.
-            // In this case, an error from getAllPrefs() is appropriate since it will alert the app during plugin initialization.
-            throw e;
-          }
-          value = listValue;
-        }
-        filteredPrefs.put(key, value);
+        filteredPrefs.put(key, transformPref(key, allPrefs.get(key)));
       }
     }
 
     return filteredPrefs;
   }
 
-  private List<String> decodeList(String encodedList) throws RuntimeException {
+  private Object transformPref(String key, Object value) {
+    if (value instanceof String) {
+      String stringValue = (String) value;
+      if (stringValue.startsWith(LIST_IDENTIFIER)) {
+        return decodeList(stringValue.substring(LIST_IDENTIFIER.length()));
+      } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
+        String encoded = stringValue.substring(BIG_INTEGER_PREFIX.length());
+        return new BigInteger(encoded, Character.MAX_RADIX);
+      } else if (stringValue.startsWith(DOUBLE_PREFIX)) {
+        String doubleStr = stringValue.substring(DOUBLE_PREFIX.length());
+        return Double.valueOf(doubleStr);
+      }
+    } else if (value instanceof Set) {
+      // This only happens for previous usage of setStringSet. The app expects a list.
+      List<String> listValue = new ArrayList<>((Set<String>) value);
+      // Let's migrate the value too while we are at it.
+
+      preferences
+          .edit()
+          .remove(key)
+          .putString(key, LIST_IDENTIFIER + encodeList(listValue))
+          .apply();
+
+      return listValue;
+    }
+    return value;
+  }
+
+  private @NonNull List<String> decodeList(String encodedList) throws RuntimeException {
     return listEncoder.decode(encodedList);
   }
 
-  private String encodeList(List<String> list) throws RuntimeException {
+  private @NonNull String encodeList(List<String> list) throws RuntimeException {
     return listEncoder.encode(list);
   }
 }

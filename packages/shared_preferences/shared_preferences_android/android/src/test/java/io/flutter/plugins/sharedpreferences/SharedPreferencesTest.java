@@ -9,13 +9,11 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
 
-import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,148 +25,158 @@ import org.mockito.Mockito;
 
 public class SharedPreferencesTest {
 
-  public class LocalSharedPreferencesEditor implements SharedPreferences.Editor {
-    Map<String, Object> _data;
+  public static class LocalSharedPreferencesEditor implements SharedPreferences.Editor {
+    private final Map<String, Object> sharedPrefData;
 
     LocalSharedPreferencesEditor(Map<String, Object> data) {
-      _data = data;
+      sharedPrefData = data;
     }
 
-    public SharedPreferences.Editor putString(String key, String value) {
-      _data.put(key, value);
+    @Override
+    public @NonNull SharedPreferences.Editor putString(String key, String value) {
+      sharedPrefData.put(key, value);
       return this;
     }
 
-    public SharedPreferences.Editor putStringSet(String key, Set<String> values) {
-      _data.put(key, values);
+    @Override
+    public @NonNull SharedPreferences.Editor putStringSet(String key, Set<String> values) {
+      sharedPrefData.put(key, values);
       return this;
     }
 
-    public SharedPreferences.Editor putBoolean(String key, boolean value) {
-      _data.put(key, value);
+    @Override
+    public @NonNull SharedPreferences.Editor putBoolean(String key, boolean value) {
+      sharedPrefData.put(key, value);
       return this;
     }
 
-    public SharedPreferences.Editor putInt(String key, int value) {
-      _data.put(key, value);
+    @Override
+    public @NonNull SharedPreferences.Editor putInt(String key, int value) {
+      sharedPrefData.put(key, value);
       return this;
     }
 
-    public SharedPreferences.Editor putLong(String key, long value) {
-      _data.put(key, value);
+    @Override
+    public @NonNull SharedPreferences.Editor putLong(String key, long value) {
+      sharedPrefData.put(key, value);
       return this;
     }
 
-    public SharedPreferences.Editor putFloat(String key, float value) {
-      _data.put(key, value);
+    @Override
+    public @NonNull SharedPreferences.Editor putFloat(String key, float value) {
+      sharedPrefData.put(key, value);
       return this;
     }
 
-    public SharedPreferences.Editor remove(String key) {
-      _data.remove(key);
+    @Override
+    public @NonNull SharedPreferences.Editor remove(String key) {
+      sharedPrefData.remove(key);
       return this;
     }
 
-    public boolean commit() {
+    @Override
+    public @NonNull boolean commit() {
       return true;
     }
 
-    public void apply() {}
+    @Override
+    public void apply() {
+      throw new UnsupportedOperationException("This method is not implemented for testing");
+    }
 
-    public SharedPreferences.Editor clear() {
-      return this;
+    @Override
+    public @NonNull SharedPreferences.Editor clear() {
+      throw new UnsupportedOperationException("This method is not implemented for testing");
     }
   }
 
-  private class LocalSharedPreferences implements SharedPreferences {
+  private static class LocalSharedPreferences implements SharedPreferences {
 
-    Map<String, Object> _data = new HashMap<String, Object>();
+    static Map<String, Object> sharedPrefData = new HashMap<>();
 
     @Override
-    public Map<String, ?> getAll() {
-      return _data;
+    public @NonNull Map<String, ?> getAll() {
+      return sharedPrefData;
     }
 
     @Override
-    public SharedPreferences.Editor edit() {
-      return new LocalSharedPreferencesEditor(_data);
+    public @NonNull SharedPreferences.Editor edit() {
+      return new LocalSharedPreferencesEditor(sharedPrefData);
     }
 
     // All methods below are not implemented.
     @Override
-    public boolean contains(String key) {
+    public @NonNull boolean contains(String key) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
 
     @Override
-    public boolean getBoolean(String key, boolean defValue) {
+    public @NonNull boolean getBoolean(String key, boolean defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
 
     @Override
-    public float getFloat(String key, float defValue) {
+    public @NonNull float getFloat(String key, float defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
 
     @Override
-    public int getInt(String key, int defValue) {
+    public @NonNull int getInt(String key, int defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
 
     @Override
-    public long getLong(String key, long defValue) {
+    public @NonNull long getLong(String key, long defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
 
     @Override
-    public String getString(String key, String defValue) {
+    public @NonNull String getString(String key, String defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
 
     @Override
-    public Set<String> getStringSet(String key, Set<String> defValues) {
+    public @NonNull Set<String> getStringSet(String key, Set<String> defValues) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(
         SharedPreferences.OnSharedPreferenceChangeListener listener) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(
         SharedPreferences.OnSharedPreferenceChangeListener listener) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
-    };
+    }
   }
 
-  class ListEncoder implements SharedPreferencesListEncoder {
+  static class ListEncoder implements SharedPreferencesListEncoder {
     @Override
-    public String encode(List<String> list) {
+    public @NonNull String encode(List<String> list) {
       return list.toString();
     }
 
     @Override
-    public List<String> decode(String listString) {
-      return Arrays.asList(s.substring(1, s.length() - 1).split(", "));
+    public @NonNull List<String> decode(String listString) {
+      return Arrays.asList(listString.substring(1, listString.length() - 1).split(", "));
     }
   }
 
   SharedPreferencesPlugin plugin;
 
   @Mock BinaryMessenger mockMessenger;
-  @Mock Application mockApplication;
-  @Mock Intent mockIntent;
-  @Mock ActivityPluginBinding activityPluginBinding;
   @Mock FlutterPlugin.FlutterPluginBinding flutterPluginBinding;
 
   @Before
-  public void before() throws Exception {
+  public void before() {
     Context context = Mockito.mock(Context.class);
     SharedPreferences sharedPrefs = new LocalSharedPreferences();
 
     flutterPluginBinding = Mockito.mock(FlutterPlugin.FlutterPluginBinding.class);
+
     Mockito.when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mockMessenger);
     Mockito.when(flutterPluginBinding.getApplicationContext()).thenReturn(context);
     Mockito.when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPrefs);
@@ -177,26 +185,25 @@ public class SharedPreferencesTest {
     plugin.onAttachedToEngine(flutterPluginBinding);
   }
 
-  Map<String, Object> data =
-      new HashMap<String, Object>() {
-        {
-          put("Language", "Java");
-          put("Counter", 0L);
-          put("Pie", 3.14);
-          // put("Names", Arrays.asList("Flutter", "Dart"));
-          put("NewToFlutter", false);
-          put("flutter.Language", "Java");
-          put("flutter.Counter", 0L);
-          put("flutter.Pie", 3.14);
-          // put("flutter.Names", Arrays.asList("Flutter", "Dart"));
-          put("flutter.NewToFlutter", false);
-          put("prefix.Language", "Java");
-          put("prefix.Counter", 0L);
-          put("prefix.Pie", 3.14);
-          // put("prefix.Names", Arrays.asList("Flutter", "Dart"));
-          put("prefix.NewToFlutter", false);
-        }
-      };
+  private static final Map<String, Object> data = new HashMap<>();
+
+  static {
+    data.put("Language", "Java");
+    data.put("Counter", 0L);
+    data.put("Pie", 3.14);
+    data.put("Names", Arrays.asList("Flutter", "Dart"));
+    data.put("NewToFlutter", false);
+    data.put("flutter.Language", "Java");
+    data.put("flutter.Counter", 0L);
+    data.put("flutter.Pie", 3.14);
+    data.put("flutter.Names", Arrays.asList("Flutter", "Dart"));
+    data.put("flutter.NewToFlutter", false);
+    data.put("prefix.Language", "Java");
+    data.put("prefix.Counter", 0L);
+    data.put("prefix.Pie", 3.14);
+    data.put("prefix.Names", Arrays.asList("Flutter", "Dart"));
+    data.put("prefix.NewToFlutter", false);
+  }
 
   @Test
   public void getAllWithPrefix() {
@@ -208,11 +215,11 @@ public class SharedPreferencesTest {
 
     Map<String, Object> flutterData = plugin.getAllWithPrefix("flutter.");
 
-    assertEquals(flutterData.size(), 4);
+    assertEquals(flutterData.size(), 5);
     assertEquals(flutterData.get("flutter.Language"), "Java");
     assertEquals(flutterData.get("flutter.Counter"), 0L);
     assertEquals(flutterData.get("flutter.Pie"), 3.14);
-    // assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart"));
+    assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart"));
     assertEquals(flutterData.get("flutter.NewToFlutter"), false);
 
     Map<String, Object> allData = plugin.getAllWithPrefix("");
@@ -226,11 +233,11 @@ public class SharedPreferencesTest {
 
     addData();
 
-    assertEquals(plugin.getAllWithPrefix("").size(), 12);
+    assertEquals(plugin.getAllWithPrefix("").size(), 15);
 
     plugin.clearWithPrefix("flutter.");
 
-    assertEquals(plugin.getAllWithPrefix("").size(), 8);
+    assertEquals(plugin.getAllWithPrefix("").size(), 10);
   }
 
   @Test
@@ -247,17 +254,17 @@ public class SharedPreferencesTest {
     plugin.setString("Language", "Java");
     plugin.setInt("Counter", 0);
     plugin.setDouble("Pie", 3.14);
-    // plugin.setStringList("Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setStringList("Names", Arrays.asList("Flutter", "Dart"));
     plugin.setBool("NewToFlutter", false);
     plugin.setString("flutter.Language", "Java");
     plugin.setInt("flutter.Counter", 0);
     plugin.setDouble("flutter.Pie", 3.14);
-    // plugin.setStringList("flutter.Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setStringList("flutter.Names", Arrays.asList("Flutter", "Dart"));
     plugin.setBool("flutter.NewToFlutter", false);
     plugin.setString("prefix.Language", "Java");
     plugin.setInt("prefix.Counter", 0);
     plugin.setDouble("prefix.Pie", 3.14);
-    // plugin.setStringList("prefix.Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setStringList("prefix.Names", Arrays.asList("Flutter", "Dart"));
     plugin.setBool("prefix.NewToFlutter", false);
   }
 }

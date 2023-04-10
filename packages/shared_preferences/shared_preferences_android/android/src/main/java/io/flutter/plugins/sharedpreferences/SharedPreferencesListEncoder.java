@@ -4,11 +4,14 @@
 
 package io.flutter.plugins.sharedpreferences;
 
+import androidx.annotation.NonNull;
 import java.util.List;
 
 /** SharedPreferencesPlugin */
 public interface SharedPreferencesListEncoder {
-  String encode(List<String> list);
+  @NonNull
+  String encode(@NonNull List<String> list);
 
-  List<String> decode(String listString);
+  @NonNull
+  List<String> decode(@NonNull String listString);
 }

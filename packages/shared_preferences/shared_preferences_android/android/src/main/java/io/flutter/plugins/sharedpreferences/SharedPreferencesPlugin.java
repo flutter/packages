@@ -22,23 +22,19 @@ import java.util.Map;
 
 /** SharedPreferencesPlugin */
 public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
-  final String TAG = "SharedPreferencesPlugin.java";
+  static final String TAG = "SharedPreferencesPlugin.java";
 
   SharedPreferencesListEncoder listEncoder;
 
-  class ListEncoder implements SharedPreferencesListEncoder {
+  static class ListEncoder implements SharedPreferencesListEncoder {
     @Override
-    public String encode(List<String> list) throws RuntimeException {
+    public @NonNull String encode(List<String> list) throws RuntimeException {
       try {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         ObjectOutputStream stream = new ObjectOutputStream(byteStream);
         stream.writeObject(list);
         stream.flush();
-        String data = Base64.encodeToString(byteStream.toByteArray(), 0);
-        if (stream != null) {
-          stream.close();
-        }
-        return data;
+        return Base64.encodeToString(byteStream.toByteArray(), 0);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -46,7 +42,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> decode(String listString) throws RuntimeException {
+    public @NonNull List<String> decode(String listString) throws RuntimeException {
       try {
         ObjectInputStream stream =
             new ObjectInputStream(new ByteArrayInputStream(Base64.decode(listString, 0)));
@@ -57,7 +53,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
     }
   }
 
-  SharedPreferencesPlugin() {
+  public SharedPreferencesPlugin() {
     listEncoder = new ListEncoder();
   }
 
@@ -96,42 +92,42 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @Override
-  public Boolean setBool(String key, Boolean value) {
+  public @NonNull Boolean setBool(String key, Boolean value) {
     return preferences.setBool(key, value);
   }
 
   @Override
-  public Boolean setString(String key, String value) {
+  public @NonNull Boolean setString(String key, String value) {
     return preferences.setString(key, value);
   }
 
   @Override
-  public Boolean setInt(String key, Object value) {
+  public @NonNull Boolean setInt(String key, Object value) {
     return preferences.setInt(key, value);
   }
 
   @Override
-  public Boolean setDouble(String key, Double value) {
+  public @NonNull Boolean setDouble(String key, Double value) {
     return preferences.setDouble(key, value);
   }
 
   @Override
-  public Boolean remove(String key) {
+  public @NonNull Boolean remove(String key) {
     return preferences.remove(key);
   }
 
   @Override
-  public Boolean setStringList(String key, List<String> value) throws RuntimeException {
+  public @NonNull Boolean setStringList(String key, List<String> value) throws RuntimeException {
     return preferences.setStringList(key, value);
   }
 
   @Override
-  public Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
+  public @NonNull Map<String, Object> getAllWithPrefix(String prefix) throws RuntimeException {
     return preferences.getAllWithPrefix(prefix);
   }
 
   @Override
-  public Boolean clearWithPrefix(String prefix) throws RuntimeException {
+  public @NonNull Boolean clearWithPrefix(String prefix) throws RuntimeException {
     return preferences.clearWithPrefix(prefix);
   }
 }
