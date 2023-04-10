@@ -522,7 +522,7 @@ void main() {
       ),
     ];
 
-    // align to bottom
+    // Align to bottom.
     const double groupAlignment = 1.0;
 
     await tester.pumpWidget(
