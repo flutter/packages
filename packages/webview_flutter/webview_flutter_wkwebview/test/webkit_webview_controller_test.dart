@@ -37,6 +37,7 @@ void main() {
     WebKitWebViewController createControllerWithMocks({
       MockUIScrollView? mockScrollView,
       MockWKPreferences? mockPreferences,
+      WKUIDelegate? uiDelegate,
       MockWKUserContentController? mockUserContentController,
       MockWKWebsiteDataStore? mockWebsiteDataStore,
       MockWKWebView Function(
@@ -77,7 +78,26 @@ void main() {
                   );
             return nonNullMockWebView;
           },
-          createUIDelegate: CapturingUIDelegate.new,
+          createUIDelegate: ({
+            void Function(
+              WKWebView webView,
+              WKWebViewConfiguration configuration,
+              WKNavigationAction navigationAction,
+            )? onCreateWebView,
+            Future<WKPermissionDecision> Function(
+              WKUIDelegate instance,
+              WKWebView webView,
+              WKSecurityOrigin origin,
+              WKFrameInfo frame,
+              WKMediaCaptureType type,
+            )? requestMediaCapturePermission,
+          }) {
+            return uiDelegate ??
+                CapturingUIDelegate(
+                  onCreateWebView: onCreateWebView,
+                  requestMediaCapturePermission: requestMediaCapturePermission,
+                );
+          },
         ),
         instanceManager: instanceManager,
       );
@@ -810,11 +830,6 @@ void main() {
           CapturingNavigationDelegate.lastCreatedDelegate,
         ),
       );
-      verify(
-        mockWebView.setUIDelegate(
-          CapturingUIDelegate.lastCreatedDelegate,
-        ),
-      );
     });
 
     test('setPlatformNavigationDelegate onProgress', () async {
@@ -901,7 +916,7 @@ void main() {
     });
 
     test(
-        'setPlatformNavigationDelegate onProgress can be changed by the WebKitNavigationDelegage',
+        'setPlatformNavigationDelegate onProgress can be changed by the WebKitNavigationDelegate',
         () async {
       final MockWKWebView mockWebView = MockWKWebView();
 
@@ -971,6 +986,40 @@ void main() {
         controller.webViewIdentifier,
         instanceManager.getIdentifier(mockWebView),
       );
+    });
+
+    test('setOnPermissionRequest', () async {
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      late final PlatformWebViewPermissionRequest permissionRequest;
+      await controller.setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) async {
+          permissionRequest = request;
+          request.grant(const WebViewPermissionGrantParams());
+        },
+      );
+
+      final Future<WKPermissionDecision> Function(
+        WKUIDelegate instance,
+        WKWebView webView,
+        WKSecurityOrigin origin,
+        WKFrameInfo frame,
+        WKMediaCaptureType type,
+      ) onPermissionRequestCallback = CapturingUIDelegate
+          .lastCreatedDelegate.requestMediaCapturePermission!;
+
+      final WKPermissionDecision decision = await onPermissionRequestCallback(
+        CapturingUIDelegate.lastCreatedDelegate,
+        WKWebView.detached(),
+        const WKSecurityOrigin(host: '', port: 0, protocol: ''),
+        const WKFrameInfo(isMainFrame: false),
+        WKMediaCaptureType.microphone,
+      );
+
+      expect(permissionRequest.types, <WebViewPermissionResourceType>[
+        WebViewPermissionResourceType.microphone,
+      ]);
+      expect(decision, WKPermissionDecision.grant);
     });
   });
 
