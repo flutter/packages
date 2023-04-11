@@ -7,9 +7,9 @@ package io.flutter.plugins.sharedpreferences;
 import androidx.annotation.NonNull;
 import java.util.List;
 
-/** 
- * An interface used to provide conversion logic between
- * List<String> and String for SharedPreferencesPlugin.
+/**
+ * An interface used to provide conversion logic between List<String> and String for
+ * SharedPreferencesPlugin.
  */
 public interface SharedPreferencesListEncoder {
   /** Converts list to String for storing in shared preferences. */

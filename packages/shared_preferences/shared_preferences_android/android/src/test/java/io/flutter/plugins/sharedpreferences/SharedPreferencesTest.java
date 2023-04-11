@@ -25,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 public class SharedPreferencesTest {
- 
 
   SharedPreferencesPlugin plugin;
 
@@ -146,7 +145,7 @@ public class SharedPreferencesTest {
   @Test
   public void clearAll() {
     addData();
-    
+
     assertEquals(plugin.getAllWithPrefix("").size(), 15);
 
     plugin.clearWithPrefix("");
@@ -182,8 +181,8 @@ public class SharedPreferencesTest {
     plugin.setBool("prefix.NewToFlutter", false);
   }
 
-   /** A dummy implementation for tests for use with FakeSharedPreferences */
-   public static class FakeSharedPreferencesEditor implements SharedPreferences.Editor {
+  /** A dummy implementation for tests for use with FakeSharedPreferences */
+  public static class FakeSharedPreferencesEditor implements SharedPreferences.Editor {
     private final Map<String, Object> sharedPrefData;
 
     FakeSharedPreferencesEditor(@NonNull Map<String, Object> data) {
