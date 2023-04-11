@@ -14,7 +14,6 @@ public class TestUtils {
       Field field = classToModify.getField(fieldName);
       field.setAccessible(true);
 
-      //noinspection JavaReflectionMemberAccess
       Field modifiersField = Field.class.getDeclaredField("modifiers");
       modifiersField.setAccessible(true);
       modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
