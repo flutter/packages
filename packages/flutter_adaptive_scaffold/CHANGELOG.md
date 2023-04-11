@@ -1,3 +1,7 @@
+## 0.1.4
+
+* Fixes the example app not running in Android - [flutter/flutter#124600](https://github.com/flutter/flutter/issues/124600)
+
 ## 0.1.3
 
 * Fixes `groupAlignment` property not available in `standardNavigationRail` - [flutter/flutter#121994](https://github.com/flutter/flutter/issues/121994)
