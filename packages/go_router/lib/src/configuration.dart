@@ -172,7 +172,9 @@ class RouteConfiguration {
     return 'RouterConfiguration: $routes';
   }
 
-  /// Returns full paths of all routes and known full paths of route names.
+  /// Returns the full path of [routes].
+  /// A path is prefixed with spaces, depending on the depth of the hierarchy.
+  /// If there are any named routes, they are also appended.
   @visibleForTesting
   String debugKnownRoutes() {
     final StringBuffer sb = StringBuffer();
