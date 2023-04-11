@@ -116,11 +116,9 @@ class DisplayListenerProxy {
       return new ArrayList<>();
     }
     try {
-      //noinspection JavaReflectionMemberAccess
       Field displayManagerGlobalField = DisplayManager.class.getDeclaredField("mGlobal");
       displayManagerGlobalField.setAccessible(true);
       Object displayManagerGlobal = displayManagerGlobalField.get(displayManager);
-      //noinspection ConstantConditions
       Field displayListenersField =
           displayManagerGlobal.getClass().getDeclaredField("mDisplayListeners");
       displayListenersField.setAccessible(true);
@@ -129,7 +127,6 @@ class DisplayListenerProxy {
 
       Field listenerField = null;
       ArrayList<DisplayManager.DisplayListener> listeners = new ArrayList<>();
-      //noinspection ConstantConditions
       for (Object delegate : delegates) {
         if (listenerField == null) {
           listenerField = delegate.getClass().getField("mListener");
