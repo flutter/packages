@@ -143,7 +143,7 @@ Page resource error:
         },
       )
       ..loadRequest(LoadRequestParams(
-        uri: Uri.parse('https://webcamtests.com/'),
+        uri: Uri.parse('https://flutter.dev'),
       ));
   }
 
