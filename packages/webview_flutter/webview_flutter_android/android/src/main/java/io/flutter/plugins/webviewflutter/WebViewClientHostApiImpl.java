@@ -60,8 +60,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     // Legacy codepath for < 23; newer versions use the variant above.
-    @Override
     @SuppressWarnings("deprecation")
+    @Override
     public void onReceivedError(
         WebView view, int errorCode, String description, String failingUrl) {
       flutterApi.onReceivedError(
@@ -75,8 +75,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     // Legacy codepath for < 23; newer versions use the variant above.
-    @Override
     @SuppressWarnings("deprecation")
+    @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
       flutterApi.urlLoading(this, view, url, reply -> {});
       return returnValueForShouldOverrideUrlLoading;
@@ -130,8 +130,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     // Legacy codepath for < 23; newer versions use the variant above.
-    @Override
     @SuppressWarnings("deprecation")
+    @Override
     public void onReceivedError(
         WebView view, int errorCode, String description, String failingUrl) {
       flutterApi.onReceivedError(
@@ -147,8 +147,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     // Legacy codepath for < 23; newer versions use the variant above.
-    @Override
     @SuppressWarnings("deprecation")
+    @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
       flutterApi.urlLoading(this, view, url, reply -> {});
       return returnValueForShouldOverrideUrlLoading;
