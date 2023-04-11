@@ -1,4 +1,4 @@
-## NEXT
+## 2.2.0
 
 * Updates minimum Flutter version to 3.3.
 * Fixes common typos in tests and documentation.
