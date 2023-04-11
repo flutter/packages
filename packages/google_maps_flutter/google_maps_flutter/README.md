@@ -14,6 +14,8 @@ A Flutter plugin that provides a [Google Maps](https://developers.google.com/map
 
 To use this plugin, add `google_maps_flutter` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
 
+GoogleMaps widget should be used within a widget with a bounded size. Using it in an unbounded widget will cause the application to throw a Flutter exception.
+
 ## Getting Started
 
 * Get an API key at <https://cloud.google.com/maps-platform/>.
