@@ -756,7 +756,8 @@ class WKUIDelegate extends NSObject {
   )? onCreateWebView;
 
   /// Determines whether a web resource, which the security origin object
-  /// describes, can access to the device’s microphone audio and camera video.
+  /// describes, can gain access to the device’s microphone audio and camera
+  /// video.
   final Future<WKPermissionDecision> Function(
     WKUIDelegate instance,
     WKWebView webView,

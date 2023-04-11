@@ -162,11 +162,12 @@ extern FWFWKNavigationType FWFWKNavigationTypeFromWKNavigationType(WKNavigationT
 /**
  * Converts a WKSecurityOrigin to an FWFWKSecurityOriginData.
  *
- * @param info The object containing information to create an FWFWKSecurityOriginData.
+ * @param origin The object containing information to create an FWFWKSecurityOriginData.
  *
  * @return An FWFWKSecurityOriginData.
  */
-extern FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromWKSecurityOrigin(WKSecurityOrigin *info);
+extern FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromWKSecurityOrigin(
+    WKSecurityOrigin *origin);
 
 /**
  * Converts an FWFWKPermissionDecisionData to a WKPermissionDecision.

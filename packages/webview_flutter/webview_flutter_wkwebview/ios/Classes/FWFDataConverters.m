@@ -236,8 +236,10 @@ FWFWKNavigationType FWFWKNavigationTypeFromWKNavigationType(WKNavigationType typ
   }
 }
 
-FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromWKSecurityOrigin(WKSecurityOrigin *info) {
-  return [FWFWKSecurityOriginData makeWithHost:info.host port:@(info.port) protocol:info.protocol];
+FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromWKSecurityOrigin(WKSecurityOrigin *origin) {
+  return [FWFWKSecurityOriginData makeWithHost:origin.host
+                                          port:@(origin.port)
+                                      protocol:origin.protocol];
 }
 
 WKPermissionDecision FWFWKPermissionDecisionFromData(FWFWKPermissionDecisionData *data) {
