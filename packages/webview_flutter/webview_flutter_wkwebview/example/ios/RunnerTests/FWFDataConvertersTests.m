@@ -142,15 +142,14 @@
                  WKPermissionDecisionPrompt);
 }
 
-- (void)testFWFWKMediaCaptureTypeDataFromWKMediaCaptureType {
-  XCTAssertEqualObjects(
-      FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(WKMediaCaptureTypeCamera).value,
-      FWFWKMediaCaptureTypeCamera);
-  XCTAssertEqualObjects(
+- (void)testFWFWKMediaCaptureTypeDataFromWKMediaCaptureType API_AVAILABLE(ios(15.0)) {
+  XCTAssertEqual(FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(WKMediaCaptureTypeCamera).value,
+                 FWFWKMediaCaptureTypeCamera);
+  XCTAssertEqual(
       FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(WKMediaCaptureTypeMicrophone).value,
       FWFWKMediaCaptureTypeMicrophone);
-  XCTAssertEqualObjects(
-      FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(WKMediaCaptureTypeCamera).value,
+  XCTAssertEqual(
+      FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(WKMediaCaptureTypeCameraAndMicrophone).value,
       FWFWKMediaCaptureTypeCameraAndMicrophone);
 }
 @end
