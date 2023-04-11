@@ -11,7 +11,6 @@ import 'package:pigeon/pigeon.dart';
   javaOptions: JavaOptions(
       className: 'Messages', package: 'io.flutter.plugins.sharedpreferences'),
   dartOut: 'lib/src/messages.g.dart',
-  dartTestOut: 'test/messages_test.g.dart',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesApi')
@@ -23,7 +22,7 @@ abstract class SharedPreferencesApi {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setString(String key, String value);
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool setInt(String key, Object value);
+  bool setInt(String key, int value);
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setDouble(String key, double value);
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
@@ -33,29 +31,26 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<bool> clear() {
+    return clearWithPrefix(_defaultPrefix);
+  }
+
+  @override
   Future<bool> clearWithPrefix(String prefix) async {
     return _api.clearWithPrefix(prefix);
+  }
+
+  @override
+  Future<Map<String, Object>> getAll() {
+    return getAllWithPrefix(_defaultPrefix);
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
     final Map<String?, Object?> data = await _api.getAllWithPrefix(prefix);
     final Map<String, Object> preferences = data.cast<String, Object>();
-    if (preferences == null) {
-      return <String, Object>{};
-    }
 
     return preferences;
-  }
-
-  @override
-  Future<bool> clear() {
-    return clearWithPrefix(_defaultPrefix);
-  }
-
-  @override
-  Future<Map<String, Object>> getAll() {
-    return getAllWithPrefix(_defaultPrefix);
   }
 
   // Call the function according to the type of value provided
@@ -74,6 +69,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
         return _api.setStringList(key, value as List<String>);
     }
 
+    // TODO (tarrinneal): change to ArgumentError to match other implementations.
     throw PlatformException(
         code: 'InvalidOperation',
         message: '"$dataType" is not a supported type.');

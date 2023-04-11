@@ -55,7 +55,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   public SharedPreferencesPlugin() {
-    listEncoder = new ListEncoder();
+    this(new ListEncoder());
   }
 
   @VisibleForTesting
@@ -70,11 +70,10 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   public static void registerWith(
       @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     final SharedPreferencesPlugin plugin = new SharedPreferencesPlugin();
-    plugin.setup(registrar.messenger(), registrar.context());
+    plugin.setUp(registrar.messenger(), registrar.context());
   }
 
-  @SuppressLint("LongLogTag")
-  private void setup(@NonNull BinaryMessenger messenger, @NonNull Context context) {
+  private void setUp(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     preferences = new MethodCallHandlerImpl(context, listEncoder);
     try {
       SharedPreferencesApi.setup(messenger, this);
@@ -85,7 +84,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
-    setup(binding.getBinaryMessenger(), binding.getApplicationContext());
+    setUp(binding.getBinaryMessenger(), binding.getApplicationContext());
   }
 
   @Override
@@ -104,7 +103,7 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @Override
-  public @NonNull Boolean setInt(@NonNull String key, @NonNull Object value) {
+  public @NonNull Boolean setInt(@NonNull String key, @NonNull Long value) {
     return preferences.setInt(key, value);
   }
 

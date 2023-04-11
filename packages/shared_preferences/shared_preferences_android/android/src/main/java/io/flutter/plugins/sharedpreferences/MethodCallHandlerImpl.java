@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 /** Helper class to save data to `android.content.SharedPreferences` */
-@SuppressWarnings("unchecked")
 class MethodCallHandlerImpl {
 
   SharedPreferencesListEncoder listEncoder;
@@ -29,9 +28,9 @@ class MethodCallHandlerImpl {
 
   private final android.content.SharedPreferences preferences;
 
-  MethodCallHandlerImpl(Context context, SharedPreferencesListEncoder listEncoderClass) {
+  MethodCallHandlerImpl(Context context, SharedPreferencesListEncoder listEncoder) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-    listEncoder = listEncoderClass;
+    this.listEncoder = listEncoder;
   }
 
   public @NonNull Boolean setBool(@NonNull String key, @NonNull Boolean value) {
@@ -39,6 +38,7 @@ class MethodCallHandlerImpl {
   }
 
   public @NonNull Boolean setString(@NonNull String key, @NonNull String value) {
+    // TODO (tarrinneal): Move this string prefix checking logic to dart code and make it an Argument Error.
     if (value.startsWith(LIST_IDENTIFIER)
         || value.startsWith(BIG_INTEGER_PREFIX)
         || value.startsWith(DOUBLE_PREFIX)) {
@@ -48,9 +48,8 @@ class MethodCallHandlerImpl {
     return preferences.edit().putString(key, value).commit();
   }
 
-  public @NonNull Boolean setInt(@NonNull String key, @NonNull Object value) {
-    Number number = (Number) value;
-    return preferences.edit().putLong(key, number.longValue()).commit();
+  public @NonNull Boolean setInt(@NonNull String key, @NonNull Long value) {
+    return preferences.edit().putLong(key, value).commit();
   }
 
   public @NonNull Boolean setDouble(@NonNull String key, @NonNull Double value) {
@@ -60,7 +59,7 @@ class MethodCallHandlerImpl {
 
   public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value)
       throws RuntimeException {
-    return preferences.edit().putString(key, LIST_IDENTIFIER + encodeList(value)).commit();
+    return preferences.edit().putString(key, LIST_IDENTIFIER + listEncoder.encode(value)).commit();
   }
 
   public @NonNull Map<String, Object> getAllWithPrefix(@NonNull String prefix)
@@ -73,10 +72,16 @@ class MethodCallHandlerImpl {
   }
 
   public @NonNull Boolean clearWithPrefix(@NonNull String prefix) throws RuntimeException {
-    Set<String> keySet = getAllPrefs(prefix).keySet();
+    Map<String, ?> allPrefs = preferences.getAll();
+    Map<String, Object> filteredPrefs = new HashMap<>();
+    for (String key : allPrefs.keySet()) {
+      if (key.startsWith(prefix)) {
+        filteredPrefs.put(key, allPrefs.get(key));
+      }
+    }
     SharedPreferences.Editor clearEditor = preferences.edit();
-    for (String keyToDelete : keySet) {
-      clearEditor.remove(keyToDelete);
+    for (String key : filteredPrefs.keySet()) {
+      clearEditor.remove(key);
     }
     return clearEditor.commit();
   }
@@ -99,7 +104,9 @@ class MethodCallHandlerImpl {
     if (value instanceof String) {
       String stringValue = (String) value;
       if (stringValue.startsWith(LIST_IDENTIFIER)) {
-        return decodeList(stringValue.substring(LIST_IDENTIFIER.length()));
+        return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length()));
+        // TODO (tarrinneal): Remove all BigInt code.
+        // https://github.com/flutter/flutter/issues/124420
       } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
         String encoded = stringValue.substring(BIG_INTEGER_PREFIX.length());
         return new BigInteger(encoded, Character.MAX_RADIX);
@@ -107,27 +114,21 @@ class MethodCallHandlerImpl {
         String doubleStr = stringValue.substring(DOUBLE_PREFIX.length());
         return Double.valueOf(doubleStr);
       }
+        // TODO (tarrinneal): Remove Set code.
+        // https://github.com/flutter/flutter/issues/124420
     } else if (value instanceof Set) {
       // This only happens for previous usage of setStringSet. The app expects a list.
+      @SuppressWarnings("unchecked")
       List<String> listValue = new ArrayList<>((Set<String>) value);
       // Let's migrate the value too while we are at it.
-
       preferences
           .edit()
           .remove(key)
-          .putString(key, LIST_IDENTIFIER + encodeList(listValue))
+          .putString(key, LIST_IDENTIFIER + listEncoder.encode(listValue))
           .apply();
 
       return listValue;
     }
     return value;
-  }
-
-  private @NonNull List<String> decodeList(@NonNull String encodedList) throws RuntimeException {
-    return listEncoder.decode(encodedList);
-  }
-
-  private @NonNull String encodeList(@NonNull List<String> list) throws RuntimeException {
-    return listEncoder.encode(list);
   }
 }

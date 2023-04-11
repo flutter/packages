@@ -1,7 +1,7 @@
 ## 2.1.1
 
 * Updates minimum Flutter version to 3.0.
-* Converts `SharedPreferencesAndroid` to Pigeon.
+* Converts implementation to Pigeon.
 
 ## 2.1.0
 

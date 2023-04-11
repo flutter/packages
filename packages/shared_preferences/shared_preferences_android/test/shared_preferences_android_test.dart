@@ -5,71 +5,12 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
+import 'package:shared_preferences_android/src/messages.g.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
-
-import 'messages_test.g.dart';
-
-class _MockSharedPreferencesApi implements TestSharedPreferencesApi {
-  final Map<String, Object> items = <String, Object>{};
-
-  @override
-  Map<String?, Object?> getAllWithPrefix(String prefix) {
-    return <String?, Object?>{
-      for (final String key in items.keys)
-        if (key.startsWith(prefix)) key: items[key]
-    };
-  }
-
-  @override
-  bool remove(String key) {
-    items.remove(key);
-    return true;
-  }
-
-  @override
-  bool setBool(String key, bool value) {
-    items[key] = value;
-    return true;
-  }
-
-  @override
-  bool setDouble(String key, double value) {
-    items[key] = value;
-    return true;
-  }
-
-  @override
-  bool clearWithPrefix(String prefix) {
-    items.keys.toList().forEach((String key) {
-      if (key.startsWith(prefix)) {
-        items.remove(key);
-      }
-    });
-    return true;
-  }
-
-  @override
-  bool setInt(String key, Object value) {
-    items[key] = value;
-    return true;
-  }
-
-  @override
-  bool setString(String key, String value) {
-    items[key] = value;
-    return true;
-  }
-
-  @override
-  bool setStringList(String key, List<String?> value) {
-    items[key] = value;
-    return true;
-  }
-}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  late _MockSharedPreferencesApi api;
+  late _FakeSharedPreferencesApi api;
 
   const Map<String, Object> flutterTestValues = <String, Object>{
     'flutter.String': 'hello world',
@@ -102,8 +43,7 @@ void main() {
   allTestValues.addAll(nonPrefixTestValues);
 
   setUp(() {
-    api = _MockSharedPreferencesApi();
-    TestSharedPreferencesApi.setup(api);
+    api = _FakeSharedPreferencesApi();
   });
 
   test('registerWith', () {
@@ -207,4 +147,62 @@ void main() {
     all = await plugin.getAllWithPrefix('');
     expect(all.length, 0);
   });
+}
+
+class _FakeSharedPreferencesApi implements SharedPreferencesApi {
+  final Map<String, Object> items = <String, Object>{};
+
+  @override
+  Future<Map<String?, Object?>> getAllWithPrefix(String prefix) async {
+    return <String?, Object?>{
+      for (final String key in items.keys)
+        if (key.startsWith(prefix)) key: items[key]
+    };
+  }
+
+  @override
+  Future<bool> remove(String key) async {
+    items.remove(key);
+    return true;
+  }
+
+  @override
+  Future<bool> setBool(String key, bool value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setDouble(String key, double value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    items.keys.toList().forEach((String key) {
+      if (key.startsWith(prefix)) {
+        items.remove(key);
+      }
+    });
+    return true;
+  }
+
+  @override
+  Future<bool> setInt(String key, Object value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setString(String key, String value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setStringList(String key, List<String?> value) async {
+    items[key] = value;
+    return true;
+  }
 }
