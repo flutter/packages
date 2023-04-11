@@ -173,8 +173,8 @@ class RouteConfiguration {
   }
 
   /// Returns the full path of [routes].
-  /// A path is prefixed with spaces, depending on the depth of the hierarchy.
-  /// If there are any named routes, they are also appended.
+  /// Each path is indented based depth of the hierarchy, and its `name`
+  /// is also appended if not null
   @visibleForTesting
   String debugKnownRoutes() {
     final StringBuffer sb = StringBuffer();
