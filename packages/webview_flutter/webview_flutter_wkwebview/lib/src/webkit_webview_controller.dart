@@ -154,7 +154,7 @@ class WebKitWebViewController extends PlatformWebViewController {
             weakThis.target?._onPermissionRequestCallback;
 
         if (callback == null) {
-          return WKPermissionDecision.deny;
+          return WKPermissionDecision.prompt;
         } else {
           late final List<WebViewPermissionResourceType> types;
           switch (type) {

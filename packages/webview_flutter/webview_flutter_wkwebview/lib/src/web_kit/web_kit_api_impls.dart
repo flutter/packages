@@ -749,7 +749,7 @@ class WKUIDelegateFlutterApiImpl extends WKUIDelegateFlutterApi {
         type.value,
       );
     } else {
-      decision = WKPermissionDecision.deny;
+      decision = WKPermissionDecision.prompt;
     }
 
     return WKPermissionDecisionData(value: decision);
