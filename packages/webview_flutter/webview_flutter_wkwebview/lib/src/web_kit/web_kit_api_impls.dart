@@ -749,6 +749,8 @@ class WKUIDelegateFlutterApiImpl extends WKUIDelegateFlutterApi {
         type.value,
       );
     } else {
+      // The default response for iOS is to prompt. See
+      // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
       decision = WKPermissionDecision.prompt;
     }
 

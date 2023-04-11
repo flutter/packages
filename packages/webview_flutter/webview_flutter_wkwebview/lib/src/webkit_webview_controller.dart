@@ -154,6 +154,8 @@ class WebKitWebViewController extends PlatformWebViewController {
             weakThis.target?._onPermissionRequestCallback;
 
         if (callback == null) {
+          // The default response for iOS is to prompt. See
+          // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
           return WKPermissionDecision.prompt;
         } else {
           late final List<WebViewPermissionResourceType> types;
