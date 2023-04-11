@@ -46,6 +46,18 @@ class CameraPermissionsErrorData {
   String description;
 }
 
+enum CameraStateType {
+  closed,
+  closing,
+  open,
+  opening,
+  pendingOpen,
+}
+
+class CameraStateTypeData {
+  late CameraStateType value;
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -171,4 +183,141 @@ abstract class LiveCameraStateFlutterApi {
   void create(int identifier);
 
   void onCameraClosing();
+}
+
+/// Host API for `CameraState`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See <link-to-docs>.
+@HostApi(dartHostTestHandler: 'TestCameraStateHostApi')
+abstract class CameraStateHostApi {}
+
+/// Flutter API for `CameraState`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See <link-to-docs>.
+@FlutterApi()
+abstract class CameraStateFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+
+  void create(
+    int identifier,
+    CameraStateTypeData type,
+    int errorIdentifier,
+  );
+}
+
+// TODO(bparrishMines): Copy these classes into pigeon file and run pigeon
+// TODO(bparrishMines): Fix documentation spacing over class methods if this is for iOS
+
+/// Host API for `Observer`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See <link-to-docs>.
+@HostApi(dartHostTestHandler: 'TestObserverHostApi')
+abstract class ObserverHostApi {
+  /// Create a new native instance and add it to the `InstanceManager`.
+
+  void create(
+    int identifier,
+  );
+}
+
+/// Flutter API for `Observer`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See <link-to-docs>.
+@FlutterApi()
+abstract class ObserverFlutterApi {
+  /// Callback to Dart function `Observer.onChanged`.
+
+  void onChanged(
+    int identifier,
+    int valueIdentifier,
+  );
+}
+
+// TODO(bparrishMines): Copy these classes into pigeon file and run pigeon
+// TODO(bparrishMines): Fix documentation spacing over class methods if this is for iOS
+
+/// Host API for `CameraStateError`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See <link-to-docs>.
+@HostApi(dartHostTestHandler: 'TestCameraStateErrorHostApi')
+abstract class CameraStateErrorHostApi {}
+
+/// Flutter API for `CameraStateError`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See <link-to-docs>.
+@FlutterApi()
+abstract class CameraStateErrorFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+
+  void create(
+    int identifier,
+    int code,
+    String description,
+  );
+}
+
+// TODO(bparrishMines): Copy these classes into pigeon file and run pigeon
+// TODO(bparrishMines): Fix documentation spacing over class methods if this is for iOS
+
+/// Host API for `LiveData`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See <link-to-docs>.
+@HostApi(dartHostTestHandler: 'TestLiveDataHostApi')
+abstract class LiveDataHostApi {
+  /// Handles Dart method `LiveData.observe`.
+
+  void observe(
+    int identifier,
+    int observerIdentifier,
+  );
+
+  /// Handles Dart method `LiveData.removeObservers`.
+
+  void removeObservers(
+    int identifier,
+  );
+}
+
+/// Flutter API for `LiveData`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See <link-to-docs>.
+@FlutterApi()
+abstract class LiveDataFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+
+  void create(
+    int identifier,
+  );
 }
