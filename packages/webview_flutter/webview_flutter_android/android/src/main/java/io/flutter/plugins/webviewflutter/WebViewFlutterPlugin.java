@@ -19,6 +19,7 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.FlutterAssetMan
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.InstanceManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaObjectHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaScriptChannelHostApi;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.PermissionRequestHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebChromeClientHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebSettingsHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebStorageHostApi;
@@ -128,6 +129,8 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
     WebStorageHostApi.setup(
         binaryMessenger,
         new WebStorageHostApiImpl(instanceManager, new WebStorageHostApiImpl.WebStorageCreator()));
+    PermissionRequestHostApi.setup(
+        binaryMessenger, new PermissionRequestHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override

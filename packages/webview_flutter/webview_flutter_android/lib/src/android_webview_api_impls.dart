@@ -46,6 +46,7 @@ class AndroidWebViewFlutterApis {
     JavaScriptChannelFlutterApiImpl? javaScriptChannelFlutterApi,
     FileChooserParamsFlutterApiImpl? fileChooserParamsFlutterApi,
     WebViewFlutterApiImpl? webViewFlutterApi,
+    PermissionRequestFlutterApiImpl? permissionRequestFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -60,6 +61,8 @@ class AndroidWebViewFlutterApis {
     this.fileChooserParamsFlutterApi =
         fileChooserParamsFlutterApi ?? FileChooserParamsFlutterApiImpl();
     this.webViewFlutterApi = webViewFlutterApi ?? WebViewFlutterApiImpl();
+    this.permissionRequestFlutterApi =
+        permissionRequestFlutterApi ?? PermissionRequestFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -90,6 +93,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [WebView].
   late final WebViewFlutterApiImpl webViewFlutterApi;
 
+  /// Flutter Api for [PermissionRequest].
+  late final PermissionRequestFlutterApiImpl permissionRequestFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -100,6 +106,7 @@ class AndroidWebViewFlutterApis {
       JavaScriptChannelFlutterApi.setup(javaScriptChannelFlutterApi);
       FileChooserParamsFlutterApi.setup(fileChooserParamsFlutterApi);
       WebViewFlutterApi.setup(webViewFlutterApi);
+      PermissionRequestFlutterApi.setup(permissionRequestFlutterApi);
       _haveBeenSetUp = true;
     }
   }
