@@ -91,6 +91,7 @@ void main() {
               WKFrameInfo frame,
               WKMediaCaptureType type,
             )? requestMediaCapturePermission,
+            InstanceManager? instanceManager,
           }) {
             return uiDelegate ??
                 CapturingUIDelegate(
@@ -1081,6 +1082,7 @@ class CapturingUIDelegate extends WKUIDelegate {
   CapturingUIDelegate({
     super.onCreateWebView,
     super.requestMediaCapturePermission,
+    super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }

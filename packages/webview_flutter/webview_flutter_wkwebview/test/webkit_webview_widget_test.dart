@@ -45,6 +45,7 @@ void main() {
           }, createUIDelegate: ({
             dynamic onCreateWebView,
             dynamic requestMediaCapturePermission,
+            InstanceManager? instanceManager,
           }) {
             final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();
             when(mockWKUIDelegate.copy()).thenReturn(MockWKUIDelegate());

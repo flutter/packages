@@ -87,5 +87,6 @@ class WebKitProxy {
       WKFrameInfo frame,
       WKMediaCaptureType type,
     )? requestMediaCapturePermission,
+    InstanceManager? instanceManager,
   }) createUIDelegate;
 }
