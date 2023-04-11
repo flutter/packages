@@ -5,6 +5,7 @@
 - Support for decoding control points as IEEE 754-2008 half precision
   floating point values.
 - Migrate the test to extend DefaultWidgetsLocalizations.
+- Added an error builder property to provide a fallback widget on exceptions.
 
 ## 1.1.4
 

@@ -4,6 +4,7 @@
 
 - Support for encoding path control points as IEEE 754-2008 half precision
   floating point values using the option `--use-half-precision-control-points`.
+- Added an error builder property to provide a fallback widget on exceptions.
 
 ## 1.1.4
 

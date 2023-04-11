@@ -5,6 +5,7 @@
 - Add support for encoding control points as IEEE 754-2008 half precision
   floating point values.
 - Increase minimum SDK to 2.17.0.
+- Added an error builder property to provide a fallback widget on exceptions.
 
 ## 1.1.4
 
