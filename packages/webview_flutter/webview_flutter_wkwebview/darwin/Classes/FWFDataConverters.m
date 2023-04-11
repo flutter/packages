@@ -4,7 +4,11 @@
 
 #import "FWFDataConverters.h"
 
+#if TARGET_OS_OSX
+#import <FlutterMacOS/FlutterMacOS.h>
+#else
 #import <Flutter/Flutter.h>
+#endif
 
 NSURLRequest *_Nullable FWFNSURLRequestFromRequestData(FWFNSUrlRequestData *data) {
   NSURL *url = [NSURL URLWithString:data.url];
