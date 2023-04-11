@@ -627,7 +627,7 @@ class CameraController extends ValueNotifier<CameraValue> {
    Future<void> getZoom() {
     _throwIfNotInitialized('getZoom');
     try {
-      return CameraPlatform.instance.getZoomLevel(_cameraId);
+      return CameraPlatform.instance.getMinZoomLevel(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
