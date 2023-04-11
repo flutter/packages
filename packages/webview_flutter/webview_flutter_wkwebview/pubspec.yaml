@@ -15,6 +15,11 @@ flutter:
       ios:
         pluginClass: FLTWebViewFlutterPlugin
         dartPluginClass: WebKitWebViewPlatform
+        sharedDarwinSource: true
+      macos:
+        pluginClass: FLTWebViewFlutterPlugin
+        dartPluginClass: WebKitWebViewPlatform
+        sharedDarwinSource: true
 
 dependencies:
   flutter:

@@ -17,8 +17,9 @@ Downloaded by pub (not CocoaPods).
   s.source_files = 'Classes/**/*.{h,m}'
   s.public_header_files = 'Classes/**/*.h'
   s.module_map = 'Classes/FlutterWebView.modulemap'
-  s.dependency 'Flutter'
-
-  s.platform = :ios, '11.0'
+  s.ios.dependency 'Flutter'
+  s.osx.dependency 'FlutterMacOS'
+  s.ios.deployment_target = '11.0'
+  s.osx.deployment_target = '10.11.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 end
