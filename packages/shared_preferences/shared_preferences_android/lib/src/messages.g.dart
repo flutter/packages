@@ -21,6 +21,7 @@ class SharedPreferencesApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
+  /// Removes property from shared preferences data set.
   Future<bool> remove(String arg_key) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.remove', codec,
@@ -48,6 +49,7 @@ class SharedPreferencesApi {
     }
   }
 
+  /// Adds property to shared preferences data set of type bool.
   Future<bool> setBool(String arg_key, bool arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.setBool', codec,
@@ -75,6 +77,7 @@ class SharedPreferencesApi {
     }
   }
 
+  /// Adds property to shared preferences data set of type String.
   Future<bool> setString(String arg_key, String arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.setString', codec,
@@ -102,6 +105,7 @@ class SharedPreferencesApi {
     }
   }
 
+  /// Adds property to shared preferences data set of type int.
   Future<bool> setInt(String arg_key, int arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.setInt', codec,
@@ -129,6 +133,7 @@ class SharedPreferencesApi {
     }
   }
 
+  /// Adds property to shared preferences data set of type double.
   Future<bool> setDouble(String arg_key, double arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.setDouble', codec,
@@ -156,6 +161,7 @@ class SharedPreferencesApi {
     }
   }
 
+  /// Adds property to shared preferences data set of type List<String>.
   Future<bool> setStringList(String arg_key, List<String?> arg_value) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.setStringList', codec,
@@ -183,6 +189,7 @@ class SharedPreferencesApi {
     }
   }
 
+  /// Removes all properties from shared preferences data set with matching prefix.
   Future<bool> clearWithPrefix(String arg_prefix) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.clearWithPrefix', codec,
@@ -210,6 +217,7 @@ class SharedPreferencesApi {
     }
   }
 
+  /// Gets all properties from shared preferences data set with matching prefix.
   Future<Map<String?, Object?>> getAllWithPrefix(String arg_prefix) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.getAllWithPrefix', codec,

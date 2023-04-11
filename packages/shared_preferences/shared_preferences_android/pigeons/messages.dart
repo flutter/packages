@@ -15,20 +15,35 @@ import 'package:pigeon/pigeon.dart';
 ))
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesApi')
 abstract class SharedPreferencesApi {
+  /// Removes property from shared preferences data set.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool remove(String key);
+
+  /// Adds property to shared preferences data set of type bool.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setBool(String key, bool value);
+
+  /// Adds property to shared preferences data set of type String.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setString(String key, String value);
+
+  /// Adds property to shared preferences data set of type int.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setInt(String key, int value);
+
+  /// Adds property to shared preferences data set of type double.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setDouble(String key, double value);
+
+  /// Adds property to shared preferences data set of type List<String>.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setStringList(String key, List<String> value);
+
+  /// Removes all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool clearWithPrefix(String prefix);
+
+  /// Gets all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   Map<String, Object> getAllWithPrefix(String prefix);
 }

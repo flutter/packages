@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
@@ -11,7 +12,12 @@ import 'src/messages.g.dart';
 ///
 /// This class implements the `package:shared_preferences` functionality for Android.
 class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
-  final SharedPreferencesApi _api = SharedPreferencesApi();
+  /// Creates a new plugin implementation instance.
+  SharedPreferencesAndroid({
+    @visibleForTesting SharedPreferencesApi? api,
+  }) : _api = api ?? SharedPreferencesApi();
+
+  final SharedPreferencesApi _api;
 
   /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
   static void registerWith() {
@@ -69,7 +75,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
         return _api.setStringList(key, value as List<String>);
     }
 
-    // TODO (tarrinneal): change to ArgumentError to match other implementations.
+    // TODO(tarrinneal): change to ArgumentError to match other implementations.
     throw PlatformException(
         code: 'InvalidOperation',
         message: '"$dataType" is not a supported type.');

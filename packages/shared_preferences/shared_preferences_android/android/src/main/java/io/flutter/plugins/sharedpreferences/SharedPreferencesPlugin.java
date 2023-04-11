@@ -27,7 +27,7 @@ import java.util.Set;
 
 /** SharedPreferencesPlugin */
 public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
-  static final String TAG = "SharedPreferencesPlugin.java";
+  static final String TAG = "SharedPreferencesPlugin";
 
   SharedPreferencesListEncoder listEncoder;
 
