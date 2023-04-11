@@ -1,3 +1,7 @@
+## 0.9.2
+
+* Adds and propagates `cancel` event on file selection.
+
 ## 0.9.1
 
 * Adds `getSaveLocation` and deprecates `getSavePath`.
