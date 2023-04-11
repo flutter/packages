@@ -24,6 +24,7 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebSettingsHost
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebStorageHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewClientHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewHostApi;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.GeolocationPermissionsCallbackHostApi;
 
 /**
  * Java platform implementation of the webview_flutter plugin.
@@ -128,6 +129,9 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
     WebStorageHostApi.setup(
         binaryMessenger,
         new WebStorageHostApiImpl(instanceManager, new WebStorageHostApiImpl.WebStorageCreator()));
+    GeolocationPermissionsCallbackHostApi.setup(
+        binaryMessenger,
+        new GeolocationPermissionsCallbackHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override
