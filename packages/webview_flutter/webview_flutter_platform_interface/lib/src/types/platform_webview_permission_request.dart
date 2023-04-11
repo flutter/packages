@@ -5,6 +5,25 @@
 import 'package:flutter/cupertino.dart';
 
 /// Types of resources that can require permissions.
+///
+/// Platform specific implementations can create their own resource types.
+///
+/// This example demonstrates how to extend the [WebViewPermissionResourceType]
+/// to create additional platform-specific types:
+///
+/// ```dart
+/// class AndroidWebViewPermissionResourceType
+///     extends WebViewPermissionResourceType {
+///   const AndroidWebViewPermissionResourceType._(super.name);
+///
+///   static const AndroidWebViewPermissionResourceType midiSysex =
+///       AndroidWebViewPermissionResourceType._('midiSysex');
+///
+///   static const AndroidWebViewPermissionResourceType protectedMediaId =
+///       AndroidWebViewPermissionResourceType._('protectedMediaId');
+/// }
+///```
+///
 @immutable
 class WebViewPermissionResourceType {
   /// Constructs a [WebViewPermissionResourceType].
@@ -14,7 +33,7 @@ class WebViewPermissionResourceType {
   @protected
   const WebViewPermissionResourceType(this.name);
 
-  /// Unique name of resource type.
+  /// Unique name of the resource type.
   ///
   /// For platform implementations, this should match the name of variable.
   final String name;
@@ -30,33 +49,37 @@ class WebViewPermissionResourceType {
 
 /// Permissions request when web content requests access to protected resources.
 ///
-/// A response must be provided by calling a method from [response].
+/// A response MUST be provided by calling a method from [response].
 ///
-/// Platform specific implementations can add additional fields when extending
+/// Platform specific implementations can add additional methods when extending
 /// this class.
 ///
-/// When extending [PlatformWebViewPermissionRequest] additional parameters
-/// should always accept `null` or have a default value to prevent breaking
-/// changes.
-///
 /// This example demonstrates how to extend the
-/// [PlatformWebViewPermissionRequest] to provide additional platform specific
-/// parameters:
+/// [PlatformWebViewPermissionRequest] to provide additional platform-specific
+/// features:
 ///
 /// ```dart
-/// enum AndroidWebViewPermissionResourceType {
-///   midiSysex,
-/// }
-///
-/// class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
-///   const AndroidWebViewPermissionRequest({
+/// class WebKitWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
+///   const WebKitWebViewPermissionRequest._({
 ///     required super.types,
-///     required this.androidTypes,
-///   });
+///     required void Function(WKPermissionDecision decision) onDecision,
+///   }) : _onDecision = onDecision;
 ///
-///   final List<AndroidWebViewPermissionResourceType> androidTypes;
+///   final void Function(WKPermissionDecision) _onDecision;
 ///
-///   // ...
+///   @override
+///   Future<void> grant(WebViewPermissionGrantParams params) async {
+///     _onDecision(WKPermissionDecision.grant);
+///   }
+///
+///   @override
+///   Future<void> deny(WebViewPermissionDenyParams params) async {
+///     _onDecision(WKPermissionDecision.deny);
+///   }
+///
+///   Future<void> prompt(WebViewPermissionDenyParams params) async {
+///     _onDecision(WKPermissionDecision.prompt);
+///   }
 /// }
 /// ```
 @immutable

@@ -452,25 +452,23 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 
   @override
   Future<void> grant(WebViewPermissionGrantParams params) {
-    return _request.grant(types
-        .map<String?>((WebViewPermissionResourceType type) {
-          switch (type) {
-            case WebViewPermissionResourceType.camera:
-              return android_webview.PermissionRequest.videoCapture;
-            case WebViewPermissionResourceType.microphone:
-              return android_webview.PermissionRequest.audioCapture;
-            case AndroidWebViewPermissionResourceType.midiSysex:
-              return android_webview.PermissionRequest.midiSysex;
-            case AndroidWebViewPermissionResourceType.protectedMediaId:
-              return android_webview.PermissionRequest.protectedMediaId;
-          }
+    return _request
+        .grant(types.map<String>((WebViewPermissionResourceType type) {
+      switch (type) {
+        case WebViewPermissionResourceType.camera:
+          return android_webview.PermissionRequest.videoCapture;
+        case WebViewPermissionResourceType.microphone:
+          return android_webview.PermissionRequest.audioCapture;
+        case AndroidWebViewPermissionResourceType.midiSysex:
+          return android_webview.PermissionRequest.midiSysex;
+        case AndroidWebViewPermissionResourceType.protectedMediaId:
+          return android_webview.PermissionRequest.protectedMediaId;
+      }
 
-          throw UnsupportedError(
-            'Resource of type `${type.name}` is not supported.',
-          );
-        })
-        .whereType<String>()
-        .toList());
+      throw UnsupportedError(
+        'Resource of type `${type.name}` is not supported.',
+      );
+    }).toList());
   }
 
   @override

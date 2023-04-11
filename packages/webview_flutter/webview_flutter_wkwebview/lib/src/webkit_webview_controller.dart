@@ -793,7 +793,7 @@ class WebKitWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 
   @override
   Future<void> deny(WebViewPermissionDenyParams params) async {
-    _onDecision(WKPermissionDecision.grant);
+    _onDecision(WKPermissionDecision.deny);
   }
 
   /// Prompt the user for permission for the requested resource.

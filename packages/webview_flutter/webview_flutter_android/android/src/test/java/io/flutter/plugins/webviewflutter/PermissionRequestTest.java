@@ -45,7 +45,7 @@ public class PermissionRequestTest {
     instanceManager.close();
   }
 
-  // These values Must equal the constants for the Dart PermssionRequest class.
+  // These values MUST equal the constants for the Dart PermissionRequest class.
   @Test
   public void enums() {
     assertEquals(PermissionRequest.RESOURCE_AUDIO_CAPTURE, "android.webkit.resource.AUDIO_CAPTURE");
