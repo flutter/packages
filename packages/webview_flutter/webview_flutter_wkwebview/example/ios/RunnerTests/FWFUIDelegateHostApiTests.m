@@ -98,7 +98,7 @@
                                     completion:OCMOCK_ANY]);
 }
 
-- (void)testRequestMediaCapturePermissionForOrigin {
+- (void)testRequestMediaCapturePermissionForOrigin API_AVAILABLE(ios(15.0)) {
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
 
   FWFUIDelegate *mockDelegate = [self mockDelegateWithManager:instanceManager identifier:0];
@@ -116,7 +116,6 @@
 
   WKFrameInfo *mockFrameInfo = OCMClassMock([WKFrameInfo class]);
   OCMStub([mockFrameInfo isMainFrame]).andReturn(YES);
-  OCMStub([mockNavigationAction targetFrame]).andReturn(mockFrameInfo);
 
   [mockDelegate webView:mockWebView
       requestMediaCapturePermissionForOrigin:mockSecurityOrigin
