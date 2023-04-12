@@ -3,677 +3,6 @@
 
     <issue
         id="SyntheticAccessor"
-        message="Access to `private` constructor of class `FileChooserModeEnumData` requires synthetic accessor"
-        errorLine1="        FileChooserModeEnumData pigeonReturn = new FileChooserModeEnumData();"
-        errorLine2="                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="101"
-            column="48"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` field `index` of class `FileChooserMode` requires synthetic accessor"
-        errorLine1="      toListResult.add(value == null ? null : value.index);"
-        errorLine2="                                                    ~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="110"
-            column="53"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` constructor of class `WebResourceRequestData` requires synthetic accessor"
-        errorLine1="        WebResourceRequestData pigeonReturn = new WebResourceRequestData();"
-        errorLine2="                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="247"
-            column="47"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` constructor of class `WebResourceErrorData` requires synthetic accessor"
-        errorLine1="        WebResourceErrorData pigeonReturn = new WebResourceErrorData();"
-        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="336"
-            column="45"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` constructor of class `WebViewPoint` requires synthetic accessor"
-        errorLine1="        WebViewPoint pigeonReturn = new WebViewPoint();"
-        errorLine2="                                    ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="412"
-            column="37"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="476"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="526"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                          ArrayList&lt;Object> wrappedError = wrapError(error);"
-        errorLine2="                                                           ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="604"
-            column="60"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="611"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="641"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="778"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="815"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="858"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="896"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="932"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="960"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="988"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1016"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1043"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1070"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1097"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1130"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                          ArrayList&lt;Object> wrappedError = wrapError(error);"
-        errorLine2="                                                           ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1168"
-            column="60"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1178"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1205"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1243"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1281"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1309"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1337"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1366"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1395"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1430"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1468"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1506"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1538"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1570"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1605"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1714"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1748"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1782"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1816"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1850"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1882"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1916"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1950"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1984"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2018"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2052"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2086"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2120"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2153"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2201"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2276"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2310"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2500"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2588"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2622"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2669"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2698"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2794"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
-        message="Access to `private` method `wrapError` of class `GeneratedAndroidWebView` requires synthetic accessor"
-        errorLine1="                  ArrayList&lt;Object> wrappedError = wrapError(exception);"
-        errorLine2="                                                   ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2821"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SyntheticAccessor"
         message="Access to `private` field `webViewClient` of class `SecureWebChromeClient` requires synthetic accessor"
         errorLine1="              if (!webViewClient.shouldOverrideUrlLoading(view, request)) {"
         errorLine2="                   ~~~~~~~~~~~~~">
@@ -1000,622 +329,6 @@
             file="src/main/java/io/flutter/plugins/webviewflutter/FlutterAssetManagerHostApiImpl.java"
             line="43"
             column="40"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    void error(Throwable error);"
-        errorLine2="               ~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="440"
-            column="16"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="456"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, InstanceManagerHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="463"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, InstanceManagerHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="463"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="501"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, JavaObjectHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="507"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, JavaObjectHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="507"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public JavaObjectFlutterApi(BinaryMessenger argBinaryMessenger) {"
-        errorLine2="                                ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="547"
-            column="33"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public void dispose(@NonNull Long identifierArg, Reply&lt;Void> callback) {"
-        errorLine2="                                                     ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="560"
-            column="54"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    void clearCookies(Result&lt;Boolean> result);"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="572"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="577"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, CookieManagerHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="584"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, CookieManagerHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="584"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        @NonNull Long instanceId, @NonNull String javascriptString, Result&lt;String> result);"
-        errorLine2="                                                                    ~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="721"
-            column="69"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="755"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebViewHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="759"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebViewHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="759"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public WebViewFlutterApi(BinaryMessenger argBinaryMessenger) {"
-        errorLine2="                             ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1629"
-            column="30"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public void create(@NonNull Long identifierArg, Reply&lt;Void> callback) {"
-        errorLine2="                                                    ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1642"
-            column="53"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1683"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebSettingsHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1689"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebSettingsHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="1689"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2170"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, JavaScriptChannelHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2177"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, JavaScriptChannelHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2177"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public JavaScriptChannelFlutterApi(BinaryMessenger argBinaryMessenger) {"
-        errorLine2="                                       ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2216"
-            column="40"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        @NonNull Long instanceIdArg, @NonNull String messageArg, Reply&lt;Void> callback) {"
-        errorLine2="                                                                 ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2230"
-            column="66"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2250"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebViewClientHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2257"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebViewClientHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2257"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public WebViewClientFlutterApi(BinaryMessenger argBinaryMessenger) {"
-        errorLine2="                                   ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2357"
-            column="36"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2374"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2389"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2405"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2423"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2444"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2459"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2474"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, DownloadListenerHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2481"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, DownloadListenerHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2481"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public DownloadListenerFlutterApi(BinaryMessenger argBinaryMessenger) {"
-        errorLine2="                                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2515"
-            column="39"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2535"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2562"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebChromeClientHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2569"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebChromeClientHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2569"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2643"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, FlutterAssetManagerHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2650"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, FlutterAssetManagerHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2650"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public WebChromeClientFlutterApi(BinaryMessenger argBinaryMessenger) {"
-        errorLine2="                                     ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2713"
-            column="38"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2730"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;List&lt;String>> callback) {"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2745"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2769"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebStorageHostApi api) {"
-        errorLine2="                      ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2775"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    static void setup(BinaryMessenger binaryMessenger, WebStorageHostApi api) {"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2775"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="    public FileChooserParamsFlutterApi(BinaryMessenger argBinaryMessenger) {"
-        errorLine2="                                       ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2871"
-            column="40"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
-        errorLine1="        Reply&lt;Void> callback) {"
-        errorLine2="        ~~~~~~~~~~~">
-        <location
-            file="src/main/java/io/flutter/plugins/webviewflutter/GeneratedAndroidWebView.java"
-            line="2890"
-            column="9"/>
     </issue>
 
     <issue
@@ -2560,7 +1273,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="75"
+            line="86"
             column="7"/>
     </issue>
 
@@ -2571,7 +1284,7 @@
         errorLine2="                                       ~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="75"
+            line="86"
             column="40"/>
     </issue>
 
@@ -2582,7 +1295,7 @@
         errorLine2="      ~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="84"
+            line="95"
             column="7"/>
     </issue>
 
@@ -2593,7 +1306,7 @@
         errorLine2="                                   ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="84"
+            line="95"
             column="36"/>
     </issue>
 
@@ -2604,7 +1317,7 @@
         errorLine2="                                                    ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="84"
+            line="95"
             column="53"/>
     </issue>
 
@@ -2615,7 +1328,7 @@
         errorLine2="                                                                   ~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="84"
+            line="95"
             column="68"/>
     </issue>
 
@@ -2626,7 +1339,7 @@
         errorLine2="      ~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="94"
+            line="105"
             column="7"/>
     </issue>
 
@@ -2637,7 +1350,7 @@
         errorLine2="                                   ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="94"
+            line="105"
             column="36"/>
     </issue>
 
@@ -2648,7 +1361,7 @@
         errorLine2="                                                    ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="94"
+            line="105"
             column="53"/>
     </issue>
 
@@ -2659,7 +1372,7 @@
         errorLine2="                                                                   ~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="94"
+            line="105"
             column="68"/>
     </issue>
 
@@ -2670,7 +1383,7 @@
         errorLine2="      ~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="108"
+            line="116"
             column="7"/>
     </issue>
 
@@ -2681,7 +1394,7 @@
         errorLine2="      ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="109"
+            line="117"
             column="7"/>
     </issue>
 
@@ -2692,7 +1405,62 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="110"
+            line="118"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      WebResourceResponse response,"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
+            line="119"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      Reply&lt;Void> callback) {"
+        errorLine2="      ~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
+            line="120"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      WebViewClient webViewClient,"
+        errorLine2="      ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
+            line="138"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      WebView webView,"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
+            line="139"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="      WebResourceRequest request,"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
+            line="140"
             column="7"/>
     </issue>
 
@@ -2703,7 +1471,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="111"
+            line="141"
             column="7"/>
     </issue>
 
@@ -2714,7 +1482,7 @@
         errorLine2="      ~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="112"
+            line="142"
             column="7"/>
     </issue>
 
@@ -2725,7 +1493,7 @@
         errorLine2="      ~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="131"
+            line="161"
             column="7"/>
     </issue>
 
@@ -2736,7 +1504,7 @@
         errorLine2="      ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="132"
+            line="162"
             column="7"/>
     </issue>
 
@@ -2747,7 +1515,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="133"
+            line="163"
             column="7"/>
     </issue>
 
@@ -2758,7 +1526,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="134"
+            line="164"
             column="7"/>
     </issue>
 
@@ -2769,7 +1537,7 @@
         errorLine2="      ~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="135"
+            line="165"
             column="7"/>
     </issue>
 
@@ -2780,7 +1548,7 @@
         errorLine2="      ~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="153"
+            line="183"
             column="7"/>
     </issue>
 
@@ -2791,7 +1559,7 @@
         errorLine2="      ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="154"
+            line="184"
             column="7"/>
     </issue>
 
@@ -2802,7 +1570,7 @@
         errorLine2="      ~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="155"
+            line="185"
             column="7"/>
     </issue>
 
@@ -2813,7 +1581,7 @@
         errorLine2="      ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="156"
+            line="186"
             column="7"/>
     </issue>
 
@@ -2824,7 +1592,7 @@
         errorLine2="      ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="157"
+            line="187"
             column="7"/>
     </issue>
 
@@ -2835,7 +1603,7 @@
         errorLine2="      ~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="158"
+            line="188"
             column="7"/>
     </issue>
 
@@ -2846,7 +1614,7 @@
         errorLine2="      ~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="178"
+            line="208"
             column="7"/>
     </issue>
 
@@ -2857,7 +1625,7 @@
         errorLine2="      ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="179"
+            line="209"
             column="7"/>
     </issue>
 
@@ -2868,7 +1636,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="180"
+            line="210"
             column="7"/>
     </issue>
 
@@ -2879,7 +1647,7 @@
         errorLine2="      ~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="181"
+            line="211"
             column="7"/>
     </issue>
 
@@ -2890,7 +1658,7 @@
         errorLine2="      ~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="197"
+            line="227"
             column="7"/>
     </issue>
 
@@ -2901,7 +1669,7 @@
         errorLine2="                                   ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="197"
+            line="227"
             column="36"/>
     </issue>
 
@@ -2912,7 +1680,7 @@
         errorLine2="                                                    ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="197"
+            line="227"
             column="53"/>
     </issue>
 
@@ -2923,7 +1691,7 @@
         errorLine2="                                                                   ~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientFlutterApiImpl.java"
-            line="197"
+            line="227"
             column="68"/>
     </issue>
 
@@ -2934,7 +1702,7 @@
         errorLine2="                              ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="48"
+            line="49"
             column="31"/>
     </issue>
 
@@ -2945,7 +1713,7 @@
         errorLine2="                                            ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="48"
+            line="49"
             column="45"/>
     </issue>
 
@@ -2956,7 +1724,7 @@
         errorLine2="                                                        ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="48"
+            line="49"
             column="57"/>
     </issue>
 
@@ -2967,7 +1735,7 @@
         errorLine2="                               ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="53"
+            line="54"
             column="32"/>
     </issue>
 
@@ -2978,8 +1746,41 @@
         errorLine2="                                             ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="53"
+            line="54"
             column="46"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="        WebView view, WebResourceRequest request, WebResourceResponse response) {"
+        errorLine2="        ~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
+            line="60"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="        WebView view, WebResourceRequest request, WebResourceResponse response) {"
+        errorLine2="                      ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
+            line="60"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="        WebView view, WebResourceRequest request, WebResourceResponse response) {"
+        errorLine2="                                                  ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
+            line="60"
+            column="51"/>
     </issue>
 
     <issue
@@ -2989,7 +1790,7 @@
         errorLine2="                                ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="58"
+            line="65"
             column="33"/>
     </issue>
 
@@ -3000,7 +1801,7 @@
         errorLine2="                                              ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="58"
+            line="65"
             column="47"/>
     </issue>
 
@@ -3011,7 +1812,7 @@
         errorLine2="                                                                          ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="58"
+            line="65"
             column="75"/>
     </issue>
 
@@ -3022,7 +1823,7 @@
         errorLine2="        ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="66"
+            line="73"
             column="9"/>
     </issue>
 
@@ -3033,7 +1834,7 @@
         errorLine2="                                     ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="66"
+            line="73"
             column="38"/>
     </issue>
 
@@ -3044,7 +1845,7 @@
         errorLine2="                                                         ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="66"
+            line="73"
             column="58"/>
     </issue>
 
@@ -3055,7 +1856,7 @@
         errorLine2="                                            ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="72"
+            line="79"
             column="45"/>
     </issue>
 
@@ -3066,7 +1867,7 @@
         errorLine2="                                                          ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="72"
+            line="79"
             column="59"/>
     </issue>
 
@@ -3077,7 +1878,7 @@
         errorLine2="                                            ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="80"
+            line="87"
             column="45"/>
     </issue>
 
@@ -3088,7 +1889,7 @@
         errorLine2="                                                          ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="80"
+            line="87"
             column="59"/>
     </issue>
 
@@ -3099,7 +1900,7 @@
         errorLine2="                                    ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="86"
+            line="93"
             column="37"/>
     </issue>
 
@@ -3110,7 +1911,7 @@
         errorLine2="                                                  ~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="86"
+            line="93"
             column="51"/>
     </issue>
 
@@ -3121,7 +1922,7 @@
         errorLine2="                              ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="111"
+            line="118"
             column="31"/>
     </issue>
 
@@ -3132,7 +1933,7 @@
         errorLine2="                                            ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="111"
+            line="118"
             column="45"/>
     </issue>
 
@@ -3143,7 +1944,7 @@
         errorLine2="                                                        ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="111"
+            line="118"
             column="57"/>
     </issue>
 
@@ -3154,7 +1955,7 @@
         errorLine2="                               ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="116"
+            line="123"
             column="32"/>
     </issue>
 
@@ -3165,8 +1966,19 @@
         errorLine2="                                             ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="116"
+            line="123"
             column="46"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="        @NonNull WebView view, @NonNull WebResourceRequest request, WebResourceResponse response) {"
+        errorLine2="                                                                    ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
+            line="130"
+            column="69"/>
     </issue>
 
     <issue
@@ -3176,7 +1988,7 @@
         errorLine2="        ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="136"
+            line="150"
             column="9"/>
     </issue>
 
@@ -3187,7 +1999,7 @@
         errorLine2="                                     ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="136"
+            line="150"
             column="38"/>
     </issue>
 
@@ -3198,7 +2010,7 @@
         errorLine2="                                                         ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="136"
+            line="150"
             column="58"/>
     </issue>
 
@@ -3209,7 +2021,7 @@
         errorLine2="                                            ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="152"
+            line="166"
             column="45"/>
     </issue>
 
@@ -3220,7 +2032,7 @@
         errorLine2="                                                          ~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="152"
+            line="166"
             column="59"/>
     </issue>
 
@@ -3231,7 +2043,7 @@
         errorLine2="                                    ~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="158"
+            line="172"
             column="37"/>
     </issue>
 
@@ -3242,7 +2054,7 @@
         errorLine2="                                                  ~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="158"
+            line="172"
             column="51"/>
     </issue>
 
@@ -3253,7 +2065,7 @@
         errorLine2="           ~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="178"
+            line="192"
             column="12"/>
     </issue>
 
@@ -3264,7 +2076,7 @@
         errorLine2="                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="178"
+            line="192"
             column="46"/>
     </issue>
 
@@ -3275,7 +2087,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="203"
+            line="217"
             column="7"/>
     </issue>
 
@@ -3286,7 +2098,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="204"
+            line="218"
             column="7"/>
     </issue>
 
@@ -3297,7 +2109,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/webviewflutter/WebViewClientHostApiImpl.java"
-            line="205"
+            line="219"
             column="7"/>
     </issue>
 
