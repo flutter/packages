@@ -60,7 +60,7 @@
 
         dispatch_async(dispatch_get_main_queue(), ^{
           [objectApi disposeObjectWithIdentifier:@(identifier)
-                                      completion:^(NSError *error) {
+                                      completion:^(FlutterError *error) {
                                         NSAssert(!error, @"%@", error);
                                       }];
         });
