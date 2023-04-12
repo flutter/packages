@@ -1,3 +1,7 @@
+## 6.5.6
+
+- Fixes an issue where ShellRoute routes were not logged when debugLogDiagnostic was enabled.
+
 ## 6.5.5
 
 - Fixes an issue when popping pageless route would accidentally complete imperative page.
