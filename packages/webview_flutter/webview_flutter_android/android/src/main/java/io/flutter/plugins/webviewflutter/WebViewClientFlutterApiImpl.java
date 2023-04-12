@@ -10,6 +10,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -200,6 +201,21 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
     final Long webViewIdentifier =
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     urlLoading(getIdentifierForClient(webViewClient), webViewIdentifier, urlArg, callback);
+  }
+
+  /** Passes arguments from {@link WebViewClient#doUpdateVisitedHistory} to Dart. */
+  public void doUpdateVisitedHistory(
+      @NonNull WebViewClient webViewClient,
+      @NonNull WebView webView,
+      @NonNull String url,
+      boolean isReload,
+      @NonNull Reply<Void> callback) {
+    webViewFlutterApi.create(webView, reply -> {});
+
+    final Long webViewIdentifier =
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
+    doUpdateVisitedHistory(
+        getIdentifierForClient(webViewClient), webViewIdentifier, url, isReload, callback);
   }
 
   private long getIdentifierForClient(WebViewClient webViewClient) {
