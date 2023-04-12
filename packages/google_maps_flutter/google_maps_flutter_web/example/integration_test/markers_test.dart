@@ -123,8 +123,7 @@ void main() {
       expect(position.lng, equals(54));
     });
 
-    testWidgets(
-        'changeMarkers can place a marker really close to Null Island',
+    testWidgets('changeMarkers can place a marker really close to Null Island',
         (WidgetTester tester) async {
       gmaps.Marker? marker;
       gmaps.LatLng? position;
