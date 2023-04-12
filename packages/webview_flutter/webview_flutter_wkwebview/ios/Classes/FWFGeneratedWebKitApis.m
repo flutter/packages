@@ -1605,7 +1605,7 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void) {
                                                         (void (^)(
                                                             FWFWKNavigationResponsePolicyEnumData
                                                                 *_Nullable,
-                                                            NSError *_Nullable))completion {
+                                                            FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
       messageChannelWithName:
           @"dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse"

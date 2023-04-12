@@ -570,7 +570,7 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void);
                                                   completion:
                                                       (void (^)(FWFWKNavigationActionPolicyEnumData
                                                                     *_Nullable,
-                                                                NSError *_Nullable))completion;
+                                                                FlutterError *_Nullable))completion;
 - (void)
     decidePolicyForNavigationResponseForDelegateWithIdentifier:(NSNumber *)identifier
                                              webViewIdentifier:(NSNumber *)webViewIdentifier
@@ -580,7 +580,7 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void);
                                                         (void (^)(
                                                             FWFWKNavigationResponsePolicyEnumData
                                                                 *_Nullable,
-                                                            NSError *_Nullable))completion;
+                                                            FlutterError *_Nullable))completion;
 - (void)didFailNavigationForDelegateWithIdentifier:(NSNumber *)identifier
                                  webViewIdentifier:(NSNumber *)webViewIdentifier
                                              error:(FWFNSErrorData *)error

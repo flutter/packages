@@ -75,7 +75,7 @@
                                           completion:
                                               (void (^)(
                                                   FWFWKNavigationResponsePolicyEnumData *_Nullable,
-                                                  NSError *_Nullable))completion {
+                                                  FlutterError *_Nullable))completion {
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   FWFWKNavigationResponseData *navigationResponseData =
@@ -178,7 +178,7 @@
                                            webView:webView
                                 navigationResponse:navigationResponse
                                         completion:^(FWFWKNavigationResponsePolicyEnumData *policy,
-                                                     NSError *error) {
+                                                     FlutterError *error) {
                                           NSAssert(!error, @"%@", error);
                                           decisionHandler(
                                               FWFWKNavigationResponsePolicyFromEnumData(policy));
