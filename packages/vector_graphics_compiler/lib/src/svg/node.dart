@@ -250,12 +250,18 @@ class TextPositionNode extends ParentNode {
   /// Computes a [TextPosition] to encode for this node.
   TextPosition computeTextPosition(Rect bounds, AffineMatrix transform) {
     final AffineMatrix computedTransform = concatTransform(transform);
-    final bool consumeTransform = computedTransform.encodableInRect;
+
     double? x = attributes.x?.calculate(bounds.width);
     double? y = attributes.y?.calculate(bounds.height);
     double? dx = attributes.dx?.calculate(bounds.width);
     double? dy = attributes.dy?.calculate(bounds.height);
-    if (x != null && y != null) {
+
+    final bool hasXY = x != null && y != null;
+    final bool hasDxDy = dx != null && dy != null;
+    final bool consumeTransform = computedTransform == AffineMatrix.identity ||
+        (computedTransform.encodableInRect && (hasXY || hasDxDy));
+
+    if (hasXY) {
       final Point baseline = consumeTransform
           ? transform.transformPoint(Point(x, y))
           : Point(x, y);
@@ -263,7 +269,7 @@ class TextPositionNode extends ParentNode {
       y = baseline.y;
     }
 
-    if (dx != null && dy != null) {
+    if (hasDxDy) {
       final Point baseline = consumeTransform
           ? transform.transformPoint(Point(dx, dy))
           : Point(dx, dy);

@@ -4,6 +4,47 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Text transform but no xy', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 450 150" xmlns="http://www.w3.org/2000/svg">
+  <g fill="red" font-family="Arimo,Liberation Sans,HammersmithOne,Helvetica,Arial,sans-serif"
+    font-weight="600">
+    <text font-size="40" transform="translate(60 45)">東急電鉄路線図</text>
+    <text font-size="22" transform="translate(60 75)">Tōkyū Railways route map</text>
+  </g>
+</svg>
+''');
+
+    expect(instructions.text, const <TextConfig>[
+      TextConfig(
+        '東急電鉄路線図',
+        0.0,
+        'Arimo,Liberation Sans,HammersmithOne,Helvetica,Arial,sans-serif',
+        FontWeight.w600,
+        40.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+      ),
+      TextConfig(
+        'Tōkyū Railways route map',
+        0.0,
+        'Arimo,Liberation Sans,HammersmithOne,Helvetica,Arial,sans-serif',
+        FontWeight.w600,
+        22.0,
+        TextDecoration.none,
+        TextDecorationStyle.solid,
+        Color(0xff000000),
+      ),
+    ]);
+    expect(instructions.textPositions, <TextPosition>[
+      TextPosition(
+          reset: true, transform: AffineMatrix.identity.translated(60, 45)),
+      TextPosition(
+          reset: true, transform: AffineMatrix.identity.translated(60, 75)),
+    ]);
+  });
+
   test('Fill rule inheritence', () {
     final VectorInstructions instructions =
         parseWithoutOptimizers(inheritFillRule);
