@@ -777,20 +777,14 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.WebView webView,
         android_webview.WebResourceRequest request,
       ) {
-        final AndroidNavigationDelegate? delegate = weakThis.target;
-        if (delegate != null) {
-          delegate._handleNavigation(
-            request.url,
-            headers: request.requestHeaders,
-            isForMainFrame: request.isForMainFrame,
-          );
-        }
+        weakThis.target?._handleNavigation(
+          request.url,
+          headers: request.requestHeaders,
+          isForMainFrame: request.isForMainFrame,
+        );
       },
       urlLoading: (android_webview.WebView webView, String url) {
-        final AndroidNavigationDelegate? delegate = weakThis.target;
-        if (delegate != null) {
-          delegate._handleNavigation(url, isForMainFrame: true);
-        }
+        weakThis.target?._handleNavigation(url, isForMainFrame: true);
       },
       doUpdateVisitedHistory: (
         android_webview.WebView webView,
