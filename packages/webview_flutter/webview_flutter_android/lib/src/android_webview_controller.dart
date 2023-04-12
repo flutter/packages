@@ -729,13 +729,15 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         .androidWebViewProxy
         .createAndroidWebViewClient(
       onPageFinished: (android_webview.WebView webView, String url) {
-        if (weakThis.target?._onPageFinished != null) {
-          weakThis.target!._onPageFinished!(url);
+        final PageEventCallback? callback = weakThis.target?._onPageFinished;
+        if (callback != null) {
+          callback(url);
         }
       },
       onPageStarted: (android_webview.WebView webView, String url) {
-        if (weakThis.target?._onPageStarted != null) {
-          weakThis.target!._onPageStarted!(url);
+        final PageEventCallback? callback = weakThis.target?._onPageStarted;
+        if (callback != null) {
+          callback(url);
         }
       },
       onReceivedRequestError: (
@@ -743,8 +745,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.WebResourceRequest request,
         android_webview.WebResourceError error,
       ) {
-        if (weakThis.target?._onWebResourceError != null) {
-          weakThis.target!._onWebResourceError!(AndroidWebResourceError._(
+        final WebResourceErrorCallback? callback =
+            weakThis.target?._onWebResourceError;
+        if (callback != null) {
+          callback(AndroidWebResourceError._(
             errorCode: error.errorCode,
             description: error.description,
             failingUrl: request.url,
@@ -758,8 +762,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         String description,
         String failingUrl,
       ) {
-        if (weakThis.target?._onWebResourceError != null) {
-          weakThis.target!._onWebResourceError!(AndroidWebResourceError._(
+        final WebResourceErrorCallback? callback =
+            weakThis.target?._onWebResourceError;
+        if (callback != null) {
+          callback(AndroidWebResourceError._(
             errorCode: errorCode,
             description: description,
             failingUrl: failingUrl,
@@ -771,20 +777,19 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.WebView webView,
         android_webview.WebResourceRequest request,
       ) {
-        if (weakThis.target != null) {
-          weakThis.target!._handleNavigation(
+        final AndroidNavigationDelegate? delegate = weakThis.target;
+        if (delegate != null) {
+          delegate._handleNavigation(
             request.url,
             headers: request.requestHeaders,
             isForMainFrame: request.isForMainFrame,
           );
         }
       },
-      urlLoading: (
-        android_webview.WebView webView,
-        String url,
-      ) {
-        if (weakThis.target != null) {
-          weakThis.target!._handleNavigation(url, isForMainFrame: true);
+      urlLoading: (android_webview.WebView webView, String url) {
+        final AndroidNavigationDelegate? delegate = weakThis.target;
+        if (delegate != null) {
+          delegate._handleNavigation(url, isForMainFrame: true);
         }
       },
       doUpdateVisitedHistory: (
@@ -792,11 +797,9 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         String url,
         bool isReload,
       ) {
-        if (weakThis.target?._onUrlChange != null) {
-          weakThis.target!._onUrlChange!(AndroidUrlChange(
-            url: url,
-            isReload: isReload,
-          ));
+        final UrlChangeCallback? callback = weakThis.target?._onUrlChange;
+        if (callback != null) {
+          callback(AndroidUrlChange(url: url, isReload: isReload));
         }
       },
     );
