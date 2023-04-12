@@ -39,7 +39,7 @@
 
   NSURL *url = [[NSURL alloc] initWithString:@"https://www.google.com"];
   [flutterApi create:url
-          completion:^(NSError *error){
+          completion:^(FlutterError *error){
           }];
 
   long identifier = [instanceManager identifierWithStrongReferenceForInstance:url];
