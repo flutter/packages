@@ -26,7 +26,12 @@ Iterable<Widget> selfAndDescendantWidgetsOf(Finder start, WidgetTester tester) {
 }
 
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
-  final List<Type> actual = widgets.map((Widget w) => w.runtimeType).toList();
+  final List<Type> actual = widgets
+      .map((Widget w) => w.runtimeType)
+      // The structure of Flex widgets is changing in https://github.com/flutter/flutter/pull/121112.
+      // Ignore the Flex type so that tests can pass on all Flutter channels.
+      .where((Type e) => e.toString() != 'Flex')
+      .toList();
   expect(actual, expected);
 }
 
