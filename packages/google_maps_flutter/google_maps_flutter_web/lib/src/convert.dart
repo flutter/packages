@@ -303,7 +303,7 @@ gmaps.MarkerOptions _markerOptionsFromMarker(
   // A workaround to position a Marker on "Null Island" is to pass an
   // non-exactly-zero value (like Number.EPSILON) to either lat/lng of the
   // update.
-  gmaps.LatLng? newPosition =
+  final gmaps.LatLng? newPosition =
       (marker.position.latitude != 0 || marker.position.longitude != 0)
           ? gmaps.LatLng(marker.position.latitude, marker.position.longitude)
           : currentMarker?.position;
