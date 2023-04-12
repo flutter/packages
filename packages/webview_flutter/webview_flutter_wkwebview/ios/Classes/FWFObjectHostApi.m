@@ -48,7 +48,7 @@
           [[FWFURLFlutterApiImpl alloc] initWithBinaryMessenger:self.binaryMessenger
                                                 instanceManager:self.instanceManager];
       [flutterApi create:value
-              completion:^(NSError *error) {
+              completion:^(FlutterError *error) {
                 NSAssert(!error, @"%@", error);
               }];
       isIdentifier = YES;
