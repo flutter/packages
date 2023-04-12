@@ -5,6 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
 import 'dart:math' as _i3;
+import 'dart:ui' as _i7;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart'
@@ -239,7 +240,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         ),
       ) as _i4.UIScrollView);
   @override
-  _i6.Future<void> setBackgroundColor(dynamic color) => (super.noSuchMethod(
+  _i6.Future<void> setBackgroundColor(_i7.Color? color) => (super.noSuchMethod(
         Invocation.method(
           #setBackgroundColor,
           [color],
@@ -751,7 +752,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         ),
       ) as _i5.WKWebView);
   @override
-  _i6.Future<void> setBackgroundColor(dynamic color) => (super.noSuchMethod(
+  _i6.Future<void> setBackgroundColor(_i7.Color? color) => (super.noSuchMethod(
         Invocation.method(
           #setBackgroundColor,
           [color],
