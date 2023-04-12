@@ -39,7 +39,7 @@ AffineMatrix? parseTransform(String? transform) {
   AffineMatrix result = AffineMatrix.identity;
   for (Match m in matches) {
     final String command = m.group(1)!.trim();
-    final String? params = m.group(2);
+    final String? params = m.group(2)!.trim();
 
     final _MatrixParser? transformer = _matrixParsers[command];
     if (transformer == null) {

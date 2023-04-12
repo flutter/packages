@@ -67,6 +67,13 @@ void main() {
     );
   });
 
+  test('Transform has whitespace in params', () {
+    expect(
+      parseTransform('translate( 50   ,     1160   )'),
+      AffineMatrix.identity.translated(50, 1160),
+    );
+  });
+
   test('Translate and scale matrix', () {
     final AffineMatrix expected = AffineMatrix.identity
         .translated(0.338957, 0.010104)
