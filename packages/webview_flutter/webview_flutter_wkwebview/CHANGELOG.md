@@ -3,6 +3,8 @@
 * Updates pigeon to fix warnings with clang 15.
 * Updates minimum Flutter version to 3.3.
 * Fixes common typos in tests and documentation.
+* Adds `decidePolicyForNavigationResponse` to internal WKNavigationDelegate to support the
+  `onHttpError` callback.
 
 ## 3.2.3
 
@@ -15,6 +17,11 @@
 ## 3.2.1
 
 * Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 3.2.0
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 3.2.0

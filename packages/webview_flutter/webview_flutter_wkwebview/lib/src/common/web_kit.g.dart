@@ -82,6 +82,14 @@ enum WKNavigationActionPolicyEnum {
   cancel,
 }
 
+/// Mirror of WKNavigationResponsePolicy.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+enum WKNavigationResponsePolicyEnum {
+  allow,
+  cancel,
+}
+
 /// Mirror of NSHTTPCookiePropertyKey.
 ///
 /// See https://developer.apple.com/documentation/foundation/nshttpcookiepropertykey.
@@ -264,6 +272,27 @@ class WKNavigationActionPolicyEnumData {
   }
 }
 
+class WKNavigationResponsePolicyEnumData {
+  WKNavigationResponsePolicyEnumData({
+    required this.value,
+  });
+
+  WKNavigationResponsePolicyEnum value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static WKNavigationResponsePolicyEnumData decode(Object result) {
+    result as List<Object?>;
+    return WKNavigationResponsePolicyEnumData(
+      value: WKNavigationResponsePolicyEnum.values[result[0]! as int],
+    );
+  }
+}
+
 class NSHttpCookiePropertyKeyEnumData {
   NSHttpCookiePropertyKeyEnumData({
     required this.value,
@@ -321,6 +350,30 @@ class NSUrlRequestData {
       httpBody: result[2] as Uint8List?,
       allHttpHeaderFields:
           (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+    );
+  }
+}
+
+/// Mirror of NSURLResponse.
+///
+/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
+class NSHttpUrlResponseData {
+  NSHttpUrlResponseData({
+    required this.statusCode,
+  });
+
+  int statusCode;
+
+  Object encode() {
+    return <Object?>[
+      statusCode,
+    ];
+  }
+
+  static NSHttpUrlResponseData decode(Object result) {
+    result as List<Object?>;
+    return NSHttpUrlResponseData(
+      statusCode: result[0]! as int,
     );
   }
 }
@@ -392,6 +445,35 @@ class WKNavigationActionData {
       request: NSUrlRequestData.decode(result[0]! as List<Object?>),
       targetFrame: WKFrameInfoData.decode(result[1]! as List<Object?>),
       navigationType: WKNavigationType.values[result[2]! as int],
+    );
+  }
+}
+
+/// Mirror of WKNavigationResponse.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationresponse.
+class WKNavigationResponseData {
+  WKNavigationResponseData({
+    required this.response,
+    required this.forMainFrame,
+  });
+
+  NSHttpUrlResponseData response;
+
+  bool forMainFrame;
+
+  Object encode() {
+    return <Object?>[
+      response.encode(),
+      forMainFrame,
+    ];
+  }
+
+  static WKNavigationResponseData decode(Object result) {
+    result as List<Object?>;
+    return WKNavigationResponseData(
+      response: NSHttpUrlResponseData.decode(result[0]! as List<Object?>),
+      forMainFrame: result[1]! as bool,
     );
   }
 }
@@ -1358,17 +1440,26 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
     if (value is NSErrorData) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSHttpUrlResponseData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationActionPolicyEnumData) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationResponseData) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationResponsePolicyEnumData) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1381,13 +1472,19 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
       case 128:
         return NSErrorData.decode(readValue(buffer)!);
       case 129:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
       case 130:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 131:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 132:
+        return WKNavigationActionData.decode(readValue(buffer)!);
+      case 133:
         return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+      case 134:
+        return WKNavigationResponseData.decode(readValue(buffer)!);
+      case 135:
+        return WKNavigationResponsePolicyEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1410,6 +1507,11 @@ abstract class WKNavigationDelegateFlutterApi {
       int identifier,
       int webViewIdentifier,
       WKNavigationActionData navigationAction);
+
+  Future<WKNavigationResponsePolicyEnumData> decidePolicyForNavigationResponse(
+      int identifier,
+      int webViewIdentifier,
+      WKNavigationResponseData navigationResponse);
 
   void didFailNavigation(
       int identifier, int webViewIdentifier, NSErrorData error);
@@ -1497,6 +1599,35 @@ abstract class WKNavigationDelegateFlutterApi {
           final WKNavigationActionPolicyEnumData output =
               await api.decidePolicyForNavigationAction(arg_identifier!,
                   arg_webViewIdentifier!, arg_navigationAction!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null int.');
+          final int? arg_webViewIdentifier = (args[1] as int?);
+          assert(arg_webViewIdentifier != null,
+              'Argument for dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null int.');
+          final WKNavigationResponseData? arg_navigationResponse =
+              (args[2] as WKNavigationResponseData?);
+          assert(arg_navigationResponse != null,
+              'Argument for dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null WKNavigationResponseData.');
+          final WKNavigationResponsePolicyEnumData output =
+              await api.decidePolicyForNavigationResponse(arg_identifier!,
+                  arg_webViewIdentifier!, arg_navigationResponse!);
           return output;
         });
       }
@@ -1708,38 +1839,47 @@ class _NSObjectFlutterApiCodec extends StandardMessageCodec {
     } else if (value is NSHttpCookiePropertyKeyEnumData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueChangeKeyEnumData) {
+    } else if (value is NSHttpUrlResponseData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueObservingOptionsEnumData) {
+    } else if (value is NSKeyValueChangeKeyEnumData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSKeyValueObservingOptionsEnumData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is WKAudiovisualMediaTypeEnumData) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is WKAudiovisualMediaTypeEnumData) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKNavigationResponseData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
+    } else if (value is WKNavigationResponsePolicyEnumData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKWebsiteDataTypeEnumData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptData) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(144);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1756,26 +1896,32 @@ class _NSObjectFlutterApiCodec extends StandardMessageCodec {
       case 130:
         return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
       case 131:
-        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
       case 132:
-        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
+        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
       case 133:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
       case 134:
-        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 135:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
       case 136:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 137:
-        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+        return WKNavigationActionData.decode(readValue(buffer)!);
       case 138:
-        return WKScriptMessageData.decode(readValue(buffer)!);
+        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       case 139:
-        return WKUserScriptData.decode(readValue(buffer)!);
+        return WKNavigationResponseData.decode(readValue(buffer)!);
       case 140:
-        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+        return WKNavigationResponsePolicyEnumData.decode(readValue(buffer)!);
       case 141:
+        return WKScriptMessageData.decode(readValue(buffer)!);
+      case 142:
+        return WKUserScriptData.decode(readValue(buffer)!);
+      case 143:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 144:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1869,38 +2015,47 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
     } else if (value is NSHttpCookiePropertyKeyEnumData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueChangeKeyEnumData) {
+    } else if (value is NSHttpUrlResponseData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueObservingOptionsEnumData) {
+    } else if (value is NSKeyValueChangeKeyEnumData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSKeyValueObservingOptionsEnumData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is WKAudiovisualMediaTypeEnumData) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is WKAudiovisualMediaTypeEnumData) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKNavigationResponseData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
+    } else if (value is WKNavigationResponsePolicyEnumData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKWebsiteDataTypeEnumData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptData) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(144);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1917,26 +2072,32 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
       case 130:
         return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
       case 131:
-        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
       case 132:
-        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
+        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
       case 133:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
       case 134:
-        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 135:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
       case 136:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 137:
-        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+        return WKNavigationActionData.decode(readValue(buffer)!);
       case 138:
-        return WKScriptMessageData.decode(readValue(buffer)!);
+        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       case 139:
-        return WKUserScriptData.decode(readValue(buffer)!);
+        return WKNavigationResponseData.decode(readValue(buffer)!);
       case 140:
-        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+        return WKNavigationResponsePolicyEnumData.decode(readValue(buffer)!);
       case 141:
+        return WKScriptMessageData.decode(readValue(buffer)!);
+      case 142:
+        return WKUserScriptData.decode(readValue(buffer)!);
+      case 143:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 144:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

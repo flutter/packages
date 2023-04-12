@@ -323,6 +323,16 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
+  _i9.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnHttpError,
+          [onHttpError],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
   _i9.Future<void> setOnProgress(_i3.ProgressCallback? onProgress) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -774,6 +784,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
+      _i2.WebResourceResponse,
+    )? onReceivedHttpError,
+    void Function(
+      _i2.WebView,
+      _i2.WebResourceRequest,
       _i2.WebResourceError,
     )? onReceivedRequestError,
     void Function(
@@ -801,6 +816,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
             String,
             String,
           )? onReceivedError,
+          void Function(
+            _i2.WebView,
+            _i2.WebResourceRequest,
+            _i2.WebResourceResponse,
+          )? onReceivedHttpError,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
@@ -837,6 +857,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
+            _i2.WebResourceResponse,
+          )? onReceivedHttpError,
+          void Function(
+            _i2.WebView,
+            _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
           void Function(
@@ -867,6 +892,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           String,
           String,
         )? onReceivedError,
+        void Function(
+          _i2.WebView,
+          _i2.WebResourceRequest,
+          _i2.WebResourceResponse,
+        )? onReceivedHttpError,
         void Function(
           _i2.WebView,
           _i2.WebResourceRequest,

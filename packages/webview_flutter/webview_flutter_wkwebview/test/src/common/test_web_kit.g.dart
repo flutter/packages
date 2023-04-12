@@ -977,38 +977,47 @@ class _TestWKWebViewHostApiCodec extends StandardMessageCodec {
     } else if (value is NSHttpCookiePropertyKeyEnumData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueChangeKeyEnumData) {
+    } else if (value is NSHttpUrlResponseData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueObservingOptionsEnumData) {
+    } else if (value is NSKeyValueChangeKeyEnumData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSKeyValueObservingOptionsEnumData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is WKAudiovisualMediaTypeEnumData) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is WKAudiovisualMediaTypeEnumData) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKNavigationResponseData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
+    } else if (value is WKNavigationResponsePolicyEnumData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKWebsiteDataTypeEnumData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptData) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(144);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1025,26 +1034,32 @@ class _TestWKWebViewHostApiCodec extends StandardMessageCodec {
       case 130:
         return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
       case 131:
-        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
       case 132:
-        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
+        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
       case 133:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
       case 134:
-        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 135:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
       case 136:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 137:
-        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+        return WKNavigationActionData.decode(readValue(buffer)!);
       case 138:
-        return WKScriptMessageData.decode(readValue(buffer)!);
+        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       case 139:
-        return WKUserScriptData.decode(readValue(buffer)!);
+        return WKNavigationResponseData.decode(readValue(buffer)!);
       case 140:
-        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+        return WKNavigationResponsePolicyEnumData.decode(readValue(buffer)!);
       case 141:
+        return WKScriptMessageData.decode(readValue(buffer)!);
+      case 142:
+        return WKUserScriptData.decode(readValue(buffer)!);
+      case 143:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 144:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

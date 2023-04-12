@@ -11,6 +11,7 @@
 
 * Fixes a bug where the native `WebView` wouldn't be traversed for autofill automatically.
 * Updates minimum Flutter version to 3.3.
+* Adds onReceivedHttpError WebViewClient callback to support the onHttpError callback.
 
 ## 3.4.3
 
