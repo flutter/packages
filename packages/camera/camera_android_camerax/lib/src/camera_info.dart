@@ -7,10 +7,11 @@ import 'dart:async';
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
+import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
-import 'live_camera_state.dart';
+import 'live_data.dart';
 
 /// The metadata of a camera.
 ///
@@ -34,7 +35,7 @@ class CameraInfo extends JavaObject {
       _api.getSensorRotationDegreesFromInstance(this);
 
   /// Starts listening for the camera closing.
-  Future<LiveCameraState> getLiveCameraState() =>
+  Future<LiveData<CameraState>> getLiveCameraState() =>
       _api.getLiveCameraStateFromInstance(this);
 }
 
@@ -58,17 +59,17 @@ class CameraInfoHostApiImpl extends CameraInfoHostApi {
     return sensorRotationDegrees;
   }
 
-  /// Gets the [LiveCameraState] that represents the state of the camera
+  /// Gets the [LiveData<CameraState>] that represents the state of the camera
   /// to which the CameraInfo [instance] pertains.
-  Future<LiveCameraState> getLiveCameraStateFromInstance(
+  Future<LiveData<CameraState>> getLiveCameraStateFromInstance(
       CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
         'No CameraInfo has the identifer of that which was requested.');
 
     final int liveCameraStateId = await getLiveCameraState(identifier!);
-    return instanceManager
-        .getInstanceWithWeakReference<LiveCameraState>(liveCameraStateId)!;
+    return instanceManager.getInstanceWithWeakReference<LiveData<CameraState>>(
+        liveCameraStateId)!;
   }
 }
 

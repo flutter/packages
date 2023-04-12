@@ -65,7 +65,7 @@ public class LiveDataTest {
         new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
 
     LifecycleOwner fakeLifecycleOwner = mock(LifecycleOwner.class);
-    hostApi.fakeLifecycleOwner = fakeLifecycleOwner;
+    hostApi.setLifecycleOwner(fakeLifecycleOwner);
 
     hostApi.observe(instanceIdentifier, observerIdentifier);
 
@@ -82,7 +82,7 @@ public class LiveDataTest {
         new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
 
         LifecycleOwner fakeLifecycleOwner = mock(LifecycleOwner.class);
-        hostApi.fakeLifecycleOwner = fakeLifecycleOwner;
+        hostApi.setLifecycleOwner(fakeLifecycleOwner);
 
     hostApi.removeObservers(instanceIdentifier);
 

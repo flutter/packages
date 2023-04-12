@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.camerax;
 
+import javax.annotation.processing.Generated;
+
 import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -19,8 +21,10 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
   private LiveCameraStateHostApiImpl liveCameraStateHostApiImpl;
-  private ProcessCameraProviderHostApiImpl processCameraProviderHostApi;
-  private ImageCaptureHostApiImpl imageCaptureHostApi;
+  private ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
+  private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
+  private LiveDataHostApiImpl liveDataHostApiImpl;
+
   public SystemServicesHostApiImpl systemServicesHostApi;
 
   /**
@@ -48,21 +52,22 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, new CameraSelectorHostApiImpl(binaryMessenger, instanceManager));
     GeneratedCameraXLibrary.JavaObjectHostApi.setup(
         binaryMessenger, new JavaObjectHostApiImpl(instanceManager));
-    processCameraProviderHostApi =
+    processCameraProviderHostApiImpl =
         new ProcessCameraProviderHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ProcessCameraProviderHostApi.setup(
-        binaryMessenger, processCameraProviderHostApi);
+        binaryMessenger, processCameraProviderHostApiImpl);
     systemServicesHostApi = new SystemServicesHostApiImpl(binaryMessenger, instanceManager);
     GeneratedCameraXLibrary.SystemServicesHostApi.setup(binaryMessenger, systemServicesHostApi);
     GeneratedCameraXLibrary.PreviewHostApi.setup(
         binaryMessenger, new PreviewHostApiImpl(binaryMessenger, instanceManager, textureRegistry));
-    imageCaptureHostApi = new ImageCaptureHostApiImpl(binaryMessenger, instanceManager, context);
-    GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApi);
+    imageCaptureHostApiImpl = new ImageCaptureHostApiImpl(binaryMessenger, instanceManager, context);
+    GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApiImpl);
     GeneratedCameraXLibrary.CameraHostApi.setup(
         binaryMessenger, new CameraHostApiImpl(binaryMessenger, instanceManager));
-    liveCameraStateHostApiImpl = new LiveCameraStateHostApiImpl(binaryMessenger, instanceManager);
-    GeneratedCameraXLibrary.LiveCameraStateHostApi.setup(
-        binaryMessenger, liveCameraStateHostApiImpl);
+    liveDataHostApiImpl = new LiveDataHostApiImpl(binaryMessenger, instanceManager);
+    GeneratedCameraXLibrary.LiveDataHostApi.setup(binaryMessenger, liveDataHostApiImpl);
+    GeneratedCameraXLibrary.ObserverHostApi.setup(
+        binaryMessenger, new ObserverHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override
@@ -88,8 +93,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     updateContext(pluginBinding.getApplicationContext());
 
     Activity activity = activityPluginBinding.getActivity();
-    processCameraProviderHostApi.setLifecycleOwner((LifecycleOwner) activity);
-    liveCameraStateHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+    processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+    liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
     systemServicesHostApi.setActivity(activity);
     systemServicesHostApi.setPermissionsRegistry(
         activityPluginBinding::addRequestPermissionsResultListener);
@@ -116,11 +121,11 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
    * ProcessCameraProvider}.
    */
   public void updateContext(Context context) {
-    if (processCameraProviderHostApi != null) {
-      processCameraProviderHostApi.setContext(context);
+    if (processCameraProviderHostApiImpl != null) {
+      processCameraProviderHostApiImpl.setContext(context);
     }
-    if (imageCaptureHostApi != null) {
-      processCameraProviderHostApi.setContext(context);
+    if (imageCaptureHostApiImpl != null) {
+      processCameraProviderHostApiImpl.setContext(context);
     }
   }
 }

@@ -57,8 +57,7 @@ public class ObserverFlutterApiWrapper {
       CameraState state = (CameraState) value;
       new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager).create(state, state.getType(), state.getError(), reply -> {});
     } else {
-      // TODO(camsim99): make this more specific
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("The type of value in observance is not wrapped by this plugin.");
     }
 
     api.onChanged(

@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -11,9 +12,12 @@ import 'package:stream_transform/stream_transform.dart';
 import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
+import 'camera_state.dart';
+import 'camera_state_error.dart';
 import 'camerax_library.g.dart';
 import 'image_capture.dart';
-import 'live_camera_state.dart';
+import 'live_data.dart';
+import 'observer.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
 import 'surface.dart';
@@ -37,7 +41,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Camera? camera;
 
   /// The [LiveCameraState] that represents the state of the [camera] instance.
-  LiveCameraState? liveCameraState;
+  LiveData<CameraState>? liveCameraState;
 
   /// The [Preview] instance that can be configured to present a live camera preview.
   @visibleForTesting
@@ -167,7 +171,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
-    _updateLiveCameraState();
+    _updateLiveCameraState(flutterSurfaceTextureId);
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -228,6 +232,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> dispose(int cameraId) async {
     preview?.releaseFlutterSurfaceTexture();
+    liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
   }
 
@@ -240,20 +245,20 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The camera started to close.
   @override
   Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
-    return LiveCameraState.cameraClosingStreamController.stream
-        .map<CameraClosingEvent>((bool isCameraClosing) {
-      assert(isCameraClosing);
-      return CameraClosingEvent(cameraId);
-    });
+    return _cameraEvents(cameraId).whereType<CameraClosingEvent>();
   }
 
   /// The camera experienced an error.
   @override
   Stream<CameraErrorEvent> onCameraError(int cameraId) {
-    return SystemServices.cameraErrorStreamController.stream
-        .map<CameraErrorEvent>((String errorDescription) {
-      return CameraErrorEvent(cameraId, errorDescription);
-    });
+    return StreamGroup.mergeBroadcast<
+        CameraErrorEvent>(<Stream<CameraErrorEvent>>[
+      SystemServices.cameraErrorStreamController.stream
+          .map<CameraErrorEvent>((String errorDescription) {
+        return CameraErrorEvent(cameraId, errorDescription);
+      }),
+      _cameraEvents(cameraId).whereType<CameraErrorEvent>()
+    ]);
   }
 
   /// The ui orientation changed.
@@ -276,7 +281,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> resumePreview(int cameraId) async {
-    await _bindPreviewToLifecycle();
+    await _bindPreviewToLifecycle(cameraId);
     _previewIsPaused = false;
   }
 
@@ -284,7 +289,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Widget buildPreview(int cameraId) {
     return FutureBuilder<void>(
-        future: _bindPreviewToLifecycle(),
+        future: _bindPreviewToLifecycle(cameraId),
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -319,7 +324,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Binds [preview] instance to the camera lifecycle controlled by the
   /// [processCameraProvider].
-  Future<void> _bindPreviewToLifecycle() async {
+  Future<void> _bindPreviewToLifecycle(int cameraId) async {
     assert(processCameraProvider != null);
     assert(cameraSelector != null);
     assert(preview != null);
@@ -332,7 +337,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
-    _updateLiveCameraState();
+    _updateLiveCameraState(cameraId);
   }
 
   /// Unbinds [preview] instance to camera lifecycle controlled by the
@@ -350,12 +355,26 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods concerning camera information:
 
-  /// Adds fresh observers to the [LiveCameraState] of the current [camera].
-  Future<void> _updateLiveCameraState() async {
+  /// Adds fresh observers to the [LiveData] of the [CameraState] of the
+  /// current [camera].
+  Future<void> _updateLiveCameraState(int cameraId) async {
     final CameraInfo cameraInfo = await camera!.getCameraInfo();
     liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo.getLiveCameraState();
-    liveCameraState!.addObserver();
+    liveCameraState!.observe(_createCameraClosingObserver(cameraId));
+  }
+
+  Observer<CameraState> _createCameraClosingObserver(int cameraId) {
+    return Observer<CameraState>(onChanged: (CameraState state) {
+      if (state.type == CameraStateType.closing) {
+        cameraEventStreamController.add(CameraClosingEvent(cameraId));
+      }
+
+      if (state.error != null) {
+        cameraEventStreamController
+            .add(CameraErrorEvent(cameraId, state.error!.description));
+      }
+    });
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:

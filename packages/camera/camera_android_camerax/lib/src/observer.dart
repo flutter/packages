@@ -35,7 +35,7 @@ class Observer<T> extends JavaObject {
 
   final _ObserverHostApiImpl _api;
 
-  final void Function(Observer<T> instance, T value) onChanged;
+  final void Function(T value) onChanged;
 }
 
 // TODO(bparrishMines): Move these classes or desired methods into `observer.dart`
@@ -99,7 +99,6 @@ class ObserverFlutterApiImpl implements ObserverFlutterApi {
 
     // ignore: avoid_dynamic_calls, void_checks
     return instance.onChanged(
-      instance,
       instanceManager.getInstanceWithWeakReference(valueIdentifier)!,
     );
   }

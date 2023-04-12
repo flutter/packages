@@ -26,10 +26,8 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   // To ease adding additional methods, this value is added prematurely.
   @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
-
-  public LifecycleOwner fakeLifecycleOwner;
+  private LifecycleOwner lifecycleOwner;
 
   /**
    * Constructs a {@link LiveDataHostApiImpl}.
@@ -44,20 +42,21 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
     this.instanceManager = instanceManager;
   }
 
+  /** Sets {@link LifecycleOwner} used to observe the camera state if so requested. */
+  public void setLifecycleOwner(LifecycleOwner lifecycleOwner) {
+    this.lifecycleOwner = lifecycleOwner;
+  }
+
   @Override
   @SuppressWarnings("unchecked")
   public void observe(@NonNull Long identifier, @NonNull Long observerIdentifier) {
-
-    // tODO(camsim99): get lifecycleowner
     getLiveDataInstance(identifier)
-        .observe(fakeLifecycleOwner, Objects.requireNonNull(instanceManager.getInstance(observerIdentifier)));
+        .observe(lifecycleOwner, Objects.requireNonNull(instanceManager.getInstance(observerIdentifier)));
   }
 
   @Override
   public void removeObservers(@NonNull Long identifier) {
-
-        // tODO(camsim99): get lifecycleowner
-    getLiveDataInstance(identifier).removeObservers(fakeLifecycleOwner);
+    getLiveDataInstance(identifier).removeObservers(lifecycleOwner);
   }
 
   private LiveData<?> getLiveDataInstance(@NonNull Long identifier) {

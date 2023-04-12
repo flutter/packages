@@ -5,9 +5,12 @@
 import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
+import 'camera_state.dart';
+import 'camera_state_error.dart';
 import 'camerax_library.g.dart';
 import 'java_object.dart';
-import 'live_camera_state.dart';
+import 'live_data.dart';
+import 'observer.dart';
 import 'process_camera_provider.dart';
 import 'system_services.dart';
 
@@ -21,7 +24,10 @@ class AndroidCameraXCameraFlutterApis {
     CameraSelectorFlutterApiImpl? cameraSelectorFlutterApi,
     ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApi,
     SystemServicesFlutterApiImpl? systemServicesFlutterApi,
-    LiveCameraStateFlutterApiImpl? liveCameraStateFlutterApiImpl,
+    CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
+    CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
+    LiveDataFlutterApiImpl? liveDataFlutterApiImpl,
+    ObserverFlutterApiImpl? observerFlutterApiImpl,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -34,8 +40,14 @@ class AndroidCameraXCameraFlutterApis {
     this.cameraFlutterApi = cameraFlutterApi ?? CameraFlutterApiImpl();
     this.systemServicesFlutterApi =
         systemServicesFlutterApi ?? SystemServicesFlutterApiImpl();
-    this.liveCameraStateFlutterApiImpl =
-        liveCameraStateFlutterApiImpl ?? LiveCameraStateFlutterApiImpl();
+    this.cameraStateErrorFlutterApiImpl =
+        cameraStateErrorFlutterApiImpl ?? CameraStateErrorFlutterApiImpl();
+    this.cameraStateFlutterApiImpl =
+        cameraStateFlutterApiImpl ?? CameraStateFlutterApiImpl();
+    this.liveDataFlutterApiImpl =
+        liveDataFlutterApiImpl ?? LiveDataFlutterApiImpl();
+    this.observerFlutterApiImpl =
+        observerFlutterApiImpl ?? ObserverFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -65,8 +77,17 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api for [SystemServices].
   late final SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
-  /// Flutter Api for [LiveCameraState].
-  late final LiveCameraStateFlutterApiImpl liveCameraStateFlutterApiImpl;
+  /// Flutter Api implementation for [CameraStateError].
+  late final CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl;
+
+  /// Flutter Api implementation  for [CameraState].
+  late final CameraStateFlutterApiImpl? cameraStateFlutterApiImpl;
+
+  /// Flutter Api implementation for [LiveData].
+  late final LiveDataFlutterApiImpl? liveDataFlutterApiImpl;
+
+  /// Flutter Api implementation for [Observer].
+  late final ObserverFlutterApiImpl? observerFlutterApiImpl;
 
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
@@ -77,7 +98,7 @@ class AndroidCameraXCameraFlutterApis {
       ProcessCameraProviderFlutterApi.setup(processCameraProviderFlutterApi);
       CameraFlutterApi.setup(cameraFlutterApi);
       SystemServicesFlutterApi.setup(systemServicesFlutterApi);
-      LiveCameraStateFlutterApi.setup(liveCameraStateFlutterApiImpl);
+      CameraStateErrorFlutterApi.setup(cameraStateErrorFlutterApiImpl);
       _haveBeenSetUp = true;
     }
   }
