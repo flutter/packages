@@ -240,7 +240,7 @@ public class ImagePickerDelegate
     }
 
     cache.saveType(
-            localImageOptions != null
+        localImageOptions != null
             ? ImagePickerCache.CacheType.IMAGE
             : ImagePickerCache.CacheType.VIDEO);
     if (localImageOptions != null) {
@@ -344,8 +344,7 @@ public class ImagePickerDelegate
       }
     }
 
-    if (localVideoOptions != null
-        && localVideoOptions.getMaxDurationSeconds() != null) {
+    if (localVideoOptions != null && localVideoOptions.getMaxDurationSeconds() != null) {
       int maxSeconds = localVideoOptions.getMaxDurationSeconds().intValue();
       intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxSeconds);
     }
