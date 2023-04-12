@@ -21,7 +21,7 @@ public class FlutterAssetManagerHostApiImpl implements FlutterAssetManagerHostAp
   final FlutterAssetManager flutterAssetManager;
 
   /** Constructs a new instance of {@link FlutterAssetManagerHostApiImpl}. */
-  public FlutterAssetManagerHostApiImpl(FlutterAssetManager flutterAssetManager) {
+  public FlutterAssetManagerHostApiImpl(@NonNull FlutterAssetManager flutterAssetManager) {
     this.flutterAssetManager = flutterAssetManager;
   }
 

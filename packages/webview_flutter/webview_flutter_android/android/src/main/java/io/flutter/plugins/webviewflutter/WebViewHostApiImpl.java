@@ -46,8 +46,11 @@ public class WebViewHostApiImpl implements WebViewHostApi {
      *     in Dart
      * @return the created {@link WebViewPlatformView}
      */
+    @NonNull
     public WebViewPlatformView createWebView(
-        Context context, BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+        @NonNull Context context,
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull InstanceManager instanceManager) {
       return new WebViewPlatformView(context, binaryMessenger, instanceManager);
     }
 
@@ -77,7 +80,9 @@ public class WebViewHostApiImpl implements WebViewHostApi {
      * @param context an Activity Context to access application assets. This value cannot be null.
      */
     public WebViewPlatformView(
-        Context context, BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+        @NonNull Context context,
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull InstanceManager instanceManager) {
       super(context);
       currentWebViewClient = new WebViewClient();
       currentWebChromeClient = new WebChromeClientHostApiImpl.SecureWebChromeClient();
@@ -87,6 +92,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       setWebChromeClient(currentWebChromeClient);
     }
 
+    @Nullable
     @Override
     public View getView() {
       return this;
@@ -125,14 +131,14 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     }
 
     @Override
-    public void setWebViewClient(WebViewClient webViewClient) {
+    public void setWebViewClient(@NonNull WebViewClient webViewClient) {
       super.setWebViewClient(webViewClient);
       currentWebViewClient = webViewClient;
       currentWebChromeClient.setWebViewClient(webViewClient);
     }
 
     @Override
-    public void setWebChromeClient(WebChromeClient client) {
+    public void setWebChromeClient(@Nullable WebChromeClient client) {
       super.setWebChromeClient(client);
       if (!(client instanceof WebChromeClientHostApiImpl.SecureWebChromeClient)) {
         throw new AssertionError("Client must be a SecureWebChromeClient.");
@@ -171,10 +177,10 @@ public class WebViewHostApiImpl implements WebViewHostApi {
    * @param context an Activity Context to access application assets. This value cannot be null.
    */
   public WebViewHostApiImpl(
-      InstanceManager instanceManager,
-      BinaryMessenger binaryMessenger,
-      WebViewProxy webViewProxy,
-      Context context) {
+      @NonNull InstanceManager instanceManager,
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull WebViewProxy webViewProxy,
+      @Nullable Context context) {
     this.instanceManager = instanceManager;
     this.binaryMessenger = binaryMessenger;
     this.webViewProxy = webViewProxy;
@@ -186,7 +192,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
    *
    * @param context the new context.
    */
-  public void setContext(Context context) {
+  public void setContext(@Nullable Context context) {
     this.context = context;
   }
 
@@ -238,6 +244,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     webView.postUrl(url, data);
   }
 
+  @Nullable
   @Override
   public String getUrl(@NonNull Long instanceId) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
@@ -291,6 +298,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     webView.evaluateJavascript(javascriptString, result::success);
   }
 
+  @Nullable
   @Override
   public String getTitle(@NonNull Long instanceId) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
@@ -298,13 +306,13 @@ public class WebViewHostApiImpl implements WebViewHostApi {
   }
 
   @Override
-  public void scrollTo(@NonNull Long instanceId, Long x, Long y) {
+  public void scrollTo(@NonNull Long instanceId, @NonNull Long x, @NonNull Long y) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
     webView.scrollTo(x.intValue(), y.intValue());
   }
 
   @Override
-  public void scrollBy(@NonNull Long instanceId, Long x, Long y) {
+  public void scrollBy(@NonNull Long instanceId, @NonNull Long x, @NonNull Long y) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
     webView.scrollBy(x.intValue(), y.intValue());
   }
@@ -364,24 +372,27 @@ public class WebViewHostApiImpl implements WebViewHostApi {
   }
 
   @Override
-  public void setDownloadListener(@NonNull Long instanceId, Long listenerInstanceId) {
+  public void setDownloadListener(@NonNull Long instanceId, @Nullable Long listenerInstanceId) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
-    webView.setDownloadListener(instanceManager.getInstance(listenerInstanceId));
+    webView.setDownloadListener(
+        instanceManager.getInstance(Objects.requireNonNull(listenerInstanceId)));
   }
 
   @Override
-  public void setWebChromeClient(@NonNull Long instanceId, Long clientInstanceId) {
+  public void setWebChromeClient(@NonNull Long instanceId, @Nullable Long clientInstanceId) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
-    webView.setWebChromeClient(instanceManager.getInstance(clientInstanceId));
+    webView.setWebChromeClient(
+        instanceManager.getInstance(Objects.requireNonNull(clientInstanceId)));
   }
 
   @Override
-  public void setBackgroundColor(@NonNull Long instanceId, Long color) {
+  public void setBackgroundColor(@NonNull Long instanceId, @NonNull Long color) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
     webView.setBackgroundColor(color.intValue());
   }
 
   /** Maintains instances used to communicate with the corresponding WebView Dart object. */
+  @NonNull
   public InstanceManager getInstanceManager() {
     return instanceManager;
   }

@@ -28,7 +28,8 @@ public class WebSettingsHostApiImpl implements WebSettingsHostApi {
      * @param webView the {@link WebView} which the settings affect
      * @return the created {@link WebSettings}
      */
-    public WebSettings createWebSettings(WebView webView) {
+    @NonNull
+    public WebSettings createWebSettings(@NonNull WebView webView) {
       return webView.getSettings();
     }
   }
@@ -40,7 +41,7 @@ public class WebSettingsHostApiImpl implements WebSettingsHostApi {
    * @param webSettingsCreator handles creating {@link WebSettings}s
    */
   public WebSettingsHostApiImpl(
-      InstanceManager instanceManager, WebSettingsCreator webSettingsCreator) {
+      @NonNull InstanceManager instanceManager, @NonNull WebSettingsCreator webSettingsCreator) {
     this.instanceManager = instanceManager;
     this.webSettingsCreator = webSettingsCreator;
   }

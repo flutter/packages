@@ -25,6 +25,7 @@ public class WebStorageHostApiImpl implements WebStorageHostApi {
      *
      * @return the created {@link WebStorage}. Defaults to {@link WebStorage#getInstance}
      */
+    @NonNull
     public WebStorage createWebStorage() {
       return WebStorage.getInstance();
     }
@@ -37,7 +38,7 @@ public class WebStorageHostApiImpl implements WebStorageHostApi {
    * @param webStorageCreator handles creating {@link WebStorage}s
    */
   public WebStorageHostApiImpl(
-      InstanceManager instanceManager, WebStorageCreator webStorageCreator) {
+      @NonNull InstanceManager instanceManager, @NonNull WebStorageCreator webStorageCreator) {
     this.instanceManager = instanceManager;
     this.webStorageCreator = webStorageCreator;
   }
