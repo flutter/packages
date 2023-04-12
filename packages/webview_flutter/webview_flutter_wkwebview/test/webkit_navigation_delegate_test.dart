@@ -75,6 +75,33 @@ void main() {
       expect(callbackUrl, 'https://www.google.com');
     });
 
+    test('setOnHttpError from decidePolicyForNavigationResponse', () {
+      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+            createUIDelegate: CapturingUIDelegate.new,
+          ),
+        ),
+      );
+
+      late final HttpResponseError callbackError;
+      void onHttpError(HttpResponseError error) {
+        callbackError = error;
+      }
+
+      webKitDelgate.setOnHttpError(onHttpError);
+
+      CapturingNavigationDelegate
+          .lastCreatedDelegate.decidePolicyForNavigationResponse!(
+        WKWebView.detached(),
+        const WKNavigationResponse(
+            response: NSHttpUrlResponse(statusCode: 401), forMainFrame: true),
+      );
+
+      expect(callbackError.statusCode, 401);
+    });
+
     test('onWebResourceError from didFailNavigation', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
@@ -244,6 +271,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
   CapturingNavigationDelegate({
     super.didFinishNavigation,
     super.didStartProvisionalNavigation,
+    super.decidePolicyForNavigationResponse,
     super.didFailNavigation,
     super.didFailProvisionalNavigation,
     super.decidePolicyForNavigationAction,

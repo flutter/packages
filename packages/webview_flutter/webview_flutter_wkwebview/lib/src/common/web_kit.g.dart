@@ -82,6 +82,14 @@ enum WKNavigationActionPolicyEnum {
   cancel,
 }
 
+/// Mirror of WKNavigationResponsePolicy.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+enum WKNavigationResponsePolicyEnum {
+  allow,
+  cancel,
+}
+
 /// Mirror of NSHTTPCookiePropertyKey.
 ///
 /// See https://developer.apple.com/documentation/foundation/nshttpcookiepropertykey.
@@ -264,6 +272,27 @@ class WKNavigationActionPolicyEnumData {
   }
 }
 
+class WKNavigationResponsePolicyEnumData {
+  WKNavigationResponsePolicyEnumData({
+    required this.value,
+  });
+
+  WKNavigationResponsePolicyEnum value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static WKNavigationResponsePolicyEnumData decode(Object result) {
+    result as List<Object?>;
+    return WKNavigationResponsePolicyEnumData(
+      value: WKNavigationResponsePolicyEnum.values[result[0]! as int],
+    );
+  }
+}
+
 class NSHttpCookiePropertyKeyEnumData {
   NSHttpCookiePropertyKeyEnumData({
     required this.value,
@@ -321,6 +350,30 @@ class NSUrlRequestData {
       httpBody: result[2] as Uint8List?,
       allHttpHeaderFields:
           (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+    );
+  }
+}
+
+/// Mirror of NSURLResponse.
+///
+/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
+class NSHttpUrlResponseData {
+  NSHttpUrlResponseData({
+    required this.statusCode,
+  });
+
+  int statusCode;
+
+  Object encode() {
+    return <Object?>[
+      statusCode,
+    ];
+  }
+
+  static NSHttpUrlResponseData decode(Object result) {
+    result as List<Object?>;
+    return NSHttpUrlResponseData(
+      statusCode: result[0]! as int,
     );
   }
 }
@@ -392,6 +445,35 @@ class WKNavigationActionData {
       request: NSUrlRequestData.decode(result[0]! as List<Object?>),
       targetFrame: WKFrameInfoData.decode(result[1]! as List<Object?>),
       navigationType: WKNavigationType.values[result[2]! as int],
+    );
+  }
+}
+
+/// Mirror of WKNavigationResponse.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationresponse.
+class WKNavigationResponseData {
+  WKNavigationResponseData({
+    required this.response,
+    required this.forMainFrame,
+  });
+
+  NSHttpUrlResponseData response;
+
+  bool forMainFrame;
+
+  Object encode() {
+    return <Object?>[
+      response.encode(),
+      forMainFrame,
+    ];
+  }
+
+  static WKNavigationResponseData decode(Object result) {
+    result as List<Object?>;
+    return WKNavigationResponseData(
+      response: NSHttpUrlResponseData.decode(result[0]! as List<Object?>),
+      forMainFrame: result[1]! as bool,
     );
   }
 }
@@ -509,37 +591,6 @@ class NSHttpCookieData {
       propertyKeys: (result[0] as List<Object?>?)!
           .cast<NSHttpCookiePropertyKeyEnumData?>(),
       propertyValues: (result[1] as List<Object?>?)!.cast<Object?>(),
-    );
-  }
-}
-
-/// An object that can represent either a value supported by
-/// `StandardMessageCodec`, a data class in this pigeon file, or an identifier
-/// of an object stored in an `InstanceManager`.
-class ObjectOrIdentifier {
-  ObjectOrIdentifier({
-    this.value,
-    required this.isIdentifier,
-  });
-
-  Object? value;
-
-  /// Whether value is an int that is used to retrieve an instance stored in an
-  /// `InstanceManager`.
-  bool isIdentifier;
-
-  Object encode() {
-    return <Object?>[
-      value,
-      isIdentifier,
-    ];
-  }
-
-  static ObjectOrIdentifier decode(Object result) {
-    result as List<Object?>;
-    return ObjectOrIdentifier(
-      value: result[0] as Object?,
-      isIdentifier: result[1]! as bool,
     );
   }
 }
@@ -1389,17 +1440,26 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
     if (value is NSErrorData) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSHttpUrlResponseData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationActionPolicyEnumData) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationResponseData) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationResponsePolicyEnumData) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1412,13 +1472,19 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
       case 128:
         return NSErrorData.decode(readValue(buffer)!);
       case 129:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
       case 130:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 131:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 132:
+        return WKNavigationActionData.decode(readValue(buffer)!);
+      case 133:
         return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+      case 134:
+        return WKNavigationResponseData.decode(readValue(buffer)!);
+      case 135:
+        return WKNavigationResponsePolicyEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1441,6 +1507,11 @@ abstract class WKNavigationDelegateFlutterApi {
       int identifier,
       int webViewIdentifier,
       WKNavigationActionData navigationAction);
+
+  Future<WKNavigationResponsePolicyEnumData> decidePolicyForNavigationResponse(
+      int identifier,
+      int webViewIdentifier,
+      WKNavigationResponseData navigationResponse);
 
   void didFailNavigation(
       int identifier, int webViewIdentifier, NSErrorData error);
@@ -1528,6 +1599,35 @@ abstract class WKNavigationDelegateFlutterApi {
           final WKNavigationActionPolicyEnumData output =
               await api.decidePolicyForNavigationAction(arg_identifier!,
                   arg_webViewIdentifier!, arg_navigationAction!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null int.');
+          final int? arg_webViewIdentifier = (args[1] as int?);
+          assert(arg_webViewIdentifier != null,
+              'Argument for dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null int.');
+          final WKNavigationResponseData? arg_navigationResponse =
+              (args[2] as WKNavigationResponseData?);
+          assert(arg_navigationResponse != null,
+              'Argument for dev.flutter.pigeon.WKNavigationDelegateFlutterApi.decidePolicyForNavigationResponse was null, expected non-null WKNavigationResponseData.');
+          final WKNavigationResponsePolicyEnumData output =
+              await api.decidePolicyForNavigationResponse(arg_identifier!,
+                  arg_webViewIdentifier!, arg_navigationResponse!);
           return output;
         });
       }
@@ -1730,11 +1830,56 @@ class _NSObjectFlutterApiCodec extends StandardMessageCodec {
   const _NSObjectFlutterApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is NSKeyValueChangeKeyEnumData) {
+    if (value is NSErrorData) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is ObjectOrIdentifier) {
+    } else if (value is NSHttpCookieData) {
       buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is NSHttpCookiePropertyKeyEnumData) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is NSHttpUrlResponseData) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is NSKeyValueChangeKeyEnumData) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is NSKeyValueObservingOptionsEnumData) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is NSUrlRequestData) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is WKAudiovisualMediaTypeEnumData) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is WKFrameInfoData) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationActionData) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationActionPolicyEnumData) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationResponseData) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationResponsePolicyEnumData) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    } else if (value is WKScriptMessageData) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptData) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(144);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1745,9 +1890,39 @@ class _NSObjectFlutterApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
+        return NSErrorData.decode(readValue(buffer)!);
       case 129:
-        return ObjectOrIdentifier.decode(readValue(buffer)!);
+        return NSHttpCookieData.decode(readValue(buffer)!);
+      case 130:
+        return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
+      case 131:
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
+      case 132:
+        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
+      case 133:
+        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
+      case 134:
+        return NSUrlRequestData.decode(readValue(buffer)!);
+      case 135:
+        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
+      case 136:
+        return WKFrameInfoData.decode(readValue(buffer)!);
+      case 137:
+        return WKNavigationActionData.decode(readValue(buffer)!);
+      case 138:
+        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+      case 139:
+        return WKNavigationResponseData.decode(readValue(buffer)!);
+      case 140:
+        return WKNavigationResponsePolicyEnumData.decode(readValue(buffer)!);
+      case 141:
+        return WKScriptMessageData.decode(readValue(buffer)!);
+      case 142:
+        return WKUserScriptData.decode(readValue(buffer)!);
+      case 143:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 144:
+        return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1765,7 +1940,7 @@ abstract class NSObjectFlutterApi {
       String keyPath,
       int objectIdentifier,
       List<NSKeyValueChangeKeyEnumData?> changeKeys,
-      List<ObjectOrIdentifier?> changeValues);
+      List<Object?> changeValues);
 
   void dispose(int identifier);
 
@@ -1795,10 +1970,10 @@ abstract class NSObjectFlutterApi {
               (args[3] as List<Object?>?)?.cast<NSKeyValueChangeKeyEnumData?>();
           assert(arg_changeKeys != null,
               'Argument for dev.flutter.pigeon.NSObjectFlutterApi.observeValue was null, expected non-null List<NSKeyValueChangeKeyEnumData?>.');
-          final List<ObjectOrIdentifier?>? arg_changeValues =
-              (args[4] as List<Object?>?)?.cast<ObjectOrIdentifier?>();
+          final List<Object?>? arg_changeValues =
+              (args[4] as List<Object?>?)?.cast<Object?>();
           assert(arg_changeValues != null,
-              'Argument for dev.flutter.pigeon.NSObjectFlutterApi.observeValue was null, expected non-null List<ObjectOrIdentifier?>.');
+              'Argument for dev.flutter.pigeon.NSObjectFlutterApi.observeValue was null, expected non-null List<Object?>.');
           api.observeValue(arg_identifier!, arg_keyPath!, arg_objectIdentifier!,
               arg_changeKeys!, arg_changeValues!);
           return;
@@ -1840,16 +2015,16 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
     } else if (value is NSHttpCookiePropertyKeyEnumData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueChangeKeyEnumData) {
+    } else if (value is NSHttpUrlResponseData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NSKeyValueObservingOptionsEnumData) {
+    } else if (value is NSKeyValueChangeKeyEnumData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NSUrlRequestData) {
+    } else if (value is NSKeyValueObservingOptionsEnumData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is ObjectOrIdentifier) {
+    } else if (value is NSUrlRequestData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else if (value is WKAudiovisualMediaTypeEnumData) {
@@ -1864,17 +2039,23 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
     } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKNavigationResponseData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKNavigationResponsePolicyEnumData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is WKWebsiteDataTypeEnumData) {
+    } else if (value is WKUserScriptData) {
       buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(144);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1891,13 +2072,13 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
       case 130:
         return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
       case 131:
-        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
+        return NSHttpUrlResponseData.decode(readValue(buffer)!);
       case 132:
-        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
+        return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
       case 133:
-        return NSUrlRequestData.decode(readValue(buffer)!);
+        return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
       case 134:
-        return ObjectOrIdentifier.decode(readValue(buffer)!);
+        return NSUrlRequestData.decode(readValue(buffer)!);
       case 135:
         return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
       case 136:
@@ -1907,12 +2088,16 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
       case 138:
         return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       case 139:
-        return WKScriptMessageData.decode(readValue(buffer)!);
+        return WKNavigationResponseData.decode(readValue(buffer)!);
       case 140:
-        return WKUserScriptData.decode(readValue(buffer)!);
+        return WKNavigationResponsePolicyEnumData.decode(readValue(buffer)!);
       case 141:
-        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+        return WKScriptMessageData.decode(readValue(buffer)!);
       case 142:
+        return WKUserScriptData.decode(readValue(buffer)!);
+      case 143:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 144:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2560,81 +2745,6 @@ class WKHttpCookieStoreHostApi {
       );
     } else {
       return;
-    }
-  }
-}
-
-/// Host API for `NSUrl`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or method calls on the associated native
-/// class or an instance of the class.
-///
-/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
-class NSUrlHostApi {
-  /// Constructor for [NSUrlHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
-  /// BinaryMessenger will be used which routes to the host platform.
-  NSUrlHostApi({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
-  final BinaryMessenger? _binaryMessenger;
-
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
-
-  Future<String?> getAbsoluteString(int arg_identifier) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.NSUrlHostApi.getAbsoluteString', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return (replyList[0] as String?);
-    }
-  }
-}
-
-/// Flutter API for `NSUrl`.
-///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
-///
-/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
-abstract class NSUrlFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
-
-  void create(int identifier);
-
-  static void setup(NSUrlFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NSUrlFlutterApi.create', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.NSUrlFlutterApi.create was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_identifier = (args[0] as int?);
-          assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.NSUrlFlutterApi.create was null, expected non-null int.');
-          api.create(arg_identifier!);
-          return;
-        });
-      }
     }
   }
 }

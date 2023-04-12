@@ -81,6 +81,14 @@ class WebResourceRequestData {
   Map<String?, String?> requestHeaders;
 }
 
+class WebResourceResponseData {
+  WebResourceResponseData(
+    this.statusCode,
+  );
+
+  int statusCode;
+}
+
 class WebResourceErrorData {
   WebResourceErrorData(this.errorCode, this.description);
 
@@ -269,6 +277,13 @@ abstract class WebViewClientFlutterApi {
   void onPageStarted(int instanceId, int webViewInstanceId, String url);
 
   void onPageFinished(int instanceId, int webViewInstanceId, String url);
+
+  void onReceivedHttpError(
+    int instanceId,
+    int webViewInstanceId,
+    WebResourceRequestData request,
+    WebResourceResponseData response,
+  );
 
   void onReceivedRequestError(
     int instanceId,

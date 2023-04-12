@@ -672,6 +672,16 @@ class AndroidWebResourceError extends WebResourceError {
   }
 }
 
+/// Error returned in `AndroidNavigationDelegate.setOnHttpError` when an HTTP
+/// response error has been received.
+@immutable
+class AndroidHttpResponseError extends HttpResponseError {
+  /// Creates a new [AndroidHttpResponseError].
+  const AndroidHttpResponseError._({
+    required super.statusCode,
+  });
+}
+
 /// Object specifying creation parameters for creating a [AndroidNavigationDelegate].
 ///
 /// When adding additional fields make sure they can be null or have a default
@@ -738,6 +748,16 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         final PageEventCallback? callback = weakThis.target?._onPageStarted;
         if (callback != null) {
           callback(url);
+        }
+      },
+      onReceivedHttpError: (
+        android_webview.WebView webView,
+        android_webview.WebResourceRequest request,
+        android_webview.WebResourceResponse response,
+      ) {
+        if (weakThis.target?._onHttpError != null) {
+          weakThis.target!._onHttpError!(
+              HttpResponseError(statusCode: response.statusCode));
         }
       },
       onReceivedRequestError: (
@@ -847,6 +867,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
 
   PageEventCallback? _onPageFinished;
   PageEventCallback? _onPageStarted;
+  HttpResponseErrorCallback? _onHttpError;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
@@ -917,6 +938,13 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     PageEventCallback onPageFinished,
   ) async {
     _onPageFinished = onPageFinished;
+  }
+
+  @override
+  Future<void> setOnHttpError(
+    HttpResponseErrorCallback onHttpError,
+  ) async {
+    _onHttpError = onHttpError;
   }
 
   @override

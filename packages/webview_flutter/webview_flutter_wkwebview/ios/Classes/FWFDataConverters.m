@@ -175,6 +175,24 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNSURLRequest(NSURLRequest *request) 
       allHttpHeaderFields:request.allHTTPHeaderFields ? request.allHTTPHeaderFields : @{}];
 }
 
+FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNavigationResponse(
+    WKNavigationResponse *response) {
+  return [FWFWKNavigationResponseData
+      makeWithResponse:FWFNSHttpUrlResponseDataFromNSURLResponse(response.response)
+          forMainFrame:@(response.forMainFrame)];
+}
+
+/// Cast the NSURLResponse object to NSHTTPURLResponse.
+///
+/// NSURLResponse doesn't contain the status code so it must be cast to NSHTTPURLResponse.
+/// This cast will always succeed because the NSURLResponse object actually is an instance of
+/// NSHTTPURLResponse. See:
+/// https://developer.apple.com/documentation/foundation/nsurlresponse#overview
+FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNSURLResponse(NSURLResponse *response) {
+  NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+  return [FWFNSHttpUrlResponseData makeWithStatusCode:@(httpResponse.statusCode)];
+}
+
 FWFWKFrameInfoData *FWFWKFrameInfoDataFromWKFrameInfo(WKFrameInfo *info) {
   return [FWFWKFrameInfoData makeWithIsMainFrame:@(info.isMainFrame)];
 }
@@ -186,6 +204,18 @@ WKNavigationActionPolicy FWFWKNavigationActionPolicyFromEnumData(
       return WKNavigationActionPolicyAllow;
     case FWFWKNavigationActionPolicyEnumCancel:
       return WKNavigationActionPolicyCancel;
+  }
+
+  return -1;
+}
+
+WKNavigationResponsePolicy FWFWKNavigationResponsePolicyFromEnumData(
+    FWFWKNavigationResponsePolicyEnumData *data) {
+  switch (data.value) {
+    case FWFWKNavigationResponsePolicyEnumAllow:
+      return WKNavigationResponsePolicyAllow;
+    case FWFWKNavigationResponsePolicyEnumCancel:
+      return WKNavigationResponsePolicyCancel;
   }
 
   return -1;

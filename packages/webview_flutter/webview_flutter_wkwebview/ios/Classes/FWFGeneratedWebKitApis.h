@@ -87,6 +87,14 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationActionPolicyEnum) {
   FWFWKNavigationActionPolicyEnumCancel = 1,
 };
 
+/// Mirror of WKNavigationResponsePolicy.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+typedef NS_ENUM(NSUInteger, FWFWKNavigationResponsePolicyEnum) {
+  FWFWKNavigationResponsePolicyEnumAllow = 0,
+  FWFWKNavigationResponsePolicyEnumCancel = 1,
+};
+
 /// Mirror of NSHTTPCookiePropertyKey.
 ///
 /// See https://developer.apple.com/documentation/foundation/nshttpcookiepropertykey.
@@ -151,10 +159,13 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 @class FWFWKAudiovisualMediaTypeEnumData;
 @class FWFWKWebsiteDataTypeEnumData;
 @class FWFWKNavigationActionPolicyEnumData;
+@class FWFWKNavigationResponsePolicyEnumData;
 @class FWFNSHttpCookiePropertyKeyEnumData;
 @class FWFNSUrlRequestData;
+@class FWFNSHttpUrlResponseData;
 @class FWFWKUserScriptData;
 @class FWFWKNavigationActionData;
+@class FWFWKNavigationResponseData;
 @class FWFWKFrameInfoData;
 @class FWFNSErrorData;
 @class FWFWKScriptMessageData;
@@ -203,6 +214,13 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 @property(nonatomic, assign) FWFWKNavigationActionPolicyEnum value;
 @end
 
+@interface FWFWKNavigationResponsePolicyEnumData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(FWFWKNavigationResponsePolicyEnum)value;
+@property(nonatomic, assign) FWFWKNavigationResponsePolicyEnum value;
+@end
+
 @interface FWFNSHttpCookiePropertyKeyEnumData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
@@ -224,6 +242,16 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 @property(nonatomic, copy, nullable) NSString *httpMethod;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *httpBody;
 @property(nonatomic, strong) NSDictionary<NSString *, NSString *> *allHttpHeaderFields;
+@end
+
+/// Mirror of NSURLResponse.
+///
+/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
+@interface FWFNSHttpUrlResponseData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithStatusCode:(NSNumber *)statusCode;
+@property(nonatomic, strong) NSNumber *statusCode;
 @end
 
 /// Mirror of WKUserScript.
@@ -252,6 +280,18 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 @property(nonatomic, strong) FWFNSUrlRequestData *request;
 @property(nonatomic, strong) FWFWKFrameInfoData *targetFrame;
 @property(nonatomic, assign) FWFWKNavigationType navigationType;
+@end
+
+/// Mirror of WKNavigationResponse.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationresponse.
+@interface FWFWKNavigationResponseData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithResponse:(FWFNSHttpUrlResponseData *)response
+                    forMainFrame:(NSNumber *)forMainFrame;
+@property(nonatomic, strong) FWFNSHttpUrlResponseData *response;
+@property(nonatomic, strong) NSNumber *forMainFrame;
 @end
 
 /// Mirror of WKFrameInfo.
@@ -545,6 +585,16 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void);
                                                       (void (^)(FWFWKNavigationActionPolicyEnumData
                                                                     *_Nullable,
                                                                 FlutterError *_Nullable))completion;
+- (void)
+    decidePolicyForNavigationResponseForDelegateWithIdentifier:(NSNumber *)identifier
+                                             webViewIdentifier:(NSNumber *)webViewIdentifier
+                                            navigationResponse:
+                                                (FWFWKNavigationResponseData *)navigationResponse
+                                                    completion:
+                                                        (void (^)(
+                                                            FWFWKNavigationResponsePolicyEnumData
+                                                                *_Nullable,
+                                                            FlutterError *_Nullable))completion;
 - (void)didFailNavigationForDelegateWithIdentifier:(NSNumber *)identifier
                                  webViewIdentifier:(NSNumber *)webViewIdentifier
                                              error:(FWFNSErrorData *)error
