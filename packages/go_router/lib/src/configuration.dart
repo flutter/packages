@@ -173,6 +173,7 @@ class RouteConfiguration {
   }
 
   /// Returns the full path of [routes].
+  ///
   /// Each path is indented based depth of the hierarchy, and its `name`
   /// is also appended if not null
   @visibleForTesting
