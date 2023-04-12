@@ -27,18 +27,14 @@ import java.util.Set;
 
 /** SharedPreferencesPlugin */
 public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
-  static final String TAG = "SharedPreferencesPlugin";
-
-  SharedPreferencesListEncoder listEncoder;
-
+  private static final String TAG = "SharedPreferencesPlugin";
   private static final String SHARED_PREFERENCES_NAME = "FlutterSharedPreferences";
-
-  // Fun fact: The following is a base64 encoding of the string "This is the prefix for a list."
   private static final String LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
   private static final String BIG_INTEGER_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy";
   private static final String DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu";
 
-  private android.content.SharedPreferences preferences;
+  private SharedPreferences preferences;
+  private SharedPreferencesListEncoder listEncoder;
 
   public SharedPreferencesPlugin() {
     this(new ListEncoder());
@@ -122,15 +118,15 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
 
   @Override
   public @NonNull Boolean clearWithPrefix(@NonNull String prefix) throws RuntimeException {
+    SharedPreferences.Editor clearEditor = preferences.edit();
     Map<String, ?> allPrefs = preferences.getAll();
-    Map<String, Object> filteredPrefs = new HashMap<>();
+    ArrayList<String> filteredPrefs = new ArrayList<>();
     for (String key : allPrefs.keySet()) {
       if (key.startsWith(prefix)) {
-        filteredPrefs.put(key, allPrefs.get(key));
+        filteredPrefs.add(key);
       }
     }
-    SharedPreferences.Editor clearEditor = preferences.edit();
-    for (String key : filteredPrefs.keySet()) {
+    for (String key : filteredPrefs) {
       clearEditor.remove(key);
     }
     return clearEditor.commit();
@@ -155,18 +151,19 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
       String stringValue = (String) value;
       if (stringValue.startsWith(LIST_IDENTIFIER)) {
         return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length()));
+      } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
         // TODO (tarrinneal): Remove all BigInt code.
         // https://github.com/flutter/flutter/issues/124420
-      } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
         String encoded = stringValue.substring(BIG_INTEGER_PREFIX.length());
         return new BigInteger(encoded, Character.MAX_RADIX);
       } else if (stringValue.startsWith(DOUBLE_PREFIX)) {
         String doubleStr = stringValue.substring(DOUBLE_PREFIX.length());
         return Double.valueOf(doubleStr);
       }
+    } else if (value instanceof Set) {
       // TODO (tarrinneal): Remove Set code.
       // https://github.com/flutter/flutter/issues/124420
-    } else if (value instanceof Set) {
+
       // This only happens for previous usage of setStringSet. The app expects a list.
       @SuppressWarnings("unchecked")
       List<String> listValue = new ArrayList<>((Set<String>) value);

@@ -54,9 +54,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
     final Map<String?, Object?> data = await _api.getAllWithPrefix(prefix);
-    final Map<String, Object> preferences = data.cast<String, Object>();
-
-    return preferences;
+    return data.cast<String, Object>();
   }
 
   // Call the function according to the type of value provided
@@ -75,7 +73,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
         return _api.setStringList(key, value as List<String>);
     }
 
-    // TODO(tarrinneal): change to ArgumentError to match other implementations.
+    // TODO(tarrinneal): change to ArgumentError across all platforms.
     throw PlatformException(
         code: 'InvalidOperation',
         message: '"$dataType" is not a supported type.');
