@@ -79,7 +79,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public void onPermissionRequest(PermissionRequest request) {
+    public void onPermissionRequest(@NonNull PermissionRequest request) {
       flutterApi.onPermissionRequest(this, request, reply -> {});
     }
 
