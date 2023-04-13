@@ -361,8 +361,13 @@ class exampleTests: XCTestCase {
       canChooseDirectories: true,
       canChooseFiles: false,
       baseOptions: SavePanelOptions())
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths, returnPaths)
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths, returnPaths)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
@@ -388,8 +393,13 @@ class exampleTests: XCTestCase {
       canChooseDirectories: true,
       canChooseFiles: false,
       baseOptions: SavePanelOptions())
-    plugin.displayOpenPanel(options: options) { paths in
-      XCTAssertEqual(paths.count, 0)
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths.count, 0)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
       called.fulfill()
     }
 
