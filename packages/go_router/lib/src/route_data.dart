@@ -79,6 +79,7 @@ abstract class GoRouteData extends RouteData {
   /// Should not be used directly.
   static GoRoute $route<T extends GoRouteData>({
     required String path,
+    String? name,
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
@@ -106,6 +107,7 @@ abstract class GoRouteData extends RouteData {
 
     return GoRoute(
       path: path,
+      name: name,
       builder: builder,
       pageBuilder: pageBuilder,
       redirect: redirect,
