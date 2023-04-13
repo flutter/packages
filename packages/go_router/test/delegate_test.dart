@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/delegate.dart';
 import 'package:go_router/src/match.dart';
+import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/misc/error_screen.dart';
 
 Future<GoRouter> createGoRouter(
@@ -80,6 +81,20 @@ void main() {
         );
       },
     );
+
+    testWidgets('gets the value provided from pop',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = await createGoRouter(tester)
+        ..push('/');
+      await tester.pumpAndSettle();
+
+      final Future<String?> returnedResult = goRouter.push<String>('/a');
+      await tester.pumpAndSettle();
+      goRouter.routerDelegate.pop('result');
+      await tester.pumpAndSettle();
+
+      expect(await returnedResult, 'result');
+    });
   });
 
   group('canPop', () {
@@ -179,33 +194,59 @@ void main() {
         );
       },
     );
+
+    testWidgets('gets the value provided from pop',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = await createGoRouter(tester)
+        ..push('/')
+        ..push('/a');
+      await tester.pumpAndSettle();
+
+      await tester.pumpAndSettle();
+      final RouteMatchList matches = await goRouter.routeInformationParser
+          .parseRouteInformationWithDependencies(
+        const RouteInformation(location: '/error'),
+        goRouter.routerDelegate.navigatorKey.currentContext!,
+      );
+      final Future<String?> returnedResult =
+          goRouter.routerDelegate.pushReplacement<String>(matches);
+      await tester.pumpAndSettle();
+      goRouter.routerDelegate.pop('error');
+      await tester.pumpAndSettle();
+
+      expect(await returnedResult, 'error');
+    });
   });
 
   group('pushReplacementNamed', () {
+    Future<GoRouter> createNamedGoRouter(WidgetTester tester) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/',
+        routes: <GoRoute>[
+          GoRoute(path: '/', builder: (_, __) => const SizedBox()),
+          GoRoute(
+              path: '/page-0',
+              name: 'page0',
+              builder: (_, __) => const SizedBox()),
+          GoRoute(
+              path: '/page-1',
+              name: 'page1',
+              builder: (_, __) => const SizedBox()),
+        ],
+      );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: goRouter,
+        ),
+      );
+      return goRouter;
+    }
+
     testWidgets(
       'It should replace the last match with the given one',
       (WidgetTester tester) async {
-        final GoRouter goRouter = GoRouter(
-          initialLocation: '/',
-          routes: <GoRoute>[
-            GoRoute(path: '/', builder: (_, __) => const SizedBox()),
-            GoRoute(
-                path: '/page-0',
-                name: 'page0',
-                builder: (_, __) => const SizedBox()),
-            GoRoute(
-                path: '/page-1',
-                name: 'page1',
-                builder: (_, __) => const SizedBox()),
-          ],
-        );
-        await tester.pumpWidget(
-          MaterialApp.router(
-            routerConfig: goRouter,
-          ),
-        );
-
-        goRouter.pushNamed('page0');
+        final GoRouter goRouter = await createNamedGoRouter(tester)
+          ..pushNamed('page0');
 
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
         final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
@@ -233,6 +274,27 @@ void main() {
         );
       },
     );
+
+    testWidgets('gets the value provided from pop',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = await createNamedGoRouter(tester)
+        ..pushNamed('page0');
+      await tester.pumpAndSettle();
+
+      await tester.pumpAndSettle();
+      final RouteMatchList matches = await goRouter.routeInformationParser
+          .parseRouteInformationWithDependencies(
+        RouteInformation(location: goRouter.namedLocation('page1')),
+        goRouter.routerDelegate.navigatorKey.currentContext!,
+      );
+      final Future<String?> returnedResult =
+          goRouter.routerDelegate.pushReplacement<String>(matches);
+      await tester.pumpAndSettle();
+      goRouter.routerDelegate.pop('page_1');
+      await tester.pumpAndSettle();
+
+      expect(await returnedResult, 'page_1');
+    });
   });
 
   group('replace', () {
@@ -338,6 +400,27 @@ void main() {
         );
       },
     );
+
+    testWidgets('gets the value provided from pop',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = await createGoRouter(tester)
+        ..push('/a');
+      await tester.pumpAndSettle();
+
+      await tester.pumpAndSettle();
+      final RouteMatchList matches = await goRouter.routeInformationParser
+          .parseRouteInformationWithDependencies(
+        const RouteInformation(location: '/error'),
+        goRouter.routerDelegate.navigatorKey.currentContext!,
+      );
+      final Future<String?> returnedResult =
+          goRouter.routerDelegate.replace<String>(matches);
+      await tester.pumpAndSettle();
+      goRouter.routerDelegate.pop('error');
+      await tester.pumpAndSettle();
+
+      expect(await returnedResult, 'error');
+    });
   });
 
   group('replaceNamed', () {
@@ -461,6 +544,28 @@ void main() {
         );
       },
     );
+
+    testWidgets('gets the value provided from pop',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = await createGoRouter(tester)
+        ..pushNamed('home')
+        ..pushNamed('page0');
+      await tester.pumpAndSettle();
+
+      await tester.pumpAndSettle();
+      final RouteMatchList matches = await goRouter.routeInformationParser
+          .parseRouteInformationWithDependencies(
+        RouteInformation(location: goRouter.namedLocation('page1')),
+        goRouter.routerDelegate.navigatorKey.currentContext!,
+      );
+      final Future<String?> returnedResult =
+          goRouter.routerDelegate.replace<String>(matches);
+      await tester.pumpAndSettle();
+      goRouter.routerDelegate.pop('page_1');
+      await tester.pumpAndSettle();
+
+      expect(await returnedResult, 'page_1');
+    });
   });
 
   testWidgets('dispose unsubscribes from refreshListenable',

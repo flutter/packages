@@ -77,7 +77,10 @@ extension GoRouterHelper on BuildContext {
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  void pushReplacement(String location, {Object? extra}) =>
+  Future<T?> pushReplacement<T extends Object?>(
+    String location, {
+    Object? extra,
+  }) =>
       GoRouter.of(this).pushReplacement(location, extra: extra);
 
   /// Replaces the top-most page of the page stack with the named route w/
@@ -87,7 +90,7 @@ extension GoRouterHelper on BuildContext {
   /// See also:
   /// * [goNamed] which navigates a named route.
   /// * [pushNamed] which pushes a named route onto the page stack.
-  void pushReplacementNamed(
+  Future<T?> pushReplacementNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
@@ -110,7 +113,7 @@ extension GoRouterHelper on BuildContext {
   /// * [push] which pushes the given location onto the page stack.
   /// * [pushReplacement] which replaces the top-most page of the page stack but
   ///   always uses a new page key.
-  void replace(String location, {Object? extra}) =>
+  Future<T?> replace<T extends Object?>(String location, {Object? extra}) =>
       GoRouter.of(this).replace(location, extra: extra);
 
   /// Replaces the top-most page with the named route and optional parameters,
@@ -124,7 +127,7 @@ extension GoRouterHelper on BuildContext {
   /// * [pushNamed] which pushes the given location onto the page stack.
   /// * [pushReplacementNamed] which replaces the top-most page of the page
   ///   stack but always uses a new page key.
-  void replaceNamed(
+  Future<T?> replaceNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},

@@ -173,10 +173,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  void pushReplacement(RouteMatchList matches) {
+  Future<T?> pushReplacement<T extends Object?>(RouteMatchList matches) {
     assert(matches.last.route is! ShellRoute);
     _matchList.remove(_matchList.last);
-    push(matches); // [push] will notify the listeners.
+    return push(matches); // [push] will notify the listeners.
   }
 
   /// Replaces the top-most page of the page stack with the given one but treats
@@ -189,13 +189,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// * [push] which pushes the given location onto the page stack.
   /// * [pushReplacement] which replaces the top-most page of the page stack but
   ///   always uses a new page key.
-  void replace(RouteMatchList matches) {
+  Future<T?> replace<T extends Object?>(RouteMatchList matches) {
     assert(matches.last.route is! ShellRoute);
     final RouteMatch routeMatch = _matchList.last;
     final ValueKey<String> pageKey = routeMatch.pageKey;
     _matchList.remove(routeMatch);
-    _push(matches, pageKey);
     notifyListeners();
+    return _push(matches, pageKey);
   }
 
   /// For internal use; visible for testing only.

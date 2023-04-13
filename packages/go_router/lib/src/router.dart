@@ -266,9 +266,12 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  void pushReplacement(String location, {Object? extra}) {
-    routeInformationParser
-        .parseRouteInformationWithDependencies(
+  Future<T?> pushReplacement<T extends Object?>(
+    String location, {
+    Object? extra,
+  }) async {
+    final RouteMatchList matchList =
+        await routeInformationParser.parseRouteInformationWithDependencies(
       // TODO(chunhtai): remove this ignore and migrate the code
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
@@ -276,10 +279,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112
       _routerDelegate.navigatorKey.currentContext!,
-    )
-        .then<void>((RouteMatchList matchList) {
-      routerDelegate.pushReplacement(matchList);
-    });
+    );
+
+    return routerDelegate.pushReplacement(matchList);
   }
 
   /// Replaces the top-most page of the page stack with the named route w/
@@ -289,13 +291,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// See also:
   /// * [goNamed] which navigates a named route.
   /// * [pushNamed] which pushes a named route onto the page stack.
-  void pushReplacementNamed(
+  Future<T?> pushReplacementNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
-    pushReplacement(
+    return pushReplacement(
       namedLocation(name, params: params, queryParams: queryParams),
       extra: extra,
     );
@@ -311,9 +313,12 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// * [push] which pushes the given location onto the page stack.
   /// * [pushReplacement] which replaces the top-most page of the page stack but
   ///   always uses a new page key.
-  void replace(String location, {Object? extra}) {
-    routeInformationParser
-        .parseRouteInformationWithDependencies(
+  Future<T?> replace<T extends Object?>(
+    String location, {
+    Object? extra,
+  }) async {
+    final RouteMatchList matchList =
+        await routeInformationParser.parseRouteInformationWithDependencies(
       // TODO(chunhtai): remove this ignore and migrate the code
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
@@ -321,10 +326,8 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       // TODO(chunhtai): avoid accessing the context directly through global key.
       // https://github.com/flutter/flutter/issues/99112
       _routerDelegate.navigatorKey.currentContext!,
-    )
-        .then<void>((RouteMatchList matchList) {
-      routerDelegate.replace(matchList);
-    });
+    );
+    return routerDelegate.replace(matchList);
   }
 
   /// Replaces the top-most page with the named route and optional parameters,
@@ -338,13 +341,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// * [pushNamed] which pushes the given location onto the page stack.
   /// * [pushReplacementNamed] which replaces the top-most page of the page
   ///   stack but always uses a new page key.
-  void replaceNamed(
+  Future<T?> replaceNamed<T extends Object?>(
     String name, {
     Map<String, String> params = const <String, String>{},
     Map<String, dynamic> queryParams = const <String, dynamic>{},
     Object? extra,
   }) {
-    replace(
+    return replace(
       namedLocation(name, params: params, queryParams: queryParams),
       extra: extra,
     );
