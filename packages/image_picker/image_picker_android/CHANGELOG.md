@@ -1,6 +1,7 @@
 ## 0.8.6+7
 
-* Improves Bitmap resizing.
+* Updates minimum Flutter version to 3.3.
+* Improves image resizing performance by decoding the Bitmap only when scaling is needed, and using `BitmapFactory.Options.inSampleSize` on the decoding step.
 
 ## 0.8.6+6
 

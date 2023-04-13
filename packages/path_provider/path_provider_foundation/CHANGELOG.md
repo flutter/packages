@@ -1,3 +1,12 @@
+## 2.2.2
+
+* Updates pigeon for null value handling fixes.
+* Updates minimum Flutter version to 3.3.
+
+## 2.2.1
+
+* Updates to `pigeon` version 9.
+
 ## 2.2.0
 
 * Adds support for `getContainerPath` on iOS.
