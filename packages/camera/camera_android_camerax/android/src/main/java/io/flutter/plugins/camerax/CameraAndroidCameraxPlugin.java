@@ -4,8 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import javax.annotation.processing.Generated;
-
 import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -20,7 +18,6 @@ import io.flutter.view.TextureRegistry;
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
-  private LiveCameraStateHostApiImpl liveCameraStateHostApiImpl;
   private ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
   private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
   private LiveDataHostApiImpl liveDataHostApiImpl;

@@ -40,7 +40,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Camera? camera;
 
-  /// The [LiveCameraState] that represents the state of the [camera] instance.
+  /// The [LiveData] of the [CameraState] that represents the state of the [camera] instance.
   LiveData<CameraState>? liveCameraState;
 
   /// The [Preview] instance that can be configured to present a live camera preview.
@@ -360,13 +360,17 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> _updateLiveCameraState(int cameraId) async {
     final CameraInfo cameraInfo = await camera!.getCameraInfo();
     liveCameraState?.removeObservers();
+    print('CAMILLE NEW LIVE CAMERA STATE COMING THROUGH TO RUIN THINGS UP');
     liveCameraState = await cameraInfo.getLiveCameraState();
     liveCameraState!.observe(_createCameraClosingObserver(cameraId));
   }
 
   Observer<CameraState> _createCameraClosingObserver(int cameraId) {
-    return Observer<CameraState>(onChanged: (CameraState state) {
+    return Observer<CameraState>(onChanged: (Object stateAsObject) {
+      CameraState state = stateAsObject as CameraState;
+      print('CAMILLE STATE: ${state.type}');
       if (state.type == CameraStateType.closing) {
+        print('HELLO!??!?!?!?!?!?!?');
         cameraEventStreamController.add(CameraClosingEvent(cameraId));
       }
 

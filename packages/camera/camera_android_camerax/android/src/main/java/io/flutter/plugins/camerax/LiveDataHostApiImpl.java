@@ -59,6 +59,11 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
     getLiveDataInstance(identifier).removeObservers(lifecycleOwner);
   }
 
+  @Override
+  public void cast(Long identifier, Long newInstanceIdentifier) {
+    instanceManager.addDartCreatedInstance(instanceManager.getInstance(identifier), newInstanceIdentifier);
+  }
+
   private LiveData<?> getLiveDataInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }

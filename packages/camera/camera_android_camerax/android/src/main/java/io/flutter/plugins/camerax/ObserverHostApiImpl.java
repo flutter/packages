@@ -57,6 +57,7 @@ public class ObserverHostApiImpl implements ObserverHostApi {
 
     @Override
     public void onChanged(T value) {
+      System.out.println("CAMILLE, GETTING CALLED");
       api.onChanged(this, value, reply -> {});
     }
 

@@ -9,14 +9,16 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 
 class LiveData<T> extends JavaObject {
-  LiveData.detached(
-      {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
+  LiveData.detached({this.binaryMessenger, this.instanceManager})
       : _api = _LiveDataHostApiImpl(
             binaryMessenger: binaryMessenger, instanceManager: instanceManager),
         super.detached(
             binaryMessenger: binaryMessenger, instanceManager: instanceManager);
 
   final _LiveDataHostApiImpl _api;
+
+  final BinaryMessenger? binaryMessenger;
+  final InstanceManager? instanceManager;
 
   Future<void> observe(Observer<T> observer) {
     return _api.observeFromInstances(this, observer);
@@ -25,9 +27,15 @@ class LiveData<T> extends JavaObject {
   Future<void> removeObservers() {
     return _api.removeObserversFromInstances(this);
   }
-}
 
-// TODO(bparrishMines): Move these classes or desired methods into `live_data.dart`
+  // @protected
+  LiveData<S> cast<S>() {
+    final LiveData<S> newInstance = LiveData<S>.detached(
+        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+    _api.castFromInstances(this, newInstance);
+    return newInstance;
+  }
+}
 
 class _LiveDataHostApiImpl extends LiveDataHostApi {
   _LiveDataHostApiImpl({
@@ -56,6 +64,17 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
     return removeObservers(
       instanceManager.getIdentifier(instance)!,
     );
+  }
+
+  Future<void> castFromInstances<T, S>(
+      LiveData<T> instance, LiveData<S> newInstance) {
+    return cast(
+        instanceManager.getIdentifier(instance)!,
+        instanceManager.addDartCreatedInstance(newInstance,
+            onCopy: (LiveData original) => LiveData.detached(
+                  binaryMessenger: binaryMessenger,
+                  instanceManager: instanceManager,
+                )));
   }
 }
 

@@ -651,56 +651,6 @@ abstract class TestImageCaptureHostApi {
   }
 }
 
-abstract class TestLiveCameraStateHostApi {
-  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
-
-  void addObserver(int identifier);
-
-  void removeObservers(int identifier);
-
-  static void setup(TestLiveCameraStateHostApi? api, {BinaryMessenger? binaryMessenger}) {
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.LiveCameraStateHostApi.addObserver', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.LiveCameraStateHostApi.addObserver was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_identifier = (args[0] as int?);
-          assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.LiveCameraStateHostApi.addObserver was null, expected non-null int.');
-          api.addObserver(arg_identifier!);
-          return <Object?>[];
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.LiveCameraStateHostApi.removeObservers', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.LiveCameraStateHostApi.removeObservers was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_identifier = (args[0] as int?);
-          assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.LiveCameraStateHostApi.removeObservers was null, expected non-null int.');
-          api.removeObservers(arg_identifier!);
-          return <Object?>[];
-        });
-      }
-    }
-  }
-}
-
 /// Host API for `CameraState`.
 ///
 /// This class may handle instantiating and adding native object instances that
@@ -785,6 +735,8 @@ abstract class TestLiveDataHostApi {
   /// Handles Dart method `LiveData.removeObservers`.
   void removeObservers(int identifier);
 
+  void cast(int oldIdentifier, int newIdentifier);
+
   static void setup(TestLiveDataHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -823,6 +775,28 @@ abstract class TestLiveDataHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.LiveDataHostApi.removeObservers was null, expected non-null int.');
           api.removeObservers(arg_identifier!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.LiveDataHostApi.cast', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.LiveDataHostApi.cast was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_oldIdentifier = (args[0] as int?);
+          assert(arg_oldIdentifier != null,
+              'Argument for dev.flutter.pigeon.LiveDataHostApi.cast was null, expected non-null int.');
+          final int? arg_newIdentifier = (args[1] as int?);
+          assert(arg_newIdentifier != null,
+              'Argument for dev.flutter.pigeon.LiveDataHostApi.cast was null, expected non-null int.');
+          api.cast(arg_oldIdentifier!, arg_newIdentifier!);
           return <Object?>[];
         });
       }

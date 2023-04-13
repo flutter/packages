@@ -11,34 +11,44 @@ import 'instance_manager.dart';
 
 @SimpleClassAnnotation()
 class Observer<T> extends JavaObject {
+  /// Constructor for [Observer].
   Observer(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      required this.onChanged})
+      required void Function(Object value) onChanged})
       : _api = _ObserverHostApiImpl(
             binaryMessenger: binaryMessenger, instanceManager: instanceManager),
         super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
+    this.onChanged = (Object value) {
+      assert(value is T);
+      onChanged(value);
+    };
     _api.createFromInstances(this);
   }
 
   Observer.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      required this.onChanged})
+      required void Function(Object value) onChanged})
       : _api = _ObserverHostApiImpl(
             binaryMessenger: binaryMessenger, instanceManager: instanceManager),
         super.detached(
-            binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+            binaryMessenger: binaryMessenger,
+            instanceManager: instanceManager) {
+    this.onChanged = (Object value) {
+      assert(value is T);
+      onChanged(value);
+    };
+  }
 
   final _ObserverHostApiImpl _api;
 
-  final void Function(T value) onChanged;
+  // TODO(camsim99): Cite Dart issue
+  late final void Function(Object value) onChanged;
 }
-
-// TODO(bparrishMines): Move these classes or desired methods into `observer.dart`
 
 class _ObserverHostApiImpl extends ObserverHostApi {
   _ObserverHostApiImpl({
@@ -51,13 +61,13 @@ class _ObserverHostApiImpl extends ObserverHostApi {
 
   final InstanceManager instanceManager;
 
-  Future<void> createFromInstances(
-    Observer instance,
+  Future<void> createFromInstances<T>(
+    Observer<T> instance,
   ) {
     return create(
       instanceManager.addDartCreatedInstance(
         instance,
-        onCopy: (Observer original) => Observer.detached(
+        onCopy: (Observer<T> original) => Observer<T>.detached(
           onChanged: original.onChanged,
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -94,12 +104,12 @@ class ObserverFlutterApiImpl implements ObserverFlutterApi {
     int identifier,
     int valueIdentifier,
   ) {
-    final dynamic instance =
+    final Observer<dynamic> instance =
         instanceManager.getInstanceWithWeakReference(identifier)!;
 
     // ignore: avoid_dynamic_calls, void_checks
-    return instance.onChanged(
-      instanceManager.getInstanceWithWeakReference(valueIdentifier)!,
+    instance.onChanged(
+      instanceManager.getInstanceWithWeakReference<Object>(valueIdentifier)!,
     );
   }
 }

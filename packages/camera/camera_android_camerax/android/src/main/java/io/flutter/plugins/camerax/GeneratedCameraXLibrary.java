@@ -1254,103 +1254,6 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
-  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-  public interface LiveCameraStateHostApi {
-
-    void addObserver(@NonNull Long identifier);
-
-    void removeObservers(@NonNull Long identifier);
-
-    /** The codec used by LiveCameraStateHostApi. */
-    static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
-    }
-    /**Sets up an instance of `LiveCameraStateHostApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable LiveCameraStateHostApi api) {
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.LiveCameraStateHostApi.addObserver", getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                ArrayList<Object> args = (ArrayList<Object>) message;
-                Number identifierArg = (Number) args.get(0);
-                try {
-                  api.addObserver((identifierArg == null) ? null : identifierArg.longValue());
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.LiveCameraStateHostApi.removeObservers", getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                ArrayList<Object> args = (ArrayList<Object>) message;
-                Number identifierArg = (Number) args.get(0);
-                try {
-                  api.removeObservers((identifierArg == null) ? null : identifierArg.longValue());
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-    }
-  }
-  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
-  public static class LiveCameraStateFlutterApi {
-    private final @NonNull BinaryMessenger binaryMessenger;
-
-    public LiveCameraStateFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
-      this.binaryMessenger = argBinaryMessenger;
-    }
-
-    /** Public interface for sending reply. */ 
-    @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
-      void reply(T reply);
-    }
-    /** The codec used by LiveCameraStateFlutterApi. */
-    static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
-    }
-    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.LiveCameraStateFlutterApi.create", getCodec());
-      channel.send(
-          new ArrayList<Object>(Collections.singletonList(identifierArg)),
-          channelReply -> callback.reply(null));
-    }
-    public void onCameraClosing(@NonNull Reply<Void> callback) {
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.LiveCameraStateFlutterApi.onCameraClosing", getCodec());
-      channel.send(
-          null,
-          channelReply -> callback.reply(null));
-    }
-  }
   /**
    * Host API for `CameraState`.
    *
@@ -1427,7 +1330,7 @@ public class GeneratedCameraXLibrary {
       return CameraStateFlutterApiCodec.INSTANCE;
     }
     /** Create a new Dart instance and add it to the `InstanceManager`. */
-    public void create(@NonNull Long identifierArg, @NonNull CameraStateTypeData typeArg, @NonNull Long errorIdentifierArg, @NonNull Reply<Void> callback) {
+    public void create(@NonNull Long identifierArg, @NonNull CameraStateTypeData typeArg, @Nullable Long errorIdentifierArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger, "dev.flutter.pigeon.CameraStateFlutterApi.create", getCodec());
@@ -1595,6 +1498,8 @@ public class GeneratedCameraXLibrary {
     /** Handles Dart method `LiveData.removeObservers`. */
     void removeObservers(@NonNull Long identifier);
 
+    void cast(@NonNull Long oldIdentifier, @NonNull Long newIdentifier);
+
     /** The codec used by LiveDataHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -1638,6 +1543,31 @@ public class GeneratedCameraXLibrary {
                 Number identifierArg = (Number) args.get(0);
                 try {
                   api.removeObservers((identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.LiveDataHostApi.cast", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number oldIdentifierArg = (Number) args.get(0);
+                Number newIdentifierArg = (Number) args.get(1);
+                try {
+                  api.cast((oldIdentifierArg == null) ? null : oldIdentifierArg.longValue(), (newIdentifierArg == null) ? null : newIdentifierArg.longValue());
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

@@ -99,6 +99,10 @@ class AndroidCameraXCameraFlutterApis {
       CameraFlutterApi.setup(cameraFlutterApi);
       SystemServicesFlutterApi.setup(systemServicesFlutterApi);
       CameraStateErrorFlutterApi.setup(cameraStateErrorFlutterApiImpl);
+      CameraStateFlutterApi.setup(cameraStateFlutterApiImpl);
+      LiveDataFlutterApi.setup(liveDataFlutterApiImpl);
+      ObserverFlutterApi.setup(observerFlutterApiImpl);
+
       _haveBeenSetUp = true;
     }
   }

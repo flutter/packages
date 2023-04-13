@@ -171,20 +171,6 @@ abstract class ImageCaptureHostApi {
   String takePicture(int identifier);
 }
 
-@HostApi(dartHostTestHandler: 'TestLiveCameraStateHostApi')
-abstract class LiveCameraStateHostApi {
-  void addObserver(int identifier);
-
-  void removeObservers(int identifier);
-}
-
-@FlutterApi()
-abstract class LiveCameraStateFlutterApi {
-  void create(int identifier);
-
-  void onCameraClosing();
-}
-
 /// Host API for `CameraState`.
 ///
 /// This class may handle instantiating and adding native object instances that
@@ -209,12 +195,9 @@ abstract class CameraStateFlutterApi {
   void create(
     int identifier,
     CameraStateTypeData type,
-    int errorIdentifier,
+    int? errorIdentifier,
   );
 }
-
-// TODO(bparrishMines): Copy these classes into pigeon file and run pigeon
-// TODO(bparrishMines): Fix documentation spacing over class methods if this is for iOS
 
 /// Host API for `Observer`.
 ///
@@ -304,6 +287,8 @@ abstract class LiveDataHostApi {
   void removeObservers(
     int identifier,
   );
+
+  void cast(int oldIdentifier, int newIdentifier);
 }
 
 /// Flutter API for `LiveData`.

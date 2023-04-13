@@ -3,11 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Import native classes
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LiveData;
@@ -47,7 +44,6 @@ public class LiveDataFlutterApiWrapper {
    * that is attached to this one. If `instance` has already been added, this method does nothing.
    */
   public void create(@NonNull LiveData<?> instance, @NonNull LiveDataFlutterApi.Reply<Void> callback) {
-
     if (!instanceManager.containsInstance(instance)) {
       api.create(instanceManager.addHostCreatedInstance(instance), callback);
     }

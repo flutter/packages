@@ -68,8 +68,10 @@ class CameraInfoHostApiImpl extends CameraInfoHostApi {
         'No CameraInfo has the identifer of that which was requested.');
 
     final int liveCameraStateId = await getLiveCameraState(identifier!);
-    return instanceManager.getInstanceWithWeakReference<LiveData<CameraState>>(
-        liveCameraStateId)!;
+    final LiveData<dynamic> liveData = instanceManager
+        .getInstanceWithWeakReference<LiveData<dynamic>>(liveCameraStateId)!;
+    final LiveData<CameraState> liveCameraState = liveData.cast<CameraState>();
+    return liveCameraState;
   }
 }
 

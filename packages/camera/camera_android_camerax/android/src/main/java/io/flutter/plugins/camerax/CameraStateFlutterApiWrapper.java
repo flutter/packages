@@ -57,22 +57,22 @@ public class CameraStateFlutterApiWrapper {
       @Nullable CameraState.StateError error,
       @NonNull CameraStateFlutterApi.Reply<Void> callback) {
 
-    CameraStateType cameraStateType;
+    CameraStateType cameraStateType = CameraStateType.CLOSED;
     switch (type) {
-      case CameraState.Type.CLOSED:
-        cameraStateType = CameraState.Type.CLOSED;
+      case CLOSED:
+        cameraStateType = CameraStateType.CLOSED;
         break;
-      case CameraState.Type.CLOSING:
-        cameraStateType = CameraState.Type.CLOSING;
+      case CLOSING:
+        cameraStateType = CameraStateType.CLOSING;
         break;
-      case CameraState.Type.OPEN:
-        cameraStateType = CameraState.Type.CLOSED;
+      case OPEN:
+        cameraStateType = CameraStateType.OPEN;
         break;
-      case CameraState.Type.OPENING:
-        cameraStateType = CameraState.Type.CLOSED;
+      case OPENING:
+        cameraStateType = CameraStateType.OPENING;
         break;
-      case CameraState.Type.PENDING_OPEN:
-        cameraStateType = CameraState.Type.CLOSED;
+      case PENDING_OPEN:
+        cameraStateType = CameraStateType.PENDING_OPEN;
         break;
     }
 

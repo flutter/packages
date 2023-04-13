@@ -67,10 +67,4 @@ public class CameraXProxy {
   public ImageCapture.OutputFileOptions createImageCaptureOutputFileOptions(@NonNull File file) {
     return new ImageCapture.OutputFileOptions.Builder(file).build();
   }
-
-  /** Creates an instance of the {@link LiveCameraStateFlutterApiImpl}. */
-  public LiveCameraStateFlutterApiImpl createLiveCameraStateFlutterApiImpl(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-    return new LiveCameraStateFlutterApiImpl(binaryMessenger, instanceManager);
-  }
 }

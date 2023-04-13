@@ -477,7 +477,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                         () {}, // TODO(camsim99): Add functionality back here.
                     onLongPress: () {
                       if (controller != null) {
-                        controller!.setFocusPoint(null);
+                        // controller!.setFocusPoint(null);
                       }
                       showInSnackBar('Resetting focus point');
                     },
@@ -602,8 +602,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       details.localPosition.dx / constraints.maxWidth,
       details.localPosition.dy / constraints.maxHeight,
     );
-    cameraController.setExposurePoint(offset);
-    cameraController.setFocusPoint(offset);
+    // cameraController.setExposurePoint(offset);
+    // cameraController.setFocusPoint(offset);
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
