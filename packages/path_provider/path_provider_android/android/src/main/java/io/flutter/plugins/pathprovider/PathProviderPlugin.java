@@ -125,27 +125,27 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
 
   private String getStorageDirectoryString(@NonNull Messages.StorageDirectory directory) {
     switch (directory) {
-      case root:
+      case ROOT:
         return null;
-      case music:
+      case MUSIC:
         return "music";
-      case podcasts:
+      case PODCASTS:
         return "podcasts";
-      case ringtones:
+      case RINGTONES:
         return "ringtones";
-      case alarms:
+      case ALARMS:
         return "alarms";
-      case notifications:
+      case NOTIFICATIONS:
         return "notifications";
-      case pictures:
+      case PICTURES:
         return "pictures";
-      case movies:
+      case MOVIES:
         return "movies";
-      case downloads:
+      case DOWNLOADS:
         return "downloads";
-      case dcim:
+      case DCIM:
         return "dcim";
-      case documents:
+      case DOCUMENTS:
         return "documents";
       default:
         throw new RuntimeException("Unrecognized directory: " + directory);
