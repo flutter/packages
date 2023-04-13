@@ -67,7 +67,7 @@
   return self;
 }
 
-- (void)create:(NSURL *)instance completion:(void (^)(NSError *_Nullable))completion {
+- (void)create:(NSURL *)instance completion:(void (^)(FlutterError *_Nullable))completion {
   [self.api createWithIdentifier:@([self.instanceManager addHostCreatedInstance:instance])
                       completion:completion];
 }

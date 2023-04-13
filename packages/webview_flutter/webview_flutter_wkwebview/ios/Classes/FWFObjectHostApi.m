@@ -34,7 +34,7 @@
                       keyPath:(NSString *)keyPath
                        object:(NSObject *)object
                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
-                   completion:(void (^)(NSError *_Nullable))completion {
+                   completion:(void (^)(FlutterError *_Nullable))completion {
   NSMutableArray<FWFNSKeyValueChangeKeyEnumData *> *changeKeys = [NSMutableArray array];
   NSMutableArray<id> *changeValues = [NSMutableArray array];
 
@@ -48,7 +48,7 @@
           [[FWFURLFlutterApiImpl alloc] initWithBinaryMessenger:self.binaryMessenger
                                                 instanceManager:self.instanceManager];
       [flutterApi create:value
-              completion:^(NSError *error) {
+              completion:^(FlutterError *error) {
                 NSAssert(!error, @"%@", error);
               }];
       isIdentifier = YES;
@@ -91,7 +91,7 @@
                                 keyPath:keyPath
                                  object:object
                                  change:change
-                             completion:^(NSError *error) {
+                             completion:^(FlutterError *error) {
                                NSAssert(!error, @"%@", error);
                              }];
 }

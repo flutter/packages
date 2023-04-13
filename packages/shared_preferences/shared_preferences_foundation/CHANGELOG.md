@@ -1,3 +1,7 @@
+## 2.2.1
+
+* Updates pigeon for null value handling fixes.
+
 ## 2.2.0
 
 * Adds `getAllWithPrefix` and `clearWithPrefix` methods.
