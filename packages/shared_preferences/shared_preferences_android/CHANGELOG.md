@@ -1,3 +1,8 @@
+## 2.1.1
+
+* Updates minimum Flutter version to 3.0.
+* Converts implementation to Pigeon.
+
 ## 2.1.0
 
 * Adds `getAllWithPrefix` and `clearWithPrefix` methods.
