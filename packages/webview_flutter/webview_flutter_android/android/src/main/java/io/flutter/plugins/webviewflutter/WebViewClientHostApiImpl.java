@@ -83,6 +83,11 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+      flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
+    }
+
+    @Override
     public void onUnhandledKeyEvent(WebView view, KeyEvent event) {
       // Deliberately empty. Occasionally the webview will mark events as having failed to be
       // handled even though they were handled. We don't want to propagate those as they're not
@@ -155,7 +160,12 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
-    public void onUnhandledKeyEvent(WebView view, KeyEvent event) {
+    public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+      flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
+    }
+
+    @Override
+    public void onUnhandledKeyEvent(@NonNull WebView view, @NonNull KeyEvent event) {
       // Deliberately empty. Occasionally the webview will mark events as having failed to be
       // handled even though they were handled. We don't want to propagate those as they're not
       // truly lost.
@@ -175,7 +185,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
      * @param flutterApi handles sending messages to Dart
      * @return the created {@link WebViewClient}
      */
-    public WebViewClient createWebViewClient(WebViewClientFlutterApiImpl flutterApi) {
+    @NonNull
+    public WebViewClient createWebViewClient(@NonNull WebViewClientFlutterApiImpl flutterApi) {
       // WebViewClientCompat is used to get
       // shouldOverrideUrlLoading(WebView view, WebResourceRequest request)
       // invoked by the webview on older Android devices, without it pages that use iframes will

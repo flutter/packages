@@ -1,7 +1,11 @@
-## 3.5.0
+## 3.6.0
 
 * Adds support for handling geolocation permissions. See
   `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
+
+## 3.5.0
+
+* Adds support for `PlatformNavigationDelegate.onUrlChange`.
 * Bumps androidx.webkit:webkit from 1.6.0 to 1.6.1.
 * Fixes common typos in tests and documentation.
 
