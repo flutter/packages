@@ -16,6 +16,7 @@
 #import "FWFScrollViewHostApi.h"
 #import "FWFUIDelegateHostApi.h"
 #import "FWFUIViewHostApi.h"
+#import "FWFURLHostApi.h"
 #import "FWFUserContentControllerHostApi.h"
 #import "FWFWebViewConfigurationHostApi.h"
 #import "FWFWebViewFlutterWKWebViewExternalAPI.h"

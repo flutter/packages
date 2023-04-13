@@ -364,6 +364,16 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnHttpError,
+          [onHttpError],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewController].
@@ -799,6 +809,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebView,
       String,
+      bool,
+    )? doUpdateVisitedHistory,
+    void Function(
+      _i2.WebView,
+      String,
     )? onPageFinished,
     void Function(
       _i2.WebView,
@@ -826,6 +841,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
   }) get createAndroidWebViewClient => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebViewClient),
         returnValue: ({
+          void Function(
+            _i2.WebView,
+            String,
+            bool,
+          )? doUpdateVisitedHistory,
           void Function(
             _i2.WebView,
             String,
@@ -862,6 +882,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             String,
+            bool,
+          )? doUpdateVisitedHistory,
+          void Function(
+            _i2.WebView,
+            String,
           )? onPageFinished,
           void Function(
             _i2.WebView,
@@ -892,6 +917,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebViewClient),
         ),
       ) as _i2.WebViewClient Function({
+        void Function(
+          _i2.WebView,
+          String,
+          bool,
+        )? doUpdateVisitedHistory,
         void Function(
           _i2.WebView,
           String,

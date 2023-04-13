@@ -677,6 +677,7 @@ class WebViewClient extends JavaObject {
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
+    this.doUpdateVisitedHistory,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -696,6 +697,7 @@ class WebViewClient extends JavaObject {
     @Deprecated('Only called on Android version < 23.') this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
+    this.doUpdateVisitedHistory,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -840,6 +842,10 @@ class WebViewClient extends JavaObject {
   /// indicates whether the [WebView] loaded the URL.
   final void Function(WebView webView, String url)? urlLoading;
 
+  /// Notify the host application to update its visited links database.
+  final void Function(WebView webView, String url, bool isReload)?
+      doUpdateVisitedHistory;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebViewClient.shouldOverrideUrlLoading(...)`.
   ///
@@ -867,6 +873,7 @@ class WebViewClient extends JavaObject {
       onReceivedError: onReceivedError,
       requestLoading: requestLoading,
       urlLoading: urlLoading,
+      doUpdateVisitedHistory: doUpdateVisitedHistory,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
