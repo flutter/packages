@@ -131,6 +131,14 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
     );
 
+    _webView.addObserver(
+      _webView,
+      keyPath: 'URL',
+      options: <NSKeyValueObservingOptions>{
+        NSKeyValueObservingOptions.newValue,
+      },
+    );
+
     final WeakReference<WebKitWebViewController> weakThis =
         WeakReference<WebKitWebViewController>(this);
     _uiDelegate = _webKitParams.webKitProxy.createUIDelegate(
