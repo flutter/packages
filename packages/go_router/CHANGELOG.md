@@ -1,7 +1,3 @@
-## 6.5.6
-
-- Adds name parameter to `TypedGoRoute`
-
 ## 6.5.5
 
 - Fixes an issue when popping pageless route would accidentally complete imperative page.
