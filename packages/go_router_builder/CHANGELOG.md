@@ -1,3 +1,7 @@
+## 1.2.2
+
+* Generated routes now adhere to the updated `push` method by having the ability to return the value. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650)
+
 ## 1.2.1
 
 * Supports opt-in required extra parameters. [#117261](https://github.com/flutter/flutter/issues/117261)
