@@ -1,5 +1,6 @@
 ## NEXT
 
+* Updates minimum Flutter version to 3.3.
 * Creates camera_android_camerax plugin for development.
 * Adds CameraInfo class and removes unnecessary code from plugin.
 * Adds CameraSelector class.

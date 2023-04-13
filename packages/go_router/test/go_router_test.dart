@@ -21,14 +21,14 @@ import 'test_helpers.dart';
 const bool enableLogs = false;
 final Logger log = Logger('GoRouter tests');
 
-Future<void> sendPlatformUrl(String url) async {
+Future<void> sendPlatformUrl(String url, WidgetTester tester) async {
   final Map<String, dynamic> testRouteInformation = <String, dynamic>{
     'location': url,
   };
   final ByteData message = const JSONMethodCodec().encodeMethodCall(
     MethodCall('pushRouteInformation', testRouteInformation),
   );
-  await ServicesBinding.instance.defaultBinaryMessenger
+  await tester.binding.defaultBinaryMessenger
       .handlePlatformMessage('flutter/navigation', message, (_) {});
 }
 
@@ -281,6 +281,57 @@ void main() {
       router.go('/1234?id=456');
       await tester.pumpAndSettle();
       expect(find.text('/1234?id=456'), findsOneWidget);
+    });
+
+    testWidgets('repeatedly pops imperative route does not crash',
+        (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/123369.
+      final UniqueKey home = UniqueKey();
+      final UniqueKey settings = UniqueKey();
+      final UniqueKey dialog = UniqueKey();
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => DummyScreen(key: home),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (_, __) => DummyScreen(key: settings),
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, navigatorKey: navKey);
+      expect(find.byKey(home), findsOneWidget);
+
+      router.push('/settings');
+      await tester.pumpAndSettle();
+      expect(find.byKey(home), findsNothing);
+      expect(find.byKey(settings), findsOneWidget);
+
+      showDialog(
+        context: navKey.currentContext!,
+        builder: (_) => DummyScreen(key: dialog),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(dialog), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.byKey(dialog), findsNothing);
+      expect(find.byKey(settings), findsOneWidget);
+
+      showDialog(
+        context: navKey.currentContext!,
+        builder: (_) => DummyScreen(key: dialog),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(dialog), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.byKey(dialog), findsNothing);
+      expect(find.byKey(settings), findsOneWidget);
     });
 
     testWidgets('match sub-route', (WidgetTester tester) async {
@@ -1495,7 +1546,7 @@ void main() {
 
       redirected = false;
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/login');
@@ -1528,7 +1579,7 @@ void main() {
 
       expect(router.location, '/');
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
       await tester.pumpAndSettle();
       expect(router.location, '/dummy');
     });
@@ -1631,7 +1682,7 @@ void main() {
       });
       redirected = false;
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy');
+      await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/login');
@@ -2024,7 +2075,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
 
       // Directly set the url through platform message.
-      await sendPlatformUrl('/dummy/dummy2');
+      await sendPlatformUrl('/dummy/dummy2', tester);
 
       await tester.pumpAndSettle();
       expect(router.location, '/other');
@@ -2130,6 +2181,9 @@ void main() {
         routes,
         tester,
       );
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       expect(router.routeInformationProvider.value.location, '/dummy');
       TestWidgetsFlutterBinding
           .instance.platformDispatcher.defaultRouteNameTestValue = '/';

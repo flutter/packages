@@ -35,10 +35,10 @@
                            webView:(WKWebView *)webView
                      configuration:(WKWebViewConfiguration *)configuration
                   navigationAction:(WKNavigationAction *)navigationAction
-                        completion:(void (^)(NSError *_Nullable))completion {
+                        completion:(void (^)(FlutterError *_Nullable))completion {
   if (![self.instanceManager containsInstance:configuration]) {
     [self.webViewConfigurationFlutterApi createWithConfiguration:configuration
-                                                      completion:^(NSError *error) {
+                                                      completion:^(FlutterError *error) {
                                                         NSAssert(!error, @"%@", error);
                                                       }];
   }
@@ -77,7 +77,7 @@
                                          webView:webView
                                    configuration:configuration
                                 navigationAction:navigationAction
-                                      completion:^(NSError *error) {
+                                      completion:^(FlutterError *error) {
                                         NSAssert(!error, @"%@", error);
                                       }];
   return nil;

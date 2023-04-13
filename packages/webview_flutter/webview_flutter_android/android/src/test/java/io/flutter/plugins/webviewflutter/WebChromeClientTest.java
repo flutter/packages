@@ -19,6 +19,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebView.WebViewTransport;
 import android.webkit.WebViewClient;
+import androidx.annotation.NonNull;
 import io.flutter.plugins.webviewflutter.WebChromeClientHostApiImpl.WebChromeClientCreator;
 import io.flutter.plugins.webviewflutter.WebChromeClientHostApiImpl.WebChromeClientImpl;
 import org.junit.After;
@@ -50,8 +51,9 @@ public class WebChromeClientTest {
     final WebChromeClientCreator webChromeClientCreator =
         new WebChromeClientCreator() {
           @Override
+          @NonNull
           public WebChromeClientImpl createWebChromeClient(
-              WebChromeClientFlutterApiImpl flutterApi) {
+              @NonNull WebChromeClientFlutterApiImpl flutterApi) {
             webChromeClient = super.createWebChromeClient(flutterApi);
             return webChromeClient;
           }

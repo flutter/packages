@@ -110,7 +110,7 @@ void main() {
       });
 
       test('create', () {
-        verify(mockPlatformHostApi.create(webViewInstanceId, false));
+        verify(mockPlatformHostApi.create(webViewInstanceId));
       });
 
       test('setWebContentsDebuggingEnabled true', () {
@@ -736,6 +736,33 @@ void main() {
         expect(
           result,
           containsAllInOrder(<Object?>[mockWebView, 'https://www.google.com']),
+        );
+      });
+
+      test('doUpdateVisitedHistory', () {
+        late final List<Object> result;
+        when(mockWebViewClient.doUpdateVisitedHistory).thenReturn(
+          (
+            WebView webView,
+            String url,
+            bool isReload,
+          ) {
+            result = <Object>[webView, url, isReload];
+          },
+        );
+
+        flutterApi.doUpdateVisitedHistory(
+          mockWebViewClientInstanceId,
+          mockWebViewInstanceId,
+          'https://www.google.com',
+          false,
+        );
+
+        expect(
+          result,
+          containsAllInOrder(
+            <Object?>[mockWebView, 'https://www.google.com', false],
+          ),
         );
       });
 

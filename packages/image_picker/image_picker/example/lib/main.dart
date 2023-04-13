@@ -184,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
           key: UniqueKey(),
           itemBuilder: (BuildContext context, int index) {
             // Why network for web?
-            // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
+            // See https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
             return Semantics(
               label: 'image_picker_example_picked_image',
               child: kIsWeb
