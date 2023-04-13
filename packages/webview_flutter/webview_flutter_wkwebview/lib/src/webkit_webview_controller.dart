@@ -43,17 +43,18 @@ class WebKitWebViewControllerCreationParams
     extends PlatformWebViewControllerCreationParams {
   /// Constructs a [WebKitWebViewControllerCreationParams].
   WebKitWebViewControllerCreationParams({
-    @visibleForTesting this.webKitProxy = const WebKitProxy(),
+    @visibleForTesting WebKitProxy? webKitProxy,
     this.mediaTypesRequiringUserAction = const <PlaybackMediaTypes>{
       PlaybackMediaTypes.audio,
       PlaybackMediaTypes.video,
     },
     this.allowsInlineMediaPlayback = false,
     @visibleForTesting InstanceManager? instanceManager,
-  }) : _instanceManager = instanceManager ?? NSObject.globalInstanceManager {
-    _configuration = webKitProxy.createWebViewConfiguration(
-      instanceManager: _instanceManager,
-    );
+  })  : webKitProxy = webKitProxy ?? WebKitProxy(),
+        _instanceManager = instanceManager ?? NSObject.globalInstanceManager {
+    _configuration = this.webKitProxy.createWebViewConfiguration(
+          instanceManager: _instanceManager,
+        );
 
     if (mediaTypesRequiringUserAction.isEmpty) {
       _configuration.setMediaTypesRequiringUserActionForPlayback(
@@ -77,7 +78,7 @@ class WebKitWebViewControllerCreationParams
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
-    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
+    @visibleForTesting WebKitProxy? webKitProxy,
     Set<PlaybackMediaTypes> mediaTypesRequiringUserAction =
         const <PlaybackMediaTypes>{
       PlaybackMediaTypes.audio,
@@ -316,24 +317,42 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> scrollTo(int x, int y) {
-    return _webView.scrollView.setContentOffset(Point<double>(
-      x.toDouble(),
-      y.toDouble(),
-    ));
+    final WKWebView webView = _webView;
+    if (webView is WKWebViewIOS) {
+      return webView.scrollView.setContentOffset(Point<double>(
+        x.toDouble(),
+        y.toDouble(),
+      ));
+    } else {
+      // TODO(stuartmorgan): Investigate doing this via JS instead.
+      throw UnimplementedError('scrollTo is not implemented on macOS');
+    }
   }
 
   @override
   Future<void> scrollBy(int x, int y) {
-    return _webView.scrollView.scrollBy(Point<double>(
-      x.toDouble(),
-      y.toDouble(),
-    ));
+    final WKWebView webView = _webView;
+    if (webView is WKWebViewIOS) {
+      return webView.scrollView.scrollBy(Point<double>(
+        x.toDouble(),
+        y.toDouble(),
+      ));
+    } else {
+      // TODO(stuartmorgan): Investigate doing this via JS instead.
+      throw UnimplementedError('scrollBy is not implemented on macOS');
+    }
   }
 
   @override
   Future<Offset> getScrollPosition() async {
-    final Point<double> offset = await _webView.scrollView.getContentOffset();
-    return Offset(offset.x, offset.y);
+    final WKWebView webView = _webView;
+    if (webView is WKWebViewIOS) {
+      final Point<double> offset = await webView.scrollView.getContentOffset();
+      return Offset(offset.x, offset.y);
+    } else {
+      // TODO(stuartmorgan): Investigate doing this via JS instead.
+      throw UnimplementedError('scrollTo is not implemented on macOS');
+    }
   }
 
   /// Whether horizontal swipe gestures trigger page navigation.
@@ -343,12 +362,18 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setBackgroundColor(Color color) {
-    return Future.wait(<Future<void>>[
-      _webView.setOpaque(false),
-      _webView.setBackgroundColor(Colors.transparent),
-      // This method must be called last.
-      _webView.scrollView.setBackgroundColor(color),
-    ]);
+    final WKWebView webView = _webView;
+    if (webView is WKWebViewIOS) {
+      return Future.wait(<Future<void>>[
+        webView.setOpaque(false),
+        webView.setBackgroundColor(Colors.transparent),
+        // This method must be called last.
+        webView.scrollView.setBackgroundColor(color),
+      ]);
+    } else {
+      // TODO(stuartmorgan): Verify that this works.
+      return webView.setBackgroundColor(color);
+    }
   }
 
   @override
@@ -440,9 +465,10 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
   WebKitJavaScriptChannelParams({
     required super.name,
     required super.onMessageReceived,
-    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
+    @visibleForTesting WebKitProxy? webKitProxy,
   })  : assert(name.isNotEmpty),
-        _messageHandler = webKitProxy.createScriptMessageHandler(
+        _messageHandler =
+            (webKitProxy ?? WebKitProxy()).createScriptMessageHandler(
           didReceiveScriptMessage: withWeakReferenceTo(
             onMessageReceived,
             (WeakReference<void Function(JavaScriptMessage)> weakReference) {
@@ -464,7 +490,7 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
   /// [JavaScriptChannelParams].
   WebKitJavaScriptChannelParams.fromJavaScriptChannelParams(
     JavaScriptChannelParams params, {
-    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
+    @visibleForTesting WebKitProxy? webKitProxy,
   }) : this(
           name: params.name,
           onMessageReceived: params.onMessageReceived,
@@ -572,17 +598,17 @@ class WebKitWebResourceError extends WebResourceError {
 class WebKitNavigationDelegateCreationParams
     extends PlatformNavigationDelegateCreationParams {
   /// Constructs a [WebKitNavigationDelegateCreationParams].
-  const WebKitNavigationDelegateCreationParams({
-    @visibleForTesting this.webKitProxy = const WebKitProxy(),
-  });
+  WebKitNavigationDelegateCreationParams({
+    @visibleForTesting WebKitProxy? webKitProxy,
+  }) : webKitProxy = webKitProxy ?? WebKitProxy();
 
   /// Constructs a [WebKitNavigationDelegateCreationParams] using a
   /// [PlatformNavigationDelegateCreationParams].
-  const WebKitNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
+  WebKitNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
     PlatformNavigationDelegateCreationParams params, {
-    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
+    @visibleForTesting WebKitProxy? webKitProxy,
   }) : this(webKitProxy: webKitProxy);
 
   /// Handles constructing objects and calling static methods for the WebKit

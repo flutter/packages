@@ -794,7 +794,7 @@ void main() {
 
       final WebKitNavigationDelegate navigationDelegate =
           WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -851,7 +851,7 @@ void main() {
 
       final WebKitNavigationDelegate navigationDelegate =
           WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: WKUIDelegate.detached,
@@ -902,7 +902,7 @@ void main() {
 
       final WebKitNavigationDelegate navigationDelegate =
           WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: WKUIDelegate.detached,

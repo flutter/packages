@@ -7,7 +7,11 @@
 
 @implementation FWFAssetManager
 - (NSString *)lookupKeyForAsset:(NSString *)asset {
+#if TARGET_OS_IOS
   return [FlutterDartProject lookupKeyForAsset:asset];
+#else
+  return nil;
+#endif
 }
 @end
 
@@ -21,16 +25,19 @@
     _objectApi = [[FWFObjectFlutterApiImpl alloc] initWithBinaryMessenger:binaryMessenger
                                                           instanceManager:instanceManager];
 
+#if TARGET_OS_IOS
     self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     if (@available(iOS 13.0, *)) {
       self.scrollView.automaticallyAdjustsScrollIndicatorInsets = NO;
     }
+#endif
   }
   return self;
 }
 
 - (void)setFrame:(CGRect)frame {
   [super setFrame:frame];
+#if TARGET_OS_IOS
   // Prevents the contentInsets from being adjusted by iOS and gives control to Flutter.
   self.scrollView.contentInset = UIEdgeInsetsZero;
 
@@ -42,6 +49,7 @@
   UIEdgeInsets insetToAdjust = self.scrollView.adjustedContentInset;
   self.scrollView.contentInset = UIEdgeInsetsMake(-insetToAdjust.top, -insetToAdjust.left,
                                                   -insetToAdjust.bottom, -insetToAdjust.right);
+#endif
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -57,9 +65,14 @@
                              }];
 }
 
+#if TARGET_OS_IOS
+
+#pragma mark FlutterPlatformView
+
 - (nonnull UIView *)view {
   return self;
 }
+#endif
 @end
 
 @interface FWFWebViewHostApiImpl ()

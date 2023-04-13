@@ -100,8 +100,12 @@
                                                              error:
                                                                  (FlutterError *_Nullable *_Nonnull)
                                                                      error {
+#if TARGET_OS_IOS
   [[self webViewConfigurationForIdentifier:identifier]
       setAllowsInlineMediaPlayback:allow.boolValue];
+#endif
+  // No-op, rather than error out, on macOS, since it's not a meaningful option on macOS and it's
+  // easier for clients if it's just ignored.
 }
 
 - (void)

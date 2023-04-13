@@ -185,7 +185,7 @@ Future<void> main() async {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setPlatformNavigationDelegate(
         WebKitNavigationDelegate(
-          const WebKitNavigationDelegateCreationParams(),
+          WebKitNavigationDelegateCreationParams(),
         )..setOnPageFinished((String url) => pageLoads.add(url)),
       )
       ..loadRequest(
@@ -219,7 +219,7 @@ Future<void> main() async {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setPlatformNavigationDelegate(
         WebKitNavigationDelegate(
-          const WebKitNavigationDelegateCreationParams(),
+          WebKitNavigationDelegateCreationParams(),
         )..setOnPageFinished((_) => pageFinished.complete()),
       );
 
@@ -345,7 +345,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )..setOnPageFinished((_) => pageLoaded.complete()),
         )
         ..loadRequest(
@@ -377,7 +377,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )..setOnPageFinished((_) => pageLoaded.complete()),
         )
         ..loadRequest(
@@ -417,7 +417,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )..setOnPageFinished((_) => pageLoaded.complete()),
         )
         ..addJavaScriptChannel(
@@ -473,7 +473,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )..setOnPageFinished((_) => pageLoaded.complete()),
         )
         ..addJavaScriptChannel(
@@ -558,7 +558,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )..setOnPageFinished((_) => pageLoaded.complete()),
         )
         ..loadRequest(
@@ -590,7 +590,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )..setOnPageFinished((_) => pageLoaded.complete()),
         )
         ..loadRequest(
@@ -636,7 +636,7 @@ Future<void> main() async {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setPlatformNavigationDelegate(
         WebKitNavigationDelegate(
-          const WebKitNavigationDelegateCreationParams(),
+          WebKitNavigationDelegateCreationParams(),
         )..setOnPageFinished((_) => pageLoaded.complete()),
       )
       ..loadRequest(
@@ -700,7 +700,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )..setOnPageFinished((_) => pageLoaded.complete()),
         )
         ..loadRequest(
@@ -761,7 +761,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )
             ..setOnPageFinished((_) => pageLoaded.complete())
             ..setOnNavigationRequest((NavigationRequest navigationRequest) {
@@ -802,7 +802,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )..setOnWebResourceError((WebResourceError error) {
               errorCompleter.complete(error);
             }),
@@ -837,7 +837,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )
             ..setOnPageFinished((_) => pageFinishCompleter.complete())
             ..setOnWebResourceError((WebResourceError error) {
@@ -891,7 +891,7 @@ Future<void> main() async {
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setPlatformNavigationDelegate(
             WebKitNavigationDelegate(
-              const WebKitNavigationDelegateCreationParams(),
+              WebKitNavigationDelegateCreationParams(),
             )
               ..setOnPageFinished((_) => pageFinishCompleter.complete())
               ..setOnWebResourceError((WebResourceError error) {
@@ -928,7 +928,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )
             ..setOnPageFinished((_) => pageLoaded.complete())
             ..setOnNavigationRequest((NavigationRequest navigationRequest) {
@@ -971,7 +971,7 @@ Future<void> main() async {
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(
           WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(),
+            WebKitNavigationDelegateCreationParams(),
           )
             ..setOnPageFinished((_) => pageLoaded.complete())
             ..setOnNavigationRequest(
@@ -1033,7 +1033,7 @@ Future<void> main() async {
     )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setPlatformNavigationDelegate(WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(),
+        WebKitNavigationDelegateCreationParams(),
       )..setOnPageFinished((_) => pageLoaded.complete()));
 
     await controller.runJavaScript('window.open("$primaryUrl", "_blank")');
@@ -1061,7 +1061,7 @@ Future<void> main() async {
       )
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setPlatformNavigationDelegate(WebKitNavigationDelegate(
-          const WebKitNavigationDelegateCreationParams(),
+          WebKitNavigationDelegateCreationParams(),
         )..setOnPageFinished((_) => pageLoaded.complete()))
         ..loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
@@ -1117,7 +1117,7 @@ class ResizableWebViewState extends State<ResizableWebView> {
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setPlatformNavigationDelegate(
       WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(),
+        WebKitNavigationDelegateCreationParams(),
       )..setOnPageFinished((_) => widget.onPageFinished()),
     )
     ..addJavaScriptChannel(

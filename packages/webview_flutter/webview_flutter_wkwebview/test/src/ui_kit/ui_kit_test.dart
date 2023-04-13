@@ -45,7 +45,7 @@ void main() {
           MockTestWKWebViewConfigurationHostApi(),
         );
         TestWKWebViewHostApi.setup(MockTestWKWebViewHostApi());
-        final WKWebView webView = WKWebView(
+        final WKWebView webView = WKWebViewIOS(
           WKWebViewConfiguration(instanceManager: instanceManager),
           instanceManager: instanceManager,
         );

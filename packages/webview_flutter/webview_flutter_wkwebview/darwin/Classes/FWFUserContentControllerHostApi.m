@@ -56,12 +56,12 @@
                                                             error:
                                                                 (FlutterError *_Nullable *_Nonnull)
                                                                     error {
-  if (@available(iOS 14.0, *)) {
+  if (@available(iOS 14.0, macOS 11, *)) {
     [[self userContentControllerForIdentifier:identifier] removeAllScriptMessageHandlers];
   } else {
     *error = [FlutterError
         errorWithCode:@"FWFUnsupportedVersionError"
-              message:@"removeAllScriptMessageHandlers is only supported on versions 14+."
+              message:@"removeAllScriptMessageHandlers is only supported on iOS 14+ and macOS 11+."
               details:nil];
   }
 }

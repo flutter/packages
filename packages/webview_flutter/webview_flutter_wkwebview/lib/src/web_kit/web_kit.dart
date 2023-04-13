@@ -870,8 +870,13 @@ class WKNavigationDelegate extends NSObject {
 /// Object that displays interactive web content, such as for an in-app browser.
 ///
 /// Wraps [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview?language=objc).
+///
+/// This is abstract, since iOS and macOS WKWebViews have different
+/// implementation details; the concrete implementations are [WKWebViewIOS] and
+/// [WKWebViewMacOS].
 @immutable
-class WKWebView extends UIView {
+// TODO(stuartmorgan): Deal with WKWebView on macOS not being a UIView.
+abstract class WKWebView extends UIView {
   /// Constructs a [WKWebView].
   ///
   /// [configuration] contains the configuration details for the web view. This
@@ -924,13 +929,6 @@ class WKWebView extends UIView {
   /// property contains a default configuration object.
   late final WKWebViewConfiguration configuration =
       WKWebViewConfiguration.fromWebView(
-    this,
-    binaryMessenger: _webViewApi.binaryMessenger,
-    instanceManager: _webViewApi.instanceManager,
-  );
-
-  /// The scrollable view associated with the web view.
-  late final UIScrollView scrollView = UIScrollView.fromWebView(
     this,
     binaryMessenger: _webViewApi.binaryMessenger,
     instanceManager: _webViewApi.instanceManager,
@@ -1055,10 +1053,62 @@ class WKWebView extends UIView {
       javaScriptString,
     );
   }
+}
+
+/// The iOS version of a WKWebView.
+class WKWebViewIOS extends WKWebView {
+  /// Constructs a new iOS WKWebView; see [WKWebView] for details.
+  WKWebViewIOS(
+    super.configuration, {
+    super.observeValue,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super();
+
+  /// See [WKWebView.detached].
+  WKWebViewIOS.detached({
+    super.observeValue,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  /// The scrollable view associated with the web view.
+  late final UIScrollView scrollView = UIScrollView.fromWebView(
+    this,
+    binaryMessenger: _webViewApi.binaryMessenger,
+    instanceManager: _webViewApi.instanceManager,
+  );
 
   @override
   WKWebView copy() {
-    return WKWebView.detached(
+    return WKWebViewIOS.detached(
+      observeValue: observeValue,
+      binaryMessenger: _webViewApi.binaryMessenger,
+      instanceManager: _webViewApi.instanceManager,
+    );
+  }
+}
+
+/// The macOS version of a WKWebView.
+class WKWebViewMacOS extends WKWebView {
+  /// Constructs a new iOS WKWebView; see [WKWebView] for details.
+  WKWebViewMacOS(
+    super.configuration, {
+    super.observeValue,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super();
+
+  /// See [WKWebView.detached].
+  WKWebViewMacOS.detached({
+    super.observeValue,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  @override
+  WKWebView copy() {
+    return WKWebViewMacOS.detached(
       observeValue: observeValue,
       binaryMessenger: _webViewApi.binaryMessenger,
       instanceManager: _webViewApi.instanceManager,

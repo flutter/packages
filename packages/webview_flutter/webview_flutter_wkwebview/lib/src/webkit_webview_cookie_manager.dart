@@ -15,7 +15,7 @@ class WebKitWebViewCookieManagerCreationParams
   /// Constructs a [WebKitWebViewCookieManagerCreationParams].
   WebKitWebViewCookieManagerCreationParams({
     WebKitProxy? webKitProxy,
-  }) : webKitProxy = webKitProxy ?? const WebKitProxy();
+  }) : webKitProxy = webKitProxy ?? WebKitProxy();
 
   /// Constructs a [WebKitWebViewCookieManagerCreationParams] using a
   /// [PlatformWebViewCookieManagerCreationParams].

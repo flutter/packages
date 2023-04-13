@@ -87,7 +87,7 @@ NSHTTPCookiePropertyKey _Nullable FWFNSHTTPCookiePropertyKeyFromEnumData(
     case FWFNSHttpCookiePropertyKeyEnumPort:
       return NSHTTPCookiePort;
     case FWFNSHttpCookiePropertyKeyEnumSameSitePolicy:
-      if (@available(iOS 13.0, *)) {
+      if (@available(iOS 13.0, macOS 10.15, *)) {
         return NSHTTPCookieSameSitePolicy;
       } else {
         return nil;

@@ -35,7 +35,7 @@ void main() {
               )? observeValue,
               InstanceManager? instanceManager,
             }) {
-              final WKWebView webView = WKWebView.detached(
+              final WKWebView webView = WKWebViewIOS.detached(
                 instanceManager: testInstanceManager,
               );
               testInstanceManager.addDartCreatedInstance(webView);

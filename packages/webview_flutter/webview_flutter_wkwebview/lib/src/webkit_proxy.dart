@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'common/instance_manager.dart';
 import 'foundation/foundation.dart';
 import 'web_kit/web_kit.dart';
@@ -10,6 +12,17 @@ import 'web_kit/web_kit.dart';
 // function literals: https://github.com/dart-lang/language/issues/1048.
 WKWebsiteDataStore _defaultWebsiteDataStore() =>
     WKWebsiteDataStore.defaultDataStore;
+
+/// The type for a WKWebView implementation's constructor.
+typedef WebViewConstructor = WKWebView Function(
+  WKWebViewConfiguration configuration, {
+  void Function(
+    String keyPath,
+    NSObject object,
+    Map<NSKeyValueChangeKey, Object?> change,
+  )? observeValue,
+  InstanceManager? instanceManager,
+});
 
 /// Handles constructing objects and calling static methods for the WebKit
 /// native library.
@@ -22,25 +35,18 @@ WKWebsiteDataStore _defaultWebsiteDataStore() =>
 /// it intends to return.
 class WebKitProxy {
   /// Constructs a [WebKitProxy].
-  const WebKitProxy({
-    this.createWebView = WKWebView.new,
+  WebKitProxy({
+    WebViewConstructor? createWebView,
     this.createWebViewConfiguration = WKWebViewConfiguration.new,
     this.createScriptMessageHandler = WKScriptMessageHandler.new,
     this.defaultWebsiteDataStore = _defaultWebsiteDataStore,
     this.createNavigationDelegate = WKNavigationDelegate.new,
     this.createUIDelegate = WKUIDelegate.new,
-  });
+  }) : createWebView = createWebView ??
+            (Platform.isIOS ? WKWebViewIOS.new : WKWebViewMacOS.new);
 
   /// Constructs a [WKWebView].
-  final WKWebView Function(
-    WKWebViewConfiguration configuration, {
-    void Function(
-      String keyPath,
-      NSObject object,
-      Map<NSKeyValueChangeKey, Object?> change,
-    )? observeValue,
-    InstanceManager? instanceManager,
-  }) createWebView;
+  final WebViewConstructor createWebView;
 
   /// Constructs a [WKWebViewConfiguration].
   final WKWebViewConfiguration Function({

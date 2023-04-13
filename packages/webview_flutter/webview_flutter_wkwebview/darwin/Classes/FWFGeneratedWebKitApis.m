@@ -6,6 +6,7 @@
 
 #import "FWFGeneratedWebKitApis.h"
 #if TARGET_OS_OSX
+// Temporary manual hack; see https://github.com/flutter/flutter/issues/124724.
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>

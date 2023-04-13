@@ -19,41 +19,57 @@
   return self;
 }
 
+#if TARGET_OS_IOS
 - (UIScrollView *)scrollViewForIdentifier:(NSNumber *)identifier {
   return (UIScrollView *)[self.instanceManager instanceForIdentifier:identifier.longValue];
 }
+#endif
 
 - (void)createFromWebViewWithIdentifier:(nonnull NSNumber *)identifier
                       webViewIdentifier:(nonnull NSNumber *)webViewIdentifier
                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+#if TARGET_OS_IOS
   WKWebView *webView =
       (WKWebView *)[self.instanceManager instanceForIdentifier:webViewIdentifier.longValue];
   [self.instanceManager addDartCreatedInstance:webView.scrollView
                                 withIdentifier:identifier.longValue];
+#else
+  *error = [FlutterError errorWithCode:@"UnavailableApi"
+                               message:@"scrollView is unavailable on macOS"
+                               details:nil];
+#endif
 }
 
 - (NSArray<NSNumber *> *)
     contentOffsetForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
                                        error:(FlutterError *_Nullable *_Nonnull)error {
+#if TARGET_OS_IOS
   CGPoint point = [[self scrollViewForIdentifier:identifier] contentOffset];
   return @[ @(point.x), @(point.y) ];
+#else
+  return @[@(0), @(0)];
+#endif
 }
 
 - (void)scrollByForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
                                           x:(nonnull NSNumber *)x
                                           y:(nonnull NSNumber *)y
                                       error:(FlutterError *_Nullable *_Nonnull)error {
+#if TARGET_OS_IOS
   UIScrollView *scrollView = [self scrollViewForIdentifier:identifier];
   CGPoint contentOffset = scrollView.contentOffset;
   [scrollView setContentOffset:CGPointMake(contentOffset.x + x.doubleValue,
                                            contentOffset.y + y.doubleValue)];
+#endif
 }
 
 - (void)setContentOffsetForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
                                                 toX:(nonnull NSNumber *)x
                                                   y:(nonnull NSNumber *)y
                                               error:(FlutterError *_Nullable *_Nonnull)error {
+#if TARGET_OS_IOS
   [[self scrollViewForIdentifier:identifier]
       setContentOffset:CGPointMake(x.doubleValue, y.doubleValue)];
+#endif
 }
 @end
