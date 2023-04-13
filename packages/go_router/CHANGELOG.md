@@ -1,3 +1,7 @@
+## 6.5.7
+
+- Adds name parameter to `TypedGoRoute`
+
 ## 6.5.6
 
 - Fixes an issue where ShellRoute routes were not logged when debugLogDiagnostic was enabled.

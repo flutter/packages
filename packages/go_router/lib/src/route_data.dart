@@ -223,6 +223,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   /// Default const constructor
   const TypedGoRoute({
     required this.path,
+    this.name,
     this.routes = const <TypedRoute<RouteData>>[],
   });
 
@@ -232,6 +233,12 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   ///
   ///
   final String path;
+
+  /// The name that corresponds to this route.
+  ///
+  /// See [GoRoute.name].
+  ///
+  final String? name;
 
   /// Child route definitions.
   ///
