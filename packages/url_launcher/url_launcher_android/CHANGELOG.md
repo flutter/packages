@@ -1,5 +1,6 @@
-## NEXT
+## 6.0.27
 
+* Fixes Java warnings.
 * Updates minimum Flutter version to 3.3.
 
 ## 6.0.26
