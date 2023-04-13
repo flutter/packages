@@ -33,7 +33,22 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
-    return await _handleSetValue(valueType, key, value) ?? false;
+    switch (valueType) {
+      case 'String':
+        return _api.setString(key, value as String);
+      case 'Bool':
+        return _api.setBool(key, value as bool);
+      case 'Int':
+        return _api.setInt(key, value as int);
+      case 'Double':
+        return _api.setDouble(key, value as double);
+      case 'StringList':
+        return _api.setStringList(key, value as List<String>);
+    }
+    // TODO(tarrinneal): change to ArgumentError across all platforms.
+    throw PlatformException(
+        code: 'InvalidOperation',
+        message: '"$valueType" is not a supported type.');
   }
 
   @override
@@ -55,27 +70,5 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
     final Map<String?, Object?> data = await _api.getAllWithPrefix(prefix);
     return data.cast<String, Object>();
-  }
-
-  // Call the function according to the type of value provided
-  Future<bool?> _handleSetValue(
-      String dataType, String key, Object value) async {
-    switch (dataType) {
-      case 'String':
-        return _api.setString(key, value as String);
-      case 'Bool':
-        return _api.setBool(key, value as bool);
-      case 'Int':
-        return _api.setInt(key, value as int);
-      case 'Double':
-        return _api.setDouble(key, value as double);
-      case 'StringList':
-        return _api.setStringList(key, value as List<String>);
-    }
-
-    // TODO(tarrinneal): change to ArgumentError across all platforms.
-    throw PlatformException(
-        code: 'InvalidOperation',
-        message: '"$dataType" is not a supported type.');
   }
 }

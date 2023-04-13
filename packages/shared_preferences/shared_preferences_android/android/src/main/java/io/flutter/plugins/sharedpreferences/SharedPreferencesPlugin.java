@@ -41,8 +41,8 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @VisibleForTesting
-  SharedPreferencesPlugin(SharedPreferencesListEncoder testListEncoder) {
-    listEncoder = testListEncoder;
+  SharedPreferencesPlugin(@NonNull SharedPreferencesListEncoder listEncoder) {
+    this.listEncoder = listEncoder;
   }
 
   @SuppressWarnings("deprecation")
