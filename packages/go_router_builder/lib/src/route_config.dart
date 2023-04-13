@@ -265,7 +265,10 @@ RouteBase get $_routeGetterName => ${_routeDefinition()};
 
   String get _newFromState {
     final StringBuffer buffer = StringBuffer('=>');
-    if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty) {
+    if (_ctor.isConst &&
+        _ctorParams.isEmpty &&
+        _ctorQueryParams.isEmpty &&
+        _extraParam == null) {
       buffer.writeln('const ');
     }
 
@@ -367,7 +370,7 @@ GoRouteData.\$route(
         );
       }
 
-      if (!_pathParams.contains(element.name)) {
+      if (!_pathParams.contains(element.name) && !element.isExtraField) {
         throw InvalidGenerationSourceError(
           'Missing param `${element.name}` in path.',
           element: element,
@@ -438,13 +441,7 @@ GoRouteData.\$route(
 
   late final List<ParameterElement> _ctorParams =
       _ctor.parameters.where((ParameterElement element) {
-    if (element.isRequired) {
-      if (element.isExtraField) {
-        throw InvalidGenerationSourceError(
-          'Parameters named `$extraFieldName` cannot be required.',
-          element: element,
-        );
-      }
+    if (element.isRequired && !element.isExtraField) {
       return true;
     }
     return false;

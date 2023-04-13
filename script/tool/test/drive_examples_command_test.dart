@@ -808,6 +808,56 @@ void main() {
           ]));
     });
 
+    test('driving on an Android plugin with alias', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/test_driver/plugin_test.dart',
+          'example/test_driver/plugin.dart',
+          'example/android/android.java',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformAndroid: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      setMockFlutterDevicesOutput();
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'drive-examples',
+        '--apk',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform),
+                const <String>['devices', '--machine'], null),
+            ProcessCall(
+                getFlutterCommand(mockPlatform),
+                const <String>[
+                  'drive',
+                  '-d',
+                  _fakeAndroidDevice,
+                  '--driver',
+                  'test_driver/plugin_test.dart',
+                  '--target',
+                  'test_driver/plugin.dart'
+                ],
+                pluginExampleDirectory.path),
+          ]));
+    });
+
     test('driving when plugin does not support Android is no-op', () async {
       createFakePlugin(
         'plugin',

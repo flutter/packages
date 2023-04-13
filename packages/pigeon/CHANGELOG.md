@@ -1,3 +1,12 @@
+## 9.2.4
+
+* [objc] Fixes a warning due to a C++-style function signature in the codec
+  getter's definition.
+
+## 9.2.3
+
+* [java] Fixes `UnknownNullability` and `SyntheticAccessor` warnings.
+
 ## 9.2.2
 
 * [cpp] Minor changes to output style.
