@@ -1,3 +1,7 @@
+## 1.2.1
+
+* Supports opt-in required extra parameters. [#117261](https://github.com/flutter/flutter/issues/117261)
+
 ## 1.2.0
 
 * Adds Support for ShellRoute
