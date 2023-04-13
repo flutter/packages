@@ -90,6 +90,12 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    public void doUpdateVisitedHistory(
+        @NonNull WebView view, @NonNull String url, boolean isReload) {
+      flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
+    }
+
+    @Override
     public void onUnhandledKeyEvent(@NonNull WebView view, @NonNull KeyEvent event) {
       // Deliberately empty. Occasionally the webview will mark events as having failed to be
       // handled even though they were handled. We don't want to propagate those as they're not
@@ -162,6 +168,12 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
       flutterApi.urlLoading(this, view, url, reply -> {});
       return returnValueForShouldOverrideUrlLoading;
+    }
+
+    @Override
+    public void doUpdateVisitedHistory(
+        @NonNull WebView view, @NonNull String url, boolean isReload) {
+      flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
     }
 
     @Override

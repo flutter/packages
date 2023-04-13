@@ -1514,6 +1514,9 @@ abstract class WebViewClientFlutterApi {
 
   void urlLoading(int instanceId, int webViewInstanceId, String url);
 
+  void doUpdateVisitedHistory(
+      int instanceId, int webViewInstanceId, String url, bool isReload);
+
   static void setup(WebViewClientFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1678,6 +1681,36 @@ abstract class WebViewClientFlutterApi {
           assert(arg_url != null,
               'Argument for dev.flutter.pigeon.WebViewClientFlutterApi.urlLoading was null, expected non-null String.');
           api.urlLoading(arg_instanceId!, arg_webViewInstanceId!, arg_url!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebViewClientFlutterApi.doUpdateVisitedHistory',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebViewClientFlutterApi.doUpdateVisitedHistory was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.WebViewClientFlutterApi.doUpdateVisitedHistory was null, expected non-null int.');
+          final int? arg_webViewInstanceId = (args[1] as int?);
+          assert(arg_webViewInstanceId != null,
+              'Argument for dev.flutter.pigeon.WebViewClientFlutterApi.doUpdateVisitedHistory was null, expected non-null int.');
+          final String? arg_url = (args[2] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.WebViewClientFlutterApi.doUpdateVisitedHistory was null, expected non-null String.');
+          final bool? arg_isReload = (args[3] as bool?);
+          assert(arg_isReload != null,
+              'Argument for dev.flutter.pigeon.WebViewClientFlutterApi.doUpdateVisitedHistory was null, expected non-null bool.');
+          api.doUpdateVisitedHistory(
+              arg_instanceId!, arg_webViewInstanceId!, arg_url!, arg_isReload!);
           return;
         });
       }
