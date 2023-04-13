@@ -796,18 +796,6 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidUrlChange(url: url, isReload: isReload));
         }
       },
-      doUpdateVisitedHistory: (
-        android_webview.WebView webView,
-        String url,
-        bool isReload,
-      ) {
-        if (weakThis.target?._onUrlChange != null) {
-          weakThis.target!._onUrlChange!(AndroidUrlChange(
-            url: url,
-            isReload: isReload,
-          ));
-        }
-      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
