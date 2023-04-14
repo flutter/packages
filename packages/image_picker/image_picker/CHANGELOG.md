@@ -2,6 +2,7 @@
 
 * Adds handling of unsupported image types to the example.
 * Updates minimum Flutter version to 3.3.
+* Fixes a broken link in the example related to `image_picker_for_web`.
 
 ## 0.8.7+1
 

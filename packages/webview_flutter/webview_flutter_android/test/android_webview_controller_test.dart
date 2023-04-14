@@ -105,6 +105,11 @@ void main() {
                 )? requestLoading,
                 void Function(android_webview.WebView webView, String url)?
                     urlLoading,
+                void Function(
+                  android_webview.WebView webView,
+                  String url,
+                  bool isReload,
+                )? doUpdateVisitedHistory,
               }) =>
                   mockWebViewClient ?? MockWebViewClient(),
               createFlutterAssetManager: () =>
@@ -210,7 +215,7 @@ void main() {
       )).called(1);
     });
 
-    test('loadFlutterAsset when asset does not exists', () async {
+    test('loadFlutterAsset when asset does not exist', () async {
       final MockWebView mockWebView = MockWebView();
       final MockFlutterAssetManager mockAssetManager =
           MockFlutterAssetManager();

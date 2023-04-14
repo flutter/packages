@@ -54,15 +54,6 @@ class NullableRequiredParam extends GoRouteData {
 }
 
 @ShouldThrow(
-  r'Parameters named `$extra` cannot be required.',
-)
-@TypedGoRoute<ExtraMustBeOptional>(path: r'bob/:$extra')
-class ExtraMustBeOptional extends GoRouteData {
-  ExtraMustBeOptional({required this.$extra});
-  final int $extra;
-}
-
-@ShouldThrow(
   'Missing param `id` in path.',
 )
 @TypedGoRoute<MissingPathParam>(path: 'bob/')
@@ -202,6 +193,36 @@ class ExtraValueRoute extends GoRouteData {
   ExtraValueRoute({this.param = 0, this.$extra});
   final int param;
   final int? $extra;
+}
+
+@ShouldGenerate(r'''
+RouteBase get $requiredExtraValueRoute => GoRouteData.$route(
+      path: '/default-value-route',
+      factory: $RequiredExtraValueRouteExtension._fromState,
+    );
+
+extension $RequiredExtraValueRouteExtension on RequiredExtraValueRoute {
+  static RequiredExtraValueRoute _fromState(GoRouterState state) =>
+      RequiredExtraValueRoute(
+        $extra: state.extra as int,
+      );
+
+  String get location => GoRouteData.$location(
+        '/default-value-route',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  void push(BuildContext context) => context.push(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+}
+''')
+@TypedGoRoute<RequiredExtraValueRoute>(path: '/default-value-route')
+class RequiredExtraValueRoute extends GoRouteData {
+  RequiredExtraValueRoute({required this.$extra});
+  final int $extra;
 }
 
 @ShouldThrow(
