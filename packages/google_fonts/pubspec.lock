@@ -311,7 +311,7 @@ packages:
       name: mockito
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.3.2"
+    version: "5.4.0"
   mustache_template:
     dependency: "direct dev"
     description:
