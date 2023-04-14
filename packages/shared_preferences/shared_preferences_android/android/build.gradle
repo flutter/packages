@@ -40,7 +40,6 @@ android {
         checkAllWarnings true
         warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
-        baseline file("lint-baseline.xml")
     }
     dependencies {
         testImplementation 'junit:junit:4.13.2'
