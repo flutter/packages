@@ -159,6 +159,7 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 @class FWFNSErrorData;
 @class FWFWKScriptMessageData;
 @class FWFNSHttpCookieData;
+@class FWFObjectOrIdentifier;
 
 @interface FWFNSKeyValueObservingOptionsEnumData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -298,6 +299,19 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
                       propertyValues:(NSArray<id> *)propertyValues;
 @property(nonatomic, strong) NSArray<FWFNSHttpCookiePropertyKeyEnumData *> *propertyKeys;
 @property(nonatomic, strong) NSArray<id> *propertyValues;
+@end
+
+/// An object that can represent either a value supported by
+/// `StandardMessageCodec`, a data class in this pigeon file, or an identifier
+/// of an object stored in an `InstanceManager`.
+@interface FWFObjectOrIdentifier : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(id)value isIdentifier:(NSNumber *)isIdentifier;
+@property(nonatomic, strong) id value;
+/// Whether value is an int that is used to retrieve an instance stored in an
+/// `InstanceManager`.
+@property(nonatomic, strong) NSNumber *isIdentifier;
 @end
 
 /// The codec used by FWFWKWebsiteDataStoreHostApi.
@@ -583,7 +597,7 @@ NSObject<FlutterMessageCodec> *FWFNSObjectFlutterApiGetCodec(void);
                                     keyPath:(NSString *)keyPath
                            objectIdentifier:(NSNumber *)objectIdentifier
                                  changeKeys:(NSArray<FWFNSKeyValueChangeKeyEnumData *> *)changeKeys
-                               changeValues:(NSArray<id> *)changeValues
+                               changeValues:(NSArray<FWFObjectOrIdentifier *> *)changeValues
                                  completion:(void (^)(FlutterError *_Nullable))completion;
 - (void)disposeObjectWithIdentifier:(NSNumber *)identifier
                          completion:(void (^)(FlutterError *_Nullable))completion;
@@ -701,5 +715,40 @@ NSObject<FlutterMessageCodec> *FWFWKHttpCookieStoreHostApiGetCodec(void);
 
 extern void FWFWKHttpCookieStoreHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                                              NSObject<FWFWKHttpCookieStoreHostApi> *_Nullable api);
+
+/// The codec used by FWFNSUrlHostApi.
+NSObject<FlutterMessageCodec> *FWFNSUrlHostApiGetCodec(void);
+
+/// Host API for `NSUrl`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
+@protocol FWFNSUrlHostApi
+- (nullable NSString *)absoluteStringForNSURLWithIdentifier:(NSNumber *)identifier
+                                                      error:
+                                                          (FlutterError *_Nullable *_Nonnull)error;
+@end
+
+extern void FWFNSUrlHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+                                 NSObject<FWFNSUrlHostApi> *_Nullable api);
+
+/// The codec used by FWFNSUrlFlutterApi.
+NSObject<FlutterMessageCodec> *FWFNSUrlFlutterApiGetCodec(void);
+
+/// Flutter API for `NSUrl`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
+@interface FWFNSUrlFlutterApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (void)createWithIdentifier:(NSNumber *)identifier
+                  completion:(void (^)(FlutterError *_Nullable))completion;
+@end
 
 NS_ASSUME_NONNULL_END

@@ -61,7 +61,8 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
    * won't react to changes in activity or context, unlike {@link WebViewFlutterPlugin}.
    */
   @SuppressWarnings({"unused", "deprecation"})
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     new WebViewFlutterPlugin()
         .setUp(
             registrar.messenger(),
