@@ -1,3 +1,7 @@
+## 2.1.2
+
+* Sets the required Java compile version to 1.8 for new features used in 2.1.1.
+
 ## 2.1.1
 
 * Updates minimum Flutter version to 3.0.
