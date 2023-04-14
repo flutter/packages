@@ -132,7 +132,7 @@ dependencies {
     expect(
       output,
       containsAllInOrder(<Matcher>[
-        contains('Ran for 1 package(s)'),
+        contains('Validating android/build.gradle'),
       ]),
     );
   });
@@ -147,7 +147,7 @@ dependencies {
     expect(
       output,
       containsAllInOrder(<Matcher>[
-        contains('Ran for 1 package(s)'),
+        contains('Validating android/build.gradle'),
       ]),
     );
   });

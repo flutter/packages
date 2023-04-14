@@ -36,6 +36,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
   }
 
   bool _validateBuildGradle(RepositoryPackage package) {
+    print('${indentation}Validating android/build.gradle.');
     final String contents = package
         .platformDirectory(FlutterPlatform.android)
         .childFile('build.gradle')
