@@ -1,6 +1,6 @@
 ## 2.1.2
 
-* Sets an explicit Java compatibility version.
+* Sets the required Java compile version to 1.8 for new features used in 2.1.1.
 
 ## 2.1.1
 
