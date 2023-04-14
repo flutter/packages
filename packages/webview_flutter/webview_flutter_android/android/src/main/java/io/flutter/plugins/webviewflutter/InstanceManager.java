@@ -7,6 +7,7 @@ package io.flutter.plugins.webviewflutter;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -69,7 +70,8 @@ public class InstanceManager {
    * @param finalizationListener the listener for garbage collected weak references.
    * @return a new `InstanceManager`.
    */
-  public static InstanceManager open(FinalizationListener finalizationListener) {
+  @NonNull
+  public static InstanceManager open(@NonNull FinalizationListener finalizationListener) {
     return new InstanceManager(finalizationListener);
   }
 
@@ -113,7 +115,7 @@ public class InstanceManager {
    *     null if the manager doesn't contain the value or the manager is closed.
    */
   @Nullable
-  public Long getIdentifierForStrongReference(Object instance) {
+  public Long getIdentifierForStrongReference(@Nullable Object instance) {
     if (assertNotClosed()) {
       return null;
     }
@@ -137,7 +139,7 @@ public class InstanceManager {
    * @param identifier the identifier to be paired with instance. This value must be >= 0 and
    *     unique.
    */
-  public void addDartCreatedInstance(Object instance, long identifier) {
+  public void addDartCreatedInstance(@NonNull Object instance, long identifier) {
     if (assertNotClosed()) {
       return;
     }
@@ -151,7 +153,7 @@ public class InstanceManager {
    * @return the unique identifier stored with instance. If the manager is closed, returns -1.
    *     Otherwise, returns a value >= 0.
    */
-  public long addHostCreatedInstance(Object instance) {
+  public long addHostCreatedInstance(@NonNull Object instance) {
     if (assertNotClosed()) {
       return INSTANCE_CLOSED;
     }
@@ -193,7 +195,7 @@ public class InstanceManager {
    * @return whether this manager contains the given `instance`. If the manager is closed, returns
    *     `false`.
    */
-  public boolean containsInstance(Object instance) {
+  public boolean containsInstance(@Nullable Object instance) {
     if (assertNotClosed()) {
       return false;
     }

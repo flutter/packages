@@ -21,6 +21,7 @@ import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebViewClient;
+import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewFlutterApi;
@@ -175,7 +176,7 @@ public class WebViewTest {
           }
 
           @Override
-          public void error(Throwable error) {}
+          public void error(@NonNull Throwable error) {}
         });
 
     @SuppressWarnings("unchecked")
