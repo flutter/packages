@@ -7,7 +7,9 @@ package io.flutter.plugins.camerax;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -35,7 +37,7 @@ public class InstanceManager {
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
   // 0 <= n < 2^16.
   private static final long MIN_HOST_CREATED_IDENTIFIER = 65536;
-  private static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 30000;
+  @VisibleForTesting public static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 30000;
   private static final String TAG = "InstanceManager";
 
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
@@ -65,6 +67,7 @@ public class InstanceManager {
    * @param finalizationListener the listener for garbage collected weak references.
    * @return a new `InstanceManager`.
    */
+  @NonNull
   public static InstanceManager create(FinalizationListener finalizationListener) {
     return new InstanceManager(finalizationListener);
   }

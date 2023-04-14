@@ -21,7 +21,6 @@
 
 * Fixes a bug where the native `WebView` wouldn't be traversed for autofill automatically.
 * Updates minimum Flutter version to 3.3.
->>>>>>> 9852b41ff46771c24bca26919fc345d69bdd0b1a
 
 ## 3.4.3
 
