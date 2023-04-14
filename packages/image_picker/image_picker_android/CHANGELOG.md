@@ -1,5 +1,6 @@
 ## 0.8.6+7
 
+* Fixes handling of non-bitmap image types.
 * Updates minimum Flutter version to 3.3.
 * Improves image resizing performance by decoding Bitmap only when needed.
 

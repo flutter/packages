@@ -33,7 +33,7 @@ class ImageResizer {
       String imagePath, @Nullable Double maxWidth, @Nullable Double maxHeight, int imageQuality) {
     SizeFCompat originalSize = readFileDimensions(imagePath);
     if (originalSize.getWidth() == -1 || originalSize.getHeight() == -1) {
-      return null;
+      return imagePath;
     }
     boolean shouldScale = maxWidth != null || maxHeight != null || imageQuality < 100;
     if (!shouldScale) {
