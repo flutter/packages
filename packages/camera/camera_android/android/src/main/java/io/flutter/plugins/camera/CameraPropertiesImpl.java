@@ -13,6 +13,7 @@ import android.util.Range;
 import android.util.Rational;
 import android.util.Size;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 /**
@@ -74,7 +75,7 @@ public class CameraPropertiesImpl implements CameraProperties {
   }
 
   @RequiresApi(api = VERSION_CODES.P)
-  @NonNull
+  @Nullable
   @Override
   public int[] getDistortionCorrectionAvailableModes() {
     return cameraCharacteristics.get(CameraCharacteristics.DISTORTION_CORRECTION_AVAILABLE_MODES);
@@ -91,7 +92,7 @@ public class CameraPropertiesImpl implements CameraProperties {
     return cameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
   }
 
-  @NonNull
+  @Nullable
   @Override
   public Float getLensInfoMinimumFocusDistance() {
     return cameraCharacteristics.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
@@ -104,17 +105,27 @@ public class CameraPropertiesImpl implements CameraProperties {
   }
 
   @RequiresApi(api = VERSION_CODES.R)
-  @NonNull
+  @Nullable
   @Override
   public Float getScalerMaxZoomRatio() {
-    return cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE).getUpper();
+    final Range<Float> range =
+        cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE);
+    if (range != null) {
+      return range.getUpper();
+    }
+    return null;
   }
 
   @RequiresApi(api = VERSION_CODES.R)
-  @NonNull
+  @Nullable
   @Override
   public Float getScalerMinZoomRatio() {
-    return cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE).getLower();
+    final Range<Float> range =
+        cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE);
+    if (range != null) {
+      return range.getLower();
+    }
+    return null;
   }
 
   @NonNull

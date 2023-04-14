@@ -9,6 +9,7 @@ import android.os.Build.VERSION_CODES;
 import android.util.Range;
 import android.util.Size;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 /** An interface allowing access to the different characteristics of the device's camera. */
@@ -104,7 +105,7 @@ public interface CameraProperties {
    * @return int[] List of distortion correction modes supported by this camera device.
    */
   @RequiresApi(api = VERSION_CODES.P)
-  @NonNull
+  @Nullable
   int[] getDistortionCorrectionAvailableModes();
 
   /**
@@ -145,7 +146,7 @@ public interface CameraProperties {
    * @return Float Shortest distance from front most surface of the lens that can be brought into
    *     sharp focus.
    */
-  @NonNull
+  @Nullable
   Float getLensInfoMinimumFocusDistance();
 
   /**
@@ -170,7 +171,7 @@ public interface CameraProperties {
    *
    * @return Float Minimum ratio between the default zoom ratio and the minimum possible zoom.
    */
-  @NonNull
+  @Nullable
   @RequiresApi(api = VERSION_CODES.R)
   Float getScalerMinZoomRatio();
 
@@ -183,7 +184,7 @@ public interface CameraProperties {
    *
    * @return Float Maximum ratio between the default zoom ratio and the maximum possible zoom.
    */
-  @NonNull
+  @Nullable
   @RequiresApi(api = VERSION_CODES.R)
   Float getScalerMaxZoomRatio();
 
