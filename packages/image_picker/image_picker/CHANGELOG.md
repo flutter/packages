@@ -1,6 +1,6 @@
 ## 0.8.7+2
 
-* Example file showcases how to display an error placeholder whenever an unsupported image type is selected.
+* Adds handling of unsupported image types to the example.
 * Updates minimum Flutter version to 3.3.
 
 ## 0.8.7+1
