@@ -1,3 +1,7 @@
+## 2.1.2
+
+* Sets an explicit Java compatibility version.
+
 ## 2.1.1
 
 * Updates minimum Flutter version to 3.0.
