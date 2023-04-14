@@ -150,22 +150,38 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   bool _onPopPage(Route<Object?> route, Object? result) {
-    if (!route.didPop(result)) {
-      return false;
-    }
     final Page<Object?> page = route.settings as Page<Object?>;
     final RouteMatch? match = builder.getRouteMatchForPage(page);
     assert(match != null);
+    if (match!.route.onExit != null) {
+      // This function needs to return before calling onExit.
+      Future<void>.microtask(() async {
+        final bool result =
+            await match.route.onExit!(navigatorKey.currentContext!);
+        if (result) {
+          _removeMatchFromList(match, result);
+        }
+      });
+      return false;
+    } else {
+      if (!route.didPop(result)) {
+        return false;
+      }
+      _removeMatchFromList(match, result);
+      return true;
+    }
+  }
+
+  void _removeMatchFromList(RouteMatch match, Object? result) {
     if (match is ImperativeRouteMatch) {
       match.complete(result);
     }
-    _remove(match!);
+    _remove(match);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
       return true;
     }());
-    return true;
   }
 
   /// Replaces the top-most page of the page stack with the given one.

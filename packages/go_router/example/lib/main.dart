@@ -29,6 +29,28 @@ final GoRouter _router = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             return const DetailsScreen();
           },
+          onExit: (BuildContext context) async {
+            final bool? confirmed = await showDialog<bool>(
+              context: context,
+              builder: (_) {
+                return AlertDialog(
+                  title: const Text('Confirm'),
+                  content: const Text('Are you sure you want to leave?'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('No'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Yes'),
+                    ),
+                  ],
+                );
+              },
+            );
+            return confirmed ?? false;
+          },
         ),
       ],
     ),
@@ -84,10 +106,15 @@ class DetailsScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <ElevatedButton>[
+          children: <Widget>[
             ElevatedButton(
               onPressed: () => context.go('/'),
               child: const Text('Go back to the Home screen'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => context.pop(),
+              child: const Text('Confirm and pop route'),
             ),
           ],
         ),

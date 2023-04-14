@@ -97,10 +97,14 @@ import 'typedefs.dart';
 abstract class RouteBase {
   const RouteBase._({
     this.routes = const <RouteBase>[],
+    this.onExit,
   });
 
   /// The list of child routes associated with this route.
   final List<RouteBase> routes;
+
+  /// Return false to prevent the route from being popped.
+  final Future<bool> Function(BuildContext context)? onExit;
 }
 
 /// A route that is displayed visually above the matching parent route using the
@@ -131,6 +135,7 @@ class GoRoute extends RouteBase {
     this.parentNavigatorKey,
     this.redirect,
     super.routes = const <RouteBase>[],
+    super.onExit,
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
         assert(pageBuilder != null || builder != null || redirect != null,
@@ -422,6 +427,7 @@ class ShellRoute extends RouteBase {
     this.pageBuilder,
     this.observers,
     super.routes,
+    super.onExit,
     GlobalKey<NavigatorState>? navigatorKey,
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
