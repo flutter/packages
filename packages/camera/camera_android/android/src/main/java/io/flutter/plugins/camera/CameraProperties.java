@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.os.Build.VERSION_CODES;
 import android.util.Range;
 import android.util.Size;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 /** An interface allowing access to the different characteristics of the device's camera. */
@@ -18,6 +19,7 @@ public interface CameraProperties {
    *
    * @return String The name of the camera device.
    */
+  @NonNull
   String getCameraName();
 
   /**
@@ -30,6 +32,7 @@ public interface CameraProperties {
    * @return android.util.Range<Integer>[] List of frame rate ranges supported by this camera
    *     device.
    */
+  @NonNull
   Range<Integer>[] getControlAutoExposureAvailableTargetFpsRanges();
 
   /**
@@ -43,6 +46,7 @@ public interface CameraProperties {
    * @return android.util.Range<Integer> Maximum and minimum exposure compensation supported by this
    *     camera device.
    */
+  @NonNull
   Range<Integer> getControlAutoExposureCompensationRange();
 
   /**
@@ -64,6 +68,7 @@ public interface CameraProperties {
    *
    * @return int[] List of auto-focus modes supported by this camera device.
    */
+  @NonNull
   int[] getControlAutoFocusAvailableModes();
 
   /**
@@ -75,6 +80,7 @@ public interface CameraProperties {
    * @return Integer Maximum number of metering regions that can be used by the auto-exposure
    *     routine.
    */
+  @NonNull
   Integer getControlMaxRegionsAutoExposure();
 
   /**
@@ -85,6 +91,7 @@ public interface CameraProperties {
    *
    * @return Integer Maximum number of metering regions that can be used by the auto-focus routine.
    */
+  @NonNull
   Integer getControlMaxRegionsAutoFocus();
 
   /**
@@ -97,6 +104,7 @@ public interface CameraProperties {
    * @return int[] List of distortion correction modes supported by this camera device.
    */
   @RequiresApi(api = VERSION_CODES.P)
+  @NonNull
   int[] getDistortionCorrectionAvailableModes();
 
   /**
@@ -107,6 +115,7 @@ public interface CameraProperties {
    *
    * @return Boolean Whether this camera device has a flash unit.
    */
+  @NonNull
   Boolean getFlashInfoAvailable();
 
   /**
@@ -136,6 +145,7 @@ public interface CameraProperties {
    * @return Float Shortest distance from front most surface of the lens that can be brought into
    *     sharp focus.
    */
+  @NonNull
   Float getLensInfoMinimumFocusDistance();
 
   /**
@@ -148,6 +158,7 @@ public interface CameraProperties {
    * @return Float Maximum ratio between both active area width and crop region width, and active
    *     area height and crop region height.
    */
+  @NonNull
   Float getScalerAvailableMaxDigitalZoom();
 
   /**
@@ -159,6 +170,7 @@ public interface CameraProperties {
    *
    * @return Float Minimum ratio between the default zoom ratio and the minimum possible zoom.
    */
+  @NonNull
   @RequiresApi(api = VERSION_CODES.R)
   Float getScalerMinZoomRatio();
 
@@ -171,6 +183,7 @@ public interface CameraProperties {
    *
    * @return Float Maximum ratio between the default zoom ratio and the maximum possible zoom.
    */
+  @NonNull
   @RequiresApi(api = VERSION_CODES.R)
   Float getScalerMaxZoomRatio();
 
@@ -184,6 +197,7 @@ public interface CameraProperties {
    * @return android.graphics.Rect area of the image sensor which corresponds to active pixels after
    *     any geometric distortion correction has been applied.
    */
+  @NonNull
   Rect getSensorInfoActiveArraySize();
 
   /**
@@ -195,6 +209,7 @@ public interface CameraProperties {
    * @return android.util.Size Dimensions of the full pixel array, possibly including black
    *     calibration pixels.
    */
+  @NonNull
   Size getSensorInfoPixelArraySize();
 
   /**
@@ -209,6 +224,7 @@ public interface CameraProperties {
    *     to the application of any geometric distortion correction.
    */
   @RequiresApi(api = VERSION_CODES.M)
+  @NonNull
   Rect getSensorInfoPreCorrectionActiveArraySize();
 
   /**
@@ -254,5 +270,6 @@ public interface CameraProperties {
    *
    * @return int[] List of noise reduction modes that are supported by this camera device.
    */
+  @NonNull
   int[] getAvailableNoiseReductionModes();
 }
