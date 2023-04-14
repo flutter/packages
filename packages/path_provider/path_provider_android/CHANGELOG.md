@@ -1,3 +1,7 @@
+## 2.0.25
+
+* Fixes Java warnings.
+
 ## 2.0.24
 
 * Clarifies explanation of endorsement in README.
