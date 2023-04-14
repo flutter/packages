@@ -3,6 +3,11 @@
 * Adds support for handling geolocation permissions. See
   `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
 
+## 3.5.1
+
+* Updates pigeon dev dependency to `9.2.4`.
+* Fixes Android lint warnings.
+
 ## 3.5.0
 
 * Adds support for `PlatformNavigationDelegate.onUrlChange`.

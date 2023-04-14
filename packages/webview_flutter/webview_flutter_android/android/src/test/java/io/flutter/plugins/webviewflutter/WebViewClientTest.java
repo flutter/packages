@@ -47,7 +47,9 @@ public class WebViewClientTest {
     final WebViewClientCreator webViewClientCreator =
         new WebViewClientCreator() {
           @Override
-          public WebViewClient createWebViewClient(WebViewClientFlutterApiImpl flutterApi) {
+          @NonNull
+          public WebViewClient createWebViewClient(
+              @NonNull WebViewClientFlutterApiImpl flutterApi) {
             webViewClient = (WebViewClientCompatImpl) super.createWebViewClient(flutterApi);
             return webViewClient;
           }
