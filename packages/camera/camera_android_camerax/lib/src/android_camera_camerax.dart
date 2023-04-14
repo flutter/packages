@@ -360,17 +360,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> _updateLiveCameraState(int cameraId) async {
     final CameraInfo cameraInfo = await camera!.getCameraInfo();
     liveCameraState?.removeObservers();
-    print('CAMILLE NEW LIVE CAMERA STATE COMING THROUGH TO RUIN THINGS UP');
     liveCameraState = await cameraInfo.getLiveCameraState();
     liveCameraState!.observe(_createCameraClosingObserver(cameraId));
   }
 
   Observer<CameraState> _createCameraClosingObserver(int cameraId) {
     return Observer<CameraState>(onChanged: (Object stateAsObject) {
-      CameraState state = stateAsObject as CameraState;
-      print('CAMILLE STATE: ${state.type}');
+      final CameraState state = stateAsObject as CameraState;
       if (state.type == CameraStateType.closing) {
-        print('HELLO!??!?!?!?!?!?!?');
         cameraEventStreamController.add(CameraClosingEvent(cameraId));
       }
 
