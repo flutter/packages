@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.webviewflutterexample;
 
-import static io.flutter.plugins.webviewflutter.InstanceManager.CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -34,7 +33,9 @@ public class InstanceManagerTest {
 
     Runtime.getRuntime().gc();
 
-    Thread.sleep(CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL);
+    // Wait for the interval after finalized callbacks are made for garbage collected objects.
+    // See InstanceManager.CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL.
+    Thread.sleep(30000);
 
     assertNull(instanceManager.getInstance(0));
     assertFalse(callbackTriggered[0]);
