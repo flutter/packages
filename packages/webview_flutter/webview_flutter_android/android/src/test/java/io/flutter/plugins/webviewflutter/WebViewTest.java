@@ -361,18 +361,18 @@ public class WebViewTest {
     final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
 
     final WebViewFlutterApiImpl flutterApiImpl =
-            new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
+        new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
 
     final WebViewFlutterApi mockFlutterApi = mock(WebViewFlutterApi.class);
     flutterApiImpl.setApi(mockFlutterApi);
     flutterApiImpl.create(mockWebView, reply -> {});
 
-    flutterApiImpl.onScrollPosChange(mockWebView, 0L, 1L, 2L, 3L, reply -> {});
+    flutterApiImpl.onScrollChanged(mockWebView, 0L, 1L, 2L, 3L, reply -> {});
 
     final long instanceIdentifier =
-            Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
     verify(mockFlutterApi)
-            .onScrollPosChange(eq(instanceIdentifier), eq(0L), eq(1L), eq(2L), eq(3L), any());
+        .onScrollPosChange(eq(instanceIdentifier), eq(0L), eq(1L), eq(2L), eq(3L), any());
 
     instanceManager.close();
   }

@@ -657,7 +657,8 @@ Future<void> main() async {
   });
 
   group('Programmatic Scroll', () {
-    testWidgets('setAndGetScrollPosition', (WidgetTester tester) async {
+    testWidgets('setAndGetAndListenScrollPosition',
+        (WidgetTester tester) async {
       const String scrollTestPage = '''
         <!DOCTYPE html>
         <html>
@@ -683,6 +684,7 @@ Future<void> main() async {
           base64Encode(const Utf8Encoder().convert(scrollTestPage));
 
       final Completer<void> pageLoaded = Completer<void>();
+      Completer<List<int>> offsetsCompleter = Completer<List<int>>();
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       )
@@ -698,7 +700,11 @@ Future<void> main() async {
               'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
             ),
           ),
-        );
+        )
+        ..setOnContentOffsetChanged(
+            (int left, int top, int oldLeft, int oldTop) {
+          offsetsCompleter.complete(<int>[left, top, oldLeft, oldTop]);
+        });
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -727,12 +733,17 @@ Future<void> main() async {
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL);
       expect(scrollPos.dy, Y_SCROLL);
+      expect(
+          offsetsCompleter.future, completion(<int>[X_SCROLL, Y_SCROLL, 0, 0]));
 
       // Check scrollBy() (on top of scrollTo())
+      offsetsCompleter = Completer<List<int>>();
       await controller.scrollBy(X_SCROLL, Y_SCROLL);
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL * 2);
       expect(scrollPos.dy, Y_SCROLL * 2);
+      expect(offsetsCompleter.future,
+          completion(<int>[X_SCROLL * 2, Y_SCROLL * 2, X_SCROLL, Y_SCROLL]));
     });
   });
 
@@ -1124,6 +1135,22 @@ Future<void> main() async {
       );
     },
   );
+
+  // testWidgets('On Content Offset Listener', (WidgetTester tester) async {
+  //   final PlatformWebViewController controller = PlatformWebViewController(
+  //     const PlatformWebViewControllerCreationParams(),
+  //   );
+  //   final Completer<List<int>> offsetCompleter = Completer<List<int>>();
+  //   controller.setOnContentOffsetChanged((left, top, oldLeft, oldTop) {
+  //     offsetCompleter.complete([left, top, oldLeft, oldTop]);
+  //   });
+  //
+  //   await tester.pumpWidget(widget);
+  //
+  //   await controller.runJavaScript('Echo.postMessage("hello");');
+  //   await expectLater(channelCompleter.future, completion('hello'));
+  //
+  // });
 }
 
 /// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.

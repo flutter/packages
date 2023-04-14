@@ -1049,15 +1049,6 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
       ) as _i2.WebSettings);
   @override
-  set onScrollChanged(_i2.ScrollChangedCallback? _onScrollChanged) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #onScrollChanged,
-          _onScrollChanged,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   _i5.Future<void> loadData({
     required String? data,
     String? mimeType,

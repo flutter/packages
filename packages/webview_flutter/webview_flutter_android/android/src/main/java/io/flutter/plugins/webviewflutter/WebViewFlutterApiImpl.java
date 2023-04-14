@@ -17,7 +17,11 @@ import java.util.Objects;
  * <p>This class may handle adding native instances that are attached to a Dart instance or passing
  * arguments of callbacks methods to a Dart instance.
  */
-public class WebViewFlutterApiImpl extends WebViewFlutterApi {
+public class WebViewFlutterApiImpl {
+  // To ease adding additional methods, this value is added prematurely.
+  @SuppressWarnings({"unused", "FieldCanBeLocal"})
+  private final BinaryMessenger binaryMessenger;
+
   private final InstanceManager instanceManager;
   private WebViewFlutterApi api;
 
@@ -29,7 +33,7 @@ public class WebViewFlutterApiImpl extends WebViewFlutterApi {
    */
   public WebViewFlutterApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-    super(binaryMessenger);
+    this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     api = new WebViewFlutterApi(binaryMessenger);
   }
@@ -54,13 +58,13 @@ public class WebViewFlutterApiImpl extends WebViewFlutterApi {
     this.api = api;
   }
 
-  public void onScrollPosChange(
+  public void onScrollChanged(
       @NonNull WebView instance,
       @NonNull Long xArg,
       @NonNull Long yArg,
       @NonNull Long oldXArg,
       @NonNull Long oldYArg,
-      Reply<Void> callback) {
+      WebViewFlutterApi.Reply<Void> callback) {
     api.onScrollPosChange(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         xArg,

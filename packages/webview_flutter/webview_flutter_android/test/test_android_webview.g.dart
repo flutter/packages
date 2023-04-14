@@ -15,6 +15,8 @@ import 'package:webview_flutter_android/src/android_webview.g.dart';
 
 /// Host API for managing the native `InstanceManager`.
 abstract class TestInstanceManagerHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   /// Clear the native `InstanceManager`.
@@ -29,9 +31,12 @@ abstract class TestInstanceManagerHostApi {
           'dev.flutter.pigeon.InstanceManagerHostApi.clear', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMockMessageHandler(null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        channel.setMockMessageHandler((Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           // ignore message
           api.clear();
           return <Object?>[];

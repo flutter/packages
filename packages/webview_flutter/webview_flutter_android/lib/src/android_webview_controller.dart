@@ -44,7 +44,8 @@ class AndroidWebViewControllerCreationParams
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
         AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting android_webview.WebStorage? androidWebStorage,
+    @visibleForTesting
+        android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -88,12 +89,21 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The native [android_webview.WebView] being controlled.
   late final android_webview.WebView _webView =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebView(
-    // Due to changes in Flutter 3.0 the `useHybridComposition` doesn't have
-    // any effect and is purposefully not exposed publicly by the
-    // [AndroidWebViewController]. More info here:
-    // https://github.com/flutter/flutter/issues/108106
-    useHybridComposition: true,
-  );
+          // Due to changes in Flutter 3.0 the `useHybridComposition` doesn't have
+          // any effect and is purposefully not exposed publicly by the
+          // [AndroidWebViewController]. More info here:
+          // https://github.com/flutter/flutter/issues/108106
+          useHybridComposition: true,
+          onScrollChanged: withWeakReferenceTo(this,
+              (WeakReference<AndroidWebViewController> weakReference) {
+            return (int l, int t, int oldL, int oldT) async {
+              if (weakReference.target?._onContentOffsetChangedCallback !=
+                  null) {
+                return weakReference.target!._onContentOffsetChangedCallback!(
+                    l, t, oldL, oldT);
+              }
+            };
+          }));
 
   late final android_webview.WebChromeClient _webChromeClient =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebChromeClient(
@@ -132,6 +142,9 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
+
+  Function(int left, int top, int oldLeft, int oldTop)?
+      _onContentOffsetChangedCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -354,7 +367,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setOnContentOffsetChanged(
       void Function(int left, int top, int oldLeft, int oldTop)?
           onOffsetChange) async {
-    _webView.onScrollChanged = onOffsetChange;
+    _onContentOffsetChangedCallback = onOffsetChange;
   }
 
   /// Sets the restrictions that apply on automatic media playback.
@@ -502,7 +515,8 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
-    @visibleForTesting InstanceManager? instanceManager,
+    @visibleForTesting
+        InstanceManager? instanceManager,
     @visibleForTesting
         this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =

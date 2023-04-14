@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformView;
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewFlutterApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewHostApi;
 import java.util.Map;
 import java.util.Objects;
@@ -166,9 +165,9 @@ public class WebViewHostApiImpl implements WebViewHostApi {
 
     @Override
     protected void onScrollChanged(int l, int t, int oldL, int oldT) {
-      webViewFlutterApi.onScrollPosChange(
-          this, (long) l, (long) t, (long) oldL, (long) oldT, reply -> {});
       super.onScrollChanged(l, t, oldL, oldT);
+      webViewFlutterApi.onScrollChanged(
+          this, (long) l, (long) t, (long) oldL, (long) oldT, reply -> {});
     }
   }
 
@@ -181,7 +180,6 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       implements PlatformView {
     private WebViewClient currentWebViewClient;
     private WebChromeClientHostApiImpl.SecureWebChromeClient currentWebChromeClient;
-    private final WebViewFlutterApiImpl webViewFlutterApi;
 
     /**
      * Creates a {@link InputAwareWebViewPlatformView}.
@@ -196,7 +194,6 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       super(context, containerView);
       currentWebViewClient = new WebViewClient();
       currentWebChromeClient = new WebChromeClientHostApiImpl.SecureWebChromeClient();
-      webViewFlutterApi = new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
 
       setWebViewClient(currentWebViewClient);
       setWebChromeClient(currentWebChromeClient);
@@ -248,13 +245,6 @@ public class WebViewHostApiImpl implements WebViewHostApi {
       }
       currentWebChromeClient = (WebChromeClientHostApiImpl.SecureWebChromeClient) client;
       currentWebChromeClient.setWebViewClient(currentWebViewClient);
-    }
-
-    @Override
-    protected void onScrollChanged(int l, int t, int oldL, int oldT) {
-      webViewFlutterApi.onScrollPosChange(
-          this, (long) l, (long) t, (long) oldL, (long) oldT, reply -> {});
-      super.onScrollChanged(l, t, oldL, oldT);
     }
   }
 

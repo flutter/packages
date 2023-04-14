@@ -63,10 +63,6 @@ class JavaObject with Copyable {
   }
 }
 
-/// Signature for the `onScrollChanged` callback responsible for listening to scroll's offset changed events.
-typedef ScrollChangedCallback = void Function(
-    int left, int top, int oldLeft, int oldTop);
-
 /// An Android View that displays web pages.
 ///
 /// **Basic usage**
@@ -94,6 +90,7 @@ class WebView extends JavaObject {
   /// https://github.com/flutter/flutter/issues/108106
   WebView({
     this.useHybridComposition = false,
+    this.onScrollChanged,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -107,6 +104,7 @@ class WebView extends JavaObject {
   @protected
   WebView.detached({
     this.useHybridComposition = false,
+    this.onScrollChanged,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -130,7 +128,7 @@ class WebView extends JavaObject {
   late final WebSettings settings = WebSettings(this);
 
   /// The [ScrollChangedCallback] object used to listen for scroll changed events.
-  late ScrollChangedCallback? onScrollChanged;
+  final Function(int left, int top, int oldLeft, int oldTop)? onScrollChanged;
 
   /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.
   ///
@@ -421,6 +419,7 @@ class WebView extends JavaObject {
   WebView copy() {
     return WebView.detached(
       useHybridComposition: useHybridComposition,
+      onScrollChanged: onScrollChanged,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );

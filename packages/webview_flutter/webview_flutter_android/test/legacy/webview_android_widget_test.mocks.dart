@@ -348,15 +348,6 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
       ) as _i2.WebSettings);
   @override
-  set onScrollChanged(_i2.ScrollChangedCallback? _onScrollChanged) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #onScrollChanged,
-          _onScrollChanged,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   _i5.Future<void> loadData({
     required String? data,
     String? mimeType,
@@ -971,36 +962,30 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageStarted,
+    )? onPageStarted,
     void Function(
       _i2.WebView,
       String,
-    )?
-        onPageFinished,
+    )? onPageFinished,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
       _i2.WebResourceError,
-    )?
-        onReceivedRequestError,
+    )? onReceivedRequestError,
     void Function(
       _i2.WebView,
       int,
       String,
       String,
-    )?
-        onReceivedError,
+    )? onReceivedError,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
-    )?
-        requestLoading,
+    )? requestLoading,
     void Function(
       _i2.WebView,
       String,
-    )?
-        urlLoading,
+    )? urlLoading,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

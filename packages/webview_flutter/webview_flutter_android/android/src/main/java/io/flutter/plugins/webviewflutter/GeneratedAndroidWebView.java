@@ -496,7 +496,7 @@ public class GeneratedAndroidWebView {
                 try {
                   api.clear();
                   wrapped.add(0, null);
-                } catch (Error | RuntimeException exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
