@@ -43,15 +43,25 @@ class ImageProxy extends JavaObject {
 
   late final _ImageProxyHostApiImpl _api;
 
-  Future<List<ImageProxyPlaneProxy>> getPlanes() {}
+  Future<List<ImageProxyPlaneProxy>> getPlanes() {
+    return _api.getPlanesFromInstances(this);
+  }
 
-  Future<int> getFormat() {}
+  Future<int> getFormat() {
+    return _api.getFormatFromInstances(this);
+  }
 
-  Future<int> getHeight() {}
+  Future<int> getHeight() {
+    return _api.getHeightFromInstances(this);
+  }
 
-  Future<int> getWidth() {}
+  Future<int> getWidth() {
+    return _api.getWidthFromInstances(this);
+  }
 
-  Future<void> close() {}
+  Future<void> close() {
+    return _api.closeFromInstances(this);
+  }
 }
 
 class _ImageProxyHostApiImpl extends ImageProxyHostApi {
@@ -65,12 +75,16 @@ class _ImageProxyHostApiImpl extends ImageProxyHostApi {
 
   final InstanceManager instanceManager;
 
-  Future<List<Object?>> getPlanesFromInstances(
+  Future<List<ImageProxyPlaneProxy>> getPlanesFromInstances(
     ImageProxy instance,
-  ) {
-    return getPlanes(
+  ) async {
+    List<Object?> planesAsObjects = await getPlanes(
       instanceManager.getIdentifier(instance)!,
     );
+
+    return planesAsObjects.map((Object? obj) {
+      return obj! as ImageProxyPlaneProxy;
+    }) as List<ImageProxyPlaneProxy>;
   }
 
   Future<int> getFormatFromInstances(

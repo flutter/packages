@@ -27,7 +27,7 @@ class ImageProxyPlaneProxy extends JavaObject {
 //             instanceManager: instanceManager) {
 //     _api = ImageProxyPlaneProxyHostApiImpl(
 //         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-//     _api.createFromInstance(this);
+//     _api.createfromInstances(this);
 //     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
 //   }
 
@@ -43,11 +43,17 @@ class ImageProxyPlaneProxy extends JavaObject {
 
   late final _ImageProxyPlaneProxyHostApiImpl _api;
 
-  Future<Uint8List> getBuffer() {}
+  Future<Uint8List> getBuffer() {
+    return _api.getBufferfromInstances(this);
+  }
 
-  Future<int> getPixelStride() {}
+  Future<int> getPixelStride() {
+    return _api.getPixelStridefromInstances(this);
+  }
 
-  Future<int> getRowStride() {}
+  Future<int> getRowStride() {
+    return _api.getRowStridefromInstances(this);
+  }
 }
 
 class _ImageProxyPlaneProxyHostApiImpl extends ImageProxyPlaneProxyHostApi {
@@ -61,7 +67,7 @@ class _ImageProxyPlaneProxyHostApiImpl extends ImageProxyPlaneProxyHostApi {
 
   final InstanceManager instanceManager;
 
-  Future<int> getPixelStrideFromInstance(
+  Future<int> getPixelStridefromInstances(
     ImageProxyPlaneProxy instance,
   ) {
     return getPixelStride(
@@ -69,7 +75,7 @@ class _ImageProxyPlaneProxyHostApiImpl extends ImageProxyPlaneProxyHostApi {
     );
   }
 
-  Future<Uint8List> getBufferFromInstance(
+  Future<Uint8List> getBufferfromInstances(
     ImageProxyPlaneProxy instance,
   ) {
     return getBuffer(
@@ -77,14 +83,13 @@ class _ImageProxyPlaneProxyHostApiImpl extends ImageProxyPlaneProxyHostApi {
     );
   }
 
-  Future<int> getRowStrideFromInstance(
+  Future<int> getRowStridefromInstances(
     ImageProxyPlaneProxy instance,
-  )  async  {
+  ) async {
     return getRowStride(
       instanceManager.getIdentifier(instance)!,
     );
   }
-  
 }
 
 /// Flutter API implementation for [ImageProxyPlaneProxy].

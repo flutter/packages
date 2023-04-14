@@ -28,7 +28,7 @@ class ImageAnalysisAnalyzer extends JavaObject {
             instanceManager: instanceManager) {
     _api = _ImageAnalysisAnalyzerHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this);
+    _api.createfromInstances(this);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
@@ -60,7 +60,7 @@ class _ImageAnalysisAnalyzerHostApiImpl extends ImageAnalysisAnalyzerHostApi {
 
   final InstanceManager instanceManager;
 
-  Future<void> createFromInstance(
+  Future<void> createfromInstances(
     ImageAnalysisAnalyzer instance,
   ) {
     return create(
@@ -127,10 +127,10 @@ class ImageAnalysisAnalyzerFlutterApiImpl
   ) {
     final ImageAnalysisAnalyzer instance =
         instanceManager.getInstanceWithWeakReference(identifier)!;
-    final ImageProxy imageProxy =  instanceManager.getInstanceWithWeakReference(imageProxyIdentifier)!;
+    final ImageProxy imageProxy =
+        instanceManager.getInstanceWithWeakReference(imageProxyIdentifier)!;
     return instance.analyze(
       imageProxy,
-
     );
   }
 }

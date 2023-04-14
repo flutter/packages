@@ -32,7 +32,7 @@ class ImageAnalysis extends UseCase {
             instanceManager: instanceManager) {
     _api = _ImageAnalysisHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, targetResolution);
+    _api.createfromInstances(this, targetResolution);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
@@ -70,12 +70,12 @@ class ImageAnalysis extends UseCase {
   /// information that is analyzed by the created ImageAnalysis.Analyzer
   /// instance.
   Future<void> setAnalyzer(ImageAnalysisAnalyzer analyzer) async {
-    _api.setAnalyzerFromInstance(this, analyzer);
+    _api.setAnalyzerfromInstances(this, analyzer);
   }
 
   /// Clears previously set analyzer for image streaming support.
   Future<void> clearAnalyzer() async {
-    _api.clearAnalyzerFromInstance(this);
+    _api.clearAnalyzerfromInstances(this);
   }
 }
 
@@ -90,7 +90,7 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
 
   final InstanceManager instanceManager;
 
-  Future<void> createFromInstance(
+  Future<void> createfromInstances(
     ImageAnalysis instance,
     ResolutionInfo? targetResolution,
   ) {
@@ -109,7 +109,7 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     );
   }
 
-  // StreamController attachOnStreamedFrameAvailableStreamControllerFromInstances(
+  // StreamController attachOnStreamedFrameAvailableStreamControllerfromInstancess(
   //   StreamController onStreamedFrameAvailableStreamController,
   // ) {
   //   attachOnStreamedFrameAvailableStreamController(
@@ -125,7 +125,7 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
   //   return onStreamedFrameAvailableStreamController;
   // }
 
-  Future<void> setAnalyzerFromInstance(
+  Future<void> setAnalyzerfromInstances(
     ImageAnalysis instance,
     ImageAnalysisAnalyzer analyzer,
   ) {
@@ -135,7 +135,7 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     );
   }
 
-  Future<void> clearAnalyzerFromInstance(
+  Future<void> clearAnalyzerfromInstances(
     ImageAnalysis instance,
   ) {
     return clearAnalyzer(
