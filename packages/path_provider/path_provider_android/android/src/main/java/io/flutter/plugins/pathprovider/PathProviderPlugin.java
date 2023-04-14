@@ -35,7 +35,8 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
   }
 
   @SuppressWarnings("deprecation")
-  public static void registerWith(@NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     PathProviderPlugin instance = new PathProviderPlugin();
     instance.setup(registrar.messenger(), registrar.context());
   }
