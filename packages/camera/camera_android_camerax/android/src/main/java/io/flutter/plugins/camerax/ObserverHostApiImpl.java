@@ -3,11 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Import native classes
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.Observer;
@@ -53,12 +50,11 @@ public class ObserverHostApiImpl implements ObserverHostApi {
       api = new ObserverFlutterApiWrapper(binaryMessenger, instanceManager);
     }
 
-    // TODO(bparrishMines): Need to handle inherited callback methods
 
     @Override
     public void onChanged(T value) {
-      System.out.println("CAMILLE, GETTING CALLED");
-      api.onChanged(this, value, reply -> {});
+      System.out.println("CAMILLE, GETTING CALLED: " + value.toString());
+      // api.onChanged(this, value, reply -> {});
     }
 
     /**
