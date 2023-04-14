@@ -1,3 +1,7 @@
+## 6.5.7
+
+- Removes navigator keys from `GoRouteData` and `ShellRouteData`.
+
 ## 6.5.6
 
 - Fixes an issue where ShellRoute routes were not logged when debugLogDiagnostic was enabled.
@@ -8,7 +12,7 @@
 
 ## 6.5.4
 
-- Remove navigator keys from `TypedGoRoute` and `TypedShellRoute`.
+- Removes navigator keys from `TypedGoRoute` and `TypedShellRoute`.
 
 ## 6.5.3
 
