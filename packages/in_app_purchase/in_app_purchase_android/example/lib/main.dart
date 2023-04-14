@@ -254,21 +254,7 @@ class _MyAppState extends State<_MyApp> {
               productDetails.description,
             ),
             trailing: previousPurchase != null
-                ? IconButton(
-                    onPressed: () {
-                      final InAppPurchaseAndroidPlatformAddition addition =
-                          InAppPurchasePlatformAddition.instance!
-                              as InAppPurchaseAndroidPlatformAddition;
-                      final SkuDetailsWrapper skuDetails =
-                          (productDetails as GooglePlayProductDetailsV4)
-                              .skuDetails;
-                      addition
-                          .launchPriceChangeConfirmationFlow(
-                              sku: skuDetails.sku)
-                          .then((BillingResultWrapper value) => print(
-                              'confirmationResponse: ${value.responseCode}'));
-                    },
-                    icon: const Icon(Icons.upgrade))
+                ? const SizedBox.shrink()
                 : TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.green[800],
@@ -283,7 +269,7 @@ class _MyAppState extends State<_MyApp> {
                       // inside the app may not be accurate.
                       final GooglePlayPurchaseDetails? oldSubscription =
                           _getOldSubscription(
-                              productDetails as GooglePlayProductDetailsV4,
+                              productDetails as GooglePlayProductDetails,
                               purchases);
                       final GooglePlayPurchaseParam purchaseParam =
                           GooglePlayPurchaseParam(
@@ -434,7 +420,7 @@ class _MyAppState extends State<_MyApp> {
   }
 
   GooglePlayPurchaseDetails? _getOldSubscription(
-      GooglePlayProductDetailsV4 productDetails,
+      GooglePlayProductDetails productDetails,
       Map<String, PurchaseDetails> purchases) {
     // This is just to demonstrate a subscription upgrade or downgrade.
     // This method assumes that you have only 2 subscriptions under a group, 'subscription_silver' & 'subscription_gold'.

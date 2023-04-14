@@ -11,7 +11,7 @@ const PurchaseWrapper dummyPurchase = PurchaseWrapper(
   packageName: 'packageName',
   purchaseTime: 0,
   signature: 'signature',
-  skus: <String>['sku'],
+  products: <String>['product'],
   purchaseToken: 'purchaseToken',
   isAutoRenewing: false,
   originalJson: '',
@@ -27,7 +27,7 @@ const PurchaseWrapper dummyUnacknowledgedPurchase = PurchaseWrapper(
   packageName: 'packageName',
   purchaseTime: 0,
   signature: 'signature',
-  skus: <String>['sku'],
+  products: <String>['product'],
   purchaseToken: 'purchaseToken',
   isAutoRenewing: false,
   originalJson: '',
@@ -40,7 +40,7 @@ const PurchaseHistoryRecordWrapper dummyPurchaseHistoryRecord =
     PurchaseHistoryRecordWrapper(
   purchaseTime: 0,
   signature: 'signature',
-  skus: <String>['sku'],
+  products: <String>['product'],
   purchaseToken: 'purchaseToken',
   originalJson: '',
   developerPayload: 'dummy payload',
@@ -51,7 +51,7 @@ const PurchaseWrapper dummyOldPurchase = PurchaseWrapper(
   packageName: 'oldPackageName',
   purchaseTime: 0,
   signature: 'oldSignature',
-  skus: <String>['oldSku'],
+  products: <String>['oldProduct'],
   purchaseToken: 'oldPurchaseToken',
   isAutoRenewing: false,
   originalJson: '',
@@ -75,7 +75,7 @@ void main() {
           GooglePlayPurchaseDetails.fromPurchase(dummyPurchase);
 
       expect(details.purchaseID, dummyPurchase.orderId);
-      expect(details.productID, dummyPurchase.sku);
+      expect(details.productID, dummyPurchase.products.first);
       expect(details.transactionDate, dummyPurchase.purchaseTime.toString());
       expect(details.verificationData, isNotNull);
       expect(details.verificationData.source, kIAPSource);
@@ -94,7 +94,7 @@ void main() {
           GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase);
 
       expect(details.purchaseID, dummyPurchase.orderId);
-      expect(details.productID, dummyPurchase.sku);
+      expect(details.productID, dummyPurchase.products.first);
       expect(details.transactionDate, dummyPurchase.purchaseTime.toString());
       expect(details.verificationData, isNotNull);
       expect(details.verificationData.source, kIAPSource);
@@ -205,7 +205,7 @@ Map<String, dynamic> buildPurchaseMap(PurchaseWrapper original) {
     'packageName': original.packageName,
     'purchaseTime': original.purchaseTime,
     'signature': original.signature,
-    'skus': original.skus,
+    'products': original.products,
     'purchaseToken': original.purchaseToken,
     'isAutoRenewing': original.isAutoRenewing,
     'originalJson': original.originalJson,
@@ -223,7 +223,7 @@ Map<String, dynamic> buildPurchaseHistoryRecordMap(
   return <String, dynamic>{
     'purchaseTime': original.purchaseTime,
     'signature': original.signature,
-    'skus': original.skus,
+    'products': original.products,
     'purchaseToken': original.purchaseToken,
     'originalJson': original.originalJson,
     'developerPayload': original.developerPayload,

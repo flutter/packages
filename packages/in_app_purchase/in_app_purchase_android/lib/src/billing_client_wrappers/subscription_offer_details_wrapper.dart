@@ -55,8 +55,8 @@ class SubscriptionOfferDetailsWrapper {
   final String offerToken;
 
   /// The pricing phases for the subscription product.
-  @JsonKey(defaultValue: <PricingPhase>[])
-  final List<PricingPhase> pricingPhases;
+  @JsonKey(defaultValue: <PricingPhaseWrapper>[])
+  final List<PricingPhaseWrapper> pricingPhases;
 
   @override
   bool operator ==(Object other) {
@@ -69,7 +69,7 @@ class SubscriptionOfferDetailsWrapper {
         other.offerId == offerId &&
         listEquals(other.offerTags, offerTags) &&
         other.offerToken == offerToken &&
-        other.pricingPhases == pricingPhases;
+        listEquals(other.pricingPhases, pricingPhases);
   }
 
   @override
@@ -88,10 +88,10 @@ class SubscriptionOfferDetailsWrapper {
 @JsonSerializable()
 @RecurrenceModeConverter()
 @immutable
-class PricingPhase {
-  /// Creates a new [PricingPhase] from the supplied info.
+class PricingPhaseWrapper {
+  /// Creates a new [PricingPhaseWrapper] from the supplied info.
   @visibleForTesting
-  const PricingPhase({
+  const PricingPhaseWrapper({
     required this.billingCycleCount,
     required this.billingPeriod,
     required this.formattedPrice,
@@ -100,9 +100,9 @@ class PricingPhase {
     required this.recurrenceMode,
   });
 
-  /// Factory for creating a [PricingPhase] from a [Map] with the phase details.
-  factory PricingPhase.fromJson(Map<String, dynamic> map) =>
-      _$PricingPhaseFromJson(map);
+  /// Factory for creating a [PricingPhaseWrapper] from a [Map] with the phase details.
+  factory PricingPhaseWrapper.fromJson(Map<String, dynamic> map) =>
+      _$PricingPhaseWrapperFromJson(map);
 
   /// Represents a pricing phase, describing how a user pays at a point in time.
   @JsonKey(defaultValue: 0)
@@ -137,7 +137,7 @@ class PricingPhase {
       return false;
     }
 
-    return other is PricingPhase &&
+    return other is PricingPhaseWrapper &&
         other.billingCycleCount == billingCycleCount &&
         other.billingPeriod == billingPeriod &&
         other.formattedPrice == formattedPrice &&

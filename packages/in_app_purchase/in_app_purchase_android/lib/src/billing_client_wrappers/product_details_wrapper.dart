@@ -89,7 +89,7 @@ class ProductDetailsWrapper {
         other.oneTimePurchaseOfferDetails == oneTimePurchaseOfferDetails &&
         other.productId == productId &&
         other.productType == productType &&
-        other.subscriptionOfferDetails == subscriptionOfferDetails &&
+        listEquals(other.subscriptionOfferDetails, subscriptionOfferDetails) &&
         other.title == title;
   }
 

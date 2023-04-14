@@ -66,7 +66,7 @@ class GooglePlayProductDetails extends ProductDetails {
     final SubscriptionOfferDetailsWrapper subscriptionOfferDetails =
         productDetails.subscriptionOfferDetails![subscriptionIndex];
 
-    final PricingPhase firstPricingPhase =
+    final PricingPhaseWrapper firstPricingPhase =
         subscriptionOfferDetails.pricingPhases.first;
     final String formattedPrice = firstPricingPhase.formattedPrice;
     final double rawPrice = (firstPricingPhase.priceAmountMicros) / 1000000.0;

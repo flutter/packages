@@ -17,13 +17,14 @@ SubscriptionOfferDetailsWrapper _$SubscriptionOfferDetailsWrapperFromJson(
           [],
       offerToken: json['offerToken'] as String? ?? '',
       pricingPhases: (json['pricingPhases'] as List<dynamic>?)
-              ?.map((e) =>
-                  PricingPhase.fromJson(Map<String, dynamic>.from(e as Map)))
+              ?.map((e) => PricingPhaseWrapper.fromJson(
+                  Map<String, dynamic>.from(e as Map)))
               .toList() ??
           [],
     );
 
-PricingPhase _$PricingPhaseFromJson(Map json) => PricingPhase(
+PricingPhaseWrapper _$PricingPhaseWrapperFromJson(Map json) =>
+    PricingPhaseWrapper(
       billingCycleCount: json['billingCycleCount'] as int? ?? 0,
       billingPeriod: json['billingPeriod'] as String? ?? '',
       formattedPrice: json['formattedPrice'] as String? ?? '',
