@@ -33,21 +33,22 @@ void main() {
     RepositoryPackage package, {
     bool includeLanguageVersion = false,
     bool includeSourceCompat = false,
+    bool commentRequiredLine = false,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
         .childFile('build.gradle');
     buildGradle.createSync(recursive: true);
 
-    const String compileOptionsSection = '''
+    final String compileOptionsSection = '''
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
+        ${commentRequiredLine ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8
     }
 ''';
-    const String javaSection = '''
+    final String javaSection = '''
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        ${commentRequiredLine ? '// ' : ''}languageVersion = JavaLanguageVersion.of(8)
     }
 }
 
@@ -89,7 +90,7 @@ dependencies {
   }
 
   test('skips when package has no Android directory', () async {
-    createFakePackage('a_package', packagesDir);
+    createFakePackage('a_package', packagesDir, examples: <String>[]);
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['gradle-check']);
@@ -103,7 +104,8 @@ dependencies {
   });
 
   test('fails when build.gradle has no java compatibility version', () async {
-    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package);
 
     Error? commandError;
@@ -123,7 +125,8 @@ dependencies {
   });
 
   test('passes when sourceCompatibility is specified', () async {
-    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package, includeSourceCompat: true);
 
     final List<String> output =
@@ -138,7 +141,8 @@ dependencies {
   });
 
   test('passes when toolchain languageVersion is specified', () async {
-    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
 
     final List<String> output =
@@ -148,6 +152,67 @@ dependencies {
       output,
       containsAllInOrder(<Matcher>[
         contains('Validating android/build.gradle'),
+      ]),
+    );
+  });
+
+  test('does not require java version in examples', () async {
+    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    writeFakeBuildGradle(package.getExamples().first);
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['gradle-check']);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Validating android/build.gradle'),
+        contains('Ran for 2 package(s)'),
+      ]),
+    );
+  });
+
+  test('fails when java compatibility version is commented out', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakeBuildGradle(package,
+        includeSourceCompat: true, commentRequiredLine: true);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+            'build.gradle must set an explicit Java compatibility version.'),
+      ]),
+    );
+  });
+
+  test('fails when languageVersion is commented out', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakeBuildGradle(package,
+        includeLanguageVersion: true, commentRequiredLine: true);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+            'build.gradle must set an explicit Java compatibility version.'),
       ]),
     );
   });
