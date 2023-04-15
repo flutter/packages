@@ -253,15 +253,15 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
             future: _controller.isPictureInPictureSupported(),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
                 Text(snapshot.data ?? false
-                    ? 'Picture in picture is supported'
-                    : 'Picture in picture is not supported'),
+                    ? 'Picture-in-picture is supported'
+                    : 'Picture-in-picture is not supported'),
           ),
           Row(
             children: <Widget>[
               const SizedBox(width: 16),
               const Expanded(
                 child: Text(
-                    'Start picture in picture automatically when going to background'),
+                    'Start picture-in-picture automatically when going to background'),
               ),
               Switch(
                 value: _enableStartPictureInPictureAutomaticallyFromInline,
@@ -296,7 +296,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                 ),
               );
             },
-            child: const Text('Set picture in picture overlay rect'),
+            child: const Text('Set picture-in-picture overlay rect'),
           ),
           MaterialButton(
             color: Colors.blue,
@@ -308,8 +308,8 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               }
             },
             child: Text(_controller.value.isPictureInPictureActive
-                ? 'Stop picture in picture'
-                : 'Start picture in picture'),
+                ? 'Stop picture-in-picture'
+                : 'Start picture-in-picture'),
           ),
           Container(
             padding: const EdgeInsets.all(20),
@@ -330,7 +330,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                       children: const <Widget>[
                         Icon(Icons.picture_in_picture),
                         SizedBox(height: 8),
-                        Text('This video is playing in picture in picture.'),
+                        Text('This video is playing in picture-in-picture.'),
                       ],
                     ),
                   ] else ...<Widget>[

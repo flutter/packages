@@ -1,6 +1,6 @@
 ## 2.5.0
 
-* Added support for picture in picture on iOS
+* Adds support for picture-in-picture on iOS.
 
 ## 2.4.4
 

@@ -275,7 +275,7 @@
   XCTAssertNil(error);
   XCTAssertEqual(avPlayer.volume, 0.1f);
 
-  // Set Picture In Picture
+  // Set picture-in-picture
   NSNumber *isPictureInPictureSupported = [videoPlayerPlugin isPictureInPictureSupported:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(isPictureInPictureSupported);

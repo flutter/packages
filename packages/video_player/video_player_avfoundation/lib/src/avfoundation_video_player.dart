@@ -178,7 +178,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> setAutomaticallyStartPictureInPicture({
+  Future<void> setAutomaticallyStartsPictureInPicture({
     required int textureId,
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) {

@@ -41,7 +41,7 @@
 // streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116).
 // An invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
 // for issue #1, and restore the correct width and height for issue #2.
-// It is also used to start picture in picture
+// It is also used to start picture-in-picture
 @property(readonly, nonatomic) AVPlayerLayer *playerLayer;
 @property(readonly, nonatomic) CADisplayLink *displayLink;
 @property(nonatomic) AVPictureInPictureController *pictureInPictureController;
@@ -258,10 +258,10 @@ NS_INLINE UIViewController *rootViewController() {
   // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
   // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
   // for issue #1, and restore the correct width and height for issue #2.
-  // It is also used to start picture in picture
+  // It is also used to start picture-in-picture
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
   // We set the opacity to 0.001 because it is an overlay.
-  // Picture in picture will show a placeholder over other widgets when video_player is used in a
+  // Picture-in-picture will show a placeholder over other widgets when video_player is used in a
   // ScrollView, PageView or in a widget that changes location.
   _playerLayer.opacity = 0.001;
   [rootViewController().view.layer addSublayer:_playerLayer];
@@ -311,8 +311,7 @@ NS_INLINE UIViewController *rootViewController() {
   if (self.pictureInPictureController && self.isPictureInPictureStarted &&
       ![self.pictureInPictureController isPictureInPictureActive]) {
     if (_eventSink != nil) {
-      // The event is already send here to make sure that Flutter UI can be updates as soon as
-      // possible
+      // The event is sent here to make sure that the Flutter UI can be updated as soon as possible.
       _eventSink(@{@"event" : @"startingPictureInPicture"});
     }
     [self.pictureInPictureController startPictureInPicture];

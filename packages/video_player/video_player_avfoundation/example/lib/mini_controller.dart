@@ -73,7 +73,7 @@ class VideoPlayerValue {
   /// The current speed of the playback.
   final double playbackSpeed;
 
-  /// True if picture in picture is currently active.
+  /// True if picture-in-picture is currently active.
   final bool isPictureInPictureActive;
 
   /// A description of the error if present.
@@ -384,23 +384,23 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlaybackSpeed();
   }
 
-  /// Returns true if picture in picture is supported on the device.
+  /// Returns true if picture-in-picture is supported on the device.
   Future<bool> isPictureInPictureSupported() {
     return _platform.isPictureInPictureSupported();
   }
 
-  /// Enable/disable to start picture in picture automatically when the app goes to the background.
+  /// Enable/disable to start picture-in-picture automatically when the app goes to the background.
   Future<void> setAutomaticallyStartPictureInPicture({
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) {
-    return _platform.setAutomaticallyStartPictureInPicture(
+    return _platform.setAutomaticallyStartsPictureInPicture(
       textureId: textureId,
       enableStartPictureInPictureAutomaticallyFromInline:
           enableStartPictureInPictureAutomaticallyFromInline,
     );
   }
 
-  /// Set the location of the video player view. So picture in picture can use it for animating
+  /// Set the location of the video player view. So picture-in-picture can use it for animating
   Future<void> setPictureInPictureOverlayRect({
     required Rect rect,
   }) {
@@ -410,12 +410,12 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
-  /// Start picture in picture mode
+  /// Start picture-in-picture mode.
   Future<void> startPictureInPicture() {
     return _platform.startPictureInPicture(textureId);
   }
 
-  /// Stop picture in picture mode
+  /// Stop picture-in-picture mode.
   Future<void> stopPictureInPicture() {
     return _platform.stopPictureInPicture(textureId);
   }

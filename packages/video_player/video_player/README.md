@@ -135,12 +135,12 @@ and so on.
 
 To learn about playback speed limitations, see the [`setPlaybackSpeed` method documentation](https://pub.dev/documentation/video_player/latest/video_player/VideoPlayerController/setPlaybackSpeed.html).
 
-### Picture in Picture
+### Picture-in-Picture
 
 #### iOS
-On iOS the picture in picture is linked to the AVPlayerController.
-If you want to enable picture in picture make sure to enable the `audio` capability (in Xcode's UI it will say **Audio, AirPlay, and Picture in Picture**).
-Not setting this capability but calling `setPictureInPictureOverlayRectMessage` and `setPictureInPicture` will not start the picture in picture.
+On iOS the picture-in-picture is linked to the AVPlayerController.
+If you want to enable picture-in-picture make sure to enable the `audio` capability (in Xcode's UI it will say **Audio, AirPlay, and Picture in Picture**).
+Not setting this capability but calling `setPictureInPictureOverlayRectMessage` and `setPictureInPicture` will not start the picture-in-picture.
 
 ```xml
     <key>UIBackgroundModes</key>
@@ -150,14 +150,14 @@ Not setting this capability but calling `setPictureInPictureOverlayRectMessage` 
 ```
 
 Example:
-![The example app running in iOS with picture in picture enabled](https://github.com/flutter/plugins/blob/main/packages/video_player/video_player/doc/demo_pip_iphone.gif?raw=true)
+![The example app running in iOS with picture-in-picture enabled](https://github.com/flutter/plugins/blob/main/packages/video_player/video_player/doc/demo_pip_iphone.gif?raw=true)
 
 #### Android
 
-On Android the implementation is different. There is no link to the video player. Your complete app will be minimized ([picture in picutre Android documentation](https://developer.android.com/guide/topics/ui/picture-in-picture))
+On Android there is no link to the video player. Your complete app will be minimized ([picture-in-picture Android documentation](https://developer.android.com/guide/topics/ui/picture-in-picture))
 
 You have multiple options on Android:
 - [simple_pip_mode](https://pub.dev/packages/simple_pip_mode)
-- Create your own plugin that follows the andorid documentation
+- Create your own plugin that follows the android documentation
 
 Furthermore, see the example app for an example playback speed implementation.

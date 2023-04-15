@@ -277,7 +277,7 @@ void main() {
     });
 
     test('setAutomaticallyStartPictureInPicture true', () async {
-      await player.setAutomaticallyStartPictureInPicture(
+      await player.setAutomaticallyStartsPictureInPicture(
           textureId: 1,
           enableStartPictureInPictureAutomaticallyFromInline: true);
       expect(log.log.last, 'setAutomaticallyStartPictureInPicture');
@@ -289,7 +289,7 @@ void main() {
     });
 
     test('setAutomaticallyStartPictureInPicture false', () async {
-      await player.setAutomaticallyStartPictureInPicture(
+      await player.setAutomaticallyStartsPictureInPicture(
           textureId: 1,
           enableStartPictureInPictureAutomaticallyFromInline: false);
       expect(log.log.last, 'setAutomaticallyStartPictureInPicture');
