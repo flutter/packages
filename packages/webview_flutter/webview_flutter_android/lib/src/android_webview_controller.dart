@@ -714,6 +714,15 @@ class AndroidNavigationDelegateCreationParams
   final AndroidWebViewProxy androidWebViewProxy;
 }
 
+/// Android details of the change to a web view's url.
+class AndroidUrlChange extends UrlChange {
+  /// Constructs an [AndroidUrlChange].
+  const AndroidUrlChange({required super.url, required this.isReload});
+
+  /// Whether the url is being reloaded.
+  final bool isReload;
+}
+
 /// A place to register callback methods responsible to handle navigation events
 /// triggered by the [android_webview.WebView].
 class AndroidNavigationDelegate extends PlatformNavigationDelegate {
@@ -730,13 +739,15 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         .androidWebViewProxy
         .createAndroidWebViewClient(
       onPageFinished: (android_webview.WebView webView, String url) {
-        if (weakThis.target?._onPageFinished != null) {
-          weakThis.target!._onPageFinished!(url);
+        final PageEventCallback? callback = weakThis.target?._onPageFinished;
+        if (callback != null) {
+          callback(url);
         }
       },
       onPageStarted: (android_webview.WebView webView, String url) {
-        if (weakThis.target?._onPageStarted != null) {
-          weakThis.target!._onPageStarted!(url);
+        final PageEventCallback? callback = weakThis.target?._onPageStarted;
+        if (callback != null) {
+          callback(url);
         }
       },
       onReceivedHttpError: (
@@ -754,8 +765,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.WebResourceRequest request,
         android_webview.WebResourceError error,
       ) {
-        if (weakThis.target?._onWebResourceError != null) {
-          weakThis.target!._onWebResourceError!(AndroidWebResourceError._(
+        final WebResourceErrorCallback? callback =
+            weakThis.target?._onWebResourceError;
+        if (callback != null) {
+          callback(AndroidWebResourceError._(
             errorCode: error.errorCode,
             description: error.description,
             failingUrl: request.url,
@@ -769,8 +782,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         String description,
         String failingUrl,
       ) {
-        if (weakThis.target?._onWebResourceError != null) {
-          weakThis.target!._onWebResourceError!(AndroidWebResourceError._(
+        final WebResourceErrorCallback? callback =
+            weakThis.target?._onWebResourceError;
+        if (callback != null) {
+          callback(AndroidWebResourceError._(
             errorCode: errorCode,
             description: description,
             failingUrl: failingUrl,
@@ -782,20 +797,23 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.WebView webView,
         android_webview.WebResourceRequest request,
       ) {
-        if (weakThis.target != null) {
-          weakThis.target!._handleNavigation(
-            request.url,
-            headers: request.requestHeaders,
-            isForMainFrame: request.isForMainFrame,
-          );
-        }
+        weakThis.target?._handleNavigation(
+          request.url,
+          headers: request.requestHeaders,
+          isForMainFrame: request.isForMainFrame,
+        );
       },
-      urlLoading: (
+      urlLoading: (android_webview.WebView webView, String url) {
+        weakThis.target?._handleNavigation(url, isForMainFrame: true);
+      },
+      doUpdateVisitedHistory: (
         android_webview.WebView webView,
         String url,
+        bool isReload,
       ) {
-        if (weakThis.target != null) {
-          weakThis.target!._handleNavigation(url, isForMainFrame: true);
+        final UrlChangeCallback? callback = weakThis.target?._onUrlChange;
+        if (callback != null) {
+          callback(AndroidUrlChange(url: url, isReload: isReload));
         }
       },
     );
@@ -854,6 +872,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
+  UrlChangeCallback? _onUrlChange;
 
   void _handleNavigation(
     String url, {
@@ -940,5 +959,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     WebResourceErrorCallback onWebResourceError,
   ) async {
     _onWebResourceError = onWebResourceError;
+  }
+
+  @override
+  Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
+    _onUrlChange = onUrlChange;
   }
 }

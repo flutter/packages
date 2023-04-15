@@ -2283,6 +2283,23 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, urlArg)),
           channelReply -> callback.reply(null));
     }
+
+    public void doUpdateVisitedHistory(
+        @NonNull Long instanceIdArg,
+        @NonNull Long webViewInstanceIdArg,
+        @NonNull String urlArg,
+        @NonNull Boolean isReloadArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.WebViewClientFlutterApi.doUpdateVisitedHistory",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(
+              Arrays.asList(instanceIdArg, webViewInstanceIdArg, urlArg, isReloadArg)),
+          channelReply -> callback.reply(null));
+    }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface DownloadListenerHostApi {

@@ -770,6 +770,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebView,
       String,
+      bool,
+    )? doUpdateVisitedHistory,
+    void Function(
+      _i2.WebView,
+      String,
     )? onPageFinished,
     void Function(
       _i2.WebView,
@@ -802,6 +807,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
   }) get createAndroidWebViewClient => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebViewClient),
         returnValue: ({
+          void Function(
+            _i2.WebView,
+            String,
+            bool,
+          )? doUpdateVisitedHistory,
           void Function(
             _i2.WebView,
             String,
@@ -843,6 +853,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebView,
             String,
+            bool,
+          )? doUpdateVisitedHistory,
+          void Function(
+            _i2.WebView,
+            String,
           )? onPageFinished,
           void Function(
             _i2.WebView,
@@ -878,6 +893,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebViewClient),
         ),
       ) as _i2.WebViewClient Function({
+        void Function(
+          _i2.WebView,
+          String,
+          bool,
+        )? doUpdateVisitedHistory,
         void Function(
           _i2.WebView,
           String,

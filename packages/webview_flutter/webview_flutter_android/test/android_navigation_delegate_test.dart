@@ -470,6 +470,27 @@ void main() {
       expect(completer.isCompleted, true);
     });
   });
+
+  test('onUrlChange', () {
+    final AndroidNavigationDelegate androidNavigationDelegate =
+        AndroidNavigationDelegate(_buildCreationParams());
+
+    late final AndroidUrlChange urlChange;
+    androidNavigationDelegate.setOnUrlChange(
+      (UrlChange change) {
+        urlChange = change as AndroidUrlChange;
+      },
+    );
+
+    CapturingWebViewClient.lastCreatedDelegate.doUpdateVisitedHistory!(
+      android_webview.WebView.detached(),
+      'https://www.google.com',
+      false,
+    );
+
+    expect(urlChange.url, 'https://www.google.com');
+    expect(urlChange.isReload, isFalse);
+  });
 }
 
 AndroidNavigationDelegateCreationParams _buildCreationParams() {
@@ -495,6 +516,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,
+    super.doUpdateVisitedHistory,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached() {
