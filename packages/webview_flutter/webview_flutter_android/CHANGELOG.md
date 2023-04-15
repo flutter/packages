@@ -2,6 +2,10 @@
 
 * Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
 
+## 3.5.2
+
+* Updates internal Java InstanceManager to only stop finalization callbacks when stopped.
+
 ## 3.5.1
 
 * Updates pigeon dev dependency to `9.2.4`.

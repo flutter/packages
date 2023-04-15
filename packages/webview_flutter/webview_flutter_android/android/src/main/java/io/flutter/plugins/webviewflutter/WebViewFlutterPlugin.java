@@ -80,7 +80,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
       Context context,
       FlutterAssetManager flutterAssetManager) {
     instanceManager =
-        InstanceManager.open(
+        InstanceManager.create(
             identifier ->
                 new GeneratedAndroidWebView.JavaObjectFlutterApi(binaryMessenger)
                     .dispose(identifier, reply -> {}));
@@ -152,7 +152,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     if (instanceManager != null) {
-      instanceManager.close();
+      instanceManager.stopFinalizationListener();
       instanceManager = null;
     }
   }

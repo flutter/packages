@@ -47,7 +47,7 @@ public class WebChromeClientTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
 
     final WebChromeClientCreator webChromeClientCreator =
         new WebChromeClientCreator() {
@@ -67,7 +67,7 @@ public class WebChromeClientTest {
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
