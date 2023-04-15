@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -122,9 +120,9 @@ void main() {
       );
       _writeFakePodspec(plugin, 'ios');
 
-      processRunner.mockProcessesForExecutable['pod'] = <io.Process>[
-        MockProcess(stdout: 'Foo', stderr: 'Bar'),
-        MockProcess(),
+      processRunner.mockProcessesForExecutable['pod'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'Foo', stderr: 'Bar')),
+        FakeProcessInfo(MockProcess()),
       ];
 
       final List<String> output =
@@ -176,8 +174,8 @@ void main() {
       _writeFakePodspec(plugin, 'ios');
 
       // Simulate failure from `which pod`.
-      processRunner.mockProcessesForExecutable['which'] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['which'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['pod']),
       ];
 
       Error? commandError;
@@ -202,8 +200,8 @@ void main() {
       _writeFakePodspec(plugin, 'ios');
 
       // Simulate failure from `pod`.
-      processRunner.mockProcessesForExecutable['pod'] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['pod'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;
@@ -230,9 +228,9 @@ void main() {
       _writeFakePodspec(plugin, 'ios');
 
       // Simulate failure from the second call to `pod`.
-      processRunner.mockProcessesForExecutable['pod'] = <io.Process>[
-        MockProcess(),
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['pod'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess()),
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;

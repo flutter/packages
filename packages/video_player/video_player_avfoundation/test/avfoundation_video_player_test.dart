@@ -324,10 +324,11 @@ void main() {
     });
 
     test('videoEventsFor', () async {
+      const String mockChannel = 'flutter.io/videoPlayer/videoEvents123';
       _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
           .defaultBinaryMessenger
           .setMockMessageHandler(
-        'flutter.io/videoPlayer/videoEvents123',
+        mockChannel,
         (ByteData? message) async {
           final MethodCall methodCall =
               const StandardMethodCodec().decodeMethodCall(message);
@@ -335,7 +336,7 @@ void main() {
             await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
                 .defaultBinaryMessenger
                 .handlePlatformMessage(
-                    'flutter.io/videoPlayer/videoEvents123',
+                    mockChannel,
                     const StandardMethodCodec()
                         .encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'initialized',
@@ -348,7 +349,7 @@ void main() {
             await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
                 .defaultBinaryMessenger
                 .handlePlatformMessage(
-                    'flutter.io/videoPlayer/videoEvents123',
+                    mockChannel,
                     const StandardMethodCodec()
                         .encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'completed',
@@ -358,7 +359,7 @@ void main() {
             await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
                 .defaultBinaryMessenger
                 .handlePlatformMessage(
-                    'flutter.io/videoPlayer/videoEvents123',
+                    mockChannel,
                     const StandardMethodCodec()
                         .encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'bufferingUpdate',
@@ -372,7 +373,7 @@ void main() {
             await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
                 .defaultBinaryMessenger
                 .handlePlatformMessage(
-                    'flutter.io/videoPlayer/videoEvents123',
+                    mockChannel,
                     const StandardMethodCodec()
                         .encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'bufferingStart',
@@ -382,10 +383,32 @@ void main() {
             await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
                 .defaultBinaryMessenger
                 .handlePlatformMessage(
-                    'flutter.io/videoPlayer/videoEvents123',
+                    mockChannel,
                     const StandardMethodCodec()
                         .encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'bufferingEnd',
+                    }),
+                    (ByteData? data) {});
+
+            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+                .defaultBinaryMessenger
+                .handlePlatformMessage(
+                    mockChannel,
+                    const StandardMethodCodec()
+                        .encodeSuccessEnvelope(<String, dynamic>{
+                      'event': 'isPlayingStateUpdate',
+                      'isPlaying': true,
+                    }),
+                    (ByteData? data) {});
+
+            await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+                .defaultBinaryMessenger
+                .handlePlatformMessage(
+                    mockChannel,
+                    const StandardMethodCodec()
+                        .encodeSuccessEnvelope(<String, dynamic>{
+                      'event': 'isPlayingStateUpdate',
+                      'isPlaying': false,
                     }),
                     (ByteData? data) {});
 
@@ -420,6 +443,14 @@ void main() {
                 ]),
             VideoEvent(eventType: VideoEventType.bufferingStart),
             VideoEvent(eventType: VideoEventType.bufferingEnd),
+            VideoEvent(
+              eventType: VideoEventType.isPlayingStateUpdate,
+              isPlaying: true,
+            ),
+            VideoEvent(
+              eventType: VideoEventType.isPlayingStateUpdate,
+              isPlaying: false,
+            ),
           ]));
     });
   });

@@ -16,7 +16,7 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 
 class FakeController extends ValueNotifier<VideoPlayerValue>
     implements VideoPlayerController {
-  FakeController() : super(VideoPlayerValue(duration: Duration.zero));
+  FakeController() : super(const VideoPlayerValue(duration: Duration.zero));
 
   FakeController.value(super.value);
 
@@ -183,7 +183,8 @@ void main() {
   testWidgets('non-zero rotationCorrection value is used',
       (WidgetTester tester) async {
     final FakeController controller = FakeController.value(
-        VideoPlayerValue(duration: Duration.zero, rotationCorrection: 180));
+        const VideoPlayerValue(
+            duration: Duration.zero, rotationCorrection: 180));
     controller.textureId = 1;
     await tester.pumpWidget(VideoPlayer(controller));
     final Transform actualRotationCorrection =
@@ -203,7 +204,7 @@ void main() {
   testWidgets('no transform when rotationCorrection is zero',
       (WidgetTester tester) async {
     final FakeController controller =
-        FakeController.value(VideoPlayerValue(duration: Duration.zero));
+        FakeController.value(const VideoPlayerValue(duration: Duration.zero));
     controller.textureId = 1;
     await tester.pumpWidget(VideoPlayer(controller));
     expect(find.byType(Transform), findsNothing);
@@ -822,6 +823,30 @@ void main() {
         expect(controller.value.position, nonzeroDuration);
       });
 
+      testWidgets('playback status', (WidgetTester tester) async {
+        final VideoPlayerController controller = VideoPlayerController.network(
+          'https://127.0.0.1',
+        );
+        await controller.initialize();
+        expect(controller.value.isPlaying, isFalse);
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.textureId]!;
+
+        fakeVideoEventStream.add(VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: true,
+        ));
+        await tester.pumpAndSettle();
+        expect(controller.value.isPlaying, isTrue);
+
+        fakeVideoEventStream.add(VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: false,
+        ));
+        await tester.pumpAndSettle();
+        expect(controller.value.isPlaying, isFalse);
+      });
+
       testWidgets('buffering status', (WidgetTester tester) async {
         final VideoPlayerController controller = VideoPlayerController.network(
           'https://127.0.0.1',
@@ -884,7 +909,7 @@ void main() {
 
   group('VideoPlayerValue', () {
     test('uninitialized()', () {
-      final VideoPlayerValue uninitialized = VideoPlayerValue.uninitialized();
+      const VideoPlayerValue uninitialized = VideoPlayerValue.uninitialized();
 
       expect(uninitialized.duration, equals(Duration.zero));
       expect(uninitialized.position, equals(Duration.zero));
@@ -905,7 +930,7 @@ void main() {
 
     test('erroneous()', () {
       const String errorMessage = 'foo';
-      final VideoPlayerValue error = VideoPlayerValue.erroneous(errorMessage);
+      const VideoPlayerValue error = VideoPlayerValue.erroneous(errorMessage);
 
       expect(error.duration, equals(Duration.zero));
       expect(error.position, equals(Duration.zero));
@@ -976,26 +1001,26 @@ void main() {
 
     group('copyWith()', () {
       test('exact copy', () {
-        final VideoPlayerValue original = VideoPlayerValue.uninitialized();
+        const VideoPlayerValue original = VideoPlayerValue.uninitialized();
         final VideoPlayerValue exactCopy = original.copyWith();
 
         expect(exactCopy.toString(), original.toString());
       });
       test('errorDescription is not persisted when copy with null', () {
-        final VideoPlayerValue original = VideoPlayerValue.erroneous('error');
+        const VideoPlayerValue original = VideoPlayerValue.erroneous('error');
         final VideoPlayerValue copy = original.copyWith(errorDescription: null);
 
         expect(copy.errorDescription, null);
       });
       test('errorDescription is changed when copy with another error', () {
-        final VideoPlayerValue original = VideoPlayerValue.erroneous('error');
+        const VideoPlayerValue original = VideoPlayerValue.erroneous('error');
         final VideoPlayerValue copy =
             original.copyWith(errorDescription: 'new error');
 
         expect(copy.errorDescription, 'new error');
       });
       test('errorDescription is changed when copy with error', () {
-        final VideoPlayerValue original = VideoPlayerValue.uninitialized();
+        const VideoPlayerValue original = VideoPlayerValue.uninitialized();
         final VideoPlayerValue copy =
             original.copyWith(errorDescription: 'new error');
 
@@ -1005,45 +1030,45 @@ void main() {
 
     group('aspectRatio', () {
       test('640x480 -> 4:3', () {
-        final VideoPlayerValue value = VideoPlayerValue(
+        const VideoPlayerValue value = VideoPlayerValue(
           isInitialized: true,
-          size: const Size(640, 480),
-          duration: const Duration(seconds: 1),
+          size: Size(640, 480),
+          duration: Duration(seconds: 1),
         );
         expect(value.aspectRatio, 4 / 3);
       });
 
       test('no size -> 1.0', () {
-        final VideoPlayerValue value = VideoPlayerValue(
+        const VideoPlayerValue value = VideoPlayerValue(
           isInitialized: true,
-          duration: const Duration(seconds: 1),
+          duration: Duration(seconds: 1),
         );
         expect(value.aspectRatio, 1.0);
       });
 
       test('height = 0 -> 1.0', () {
-        final VideoPlayerValue value = VideoPlayerValue(
+        const VideoPlayerValue value = VideoPlayerValue(
           isInitialized: true,
-          size: const Size(640, 0),
-          duration: const Duration(seconds: 1),
+          size: Size(640, 0),
+          duration: Duration(seconds: 1),
         );
         expect(value.aspectRatio, 1.0);
       });
 
       test('width = 0 -> 1.0', () {
-        final VideoPlayerValue value = VideoPlayerValue(
+        const VideoPlayerValue value = VideoPlayerValue(
           isInitialized: true,
-          size: const Size(0, 480),
-          duration: const Duration(seconds: 1),
+          size: Size(0, 480),
+          duration: Duration(seconds: 1),
         );
         expect(value.aspectRatio, 1.0);
       });
 
       test('negative aspect ratio -> 1.0', () {
-        final VideoPlayerValue value = VideoPlayerValue(
+        const VideoPlayerValue value = VideoPlayerValue(
           isInitialized: true,
-          size: const Size(640, -480),
-          duration: const Duration(seconds: 1),
+          size: Size(640, -480),
+          duration: Duration(seconds: 1),
         );
         expect(value.aspectRatio, 1.0);
       });
