@@ -681,7 +681,7 @@ class StackedShellRoute extends ShellRouteBase {
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
         assert((pageBuilder != null) ^ (builder != null),
-            'builder or pageBuilder must be provided'),
+            'One of builder or pageBuilder must be provided, but not both'),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
         assert(_debugValidateParentNavigatorKeys(branches)),
