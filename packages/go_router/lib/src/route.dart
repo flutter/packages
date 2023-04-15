@@ -356,7 +356,7 @@ class ShellRouteContext {
     required this.navigatorBuilder,
   });
 
-  /// The current immediate sub-route of the associated shell route.
+  /// The matched immediate sub-route of the associated shell route.
   final RouteBase subRoute;
 
   /// The route match list for the current route.
