@@ -359,7 +359,7 @@ class ShellRouteContext {
   /// The matched immediate sub-route of the associated shell route.
   final RouteBase subRoute;
 
-  /// The route match list for the current route.
+  /// The route match list for the current location.
   final RouteMatchList routeMatchList;
 
   /// The navigator builder.
