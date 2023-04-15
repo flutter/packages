@@ -5,195 +5,197 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
-import 'package:shared_preferences_platform_interface/method_channel_shared_preferences.dart';
+import 'package:shared_preferences_android/src/messages.g.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  late _FakeSharedPreferencesApi api;
+  late SharedPreferencesAndroid plugin;
 
-  group(MethodChannelSharedPreferencesStore, () {
-    const MethodChannel channel = MethodChannel(
-      'plugins.flutter.io/shared_preferences_android',
-    );
+  const Map<String, Object> flutterTestValues = <String, Object>{
+    'flutter.String': 'hello world',
+    'flutter.Bool': true,
+    'flutter.Int': 42,
+    'flutter.Double': 3.14159,
+    'flutter.StringList': <String>['foo', 'bar'],
+  };
 
-    const Map<String, Object> flutterTestValues = <String, Object>{
-      'flutter.String': 'hello world',
-      'flutter.Bool': true,
-      'flutter.Int': 42,
-      'flutter.Double': 3.14159,
-      'flutter.StringList': <String>['foo', 'bar'],
-    };
+  const Map<String, Object> prefixTestValues = <String, Object>{
+    'prefix.String': 'hello world',
+    'prefix.Bool': true,
+    'prefix.Int': 42,
+    'prefix.Double': 3.14159,
+    'prefix.StringList': <String>['foo', 'bar'],
+  };
 
-    const Map<String, Object> prefixTestValues = <String, Object>{
-      'prefix.String': 'hello world',
-      'prefix.Bool': true,
-      'prefix.Int': 42,
-      'prefix.Double': 3.14159,
-      'prefix.StringList': <String>['foo', 'bar'],
-    };
+  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+    'String': 'hello world',
+    'Bool': true,
+    'Int': 42,
+    'Double': 3.14159,
+    'StringList': <String>['foo', 'bar'],
+  };
 
-    const Map<String, Object> nonPrefixTestValues = <String, Object>{
-      'String': 'hello world',
-      'Bool': true,
-      'Int': 42,
-      'Double': 3.14159,
-      'StringList': <String>['foo', 'bar'],
-    };
+  final Map<String, Object> allTestValues = <String, Object>{};
 
-    final Map<String, Object> allTestValues = <String, Object>{};
+  allTestValues.addAll(flutterTestValues);
+  allTestValues.addAll(prefixTestValues);
+  allTestValues.addAll(nonPrefixTestValues);
 
-    allTestValues.addAll(flutterTestValues);
-    allTestValues.addAll(prefixTestValues);
-    allTestValues.addAll(nonPrefixTestValues);
+  setUp(() {
+    api = _FakeSharedPreferencesApi();
+    plugin = SharedPreferencesAndroid(api: api);
+  });
 
-    late InMemorySharedPreferencesStore testData;
+  test('registerWith', () {
+    SharedPreferencesAndroid.registerWith();
+    expect(SharedPreferencesStorePlatform.instance,
+        isA<SharedPreferencesAndroid>());
+  });
 
-    final List<MethodCall> log = <MethodCall>[];
-    late SharedPreferencesStorePlatform store;
+  test('remove', () async {
+    api.items['flutter.hi'] = 'world';
+    expect(await plugin.remove('flutter.hi'), isTrue);
+    expect(api.items.containsKey('flutter.hi'), isFalse);
+  });
 
-    setUp(() async {
-      testData = InMemorySharedPreferencesStore.empty();
+  test('clear', () async {
+    api.items['flutter.hi'] = 'world';
+    expect(await plugin.clear(), isTrue);
+    expect(api.items.containsKey('flutter.hi'), isFalse);
+  });
 
-      Map<String, Object?> getArgumentDictionary(MethodCall call) {
-        return (call.arguments as Map<Object?, Object?>)
-            .cast<String, Object?>();
-      }
+  test('clearWithPrefix', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
 
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        log.add(methodCall);
-        if (methodCall.method == 'getAll') {
-          return testData.getAll();
-        }
-        if (methodCall.method == 'getAllWithPrefix') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String prefix = arguments['prefix']! as String;
-          return testData.getAllWithPrefix(prefix);
-        }
-        if (methodCall.method == 'remove') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String key = arguments['key']! as String;
-          return testData.remove(key);
-        }
-        if (methodCall.method == 'clear') {
-          return testData.clear();
-        }
-        if (methodCall.method == 'clearWithPrefix') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String prefix = arguments['prefix']! as String;
-          return testData.clearWithPrefix(prefix);
-        }
-        final RegExp setterRegExp = RegExp(r'set(.*)');
-        final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
-        if (match?.groupCount == 1) {
-          final String valueType = match!.group(1)!;
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String key = arguments['key']! as String;
-          final Object value = arguments['value']!;
-          return testData.setValue(valueType, key, value);
-        }
-        fail('Unexpected method call: ${methodCall.method}');
-      });
-      log.clear();
-    });
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 5);
+    await plugin.clearWithPrefix('prefix.');
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 0);
+  });
 
-    test('registered instance', () {
-      SharedPreferencesAndroid.registerWith();
-      expect(SharedPreferencesStorePlatform.instance,
-          isA<SharedPreferencesAndroid>());
-    });
+  test('getAll', () async {
+    for (final String key in flutterTestValues.keys) {
+      api.items[key] = flutterTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAll();
+    expect(all.length, 5);
+    expect(all, flutterTestValues);
+  });
 
-    test('getAll', () async {
-      store = SharedPreferencesAndroid();
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(await store.getAll(), flutterTestValues);
-      expect(log.single.method, 'getAllWithPrefix');
-    });
+  test('getAllWithPrefix', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 5);
+    expect(all, prefixTestValues);
+  });
 
-    test('getAllWithPrefix', () async {
-      store = SharedPreferencesAndroid();
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(await store.getAllWithPrefix('prefix.'), prefixTestValues);
-      expect(log.single.method, 'getAllWithPrefix');
-    });
+  test('setValue', () async {
+    expect(await plugin.setValue('Bool', 'flutter.Bool', true), isTrue);
+    expect(api.items['flutter.Bool'], true);
+    expect(await plugin.setValue('Double', 'flutter.Double', 1.5), isTrue);
+    expect(api.items['flutter.Double'], 1.5);
+    expect(await plugin.setValue('Int', 'flutter.Int', 12), isTrue);
+    expect(api.items['flutter.Int'], 12);
+    expect(await plugin.setValue('String', 'flutter.String', 'hi'), isTrue);
+    expect(api.items['flutter.String'], 'hi');
+    expect(
+        await plugin
+            .setValue('StringList', 'flutter.StringList', <String>['hi']),
+        isTrue);
+    expect(api.items['flutter.StringList'], <String>['hi']);
+  });
 
-    test('remove', () async {
-      store = SharedPreferencesAndroid();
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(await store.remove('flutter.String'), true);
-      expect(await store.remove('flutter.Bool'), true);
-      expect(await store.remove('flutter.Int'), true);
-      expect(await store.remove('flutter.Double'), true);
-      expect(await testData.getAll(), <String, dynamic>{
-        'flutter.StringList': <String>['foo', 'bar'],
-      });
+  test('setValue with unsupported type', () {
+    expect(() async {
+      await plugin.setValue('Map', 'flutter.key', <String, String>{});
+    }, throwsA(isA<PlatformException>()));
+  });
 
-      expect(log, hasLength(4));
-      for (final MethodCall call in log) {
-        expect(call.method, 'remove');
-      }
-    });
+  test('getAllWithNoPrefix', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    expect(all, allTestValues);
+  });
 
-    test('setValue', () async {
-      store = SharedPreferencesAndroid();
-      expect(await testData.getAll(), isEmpty);
-      for (final String key in allTestValues.keys) {
-        final Object value = allTestValues[key]!;
-        expect(await store.setValue(key.split('.').last, key, value), true);
-      }
-      expect(await testData.getAll(), flutterTestValues);
+  test('clearWithNoPrefix', () async {
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
 
-      expect(log, hasLength(15));
-      expect(log[0].method, 'setString');
-      expect(log[1].method, 'setBool');
-      expect(log[2].method, 'setInt');
-      expect(log[3].method, 'setDouble');
-      expect(log[4].method, 'setStringList');
-    });
-
-    test('clear', () async {
-      store = SharedPreferencesAndroid();
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-      expect(await testData.getAll(), isNotEmpty);
-      expect(await store.clear(), true);
-      expect(await testData.getAll(), isEmpty);
-      expect(log.single.method, 'clearWithPrefix');
-    });
-
-    test('clearWithPrefix', () async {
-      store = SharedPreferencesAndroid();
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-
-      expect(await testData.getAllWithPrefix('prefix.'), isNotEmpty);
-      expect(await store.clearWithPrefix('prefix.'), true);
-      expect(await testData.getAllWithPrefix('prefix.'), isEmpty);
-    });
-
-    test('getAllWithNoPrefix', () async {
-      store = SharedPreferencesAndroid();
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-
-      expect(await testData.getAllWithPrefix(''), hasLength(15));
-    });
-
-    test('clearWithNoPrefix', () async {
-      store = SharedPreferencesAndroid();
-      testData = InMemorySharedPreferencesStore.withData(allTestValues);
-
-      expect(await testData.getAllWithPrefix(''), isNotEmpty);
-      expect(await store.clearWithPrefix(''), true);
-      expect(await testData.getAllWithPrefix(''), isEmpty);
-    });
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    await plugin.clearWithPrefix('');
+    all = await plugin.getAllWithPrefix('');
+    expect(all.length, 0);
   });
 }
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+class _FakeSharedPreferencesApi implements SharedPreferencesApi {
+  final Map<String, Object> items = <String, Object>{};
+
+  @override
+  Future<Map<String?, Object?>> getAllWithPrefix(String prefix) async {
+    return <String?, Object?>{
+      for (final String key in items.keys)
+        if (key.startsWith(prefix)) key: items[key]
+    };
+  }
+
+  @override
+  Future<bool> remove(String key) async {
+    items.remove(key);
+    return true;
+  }
+
+  @override
+  Future<bool> setBool(String key, bool value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setDouble(String key, double value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    items.keys.toList().forEach((String key) {
+      if (key.startsWith(prefix)) {
+        items.remove(key);
+      }
+    });
+    return true;
+  }
+
+  @override
+  Future<bool> setInt(String key, Object value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setString(String key, String value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setStringList(String key, List<String?> value) async {
+    items[key] = value;
+    return true;
+  }
+}

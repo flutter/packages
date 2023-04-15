@@ -130,14 +130,12 @@ class RouteConfig {
     InterfaceElement classElement, {
     required String keyName,
   }) {
-    bool whereStatic(FieldElement element) => element.isStatic;
-    bool whereKeyName(FieldElement element) => element.name == keyName;
     final String? fieldDisplayName = classElement.fields
-        .where(whereStatic)
-        .where(whereKeyName)
         .where((FieldElement element) {
           final DartType type = element.type;
-          if (type is! ParameterizedType) {
+          if (!element.isStatic ||
+              element.name != keyName ||
+              type is! ParameterizedType) {
             return false;
           }
           final List<DartType> typeArguments = type.typeArguments;
