@@ -16,6 +16,64 @@ enum CameraLensDirection {
   external,
 }
 
+/// The camera's device type in ios
+/// IOS only
+enum AVCaptureDeviceType {
+  /// A built-in wide angle camera device.
+  /// These devices are suitable for general purpose use.
+  wideAngleCamera(name: 'AVCaptureDeviceTypeBuiltInWideAngleCamera'),
+
+  /// A built-in camera device with a longer focal length than a wide angle camera.
+  telephotoCamera(name: 'AVCaptureDeviceTypeBuiltInTelephotoCamera'),
+
+  /// A built-in camera device with a shorter focal length than a wide angle camera.
+  ultraWideCamera(name: 'AVCaptureDeviceTypeBuiltInUltraWideCamera'),
+
+  /// A device that consists of two fixed focal length cameras,
+  /// one wide and one telephoto.
+  dualCamera(name: 'AVCaptureDeviceTypeBuiltInDualCamera'),
+
+  /// A device that consists of two fixed focal length cameras,
+  /// one ultra wide and one wide angle.
+  dualWideCamera(name: 'AVCaptureDeviceTypeBuiltInDualWideCamera'),
+
+  /// A device that consists of three fixed focal length cameras,
+  /// one ultra wide, one wide angle, and one telephoto.
+  tripleCamera(name: 'AVCaptureDeviceTypeBuiltInTripleCamera'),
+
+  /// A device that consists of two cameras, one YUV and one Infrared.
+  /// The infrared camera provides high quality depth information
+  /// that is synchronized and perspective corrected to frames produced by the YUV camera.
+  /// While the resolution of the depth data and YUV frames may differ,
+  /// their field of view and aspect ratio always match.
+  trueDepthCamera(name: 'AVCaptureDeviceTypeBuiltInTrueDepthCamera'),
+
+  /// A device that consists of two cameras, one YUV and one LiDAR.
+  /// The LiDAR camera provides high quality, high accuracy depth information by
+  /// measuring the round trip of an artificial light signal emitted by a laser.
+  /// The depth is synchronized and perspective corrected to frames produced by
+  /// the paired YUV camera. While the resolution of the depth data and YUV frames may differ,
+  /// their field of view and aspect ratio always match.
+  liDARDepthCamera(name: 'AVCaptureDeviceTypeBuiltInLiDARDepthCamera'),
+
+  /// An unknown device type.
+  unknown;
+
+  /// AVCaptureDeviceType
+  const AVCaptureDeviceType({this.name});
+
+  /// The device type string from IOS
+  final String? name;
+
+  /// Parse device type from string
+  static AVCaptureDeviceType parseFromString(String? deviceType) {
+    return AVCaptureDeviceType.values.singleWhere(
+      (AVCaptureDeviceType element) => element.name == deviceType,
+      orElse: () => AVCaptureDeviceType.unknown,
+    );
+  }
+}
+
 /// Properties of a camera device.
 @immutable
 class CameraDescription {
@@ -24,6 +82,7 @@ class CameraDescription {
     required this.name,
     required this.lensDirection,
     required this.sensorOrientation,
+    this.cameraType = AVCaptureDeviceType.unknown,
   });
 
   /// The name of the camera device.
@@ -41,13 +100,18 @@ class CameraDescription {
   /// is from top to bottom in the sensor's coordinate system.
   final int sensorOrientation;
 
+  /// Camera type,IOS only
+  /// TrueDepthCamera  DualCamera  TripleCamera  LiDARDepthCamera  DeskViewCamera DualWideCamera ExternalUnknown WideAngleCamera TelephotoCamera UltraWideCamera
+  final AVCaptureDeviceType cameraType;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is CameraDescription &&
           runtimeType == other.runtimeType &&
           name == other.name &&
-          lensDirection == other.lensDirection;
+          lensDirection == other.lensDirection &&
+          cameraType == other.cameraType;
 
   @override
   int get hashCode => Object.hash(name, lensDirection);
@@ -55,6 +119,6 @@ class CameraDescription {
   @override
   String toString() {
     return '${objectRuntimeType(this, 'CameraDescription')}('
-        '$name, $lensDirection, $sensorOrientation)';
+        '$name, $lensDirection, $sensorOrientation, $cameraType)';
   }
 }

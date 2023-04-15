@@ -105,10 +105,17 @@
                        result:(FLTThreadSafeFlutterResult *)result {
   if ([@"availableCameras" isEqualToString:call.method]) {
     NSMutableArray *discoveryDevices =
-        [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
+        [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera,
+            AVCaptureDeviceTypeBuiltInDualCamera,
+            AVCaptureDeviceTypeBuiltInTelephotoCamera ]
             mutableCopy];
     if (@available(iOS 13.0, *)) {
+      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInTripleCamera];      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+    }
+    if (@available(iOS 15.4, *)) {
+      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
     }
     AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
         discoverySessionWithDeviceTypes:discoveryDevices
@@ -134,6 +141,7 @@
         @"name" : [device uniqueID],
         @"lensFacing" : lensFacing,
         @"sensorOrientation" : @90,
+        @"cameraType" : [device deviceType],
       }];
     }
     [result sendSuccessWithData:reply];
