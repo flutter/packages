@@ -14,7 +14,6 @@ import io.flutter.plugins.camera.CameraRegionUtils;
 import io.flutter.plugins.camera.features.CameraFeature;
 import io.flutter.plugins.camera.features.Point;
 import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
-import java.util.Arrays;
 
 /** Exposure point controls where in the frame exposure metering will come from. */
 public class ExposurePointFeature extends CameraFeature<Point> {
@@ -78,7 +77,8 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       defaultExposureRectangle = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
     }
     if (exposureRectangle != null) {
-      requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
+      requestBuilder.set(
+          CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
     } else if (shouldReset(requestBuilder)) {
       requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultExposureRectangle);
     }
@@ -104,7 +104,7 @@ public class ExposurePointFeature extends CameraFeature<Point> {
     }
   }
 
- public boolean shouldReset(CaptureRequest.Builder requestBuilder) {
+  public boolean shouldReset(CaptureRequest.Builder requestBuilder) {
     MeteringRectangle[] currentRectangles = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
     return currentRectangles == null || currentRectangles.length == 0;
   }
