@@ -1,3 +1,7 @@
+## 0.9.14
+
+* Allow to get all available cameras, such as dual camera, triple camera.
+
 ## 0.9.13+1
 
 * Clarifies explanation of endorsement in README.
