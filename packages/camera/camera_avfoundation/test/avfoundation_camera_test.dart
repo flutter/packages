@@ -487,12 +487,14 @@ void main() {
         <String, dynamic>{
           'name': 'Test 1',
           'lensFacing': 'front',
-          'sensorOrientation': 1
+          'sensorOrientation': 1,
+          'cameraType': 'AVCaptureDeviceTypeBuiltInWideAngleCamera'
         },
         <String, dynamic>{
           'name': 'Test 2',
           'lensFacing': 'back',
-          'sensorOrientation': 2
+          'sensorOrientation': 2,
+          'cameraType': 'AVCaptureDeviceTypeBuiltInUltraWideCamera'
         }
       ];
       final MethodChannelMock channel = MethodChannelMock(
@@ -516,6 +518,7 @@ void main() {
           lensDirection:
               parseCameraLensDirection(typedData['lensFacing']! as String),
           sensorOrientation: typedData['sensorOrientation']! as int,
+          cameraType: AVCaptureDeviceType.parseFromString(typedData['cameraType'] as String?)
         );
         expect(cameras[i], cameraDescription);
       }

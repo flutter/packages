@@ -114,7 +114,7 @@ class CameraDescription {
           cameraType == other.cameraType;
 
   @override
-  int get hashCode => Object.hash(name, lensDirection);
+  int get hashCode => Object.hash(name, lensDirection, cameraType);
 
   @override
   String toString() {
