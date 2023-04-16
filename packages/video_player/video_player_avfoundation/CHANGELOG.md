@@ -1,6 +1,7 @@
 ## 2.4.5
 
 * Fixes playback speed doesn't get persisted after reinitializing with new VideoPlayerController.
+
 ## 2.4.4
 
 * Updates pigeon to fix warnings with clang 15.
