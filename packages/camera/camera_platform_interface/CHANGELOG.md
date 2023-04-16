@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Add cameraType to CameraDescription, such as dual camera, triple camera.
+
 ## 2.5.0
 
 * Adds NV21 as an image stream format (suitable for Android).

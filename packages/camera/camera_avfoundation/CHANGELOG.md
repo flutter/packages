@@ -1,3 +1,8 @@
+## 0.9.14
+
+* Allows get all available cameras.
+* Add cameraType to CameraDescription, such as dual camera, triple camera.
+
 ## 0.9.13+1
 
 * Clarifies explanation of endorsement in README.
