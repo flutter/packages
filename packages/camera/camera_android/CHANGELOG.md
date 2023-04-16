@@ -1,3 +1,7 @@
+## 0.10.6
+
+* Provides a default exposure point if null
+
 ## 0.10.5
 
 * Allows camera to be switched while video recording.
