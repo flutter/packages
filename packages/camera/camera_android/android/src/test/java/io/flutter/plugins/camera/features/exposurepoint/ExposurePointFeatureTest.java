@@ -9,6 +9,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -291,7 +292,7 @@ public class ExposurePointFeatureTest {
 
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
 
-    verify(mockCaptureRequestBuilder, never()).set(any(), any());
+    verify(mockCaptureRequestBuilder, times(1)).set(any(), isNull());
   }
 
   @Test
@@ -310,7 +311,7 @@ public class ExposurePointFeatureTest {
     exposurePointFeature.setValue(new Point(null, 0d));
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
 
-    verify(mockCaptureRequestBuilder, never()).set(any(), any());
+    verify(mockCaptureRequestBuilder, times(3)).set(any(), isNull());
   }
 
   @Test
