@@ -19,6 +19,13 @@ dependencies:
   path_provider: ^2.0.0
   video_player: ^2.1.4
 
+# FOR TESTING ONLY. DO NOT MERGE.
+dependency_overrides:
+  camera_avfoundation:
+    path: ../../camera_avfoundation
+  camera_platform_interface:
+    path: ../../camera_platform_interface
+
 dev_dependencies:
   build_runner: ^2.1.10
   flutter_driver:
