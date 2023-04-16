@@ -514,12 +514,12 @@ void main() {
         final Map<String, Object?> typedData =
             (returnData[i] as Map<dynamic, dynamic>).cast<String, Object?>();
         final CameraDescription cameraDescription = CameraDescription(
-          name: typedData['name']! as String,
-          lensDirection:
-              parseCameraLensDirection(typedData['lensFacing']! as String),
-          sensorOrientation: typedData['sensorOrientation']! as int,
-          cameraType: AVCaptureDeviceType.parseFromString(typedData['cameraType'] as String?)
-        );
+            name: typedData['name']! as String,
+            lensDirection:
+                parseCameraLensDirection(typedData['lensFacing']! as String),
+            sensorOrientation: typedData['sensorOrientation']! as int,
+            cameraType: AVCaptureDeviceType.parseFromString(
+                typedData['cameraType'] as String?));
         expect(cameras[i], cameraDescription);
       }
     });
