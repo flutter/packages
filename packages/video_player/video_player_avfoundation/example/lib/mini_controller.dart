@@ -390,7 +390,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   }
 
   /// Enable/disable to start picture-in-picture automatically when the app goes to the background.
-  Future<void> setAutomaticallyStartPictureInPicture({
+  Future<void> setAutomaticallyStartsPictureInPicture({
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) {
     return _platform.setAutomaticallyStartsPictureInPicture(

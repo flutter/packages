@@ -112,7 +112,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) {
     throw UnimplementedError(
-        'setAutomaticallyStartPictureInPicture() has not been implemented.');
+        'setAutomaticallyStartsPictureInPicture() has not been implemented.');
   }
 
   /// Set the location of the video player view. So picture-in-picture can use it for animating.

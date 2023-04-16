@@ -182,8 +182,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     required int textureId,
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) {
-    return _api.setAutomaticallyStartPictureInPicture(
-      AutomaticallyStartPictureInPictureMessage(
+    return _api.setAutomaticallyStartsPictureInPicture(
+      AutomaticallyStartsPictureInPictureMessage(
         textureId: textureId,
         enableStartPictureInPictureAutomaticallyFromInline:
             enableStartPictureInPictureAutomaticallyFromInline,

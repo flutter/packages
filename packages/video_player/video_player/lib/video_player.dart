@@ -582,7 +582,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       _videoPlayerPlatform.isPictureInPictureSupported();
 
   /// Enable/disable to start picture-in-picture automatically when the app goes to the background.
-  Future<void> setAutomaticallyStartPictureInPicture({
+  Future<void> setAutomaticallyStartsPictureInPicture({
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) async {
     if (!value.isInitialized || _isDisposed) {

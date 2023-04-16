@@ -64,8 +64,8 @@ class MixWithOthersMessage {
   bool mixWithOthers;
 }
 
-class AutomaticallyStartPictureInPictureMessage {
-  AutomaticallyStartPictureInPictureMessage(
+class AutomaticallyStartsPictureInPictureMessage {
+  AutomaticallyStartsPictureInPictureMessage(
     this.textureId,
     this.enableStartPictureInPictureAutomaticallyFromInline,
   );
@@ -153,9 +153,9 @@ abstract class AVFoundationVideoPlayerApi {
   void setPictureInPictureOverlayRect(
       SetPictureInPictureOverlayRectMessage msg);
 
-  @ObjCSelector('setAutomaticallyStartPictureInPicture:')
-  void setAutomaticallyStartPictureInPicture(
-      AutomaticallyStartPictureInPictureMessage msg);
+  @ObjCSelector('setAutomaticallyStartsPictureInPicture:')
+  void setAutomaticallyStartsPictureInPicture(
+      AutomaticallyStartsPictureInPictureMessage msg);
 
   @ObjCSelector('startPictureInPicture:')
   void startPictureInPicture(StartPictureInPictureMessage msg);

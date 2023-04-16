@@ -24,8 +24,8 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
   SetPictureInPictureOverlayRectMessage? setPictureInPictureOverlayRectMessage;
-  AutomaticallyStartPictureInPictureMessage?
-      automaticallyStartPictureInPictureMessage;
+  AutomaticallyStartsPictureInPictureMessage?
+      automaticallyStartsPictureInPictureMessage;
   StartPictureInPictureMessage? startPictureInPictureMessage;
   StopPictureInPictureMessage? stopPictureInPictureMessage;
 
@@ -103,10 +103,10 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void setAutomaticallyStartPictureInPicture(
-      AutomaticallyStartPictureInPictureMessage msg) {
-    log.add('setAutomaticallyStartPictureInPicture');
-    automaticallyStartPictureInPictureMessage = msg;
+  void setAutomaticallyStartsPictureInPicture(
+      AutomaticallyStartsPictureInPictureMessage msg) {
+    log.add('setAutomaticallyStartsPictureInPicture');
+    automaticallyStartsPictureInPictureMessage = msg;
   }
 
   @override
@@ -276,26 +276,26 @@ void main() {
       expect(isSupported, true);
     });
 
-    test('setAutomaticallyStartPictureInPicture true', () async {
+    test('setAutomaticallyStartsPictureInPicture true', () async {
       await player.setAutomaticallyStartsPictureInPicture(
           textureId: 1,
           enableStartPictureInPictureAutomaticallyFromInline: true);
-      expect(log.log.last, 'setAutomaticallyStartPictureInPicture');
-      expect(log.automaticallyStartPictureInPictureMessage?.textureId, 1);
+      expect(log.log.last, 'setAutomaticallyStartsPictureInPicture');
+      expect(log.automaticallyStartsPictureInPictureMessage?.textureId, 1);
       expect(
-          log.automaticallyStartPictureInPictureMessage
+          log.automaticallyStartsPictureInPictureMessage
               ?.enableStartPictureInPictureAutomaticallyFromInline,
           true);
     });
 
-    test('setAutomaticallyStartPictureInPicture false', () async {
+    test('setAutomaticallyStartsPictureInPicture false', () async {
       await player.setAutomaticallyStartsPictureInPicture(
           textureId: 1,
           enableStartPictureInPictureAutomaticallyFromInline: false);
-      expect(log.log.last, 'setAutomaticallyStartPictureInPicture');
-      expect(log.automaticallyStartPictureInPictureMessage?.textureId, 1);
+      expect(log.log.last, 'setAutomaticallyStartsPictureInPicture');
+      expect(log.automaticallyStartsPictureInPictureMessage?.textureId, 1);
       expect(
-          log.automaticallyStartPictureInPictureMessage
+          log.automaticallyStartsPictureInPictureMessage
               ?.enableStartPictureInPictureAutomaticallyFromInline,
           false);
     });

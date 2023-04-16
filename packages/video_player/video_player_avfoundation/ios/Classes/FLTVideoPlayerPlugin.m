@@ -281,12 +281,12 @@ NS_INLINE UIViewController *rootViewController() {
   if ([AVPictureInPictureController isPictureInPictureSupported]) {
     self.pictureInPictureController =
         [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
-    [self setAutomaticallyStartPictureInPicture:NO];
+    [self setAutomaticallyStartsPictureInPicture:NO];
     self.pictureInPictureController.delegate = self;
   }
 }
 
-- (void)setAutomaticallyStartPictureInPicture:
+- (void)setAutomaticallyStartsPictureInPicture:
     (BOOL)canStartPictureInPictureAutomaticallyFromInline {
   if (!self.pictureInPictureController) return;
   if (@available(iOS 14.2, *)) {
@@ -756,11 +756,11 @@ NS_INLINE UIViewController *rootViewController() {
   return @([AVPictureInPictureController isPictureInPictureSupported]);
 }
 
-- (void)setAutomaticallyStartPictureInPicture:(FLTAutomaticallyStartPictureInPictureMessage *)input
+- (void)setAutomaticallyStartsPictureInPicture:(FLTAutomaticallyStartsPictureInPictureMessage *)input
                                         error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
   [player
-      setAutomaticallyStartPictureInPicture:input.enableStartPictureInPictureAutomaticallyFromInline
+      setAutomaticallyStartsPictureInPicture:input.enableStartPictureInPictureAutomaticallyFromInline
                                                 .boolValue];
 }
 

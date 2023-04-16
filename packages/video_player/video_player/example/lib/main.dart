@@ -270,7 +270,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                     _enableStartPictureInPictureAutomaticallyFromInline =
                         newValue;
                   });
-                  _controller.setAutomaticallyStartPictureInPicture(
+                  _controller.setAutomaticallyStartsPictureInPicture(
                       enableStartPictureInPictureAutomaticallyFromInline:
                           _enableStartPictureInPictureAutomaticallyFromInline);
                 },

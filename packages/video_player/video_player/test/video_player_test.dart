@@ -85,7 +85,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<bool> isPictureInPictureSupported() async => true;
 
   @override
-  Future<void> setAutomaticallyStartPictureInPicture({
+  Future<void> setAutomaticallyStartsPictureInPicture({
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) async {}
 
