@@ -407,6 +407,142 @@ void main() {
       expect(lastDestinationWithSelectedIcon, findsOneWidget);
     },
   );
+
+  testWidgets(
+    'when view in medium screen, navigation rail must be visible as per theme data values.',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
+      await tester.pumpWidget(SimulatedLayout.medium.app());
+      await tester.pumpAndSettle();
+
+      final Finder primaryNavigationMedium = find.byKey(
+        const Key('primaryNavigation'),
+      );
+      expect(primaryNavigationMedium, findsOneWidget);
+
+      final Finder navigationRailFinder = find.descendant(
+        of: primaryNavigationMedium,
+        matching: find.byType(NavigationRail),
+      );
+      expect(navigationRailFinder, findsOneWidget);
+
+      final NavigationRail navigationRailView = tester.firstWidget(
+        navigationRailFinder,
+      );
+      expect(navigationRailView, isNotNull);
+
+      expect(
+        navigationRailView.backgroundColor,
+        SimulatedLayout.navigationRailThemeBgColor,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.color,
+        SimulatedLayout.selectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.size,
+        SimulatedLayout.selectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.color,
+        SimulatedLayout.unSelectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.size,
+        SimulatedLayout.unSelectedIconThemeData.size,
+      );
+    },
+  );
+
+  testWidgets(
+    'when view in large screen, navigation rail must be visible as per theme data values.',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
+      await tester.pumpWidget(SimulatedLayout.large.app());
+      await tester.pumpAndSettle();
+
+      final Finder primaryNavigationLarge = find.byKey(
+        const Key('primaryNavigation1'),
+      );
+      expect(primaryNavigationLarge, findsOneWidget);
+
+      final Finder navigationRailFinder = find.descendant(
+        of: primaryNavigationLarge,
+        matching: find.byType(NavigationRail),
+      );
+      expect(navigationRailFinder, findsOneWidget);
+
+      final NavigationRail navigationRailView = tester.firstWidget(
+        navigationRailFinder,
+      );
+      expect(navigationRailView, isNotNull);
+
+      expect(
+        navigationRailView.backgroundColor,
+        SimulatedLayout.navigationRailThemeBgColor,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.color,
+        SimulatedLayout.selectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.size,
+        SimulatedLayout.selectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.color,
+        SimulatedLayout.unSelectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.size,
+        SimulatedLayout.unSelectedIconThemeData.size,
+      );
+    },
+  );
+
+  // This test checks whether AdaptiveScaffold.standardNavigationRail function
+  // creates a NavigationRail widget as expected with groupAlignment provided,
+  // and checks whether the NavigationRail's groupAlignment matches the expected value.
+  testWidgets(
+      'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
+      (WidgetTester tester) async {
+    const List<NavigationRailDestination> destinations =
+        <NavigationRailDestination>[
+      NavigationRailDestination(
+        icon: Icon(Icons.home),
+        label: Text('Home'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.account_circle),
+        label: Text('Profile'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.settings),
+        label: Text('Settings'),
+      ),
+    ];
+
+    // Align to bottom.
+    const double groupAlignment = 1.0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return AdaptiveScaffold.standardNavigationRail(
+                destinations: destinations,
+                groupAlignment: groupAlignment,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    final NavigationRail rail =
+        tester.widget<NavigationRail>(find.byType(NavigationRail));
+    expect(rail.groupAlignment, equals(groupAlignment));
+  });
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that

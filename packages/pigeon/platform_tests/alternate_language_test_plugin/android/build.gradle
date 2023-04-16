@@ -45,9 +45,15 @@ android {
         }
     }
 
+    lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+    }
+
     dependencies {
-        testImplementation 'junit:junit:4.+'
-        testImplementation "org.mockito:mockito-core:5.+"
+        testImplementation 'junit:junit:4.13.2'
+        testImplementation "org.mockito:mockito-core:5.1.1"
     }
 }
 

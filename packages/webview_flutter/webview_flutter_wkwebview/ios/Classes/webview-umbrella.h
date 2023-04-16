@@ -3,20 +3,22 @@
 // found in the LICENSE file.
 
 #import <Foundation/Foundation.h>
-#import <webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>
-#import <webview_flutter_wkwebview/FWFDataConverters.h>
-#import <webview_flutter_wkwebview/FWFGeneratedWebKitApis.h>
-#import <webview_flutter_wkwebview/FWFHTTPCookieStoreHostApi.h>
-#import <webview_flutter_wkwebview/FWFInstanceManager.h>
-#import <webview_flutter_wkwebview/FWFNavigationDelegateHostApi.h>
-#import <webview_flutter_wkwebview/FWFObjectHostApi.h>
-#import <webview_flutter_wkwebview/FWFPreferencesHostApi.h>
-#import <webview_flutter_wkwebview/FWFScriptMessageHandlerHostApi.h>
-#import <webview_flutter_wkwebview/FWFScrollViewHostApi.h>
-#import <webview_flutter_wkwebview/FWFUIDelegateHostApi.h>
-#import <webview_flutter_wkwebview/FWFUIViewHostApi.h>
-#import <webview_flutter_wkwebview/FWFUserContentControllerHostApi.h>
-#import <webview_flutter_wkwebview/FWFWebViewConfigurationHostApi.h>
-#import <webview_flutter_wkwebview/FWFWebViewFlutterWKWebViewExternalAPI.h>
-#import <webview_flutter_wkwebview/FWFWebViewHostApi.h>
-#import <webview_flutter_wkwebview/FWFWebsiteDataStoreHostApi.h>
+
+#import "FLTWebViewFlutterPlugin.h"
+#import "FWFDataConverters.h"
+#import "FWFGeneratedWebKitApis.h"
+#import "FWFHTTPCookieStoreHostApi.h"
+#import "FWFInstanceManager.h"
+#import "FWFNavigationDelegateHostApi.h"
+#import "FWFObjectHostApi.h"
+#import "FWFPreferencesHostApi.h"
+#import "FWFScriptMessageHandlerHostApi.h"
+#import "FWFScrollViewHostApi.h"
+#import "FWFUIDelegateHostApi.h"
+#import "FWFUIViewHostApi.h"
+#import "FWFURLHostApi.h"
+#import "FWFUserContentControllerHostApi.h"
+#import "FWFWebViewConfigurationHostApi.h"
+#import "FWFWebViewFlutterWKWebViewExternalAPI.h"
+#import "FWFWebViewHostApi.h"
+#import "FWFWebsiteDataStoreHostApi.h"

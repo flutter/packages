@@ -18,6 +18,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
   private ProcessCameraProviderHostApiImpl processCameraProviderHostApi;
+  private ImageCaptureHostApiImpl imageCaptureHostApi;
   public SystemServicesHostApiImpl systemServicesHostApi;
 
   /**
@@ -30,13 +31,15 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   void setUp(BinaryMessenger binaryMessenger, Context context, TextureRegistry textureRegistry) {
     // Set up instance manager.
     instanceManager =
-        InstanceManager.open(
+        InstanceManager.create(
             identifier -> {
               new GeneratedCameraXLibrary.JavaObjectFlutterApi(binaryMessenger)
                   .dispose(identifier, reply -> {});
             });
 
     // Set up Host APIs.
+    GeneratedCameraXLibrary.InstanceManagerHostApi.setup(
+        binaryMessenger, () -> instanceManager.clear());
     GeneratedCameraXLibrary.CameraInfoHostApi.setup(
         binaryMessenger, new CameraInfoHostApiImpl(instanceManager));
     GeneratedCameraXLibrary.CameraSelectorHostApi.setup(
@@ -51,6 +54,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     GeneratedCameraXLibrary.SystemServicesHostApi.setup(binaryMessenger, systemServicesHostApi);
     GeneratedCameraXLibrary.PreviewHostApi.setup(
         binaryMessenger, new PreviewHostApiImpl(binaryMessenger, instanceManager, textureRegistry));
+    imageCaptureHostApi = new ImageCaptureHostApiImpl(binaryMessenger, instanceManager, context);
+    GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApi);
   }
 
   @Override
@@ -61,7 +66,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     if (instanceManager != null) {
-      instanceManager.close();
+      instanceManager.stopFinalizationListener();
     }
   }
 
@@ -103,6 +108,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
    */
   public void updateContext(Context context) {
     if (processCameraProviderHostApi != null) {
+      processCameraProviderHostApi.setContext(context);
+    }
+    if (imageCaptureHostApi != null) {
       processCameraProviderHostApi.setContext(context);
     }
   }

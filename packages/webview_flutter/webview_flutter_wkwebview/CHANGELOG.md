@@ -1,3 +1,21 @@
+## 3.3.0
+
+* Adds support for `PlatformNavigationDelegate.onUrlChange`.
+
+## 3.2.4
+
+* Updates pigeon to fix warnings with clang 15.
+* Updates minimum Flutter version to 3.3.
+* Fixes common typos in tests and documentation.
+
+## 3.2.3
+
+* Updates to `pigeon` version 7.
+
+## 3.2.2
+
+* Changes Objective-C to use relative imports.
+
 ## 3.2.1
 
 * Clarifies explanation of endorsement in README.

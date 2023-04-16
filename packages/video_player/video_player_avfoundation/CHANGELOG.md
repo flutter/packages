@@ -1,6 +1,13 @@
+## 2.4.5
+
+* Fixes playback speed doesn't get persisted after reinitializing with new VideoPlayerController.
+## 2.4.4
+
+* Updates pigeon to fix warnings with clang 15.
+
 ## 2.4.3
 
-* Fixes playback speed doesn't get persisted after reinitializing with new VideoPlayerController (https://github.com/flutter/flutter/issues/100351)
+* Synchronizes `VideoPlayerValue.isPlaying` with `AVPlayer`.
 
 ## 2.4.2
 

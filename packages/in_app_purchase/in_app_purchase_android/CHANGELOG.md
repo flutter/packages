@@ -1,3 +1,9 @@
+## 0.2.5
+
+* Fixes the management of `BillingClient` connection by handling `BillingResponse.serviceDisconnected`.
+* Introduces `BillingClientManager`.
+* Updates minimum Flutter version to 3.3.
+
 ## 0.2.4+3
 
 * Clarifies explanation of endorsement in README.

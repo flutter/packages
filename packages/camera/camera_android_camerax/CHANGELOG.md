@@ -1,5 +1,6 @@
 ## NEXT
 
+* Updates minimum Flutter version to 3.3.
 * Creates camera_android_camerax plugin for development.
 * Adds CameraInfo class and removes unnecessary code from plugin.
 * Adds CameraSelector class.
@@ -12,3 +13,8 @@
 * Adds implementation of availableCameras().
 * Implements camera preview, createCamera, initializeCamera, onCameraError, onDeviceOrientationChanged, and onCameraInitialized.
 * Adds integration test to plugin.
+* Bump CameraX version to 1.3.0-alpha04.
+* Fixes instance manager hot restart behavior and fixes Java casting issue.
+* Implements image capture.
+* Fixes cast of CameraInfo to fix integration test failure.
+* Updates internal Java InstanceManager to only stop finalization callbacks when stopped.
