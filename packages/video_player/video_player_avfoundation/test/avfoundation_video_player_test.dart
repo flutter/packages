@@ -189,6 +189,12 @@ void main() {
       expect(log.textureMessage?.textureId, 1);
     });
 
+    test('play with playback speed', () async {
+      await player.setPlaybackSpeed(1, 2.0);
+      await player.play(1);
+      expect(log.playbackSpeedMessage?.speed, 2.0);
+    });
+
     test('pause', () async {
       await player.pause(1);
       expect(log.log.last, 'pause');
