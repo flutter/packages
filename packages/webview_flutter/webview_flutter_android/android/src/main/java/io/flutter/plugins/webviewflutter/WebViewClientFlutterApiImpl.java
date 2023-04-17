@@ -32,6 +32,14 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   private final InstanceManager instanceManager;
   private final WebViewFlutterApiImpl webViewFlutterApi;
 
+  static GeneratedAndroidWebView.RenderProcessGoneDetailData createRenderProcessGoneDetailData(
+      RenderProcessGoneDetail detail) {
+    return new GeneratedAndroidWebView.RenderProcessGoneDetailData.Builder()
+        .setDidCrash(detail.didCrash())
+        .setRendererPriorityAtExit((long) detail.rendererPriorityAtExit())
+        .build();
+  }
+
   @RequiresApi(api = Build.VERSION_CODES.M)
   static GeneratedAndroidWebView.WebResourceErrorData createWebResourceErrorData(
       WebResourceError error) {
@@ -218,8 +226,7 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
     onRenderProcessGone(
         getIdentifierForClient(webViewClient),
         webViewIdentifier,
-        detail.didCrash(),
-        (long) detail.rendererPriorityAtExit(),
+        createRenderProcessGoneDetailData(detail),
         callback);
   }
 
