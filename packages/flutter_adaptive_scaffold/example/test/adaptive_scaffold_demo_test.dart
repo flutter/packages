@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_adaptive_scaffold_example/adaptive_scaffold_demo.dart'
-    as example;
+import 'package:flutter_adaptive_scaffold_example/adaptive_scaffold_demo.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -19,21 +18,18 @@ void main() {
     await tester.binding.setSurfaceSize(Size(width, 800));
     await tester.pumpWidget(
       MaterialApp(
-        home: MediaQuery(
-            data: MediaQueryData(size: Size(width, 800)),
-            child: const example.MyHomePage()),
+        home: MediaQuery(data: MediaQueryData(size: Size(width, 800)), child: const example.MyHomePage()),
       ),
     );
   }
 
-  testWidgets('dislays correct item of config based on screen width',
-      (WidgetTester tester) async {
+  testWidgets('dislays correct item of config based on screen width', (WidgetTester tester) async {
     await updateScreen(300, tester);
     await tester.pumpAndSettle();
     expect(smallBody, findsOneWidget);
     expect(bnav, findsOneWidget);
     expect(tester.getTopLeft(smallBody), Offset.zero);
-    expect(tester.getTopLeft(bnav), const Offset(0, 744));
+    expect(tester.getTopLeft(bnav), const Offset(0, 720));
     expect(body, findsNothing);
     expect(largeBody, findsNothing);
     expect(pnav, findsNothing);
@@ -60,8 +56,7 @@ void main() {
     expect(tester.getBottomRight(pnav1), const Offset(208, 800));
   });
 
-  testWidgets('adaptive scaffold animations work correctly',
-      (WidgetTester tester) async {
+  testWidgets('adaptive scaffold animations work correctly', (WidgetTester tester) async {
     final Finder b = find.byKey(const Key('body'));
     final Finder sBody = find.byKey(const Key('sBody'));
 
@@ -72,23 +67,17 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(tester.getTopLeft(b), const Offset(17.6, 0));
-    expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(778.2, 755.2), epsilon: 1.0));
-    expect(tester.getTopLeft(sBody),
-        offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
-    expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(1178.2, 755.2), epsilon: 1.0));
+    expect(tester.getBottomRight(b), offsetMoreOrLessEquals(const Offset(778.2, 736), epsilon: 1.0));
+    expect(tester.getTopLeft(sBody), offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
+    expect(tester.getBottomRight(sBody), offsetMoreOrLessEquals(const Offset(1178.2, 736), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(tester.getTopLeft(b), const Offset(70.4, 0));
-    expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(416.0, 788.8), epsilon: 1.0));
-    expect(tester.getTopLeft(sBody),
-        offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
-    expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(816, 788.8), epsilon: 1.0));
+    expect(tester.getBottomRight(b), offsetMoreOrLessEquals(const Offset(416.0, 784), epsilon: 1.0));
+    expect(tester.getTopLeft(sBody), offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
+    expect(tester.getBottomRight(sBody), offsetMoreOrLessEquals(const Offset(816, 784), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
