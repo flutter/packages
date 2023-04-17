@@ -1,13 +1,9 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Import native classes
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -28,14 +24,12 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 public class LiveDataTest {
-
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @SuppressWarnings("rawtypes")
-  @Mock public LiveData mockLiveData;
-
+  @Mock
+  public LiveData mockLiveData;
   @Mock public BinaryMessenger mockBinaryMessenger;
-
   @Mock public LiveDataFlutterApi mockFlutterApi;
 
   InstanceManager instanceManager;
@@ -52,49 +46,59 @@ public class LiveDataTest {
 
   @Test
   @SuppressWarnings({"unchecked", "rawtypes"})
-  public void observe() {
-
+  public void observe_addsExpectedObserverToLiveDataInstance() {
+    final LiveDataHostApiImpl hostApi =
+        new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
     final Observer mockObserver = mock(Observer.class);
     final long observerIdentifier = 20;
-    instanceManager.addDartCreatedInstance(mockObserver, observerIdentifier);
-
     final long instanceIdentifier = 0;
+    final LifecycleOwner mockLifecycleOwner = mock(LifecycleOwner.class);
+
+    instanceManager.addDartCreatedInstance(mockObserver, observerIdentifier);
     instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
 
-    final LiveDataHostApiImpl hostApi =
-        new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
-
-    LifecycleOwner fakeLifecycleOwner = mock(LifecycleOwner.class);
-    hostApi.setLifecycleOwner(fakeLifecycleOwner);
-
+    hostApi.setLifecycleOwner(mockLifecycleOwner);
     hostApi.observe(instanceIdentifier, observerIdentifier);
 
-    verify(mockLiveData).observe(fakeLifecycleOwner, mockObserver);
+    verify(mockLiveData).observe(mockLifecycleOwner, mockObserver);
   }
 
   @Test
-  public void removeObservers() {
-
-    final long instanceIdentifier = 0;
-    instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
-
+  public void removeObservers_makesCallToRemoveObserversFromLiveDataInstance() {
     final LiveDataHostApiImpl hostApi =
         new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
+    final long instanceIdentifier = 0;
+    final LifecycleOwner mockLifecycleOwner = mock(LifecycleOwner.class);
 
-        LifecycleOwner fakeLifecycleOwner = mock(LifecycleOwner.class);
-        hostApi.setLifecycleOwner(fakeLifecycleOwner);
+    instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
 
+    hostApi.setLifecycleOwner(mockLifecycleOwner);
     hostApi.removeObservers(instanceIdentifier);
 
-    verify(mockLiveData).removeObservers(fakeLifecycleOwner);
+    verify(mockLiveData).removeObservers(mockLifecycleOwner);
   }
 
   @Test
-  public void flutterApiCreate() {
+  public void cast_addsOldInstanceWithNewIdentifier() {
+    final LiveDataHostApiImpl hostApi =
+        new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
+    final long instanceIdentifier = 56;
+    final long newIdentifier = 98;
+    final LifecycleOwner mockLifecycleOwner = mock(LifecycleOwner.class);
+
+    instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
+
+    hostApi.cast(instanceIdentifier, newIdentifier);
+
+    verify(instanceManager).addDartCreatedInstance(mockLiveData, newIdentifier);
+  }
+
+  @Test
+  public void flutterApiCreate_makesCallToDartToCreateInstance() {
     final LiveDataFlutterApiWrapper flutterApi =
         new LiveDataFlutterApiWrapper(mockBinaryMessenger, instanceManager);
-    flutterApi.setApi(mockFlutterApi);
 
+    flutterApi.setApi(mockFlutterApi);
     flutterApi.create(mockLiveData, reply -> {});
 
     final long instanceIdentifier =

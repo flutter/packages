@@ -1,4 +1,3 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -13,59 +12,44 @@ import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ObserverHostApi;
 import java.util.Objects;
 
 /**
- * Host API implementation for `Observer`.
+ * Host API implementation for {@link Observer}.
  *
  * <p>This class may handle instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class ObserverHostApiImpl implements ObserverHostApi {
-
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
+  private final ObserverProxy observerProxy;
 
-  private final ObserverProxy proxy;
-
-  /** Proxy for constructors and static method of `Observer`. */
+  /** Proxy for constructors and static method of {@link Observer}. */
   @VisibleForTesting
   public static class ObserverProxy {
 
-    /** Creates an instance of `Observer`. */
-    public <T>ObserverImpl<T> create(
+    /** Creates an instance of {@link Observer}. */
+    public <T> ObserverImpl<T> create(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-     return new ObserverImpl<T>(binaryMessenger, instanceManager);
+      return new ObserverImpl<T>(binaryMessenger, instanceManager);
     }
   }
 
-  /** Implementation of `Observer` that passes arguments of callback methods to Dart. */
+  /** Implementation of {@link Observer} that passes arguments of callback methods to Dart. */
   public static class ObserverImpl<T> implements Observer<T> {
-    private ObserverFlutterApiWrapper api;
+    private ObserverFlutterApiWrapper observerFlutterApiWrapper;
 
-    /** Constructs an instance of `Observer` that passes arguments of callbacks methods to Dart. */
+    /** Constructs an instance of {@link Observer} that passes arguments of callbacks methods to Dart. */
     public ObserverImpl(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
       super();
-      api = new ObserverFlutterApiWrapper(binaryMessenger, instanceManager);
-    }
-
-
-    @Override
-    public void onChanged(T value) {
-      System.out.println("CAMILLE, GETTING CALLED: " + value.toString());
-      // api.onChanged(this, value, reply -> {});
+      observerFlutterApiWrapper = new ObserverFlutterApiWrapper(binaryMessenger, instanceManager);
     }
 
     /**
-     * Flutter API used to send messages back to Dart.
-     *
-     * <p>This is only visible for testing.
+     * Method called when the data in observance is changed to {@code value}.
      */
-    @SuppressWarnings("unused")
-    @VisibleForTesting
-    void setApi(@NonNull ObserverFlutterApiWrapper api) {
-      this.api = api;
+    @Override
+    public void onChanged(T value) {
+      observerFlutterApiWrapper.onChanged(this, value, reply -> {});
     }
   }
 
@@ -86,22 +70,25 @@ public class ObserverHostApiImpl implements ObserverHostApi {
    *
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of `Observer`
+   * @param proxy proxy for constructors and static method of {@link Observer}
    */
   @VisibleForTesting
   ObserverHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
-      @NonNull ObserverProxy proxy) {
+      @NonNull ObserverProxy observerProxy) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    this.proxy = proxy;
+    this.observerProxy = observerProxy;
   }
 
+  /**
+   * Creates an {@link Observer} instance with the specified identifier.
+   */
   @Override
   public void create(@NonNull Long identifier) {
     instanceManager.addDartCreatedInstance(
-        proxy.create(binaryMessenger, instanceManager), identifier);
+        observerProxy.create(binaryMessenger, instanceManager), identifier);
   }
 
   private Observer<?> getObserverInstance(@NonNull Long identifier) {

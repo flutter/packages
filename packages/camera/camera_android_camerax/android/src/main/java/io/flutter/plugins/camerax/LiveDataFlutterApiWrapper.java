@@ -1,4 +1,3 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -12,19 +11,15 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataFlutterApi;
 
 /**
- * Flutter API implementation for `LiveData`.
+ * Flutter API implementation for {@link LiveData}.
  *
  * <p>This class may handle adding native instances that are attached to a Dart instance or passing
  * arguments of callbacks methods to a Dart instance.
  */
 public class LiveDataFlutterApiWrapper {
-
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
-  private LiveDataFlutterApi api;
+  private LiveDataFlutterApi liveDataFlutterApi;
 
   /**
    * Constructs a {@link LiveDataFlutterApiWrapper}.
@@ -36,16 +31,17 @@ public class LiveDataFlutterApiWrapper {
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    api = new LiveDataFlutterApi(binaryMessenger);
+    liveDataFlutterApi = new LiveDataFlutterApi(binaryMessenger);
   }
 
   /**
-   * Stores the `LiveData` instance and notifies Dart to create and store a new `LiveData` instance
-   * that is attached to this one. If `instance` has already been added, this method does nothing.
+   * Stores the {@link LiveData} instance and notifies Dart to create and store a new {@link LiveData} instance
+   * that is attached to this one. If {@code instance} has already been added, this method does nothing.
    */
-  public void create(@NonNull LiveData<?> instance, @NonNull LiveDataFlutterApi.Reply<Void> callback) {
+  public void create(
+      @NonNull LiveData<?> instance, @NonNull LiveDataFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      api.create(instanceManager.addHostCreatedInstance(instance), callback);
+      liveDataFlutterApi.create(instanceManager.addHostCreatedInstance(instance), callback);
     }
   }
 
@@ -56,6 +52,6 @@ public class LiveDataFlutterApiWrapper {
    */
   @VisibleForTesting
   void setApi(@NonNull LiveDataFlutterApi api) {
-    this.api = api;
+    this.liveDataFlutterApi = api;
   }
 }

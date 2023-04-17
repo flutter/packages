@@ -45,7 +45,8 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
     LiveData<CameraState> liveCameraState = cameraInfo.getCameraState();
-    LiveDataFlutterApiWrapper liveDataFlutterApiWrapper = new LiveDataFlutterApiWrapper(binaryMessenger, instanceManager);
+    LiveDataFlutterApiWrapper liveDataFlutterApiWrapper =
+        new LiveDataFlutterApiWrapper(binaryMessenger, instanceManager);
     liveDataFlutterApiWrapper.create(liveCameraState, reply -> {});
     return instanceManager.getIdentifierForStrongReference(liveCameraState);
   }

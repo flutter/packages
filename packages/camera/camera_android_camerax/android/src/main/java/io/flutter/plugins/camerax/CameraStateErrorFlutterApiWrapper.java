@@ -1,13 +1,9 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Import native classes
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraState;
@@ -15,19 +11,15 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateErrorFlutterApi;
 
 /**
- * Flutter API implementation for `CameraStateError`.
+ * Flutter API implementation for {@link CameraStateError}.
  *
  * <p>This class may handle adding native instances that are attached to a Dart instance or passing
  * arguments of callbacks methods to a Dart instance.
  */
 public class CameraStateErrorFlutterApiWrapper {
-
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
-  private CameraStateErrorFlutterApi api;
+  private CameraStateErrorFlutterApi cameraStateErrorFlutterApi;
 
   /**
    * Constructs a {@link CameraStateErrorFlutterApiWrapper}.
@@ -39,13 +31,13 @@ public class CameraStateErrorFlutterApiWrapper {
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    api = new CameraStateErrorFlutterApi(binaryMessenger);
+    cameraStateErrorFlutterApi = new CameraStateErrorFlutterApi(binaryMessenger);
   }
 
   /**
-   * Stores the `CameraStateError` instance and notifies Dart to create and store a new
-   * `CameraStateError` instance that is attached to this one. If `instance` has already been added,
-   * this method does nothing.
+   * Stores the {@link CameraStateError} instance and notifies Dart to create and store a new {@link
+   * CameraStateError} instance that is attached to this one. If {@code instance} has already been
+   * added, this method does nothing.
    */
   public void create(
       @NonNull CameraState.StateError instance,
@@ -53,7 +45,8 @@ public class CameraStateErrorFlutterApiWrapper {
       @NonNull String description,
       @NonNull CameraStateErrorFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      api.create(instanceManager.addHostCreatedInstance(instance), code, description, callback);
+      cameraStateErrorFlutterApi.create(
+          instanceManager.addHostCreatedInstance(instance), code, description, callback);
     }
   }
 
@@ -64,6 +57,6 @@ public class CameraStateErrorFlutterApiWrapper {
    */
   @VisibleForTesting
   void setApi(@NonNull CameraStateErrorFlutterApi api) {
-    this.api = api;
+    this.cameraStateErrorFlutterApi = api;
   }
 }

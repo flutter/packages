@@ -1,13 +1,9 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Import native classes
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraState;
@@ -17,19 +13,15 @@ import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ObserverFlutterApi;
 import java.util.Objects;
 
 /**
- * Flutter API implementation for `Observer`.
+ * Flutter API implementation for {@link Observer}.
  *
  * <p>This class may handle adding native instances that are attached to a Dart instance or passing
  * arguments of callbacks methods to a Dart instance.
  */
 public class ObserverFlutterApiWrapper {
-
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
-  private ObserverFlutterApi api;
+  private ObserverFlutterApi observerFlutterApi;
 
   /**
    * Constructs a {@link ObserverFlutterApiWrapper}.
@@ -41,26 +33,29 @@ public class ObserverFlutterApiWrapper {
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    api = new ObserverFlutterApi(binaryMessenger);
+    observerFlutterApi = new ObserverFlutterApi(binaryMessenger);
   }
 
   /**
-   * Sends a message to Dart to call `Observer.onChanged` on the Dart object representing
-   * `instance`.
+   * Sends a message to Dart to call {@link Observer.onChanged} on the Dart object representing
+   * {@code instance}.
    */
   public void onChanged(
       @NonNull Observer<?> instance,
       @NonNull Object value,
       @NonNull ObserverFlutterApi.Reply<Void> callback) {
 
+    // Cast value to type of data that is being observed if supported by this plugin.
     if (value instanceof CameraState) {
       CameraState state = (CameraState) value;
-      new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager).create(state, state.getType(), state.getError(), reply -> {});
+      new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager)
+          .create(state, state.getType(), state.getError(), reply -> {});
     } else {
-      throw new UnsupportedOperationException("The type of value in observance is not wrapped by this plugin.");
+      throw new UnsupportedOperationException(
+          "The type of value in observance is not wrapped by this plugin.");
     }
 
-    api.onChanged(
+    observerFlutterApi.onChanged(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         instanceManager.getIdentifierForStrongReference(value),
         callback);
@@ -73,6 +68,6 @@ public class ObserverFlutterApiWrapper {
    */
   @VisibleForTesting
   void setApi(@NonNull ObserverFlutterApi api) {
-    this.api = api;
+    this.observerFlutterApi = api;
   }
 }

@@ -1,4 +1,3 @@
-import 'package:simple_ast/annotations.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
@@ -28,7 +27,6 @@ class LiveData<T> extends JavaObject {
     return _api.removeObserversFromInstances(this);
   }
 
-  // @protected
   LiveData<S> cast<S>() {
     final LiveData<S> newInstance = LiveData<S>.detached(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);

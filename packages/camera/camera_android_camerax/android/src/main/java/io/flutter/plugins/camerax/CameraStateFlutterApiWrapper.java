@@ -1,13 +1,9 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Import native classes
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -17,21 +13,16 @@ import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateFlutterApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateType;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateTypeData;
 
-
 /**
- * Flutter API implementation for `CameraState`.
+ * Flutter API implementation for {@link CameraState}.
  *
  * <p>This class may handle adding native instances that are attached to a Dart instance or passing
  * arguments of callbacks methods to a Dart instance.
  */
 public class CameraStateFlutterApiWrapper {
-
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
-  private CameraStateFlutterApi api;
+  private CameraStateFlutterApi cameraStateFlutterApi;
 
   /**
    * Constructs a {@link CameraStateFlutterApiWrapper}.
@@ -43,13 +34,13 @@ public class CameraStateFlutterApiWrapper {
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    api = new CameraStateFlutterApi(binaryMessenger);
+    cameraStateFlutterApi = new CameraStateFlutterApi(binaryMessenger);
   }
 
   /**
-   * Stores the `CameraState` instance and notifies Dart to create and store a new `CameraState`
-   * instance that is attached to this one. If `instance` has already been added, this method does
-   * nothing.
+   * Stores the {@link CameraState} instance and notifies Dart to create and store a new {@link
+   * CameraState} instance that is attached to this one. If {@code instance} has already been added,
+   * this method does nothing.
    */
   public void create(
       @NonNull CameraState instance,
@@ -57,6 +48,7 @@ public class CameraStateFlutterApiWrapper {
       @Nullable CameraState.StateError error,
       @NonNull CameraStateFlutterApi.Reply<Void> callback) {
 
+    // Convert CameraX CameraState.Type to CameraStateType that the Dart side understands.
     CameraStateType cameraStateType = CameraStateType.CLOSED;
     switch (type) {
       case CLOSED:
@@ -77,11 +69,18 @@ public class CameraStateFlutterApiWrapper {
     }
 
     if (error != null) {
-      new CameraStateErrorFlutterApiWrapper(binaryMessenger, instanceManager).create(error, Long.valueOf(error.getCode()), getCameraStateErrorDescription(error), reply -> {});
+      // We need to create a CameraStateError if there is a problem with the current camera
+      // state to send to the Dart side.
+      new CameraStateErrorFlutterApiWrapper(binaryMessenger, instanceManager)
+          .create(
+              error,
+              Long.valueOf(error.getCode()),
+              getCameraStateErrorDescription(error),
+              reply -> {});
     }
 
     if (!instanceManager.containsInstance(instance)) {
-      api.create(
+      cameraStateFlutterApi.create(
           instanceManager.addHostCreatedInstance(instance),
           new CameraStateTypeData.Builder().setValue(cameraStateType).build(),
           instanceManager.getIdentifierForStrongReference(error),
@@ -120,7 +119,7 @@ public class CameraStateFlutterApiWrapper {
         return cameraStateErrorDescription
             + "The camera could not be opened because 'Do Not Disturb' mode is enabled. Please disable this mode, and try opening the camera again.";
       default:
-        return "There was an undefined issue with the camera state.";
+        return "There was an unspecified issue with the current camera state.";
     }
   }
 
@@ -131,6 +130,6 @@ public class CameraStateFlutterApiWrapper {
    */
   @VisibleForTesting
   void setApi(@NonNull CameraStateFlutterApi api) {
-    this.api = api;
+    this.cameraStateFlutterApi = api;
   }
 }

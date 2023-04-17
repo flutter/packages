@@ -44,7 +44,7 @@ public class CameraInfoTest {
   }
 
   @Test
-  public void getSensorRotationDegrees_MakesCallToRetrieveSensorRotationDegrees() {
+  public void getSensorRotationDegrees_makesCallToRetrieveSensorRotationDegrees() {
     final CameraInfoHostApiImpl cameraInfoHostApi =
         new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
 
@@ -57,7 +57,7 @@ public class CameraInfoTest {
   }
 
   @Test
-  public void getLiveCameraState_MakesCallToRetrieveLiveCameraState() {
+  public void getLiveCameraState_makesCallToRetrieveLiveCameraState() {
     final CameraInfoHostApiImpl cameraInfoHostApiImpl =
         new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
     final Long mockCameraInfoIdentifier = 27L;
@@ -76,7 +76,7 @@ public class CameraInfoTest {
   }
 
   @Test
-  public void flutterApi_MakesCallToDartToCreateInstance() {
+  public void flutterApi_makesCallToDartToCreateInstance() {
     final CameraInfoFlutterApiImpl spyFlutterApi =
         spy(new CameraInfoFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
 
