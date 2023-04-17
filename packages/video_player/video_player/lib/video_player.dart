@@ -797,7 +797,6 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
   _VideoAppLifeCycleObserver(this._controller);
 
   bool _wasPlayingBeforePause = false;
-  bool _isPictureInPictureActive = false;
   final VideoPlayerController _controller;
 
   void initialize() {
@@ -808,10 +807,6 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _wasPlayingBeforePause = _controller.value.isPlaying;
-      _isPictureInPictureActive = _controller.value.isPictureInPictureActive;
-      if (!_isPictureInPictureActive) {
-        _controller.pause();
-      }
       _controller.pause();
     } else if (state == AppLifecycleState.resumed) {
       if (_wasPlayingBeforePause) {
