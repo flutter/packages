@@ -123,11 +123,11 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   /** Passes arguments from {@link WebViewClient#onReceivedHttpError} to Dart. */
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public void onReceivedHttpError(
-      WebViewClient webViewClient,
-      WebView webView,
-      WebResourceRequest request,
-      WebResourceResponse response,
-      Reply<Void> callback) {
+      @NonNull WebViewClient webViewClient,
+      @NonNull WebView webView,
+      @NonNull WebResourceRequest request,
+      @NonNull WebResourceResponse response,
+      @NonNull Reply<Void> callback) {
     webViewFlutterApi.create(webView, reply -> {});
 
     final Long webViewIdentifier = instanceManager.getIdentifierForStrongReference(webView);

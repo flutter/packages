@@ -57,12 +57,17 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
 
     @Override
     public void onReceivedHttpError(
-        WebView view, WebResourceRequest request, WebResourceResponse response) {
+        @NonNull WebView view,
+        @NonNull WebResourceRequest request,
+        @NonNull WebResourceResponse response) {
       flutterApi.onReceivedHttpError(this, view, request, response, reply -> {});
     }
 
     @Override
-    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+    public void onReceivedError(
+        @NonNull WebView view,
+        @NonNull WebResourceRequest request,
+        @NonNull WebResourceError error) {
       flutterApi.onReceivedRequestError(this, view, request, error, reply -> {});
     }
 
@@ -137,7 +142,9 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onReceivedHttpError(
-        @NonNull WebView view, @NonNull WebResourceRequest request, WebResourceResponse response) {
+        @NonNull WebView view,
+        @NonNull WebResourceRequest request,
+        @NonNull WebResourceResponse response) {
       flutterApi.onReceivedHttpError(this, view, request, response, reply -> {});
     }
 
