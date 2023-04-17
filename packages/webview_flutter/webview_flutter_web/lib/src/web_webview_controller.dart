@@ -116,15 +116,15 @@ class WebWebViewController extends PlatformWebViewController {
   Future<void> addJavaScriptChannel(
     JavaScriptChannelParams javaScriptChannelParams,
   ) async {
-    void _handler(html.Event event) {
+    void handler(html.Event event) {
       if (event is html.MessageEvent) {
         javaScriptChannelParams.onMessageReceived(
             JavaScriptMessage(message: event.data.toString()));
       }
     }
 
-    javascriptChannels[javaScriptChannelParams.name] = _handler;
-    html.window.addEventListener('message', _handler);
+    javascriptChannels[javaScriptChannelParams.name] = handler;
+    html.window.addEventListener('message', handler);
   }
 
   @override
