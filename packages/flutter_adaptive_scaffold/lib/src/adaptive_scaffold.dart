@@ -317,13 +317,11 @@ class AdaptiveScaffold extends StatefulWidget {
   }) {
     return Builder(
       builder: (_) {
-        return BottomNavigationBar(
-          currentIndex: currentIndex ?? 0,
-          iconSize: iconSize,
-          items: destinations
-              .map((NavigationDestination e) => _toBottomNavItem(e))
-              .toList(),
-          onTap: onDestinationSelected,
+        return NavigationBar(
+          selectedIndex: currentIndex ?? 0,
+          // iconSize: iconSize,
+          destinations: destinations,
+          onDestinationSelected: onDestinationSelected,
         );
       },
     );
@@ -642,14 +640,6 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
       ),
     );
   }
-}
-
-BottomNavigationBarItem _toBottomNavItem(NavigationDestination destination) {
-  return BottomNavigationBarItem(
-    label: destination.label,
-    icon: destination.icon,
-    activeIcon: destination.selectedIcon,
-  );
 }
 
 class _BrickLayout extends StatelessWidget {
