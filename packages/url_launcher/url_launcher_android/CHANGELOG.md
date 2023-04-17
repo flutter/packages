@@ -1,3 +1,7 @@
+## 6.0.28
+
+* Updates android gradle plugin to 8.0.0.
+
 ## 6.0.27
 
 * Fixes Java warnings.
