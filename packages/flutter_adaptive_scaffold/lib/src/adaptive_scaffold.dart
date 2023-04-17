@@ -319,7 +319,6 @@ class AdaptiveScaffold extends StatefulWidget {
       builder: (_) {
         return NavigationBar(
           selectedIndex: currentIndex ?? 0,
-          // iconSize: iconSize,
           destinations: destinations,
           onDestinationSelected: onDestinationSelected,
         );
