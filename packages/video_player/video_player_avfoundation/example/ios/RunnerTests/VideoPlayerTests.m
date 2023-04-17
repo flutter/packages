@@ -284,12 +284,12 @@
   if (isPictureInPictureSupported.boolValue) {
     FLTStartPictureInPictureMessage *startPictureInPicture =
         [FLTStartPictureInPictureMessage makeWithTextureId:textureId];
-    XCTestExpectation *startingPiPExpectation =
-        [self expectationWithDescription:@"startingPictureInPicture"];
+    XCTestExpectation *startedPiPExpectation =
+        [self expectationWithDescription:@"startedPictureInPicture"];
     [player onListenWithArguments:nil
                         eventSink:^(NSDictionary<NSString *, id> *event) {
-                          if ([event[@"event"] isEqualToString:@"startingPictureInPicture"]) {
-                            [startingPiPExpectation fulfill];
+                          if ([event[@"event"] isEqualToString:@"startedPictureInPicture"]) {
+                            [startedPiPExpectation fulfill];
                           }
                         }];
     [videoPlayerPlugin startPictureInPicture:startPictureInPicture error:&error];

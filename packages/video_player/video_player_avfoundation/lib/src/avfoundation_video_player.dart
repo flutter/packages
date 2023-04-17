@@ -148,8 +148,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
           return VideoEvent(eventType: VideoEventType.bufferingEnd);
         case 'stoppedPictureInPicture':
           return VideoEvent(eventType: VideoEventType.stoppedPictureInPicture);
-        case 'startingPictureInPicture':
-          return VideoEvent(eventType: VideoEventType.startingPictureInPicture);
+        case 'startedPictureInPicture':
+          return VideoEvent(eventType: VideoEventType.startedPictureInPicture);
         case 'isPlayingStateUpdate':
           return VideoEvent(
             eventType: VideoEventType.isPlayingStateUpdate,

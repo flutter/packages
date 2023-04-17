@@ -449,7 +449,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
           break;
-        case VideoEventType.startingPictureInPicture:
+        case VideoEventType.startedPictureInPicture:
           value = value.copyWith(isPictureInPictureActive: true);
           break;
         case VideoEventType.stoppedPictureInPicture:

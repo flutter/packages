@@ -322,8 +322,8 @@ enum VideoEventType {
   /// The video stopped to buffer.
   bufferingEnd,
 
-  /// The video is starting picture-in-picture mode.
-  startingPictureInPicture,
+  /// The video is started picture-in-picture mode.
+  startedPictureInPicture,
 
   /// The video is exited picture-in-picture mode.
   stoppedPictureInPicture,

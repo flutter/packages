@@ -312,7 +312,7 @@ NS_INLINE UIViewController *rootViewController() {
       ![self.pictureInPictureController isPictureInPictureActive]) {
     if (_eventSink != nil) {
       // The event is sent here to make sure that the Flutter UI can be updated as soon as possible.
-      _eventSink(@{@"event" : @"startingPictureInPicture"});
+      _eventSink(@{@"event" : @"startedPictureInPicture"});
     }
     [self.pictureInPictureController startPictureInPicture];
   } else if (self.pictureInPictureController && !self.isPictureInPictureStarted &&
