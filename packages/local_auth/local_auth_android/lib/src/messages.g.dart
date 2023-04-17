@@ -43,7 +43,7 @@ enum AuthResult {
 }
 
 /// Pigeon equivalent of the subset of BiometricType used by Android.
-enum AuthClassifications {
+enum AuthClassification {
   weak,
   strong,
 }
@@ -304,7 +304,7 @@ class LocalAuthApi {
 
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
-  Future<List<AuthClassifications?>> getEnrolledBiometrics() async {
+  Future<List<AuthClassification?>> getEnrolledBiometrics() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.LocalAuthApi.getEnrolledBiometrics', codec,
         binaryMessenger: _binaryMessenger);
@@ -326,7 +326,7 @@ class LocalAuthApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<AuthClassifications?>();
+      return (replyList[0] as List<Object?>?)!.cast<AuthClassification?>();
     }
   }
 

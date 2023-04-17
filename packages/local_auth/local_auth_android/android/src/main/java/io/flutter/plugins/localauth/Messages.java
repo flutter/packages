@@ -84,13 +84,13 @@ public class Messages {
   }
 
   /** Pigeon equivalent of the subset of BiometricType used by Android. */
-  public enum AuthClassifications {
+  public enum AuthClassification {
     WEAK(0),
     STRONG(1);
 
     final int index;
 
-    private AuthClassifications(final int index) {
+    private AuthClassification(final int index) {
       this.index = index;
     }
   }
@@ -603,7 +603,7 @@ public class Messages {
      * Returns the biometric types that are enrolled, and can thus be used without additional setup.
      */
     @NonNull
-    List<AuthClassifications> getEnrolledBiometrics();
+    List<AuthClassification> getEnrolledBiometrics();
     /**
      * Attempts to authenticate the user with the provided [options], and using [strings] for any
      * UI.
@@ -695,7 +695,7 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
-                  List<AuthClassifications> output = api.getEnrolledBiometrics();
+                  List<AuthClassification> output = api.getEnrolledBiometrics();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

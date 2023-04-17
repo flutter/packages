@@ -18,15 +18,15 @@ class AuthStrings {
   /// Constructs a new instance.
   const AuthStrings({
     required this.reason,
-    this.biometricHint,
-    this.biometricNotRecognized,
-    this.biometricRequiredTitle,
-    this.cancelButton,
-    this.deviceCredentialsRequiredTitle,
-    this.deviceCredentialsSetupDescription,
-    this.goToSettingsButton,
-    this.goToSettingsDescription,
-    this.signInTitle,
+    required this.biometricHint,
+    required this.biometricNotRecognized,
+    required this.biometricRequiredTitle,
+    required this.cancelButton,
+    required this.deviceCredentialsRequiredTitle,
+    required this.deviceCredentialsSetupDescription,
+    required this.goToSettingsButton,
+    required this.goToSettingsDescription,
+    required this.signInTitle,
   });
 
   final String reason;
@@ -92,7 +92,7 @@ class AuthResultWrapper {
 }
 
 /// Pigeon equivalent of the subset of BiometricType used by Android.
-enum AuthClassifications { weak, strong }
+enum AuthClassification { weak, strong }
 
 @HostApi()
 abstract class LocalAuthApi {
@@ -111,7 +111,7 @@ abstract class LocalAuthApi {
 
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
-  List<AuthClassifications> getEnrolledBiometrics();
+  List<AuthClassification> getEnrolledBiometrics();
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
