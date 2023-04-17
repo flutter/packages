@@ -1,6 +1,10 @@
-## 6.0.28
+## 6.0.29
 
 * Updates android gradle plugin to 8.0.0.
+
+## 6.0.28
+
+* Sets an explicit Java compatibility version.
 
 ## 6.0.27
 
