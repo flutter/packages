@@ -36,13 +36,20 @@
   OCMStub([telephotoCamera uniqueID]).andReturn(@"3");
   OCMStub([telephotoCamera position]).andReturn(AVCaptureDevicePositionBack);
 
-  NSMutableArray *requiredTypes =
-      [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
-          mutableCopy];
+  NSMutableArray *requiredTypes = [@[
+    AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInDualCamera,
+    AVCaptureDeviceTypeBuiltInTelephotoCamera
+  ] mutableCopy];
   if (@available(iOS 13.0, *)) {
     [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
   }
-
+  if (@available(iOS 15.4, *)) {
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
+  }
   id discoverySessionMock = OCMClassMock([AVCaptureDeviceDiscoverySession class]);
   OCMStub([discoverySessionMock discoverySessionWithDeviceTypes:requiredTypes
                                                       mediaType:AVMediaTypeVideo
@@ -87,11 +94,19 @@
   OCMStub([frontFacingCamera uniqueID]).andReturn(@"1");
   OCMStub([frontFacingCamera position]).andReturn(AVCaptureDevicePositionFront);
 
-  NSMutableArray *requiredTypes =
-      [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
-          mutableCopy];
+  NSMutableArray *requiredTypes = [@[
+    AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInDualCamera,
+    AVCaptureDeviceTypeBuiltInTelephotoCamera
+  ] mutableCopy];
   if (@available(iOS 13.0, *)) {
     [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+  }
+  if (@available(iOS 15.4, *)) {
+    [requiredTypes addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
   }
 
   id discoverySessionMock = OCMClassMock([AVCaptureDeviceDiscoverySession class]);
