@@ -35,6 +35,14 @@ WebResourceError _toWebResourceError(WebResourceErrorData data) {
   );
 }
 
+/// Converts [RenderProcessGoneDetailData] to [RenderProcessGoneDetail].
+RenderProcessGoneDetail _toRenderProcessGoneDetail(RenderProcessGoneDetailData data) {
+  return RenderProcessGoneDetail(
+    didCrash: data.didCrash,
+    rendererPriorityAtExit: data.rendererPriorityAtExit,
+  );
+}
+
 /// Handles initialization of Flutter APIs for Android WebView.
 class AndroidWebViewFlutterApis {
   /// Creates a [AndroidWebViewFlutterApis].
@@ -690,8 +698,7 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   void onRenderProcessGone(
     int instanceId,
     int webViewInstanceId,
-    bool didCrash,
-    int rendererPriorityAtExit,
+    RenderProcessGoneDetailData detail,
   ) {
     final WebViewClient? instance = instanceManager
         .getInstanceWithWeakReference(instanceId) as WebViewClient?;
@@ -708,8 +715,7 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
     if (instance!.onRenderProcessGone != null) {
       instance.onRenderProcessGone!(
         webViewInstance!,
-        didCrash,
-        rendererPriorityAtExit,
+        _toRenderProcessGoneDetail(detail),
       );
     }
   }

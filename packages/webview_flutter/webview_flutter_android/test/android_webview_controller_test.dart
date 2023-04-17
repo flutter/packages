@@ -106,8 +106,7 @@ void main() {
                 )? requestLoading,
                 void Function(
                   android_webview.WebView webView,
-                  bool didCrash,
-                  int rendererPriorityAtExit,
+                  android_webview.RenderProcessGoneDetail detail,
                 )? onRenderProcessGone,
                 void Function(android_webview.WebView webView, String url)?
                     urlLoading,

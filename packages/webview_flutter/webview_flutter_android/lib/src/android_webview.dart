@@ -849,8 +849,7 @@ class WebViewClient extends JavaObject {
   /// onRenderProcessGone will be called for each WebView that was affected.
   final void Function(
     WebView webView,
-    bool didCrash,
-    int rendererPriorityAtExit,
+    RenderProcessGoneDetail detail,
   )? onRenderProcessGone;
 
   /// Sets the required synchronous return value for the Java method,
@@ -1144,6 +1143,23 @@ class WebResourceError {
 
   /// Describes the error.
   final String description;
+}
+
+/// Encapsulates information about why the render process exited.
+///
+/// See [WebViewClient.onRenderProcessGone].
+class RenderProcessGoneDetail {
+  /// Constructs a [RenderProcessGoneDetail].
+  RenderProcessGoneDetail({
+    required this.didCrash,
+    required this.rendererPriorityAtExit,
+  });
+
+  /// Indicates whether the render process was observed to crash, or whether it was killed by the system.
+  final bool didCrash;
+
+  /// Returns the renderer priority that was set at the time that the renderer exited.
+  final int rendererPriorityAtExit;
 }
 
 /// Manages Flutter assets that are part of Android's app bundle.

@@ -345,7 +345,10 @@ class MockAndroidNavigationDelegate extends _i1.Mock
       ) as _i9.Future<void>);
   @override
   _i9.Future<void> setOnRenderProcessGone(
-          _i8.RenderProcessGoneCallback? onRenderProcessGone) =>
+          void Function({
+            bool didCrash,
+            int rendererPriorityAtExit,
+          })? onRenderProcessGone) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnRenderProcessGone,
@@ -792,8 +795,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
     )? onReceivedRequestError,
     void Function(
       _i2.WebView,
-      bool,
-      int,
+      _i2.RenderProcessGoneDetail,
     )? onRenderProcessGone,
     void Function(
       _i2.WebView,
@@ -827,8 +829,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           )? onReceivedRequestError,
           void Function(
             _i2.WebView,
-            bool,
-            int,
+            _i2.RenderProcessGoneDetail,
           )? onRenderProcessGone,
           void Function(
             _i2.WebView,
@@ -865,8 +866,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           )? onReceivedRequestError,
           void Function(
             _i2.WebView,
-            bool,
-            int,
+            _i2.RenderProcessGoneDetail,
           )? onRenderProcessGone,
           void Function(
             _i2.WebView,
@@ -903,8 +903,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
         )? onReceivedRequestError,
         void Function(
           _i2.WebView,
-          bool,
-          int,
+          _i2.RenderProcessGoneDetail,
         )? onRenderProcessGone,
         void Function(
           _i2.WebView,

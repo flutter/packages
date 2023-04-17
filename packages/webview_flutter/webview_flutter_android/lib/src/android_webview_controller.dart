@@ -17,6 +17,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'android_proxy.dart';
 import 'android_webview.dart' as android_webview;
+import 'android_webview.g.dart';
 import 'instance_manager.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
@@ -710,10 +711,6 @@ class AndroidNavigationDelegateCreationParams
   final AndroidWebViewProxy androidWebViewProxy;
 }
 
-/// Signature for the `renderProcessGone` callback.
-typedef RenderProcessGoneCallback = void Function(
-    bool didCrash, int rendererPriorityAtExit);
-
 /// A place to register callback methods responsible to handle navigation events
 /// triggered by the [android_webview.WebView].
 class AndroidNavigationDelegate extends PlatformNavigationDelegate {
@@ -770,13 +767,12 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
       },
       onRenderProcessGone: (
         android_webview.WebView webView,
-        bool didCrash,
-        int rendererPriorityAtExit,
+        android_webview.RenderProcessGoneDetail detail,
       ) {
         if (weakThis.target?._onRenderProcessGone != null) {
           weakThis.target!._onRenderProcessGone!(
-            didCrash,
-            rendererPriorityAtExit,
+            didCrash: detail.didCrash,
+            rendererPriorityAtExit: detail.rendererPriorityAtExit,
           );
         }
       },
@@ -853,7 +849,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   PageEventCallback? _onPageStarted;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
-  RenderProcessGoneCallback? _onRenderProcessGone;
+  void Function({ bool didCrash, int rendererPriorityAtExit })? _onRenderProcessGone;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
 
@@ -939,7 +935,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
 
   /// Invoked when a render process has exited.
   Future<void> setOnRenderProcessGone(
-    RenderProcessGoneCallback onRenderProcessGone,
+    void Function({ bool didCrash, int rendererPriorityAtExit }) onRenderProcessGone,
   ) async {
     _onRenderProcessGone = onRenderProcessGone;
     _webViewClient.setSynchronousReturnValueForOnRenderProcessGone(true);

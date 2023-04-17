@@ -700,18 +700,19 @@ void main() {
         when(mockWebViewClient.onRenderProcessGone).thenReturn(
           (
             WebView webView,
-            bool didCrash,
-            int rendererPriorityAtExit,
+            RenderProcessGoneDetail detail,
           ) {
-            result = <Object>[webView, didCrash, rendererPriorityAtExit];
+            result = <Object>[webView, detail.didCrash, detail.rendererPriorityAtExit];
           },
         );
 
         flutterApi.onRenderProcessGone(
           mockWebViewClientInstanceId,
           mockWebViewInstanceId,
-          true,
-          133,
+          RenderProcessGoneDetailData(
+            didCrash: true,
+            rendererPriorityAtExit: 133,
+          ),
         );
 
         expect(
