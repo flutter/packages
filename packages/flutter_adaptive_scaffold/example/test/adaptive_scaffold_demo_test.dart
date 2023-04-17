@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold_example/adaptive_scaffold_demo.dart'
-  as example;
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -27,7 +27,7 @@ void main() {
   }
 
   testWidgets('dislays correct item of config based on screen width',
-          (WidgetTester tester) async {
+      (WidgetTester tester) async {
     await updateScreen(300, tester);
     await tester.pumpAndSettle();
     expect(smallBody, findsOneWidget);
@@ -61,7 +61,7 @@ void main() {
   });
 
   testWidgets('adaptive scaffold animations work correctly',
-          (WidgetTester tester) async {
+      (WidgetTester tester) async {
     final Finder b = find.byKey(const Key('body'));
     final Finder sBody = find.byKey(const Key('sBody'));
 
