@@ -49,6 +49,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    namespace 'io.flutter.plugins.googlesigninexample'
 }
 
 flutter {

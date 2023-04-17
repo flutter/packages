@@ -213,6 +213,97 @@ void main() {
     final String? value = prefs.getString('test');
     expect(value, 'foo');
   });
+
+  test('calling setPrefix after getInstance throws', () async {
+    const String newPrefix = 'newPrefix';
+
+    await SharedPreferences.getInstance();
+    Object? err;
+    try {
+      SharedPreferences.setPrefix(newPrefix);
+    } catch (e) {
+      err = e;
+    }
+    expect(err, isA<StateError>());
+  });
+
+  test('using setPrefix allows setting and getting', () async {
+    const String newPrefix = 'newPrefix';
+
+    SharedPreferences.resetStatic();
+    SharedPreferences.setPrefix(newPrefix);
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('stringKey', 'test');
+    await prefs.setBool('boolKey', true);
+    await prefs.setDouble('doubleKey', 3.14);
+
+    final String? testString = prefs.getString('stringKey');
+    expect(testString, 'test');
+
+    final bool? testBool = prefs.getBool('boolKey');
+    expect(testBool, true);
+
+    final double? testDouble = prefs.getDouble('doubleKey');
+    expect(testDouble, 3.14);
+  });
+
+  test('using reload after setPrefix properly reloads the cache', () async {
+    const String newPrefix = 'newPrefix';
+
+    SharedPreferences.resetStatic();
+    SharedPreferences.setPrefix(newPrefix);
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? testString = prefs.getString('stringKey');
+
+    await prefs.setString('stringKey', 'test');
+    testString = prefs.getString('stringKey');
+    expect(testString, 'test');
+
+    await prefs.reload();
+    final String? testStrings = prefs.getString('stringKey');
+    expect(testStrings, 'test');
+  });
+
+  test('unimplemented errors in withPrefix methods are updated', () async {
+    final UnimplementedSharedPreferencesStore localStore =
+        UnimplementedSharedPreferencesStore();
+    SharedPreferencesStorePlatform.instance = localStore;
+    SharedPreferences.resetStatic();
+    SharedPreferences.setPrefix('');
+    Object? err;
+
+    try {
+      await SharedPreferences.getInstance();
+    } catch (e) {
+      err = e;
+    }
+    expect(err, isA<UnimplementedError>());
+    expect(
+        err.toString(),
+        contains(
+            "Shared Preferences doesn't yet support the setPrefix method"));
+  });
+
+  test('non-Unimplemented errors pass through withPrefix methods correctly',
+      () async {
+    final ThrowingSharedPreferencesStore localStore =
+        ThrowingSharedPreferencesStore();
+    SharedPreferencesStorePlatform.instance = localStore;
+    SharedPreferences.resetStatic();
+    SharedPreferences.setPrefix('');
+    Object? err;
+
+    try {
+      await SharedPreferences.getInstance();
+    } catch (e) {
+      err = e;
+    }
+    expect(err, isA<StateError>());
+    expect(err.toString(), contains('State Error'));
+  });
 }
 
 class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
@@ -235,6 +326,12 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    log.add(const MethodCall('getAllWithPrefix'));
+    return backend.getAllWithPrefix(prefix);
+  }
+
+  @override
   Future<bool> remove(String key) {
     log.add(MethodCall('remove', key));
     return backend.remove(key);
@@ -244,5 +341,55 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   Future<bool> setValue(String valueType, String key, Object value) {
     log.add(MethodCall('setValue', <dynamic>[valueType, key, value]));
     return backend.setValue(valueType, key, value);
+  }
+}
+
+class UnimplementedSharedPreferencesStore
+    extends SharedPreferencesStorePlatform {
+  @override
+  Future<bool> clear() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAll() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> remove(String key) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setValue(String valueType, String key, Object value) {
+    throw UnimplementedError();
+  }
+}
+
+class ThrowingSharedPreferencesStore extends SharedPreferencesStorePlatform {
+  @override
+  Future<bool> clear() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAll() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> remove(String key) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> setValue(String valueType, String key, Object value) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    throw StateError('State Error');
   }
 }

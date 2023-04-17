@@ -283,6 +283,57 @@ void main() {
       expect(find.text('/1234?id=456'), findsOneWidget);
     });
 
+    testWidgets('repeatedly pops imperative route does not crash',
+        (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/123369.
+      final UniqueKey home = UniqueKey();
+      final UniqueKey settings = UniqueKey();
+      final UniqueKey dialog = UniqueKey();
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => DummyScreen(key: home),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (_, __) => DummyScreen(key: settings),
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, navigatorKey: navKey);
+      expect(find.byKey(home), findsOneWidget);
+
+      router.push('/settings');
+      await tester.pumpAndSettle();
+      expect(find.byKey(home), findsNothing);
+      expect(find.byKey(settings), findsOneWidget);
+
+      showDialog(
+        context: navKey.currentContext!,
+        builder: (_) => DummyScreen(key: dialog),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(dialog), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.byKey(dialog), findsNothing);
+      expect(find.byKey(settings), findsOneWidget);
+
+      showDialog(
+        context: navKey.currentContext!,
+        builder: (_) => DummyScreen(key: dialog),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(dialog), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.byKey(dialog), findsNothing);
+      expect(find.byKey(settings), findsOneWidget);
+    });
+
     testWidgets('match sub-route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -791,6 +842,42 @@ void main() {
         ]);
       });
     });
+  });
+
+  testWidgets('does not crash when inherited widget changes',
+      (WidgetTester tester) async {
+    final ValueNotifier<String> notifier = ValueNotifier<String>('initial');
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+          path: '/',
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final String value = context
+                .dependOnInheritedWidgetOfExactType<TestInheritedNotifier>()!
+                .notifier!
+                .value;
+            return MaterialPage<void>(
+              key: state.pageKey,
+              child: Text(value),
+            );
+          }),
+    ];
+    final GoRouter router = GoRouter(
+      routes: routes,
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+        builder: (BuildContext context, Widget? child) {
+          return TestInheritedNotifier(notifier: notifier, child: child!);
+        },
+      ),
+    );
+
+    expect(find.text(notifier.value), findsOneWidget);
+
+    notifier.value = 'updated';
+    await tester.pump();
+    expect(find.text(notifier.value), findsOneWidget);
   });
 
   testWidgets(
@@ -2130,6 +2217,9 @@ void main() {
         routes,
         tester,
       );
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       expect(router.routeInformationProvider.value.location, '/dummy');
       TestWidgetsFlutterBinding
           .instance.platformDispatcher.defaultRouteNameTestValue = '/';
@@ -3423,6 +3513,14 @@ void main() {
         expect(GoRouter.maybeOf(context), isNull);
       },
     );
+  });
+}
+
+class TestInheritedNotifier extends InheritedNotifier<ValueNotifier<String>> {
+  const TestInheritedNotifier({
+    super.key,
+    required super.notifier,
+    required super.child,
   });
 }
 

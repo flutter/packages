@@ -130,7 +130,7 @@ abstract class CookieManagerHostApi {
 
 @HostApi(dartHostTestHandler: 'TestWebViewHostApi')
 abstract class WebViewHostApi {
-  void create(int instanceId, bool useHybridComposition);
+  void create(int instanceId);
 
   void loadData(
     int instanceId,
@@ -310,6 +310,13 @@ abstract class WebViewClientFlutterApi {
   );
 
   void urlLoading(int instanceId, int webViewInstanceId, String url);
+
+  void doUpdateVisitedHistory(
+    int instanceId,
+    int webViewInstanceId,
+    String url,
+    bool isReload,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestDownloadListenerHostApi')
