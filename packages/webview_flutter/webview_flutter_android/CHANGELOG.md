@@ -1,6 +1,10 @@
 ## 3.5.0
 
 * Adds support for the native `onRenderProcessGone` callback.
+
+## 3.4.4
+
+* Fixes a bug where the native `WebView` wouldn't be traversed for autofill automatically.
 * Updates minimum Flutter version to 3.3.
 
 ## 3.4.3
