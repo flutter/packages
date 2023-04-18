@@ -11,7 +11,7 @@ import '../../billing_client_wrappers.dart';
 class GooglePlayProductDetails extends ProductDetails {
   /// Creates a new Google Play specific product details object with the
   /// provided details.
-  GooglePlayProductDetails({
+  GooglePlayProductDetails._({
     required super.id,
     required super.title,
     required super.description,
@@ -41,7 +41,7 @@ class GooglePlayProductDetails extends ProductDetails {
     final String currencySymbol =
         formattedPrice.isEmpty ? currencyCode : formattedPrice[0];
 
-    return GooglePlayProductDetails(
+    return GooglePlayProductDetails._(
       id: productDetails.productId,
       title: productDetails.title,
       description: productDetails.description,
@@ -55,6 +55,14 @@ class GooglePlayProductDetails extends ProductDetails {
 
   /// Generate a [GooglePlayProductDetails] object based on an Android
   /// [ProductDetailsWrapper] object for a subscription product.
+  /// Subscriptions can consist of multiple base plans, and base plans in turn
+  /// can consist of multiple offers. This method generates a list where every
+  /// element corresponds to a base plan or its offer.
+  ///
+  /// Subscriptions can consist of multiple base plans, and base plans in turn
+  /// can consist of multiple offers. [subscriptionIndex] points to the index of
+  /// [productDetails.subscriptionOfferDetails] for which the
+  /// [GooglePlayProductDetails] is constructed.
   factory GooglePlayProductDetails._fromSubscription(
     ProductDetailsWrapper productDetails,
     int subscriptionIndex,
@@ -74,7 +82,7 @@ class GooglePlayProductDetails extends ProductDetails {
     final String currencySymbol =
         formattedPrice.isEmpty ? currencyCode : formattedPrice[0];
 
-    return GooglePlayProductDetails(
+    return GooglePlayProductDetails._(
       id: productDetails.productId,
       title: productDetails.title,
       description: productDetails.description,
@@ -88,11 +96,13 @@ class GooglePlayProductDetails extends ProductDetails {
   }
 
   /// Generate a list of [GooglePlayProductDetails] based on an Android
-  /// [ProductDetailsWrapper] object for a subscription product.
+  /// [ProductDetailsWrapper] object.
   ///
-  /// Subscriptions can consist of multiple base plans, and base plans in turn
-  /// can consist of multiple offers. This method generates a list where every
-  /// element corresponds to a base plan or its offer.
+  /// If [productDetails] is of type [ProductType.inapp], a single
+  /// [GooglePlayProductDetails] will be constructed.
+  /// If [productDetails] is of type [ProductType.subs], a list is returned
+  /// where every element corresponds to a base plan or its offer in
+  /// [productDetails.subscriptionOfferDetails].
   static List<GooglePlayProductDetails> fromProductDetails(
     ProductDetailsWrapper productDetails,
   ) {
@@ -126,7 +136,7 @@ class GooglePlayProductDetails extends ProductDetails {
   final int? subscriptionIndex;
 
   /// The offerToken of the subscription this [GooglePlayProductDetails]
-  /// object was contructed for, or 'null' if it was not a subscription.
+  /// object was contructed for, or `null` if it was not a subscription.
   String? get offerToken => subscriptionIndex != null &&
           productDetails.subscriptionOfferDetails != null
       ? productDetails
