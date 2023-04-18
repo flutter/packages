@@ -7,6 +7,8 @@ The following functionality is currently available:
 
 - `loadRequest`
 - `loadHtmlString` (Without `baseUrl`)
+- `addJavaScriptChannel`
+- `removeJavaScriptChannel`
 
 Nothing else is currently supported.
 
@@ -21,6 +23,21 @@ yet, so it currently requires extra setup to use:
 
 Once the step above is complete, the APIs from `webview_flutter` listed
 above can be used as normal on web.
+
+### JavaScript channels
+
+Contrary to the Android and iOS implementations, the `addJavaScriptChannel`
+method does not create a named channel; the channel can only be accessed using
+`window.parent`. In order to send a cross-platform message over a channel named
+`flutterApp`, the following construction can be used in the web application:
+
+```ts
+if (window.flutterApp) {
+  window.flutterApp.postMessage(message);
+} else if (window.parent) {
+  window.parent.postMessage(message, targetOrigin);
+}
+```
 
 ## Tests
 
