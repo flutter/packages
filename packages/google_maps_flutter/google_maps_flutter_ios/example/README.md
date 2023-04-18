@@ -36,7 +36,8 @@ New test types can be added to any example if needs change.
 * When a new major of the SDK comes out that raises the minimum
   iOS deployment version, a new example with that minimum target
   should be added to ensure that the plugin compiles with that
-  version of the SDK.
+  version of the SDK, and the range in the plugin's `podspec` file
+  should be bumped to the next major version.
 * When the minimum supported version of Flutter (on `stable`)
   reaches the point where the oldest example is for an SDK
   that can no longer be resolved to, that example should be
