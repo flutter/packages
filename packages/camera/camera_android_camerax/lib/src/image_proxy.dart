@@ -4,33 +4,20 @@
 
 import 'dart:async';
 
-import 'package:camera_platform_interface/camera_platform_interface.dart'
-    show CameraImageData, CameraImageFormat, CameraImagePlane, ImageFormatGroup;
 import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:meta/meta.dart' show protected;
-import 'package:simple_ast/annotations.dart';
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
-import 'image_proxy_plane_proxy.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
-import 'use_case.dart';
+import 'plane_proxy.dart';
 
-@SimpleClassAnnotation()
+/// Representation of a single complete image buffer.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/ImageProxy.
 class ImageProxy extends JavaObject {
-//   ImageProxyPlaneProxy(
-//       {BinaryMessenger? binaryMessenger,
-//       InstanceManager? instanceManager})
-//       : super.detached(
-//             binaryMessenger: binaryMessenger,
-//             instanceManager: instanceManager) {
-//     _api = ImageProxyPlaneProxyHostApiImpl(
-//         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-//     _api.createFromInstance(this);
-//     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
-//   }
-
+  /// Constructs a [ImageProxy] that is not automatically attached to a native object.
   ImageProxy.detached(
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
       : super.detached(
@@ -43,27 +30,23 @@ class ImageProxy extends JavaObject {
 
   late final _ImageProxyHostApiImpl _api;
 
-  Future<List<ImageProxyPlaneProxy>> getPlanes() {
-    return _api.getPlanesFromInstances(this);
-  }
+  /// Returns the list of color planes of image data.
+  Future<List<PlaneProxy>> getPlanes() => _api.getPlanesFromInstances(this);
 
-  Future<int> getFormat() {
-    return _api.getFormatFromInstances(this);
-  }
+  /// Returns the image format.
+  Future<int> getFormat() => _api.getFormatFromInstances(this);
 
-  Future<int> getHeight() {
-    return _api.getHeightFromInstances(this);
-  }
+  /// Returns the image height.
+  Future<int> getHeight() => _api.getHeightFromInstances(this);
 
-  Future<int> getWidth() {
-    return _api.getWidthFromInstances(this);
-  }
+  /// Returns the image width.
+  Future<int> getWidth() => _api.getWidthFromInstances(this);
 
-  Future<void> close() {
-    return _api.closeFromInstances(this);
-  }
+  /// Closes the underlying image.
+  Future<void> close() => _api.closeFromInstances(this);
 }
 
+/// Host API implementation of [ImageProxy].
 class _ImageProxyHostApiImpl extends ImageProxyHostApi {
   _ImageProxyHostApiImpl({
     this.binaryMessenger,
@@ -75,18 +58,22 @@ class _ImageProxyHostApiImpl extends ImageProxyHostApi {
 
   final InstanceManager instanceManager;
 
-  Future<List<ImageProxyPlaneProxy>> getPlanesFromInstances(
+  /// Returns the list of color planes of the image data represnted by the
+  /// [instance].
+  Future<List<PlaneProxy>> getPlanesFromInstances(
     ImageProxy instance,
   ) async {
-    List<Object?> planesAsObjects = await getPlanes(
+    final List<int?> planesAsObjects = await getPlanes(
       instanceManager.getIdentifier(instance)!,
     );
 
-    return planesAsObjects.map((Object? obj) {
-      return obj! as ImageProxyPlaneProxy;
-    }) as List<ImageProxyPlaneProxy>;
+    return planesAsObjects.map((int? planeIdentifier) {
+      return instanceManager
+          .getInstanceWithWeakReference<PlaneProxy>(planeIdentifier!)!;
+    }) as List<PlaneProxy>;
   }
 
+  /// Returns the format of the image represented by the [instance].
   Future<int> getFormatFromInstances(
     ImageProxy instance,
   ) {
@@ -95,6 +82,7 @@ class _ImageProxyHostApiImpl extends ImageProxyHostApi {
     );
   }
 
+  /// Returns the height of the image represented by the [instance].
   Future<int> getHeightFromInstances(
     ImageProxy instance,
   ) {
@@ -103,6 +91,7 @@ class _ImageProxyHostApiImpl extends ImageProxyHostApi {
     );
   }
 
+  /// Returns the width of the image represented by the [instance].
   Future<int> getWidthFromInstances(
     ImageProxy instance,
   ) {
@@ -111,6 +100,7 @@ class _ImageProxyHostApiImpl extends ImageProxyHostApi {
     );
   }
 
+  /// Closes the underlying image of the [instance].
   Future<void> closeFromInstances(
     ImageProxy instance,
   ) {

@@ -4,15 +4,12 @@
 
 import 'dart:async';
 
-import 'package:camera_platform_interface/camera_platform_interface.dart'
-    show CameraImageData, CameraImageFormat, CameraImagePlane, ImageFormatGroup;
 import 'package:flutter/services.dart' show BinaryMessenger;
-import 'package:meta/meta.dart' show protected;
 import 'package:simple_ast/annotations.dart';
 
+import 'analyzer.dart';
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
-import 'image_analysis_analyzer.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 import 'use_case.dart';
@@ -49,36 +46,20 @@ class ImageAnalysis extends UseCase {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  // /// Stream that emits data whenever a frame is received for image streaming.
-  // static final StreamController<CameraImageData>
-  //     onStreamedFrameAvailableStreamController =
-  //     StreamController<CameraImageData>.broadcast();
-
   late final _ImageAnalysisHostApiImpl _api;
 
   /// Target resolution of the camera preview stream.
   final ResolutionInfo? targetResolution;
 
-  /// Configures this instance for image streaming support.
-  ///
-  /// This is a direct wrapping of the setAnalyzer method in CameraX,
-  /// but also handles the creation of the CameraX ImageAnalysis.Analyzer
-  /// that is used to collect the image information required for image
-  /// streaming.
-  ///
-  /// See [ImageAnalysisFlutterApiImpl.onImageAnalyzed] for the image
-  /// information that is analyzed by the created ImageAnalysis.Analyzer
-  /// instance.
-  Future<void> setAnalyzer(ImageAnalysisAnalyzer analyzer) async {
-    _api.setAnalyzerfromInstances(this, analyzer);
-  }
+  /// Sets an [Analyzer] to receive and analyze images.
+  Future<void> setAnalyzer(Analyzer analyzer) =>
+      _api.setAnalyzerfromInstances(this, analyzer);
 
-  /// Clears previously set analyzer for image streaming support.
-  Future<void> clearAnalyzer() async {
-    _api.clearAnalyzerfromInstances(this);
-  }
+  /// Removes a previously set [Analyzer].
+  Future<void> clearAnalyzer() => _api.clearAnalyzerfromInstances(this);
 }
 
+/// Host API implementation of [ImageAnalysis].
 class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
   _ImageAnalysisHostApiImpl({
     this.binaryMessenger,
@@ -90,6 +71,8 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
 
   final InstanceManager instanceManager;
 
+  /// Creates an [ImageAnalysis] instance with the specified target resolution
+  /// on the native side.
   Future<void> createfromInstances(
     ImageAnalysis instance,
     ResolutionInfo? targetResolution,
@@ -109,25 +92,10 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     );
   }
 
-  // StreamController attachOnStreamedFrameAvailableStreamControllerfromInstancess(
-  //   StreamController onStreamedFrameAvailableStreamController,
-  // ) {
-  //   attachOnStreamedFrameAvailableStreamController(
-  //     instanceManager.addDartCreatedInstance(
-  //       onStreamedFrameAvailableStreamController,
-  //       onCopy: (StreamController original) => StreamController.detached(
-  //         // TODO(bparrishMines): This should include the missing params.
-  //         binaryMessenger: binaryMessenger,
-  //         instanceManager: instanceManager,
-  //       ),
-  //     ),
-  //   );
-  //   return onStreamedFrameAvailableStreamController;
-  // }
-
+  /// Sets the [analyzer] to receive and analyze images on the [instance].
   Future<void> setAnalyzerfromInstances(
     ImageAnalysis instance,
-    ImageAnalysisAnalyzer analyzer,
+    Analyzer analyzer,
   ) {
     return setAnalyzer(
       instanceManager.getIdentifier(instance)!,
@@ -135,58 +103,12 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     );
   }
 
+  /// Removes a previously set analyzer from the [instance].
   Future<void> clearAnalyzerfromInstances(
     ImageAnalysis instance,
   ) {
     return clearAnalyzer(
       instanceManager.getIdentifier(instance)!,
-    );
-  }
-}
-
-/// Flutter API implementation for [ImageAnalysis].
-///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
-@protected
-class ImageAnalysisFlutterApiImpl implements ImageAnalysisFlutterApi {
-  /// Constructs a [ImageAnalysisFlutterApiImpl].
-  ImageAnalysisFlutterApiImpl({
-    this.binaryMessenger,
-    InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
-
-  /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager instanceManager;
-
-  @override
-  void create(
-    int identifier,
-    int? targetResolutionIdentifier,
-  ) {
-    instanceManager.addHostCreatedInstance(
-      ImageAnalysis.detached(
-        targetResolution: targetResolutionIdentifier == null
-            ? null
-            : instanceManager.getInstanceWithWeakReference(
-                targetResolutionIdentifier,
-              ),
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
-      ),
-      identifier,
-      onCopy: (ImageAnalysis original) => ImageAnalysis.detached(
-        targetResolution: original.targetResolution,
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
-      ),
     );
   }
 }

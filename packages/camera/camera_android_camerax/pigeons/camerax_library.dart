@@ -46,32 +46,6 @@ class CameraPermissionsErrorData {
   String description;
 }
 
-class ImagePlaneInformation {
-  ImagePlaneInformation({
-    required this.bytes,
-    required this.bytesPerRow,
-    required this.bytesPerPixel,
-  });
-
-  Uint8List bytes;
-  int bytesPerRow;
-  int bytesPerPixel;
-}
-
-class ImageInformation {
-  ImageInformation({
-    required this.format,
-    required this.imagePlanesInformation,
-    required this.height,
-    required this.width,
-  });
-
-  int format;
-  List<ImagePlaneInformation?> imagePlanesInformation;
-  int height;
-  int width;
-}
-
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -178,164 +152,55 @@ abstract class ImageCaptureHostApi {
   String takePicture(int identifier);
 }
 
-// @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
-// abstract class ImageAnalysisHostApi {
-//   void create(int identifier, ResolutionInfo? targetResolution);
+@HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
+abstract class ImageAnalysisHostApi {
+  void create(int identifier, int? targetResolutionIdentifier);
 
-//   void setAnalyzer(int identifier);
+  void setAnalyzer(int identifier, int analyzerIdentifier);
 
-//   void clearAnalyzer(int identifier);
-// }
+  void clearAnalyzer(int identifier);
+}
 
-// @FlutterApi()
-// abstract class ImageAnalysisFlutterApi {
-//   void onImageAnalyzed(ImageInformation imageInformation);
-// }
-
-@HostApi(dartHostTestHandler: 'TestImageAnalysisAnalyzerHostApi')
-abstract class ImageAnalysisAnalyzerHostApi {
+@HostApi(dartHostTestHandler: 'TestAnalyzerHostApi')
+abstract class AnalyzerHostApi {
   void create(int identifier);
-
 }
 
 @FlutterApi()
-abstract class ImageAnalysisAnalyzerFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
+abstract class AnalyzerFlutterApi {
+  void create(int identifier);
 
-  void create(
-    int identifier,
-
-  );
-
-  /// Callback to Dart function `ImageAnalysisAnalyzer.analyze`.
-
-  void analyze(
-    int identifier,
-    int imageProxyIdentifier,
-
-  );
+  void analyze(int identifier, int imageProxyIdentifier);
 }
 
 @HostApi(dartHostTestHandler: 'TestImageProxyHostApi')
 abstract class ImageProxyHostApi {
+  List<int> getPlanes(int identifier);
 
-  /// Handles Dart method `ImageProxy.getPlanes`.
+  int getFormat(int identifier);
 
-  List getPlanes(
-     int identifier,
+  int getHeight(int identifier);
 
-  );
+  int getWidth(int identifier);
 
-  /// Handles Dart method `ImageProxy.getFormat`.
-
-  int getFormat(
-     int identifier,
-
-  );
-
-  /// Handles Dart method `ImageProxy.getHeight`.
-
-  int getHeight(
-     int identifier,
-
-  );
-
-  /// Handles Dart method `ImageProxy.getWidth`.
-
-  int getWidth(
-     int identifier,
-
-  );
-
-  /// Handles Dart method `ImageProxy.close`.
-
-  void close(
-     int identifier,
-
-  );
-
+  void close(int identifier);
 }
 
 @FlutterApi()
 abstract class ImageProxyFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-
-  void create(
-    int identifier,
-
-  );
-
+  void create(int identifier);
 }
 
-@HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
-abstract class ImageAnalysisHostApi {
+@HostApi(dartHostTestHandler: 'TestPlaneProxyHostApi')
+abstract class PlaneProxyHostApi {
+  int getPixelStride(int identifier);
 
-  /// Create a new native instance and add it to the `InstanceManager`.
+  Uint8List getBuffer(int identifier);
 
-  void create(
-    int identifier,
-
-    int? targetResolutionIdentifier,
-
-  );
-
-  // /// Handles attaching `ImageAnalysis.onStreamedFrameAvailableStreamController` to a native instance.
-
-  // void attachOnStreamedFrameAvailableStreamController(
-
-  //   int onStreamedFrameAvailableStreamControllerIdentifier,
-  // );
-
-  /// Handles Dart method `ImageAnalysis.setAnalyzer`.
-
-  void setAnalyzer(
-     int identifier,
-
-    int analyzerIdentifier,
-
-  );
-
-  /// Handles Dart method `ImageAnalysis.clearAnalyzer`.
-
-  void clearAnalyzer(
-     int identifier,
-
-  );
-
-}
-
-@HostApi(dartHostTestHandler: 'TestImageProxyPlaneProxyHostApi')
-abstract class ImageProxyPlaneProxyHostApi {
-
-  /// Handles Dart method `ImageProxyPlaneProxy.getPixelStride`.
-
-  int getPixelStride(
-     int identifier,
-
-  );
-
-  /// Handles Dart method `ImageProxyPlaneProxy.getRowStride`.
-
-  Uint8List getBuffer(
-     int identifier,
-
-  );
-
-  /// Handles Dart method `ImageProxyPlaneProxy.getRowStride`.
-
-  int  getRowStride(
-     int identifier,
-
-  );
+  int getRowStride(int identifier);
 }
 
 @FlutterApi()
-abstract class ImageProxyPlaneProxyFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-
-  void create(
-    int identifier,
-
-  );
-
+abstract class PlaneProxyFlutterApi {
+  void create(int identifier);
 }

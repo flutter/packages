@@ -4,53 +4,55 @@
 
 import 'dart:async';
 
-import 'package:camera_platform_interface/camera_platform_interface.dart'
-    show CameraImageData, CameraImageFormat, CameraImagePlane, ImageFormatGroup;
 import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:meta/meta.dart' show protected;
-import 'package:simple_ast/annotations.dart';
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'image_proxy.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
-import 'use_case.dart';
 
-@SimpleClassAnnotation()
-class ImageAnalysisAnalyzer extends JavaObject {
-  ImageAnalysisAnalyzer(
+/// Wrapper of callback for analyzing images.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.Analyzer.
+class Analyzer extends JavaObject {
+  /// Creates an [Analyzer].
+  Analyzer(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       required this.analyze})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
-    _api = _ImageAnalysisAnalyzerHostApiImpl(
+    _api = _AnalyzerHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     _api.createfromInstances(this);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  ImageAnalysisAnalyzer.detached(
+  /// Constructs a [Analyzer] that is not automatically attached to a native object.
+  Analyzer.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       required this.analyze})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
-    _api = _ImageAnalysisAnalyzerHostApiImpl(
+    _api = _AnalyzerHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  late final _ImageAnalysisAnalyzerHostApiImpl _api;
+  late final _AnalyzerHostApiImpl _api;
 
+  /// Analyzes an image to produce a result.
   final void Function(ImageProxy imageProxy) analyze;
 }
 
-class _ImageAnalysisAnalyzerHostApiImpl extends ImageAnalysisAnalyzerHostApi {
-  _ImageAnalysisAnalyzerHostApiImpl({
+/// Host API implementation of [Analyzer].
+class _AnalyzerHostApiImpl extends AnalyzerHostApi {
+  _AnalyzerHostApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
   })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
@@ -60,14 +62,14 @@ class _ImageAnalysisAnalyzerHostApiImpl extends ImageAnalysisAnalyzerHostApi {
 
   final InstanceManager instanceManager;
 
+  /// Creates an [Analyzer] instance on the native side.
   Future<void> createfromInstances(
-    ImageAnalysisAnalyzer instance,
+    Analyzer instance,
   ) {
     return create(
       instanceManager.addDartCreatedInstance(
         instance,
-        onCopy: (ImageAnalysisAnalyzer original) =>
-            ImageAnalysisAnalyzer.detached(
+        onCopy: (Analyzer original) => Analyzer.detached(
           analyze: original.analyze,
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -77,16 +79,15 @@ class _ImageAnalysisAnalyzerHostApiImpl extends ImageAnalysisAnalyzerHostApi {
   }
 }
 
-/// Flutter API implementation for [ImageAnalysisAnalyzer].
+/// Flutter API implementation for [Analyzer].
 ///
 /// This class may handle instantiating and adding Dart instances that are
 /// attached to a native instance or receiving callback methods from an
 /// overridden native class.
 @protected
-class ImageAnalysisAnalyzerFlutterApiImpl
-    implements ImageAnalysisAnalyzerFlutterApi {
-  /// Constructs a [ImageAnalysisAnalyzerFlutterApiImpl].
-  ImageAnalysisAnalyzerFlutterApiImpl({
+class AnalyzerFlutterApiImpl implements AnalyzerFlutterApi {
+  /// Constructs a [AnalyzerFlutterApiImpl].
+  AnalyzerFlutterApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
   }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
@@ -105,14 +106,13 @@ class ImageAnalysisAnalyzerFlutterApiImpl
     int identifier,
   ) {
     instanceManager.addHostCreatedInstance(
-      ImageAnalysisAnalyzer.detached(
+      Analyzer.detached(
         analyze: (ImageProxy imageProxy) {},
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),
       identifier,
-      onCopy: (ImageAnalysisAnalyzer original) =>
-          ImageAnalysisAnalyzer.detached(
+      onCopy: (Analyzer original) => Analyzer.detached(
         analyze: original.analyze,
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
@@ -125,7 +125,7 @@ class ImageAnalysisAnalyzerFlutterApiImpl
     int identifier,
     int imageProxyIdentifier,
   ) {
-    final ImageAnalysisAnalyzer instance =
+    final Analyzer instance =
         instanceManager.getInstanceWithWeakReference(identifier)!;
     final ImageProxy imageProxy =
         instanceManager.getInstanceWithWeakReference(imageProxyIdentifier)!;
