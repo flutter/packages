@@ -18,13 +18,18 @@ order to ensure that the plugin continues to compile against all
 SDK versions that could resolve, there are multiple largely identical
 examples, each with a different minimum target iOS version.
 
-In order to avoid wasting CI resources, the majority of the testing
-is done with the lowest supported version. The assumption (based on
-experience so far) is that the changes in the SDK are unlikely to
-break functionality at runtime, and that it's primarily a
-compile-time issue. However, we can add testing to newer versions
-(e.g., to test functionality that only exists in newer versions
-of the SDK) as needed.
+In order to avoid wasting CI resources, tests are mostly not duplicated.
+The test structure is:
+* The oldest version has all of the usual tests (Dart integration,
+  XCTest, XCUITest).
+* The newest version has only XCTests (the cheapest tests), which
+  can be used to unit tests any code paths that are specific to
+  new SDKs (e.g., behind target OS `#if` checks).
+
+This setup is based on the assumption (based on experience so far) that
+the changes in the SDK are unlikely to break functionality at runtime,
+but that we will want to have unit test coverage of new-SDK-only code.
+New test types can be added to any example if needs change.
 
 ## Updating Examples
 
