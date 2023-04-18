@@ -1,67 +1,54 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Fix name of generated pigeon file
-// TODO(bparrishMines): Import native classes
-import GeneratedPigeonFilename.ImageAnalysisAnalyzerHostApi;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.camera.core.ImageAnalysis;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerHostApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
 
 /**
- * Host API implementation for `ImageAnalysisAnalyzer`.
+ * Host API implementation for {@link ImageAnalysis.Analyzer}.
  *
  * <p>This class may handle instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
-public class ImageAnalysisAnalyzerHostApiImpl implements ImageAnalysisAnalyzerHostApi {
-
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
+public class AnalyzerHostApiImpl implements AnalyzerHostApi {
   private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
+  private final AnalyzerProxy proxy;
 
-  private final ImageAnalysisAnalyzerProxy proxy;
-
-  /** Proxy for constructors and static method of `ImageAnalysisAnalyzer`. */
+  /** Proxy for constructors and static method of {@link ImageAnalysis.Analyzer}. */
   @VisibleForTesting
-  public static class ImageAnalysisAnalyzerProxy {
+  public static class AnalyzerProxy {
 
-    /** Creates an instance of `ImageAnalysisAnalyzer`. */
-    public ImageAnalysisAnalyzerImpl create(
+    /** Creates an instance of {@link AnalyzerImpl}. */
+    public AnalyzerImpl create(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-      //
-      // return new ImageAnalysisAnalyzerImpl(
-      //
-      //    binaryMessenger, instanceManager);
+      return new AnalyzerImpl(
+         binaryMessenger, instanceManager);
     }
   }
 
   /**
-   * Implementation of `ImageAnalysisAnalyzer` that passes arguments of callback methods to Dart.
+   * Implementation of {@link ImageAnalysis.Analyzer} that passes arguments of callback methods to Dart.
    */
-  public static class ImageAnalysisAnalyzerImpl extends ImageAnalysisAnalyzer {
+  public static class AnalyzerImpl extends ImageAnalysis.Analyzer {
     private ImageAnalysisAnalyzerFlutterApiImpl api;
 
     /**
-     * Constructs an instance of `ImageAnalysisAnalyzer` that passes arguments of callbacks methods
+     * Constructs an instance of {@link ImageAnalysis.Analyzer} that passes arguments of callbacks methods
      * to Dart.
      */
-    public ImageAnalysisAnalyzerImpl(
+    public AnalyzerImpl(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
       super();
-      api = new ImageAnalysisAnalyzerFlutterApiImpl(binaryMessenger, instanceManager);
+      api = new AnalyzerFlutterApiImpl(binaryMessenger, instanceManager);
     }
-
-    // TODO(bparrishMines): Need to handle inherited callback methods
 
     @Override
     public void analyze() {
@@ -81,41 +68,40 @@ public class ImageAnalysisAnalyzerHostApiImpl implements ImageAnalysisAnalyzerHo
   }
 
   /**
-   * Constructs a {@link ImageAnalysisAnalyzerHostApiImpl}.
+   * Constructs a {@link AnalyzerHostApiImpl}.
    *
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public ImageAnalysisAnalyzerHostApiImpl(
+  public AnalyzerHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-
-    this(binaryMessenger, instanceManager, new ImageAnalysisAnalyzerProxy());
+    this(binaryMessenger, instanceManager, new AnalyzerProxy());
   }
 
   /**
-   * Constructs a {@link ImageAnalysisAnalyzerHostApiImpl}.
+   * Constructs a {@link AnalyzerHostApiImpl}.
    *
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of `ImageAnalysisAnalyzer`
+   * @param proxy proxy for constructors and static method of {@link ImageAnalysis.Analyzer}
    */
   @VisibleForTesting
-  ImageAnalysisAnalyzerHostApiImpl(
+  AnalyzerHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
-      @NonNull ImageAnalysisAnalyzerProxy proxy) {
+      @NonNull AnalyzerProxy proxy) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }
 
+  /**
+   * Creates an {@link AnalyzerProxy} that represents an {@link ImageAnalysis.Analyzer}
+   * instance with the specified identifier. 
+   */
   @Override
   public void create(@NonNull Long identifier) {
     instanceManager.addDartCreatedInstance(
         proxy.create(binaryMessenger, instanceManager), identifier);
-  }
-
-  private ImageAnalysisAnalyzer getImageAnalysisAnalyzerInstance(@NonNull Long identifier) {
-    return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
 }

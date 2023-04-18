@@ -54,73 +54,14 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   }
 
   /**
-   * Sets an analyzer created by {@link ImageAnalysisHostApiImpl#createImageAnalysisAnalyzer()} on
-   * an {@link ImageAnalysis} instance to receive and analyze images.
+   * Sets {@link ImageAnalysis.Analyzer} instance with specified {@code analyzerIdentifier} on the 
+   * {@link ImageAnalysis} instance with the specified {@code identifier} to receive and analyze images.
    */
-  // @Override
-  // public void setAnalyzer(@NonNull Long identifier) {
-  //   ImageAnalysis imageAnalysis =
-  //       (ImageAnalysis) Objects.requireNonNull(instanceManager.getInstance(identifier));
-  //   ImageAnalysis.Analyzer analyzer = createImageAnalysisAnalyzer();
-  //   imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), analyzer);
-  // }
-
-  /**
-   * Creates an {@link ImageAnalysis.Analyzer} instance to send image information to the Dart side
-   * to support image streaming.
-   *
-   * <p>The image information collected and sent matches that of the (Dart) CameraImageData class,
-   * which is required for image streaming in this plugin.
-   */
-//   private ImageAnalysis.Analyzer createImageAnalysisAnalyzer() {
-//     return new ImageAnalysis.Analyzer() {
-//       @Override
-//       public void analyze(@NonNull ImageProxy image) {
-//         // Collect image plane information.
-//         ImageProxy.PlaneProxy[] planes = image.getPlanes();
-//         List<GeneratedCameraXLibrary.ImagePlaneInformation> imagePlanesInformation =
-//             new ArrayList<GeneratedCameraXLibrary.ImagePlaneInformation>();
-
-//         for (ImageProxy.PlaneProxy plane : planes) {
-//           ByteBuffer byteBuffer = plane.getBuffer();
-//           byte[] bytes = new byte[byteBuffer.remaining()];
-//           byteBuffer.get(bytes, 0, bytes.length);
-//           GeneratedCameraXLibrary.ImagePlaneInformation.Builder imagePlaneInfoBuilder =
-//               new GeneratedCameraXLibrary.ImagePlaneInformation.Builder();
-
-//           imagePlanesInformation.add(
-//               imagePlaneInfoBuilder
-//                   .setBytesPerRow(Long.valueOf(plane.getRowStride()))
-//                   .setBytesPerPixel(Long.valueOf(plane.getPixelStride()))
-//                   .setBytes(bytes)
-//                   .build());
-//         }
-
-//         // Collect general image information.
-//         // TODO(camsim99): Retrieve and send the following when made available by b/274791178:
-//         // last lens aperture, last sensor exposure time, last sensor sensitivity.
-//         GeneratedCameraXLibrary.ImageInformation.Builder imageInfoBuilder =
-//             new GeneratedCameraXLibrary.ImageInformation.Builder();
-//         imageInfoBuilder.setFormat(Long.valueOf(image.getFormat()));
-//         imageInfoBuilder.setImagePlanesInformation(imagePlanesInformation);
-//         imageInfoBuilder.setHeight(Long.valueOf(image.getHeight()));
-//         imageInfoBuilder.setWidth(Long.valueOf(image.getWidth()));
-
-//         // Send image frame to Dart side for image streaming and close ImageProxy, since we are done using it.
-//         ImageAnalysisFlutterApiImpl imageAnalysisFlutterApiImpl =
-//             cameraXProxy.createImageAnalysisFlutterApiImpl(binaryMessenger);
-//         imageAnalysisFlutterApiImpl.sendOnImageAnalyzedEvent(imageInfoBuilder.build(), reply -> {});
-//         image.close();
-//       }
-//     };
-//   }
-
-@Override
-public void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier) {
-
-  getImageAnalysisInstance(identifier)
-      .setAnalyzer(Objects.requireNonNull(instanceManager.getInstance(analyzerIdentifier)));
-}
+  @Override
+  public void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier) {
+    getImageAnalysisInstance(identifier)
+        .setAnalyzer(ContextCompat.getMainExecutor(context), Objects.requireNonNull(instanceManager.getInstance(analyzerIdentifier)));
+  }
 
   /** Clears any analyzer previously set on the specified {@link ImageAnalysis} instance. */
   @Override
@@ -130,6 +71,7 @@ public void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifi
     imageAnalysis.clearAnalyzer();
   }
 
+  /** Retrieives the {@link ImageAnalysis} instance associated with the specified {@code identifier}. */
   private ImageAnalysis getImageAnalysisInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }

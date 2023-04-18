@@ -59,6 +59,12 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApi);
     imageAnalysisHostApiImpl = new ImageAnalysisHostApiImpl(binaryMessenger, instanceManager);
     GeneratedCameraXLibrary.ImageAnalysisHostApi.setup(binaryMessenger, imageAnalysisHostApiImpl);
+    GeneratedCameraXLibrary.AnalyzerHostApi.setup(
+      binaryMessenger, new AnalyzerHostApiImpl(binaryMessenger, instanceManager));
+    GeneratedCameraXLibrary.ImageProxyHostApi.setup(
+      binaryMessenger, new ImageProxyHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.PlaneProxyHostApi.setup(
+      binaryMessenger, new PlaneProxyHostApiImpl(instanceManager));
   }
 
   @Override
