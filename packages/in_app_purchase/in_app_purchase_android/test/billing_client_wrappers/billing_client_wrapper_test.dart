@@ -131,8 +131,9 @@ void main() {
       });
 
       final ProductDetailsResponseWrapper response = await billingClient
-          .queryProductDetails(productList: <Product>[
-        const Product(id: 'invalid', type: ProductType.inapp)
+          .queryProductDetails(productList: <ProductWrapper>[
+        const ProductWrapper(
+            productId: 'invalid', productType: ProductType.inapp)
       ]);
 
       const BillingResultWrapper billingResult = BillingResultWrapper(
@@ -156,8 +157,9 @@ void main() {
 
       final ProductDetailsResponseWrapper response =
           await billingClient.queryProductDetails(
-        productList: <Product>[
-          const Product(id: 'invalid', type: ProductType.inapp),
+        productList: <ProductWrapper>[
+          const ProductWrapper(
+              productId: 'invalid', productType: ProductType.inapp),
         ],
       );
 
@@ -172,8 +174,9 @@ void main() {
 
       final ProductDetailsResponseWrapper response =
           await billingClient.queryProductDetails(
-        productList: <Product>[
-          const Product(id: 'invalid', type: ProductType.inapp),
+        productList: <ProductWrapper>[
+          const ProductWrapper(
+              productId: 'invalid', productType: ProductType.inapp),
         ],
       );
 

@@ -8,6 +8,7 @@ import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 
 import android.app.Activity;
 import android.app.Application;
@@ -123,9 +124,8 @@ class MethodCallHandlerImpl
         endConnection(result);
         break;
       case InAppPurchasePlugin.MethodNames.QUERY_PRODUCT_DETAILS:
-        List<String> productIds = call.argument("productIds");
-        List<String> productTypes = call.argument("productTypes");
-        queryProductDetailsAsync(productIds, productTypes, result);
+        List<Product> productList = toProductList(call.argument("productList"));
+        queryProductDetailsAsync(productList, result);
         break;
       case InAppPurchasePlugin.MethodNames.LAUNCH_BILLING_FLOW:
         launchBillingFlow(
@@ -184,22 +184,10 @@ class MethodCallHandlerImpl
   }
 
   private void queryProductDetailsAsync(
-      final List<String> productIds,
-      final List<String> productTypes,
+      final List<Product> productList,
       final MethodChannel.Result result) {
-    assert (productIds.size() == productTypes.size());
-
     if (billingClientError(result)) {
       return;
-    }
-
-    List<Product> productList = new ArrayList<>();
-    for (int i = 0; i < productIds.size(); i++) {
-      productList.add(
-          Product.newBuilder()
-              .setProductId(productIds.get(i))
-              .setProductType(productTypes.get(i))
-              .build());
     }
 
     QueryProductDetailsParams params =

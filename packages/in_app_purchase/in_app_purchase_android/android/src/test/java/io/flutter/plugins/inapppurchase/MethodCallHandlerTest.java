@@ -219,8 +219,7 @@ public class MethodCallHandlerTest {
     String productType = BillingClient.ProductType.INAPP;
     List<String> productsList = asList("id1", "id2");
     HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("productTypes", Arrays.asList(productType, productType));
-    arguments.put("productIds", productsList);
+    arguments.put("productList", buildProductMap(productsList, productType));
     MethodCall queryCall = new MethodCall(QUERY_PRODUCT_DETAILS, arguments);
 
     // Query for product details
@@ -260,8 +259,7 @@ public class MethodCallHandlerTest {
     String productType = BillingClient.ProductType.INAPP;
     List<String> productsList = asList("id1", "id2");
     HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("productTypes", Arrays.asList(productType, productType));
-    arguments.put("productIds", productsList);
+    arguments.put("productList", buildProductMap(productsList, productType));
     MethodCall queryCall = new MethodCall(QUERY_PRODUCT_DETAILS, arguments);
 
     // Query for product details
@@ -856,17 +854,13 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(connectCall, result);
   }
 
-  private void queryForProducts(List<String> productsList) {
+  private void queryForProducts(List<String> productIdList) {
     // Set up the query method call
     establishConnectedBillingClient(/* arguments= */ null, /* result= */ null);
     HashMap<String, Object> arguments = new HashMap<>();
     String productType = BillingClient.ProductType.INAPP;
-    List<String> productTypes = new ArrayList<>();
-    for (String ignored : productsList) {
-      productTypes.add(productType);
-    }
-    arguments.put("productTypes", productTypes);
-    arguments.put("productIds", productsList);
+    List<Map<String, Object>> productList = buildProductMap(productIdList, productType);
+    arguments.put("productList", productList);
     MethodCall queryCall = new MethodCall(QUERY_PRODUCT_DETAILS, arguments);
 
     // Call the method.
@@ -877,7 +871,7 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(ProductDetailsResponseListener.class);
     verify(mockBillingClient).queryProductDetailsAsync(any(), listenerCaptor.capture());
     List<ProductDetails> productDetailsResponse =
-        productsList.stream().map(this::buildProductDetails).collect(toList());
+        productIdList.stream().map(this::buildProductDetails).collect(toList());
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -885,6 +879,17 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
+  }
+
+  private List<Map<String, Object>> buildProductMap(List<String> productIds, String productType) {
+    List<Map<String, Object>> productList = new ArrayList<>();
+    for (String productId : productIds) {
+      Map<String, Object> productMap = new HashMap<>();
+      productMap.put("productId", productId);
+      productMap.put("productType", productType);
+      productList.add(productMap);
+    }
+    return productList;
   }
 
   private ProductDetails buildProductDetails(String id) {

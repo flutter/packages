@@ -80,16 +80,16 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
           billingClientManager.runWithClient(
             (BillingClient client) => client.queryProductDetails(
               productList: identifiers
-                  .map((String productId) =>
-                      Product(id: productId, type: ProductType.subs))
+                  .map((String productId) => ProductWrapper(
+                      productId: productId, productType: ProductType.subs))
                   .toList(),
             ),
           ),
           billingClientManager.runWithClient(
             (BillingClient client) => client.queryProductDetails(
               productList: identifiers
-                  .map((String productId) =>
-                      Product(id: productId, type: ProductType.inapp))
+                  .map((String productId) => ProductWrapper(
+                      productId: productId, productType: ProductType.inapp))
                   .toList(),
             ),
           ),

@@ -144,13 +144,11 @@ class BillingClient {
   /// `ProductDetailsParams` as direct arguments instead of requiring it
   /// constructed and passed in as a class.
   Future<ProductDetailsResponseWrapper> queryProductDetails({
-    required List<Product> productList,
+    required List<ProductWrapper> productList,
   }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{
-      'productIds': productList.map((Product p) => p.id).toList(),
-      'productTypes': productList
-          .map((Product p) => const ProductTypeConverter().toJson(p.type))
-          .toList(),
+      'productList':
+          productList.map((ProductWrapper product) => product.toJson()).toList()
     };
     return ProductDetailsResponseWrapper.fromJson(
         (await channel.invokeMapMethod<String, dynamic>(
