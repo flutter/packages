@@ -32,6 +32,7 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   private final InstanceManager instanceManager;
   private final WebViewFlutterApiImpl webViewFlutterApi;
 
+  @RequiresApi(api = Build.VERSION_CODES.O)
   static GeneratedAndroidWebView.RenderProcessGoneDetailData createRenderProcessGoneDetailData(
       RenderProcessGoneDetail detail) {
     return new GeneratedAndroidWebView.RenderProcessGoneDetailData.Builder()
@@ -215,10 +216,10 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
    */
   @RequiresApi(api = Build.VERSION_CODES.O)
   public void onRenderProcessGone(
-      WebViewClient webViewClient,
-      WebView webView,
-      RenderProcessGoneDetail detail,
-      Reply<Void> callback) {
+      @NonNull WebViewClient webViewClient,
+      @NonNull WebView webView,
+      @NonNull RenderProcessGoneDetail detail,
+      @NonNull Reply<Void> callback) {
     webViewFlutterApi.create(webView, reply -> {});
 
     final Long webViewIdentifier =
