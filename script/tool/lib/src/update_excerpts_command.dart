@@ -89,6 +89,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         if (!await _injectSnippets(example, targetPackage: package)) {
           return PackageResult.fail(<String>['Unable to inject excerpts']);
         }
+        if (!await _injectSnippets(example, targetPackage: example)) {
+          return PackageResult.fail(<String>['Unable to inject excerpts']);
+        }
       } finally {
         // Clean up the pubspec changes and extracted excerpts directory.
         _undoPubspecChanges(example);
