@@ -238,7 +238,7 @@ class MethodCallHandlerImpl
     if (subscriptionOfferDetails != null) {
       boolean isValidOfferToken = false;
       for (ProductDetails.SubscriptionOfferDetails offerDetails : subscriptionOfferDetails) {
-        if (Objects.equals(offerDetails.getOfferToken(), offerToken)) {
+        if (offerToken != null && offerToken.equals(offerDetails.getOfferToken())) {
           isValidOfferToken = true;
           break;
         }
@@ -433,7 +433,7 @@ class MethodCallHandlerImpl
         });
   }
 
-  private void updateCachedProducts(@Nullable List<ProductDetails> productDetailsList) {
+  protected void updateCachedProducts(@Nullable List<ProductDetails> productDetailsList) {
     if (productDetailsList == null) {
       return;
     }
