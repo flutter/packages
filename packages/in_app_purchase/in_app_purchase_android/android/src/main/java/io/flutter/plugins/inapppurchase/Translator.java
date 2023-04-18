@@ -90,7 +90,7 @@ import java.util.Locale;
     serialized.put("offerId", subscriptionOfferDetails.getOfferId());
     serialized.put("basePlanId", subscriptionOfferDetails.getBasePlanId());
     serialized.put("offerTags", subscriptionOfferDetails.getOfferTags());
-    serialized.put("offerToken", subscriptionOfferDetails.getOfferToken());
+    serialized.put("offerIdToken", subscriptionOfferDetails.getOfferToken());
 
     ProductDetails.PricingPhases pricingPhases = subscriptionOfferDetails.getPricingPhases();
     serialized.put("pricingPhases", fromPricingPhases(pricingPhases));

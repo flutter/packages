@@ -25,7 +25,7 @@ class SubscriptionOfferDetailsWrapper {
     required this.basePlanId,
     this.offerId,
     required this.offerTags,
-    required this.offerToken,
+    required this.offerIdToken,
     required this.pricingPhases,
   });
 
@@ -52,7 +52,7 @@ class SubscriptionOfferDetailsWrapper {
   /// The offer token required to pass in [BillingClient.launchBillingFlow] to
   /// purchase the subscription product with these [pricingPhases].
   @JsonKey(defaultValue: '')
-  final String offerToken;
+  final String offerIdToken;
 
   /// The pricing phases for the subscription product.
   @JsonKey(defaultValue: <PricingPhaseWrapper>[])
@@ -68,7 +68,7 @@ class SubscriptionOfferDetailsWrapper {
         other.basePlanId == basePlanId &&
         other.offerId == offerId &&
         listEquals(other.offerTags, offerTags) &&
-        other.offerToken == offerToken &&
+        other.offerIdToken == offerIdToken &&
         listEquals(other.pricingPhases, pricingPhases);
   }
 
@@ -78,7 +78,7 @@ class SubscriptionOfferDetailsWrapper {
       basePlanId.hashCode,
       offerId.hashCode,
       offerTags.hashCode,
-      offerToken.hashCode,
+      offerIdToken.hashCode,
       pricingPhases.hashCode,
     );
   }

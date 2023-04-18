@@ -1,6 +1,6 @@
 import '../../billing_client_wrappers.dart';
 
-/// Tuple object containing a product's id and type.
+/// Dart wrapper around [`com.android.billingclient.api.Product`](https://developer.android.com/reference/com/android/billingclient/api/QueryProductDetailsParams.Product).
 class Product {
   /// Creates a new [Product].
   const Product({

@@ -31,7 +31,7 @@ const ProductDetailsWrapper dummySubscriptionProductDetails =
       basePlanId: 'basePlanId',
       offerTags: <String>['offerTags'],
       offerId: 'offerId',
-      offerToken: 'offerToken',
+      offerIdToken: 'offerToken',
       pricingPhases: <PricingPhaseWrapper>[
         PricingPhaseWrapper(
           billingCycleCount: 4,
@@ -180,7 +180,7 @@ void main() {
           SubscriptionOfferDetailsWrapper(
             basePlanId: 'basePlanId',
             offerTags: <String>['offerTags'],
-            offerToken: 'offerToken',
+            offerIdToken: 'offerToken',
             pricingPhases: <PricingPhaseWrapper>[
               PricingPhaseWrapper(
                 billingCycleCount: 4,
@@ -210,7 +210,7 @@ void main() {
           SubscriptionOfferDetailsWrapper(
             basePlanId: 'basePlanId',
             offerTags: <String>['offerTags'],
-            offerToken: 'offerToken',
+            offerIdToken: 'offerToken',
             pricingPhases: <PricingPhaseWrapper>[
               PricingPhaseWrapper(
                 billingCycleCount: 4,
@@ -289,7 +289,7 @@ Map<String, dynamic> buildSubscriptionMap(
     'offerId': original.offerId,
     'basePlanId': original.basePlanId,
     'offerTags': original.offerTags,
-    'offerToken': original.offerToken,
+    'offerIdToken': original.offerIdToken,
     'pricingPhases': buildPricingPhaseMapList(original.pricingPhases),
   };
 }

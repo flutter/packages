@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
-import 'package:in_app_purchase_android/src/types/product.dart';
 
 import '../stub_in_app_purchase_platform.dart';
 import 'product_details_wrapper_test.dart';

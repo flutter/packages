@@ -15,7 +15,7 @@ SubscriptionOfferDetailsWrapper _$SubscriptionOfferDetailsWrapperFromJson(
               ?.map((e) => e as String)
               .toList() ??
           [],
-      offerToken: json['offerToken'] as String? ?? '',
+      offerIdToken: json['offerIdToken'] as String? ?? '',
       pricingPhases: (json['pricingPhases'] as List<dynamic>?)
               ?.map((e) => PricingPhaseWrapper.fromJson(
                   Map<String, dynamic>.from(e as Map)))

@@ -129,6 +129,7 @@ class GooglePlayProductDetails extends ProductDetails {
   /// object was contructed for, or 'null' if it was not a subscription.
   String? get offerToken => subscriptionIndex != null &&
           productDetails.subscriptionOfferDetails != null
-      ? productDetails.subscriptionOfferDetails![subscriptionIndex!].offerToken
+      ? productDetails
+          .subscriptionOfferDetails![subscriptionIndex!].offerIdToken
       : null;
 }
