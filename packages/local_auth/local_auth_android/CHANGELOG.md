@@ -1,3 +1,7 @@
+## 1.0.23
+
+* Switches internals to Pigeon and fixes Java warnings.
+
 ## 1.0.22
 
 * Sets an explicit Java compatibility version.
