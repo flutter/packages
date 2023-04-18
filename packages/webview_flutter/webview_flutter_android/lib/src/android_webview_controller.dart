@@ -140,7 +140,7 @@ class AndroidWebViewController extends PlatformWebViewController {
           if (callback == null) {
             return request.deny();
           } else {
-            final List<WebViewPermissionResourceType> types = request.resources
+            final Set<WebViewPermissionResourceType> types = request.resources
                 .map<WebViewPermissionResourceType?>((String type) {
                   switch (type) {
                     case android_webview.PermissionRequest.videoCapture:
@@ -158,7 +158,7 @@ class AndroidWebViewController extends PlatformWebViewController {
                   return null;
                 })
                 .whereType<WebViewPermissionResourceType>()
-                .toList();
+                .toSet();
 
             if (types.isEmpty) {
               return request.deny();
@@ -451,7 +451,7 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   final android_webview.PermissionRequest _request;
 
   @override
-  Future<void> grant(WebViewPermissionGrantParams params) {
+  Future<void> grant() {
     return _request
         .grant(types.map<String>((WebViewPermissionResourceType type) {
       switch (type) {
@@ -472,7 +472,7 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   }
 
   @override
-  Future<void> deny(WebViewPermissionDenyParams params) {
+  Future<void> deny() {
     return _request.deny();
   }
 }

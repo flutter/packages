@@ -46,7 +46,7 @@ class WebViewController {
   /// `onPermissionRequest`: Sets a callback that notifies the host application
   /// that web content is requesting permission to access the specified
   /// resources. Apps that attempt to access device resources will most likely
-  /// require additional platform=specific steps for acquiring permission from
+  /// require additional platform-specific steps for acquiring permission from
   /// the user.
   ///
   /// See [WebViewController.fromPlatformCreationParams] for setting parameters
@@ -64,7 +64,7 @@ class WebViewController {
   /// `onPermissionRequest`: Sets a callback that notifies the host application
   /// that web content is requesting permission to access the specified
   /// resources. Apps that attempt to access device resources will most likely
-  /// require additional platform=specific steps for acquiring permission from
+  /// require additional platform-specific steps for acquiring permission from
   /// the user.
   ///
   /// {@template webview_flutter.WebViewCookieManager.fromPlatformCreationParams}
@@ -106,7 +106,7 @@ class WebViewController {
   /// `onPermissionRequest`: Sets a callback that notifies the host application
   /// that web content is requesting permission to access the specified
   /// resources. Apps that attempt to access device resources will most likely
-  /// require additional platform=specific steps for acquiring permission from
+  /// require additional platform-specific steps for acquiring permission from
   /// the user.
   WebViewController.fromPlatform(
     this.platform, {
@@ -367,7 +367,7 @@ class WebViewPermissionRequest {
   const WebViewPermissionRequest._(this.platform, {required this.types});
 
   /// All resources access has been requested for.
-  final List<WebViewPermissionResourceType> types;
+  final Set<WebViewPermissionResourceType> types;
 
   /// Implementation of [PlatformWebViewPermissionRequest] for the current
   /// platform.

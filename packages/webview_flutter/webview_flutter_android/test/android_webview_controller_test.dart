@@ -638,7 +638,7 @@ void main() {
       await controller.setOnPlatformPermissionRequest(
         (PlatformWebViewPermissionRequest request) async {
           permissionRequest = request;
-          request.grant(const WebViewPermissionGrantParams());
+          request.grant();
         },
       );
 

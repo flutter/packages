@@ -68,16 +68,16 @@ class WebViewPermissionResourceType {
 ///   final void Function(WKPermissionDecision) _onDecision;
 ///
 ///   @override
-///   Future<void> grant(WebViewPermissionGrantParams params) async {
+///   Future<void> grant() async {
 ///     _onDecision(WKPermissionDecision.grant);
 ///   }
 ///
 ///   @override
-///   Future<void> deny(WebViewPermissionDenyParams params) async {
+///   Future<void> deny() async {
 ///     _onDecision(WKPermissionDecision.deny);
 ///   }
 ///
-///   Future<void> prompt(WebViewPermissionDenyParams params) async {
+///   Future<void> prompt() async {
 ///     _onDecision(WKPermissionDecision.prompt);
 ///   }
 /// }
@@ -88,75 +88,11 @@ abstract class PlatformWebViewPermissionRequest {
   const PlatformWebViewPermissionRequest({required this.types});
 
   /// All resources access has been requested for.
-  final List<WebViewPermissionResourceType> types;
+  final Set<WebViewPermissionResourceType> types;
 
   /// Grant permission for the requested resource(s).
-  Future<void> grant(WebViewPermissionGrantParams params);
+  Future<void> grant();
 
   /// Deny permission for the requested resource(s).
-  Future<void> deny(WebViewPermissionDenyParams params);
-}
-
-/// Params for granting permission for a requested resource.
-///
-/// Platform specific implementations can add additional fields by extending
-/// this class.
-///
-/// When extending [WebViewPermissionGrantParams] additional parameters should
-/// always accept `null` or have a default value to prevent breaking changes.
-///
-/// This example demonstrates how to extend the [WebViewPermissionGrantParams]
-/// to provide additional platform specific parameters:
-///
-/// ```dart
-/// class AndroidWebViewPermissionGrantParams extends WebViewPermissionGrantParams {
-///   const AndroidWebViewPermissionGrantParams({
-///     this.types = const <WebViewPermissionResourceType>[],
-///   });
-///
-///   AndroidWebViewPermissionGrantParams.fromWebViewPermissionGrantParams(
-///     WebViewPermissionGrantParams params, {
-///     List<WebViewPermissionResourceType> types =
-///         const <WebViewPermissionResourceType>[],
-///   }) : this(types: types);
-///
-///   final List<WebViewPermissionResourceType> types;
-/// }
-/// ```
-@immutable
-class WebViewPermissionGrantParams {
-  /// Constructs a [WebViewPermissionGrantParams].
-  const WebViewPermissionGrantParams();
-}
-
-/// Params for denying permission for a requested resource.
-///
-/// Platform specific implementations can add additional fields by extending
-/// this class.
-///
-/// When extending [WebViewPermissionDenyParams] additional parameters should
-/// always accept `null` or have a default value to prevent breaking changes.
-///
-/// This example demonstrates how to extend the [WebViewPermissionDenyParams] to
-/// provide additional platform specific parameters:
-///
-/// ```dart
-/// class AndroidWebViewPermissionDenyParams extends WebViewPermissionDenyParams {
-///   const AndroidWebViewPermissionDenyParams({
-///     this.types = const <WebViewPermissionResourceType>[],
-///   });
-///
-///   AndroidWebViewPermissionDenyParams.fromWebViewPermissionDenyParams(
-///     WebViewPermissionDenyParams params, {
-///     List<WebViewPermissionResourceType> types =
-///         const <WebViewPermissionResourceType>[],
-///   }) : this(types: types);
-///
-///   final List<WebViewPermissionResourceType> types;
-/// }
-/// ```
-@immutable
-class WebViewPermissionDenyParams {
-  /// Constructs a [WebViewPermissionDenyParams].
-  const WebViewPermissionDenyParams();
+  Future<void> deny();
 }

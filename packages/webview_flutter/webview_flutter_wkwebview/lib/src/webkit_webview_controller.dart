@@ -167,23 +167,23 @@ class WebKitWebViewController extends PlatformWebViewController {
           // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
           return WKPermissionDecision.prompt;
         } else {
-          late final List<WebViewPermissionResourceType> types;
+          late final Set<WebViewPermissionResourceType> types;
           switch (type) {
             case WKMediaCaptureType.camera:
-              types = <WebViewPermissionResourceType>[
+              types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.camera
-              ];
+              };
               break;
             case WKMediaCaptureType.cameraAndMicrophone:
-              types = <WebViewPermissionResourceType>[
+              types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.camera,
                 WebViewPermissionResourceType.microphone
-              ];
+              };
               break;
             case WKMediaCaptureType.microphone:
-              types = <WebViewPermissionResourceType>[
+              types = <WebViewPermissionResourceType>{
                 WebViewPermissionResourceType.microphone
-              ];
+              };
               break;
           }
 
@@ -819,17 +819,17 @@ class WebKitWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   final void Function(WKPermissionDecision) _onDecision;
 
   @override
-  Future<void> grant(WebViewPermissionGrantParams params) async {
+  Future<void> grant() async {
     _onDecision(WKPermissionDecision.grant);
   }
 
   @override
-  Future<void> deny(WebViewPermissionDenyParams params) async {
+  Future<void> deny() async {
     _onDecision(WKPermissionDecision.deny);
   }
 
   /// Prompt the user for permission for the requested resource.
-  Future<void> prompt(WebViewPermissionDenyParams params) async {
+  Future<void> prompt() async {
     _onDecision(WKPermissionDecision.prompt);
   }
 }
