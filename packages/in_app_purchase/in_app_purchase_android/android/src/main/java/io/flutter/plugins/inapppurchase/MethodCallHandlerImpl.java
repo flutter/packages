@@ -184,8 +184,7 @@ class MethodCallHandlerImpl
   }
 
   private void queryProductDetailsAsync(
-      final List<Product> productList,
-      final MethodChannel.Result result) {
+      final List<Product> productList, final MethodChannel.Result result) {
     if (billingClientError(result)) {
       return;
     }

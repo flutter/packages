@@ -7,13 +7,11 @@ package io.flutter.plugins.inapppurchase;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.billingclient.api.AccountIdentifiers;
-import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -22,8 +20,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/** Handles serialization and deserialization of {@link com.android.billingclient.api.BillingClient}
- * related objects. */
+/**
+ * Handles serialization and deserialization of {@link com.android.billingclient.api.BillingClient}
+ * related objects.
+ */
 /*package*/ class Translator {
   static HashMap<String, Object> fromProductDetail(ProductDetails detail) {
     HashMap<String, Object> info = new HashMap<>();
@@ -56,9 +56,8 @@ import java.util.Map;
 
   static List<QueryProductDetailsParams.Product> toProductList(List<Object> serialized) {
     List<QueryProductDetailsParams.Product> products = new ArrayList<>();
-    for (Object productSerialized :
-            serialized) {
-      @SuppressWarnings(value="unchecked")
+    for (Object productSerialized : serialized) {
+      @SuppressWarnings(value = "unchecked")
       Map<String, Object> productMap = (Map<String, Object>) productSerialized;
       products.add(toProduct(productMap));
     }
@@ -68,7 +67,10 @@ import java.util.Map;
   static QueryProductDetailsParams.Product toProduct(Map<String, Object> serialized) {
     String productId = (String) serialized.get("productId");
     String productType = (String) serialized.get("productType");
-    return QueryProductDetailsParams.Product.newBuilder().setProductId(productId).setProductType(productType).build();
+    return QueryProductDetailsParams.Product.newBuilder()
+        .setProductId(productId)
+        .setProductType(productType)
+        .build();
   }
 
   static List<HashMap<String, Object>> fromProductDetailsList(
