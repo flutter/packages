@@ -1,6 +1,6 @@
 ## 0.10.6
 
-* Provides a default exposure point if null
+* Provides a default exposure point if null.
 
 ## 0.10.5
 
