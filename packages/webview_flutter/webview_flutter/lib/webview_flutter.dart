@@ -18,11 +18,12 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         PlatformWebViewCookieManagerCreationParams,
         PlatformWebViewWidgetCreationParams,
         ProgressCallback,
-        WebViewPermissionResourceType,
+        UrlChange,
         WebResourceError,
         WebResourceErrorCallback,
         WebResourceErrorType,
         WebViewCookie,
+        WebViewPermissionResourceType,
         WebViewPlatform;
 
 export 'src/navigation_delegate.dart';

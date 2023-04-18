@@ -43,6 +43,8 @@ void main() {
       main_file.WebViewCookie;
       // ignore: unnecessary_statements
       main_file.WebResourceErrorType;
+      // ignore: unnecessary_statements
+      main_file.UrlChange;
     });
   });
 }
