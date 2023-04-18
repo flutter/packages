@@ -60,7 +60,7 @@ final class GoogleMapController
   private final int id;
   private final MethodChannel methodChannel;
   private final GoogleMapOptions options;
-  @Nullable private MapView mapView;
+  @Nullable MapView mapView;
   @Nullable private GoogleMap googleMap;
   private boolean trackCameraPosition = false;
   private boolean myLocationEnabled = false;
@@ -135,7 +135,7 @@ final class GoogleMapController
     return trackCameraPosition ? googleMap.getCameraPosition() : null;
   }
 
-  private boolean loadedCallbackPending = false;
+  boolean loadedCallbackPending = false;
 
   /**
    * Invalidates the map view after the map has finished rendering.
@@ -176,7 +176,7 @@ final class GoogleMapController
         });
   }
 
-  private static void postFrameCallback(Runnable f) {
+  public static void postFrameCallback(Runnable f) {
     Choreographer.getInstance()
         .postFrameCallback(
             new Choreographer.FrameCallback() {
