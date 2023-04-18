@@ -1,6 +1,6 @@
 # Platform Implementation Test Apps
 
-These are test app for manual testing and automated integration testing
+These are test apps for manual testing and automated integration testing
 of this platform implementation. They are not intended to demonstrate actual
 use of this package, since the intent is that plugin clients use the
 app-facing package.
