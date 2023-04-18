@@ -3,6 +3,10 @@
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
+## 0.2.3
+
+* Adds implementation for `WebWebViewController.addJavaScriptChannel` and `WebWebViewController.removeJavaScriptChannel`.
+
 ## 0.2.2+1
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
