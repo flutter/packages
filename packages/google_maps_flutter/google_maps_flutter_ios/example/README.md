@@ -12,7 +12,7 @@ are very unlikely to be relevant.
 
 This package contains multiple exmaples, which are used to test different
 versions of the Google Maps iOS SDK. Because the plugin's dependency
-is unpinned, CocoaPods will pick the newest version that supports the
+is loosely pinned, CocoaPods will pick the newest version that supports the
 minimum targetted OS version of the application using the plugin. In
 order to ensure that the plugin continues to compile against all
 SDK versions that could resolve, there are multiple largely identical
