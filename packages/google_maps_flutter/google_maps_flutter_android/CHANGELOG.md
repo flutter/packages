@@ -1,3 +1,7 @@
+## 2.4.11
+
+* Fixes Java warnings.
+
 ## 2.4.10
 
 * Bump RoboElectric dependency to 4.4.1 to support AndroidX.
