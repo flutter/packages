@@ -6,6 +6,7 @@ import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camera_state.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:camera_android_camerax/src/live_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -13,7 +14,11 @@ import 'package:mockito/mockito.dart';
 import 'camera_info_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestCameraInfoHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[
+  LiveData<CameraInfo>,
+  TestCameraInfoHostApi,
+  TestInstanceManagerHostApi
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
