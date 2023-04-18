@@ -182,4 +182,4 @@ void main() {
 
 ## Testing
 
-See [example/test](https://github.com/material-foundation/flutter-packages/blob/main/packages/google_fonts/packages/google_fonts/example/test) for testing examples.
+See [example/test](https://github.com/material-foundation/flutter-packages/blob/main/packages/google_fonts/example/test) for testing examples.
