@@ -1,3 +1,7 @@
+## 0.3.0
+* **BREAKING CHANGE**: Removes `launchPriceChangeConfirmationFlow` from `InAppPurchaseAndroidPlatform` as it is deprecated by Android.
+* Returns both base plans and offers when `queryProductDetailsAsync` is called.
+
 ## 0.2.5+5
 
 * Updates gradle, AGP and fixes some lint errors.
