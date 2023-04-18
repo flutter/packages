@@ -7,3 +7,7 @@ package.
 
 Unless you are making changes to this implementation package, this example is
 very unlikely to be relevant.
+
+## Versions
+
+This example requires iOS 11, so will select a 5.x SDK version.
