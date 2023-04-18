@@ -1,3 +1,8 @@
+## 3.4.0
+
+* Adds `decidePolicyForNavigationResponse` to internal WKNavigationDelegate to support the
+  `onHttpError` callback.
+
 ## 3.3.0
 
 * Adds support for `PlatformNavigationDelegate.onUrlChange`.
@@ -7,8 +12,6 @@
 * Updates pigeon to fix warnings with clang 15.
 * Updates minimum Flutter version to 3.3.
 * Fixes common typos in tests and documentation.
-* Adds `decidePolicyForNavigationResponse` to internal WKNavigationDelegate to support the
-  `onHttpError` callback.
 
 ## 3.2.3
 

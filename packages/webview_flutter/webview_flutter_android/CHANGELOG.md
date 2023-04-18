@@ -1,3 +1,7 @@
+## 3.6.0
+
+* Adds onReceivedHttpError WebViewClient callback to support `PlatformNavigationDelegate.onHttpError`.
+
 ## 3.5.3
 
 * Bumps gradle from 7.2.2 to 8.0.0.
@@ -25,7 +29,6 @@
 
 * Fixes a bug where the native `WebView` wouldn't be traversed for autofill automatically.
 * Updates minimum Flutter version to 3.3.
-* Adds onReceivedHttpError WebViewClient callback to support the onHttpError callback.
 
 ## 3.4.3
 
