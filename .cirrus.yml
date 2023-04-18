@@ -106,6 +106,7 @@ task:
           # run with --require-excerpts and no exclusions.
           - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
         dependabot_script: $PLUGIN_TOOL_COMMAND dependabot-check
+        gradle_script: $PLUGIN_TOOL_COMMAND gradle-check
         version_script:
           # For pre-submit, pass the PR labels to the script to allow for
           # check overrides.
@@ -324,8 +325,8 @@ task:
     - name: web_benchmarks_test
       env:
         matrix:
-          CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
           CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
+          CHROMIUM_BUILD: "1097615" # Chromium 111
       << : *INSTALL_CHROME_LINUX
       script:
         - cd packages/web_benchmarks/testing/test_app

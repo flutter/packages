@@ -1,3 +1,11 @@
+## 6.1.10
+
+* Sets an explicit Java compatibility version.
+
+## 6.1.9
+
+* Updates play-services-auth version to 20.5.0.
+
 ## 6.1.8
 
 * Clarifies explanation of endorsement in README.

@@ -1,3 +1,12 @@
+## 6.0.28
+
+* Sets an explicit Java compatibility version.
+
+## 6.0.27
+
+* Fixes Java warnings.
+* Updates minimum Flutter version to 3.3.
+
 ## 6.0.26
 
 * Bump RoboElectric dependency to 4.4.1 to support AndroidX.

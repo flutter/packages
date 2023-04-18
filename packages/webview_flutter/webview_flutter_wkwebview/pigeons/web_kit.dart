@@ -258,6 +258,17 @@ class NSHttpCookieData {
   late List<Object?> propertyValues;
 }
 
+/// An object that can represent either a value supported by
+/// `StandardMessageCodec`, a data class in this pigeon file, or an identifier
+/// of an object stored in an `InstanceManager`.
+class ObjectOrIdentifier {
+  late Object? value;
+
+  /// Whether value is an int that is used to retrieve an instance stored in an
+  /// `InstanceManager`.
+  late bool isIdentifier;
+}
+
 /// Mirror of WKWebsiteDataStore.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore?language=objc.
@@ -340,7 +351,7 @@ abstract class WKWebViewConfigurationHostApi {
   );
 }
 
-/// Handles callbacks from an WKWebViewConfiguration instance.
+/// Handles callbacks from a WKWebViewConfiguration instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
 @FlutterApi()
@@ -410,7 +421,7 @@ abstract class WKScriptMessageHandlerHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKScriptMessageHandler instance.
+/// Handles callbacks from a WKScriptMessageHandler instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
 @FlutterApi()
@@ -434,7 +445,7 @@ abstract class WKNavigationDelegateHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKNavigationDelegate instance.
+/// Handles callbacks from a WKNavigationDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
 @FlutterApi()
@@ -536,7 +547,7 @@ abstract class NSObjectFlutterApi {
     // conform to `NSCopying`. This splits the map of properties into a list of
     // keys and values with the ordered maintained.
     List<NSKeyValueChangeKeyEnumData?> changeKeys,
-    List<Object?> changeValues,
+    List<ObjectOrIdentifier> changeValues,
   );
 
   @ObjCSelector('disposeObjectWithIdentifier:')
@@ -615,7 +626,7 @@ abstract class WKUIDelegateHostApi {
   void create(int identifier);
 }
 
-/// Handles callbacks from an WKUIDelegate instance.
+/// Handles callbacks from a WKUIDelegate instance.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
 @FlutterApi()
@@ -645,4 +656,30 @@ abstract class WKHttpCookieStoreHostApi {
   @ObjCSelector('setCookieForStoreWithIdentifier:cookie:')
   @async
   void setCookie(int identifier, NSHttpCookieData cookie);
+}
+
+/// Host API for `NSUrl`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
+@HostApi(dartHostTestHandler: 'TestNSUrlHostApi')
+abstract class NSUrlHostApi {
+  @ObjCSelector('absoluteStringForNSURLWithIdentifier:')
+  String? getAbsoluteString(int identifier);
+}
+
+/// Flutter API for `NSUrl`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
+@FlutterApi()
+abstract class NSUrlFlutterApi {
+  @ObjCSelector('createWithIdentifier:')
+  void create(int identifier);
 }
