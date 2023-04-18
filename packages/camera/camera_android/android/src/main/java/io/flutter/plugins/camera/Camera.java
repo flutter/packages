@@ -1195,6 +1195,17 @@ class Camera
   }
 
   private void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
+    // If the imageStreamReader is not initialized yet, initialize it.
+    if (imageStreamReader == null) {
+      Integer imageFormat = supportedImageFormats.get(imageFormatGroup);
+      imageFormat = (imageFormat == null) ? ImageFormat.YUV_420_888 : imageFormat;
+
+      ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
+      int width = resolutionFeature.getPreviewSize().getWidth();
+      int height = resolutionFeature.getPreviewSize().getHeight();
+
+      imageStreamReader = ImageReader.newInstance(width, height, imageFormat, 1);
+    }
     imageStreamReader.setOnImageAvailableListener(
         reader -> {
           Image img = reader.acquireNextImage();
