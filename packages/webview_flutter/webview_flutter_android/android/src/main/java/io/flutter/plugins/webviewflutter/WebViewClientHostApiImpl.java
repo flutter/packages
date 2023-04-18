@@ -67,8 +67,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @TargetApi(Build.VERSION_CODES.O)
     @Override
     public boolean onRenderProcessGone(
-        @NonNull WebView view,
-        @NonNull RenderProcessGoneDetail detail) {
+        @NonNull WebView view, @NonNull RenderProcessGoneDetail detail) {
       flutterApi.onRenderProcessGone(this, view, detail, reply -> {});
       return returnValueForOnRenderProcessGone;
     }
@@ -162,8 +161,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @TargetApi(Build.VERSION_CODES.O)
     @Override
     public boolean onRenderProcessGone(
-        @NonNull WebView view,
-        @NonNull RenderProcessGoneDetail detail) {
+        @NonNull WebView view, @NonNull RenderProcessGoneDetail detail) {
       flutterApi.onRenderProcessGone(this, view, detail, reply -> {});
       return returnValueForOnRenderProcessGone;
     }

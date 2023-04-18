@@ -702,7 +702,11 @@ void main() {
             WebView webView,
             RenderProcessGoneDetail detail,
           ) {
-            result = <Object>[webView, detail.didCrash, detail.rendererPriorityAtExit];
+            result = <Object>[
+              webView,
+              detail.didCrash,
+              detail.rendererPriorityAtExit
+            ];
           },
         );
 

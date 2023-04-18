@@ -88,7 +88,7 @@ class WebResourceErrorData {
   String description;
 }
 
-class RenderProcessGoneDetailData{
+class RenderProcessGoneDetailData {
   RenderProcessGoneDetailData(this.didCrash, this.rendererPriorityAtExit);
 
   bool didCrash;

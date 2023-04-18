@@ -36,7 +36,8 @@ WebResourceError _toWebResourceError(WebResourceErrorData data) {
 }
 
 /// Converts [RenderProcessGoneDetailData] to [RenderProcessGoneDetail].
-RenderProcessGoneDetail _toRenderProcessGoneDetail(RenderProcessGoneDetailData data) {
+RenderProcessGoneDetail _toRenderProcessGoneDetail(
+    RenderProcessGoneDetailData data) {
   return RenderProcessGoneDetail(
     didCrash: data.didCrash,
     rendererPriorityAtExit: data.rendererPriorityAtExit,

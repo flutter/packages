@@ -860,7 +860,8 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   PageEventCallback? _onPageStarted;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
-  void Function({ bool didCrash, int rendererPriorityAtExit })? _onRenderProcessGone;
+  void Function({bool didCrash, int rendererPriorityAtExit})?
+      _onRenderProcessGone;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
@@ -952,7 +953,8 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
 
   /// Invoked when a render process has exited.
   Future<void> setOnRenderProcessGone(
-    void Function({ bool didCrash, int rendererPriorityAtExit }) onRenderProcessGone,
+    void Function({bool didCrash, int rendererPriorityAtExit})
+        onRenderProcessGone,
   ) async {
     _onRenderProcessGone = onRenderProcessGone;
     _webViewClient.setSynchronousReturnValueForOnRenderProcessGone(true);

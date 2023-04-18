@@ -57,7 +57,8 @@ class AndroidWebViewProxy {
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
     )? requestLoading,
-    void Function(android_webview.WebView webView, android_webview.RenderProcessGoneDetail detail)?
+    void Function(android_webview.WebView webView,
+            android_webview.RenderProcessGoneDetail detail)?
         onRenderProcessGone,
     void Function(android_webview.WebView webView, String url)? urlLoading,
     void Function(android_webview.WebView webView, String url, bool isReload)?
