@@ -146,34 +146,17 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
           (purchaseParam.productDetails as GooglePlayProductDetails).offerToken;
     }
 
-    final bool isSupported =
-        await billingClientManager.runWithClientNonRetryable(
-      (BillingClient client) =>
-          client.isFeatureSupported(BillingClientFeature.productDetails),
+    final BillingResultWrapper billingResultWrapper =
+        await billingClientManager.runWithClient(
+      (BillingClient client) => client.launchBillingFlow(
+          product: purchaseParam.productDetails.id,
+          offerToken: offerToken,
+          accountId: purchaseParam.applicationUserName,
+          oldProduct: changeSubscriptionParam?.oldPurchaseDetails.productID,
+          purchaseToken: changeSubscriptionParam
+              ?.oldPurchaseDetails.verificationData.serverVerificationData,
+          prorationMode: changeSubscriptionParam?.prorationMode),
     );
-    final BillingResultWrapper billingResultWrapper;
-    if (isSupported) {
-      billingResultWrapper = await billingClientManager.runWithClient(
-        (BillingClient client) => client.launchBillingFlow(
-            product: purchaseParam.productDetails.id,
-            offerToken: offerToken,
-            accountId: purchaseParam.applicationUserName,
-            oldProduct: changeSubscriptionParam?.oldPurchaseDetails.productID,
-            purchaseToken: changeSubscriptionParam
-                ?.oldPurchaseDetails.verificationData.serverVerificationData,
-            prorationMode: changeSubscriptionParam?.prorationMode),
-      );
-    } else {
-      billingResultWrapper = await billingClientManager.runWithClient(
-        (BillingClient client) => client.launchBillingFlow(
-            product: purchaseParam.productDetails.id,
-            accountId: purchaseParam.applicationUserName,
-            oldProduct: changeSubscriptionParam?.oldPurchaseDetails.productID,
-            purchaseToken: changeSubscriptionParam
-                ?.oldPurchaseDetails.verificationData.serverVerificationData,
-            prorationMode: changeSubscriptionParam?.prorationMode),
-      );
-    }
     return billingResultWrapper.responseCode == BillingResponse.ok;
   }
 
