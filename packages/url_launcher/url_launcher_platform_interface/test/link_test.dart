@@ -83,6 +83,9 @@ class _RouteDelegate extends RouterDelegate<RouteInformation>
     if (_history.isEmpty) {
       return const Placeholder(key: Key('empty'));
     }
+    // TODO(chunhtai): remove this ignore and migrate the code
+    // https://github.com/flutter/flutter/issues/124045.
+    // ignore: unnecessary_string_interpolations, deprecated_member_use
     return Placeholder(key: Key('${_history.last.location}'));
   }
 }
