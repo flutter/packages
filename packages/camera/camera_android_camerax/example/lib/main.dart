@@ -475,12 +475,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     style: styleAuto,
                     onPressed:
                         () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress: () {
-                      if (controller != null) {
-                        // controller!.setFocusPoint(null);
-                      }
-                      showInSnackBar('Resetting focus point');
-                    },
+                    onLongPress:
+                        () {}, // TODO(camsim99): Add functionality back here.
                     child: const Text('AUTO'),
                   ),
                   TextButton(
@@ -602,8 +598,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       details.localPosition.dx / constraints.maxWidth,
       details.localPosition.dy / constraints.maxHeight,
     );
-    // cameraController.setExposurePoint(offset);
-    // cameraController.setFocusPoint(offset);
+
+    // TODO(camsim99): Add functionality back here for setting exposure and
+    // focus point.
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {

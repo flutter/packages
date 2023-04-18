@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import androidx.lifecycle.LifecycleOwner;
@@ -80,17 +81,18 @@ public class LiveDataTest {
 
   @Test
   public void cast_addsOldInstanceWithNewIdentifier() {
+    final InstanceManager spyInstanceManager = spy(instanceManager);
     final LiveDataHostApiImpl hostApi =
-        new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
+        new LiveDataHostApiImpl(mockBinaryMessenger, spyInstanceManager);
     final long instanceIdentifier = 56;
     final long newIdentifier = 98;
     final LifecycleOwner mockLifecycleOwner = mock(LifecycleOwner.class);
 
-    instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
+    spyInstanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
 
     hostApi.cast(instanceIdentifier, newIdentifier);
 
-    verify(instanceManager).addDartCreatedInstance(mockLiveData, newIdentifier);
+    verify(spyInstanceManager).addDartCreatedInstance(mockLiveData, newIdentifier);
   }
 
   @Test

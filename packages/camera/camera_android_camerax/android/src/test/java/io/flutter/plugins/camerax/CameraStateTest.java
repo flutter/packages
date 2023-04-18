@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -12,12 +13,14 @@ import static org.mockito.Mockito.verify;
 import androidx.camera.core.CameraState;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateFlutterApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateType;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateTypeData;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -53,12 +56,17 @@ public class CameraStateTest {
     flutterApi.create(mockCameraState, type, mockError, reply -> {});
 
     final long instanceIdentifier =
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockCameraState));
+      Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockCameraState));
+    final ArgumentCaptor<CameraStateTypeData> cameraStateTypeDataCaptor =
+      ArgumentCaptor.forClass(CameraStateTypeData.class);
+
     verify(mockFlutterApi)
         .create(
             eq(instanceIdentifier),
-            eq(CameraStateType.OPEN),
+            cameraStateTypeDataCaptor.capture(),
             eq(Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockError))),
             any());
+    
+    assertEquals(cameraStateTypeDataCaptor.getValue().getValue(), CameraStateType.OPEN);
   }
 }

@@ -123,12 +123,10 @@ class InstanceManager {
     if (weakInstance == null) {
       final T? strongInstance = _strongInstances[identifier] as T?;
       if (strongInstance != null) {
+        final Function copyCallback = _copyCallbacks[identifier]!;
         // This cast is safe since it matches the argument type for
         // _addInstanceWithIdentifier, which is the only place _copyCallbacks
         // is populated.
-        // final T Function(T) copyCallback =
-        //     _copyCallbacks[identifier]! as T Function(T);
-        final Function copyCallback = _copyCallbacks[identifier]!;
         final T copy = copyCallback(strongInstance) as T;
         _identifiers[copy] = identifier;
         _weakInstances[identifier] = WeakReference<Object>(copy);

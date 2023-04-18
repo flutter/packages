@@ -759,13 +759,6 @@ abstract class TestImageCaptureHostApi {
   }
 }
 
-/// Host API for `CameraState`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
-///
-/// See <link-to-docs>.
 abstract class TestCameraStateHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
       TestDefaultBinaryMessengerBinding.instance;
@@ -775,19 +768,11 @@ abstract class TestCameraStateHostApi {
       {BinaryMessenger? binaryMessenger}) {}
 }
 
-/// Host API for `Observer`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
-///
-/// See <link-to-docs>.
 abstract class TestObserverHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
       TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  /// Create a new native instance and add it to the `InstanceManager`.
   void create(int identifier);
 
   static void setup(TestObserverHostApi? api,
@@ -817,38 +802,13 @@ abstract class TestObserverHostApi {
   }
 }
 
-/// Host API for `CameraStateError`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
-///
-/// See <link-to-docs>.
-abstract class TestCameraStateErrorHostApi {
-  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
-      TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
-
-  static void setup(TestCameraStateErrorHostApi? api,
-      {BinaryMessenger? binaryMessenger}) {}
-}
-
-/// Host API for `LiveData`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
-///
-/// See <link-to-docs>.
 abstract class TestLiveDataHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
       TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  /// Handles Dart method `LiveData.observe`.
   void observe(int identifier, int observerIdentifier);
 
-  /// Handles Dart method `LiveData.removeObservers`.
   void removeObservers(int identifier);
 
   void cast(int oldIdentifier, int newIdentifier);

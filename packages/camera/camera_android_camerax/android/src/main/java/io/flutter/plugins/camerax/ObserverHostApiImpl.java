@@ -51,6 +51,16 @@ public class ObserverHostApiImpl implements ObserverHostApi {
     public void onChanged(T value) {
       observerFlutterApiWrapper.onChanged(this, value, reply -> {});
     }
+
+    /**
+     * Flutter API used to send messages back to Dart.
+     *
+     * <p>This is only visible for testing.
+     */
+    @VisibleForTesting
+    void setApi(@NonNull ObserverFlutterApiWrapper api) {
+      this.observerFlutterApiWrapper = api;
+    }
   }
 
   /**
@@ -83,7 +93,7 @@ public class ObserverHostApiImpl implements ObserverHostApi {
   }
 
   /**
-   * Creates an {@link Observer} instance with the specified identifier.
+   * Creates an {@link Observer} instance with the specified observer.
    */
   @Override
   public void create(@NonNull Long identifier) {

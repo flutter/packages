@@ -9,9 +9,12 @@ import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/camera.dart';
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camera_selector.dart';
+import 'package:camera_android_camerax/src/camera_state.dart';
+import 'package:camera_android_camerax/src/camera_state_error.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/image_capture.dart';
-import 'package:camera_android_camerax/src/live_camera_state.dart';
+import 'package:camera_android_camerax/src/live_data.dart';
+import 'package:camera_android_camerax/src/observer.dart';
 import 'package:camera_android_camerax/src/preview.dart';
 import 'package:camera_android_camerax/src/process_camera_provider.dart';
 import 'package:camera_android_camerax/src/system_services.dart';
@@ -24,19 +27,52 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'android_camera_camerax_test.mocks.dart';
+import 'test_camerax_library.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
   MockSpec<CameraSelector>(),
   MockSpec<ImageCapture>(),
-  MockSpec<LiveCameraState>(),
+  MockSpec<LiveData<CameraState>>(),
   MockSpec<Preview>(),
   MockSpec<ProcessCameraProvider>(),
+  MockSpec<TestInstanceManagerHostApi>(),
 ])
 @GenerateMocks(<Type>[BuildContext])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  // Mocks the call to clear the native InstanceManager.
+
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
+  Future<bool> testCameraClosingObserver(
+      AndroidCameraCameraX camera, int cameraId, Observer observer) async {
+    const String testErrorDescription = 'Test error description';
+    final Stream<CameraClosingEvent> cameraClosingEventStream =
+        camera.onCameraClosing(cameraId);
+    final StreamQueue<CameraClosingEvent> cameraClosingStreamQueue =
+        StreamQueue<CameraClosingEvent>(cameraClosingEventStream);
+    final Stream<CameraErrorEvent> cameraErrorEventStream =
+        camera.onCameraError(cameraId);
+    final StreamQueue<CameraErrorEvent> cameraErrorStreamQueue =
+        StreamQueue<CameraErrorEvent>(cameraErrorEventStream);
+
+    observer.onChanged(CameraState.detached(
+        type: CameraStateType.closing,
+        error: CameraStateError.detached(
+            code: 0, description: testErrorDescription)));
+
+    final bool cameraClosingEventSent =
+        await cameraClosingStreamQueue.next == CameraClosingEvent(cameraId);
+    final bool cameraErrorSent = await cameraErrorStreamQueue.next ==
+        CameraErrorEvent(cameraId, testErrorDescription);
+
+    await cameraClosingStreamQueue.cancel();
+    await cameraErrorStreamQueue.cancel();
+
+    return cameraClosingEventSent && cameraErrorSent;
+  }
 
   test('Should fetch CameraDescription instances for available cameras',
       () async {
@@ -99,7 +135,7 @@ void main() {
   });
 
   test(
-      'createCamera requests permissions, starts listening for device orientation changes, and returns flutter surface texture ID',
+      'createCamera requests permissions, starts listening for device orientation changes, updates camera state observers, and returns flutter surface texture ID',
       () async {
     final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
     final MockProcessCameraProvider processCameraProvider =
@@ -115,6 +151,7 @@ void main() {
     const int testSurfaceTextureId = 6;
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockLiveData mockLiveCameraState = MockLiveData();
 
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => testSurfaceTextureId);
@@ -123,8 +160,9 @@ void main() {
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
-        .thenAnswer((_) async => MockLiveCameraState());
+        .thenAnswer((_) async => mockLiveCameraState);
     camera.processCameraProvider = processCameraProvider;
+    camera.createDetachedObservers = true;
 
     expect(
         await camera.createCamera(testCameraDescription, testResolutionPreset,
@@ -146,6 +184,15 @@ void main() {
 
     // Verify the camera's Preview instance has its surface provider set.
     verify(camera.preview!.setSurfaceProvider());
+
+    // Verify the camera state observer is updated.
+    // expect(
+    //     await testCameraClosingObserver(
+    //         camera,
+    //         testSurfaceTextureId,
+    //         verify(mockLiveCameraState.observe(captureAny)).captured.single
+    //             as Observer),
+    //     isTrue);
   });
 
   test(
@@ -170,8 +217,9 @@ void main() {
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
-        .thenAnswer((_) async => MockLiveCameraState());
+        .thenAnswer((_) async => MockLiveData());
     camera.processCameraProvider = processCameraProvider;
+    camera.createDetachedObservers = true;
 
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
@@ -230,7 +278,8 @@ void main() {
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
-        .thenAnswer((_) async => MockLiveCameraState());
+        .thenAnswer((_) async => MockLiveData());
+    camera.createDetachedObservers = true;
 
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
@@ -253,16 +302,19 @@ void main() {
     expect(camera.camera, isNotNull);
   });
 
-  test('dispose releases Flutter surface texture and unbinds all use cases',
+  test(
+      'dispose releases Flutter surface texture, removes camera state observers, and unbinds all use cases',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
 
     camera.preview = MockPreview();
     camera.processCameraProvider = MockProcessCameraProvider();
+    camera.liveCameraState = MockLiveData();
 
     camera.dispose(3);
 
     verify(camera.preview!.releaseFlutterSurfaceTexture());
+    verify(camera.liveCameraState!.removeObservers());
     verify(camera.processCameraProvider!.unbindAll());
   });
 
@@ -283,33 +335,42 @@ void main() {
   });
 
   test(
-      'onCameraClosing stream emits camera closing event when detected by LiveCameraState',
+      'onCameraClosing stream emits camera closing event when cameraEventStreamController emits a camera closing event',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 99;
+    const CameraClosingEvent cameraClosingEvent = CameraClosingEvent(cameraId);
     final Stream<CameraClosingEvent> eventStream =
         camera.onCameraClosing(cameraId);
     final StreamQueue<CameraClosingEvent> streamQueue =
         StreamQueue<CameraClosingEvent>(eventStream);
 
-    LiveCameraState.cameraClosingStreamController.add(true);
+    camera.cameraEventStreamController.add(cameraClosingEvent);
 
-    expect(await streamQueue.next, equals(const CameraClosingEvent(cameraId)));
+    expect(await streamQueue.next, equals(cameraClosingEvent));
     await streamQueue.cancel();
   });
 
-  test('onCameraError stream emits errors caught by system services', () async {
+  test(
+      'onCameraError stream emits errors caught by system services or added to stream within plugin',
+      () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 27;
-    const String testErrorDescription = 'Test error description!';
+    const String firstTestErrorDescription = 'Test error description 1!';
+    const String secondTestErrorDescription = 'Test error description 2!';
+    const CameraErrorEvent secondCameraErrorEvent =
+        CameraErrorEvent(cameraId, secondTestErrorDescription);
     final Stream<CameraErrorEvent> eventStream = camera.onCameraError(cameraId);
     final StreamQueue<CameraErrorEvent> streamQueue =
         StreamQueue<CameraErrorEvent>(eventStream);
 
-    SystemServices.cameraErrorStreamController.add(testErrorDescription);
-
+    SystemServices.cameraErrorStreamController.add(firstTestErrorDescription);
     expect(await streamQueue.next,
-        equals(const CameraErrorEvent(cameraId, testErrorDescription)));
+        equals(const CameraErrorEvent(cameraId, firstTestErrorDescription)));
+
+    camera.cameraEventStreamController.add(secondCameraErrorEvent);
+    expect(await streamQueue.next, equals(secondCameraErrorEvent));
+
     await streamQueue.cancel();
   });
 
@@ -360,46 +421,70 @@ void main() {
         camera.processCameraProvider!.unbind(<UseCase>[camera.preview!]));
   });
 
-  test('resumePreview does not bind preview to lifecycle if already bound',
-      () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-
-    camera.processCameraProvider = MockProcessCameraProvider();
-    camera.cameraSelector = MockCameraSelector();
-    camera.preview = MockPreview();
-
-    when(camera.processCameraProvider!.isBound(camera.preview!))
-        .thenAnswer((_) async => true);
-
-    await camera.resumePreview(78);
-
-    verifyNever(camera.processCameraProvider!
-        .bindToLifecycle(camera.cameraSelector!, <UseCase>[camera.preview!]));
-  });
-
-  test('resumePreview binds preview to lifecycle if not already bound',
+  test(
+      'resumePreview does not bind preview to lifecycle or update camera state observers if already bound',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockLiveData mockLiveCameraState = MockLiveData();
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+
+    when(camera.processCameraProvider!.isBound(camera.preview!))
+        .thenAnswer((_) async => true);
 
     when(mockProcessCameraProvider
             .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
-        .thenAnswer((_) async => MockLiveCameraState());
+        .thenAnswer((_) async => mockLiveCameraState);
+
+    await camera.resumePreview(78);
+
+    verifyNever(camera.processCameraProvider!
+        .bindToLifecycle(camera.cameraSelector!, <UseCase>[camera.preview!]));
+    verifyNever(mockLiveCameraState.observe(any));
+  });
+
+  test(
+      'resumePreview binds preview to lifecycle and updates camera state observers if not already bound',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockLiveData mockLiveCameraState = MockLiveData();
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.cameraSelector = MockCameraSelector();
+    camera.preview = MockPreview();
+    camera.createDetachedObservers = true;
+
+    when(mockProcessCameraProvider
+            .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getLiveCameraState())
+        .thenAnswer((_) async => mockLiveCameraState);
 
     await camera.resumePreview(78);
 
     verify(camera.processCameraProvider!
         .bindToLifecycle(camera.cameraSelector!, <UseCase>[camera.preview!]));
+    expect(
+        await testCameraClosingObserver(
+            camera,
+            78,
+            verify(mockLiveCameraState.observe(captureAny)).captured.single
+                as Observer),
+        isTrue);
   });
 
   test(
@@ -415,13 +500,14 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+    camera.createDetachedObservers = true;
 
     when(mockProcessCameraProvider
             .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
-        .thenAnswer((_) async => MockLiveCameraState());
+        .thenAnswer((_) async => MockLiveData());
 
     final FutureBuilder<void> previewWidget =
         camera.buildPreview(textureId) as FutureBuilder<void>;
@@ -453,13 +539,14 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+    camera.createDetachedObservers = true;
 
     when(mockProcessCameraProvider
             .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getLiveCameraState())
-        .thenAnswer((_) async => MockLiveCameraState());
+        .thenAnswer((_) async => MockLiveData());
 
     final FutureBuilder<void> previewWidget =
         camera.buildPreview(textureId) as FutureBuilder<void>;

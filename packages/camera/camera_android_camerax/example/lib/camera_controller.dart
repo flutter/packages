@@ -306,12 +306,6 @@ class CameraController extends ValueNotifier<CameraValue> {
         initializeCompleter.complete(event);
       }));
 
-      CameraPlatform.instance
-          .onCameraClosing(_cameraId)
-          .listen((CameraClosingEvent event) {
-        print('woohoo!!! camera closing');
-      });
-
       await CameraPlatform.instance.initializeCamera(
         _cameraId,
         imageFormatGroup: imageFormatGroup ?? ImageFormatGroup.unknown,

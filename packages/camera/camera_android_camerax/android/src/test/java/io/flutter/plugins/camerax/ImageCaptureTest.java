@@ -192,8 +192,6 @@ public class ImageCaptureTest {
     final ImageCaptureException mockException = mock(ImageCaptureException.class);
 
     imageCaptureHostApiImpl.cameraXProxy = mockCameraXProxy;
-    when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger))
-        .thenReturn(mockSystemServicesFlutterApiImpl);
     when(mockFile.getAbsolutePath()).thenReturn(mockFileAbsolutePath);
 
     ImageCapture.OnImageSavedCallback onImageSavedCallback =

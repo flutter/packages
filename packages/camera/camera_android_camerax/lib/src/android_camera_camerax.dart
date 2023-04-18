@@ -13,7 +13,6 @@ import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
-import 'camera_state_error.dart';
 import 'camerax_library.g.dart';
 import 'image_capture.dart';
 import 'live_data.dart';
@@ -40,7 +39,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Camera? camera;
 
-  /// The [LiveData] of the [CameraState] that represents the state of the [camera] instance.
+  /// The [LiveData] of the [CameraState] that represents the state of the
+  /// [camera] instance.
   LiveData<CameraState>? liveCameraState;
 
   /// The [Preview] instance that can be configured to present a live camera preview.
@@ -76,6 +76,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<CameraEvent> _cameraEvents(int cameraId) =>
       cameraEventStreamController.stream
           .where((CameraEvent event) => event.cameraId == cameraId);
+
+  /// Conditional used to create detached [Observer]s for testing their
+  /// callback methods.
+  @visibleForTesting
+  bool createDetachedObservers = false;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -171,7 +176,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
-    _updateLiveCameraState(flutterSurfaceTextureId);
+    await _updateLiveCameraState(flutterSurfaceTextureId);
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -337,7 +342,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
-    _updateLiveCameraState(cameraId);
+    await _updateLiveCameraState(cameraId);
   }
 
   /// Unbinds [preview] instance to camera lifecycle controlled by the
@@ -353,7 +358,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider!.unbind(<UseCase>[preview!]);
   }
 
-  // Methods concerning camera information:
+  // Methods concerning camera state:
 
   /// Adds fresh observers to the [LiveData] of the [CameraState] of the
   /// current [camera].
@@ -361,21 +366,31 @@ class AndroidCameraCameraX extends CameraPlatform {
     final CameraInfo cameraInfo = await camera!.getCameraInfo();
     liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo.getLiveCameraState();
-    liveCameraState!.observe(_createCameraClosingObserver(cameraId));
+    await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
   }
 
+  /// Creates [Observer] of the [CameraState] that will:
+  ///
+  ///  * Send a [CameraClosingEvent] if the [CameraState] indicates that the
+  ///    camera has begun to close.
+  ///  * Send a [CameraErrorEvent] if the [CameraState] indicates that the
+  ///    camera is in error state.
   Observer<CameraState> _createCameraClosingObserver(int cameraId) {
-    return Observer<CameraState>(onChanged: (Object stateAsObject) {
+    // Callback method used to implement the behavior described above:
+    void onChanged(Object stateAsObject) {
       final CameraState state = stateAsObject as CameraState;
       if (state.type == CameraStateType.closing) {
         cameraEventStreamController.add(CameraClosingEvent(cameraId));
       }
-
       if (state.error != null) {
         cameraEventStreamController
             .add(CameraErrorEvent(cameraId, state.error!.description));
       }
-    });
+    }
+
+    return createDetachedObservers
+        ? Observer<CameraState>.detached(onChanged: onChanged)
+        : Observer<CameraState>(onChanged: onChanged);
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:

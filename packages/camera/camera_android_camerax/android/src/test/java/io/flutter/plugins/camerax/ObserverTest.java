@@ -62,8 +62,8 @@ public class ObserverTest {
   public void onChanged_makesCallToDartCallback() {
     final ObserverFlutterApiWrapper flutterApi =
         new ObserverFlutterApiWrapper(mockBinaryMessenger, instanceManager);
-    final ObserverHostApiImpl.ObserverImpl<Object> instance =
-        new ObserverHostApiImpl.ObserverImpl<Object>(mockBinaryMessenger, instanceManager);
+    final ObserverHostApiImpl.ObserverImpl<CameraState> instance =
+        new ObserverHostApiImpl.ObserverImpl<CameraState>(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 0;
     final CameraState mockCameraState = CameraState.create(CameraState.Type.CLOSED);
     Long mockCameraStateIdentifier = instanceManager.addHostCreatedInstance(mockCameraState);

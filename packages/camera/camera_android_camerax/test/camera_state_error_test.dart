@@ -17,13 +17,12 @@ import 'test_camerax_library.g.dart';
 // TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
 // TODO(bparrishMines): Run build runner
 
-@GenerateMocks(<Type>[TestCameraStateErrorHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('CameraStateError', () {
     tearDown(() {
-      TestCameraStateErrorHostApi.setup(null);
       TestInstanceManagerHostApi.setup(null);
     });
 

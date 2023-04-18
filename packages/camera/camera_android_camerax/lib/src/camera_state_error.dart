@@ -1,24 +1,33 @@
-import 'package:simple_ast/annotations.dart';
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
-import 'observer.dart';
-import 'java_object.dart';
-import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
+import 'java_object.dart';
 
-class CameraStateError<T> extends JavaObject {
+/// The error that a camera has encountered.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraState.StateError.
+class CameraStateError extends JavaObject {
+  /// Constructs a [CameraStateError] that is not automatically attached to a native object.
   CameraStateError.detached(
-      {BinaryMessenger? binaryMessenger,
-      InstanceManager? instanceManager,
+      {super.binaryMessenger,
+      super.instanceManager,
       required this.code,
       required this.description})
-      : super.detached(
-            binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+      : super.detached();
 
+  /// The code of this error.
   final int code;
 
+  /// The description of this error corresponding to its [code].
+  ///
+  /// This is not directly provided by the CameraX library, but is determined on
+  /// the Java side based on the error type.
   final String description;
 }
 

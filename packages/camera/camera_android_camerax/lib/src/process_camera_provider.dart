@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 
 import 'android_camera_camerax_flutter_api_impls.dart';

@@ -1,26 +1,28 @@
-import 'package:simple_ast/annotations.dart';
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
-import 'observer.dart';
-import 'java_object.dart';
 import 'android_camera_camerax_flutter_api_impls.dart';
-import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
+import 'java_object.dart';
+import 'live_data.dart';
 
-@SimpleClassAnnotation()
+/// Callback that can receive from [LiveData].
+///
+/// See https://developer.android.com/reference/androidx/lifecycle/Observer.
 class Observer<T> extends JavaObject {
   /// Constructor for [Observer].
   Observer(
-      {BinaryMessenger? binaryMessenger,
-      InstanceManager? instanceManager,
+      {super.binaryMessenger,
+      super.instanceManager,
       required void Function(Object value) onChanged})
       : _api = _ObserverHostApiImpl(
             binaryMessenger: binaryMessenger, instanceManager: instanceManager),
-        super.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager) {
+        super.detached() {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
     this.onChanged = (Object value) {
       assert(value is T);
@@ -29,6 +31,7 @@ class Observer<T> extends JavaObject {
     _api.createFromInstances(this);
   }
 
+  /// Constructs a [Observer] that is not automatically attached to a native object.
   Observer.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
@@ -46,7 +49,10 @@ class Observer<T> extends JavaObject {
 
   final _ObserverHostApiImpl _api;
 
-  // TODO(camsim99): Cite Dart issue
+  /// Callback used when the observed data is changed to a new value.
+  ///
+  /// The callback parameter cannot take type [T] directly due to the issue
+  /// described in https://github.com/dart-lang/sdk/issues/51461.
   late final void Function(Object value) onChanged;
 }
 
@@ -61,6 +67,8 @@ class _ObserverHostApiImpl extends ObserverHostApi {
 
   final InstanceManager instanceManager;
 
+  /// Adds specified [Observer] instance to instance manager and makes call
+  /// to native side to create the instance.
   Future<void> createFromInstances<T>(
     Observer<T> instance,
   ) {
