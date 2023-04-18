@@ -28,21 +28,29 @@ import java.util.Locale;
     info.put("productType", detail.getProductType());
     info.put("name", detail.getName());
 
-    @Nullable ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails = detail.getOneTimePurchaseOfferDetails();
+    @Nullable
+    ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails =
+        detail.getOneTimePurchaseOfferDetails();
     if (oneTimePurchaseOfferDetails != null) {
-      info.put("oneTimePurchaseOfferDetails", fromOneTimePurchaseOfferDetails(oneTimePurchaseOfferDetails));
+      info.put(
+          "oneTimePurchaseOfferDetails",
+          fromOneTimePurchaseOfferDetails(oneTimePurchaseOfferDetails));
     }
 
-    @Nullable List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetailsList = detail.getSubscriptionOfferDetails();
+    @Nullable
+    List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetailsList =
+        detail.getSubscriptionOfferDetails();
     if (subscriptionOfferDetailsList != null) {
-      info.put("subscriptionOfferDetails", fromSubscriptionOfferDetailsList(subscriptionOfferDetailsList));
+      info.put(
+          "subscriptionOfferDetails",
+          fromSubscriptionOfferDetailsList(subscriptionOfferDetailsList));
     }
 
     return info;
   }
 
   static List<HashMap<String, Object>> fromProductDetailsList(
-          @Nullable List<ProductDetails> productDetailsList) {
+      @Nullable List<ProductDetails> productDetailsList) {
     if (productDetailsList == null) {
       return Collections.emptyList();
     }
@@ -54,7 +62,8 @@ import java.util.Locale;
     return output;
   }
 
-  static HashMap<String, Object> fromOneTimePurchaseOfferDetails(@Nullable ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails) {
+  static HashMap<String, Object> fromOneTimePurchaseOfferDetails(
+      @Nullable ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails) {
     HashMap<String, Object> serialized = new HashMap<>();
     if (oneTimePurchaseOfferDetails == null) {
       return serialized;
@@ -67,21 +76,24 @@ import java.util.Locale;
     return serialized;
   }
 
-  static List<HashMap<String, Object>> fromSubscriptionOfferDetailsList(@Nullable List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetailsList) {
+  static List<HashMap<String, Object>> fromSubscriptionOfferDetailsList(
+      @Nullable List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetailsList) {
     if (subscriptionOfferDetailsList == null) {
       return Collections.emptyList();
     }
 
     ArrayList<HashMap<String, Object>> serialized = new ArrayList<>();
 
-    for (ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails : subscriptionOfferDetailsList) {
+    for (ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails :
+        subscriptionOfferDetailsList) {
       serialized.add(fromSubscriptionOfferDetails(subscriptionOfferDetails));
     }
 
     return serialized;
   }
 
-  static HashMap<String, Object> fromSubscriptionOfferDetails(@Nullable ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails) {
+  static HashMap<String, Object> fromSubscriptionOfferDetails(
+      @Nullable ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails) {
     HashMap<String, Object> serialized = new HashMap<>();
     if (subscriptionOfferDetails == null) {
       return serialized;
@@ -98,7 +110,8 @@ import java.util.Locale;
     return serialized;
   }
 
-  static List<HashMap<String, Object>> fromPricingPhases(@NonNull ProductDetails.PricingPhases pricingPhases) {
+  static List<HashMap<String, Object>> fromPricingPhases(
+      @NonNull ProductDetails.PricingPhases pricingPhases) {
     ArrayList<HashMap<String, Object>> serialized = new ArrayList<>();
 
     for (ProductDetails.PricingPhase pricingPhase : pricingPhases.getPricingPhaseList()) {
@@ -107,7 +120,8 @@ import java.util.Locale;
     return serialized;
   }
 
-  static HashMap<String, Object> fromPricingPhase(@Nullable ProductDetails.PricingPhase pricingPhase) {
+  static HashMap<String, Object> fromPricingPhase(
+      @Nullable ProductDetails.PricingPhase pricingPhase) {
     HashMap<String, Object> serialized = new HashMap<>();
 
     if (pricingPhase == null) {

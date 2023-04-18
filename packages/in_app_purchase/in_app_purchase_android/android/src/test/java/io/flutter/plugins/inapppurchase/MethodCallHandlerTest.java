@@ -63,7 +63,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -73,7 +72,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -214,44 +212,45 @@ public class MethodCallHandlerTest {
     verify(mockMethodChannel, times(1)).invokeMethod(ON_DISCONNECT, expectedInvocation);
   }
 
-    @Test
-    public void queryProductDetailsAsync() {
-        // Connect a billing client and set up the product query listeners
-        establishConnectedBillingClient(/* arguments= */ null, /* result= */ null);
-        String productType = BillingClient.ProductType.INAPP;
-        List<String> productsList = asList("id1", "id2");
-        HashMap<String, Object> arguments = new HashMap<>();
-        arguments.put("productTypes", Arrays.asList(productType, productType));
-        arguments.put("productIds", productsList);
-        MethodCall queryCall = new MethodCall(QUERY_PRODUCT_DETAILS, arguments);
+  @Test
+  public void queryProductDetailsAsync() {
+    // Connect a billing client and set up the product query listeners
+    establishConnectedBillingClient(/* arguments= */ null, /* result= */ null);
+    String productType = BillingClient.ProductType.INAPP;
+    List<String> productsList = asList("id1", "id2");
+    HashMap<String, Object> arguments = new HashMap<>();
+    arguments.put("productTypes", Arrays.asList(productType, productType));
+    arguments.put("productIds", productsList);
+    MethodCall queryCall = new MethodCall(QUERY_PRODUCT_DETAILS, arguments);
 
-        // Query for product details
-        methodChannelHandler.onMethodCall(queryCall, result);
+    // Query for product details
+    methodChannelHandler.onMethodCall(queryCall, result);
 
-        // Assert the arguments were forwarded correctly to BillingClient
-        ArgumentCaptor<QueryProductDetailsParams> paramCaptor =
-                ArgumentCaptor.forClass(QueryProductDetailsParams.class);
-        ArgumentCaptor<ProductDetailsResponseListener> listenerCaptor =
-                ArgumentCaptor.forClass(ProductDetailsResponseListener.class);
-        verify(mockBillingClient).queryProductDetailsAsync(paramCaptor.capture(), listenerCaptor.capture());
+    // Assert the arguments were forwarded correctly to BillingClient
+    ArgumentCaptor<QueryProductDetailsParams> paramCaptor =
+        ArgumentCaptor.forClass(QueryProductDetailsParams.class);
+    ArgumentCaptor<ProductDetailsResponseListener> listenerCaptor =
+        ArgumentCaptor.forClass(ProductDetailsResponseListener.class);
+    verify(mockBillingClient)
+        .queryProductDetailsAsync(paramCaptor.capture(), listenerCaptor.capture());
 
-        // Assert that we handed result BillingClient's response
-        int responseCode = 200;
-        List<ProductDetails> productDetailsResponse =
-                asList(buildProductDetails("foo"));
-        BillingResult billingResult =
-                BillingResult.newBuilder()
-                        .setResponseCode(100)
-                        .setDebugMessage("dummy debug message")
-                        .build();
-        listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
-        verify(result).success(resultCaptor.capture());
-        HashMap<String, Object> resultData = resultCaptor.getValue();
-        assertEquals(resultData.get("billingResult"), fromBillingResult(billingResult));
-        assertEquals(resultData.get("productDetailsList"), fromProductDetailsList(productDetailsResponse));
-    }
+    // Assert that we handed result BillingClient's response
+    int responseCode = 200;
+    List<ProductDetails> productDetailsResponse = asList(buildProductDetails("foo"));
+    BillingResult billingResult =
+        BillingResult.newBuilder()
+            .setResponseCode(100)
+            .setDebugMessage("dummy debug message")
+            .build();
+    listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
+    verify(result).success(resultCaptor.capture());
+    HashMap<String, Object> resultData = resultCaptor.getValue();
+    assertEquals(resultData.get("billingResult"), fromBillingResult(billingResult));
+    assertEquals(
+        resultData.get("productDetailsList"), fromProductDetailsList(productDetailsResponse));
+  }
 
   @Test
   public void queryProductDetailsAsync_clientDisconnected() {
@@ -583,7 +582,8 @@ public class MethodCallHandlerTest {
     methodChannelHandler.onMethodCall(launchCall, result);
 
     // Assert that we sent an error back.
-    verify(result).error(contains("IN_APP_PURCHASE_INVALID_OLD_PRODUCT"), contains(oldProductId), any());
+    verify(result)
+        .error(contains("IN_APP_PURCHASE_INVALID_OLD_PRODUCT"), contains(oldProductId), any());
     verify(result, never()).success(any());
   }
 
@@ -862,8 +862,7 @@ public class MethodCallHandlerTest {
     HashMap<String, Object> arguments = new HashMap<>();
     String productType = BillingClient.ProductType.INAPP;
     List<String> productTypes = new ArrayList<>();
-    for (String ignored :
-            productsList) {
+    for (String ignored : productsList) {
       productTypes.add(productType);
     }
     arguments.put("productTypes", productTypes);
@@ -888,38 +887,28 @@ public class MethodCallHandlerTest {
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
   }
 
-    private ProductDetails buildProductDetails(String id) {
-        String json =
-                String.format(
-                        "{\n" +
-                        "  \"title\": \"Example title\",\n" +
-                                "  \"description\": \"Example description\",\n" +
-                                "  \"productId\": \"%s\",\n" +
-                                "  \"type\": \"inapp\",\n" +
-                                "  \"name\": \"Example name\",\n" +
-                                "  \"oneTimePurchaseOfferDetails\": {\n" +
-                                "    \"priceAmountMicros\": 990000,\n" +
-                                "    \"priceCurrencyCode\": \"USD\",\n" +
-                                "    \"formattedPrice\": \"$0.99\"\n" +
-                                "  }\n" +
-                                "}",
-                        id);
+  private ProductDetails buildProductDetails(String id) {
+    String json =
+        String.format(
+            "{\"title\":\"Example title\",\"description\":\"Example description\",\"productId\":\"%s\",\"type\":\"inapp\",\"name\":\"Example name\",\"oneTimePurchaseOfferDetails\":{\"priceAmountMicros\":990000,\"priceCurrencyCode\":\"USD\",\"formattedPrice\":\"$0.99\"}}",
+            id);
 
-        try {
-            Constructor<ProductDetails> productDetailsConstructor = ProductDetails.class.getDeclaredConstructor(String.class);
-            productDetailsConstructor.setAccessible(true);
-            return productDetailsConstructor.newInstance(json);
-        } catch (NoSuchMethodException e) {
-          fail("buildProductDetails failed with NoSuchMethodException " + e);
-        } catch (InvocationTargetException e) {
-          fail("buildProductDetails failed with InvocationTargetException " + e);
-        } catch (IllegalAccessException e) {
-          fail("buildProductDetails failed with IllegalAccessException " + e);
-        } catch (InstantiationException e) {
-          fail("buildProductDetails failed with InstantiationException " + e);
-        }
-        return null;
+    try {
+      Constructor<ProductDetails> productDetailsConstructor =
+          ProductDetails.class.getDeclaredConstructor(String.class);
+      productDetailsConstructor.setAccessible(true);
+      return productDetailsConstructor.newInstance(json);
+    } catch (NoSuchMethodException e) {
+      fail("buildProductDetails failed with NoSuchMethodException " + e);
+    } catch (InvocationTargetException e) {
+      fail("buildProductDetails failed with InvocationTargetException " + e);
+    } catch (IllegalAccessException e) {
+      fail("buildProductDetails failed with IllegalAccessException " + e);
+    } catch (InstantiationException e) {
+      fail("buildProductDetails failed with InstantiationException " + e);
     }
+    return null;
+  }
 
   private Purchase buildPurchase(String orderId) {
     Purchase purchase = mock(Purchase.class);

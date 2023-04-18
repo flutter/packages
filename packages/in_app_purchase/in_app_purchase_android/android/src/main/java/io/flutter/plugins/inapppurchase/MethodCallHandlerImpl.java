@@ -35,10 +35,8 @@ import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryProductDetailsParams.Product;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -186,11 +184,10 @@ class MethodCallHandlerImpl
   }
 
   private void queryProductDetailsAsync(
-          final List<String> productIds,
-          final List<String> productTypes,
-          final MethodChannel.Result result
-  ) {
-    assert(productIds.size() == productTypes.size());
+      final List<String> productIds,
+      final List<String> productTypes,
+      final MethodChannel.Result result) {
+    assert (productIds.size() == productTypes.size());
 
     if (billingClientError(result)) {
       return;
@@ -198,34 +195,41 @@ class MethodCallHandlerImpl
 
     List<Product> productList = new ArrayList<>();
     for (int i = 0; i < productIds.size(); i++) {
-      productList.add(Product.newBuilder()
+      productList.add(
+          Product.newBuilder()
               .setProductId(productIds.get(i))
               .setProductType(productTypes.get(i))
               .build());
     }
 
-    QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder().setProductList(productList).build();
-    billingClient.queryProductDetailsAsync(params, new ProductDetailsResponseListener() {
-      @Override
-      public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> productDetailsList) {
-        updateCachedProducts(productDetailsList);
-        final Map<String, Object> productDetailsResponse = new HashMap<>();
-        productDetailsResponse.put("billingResult", fromBillingResult(billingResult));
-        productDetailsResponse.put("productDetailsList", fromProductDetailsList(productDetailsList));
-        result.success(productDetailsResponse);
-      }
-    });
+    QueryProductDetailsParams params =
+        QueryProductDetailsParams.newBuilder().setProductList(productList).build();
+    billingClient.queryProductDetailsAsync(
+        params,
+        new ProductDetailsResponseListener() {
+          @Override
+          public void onProductDetailsResponse(
+              @NonNull BillingResult billingResult,
+              @NonNull List<ProductDetails> productDetailsList) {
+            updateCachedProducts(productDetailsList);
+            final Map<String, Object> productDetailsResponse = new HashMap<>();
+            productDetailsResponse.put("billingResult", fromBillingResult(billingResult));
+            productDetailsResponse.put(
+                "productDetailsList", fromProductDetailsList(productDetailsList));
+            result.success(productDetailsResponse);
+          }
+        });
   }
 
   private void launchBillingFlow(
-          String product,
-          @Nullable String offerToken,
-          @Nullable String accountId,
-          @Nullable String obfuscatedProfileId,
-          @Nullable String oldProduct,
-          @Nullable String purchaseToken,
-          int prorationMode,
-          MethodChannel.Result result) {
+      String product,
+      @Nullable String offerToken,
+      @Nullable String accountId,
+      @Nullable String obfuscatedProfileId,
+      @Nullable String oldProduct,
+      @Nullable String purchaseToken,
+      int prorationMode,
+      MethodChannel.Result result) {
     if (billingClientError(result)) {
       return;
     }
@@ -233,15 +237,17 @@ class MethodCallHandlerImpl
     com.android.billingclient.api.ProductDetails productDetails = cachedProducts.get(product);
     if (productDetails == null) {
       result.error(
-              "NOT_FOUND",
-              String.format(
-                      "Details for product %s are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: %s",
-                      product, LOAD_PRODUCT_DOC_URL),
-              null);
+          "NOT_FOUND",
+          String.format(
+              "Details for product %s are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: %s",
+              product, LOAD_PRODUCT_DOC_URL),
+          null);
       return;
     }
 
-    @Nullable List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetails = productDetails.getSubscriptionOfferDetails();
+    @Nullable
+    List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetails =
+        productDetails.getSubscriptionOfferDetails();
     if (subscriptionOfferDetails != null) {
       boolean isValidOfferToken = false;
       for (ProductDetails.SubscriptionOfferDetails offerDetails : subscriptionOfferDetails) {
@@ -252,42 +258,44 @@ class MethodCallHandlerImpl
       }
       if (!isValidOfferToken) {
         result.error(
-                "INVALID_OFFER_TOKEN",
-                String.format(
-                        "Offer token %s for product %s is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: %s",
-                        offerToken, product, LOAD_PRODUCT_DOC_URL),
-                null);
+            "INVALID_OFFER_TOKEN",
+            String.format(
+                "Offer token %s for product %s is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: %s",
+                offerToken, product, LOAD_PRODUCT_DOC_URL),
+            null);
         return;
       }
     }
 
     if (oldProduct == null
-            && prorationMode != ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+        && prorationMode != ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
       result.error(
-              "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
-              "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
-              null);
+          "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
+          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
+          null);
       return;
     } else if (oldProduct != null && !cachedProducts.containsKey(oldProduct)) {
       result.error(
-              "IN_APP_PURCHASE_INVALID_OLD_PRODUCT",
-              String.format(
-                      "Details for product %s are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: %s",
-                      oldProduct, LOAD_PRODUCT_DOC_URL),
-              null);
+          "IN_APP_PURCHASE_INVALID_OLD_PRODUCT",
+          String.format(
+              "Details for product %s are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: %s",
+              oldProduct, LOAD_PRODUCT_DOC_URL),
+          null);
       return;
     }
 
     if (activity == null) {
       result.error(
-              "ACTIVITY_UNAVAILABLE",
-              String.format("Details for product %s are not available. This method must be run with the app in foreground.",
-                      product),
-              null);
+          "ACTIVITY_UNAVAILABLE",
+          String.format(
+              "Details for product %s are not available. This method must be run with the app in foreground.",
+              product),
+          null);
       return;
     }
 
-    BillingFlowParams.ProductDetailsParams.Builder productDetailsParamsBuilder = BillingFlowParams.ProductDetailsParams.newBuilder();
+    BillingFlowParams.ProductDetailsParams.Builder productDetailsParamsBuilder =
+        BillingFlowParams.ProductDetailsParams.newBuilder();
     productDetailsParamsBuilder.setProductDetails(productDetails);
     if (offerToken != null) {
       productDetailsParamsBuilder.setOfferToken(offerToken);
@@ -297,7 +305,7 @@ class MethodCallHandlerImpl
     productDetailsParamsList.add(productDetailsParamsBuilder.build());
 
     BillingFlowParams.Builder paramsBuilder =
-            BillingFlowParams.newBuilder().setProductDetailsParamsList(productDetailsParamsList);
+        BillingFlowParams.newBuilder().setProductDetailsParamsList(productDetailsParamsList);
     if (accountId != null && !accountId.isEmpty()) {
       paramsBuilder.setObfuscatedAccountId(accountId);
     }
@@ -305,7 +313,7 @@ class MethodCallHandlerImpl
       paramsBuilder.setObfuscatedProfileId(obfuscatedProfileId);
     }
     BillingFlowParams.SubscriptionUpdateParams.Builder subscriptionUpdateParamsBuilder =
-            BillingFlowParams.SubscriptionUpdateParams.newBuilder();
+        BillingFlowParams.SubscriptionUpdateParams.newBuilder();
     if (oldProduct != null && !oldProduct.isEmpty() && purchaseToken != null) {
       subscriptionUpdateParamsBuilder.setOldPurchaseToken(purchaseToken);
       // The proration mode value has to match one of the following declared in
@@ -314,8 +322,7 @@ class MethodCallHandlerImpl
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
     result.success(
-            fromBillingResult(
-                    billingClient.launchBillingFlow(activity, paramsBuilder.build())));
+        fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build())));
   }
 
   private void consumeAsync(String purchaseToken, final MethodChannel.Result result) {

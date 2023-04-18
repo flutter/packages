@@ -17,7 +17,6 @@ import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -33,8 +32,10 @@ import org.junit.Test;
 public class TranslatorTest {
   private static final String PURCHASE_EXAMPLE_JSON =
       "{\"orderId\":\"foo\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy payload\",\"isAcknowledged\":\"true\", \"obfuscatedAccountId\":\"Account101\", \"obfuscatedProfileId\":\"Profile105\"}";
-  private static final String IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON = "{\"title\":\"Example title\",\"description\":\"Example description\",\"productId\":\"Example id\",\"type\":\"inapp\",\"name\":\"Example name\",\"oneTimePurchaseOfferDetails\":{\"priceAmountMicros\":990000,\"priceCurrencyCode\":\"USD\",\"formattedPrice\":\"$0.99\"}}";
-  private static final String SUBS_PRODUCT_DETAIL_EXAMPLE_JSON = "{\"title\":\"Example title 2\",\"description\":\"Example description 2\",\"productId\":\"Example id 2\",\"type\":\"subs\",\"name\":\"Example name 2\",\"subscriptionOfferDetails\":[{\"offerId\":\"Example offer id\",\"basePlanId\":\"Example base plan id\",\"offerTags\":[\"Example offer tag\"],\"offerIdToken\":\"Example offer token\",\"pricingPhases\":[{\"formattedPrice\":\"$0.99\",\"priceCurrencyCode\":\"USD\",\"priceAmountMicros\":990000,\"billingCycleCount\":4,\"billingPeriod\":\"Example billing period\",\"recurrenceMode\":0}]}]}";
+  private static final String IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON =
+      "{\"title\":\"Example title\",\"description\":\"Example description\",\"productId\":\"Example id\",\"type\":\"inapp\",\"name\":\"Example name\",\"oneTimePurchaseOfferDetails\":{\"priceAmountMicros\":990000,\"priceCurrencyCode\":\"USD\",\"formattedPrice\":\"$0.99\"}}";
+  private static final String SUBS_PRODUCT_DETAIL_EXAMPLE_JSON =
+      "{\"title\":\"Example title 2\",\"description\":\"Example description 2\",\"productId\":\"Example id 2\",\"type\":\"subs\",\"name\":\"Example name 2\",\"subscriptionOfferDetails\":[{\"offerId\":\"Example offer id\",\"basePlanId\":\"Example base plan id\",\"offerTags\":[\"Example offer tag\"],\"offerIdToken\":\"Example offer token\",\"pricingPhases\":[{\"formattedPrice\":\"$0.99\",\"priceCurrencyCode\":\"USD\",\"priceAmountMicros\":990000,\"billingCycleCount\":4,\"billingPeriod\":\"Example billing period\",\"recurrenceMode\":0}]}]}";
 
   Constructor<ProductDetails> productDetailsConstructor;
 
@@ -48,8 +49,10 @@ public class TranslatorTest {
   }
 
   @Test
-  public void fromInAppProductDetail() throws InvocationTargetException, IllegalAccessException, InstantiationException {
-    final ProductDetails expected = productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON);
+  public void fromInAppProductDetail()
+      throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    final ProductDetails expected =
+        productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON);
 
     Map<String, Object> serialized = Translator.fromProductDetail(expected);
 
@@ -57,8 +60,10 @@ public class TranslatorTest {
   }
 
   @Test
-  public void fromSubsProductDetail() throws InvocationTargetException, IllegalAccessException, InstantiationException {
-    final ProductDetails expected = productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON);
+  public void fromSubsProductDetail()
+      throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    final ProductDetails expected =
+        productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON);
 
     Map<String, Object> serialized = Translator.fromProductDetail(expected);
 
@@ -66,11 +71,12 @@ public class TranslatorTest {
   }
 
   @Test
-  public void fromProductDetailsList() throws InvocationTargetException, IllegalAccessException, InstantiationException {
+  public void fromProductDetailsList()
+      throws InvocationTargetException, IllegalAccessException, InstantiationException {
     final List<ProductDetails> expected =
         Arrays.asList(
-                productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON),
-                productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON));
+            productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON),
+            productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON));
 
     final List<HashMap<String, Object>> serialized = Translator.fromProductDetailsList(expected);
 
@@ -185,74 +191,82 @@ public class TranslatorTest {
     }
   }
 
-  private void assertSerialized(
-      ProductDetails expected, Map<String, Object> serialized) {
+  private void assertSerialized(ProductDetails expected, Map<String, Object> serialized) {
     assertEquals(expected.getDescription(), serialized.get("description"));
     assertEquals(expected.getTitle(), serialized.get("title"));
     assertEquals(expected.getName(), serialized.get("name"));
-    assertEquals(
-        expected.getProductId(),
-        serialized.get("productId"));
+    assertEquals(expected.getProductId(), serialized.get("productId"));
     assertEquals(expected.getProductType(), serialized.get("productType"));
 
-    ProductDetails.OneTimePurchaseOfferDetails expectedOneTimePurchaseOfferDetails = expected.getOneTimePurchaseOfferDetails();
+    ProductDetails.OneTimePurchaseOfferDetails expectedOneTimePurchaseOfferDetails =
+        expected.getOneTimePurchaseOfferDetails();
     Object oneTimePurchaseOfferDetailsObject = serialized.get("oneTimePurchaseOfferDetails");
-    assertEquals(expectedOneTimePurchaseOfferDetails == null, oneTimePurchaseOfferDetailsObject == null);
+    assertEquals(
+        expectedOneTimePurchaseOfferDetails == null, oneTimePurchaseOfferDetailsObject == null);
     if (expectedOneTimePurchaseOfferDetails != null && oneTimePurchaseOfferDetailsObject != null) {
-      @SuppressWarnings(value="unchecked")
-      Map<String, Object> oneTimePurchaseOfferDetailsMap = (Map<String, Object>) oneTimePurchaseOfferDetailsObject;
+      @SuppressWarnings(value = "unchecked")
+      Map<String, Object> oneTimePurchaseOfferDetailsMap =
+          (Map<String, Object>) oneTimePurchaseOfferDetailsObject;
       assertSerialized(expectedOneTimePurchaseOfferDetails, oneTimePurchaseOfferDetailsMap);
     }
 
-    List<ProductDetails.SubscriptionOfferDetails> expectedSubscriptionOfferDetailsList = expected.getSubscriptionOfferDetails();
+    List<ProductDetails.SubscriptionOfferDetails> expectedSubscriptionOfferDetailsList =
+        expected.getSubscriptionOfferDetails();
     Object subscriptionOfferDetailsListObject = serialized.get("subscriptionOfferDetails");
-    assertEquals(expectedSubscriptionOfferDetailsList == null, subscriptionOfferDetailsListObject == null);
-    if (expectedSubscriptionOfferDetailsList != null && subscriptionOfferDetailsListObject != null) {
-      @SuppressWarnings(value="unchecked")
-      List<Object> subscriptionOfferDetailsListList = (List<Object>) subscriptionOfferDetailsListObject;
+    assertEquals(
+        expectedSubscriptionOfferDetailsList == null, subscriptionOfferDetailsListObject == null);
+    if (expectedSubscriptionOfferDetailsList != null
+        && subscriptionOfferDetailsListObject != null) {
+      @SuppressWarnings(value = "unchecked")
+      List<Object> subscriptionOfferDetailsListList =
+          (List<Object>) subscriptionOfferDetailsListObject;
       assertSerialized(expectedSubscriptionOfferDetailsList, subscriptionOfferDetailsListList);
     }
   }
 
-  private void assertSerialized(ProductDetails.OneTimePurchaseOfferDetails expected, Map<String, Object> serialized) {
-      assertEquals(expected.getPriceAmountMicros(), serialized.get("priceAmountMicros"));
-      assertEquals(expected.getPriceCurrencyCode(), serialized.get("priceCurrencyCode"));
-      assertEquals(expected.getFormattedPrice(), serialized.get("formattedPrice"));
+  private void assertSerialized(
+      ProductDetails.OneTimePurchaseOfferDetails expected, Map<String, Object> serialized) {
+    assertEquals(expected.getPriceAmountMicros(), serialized.get("priceAmountMicros"));
+    assertEquals(expected.getPriceCurrencyCode(), serialized.get("priceCurrencyCode"));
+    assertEquals(expected.getFormattedPrice(), serialized.get("formattedPrice"));
   }
 
-  private void assertSerialized(List<ProductDetails.SubscriptionOfferDetails> expected, List<Object> serialized) {
+  private void assertSerialized(
+      List<ProductDetails.SubscriptionOfferDetails> expected, List<Object> serialized) {
     assertEquals(expected.size(), serialized.size());
     for (int i = 0; i < expected.size(); i++) {
-      @SuppressWarnings(value="unchecked")
+      @SuppressWarnings(value = "unchecked")
       Map<String, Object> serializedMap = (Map<String, Object>) serialized.get(i);
       assertSerialized(expected.get(i), serializedMap);
     }
   }
 
-  private void assertSerialized(ProductDetails.SubscriptionOfferDetails expected, Map<String, Object> serialized) {
-      assertEquals(expected.getBasePlanId(), serialized.get("basePlanId"));
-      assertEquals(expected.getOfferId(), serialized.get("offerId"));
-      assertEquals(expected.getOfferTags(), serialized.get("offerTags"));
-      assertEquals(expected.getOfferToken(), serialized.get("offerIdToken"));
+  private void assertSerialized(
+      ProductDetails.SubscriptionOfferDetails expected, Map<String, Object> serialized) {
+    assertEquals(expected.getBasePlanId(), serialized.get("basePlanId"));
+    assertEquals(expected.getOfferId(), serialized.get("offerId"));
+    assertEquals(expected.getOfferTags(), serialized.get("offerTags"));
+    assertEquals(expected.getOfferToken(), serialized.get("offerIdToken"));
 
-      @SuppressWarnings(value="unchecked")
-      List<Object> serializedPricingPhases = (List<Object>) serialized.get("pricingPhases");
-      assertNotNull(serializedPricingPhases);
-      assertSerialized(expected.getPricingPhases(), serializedPricingPhases);
+    @SuppressWarnings(value = "unchecked")
+    List<Object> serializedPricingPhases = (List<Object>) serialized.get("pricingPhases");
+    assertNotNull(serializedPricingPhases);
+    assertSerialized(expected.getPricingPhases(), serializedPricingPhases);
   }
 
   private void assertSerialized(ProductDetails.PricingPhases expected, List<Object> serialized) {
     List<ProductDetails.PricingPhase> expectedPhases = expected.getPricingPhaseList();
     assertEquals(expectedPhases.size(), serialized.size());
     for (int i = 0; i < serialized.size(); i++) {
-      @SuppressWarnings(value="unchecked")
+      @SuppressWarnings(value = "unchecked")
       Map<String, Object> pricingPhaseMap = (Map<String, Object>) serialized.get(i);
       assertSerialized(expectedPhases.get(i), pricingPhaseMap);
     }
     expected.getPricingPhaseList();
   }
 
-  private void assertSerialized(ProductDetails.PricingPhase expected, Map<String, Object> serialized) {
+  private void assertSerialized(
+      ProductDetails.PricingPhase expected, Map<String, Object> serialized) {
     assertEquals(expected.getFormattedPrice(), serialized.get("formattedPrice"));
     assertEquals(expected.getPriceCurrencyCode(), serialized.get("priceCurrencyCode"));
     assertEquals(expected.getPriceAmountMicros(), serialized.get("priceAmountMicros"));
