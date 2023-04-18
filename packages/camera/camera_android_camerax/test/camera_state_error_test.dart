@@ -2,20 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:camera_android_camerax/src/camera_state_error.dart';
+import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:camera_android_camerax/src/camera_state_error.dart';
-import 'package:camera_android_camerax/src/camerax_library.g.dart';
-import 'package:camera_android_camerax/src/instance_manager.dart';
 
-import 'camera_state_error_test.mocks.dart';
 import 'test_camerax_library.g.dart';
-
-// TODO(bparrishMines): Move desired test implementations to test file or
-// remove .gen_api_impls from filename and follow todos below
-// TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
-// TODO(bparrishMines): Run build runner
 
 @GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
@@ -26,7 +18,9 @@ void main() {
       TestInstanceManagerHostApi.setup(null);
     });
 
-    test('FlutterAPI create', () {
+    test(
+        'FlutterAPI create makes call to create CameraStateError instance with expected identifier',
+        () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
@@ -36,17 +30,27 @@ void main() {
       );
 
       const int instanceIdentifier = 0;
+      const int code = 23;
+      const String description = 'Test error description!';
 
       api.create(
         instanceIdentifier,
-        0,
-        'testString',
+        code,
+        description,
       );
 
+      // Test instance type.
+      final Object? instance =
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier);
       expect(
-        instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+        instance,
         isA<CameraStateError>(),
       );
+
+      // Test instance properties.
+      final CameraStateError cameraStateError = instance! as CameraStateError;
+      expect(cameraStateError.code, equals(code));
+      expect(cameraStateError.description, equals(description));
     });
   });
 }

@@ -35,8 +35,9 @@ public class LiveDataFlutterApiWrapper {
   }
 
   /**
-   * Stores the {@link LiveData} instance and notifies Dart to create and store a new {@link LiveData} instance
-   * that is attached to this one. If {@code instance} has already been added, this method does nothing.
+   * Stores the {@link LiveData} instance and notifies Dart to create and store a new {@link
+   * LiveData} instance that is attached to this one. If {@code instance} has already been added,
+   * this method does nothing.
    */
   public void create(
       @NonNull LiveData<?> instance, @NonNull LiveDataFlutterApi.Reply<Void> callback) {

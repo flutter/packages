@@ -37,16 +37,17 @@ public class ObserverHostApiImpl implements ObserverHostApi {
   public static class ObserverImpl<T> implements Observer<T> {
     private ObserverFlutterApiWrapper observerFlutterApiWrapper;
 
-    /** Constructs an instance of {@link Observer} that passes arguments of callbacks methods to Dart. */
+    /**
+     * Constructs an instance of {@link Observer} that passes arguments of callbacks methods to
+     * Dart.
+     */
     public ObserverImpl(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
       super();
       observerFlutterApiWrapper = new ObserverFlutterApiWrapper(binaryMessenger, instanceManager);
     }
 
-    /**
-     * Method called when the data in observance is changed to {@code value}.
-     */
+    /** Method called when the data in observance is changed to {@code value}. */
     @Override
     public void onChanged(T value) {
       observerFlutterApiWrapper.onChanged(this, value, reply -> {});
@@ -92,9 +93,7 @@ public class ObserverHostApiImpl implements ObserverHostApi {
     this.observerProxy = observerProxy;
   }
 
-  /**
-   * Creates an {@link Observer} instance with the specified observer.
-   */
+  /** Creates an {@link Observer} instance with the specified observer. */
   @Override
   public void create(@NonNull Long identifier) {
     instanceManager.addDartCreatedInstance(

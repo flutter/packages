@@ -28,6 +28,7 @@ public class ObserverTest {
   @SuppressWarnings("rawtypes")
   @Mock
   public ObserverHostApiImpl.ObserverImpl mockObserver;
+
   @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public ObserverFlutterApi mockFlutterApi;
   @Mock public ObserverHostApiImpl.ObserverProxy mockProxy;
@@ -76,6 +77,7 @@ public class ObserverTest {
     instance.onChanged(mockCameraState);
 
     verify(mockFlutterApi)
-        .onChanged(eq(instanceIdentifier), eq(Objects.requireNonNull(mockCameraStateIdentifier)), any());
+        .onChanged(
+            eq(instanceIdentifier), eq(Objects.requireNonNull(mockCameraStateIdentifier)), any());
   }
 }

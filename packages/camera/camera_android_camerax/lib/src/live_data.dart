@@ -73,8 +73,8 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
   /// Adds specified [Observer] to the list of observers of the specified
   /// [LiveData] instance.
   Future<void> observeFromInstances(
-    LiveData instance,
-    Observer observer,
+    LiveData<dynamic> instance,
+    Observer<dynamic> observer,
   ) {
     return observe(
       instanceManager.getIdentifier(instance)!,
@@ -84,7 +84,7 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
 
   /// Removes all observers of the specified [LiveData] instance.
   Future<void> removeObserversFromInstances(
-    LiveData instance,
+    LiveData<dynamic> instance,
   ) {
     return removeObservers(
       instanceManager.getIdentifier(instance)!,
@@ -99,7 +99,7 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
     return cast(
         instanceManager.getIdentifier(instance)!,
         instanceManager.addDartCreatedInstance(newInstance,
-            onCopy: (LiveData original) => LiveData.detached(
+            onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
                   binaryMessenger: binaryMessenger,
                   instanceManager: instanceManager,
                 )));
@@ -133,12 +133,12 @@ class LiveDataFlutterApiImpl implements LiveDataFlutterApi {
     int identifier,
   ) {
     instanceManager.addHostCreatedInstance(
-      LiveData.detached(
+      LiveData<dynamic>.detached(
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),
       identifier,
-      onCopy: (LiveData original) => LiveData.detached(
+      onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),

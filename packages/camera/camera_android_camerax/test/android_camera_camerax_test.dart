@@ -46,8 +46,8 @@ void main() {
 
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
-  Future<bool> testCameraClosingObserver(
-      AndroidCameraCameraX camera, int cameraId, Observer observer) async {
+  Future<bool> testCameraClosingObserver(AndroidCameraCameraX camera,
+      int cameraId, Observer<dynamic> observer) async {
     const String testErrorDescription = 'Test error description';
     final Stream<CameraClosingEvent> cameraClosingEventStream =
         camera.onCameraClosing(cameraId);
@@ -483,7 +483,7 @@ void main() {
             camera,
             78,
             verify(mockLiveCameraState.observe(captureAny)).captured.single
-                as Observer),
+                as Observer<dynamic>),
         isTrue);
   });
 

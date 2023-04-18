@@ -592,13 +592,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    final CameraController cameraController = controller!;
-
-    final Offset offset = Offset(
-      details.localPosition.dx / constraints.maxWidth,
-      details.localPosition.dy / constraints.maxHeight,
-    );
-
     // TODO(camsim99): Add functionality back here for setting exposure and
     // focus point.
   }

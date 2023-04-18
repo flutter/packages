@@ -2,21 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/camera_state.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/live_data.dart';
 import 'package:camera_android_camerax/src/observer.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'live_data_test.mocks.dart';
 import 'test_camerax_library.g.dart';
-
-// TODO(bparrishMines): Move desired test implementations to test file or
-// remove .gen_api_impls from filename and follow todos below
-// TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
-// TODO(bparrishMines): Run build runner
 
 @GenerateMocks(<Type>[TestLiveDataHostApi, TestInstanceManagerHostApi])
 void main() {
@@ -28,7 +23,7 @@ void main() {
       TestInstanceManagerHostApi.setup(null);
     });
 
-    test('observe', () async {
+    test('observe makes call to add observer to LiveData instance', () async {
       final MockTestLiveDataHostApi mockApi = MockTestLiveDataHostApi();
       TestLiveDataHostApi.setup(mockApi);
 
@@ -36,35 +31,29 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final LiveData instance = LiveData.detached(
-        binaryMessenger: null,
+      final LiveData<dynamic> instance = LiveData<dynamic>.detached(
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
         instance,
         instanceIdentifier,
-        onCopy: (LiveData original) => LiveData.detached(
-          binaryMessenger: null,
+        onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
           instanceManager: instanceManager,
         ),
       );
 
-      final Observer observer = Observer.detached(
-        // TODO(bparrishMines): This should include the missing params.
-        binaryMessenger: null,
+      final Observer<dynamic> observer = Observer<dynamic>.detached(
         instanceManager: instanceManager,
-        onChanged: (Observer<dynamic> instance, value) {},
+        onChanged: (Object value) {},
       );
       const int observerIdentifier = 20;
       instanceManager.addHostCreatedInstance(
         observer,
         observerIdentifier,
-        onCopy: (_) => Observer.detached(
-          // TODO(bparrishMines): This should include the missing params.
-          binaryMessenger: null,
+        onCopy: (_) => Observer<dynamic>.detached(
           instanceManager: instanceManager,
-          onChanged: (Observer<dynamic> instance, value) {},
+          onChanged: (Object value) {},
         ),
       );
 
@@ -78,7 +67,9 @@ void main() {
       ));
     });
 
-    test('removeObservers', () async {
+    test(
+        'removeObservers makes call to remove observers from LiveData instance',
+        () async {
       final MockTestLiveDataHostApi mockApi = MockTestLiveDataHostApi();
       TestLiveDataHostApi.setup(mockApi);
 
@@ -86,16 +77,14 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final LiveData instance = LiveData.detached(
-        binaryMessenger: null,
+      final LiveData<dynamic> instance = LiveData<dynamic>.detached(
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
         instance,
         instanceIdentifier,
-        onCopy: (LiveData original) => LiveData.detached(
-          binaryMessenger: null,
+        onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
           instanceManager: instanceManager,
         ),
       );
@@ -107,7 +96,39 @@ void main() {
       ));
     });
 
-    test('FlutterAPI create', () {
+    test('cast makes call to create instance with expected type', () {
+      final MockTestLiveDataHostApi mockApi = MockTestLiveDataHostApi();
+      TestLiveDataHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final LiveData<dynamic> instance = LiveData<dynamic>.detached(
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 27;
+      instanceManager.addHostCreatedInstance(
+        instance,
+        instanceIdentifier,
+        onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
+          instanceManager: instanceManager,
+        ),
+      );
+
+      instance.cast<CameraState>();
+
+      final int? newInstanceIdentifier =
+          verify(mockApi.cast(instanceIdentifier, captureAny)).captured.single
+              as int?;
+      expect(
+          instanceManager.getInstanceWithWeakReference(newInstanceIdentifier!),
+          isA<LiveData<CameraState>>());
+    });
+
+    test(
+        'FlutterAPI create makes call to create LiveData instance with expected identifier',
+        () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
@@ -124,7 +145,7 @@ void main() {
 
       expect(
         instanceManager.getInstanceWithWeakReference(instanceIdentifier),
-        isA<LiveData>(),
+        isA<LiveData<dynamic>>(),
       );
     });
   });

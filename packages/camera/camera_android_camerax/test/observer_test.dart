@@ -2,21 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:camera_android_camerax/src/camera_state.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/observer.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'observer_test.mocks.dart';
 import 'test_camerax_library.g.dart';
-
-// TODO(bparrishMines): Move desired test implementations to test file or
-// remove .gen_api_impls from filename and follow todos below
-// TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
-// TODO(bparrishMines): Run build runner
 
 @GenerateMocks(<Type>[TestObserverHostApi, TestInstanceManagerHostApi])
 void main() {
@@ -28,7 +23,7 @@ void main() {
       TestInstanceManagerHostApi.setup(null);
     });
 
-    test('HostApi create', () {
+    test('HostApi create makes call to create Observer instance', () {
       final MockTestObserverHostApi mockApi = MockTestObserverHostApi();
       TestObserverHostApi.setup(mockApi);
       TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
@@ -37,9 +32,9 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final Observer instance = Observer(
+      final Observer<dynamic> instance = Observer<dynamic>(
         instanceManager: instanceManager,
-        onChanged: (Observer<dynamic> instance, value) {},
+        onChanged: (Object value) {},
       );
 
       verify(mockApi.create(
@@ -47,24 +42,35 @@ void main() {
       ));
     });
 
-    test('onChanged', () {
+    test(
+        'HostAPI create makes Observer instance that throws assertion error if onChanged receives unexpected parameter type',
+        () {
+      final MockTestObserverHostApi mockApi = MockTestObserverHostApi();
+      TestObserverHostApi.setup(mockApi);
+      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
+      final Observer<String> cameraStateObserver =
+          Observer<String>.detached(onChanged: (Object value) {});
+
+      expect(
+          () => cameraStateObserver.onChanged(
+              CameraState.detached(type: CameraStateType.pendingOpen)),
+          throwsAssertionError);
+    });
+
+    test(
+        'FlutterAPI onChanged makes call with expected parameter to Observer instance onChanged callback',
+        () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
       const int instanceIdentifier = 0;
-      late final List<Object?> callbackParameters;
+      late final Object? callbackParameter;
       final Observer<CameraState> instance = Observer<CameraState>.detached(
-        onChanged: (
-          Observer<CameraState> instance,
-          CameraState value,
-        ) {
-          callbackParameters = <Object?>[
-            instance,
-            value,
-          ];
+        onChanged: (Object value) {
+          callbackParameter = value;
         },
-        binaryMessenger: null,
         instanceManager: instanceManager,
       );
       instanceManager.addHostCreatedInstance(
@@ -73,7 +79,6 @@ void main() {
         onCopy: (Observer<CameraState> original) =>
             Observer<CameraState>.detached(
           onChanged: original.onChanged,
-          binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );
@@ -82,11 +87,9 @@ void main() {
         instanceManager: instanceManager,
       );
 
-      final CameraStateType cameraStateType = CameraStateType.closed;
+      const CameraStateType cameraStateType = CameraStateType.closed;
 
       final CameraState value = CameraState.detached(
-        // TODO(bparrishMines): This should include the missing params.
-        binaryMessenger: null,
         instanceManager: instanceManager,
         type: cameraStateType,
       );
@@ -95,8 +98,6 @@ void main() {
         value,
         valueIdentifier,
         onCopy: (_) => CameraState.detached(
-          // TODO(bparrishMines): This should include the missing params.
-          binaryMessenger: null,
           instanceManager: instanceManager,
           type: cameraStateType,
         ),
@@ -107,10 +108,7 @@ void main() {
         valueIdentifier,
       );
 
-      expect(callbackParameters, <Object?>[
-        instance,
-        value,
-      ]);
+      expect(callbackParameter, value);
     });
   });
 }

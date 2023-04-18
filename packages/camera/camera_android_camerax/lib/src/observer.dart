@@ -33,14 +33,12 @@ class Observer<T> extends JavaObject {
 
   /// Constructs a [Observer] that is not automatically attached to a native object.
   Observer.detached(
-      {BinaryMessenger? binaryMessenger,
-      InstanceManager? instanceManager,
+      {super.binaryMessenger,
+      super.instanceManager,
       required void Function(Object value) onChanged})
       : _api = _ObserverHostApiImpl(
             binaryMessenger: binaryMessenger, instanceManager: instanceManager),
-        super.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager) {
+        super.detached() {
     this.onChanged = (Object value) {
       assert(value is T);
       onChanged(value);

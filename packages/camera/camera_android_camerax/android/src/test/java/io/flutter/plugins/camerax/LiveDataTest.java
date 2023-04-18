@@ -30,6 +30,7 @@ public class LiveDataTest {
   @SuppressWarnings("rawtypes")
   @Mock
   public LiveData mockLiveData;
+
   @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public LiveDataFlutterApi mockFlutterApi;
 

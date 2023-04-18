@@ -56,9 +56,9 @@ public class CameraStateTest {
     flutterApi.create(mockCameraState, type, mockError, reply -> {});
 
     final long instanceIdentifier =
-      Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockCameraState));
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockCameraState));
     final ArgumentCaptor<CameraStateTypeData> cameraStateTypeDataCaptor =
-      ArgumentCaptor.forClass(CameraStateTypeData.class);
+        ArgumentCaptor.forClass(CameraStateTypeData.class);
 
     verify(mockFlutterApi)
         .create(
@@ -66,7 +66,7 @@ public class CameraStateTest {
             cameraStateTypeDataCaptor.capture(),
             eq(Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockError))),
             any());
-    
+
     assertEquals(cameraStateTypeDataCaptor.getValue().getValue(), CameraStateType.OPEN);
   }
 }
