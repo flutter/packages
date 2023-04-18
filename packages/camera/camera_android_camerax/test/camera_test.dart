@@ -40,7 +40,7 @@ void main() {
       instanceManager.addHostCreatedInstance(
         camera,
         cameraIdentifier,
-        onCopy: (_) => CameraInfo.detached(),
+        onCopy: (_) => Camera.detached(),
       );
       instanceManager.addHostCreatedInstance(
         cameraInfo,
