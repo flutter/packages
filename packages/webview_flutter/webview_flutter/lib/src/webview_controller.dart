@@ -53,7 +53,7 @@ class WebViewController {
   /// Constructs a [WebViewController] from creation params for a specific
   /// platform.
   ///
-  /// {@template webview_flutter.WebViewCookieManager.fromPlatformCreationParams}
+  /// {@template webview_flutter.WebViewController.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
   /// iOS and Android:
   ///
