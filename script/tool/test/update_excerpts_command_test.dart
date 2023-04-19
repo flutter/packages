@@ -100,6 +100,39 @@ void main() {
                 '../README.md',
               ],
               example.path),
+        ]));
+
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Ran for 1 package(s)'),
+        ]));
+  });
+
+  test('updates example readme when config is present', () async {
+    final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+    final Directory example = getExampleDir(package);
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['update-excerpts']);
+
+    expect(
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall(
+              'dart',
+              const <String>[
+                'run',
+                'build_runner',
+                'build',
+                '--config',
+                'excerpt',
+                '--output',
+                'excerpts',
+                '--delete-conflicting-outputs',
+              ],
+              example.path),
           ProcessCall(
               'dart',
               const <String>[
