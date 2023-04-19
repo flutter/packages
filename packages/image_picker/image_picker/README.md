@@ -41,6 +41,9 @@ It is no longer required to add `android:requestLegacyExternalStorage="true"` as
 **Note:** Images and videos picked using the camera are saved to your application's local cache, and should therefore be expected to only be around temporarily.
 If you require your picked image to be stored permanently, it is your responsibility to move it to a more permanent location.
 
+
+**Note:** Launching the image picker from an `Activity` with `launchMode: singleInstance` will always return `RESULT_CANCELED`. In this launch mode, new activities are created in a separate [Task][2]. As activities cannot communicate between tasks, the image picker activity cannot send back its eventual result to the calling activity. To work around this problem, consider using `launchMode: singleTask` instead.
+
 ### Example
 
 <?code-excerpt "readme_excerpts.dart (Pick)"?>
@@ -111,3 +114,4 @@ Starting with version **0.8.2** of the image_picker plugin, new methods have bee
 | `LostData response = await _picker.getLostData()` | `LostDataResponse response = await _picker.retrieveLostData()` |
 
 [1]: https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
+[2]: https://developer.android.com/guide/components/activities/tasks-and-back-stack
