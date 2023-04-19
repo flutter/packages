@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageProxy;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PlaneProxyHostApi;
+import java.nio.ByteBuffer;
 import java.util.Objects;
 
 /**
@@ -31,7 +32,7 @@ public class PlaneProxyHostApiImpl implements PlaneProxyHostApi {
   /** Returns the pixel stride. */
   @Override
   public Long getPixelStride(@NonNull Long identifier) {
-    return getPlaneProxyInstance(identifier).getPixelStride();
+    return Long.valueOf(getPlaneProxyInstance(identifier).getPixelStride());
   }
 
   /** Returns the pixels buffer. */
@@ -47,7 +48,7 @@ public class PlaneProxyHostApiImpl implements PlaneProxyHostApi {
   /** Returns the row stride. */
   @Override
   public Long getRowStride(@NonNull Long identifier) {
-    return getPlaneProxyInstance(identifier).getRowStride();
+    return Long.valueOf(getPlaneProxyInstance(identifier).getRowStride());
   }
 
   /** Retrieives the {@link ImageProxy.PlaneProxy} instance associated with the specified {@code identifier}. */

@@ -601,11 +601,34 @@ abstract class TestImageCaptureHostApi {
   }
 }
 
+class _TestImageAnalysisHostApiCodec extends StandardMessageCodec {
+  const _TestImageAnalysisHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ResolutionInfo) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return ResolutionInfo.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 abstract class TestImageAnalysisHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _TestImageAnalysisHostApiCodec();
 
-  void create(int identifier, int? targetResolutionIdentifier);
+  void create(int identifier, ResolutionInfo? targetResolutionIdentifier);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
@@ -626,7 +649,7 @@ abstract class TestImageAnalysisHostApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ImageAnalysisHostApi.create was null, expected non-null int.');
-          final int? arg_targetResolutionIdentifier = (args[1] as int?);
+          final ResolutionInfo? arg_targetResolutionIdentifier = (args[1] as ResolutionInfo?);
           api.create(arg_identifier!, arg_targetResolutionIdentifier);
           return <Object?>[];
         });

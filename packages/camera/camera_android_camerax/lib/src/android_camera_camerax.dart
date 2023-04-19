@@ -77,7 +77,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraEventStreamController.stream
           .where((CameraEvent event) => event.cameraId == cameraId);
 
-  /// TODO(camsim99)
+  /// The controller we need to stream image data.
   StreamController<CameraImageData>? _cameraImageDataStreamController;
 
   /// Returns list of all available cameras and their descriptions.
@@ -426,7 +426,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     imageAnalysis!.clearAnalyzer();
   }
 
-  // TODO(camsim99)
+  /// Converts between Android ImageFormat constants and [ImageFormatGroup]s.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/ImageFormat.
   ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
     switch (data) {
       case 35: // android.graphics.ImageFormat.YUV_420_888

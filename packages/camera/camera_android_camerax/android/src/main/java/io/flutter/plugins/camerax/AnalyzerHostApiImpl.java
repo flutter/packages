@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerHostApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
@@ -37,8 +38,8 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
   /**
    * Implementation of {@link ImageAnalysis.Analyzer} that passes arguments of callback methods to Dart.
    */
-  public static class AnalyzerImpl extends ImageAnalysis.Analyzer {
-    private ImageAnalysisAnalyzerFlutterApiImpl api;
+  public static class AnalyzerImpl implements ImageAnalysis.Analyzer {
+    private AnalyzerFlutterApiImpl api;
 
     /**
      * Constructs an instance of {@link ImageAnalysis.Analyzer} that passes arguments of callbacks methods
@@ -51,8 +52,8 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
     }
 
     @Override
-    public void analyze() {
-      api.analyze(this, reply -> {});
+    public void analyze(ImageProxy imageProxy) {
+      api.analyze(this, imageProxy, reply -> {});
     }
 
     /**
@@ -60,9 +61,8 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
      *
      * <p>This is only visible for testing.
      */
-    @SuppressWarnings("unused")
     @VisibleForTesting
-    void setApi(@NonNull ImageAnalysisAnalyzerFlutterApiImpl api) {
+    void setApi(@NonNull AnalyzerFlutterApiImpl api) {
       this.api = api;
     }
   }

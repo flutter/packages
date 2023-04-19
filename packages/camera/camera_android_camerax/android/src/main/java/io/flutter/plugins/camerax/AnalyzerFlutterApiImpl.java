@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerFlutterApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
@@ -53,10 +54,12 @@ public class AnalyzerFlutterApiImpl {
    * `instance`.
    */
   public void analyze(
-      @NonNull ImageAnalysis.Analyzer instance,
+      @NonNull ImageAnalysis.Analyzer analyzerInstance,
+      @NonNull ImageProxy imageProxyInstance,
       @NonNull AnalyzerFlutterApi.Reply<Void> callback) {
     api.analyze(
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(analyzerInstance)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(imageProxyInstance)),
         callback);
   }
 

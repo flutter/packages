@@ -77,14 +77,4 @@ public class CameraXProxy {
   public ImageAnalysis.Builder createImageAnalysisBuilder() {
     return new ImageAnalysis.Builder();
   }
-
-  /**
-   * Creates an instance of the {@code ImageAnalysisFlutterApiImpl}.
-   *
-   * <p>Included in this class for testing purposes.
-   */
-  public ImageAnalysisFlutterApiImpl createImageAnalysisFlutterApiImpl(
-      @NonNull BinaryMessenger binaryMessenger) {
-    return new ImageAnalysisFlutterApiImpl(binaryMessenger);
-  }
 }

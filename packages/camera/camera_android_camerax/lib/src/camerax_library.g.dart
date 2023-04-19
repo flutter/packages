@@ -925,6 +925,29 @@ class ImageCaptureHostApi {
   }
 }
 
+class _ImageAnalysisHostApiCodec extends StandardMessageCodec {
+  const _ImageAnalysisHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ResolutionInfo) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return ResolutionInfo.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 class ImageAnalysisHostApi {
   /// Constructor for [ImageAnalysisHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -933,9 +956,9 @@ class ImageAnalysisHostApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _ImageAnalysisHostApiCodec();
 
-  Future<void> create(int arg_identifier, int? arg_targetResolutionIdentifier) async {
+  Future<void> create(int arg_identifier, ResolutionInfo? arg_targetResolutionIdentifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImageAnalysisHostApi.create', codec,
         binaryMessenger: _binaryMessenger);

@@ -86,9 +86,7 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
           instanceManager: instanceManager,
         ),
       ),
-      targetResolution == null
-          ? null
-          : instanceManager.getIdentifier(targetResolution)!,
+      targetResolution,
     );
   }
 

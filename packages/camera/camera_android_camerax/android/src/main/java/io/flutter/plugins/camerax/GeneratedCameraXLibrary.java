@@ -1126,10 +1126,37 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
+  private static class ImageAnalysisHostApiCodec extends StandardMessageCodec {
+    public static final ImageAnalysisHostApiCodec INSTANCE = new ImageAnalysisHostApiCodec();
+
+    private ImageAnalysisHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof ResolutionInfo) {
+        stream.write(128);
+        writeValue(stream, ((ResolutionInfo) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageAnalysisHostApi {
 
-    void create(@NonNull Long identifier, @Nullable Long targetResolutionIdentifier);
+    void create(@NonNull Long identifier, @Nullable ResolutionInfo targetResolutionIdentifier);
 
     void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier);
 
@@ -1137,7 +1164,7 @@ public class GeneratedCameraXLibrary {
 
     /** The codec used by ImageAnalysisHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return ImageAnalysisHostApiCodec.INSTANCE;
     }
     /**Sets up an instance of `ImageAnalysisHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ImageAnalysisHostApi api) {
@@ -1151,9 +1178,9 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                Number targetResolutionIdentifierArg = (Number) args.get(1);
+                ResolutionInfo targetResolutionIdentifierArg = (ResolutionInfo) args.get(1);
                 try {
-                  api.create((identifierArg == null) ? null : identifierArg.longValue(), (targetResolutionIdentifierArg == null) ? null : targetResolutionIdentifierArg.longValue());
+                  api.create((identifierArg == null) ? null : identifierArg.longValue(), targetResolutionIdentifierArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

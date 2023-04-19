@@ -154,7 +154,7 @@ abstract class ImageCaptureHostApi {
 
 @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
 abstract class ImageAnalysisHostApi {
-  void create(int identifier, int? targetResolutionIdentifier);
+  void create(int identifier, ResolutionInfo? targetResolutionIdentifier);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
