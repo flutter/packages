@@ -37,12 +37,12 @@ public class PermissionRequestTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
   }
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   // These values MUST equal the constants for the Dart PermissionRequest class.
