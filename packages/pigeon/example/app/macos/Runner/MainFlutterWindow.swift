@@ -5,6 +5,12 @@
 import Cocoa
 import FlutterMacOS
 
+private class PigeonApiImplementation: ExampleHostApi {
+  func getHostString() throws -> String {
+    return "Swift"
+  }
+}
+
 class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
@@ -13,6 +19,10 @@ class MainFlutterWindow: NSWindow {
     self.setFrame(windowFrame, display: true)
 
     RegisterGeneratedPlugins(registry: flutterViewController)
+
+    let hostApi = PigeonApiImplementation()
+    ExampleHostApiSetup.setUp(
+      binaryMessenger: flutterViewController.engine.binaryMessenger, api: hostApi)
 
     super.awakeFromNib()
   }

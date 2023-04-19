@@ -5,6 +5,12 @@
 import UIKit
 import Flutter
 
+private class PigeonApiImplementation: ExampleHostApi {
+  func getHostString() throws -> String {
+    return "Swift"
+  }
+}
+
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
@@ -12,6 +18,12 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+
+    let controller = window?.rootViewController as! FlutterViewController
+    let api = PigeonApiImplementation()
+    ExampleHostApiSetup.setUp(binaryMessenger: controller.binaryMessenger, api: api)
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
   }
 }
