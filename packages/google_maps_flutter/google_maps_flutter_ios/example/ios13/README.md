@@ -10,4 +10,4 @@ very unlikely to be relevant.
 
 ## Versions
 
-This example requires iOS 13, so will select a 7.x SDK version.
+This example requires iOS 13, so will select a 7.x GoogleMaps SDK version.
