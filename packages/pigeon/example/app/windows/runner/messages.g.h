@@ -17,17 +17,16 @@
 
 namespace pigeon_example {
 
-
 // Generated class from Pigeon.
 
 class FlutterError {
  public:
-  explicit FlutterError(const std::string& code)
-    : code_(code) {}
+  explicit FlutterError(const std::string& code) : code_(code) {}
   explicit FlutterError(const std::string& code, const std::string& message)
-    : code_(code), message_(message) {}
-  explicit FlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
-    : code_(code), message_(message), details_(details) {}
+      : code_(code), message_(message) {}
+  explicit FlutterError(const std::string& code, const std::string& message,
+                        const flutter::EncodableValue& details)
+      : code_(code), message_(message), details_(details) {}
 
   const std::string& code() const { return code_; }
   const std::string& message() const { return message_; }
@@ -39,7 +38,8 @@ class FlutterError {
   flutter::EncodableValue details_;
 };
 
-template<class T> class ErrorOr {
+template <class T>
+class ErrorOr {
  public:
   ErrorOr(const T& rhs) : v_(rhs) {}
   ErrorOr(const T&& rhs) : v_(std::move(rhs)) {}
@@ -58,7 +58,8 @@ template<class T> class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
-// Generated interface from Pigeon that represents a handler of messages from Flutter.
+// Generated interface from Pigeon that represents a handler of messages from
+// Flutter.
 class ExampleHostApi {
  public:
   ExampleHostApi(const ExampleHostApi&) = delete;
@@ -68,16 +69,15 @@ class ExampleHostApi {
 
   // The codec used by ExampleHostApi.
   static const flutter::StandardMessageCodec& GetCodec();
-  // Sets up an instance of `ExampleHostApi` to handle messages through the `binary_messenger`.
-  static void SetUp(
-    flutter::BinaryMessenger* binary_messenger,
-    ExampleHostApi* api);
+  // Sets up an instance of `ExampleHostApi` to handle messages through the
+  // `binary_messenger`.
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    ExampleHostApi* api);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
  protected:
   ExampleHostApi() = default;
-
 };
 }  // namespace pigeon_example
 #endif  // PIGEON_MESSAGES_G_H_

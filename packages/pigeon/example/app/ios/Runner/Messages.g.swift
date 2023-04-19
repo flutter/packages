@@ -5,12 +5,13 @@
 // See also: https://pub.dev/packages/pigeon
 
 import Foundation
+
 #if os(iOS)
-import Flutter
+  import Flutter
 #elseif os(macOS)
-import FlutterMacOS
+  import FlutterMacOS
 #else
-#error("Unsupported platform.")
+  #error("Unsupported platform.")
 #endif
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -22,13 +23,13 @@ private func wrapError(_ error: Any) -> [Any?] {
     return [
       flutterError.code,
       flutterError.message,
-      flutterError.details
+      flutterError.details,
     ]
   }
   return [
     "\(error)",
     "\(type(of: error))",
-    "Stacktrace: \(Thread.callStackSymbols)"
+    "Stacktrace: \(Thread.callStackSymbols)",
   ]
 }
 
@@ -46,7 +47,8 @@ class ExampleHostApiSetup {
   /// The codec used by ExampleHostApi.
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?) {
-    let getHostStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ExampleHostApi.getHostString", binaryMessenger: binaryMessenger)
+    let getHostStringChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.ExampleHostApi.getHostString", binaryMessenger: binaryMessenger)
     if let api = api {
       getHostStringChannel.setMessageHandler { _, reply in
         do {

@@ -26,30 +26,35 @@ using flutter::EncodableValue;
 
 /// The codec used by ExampleHostApi.
 const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
-  return flutter::StandardMessageCodec::GetInstance(&flutter::StandardCodecSerializer::GetInstance());
+  return flutter::StandardMessageCodec::GetInstance(
+      &flutter::StandardCodecSerializer::GetInstance());
 }
 
-// Sets up an instance of `ExampleHostApi` to handle messages through the `binary_messenger`.
-void ExampleHostApi::SetUp(
-  flutter::BinaryMessenger* binary_messenger,
-  ExampleHostApi* api) {
+// Sets up an instance of `ExampleHostApi` to handle messages through the
+// `binary_messenger`.
+void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                           ExampleHostApi* api) {
   {
-    auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, "dev.flutter.pigeon.ExampleHostApi.getHostString", &GetCodec());
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger, "dev.flutter.pigeon.ExampleHostApi.getHostString",
+        &GetCodec());
     if (api != nullptr) {
-      channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          ErrorOr<std::string> output = api->GetHostString();
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              ErrorOr<std::string> output = api->GetHostString();
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
     } else {
       channel->SetMessageHandler(nullptr);
     }
@@ -57,19 +62,15 @@ void ExampleHostApi::SetUp(
 }
 
 EncodableValue ExampleHostApi::WrapError(std::string_view error_message) {
-  return EncodableValue(EncodableList{
-    EncodableValue(std::string(error_message)),
-    EncodableValue("Error"),
-    EncodableValue()
-  });
+  return EncodableValue(
+      EncodableList{EncodableValue(std::string(error_message)),
+                    EncodableValue("Error"), EncodableValue()});
 }
 
 EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{
-    EncodableValue(error.code()),
-    EncodableValue(error.message()),
-    error.details()
-  });
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
+                                      error.details()});
 }
 
 }  // namespace pigeon_example
