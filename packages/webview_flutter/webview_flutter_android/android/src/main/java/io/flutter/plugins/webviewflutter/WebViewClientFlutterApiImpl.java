@@ -37,7 +37,6 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       RenderProcessGoneDetail detail) {
     return new GeneratedAndroidWebView.RenderProcessGoneDetailData.Builder()
         .setDidCrash(detail.didCrash())
-        .setRendererPriorityAtExit((long) detail.rendererPriorityAtExit())
         .build();
   }
 

@@ -40,7 +40,6 @@ RenderProcessGoneDetail _toRenderProcessGoneDetail(
     RenderProcessGoneDetailData data) {
   return RenderProcessGoneDetail(
     didCrash: data.didCrash,
-    rendererPriorityAtExit: data.rendererPriorityAtExit,
   );
 }
 

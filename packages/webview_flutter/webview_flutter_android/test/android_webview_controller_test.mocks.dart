@@ -344,25 +344,22 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-  _i9.Future<void> setOnRenderProcessGone(
-          void Function({
-            bool didCrash,
-            int rendererPriorityAtExit,
-          })? onRenderProcessGone) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnRenderProcessGone,
-          [onRenderProcessGone],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-  @override
   _i9.Future<void> setOnUrlChange(_i3.UrlChangeCallback? onUrlChange) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnUrlChange,
           [onUrlChange],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setOnRenderProcessGone(
+          void Function(_i8.RenderProcessGoneInfo)? onRenderProcessGone) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnRenderProcessGone,
+          [onRenderProcessGone],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),

@@ -1145,14 +1145,10 @@ class RenderProcessGoneDetail {
   /// Constructs a [RenderProcessGoneDetail].
   RenderProcessGoneDetail({
     required this.didCrash,
-    required this.rendererPriorityAtExit,
   });
 
   /// Indicates whether the render process was observed to crash, or whether it was killed by the system.
   final bool didCrash;
-
-  /// Returns the renderer priority that was set at the time that the renderer exited.
-  final int rendererPriorityAtExit;
 }
 
 /// Manages Flutter assets that are part of Android's app bundle.

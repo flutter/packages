@@ -89,10 +89,9 @@ class WebResourceErrorData {
 }
 
 class RenderProcessGoneDetailData {
-  RenderProcessGoneDetailData(this.didCrash, this.rendererPriorityAtExit);
+  RenderProcessGoneDetailData(this.didCrash);
 
   bool didCrash;
-  int rendererPriorityAtExit;
 }
 
 class WebViewPoint {

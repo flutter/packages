@@ -1305,9 +1305,12 @@ abstract class TestWebViewClientHostApi {
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMockMessageHandler(null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        channel.setMockMessageHandler((Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.WebViewClientHostApi.setSynchronousReturnValueForOnRenderProcessGone was null.');
           final List<Object?> args = (message as List<Object?>?)!;

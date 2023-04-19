@@ -400,19 +400,6 @@ public class GeneratedAndroidWebView {
       this.didCrash = setterArg;
     }
 
-    private @NonNull Long rendererPriorityAtExit;
-
-    public @NonNull Long getRendererPriorityAtExit() {
-      return rendererPriorityAtExit;
-    }
-
-    public void setRendererPriorityAtExit(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"rendererPriorityAtExit\" is null.");
-      }
-      this.rendererPriorityAtExit = setterArg;
-    }
-
     /** Constructor is non-public to enforce null safety; use Builder. */
     RenderProcessGoneDetailData() {}
 
@@ -425,26 +412,17 @@ public class GeneratedAndroidWebView {
         return this;
       }
 
-      private @Nullable Long rendererPriorityAtExit;
-
-      public @NonNull Builder setRendererPriorityAtExit(@NonNull Long setterArg) {
-        this.rendererPriorityAtExit = setterArg;
-        return this;
-      }
-
       public @NonNull RenderProcessGoneDetailData build() {
         RenderProcessGoneDetailData pigeonReturn = new RenderProcessGoneDetailData();
         pigeonReturn.setDidCrash(didCrash);
-        pigeonReturn.setRendererPriorityAtExit(rendererPriorityAtExit);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
       toListResult.add(didCrash);
-      toListResult.add(rendererPriorityAtExit);
       return toListResult;
     }
 
@@ -452,13 +430,6 @@ public class GeneratedAndroidWebView {
       RenderProcessGoneDetailData pigeonResult = new RenderProcessGoneDetailData();
       Object didCrash = list.get(0);
       pigeonResult.setDidCrash((Boolean) didCrash);
-      Object rendererPriorityAtExit = list.get(1);
-      pigeonResult.setRendererPriorityAtExit(
-          (rendererPriorityAtExit == null)
-              ? null
-              : ((rendererPriorityAtExit instanceof Integer)
-                  ? (Integer) rendererPriorityAtExit
-                  : (Long) rendererPriorityAtExit));
       return pigeonResult;
     }
   }

@@ -129,17 +129,13 @@ class WebResourceErrorData {
 class RenderProcessGoneDetailData {
   RenderProcessGoneDetailData({
     required this.didCrash,
-    required this.rendererPriorityAtExit,
   });
 
   bool didCrash;
 
-  int rendererPriorityAtExit;
-
   Object encode() {
     return <Object?>[
       didCrash,
-      rendererPriorityAtExit,
     ];
   }
 
@@ -147,7 +143,6 @@ class RenderProcessGoneDetailData {
     result as List<Object?>;
     return RenderProcessGoneDetailData(
       didCrash: result[0]! as bool,
-      rendererPriorityAtExit: result[1]! as int,
     );
   }
 }

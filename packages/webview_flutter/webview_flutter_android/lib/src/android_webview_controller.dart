@@ -713,6 +713,15 @@ class AndroidUrlChange extends UrlChange {
   final bool isReload;
 }
 
+/// Information about why the render process exited.
+class RenderProcessGoneInfo {
+  /// Constructs an [RenderProcessGoneInfo].
+  RenderProcessGoneInfo._(this.didCrash);
+
+  /// Indicates whether the render process was observed to crash, or whether it was killed by the system.
+  final bool didCrash;
+}
+
 /// A place to register callback methods responsible to handle navigation events
 /// triggered by the [android_webview.WebView].
 class AndroidNavigationDelegate extends PlatformNavigationDelegate {
@@ -778,10 +787,8 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.RenderProcessGoneDetail detail,
       ) {
         if (weakThis.target?._onRenderProcessGone != null) {
-          weakThis.target!._onRenderProcessGone!(
-            didCrash: detail.didCrash,
-            rendererPriorityAtExit: detail.rendererPriorityAtExit,
-          );
+          weakThis.target!
+              ._onRenderProcessGone!(RenderProcessGoneInfo._(detail.didCrash));
         }
       },
       requestLoading: (
@@ -860,8 +867,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   PageEventCallback? _onPageStarted;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
-  void Function({bool didCrash, int rendererPriorityAtExit})?
-      _onRenderProcessGone;
+  void Function(RenderProcessGoneInfo)? _onRenderProcessGone;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
@@ -953,8 +959,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
 
   /// Invoked when a render process has exited.
   Future<void> setOnRenderProcessGone(
-    void Function({bool didCrash, int rendererPriorityAtExit})
-        onRenderProcessGone,
+    void Function(RenderProcessGoneInfo) onRenderProcessGone,
   ) async {
     _onRenderProcessGone = onRenderProcessGone;
     _webViewClient.setSynchronousReturnValueForOnRenderProcessGone(true);

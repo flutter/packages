@@ -705,7 +705,6 @@ void main() {
             result = <Object>[
               webView,
               detail.didCrash,
-              detail.rendererPriorityAtExit
             ];
           },
         );
@@ -715,14 +714,13 @@ void main() {
           mockWebViewInstanceId,
           RenderProcessGoneDetailData(
             didCrash: true,
-            rendererPriorityAtExit: 133,
           ),
         );
 
         expect(
           result,
           containsAllInOrder(
-            <Object?>[mockWebView, true, 133],
+            <Object?>[mockWebView, true],
           ),
         );
       });
