@@ -49,7 +49,7 @@ class WebViewPermissionResourceType {
 
 /// Permissions request when web content requests access to protected resources.
 ///
-/// A response MUST be provided by calling a method from [response].
+/// A response MUST be provided by calling a provided method.
 ///
 /// Platform specific implementations can add additional methods when extending
 /// this class.

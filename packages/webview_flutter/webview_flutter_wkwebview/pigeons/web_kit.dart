@@ -239,6 +239,9 @@ enum WKMediaCaptureType {
   microphone,
 
   /// An unknown media device.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that we don't currently support.
   unknown,
 }
 

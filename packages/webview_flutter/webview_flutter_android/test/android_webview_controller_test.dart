@@ -613,7 +613,7 @@ void main() {
       expect(fileSelectorParams.mode, FileSelectorMode.open);
     });
 
-    test('setOnPermissionRequest', () async {
+    test('setOnPlatformPermissionRequest', () async {
       late final void Function(
         android_webview.WebChromeClient instance,
         android_webview.PermissionRequest request,
@@ -659,6 +659,48 @@ void main() {
         WebViewPermissionResourceType.microphone,
       ]);
       verify(mockPermissionRequest.grant(permissionTypes));
+    });
+
+    test(
+        'setOnPlatformPermissionRequest callback not invoked when type is not recognized',
+        () async {
+      late final void Function(
+        android_webview.WebChromeClient instance,
+        android_webview.PermissionRequest request,
+      ) onPermissionRequestCallback;
+
+      final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        createWebChromeClient: ({
+          dynamic onProgressChanged,
+          dynamic onShowFileChooser,
+          void Function(
+            android_webview.WebChromeClient instance,
+            android_webview.PermissionRequest request,
+          )? onPermissionRequest,
+        }) {
+          onPermissionRequestCallback = onPermissionRequest!;
+          return mockWebChromeClient;
+        },
+      );
+
+      bool callbackCalled = false;
+      await controller.setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) async {
+          callbackCalled = true;
+        },
+      );
+
+      final MockPermissionRequest mockPermissionRequest =
+          MockPermissionRequest();
+      when(mockPermissionRequest.resources).thenReturn(<String>['unknownType']);
+
+      onPermissionRequestCallback(
+        android_webview.WebChromeClient.detached(),
+        mockPermissionRequest,
+      );
+
+      expect(callbackCalled, isFalse);
     });
 
     test('runJavaScript', () async {
