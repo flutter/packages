@@ -100,6 +100,17 @@ void main() {
                 '../README.md',
               ],
               example.path),
+          ProcessCall(
+              'dart',
+              const <String>[
+                'run',
+                'code_excerpt_updater',
+                '--write-in-place',
+                '--yaml',
+                '--no-escape-ng-interpolation',
+                'README.md',
+              ],
+              example.path),
         ]));
 
     expect(
