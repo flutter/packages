@@ -4,9 +4,24 @@
 
 #include "flutter_window.h"
 
+#include <memory>
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
+#include "messages.g.h"
+
+namespace {
+using pigeon_example::ErrorOr;
+using pigeon_example::ExampleHostApi;
+
+class PigeonApiImplementation : public ExampleHostApi {
+ public:
+  PigeonApiImplementation() {}
+  virtual ~PigeonApiImplementation() {}
+
+  ErrorOr<std::string> GetHostString() override { return "C++"; }
+};
+}  // namespace
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -30,6 +45,10 @@ bool FlutterWindow::OnCreate() {
   }
   RegisterPlugins(flutter_controller_->engine());
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
+
+  pigeonHostApi_ = std::make_unique<PigeonApiImplementation>();
+  ExampleHostApi::SetUp(flutter_controller_->engine()->messenger(),
+                        pigeonHostApi_.get());
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() { this->Show(); });
 
