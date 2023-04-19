@@ -275,6 +275,34 @@ void main() {
         ]));
   });
 
+  test('fails if example injection fails', () async {
+    createFakePlugin('a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+      FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
+      FakeProcessInfo(MockProcess(), <String>['run', 'code_excerpt_updater']),
+      FakeProcessInfo(
+          MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
+    ];
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['update-excerpts'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The following packages had errors:'),
+          contains('a_package:\n'
+              '    Unable to inject example excerpts')
+        ]));
+  });
+
   test('fails if READMEs are changed with --fail-on-change', () async {
     createFakePlugin('a_plugin', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
