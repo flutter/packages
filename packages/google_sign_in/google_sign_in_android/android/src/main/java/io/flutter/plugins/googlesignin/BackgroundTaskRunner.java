@@ -56,12 +56,7 @@ public final class BackgroundTaskRunner {
   public <T> void runInBackground(Callable<T> task, final Callback<T> callback) {
     final ListenableFuture<T> future = runInBackground(task);
     future.addListener(
-        new Runnable() {
-          @Override
-          public void run() {
-            callback.run(future);
-          }
-        },
+            () -> callback.run(future),
         Executors.uiThreadExecutor());
   }
 
@@ -76,18 +71,15 @@ public final class BackgroundTaskRunner {
     final SettableFuture<T> future = SettableFuture.create();
 
     executor.execute(
-        new Runnable() {
-          @Override
-          public void run() {
-            if (!future.isCancelled()) {
-              try {
-                future.set(task.call());
-              } catch (Throwable t) {
-                future.setException(t);
+            () -> {
+              if (!future.isCancelled()) {
+                try {
+                  future.set(task.call());
+                } catch (Throwable t) {
+                  future.setException(t);
+                }
               }
-            }
-          }
-        });
+            });
 
     return future;
   }
