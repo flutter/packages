@@ -1,3 +1,7 @@
+## 6.1.11
+
+* Fixes Java warnings.
+
 ## 6.1.10
 
 * Sets an explicit Java compatibility version.
