@@ -6,7 +6,7 @@ import Flutter
 import UIKit
 
 private class PigeonApiImplementation: ExampleHostApi {
-  func getHostString() throws -> String {
+  func getHostLanguage() throws -> String {
     return "Swift"
   }
 }

@@ -19,7 +19,7 @@ class PigeonApiImplementation : public ExampleHostApi {
   PigeonApiImplementation() {}
   virtual ~PigeonApiImplementation() {}
 
-  ErrorOr<std::string> GetHostString() override { return "C++"; }
+  ErrorOr<std::string> GetHostLanguage() override { return "C++"; }
 };
 }  // namespace
 

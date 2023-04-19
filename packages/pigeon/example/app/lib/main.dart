@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _hostApi.getHostString().then((String response) {
+    _hostApi.getHostLanguage().then((String response) {
       setState(() {
         _hostCallResult = 'Hello from $response!';
       });

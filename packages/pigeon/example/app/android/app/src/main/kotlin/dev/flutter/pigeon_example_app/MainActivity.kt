@@ -10,7 +10,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 
 private class PigeonApiImplementation: ExampleHostApi {
-    override fun getHostString(): String {
+    override fun getHostLanguage(): String {
         return "Kotlin"
     }
 }
@@ -18,7 +18,7 @@ private class PigeonApiImplementation: ExampleHostApi {
 class MainActivity: FlutterActivity() {
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        
+
         val api = PigeonApiImplementation()
         ExampleHostApi.setUp(flutterEngine.dartExecutor.binaryMessenger, api);
     }
