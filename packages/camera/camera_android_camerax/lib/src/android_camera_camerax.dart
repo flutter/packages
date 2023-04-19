@@ -8,12 +8,15 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'analyzer.dart';
 import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camerax_library.g.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
+import 'image_proxy.dart';
+import 'plane_proxy.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
 import 'surface.dart';
@@ -73,6 +76,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<CameraEvent> _cameraEvents(int cameraId) =>
       cameraEventStreamController.stream
           .where((CameraEvent event) => event.cameraId == cameraId);
+
+  /// TODO(camsim99)
+  StreamController<CameraImageData>? _cameraImageDataStreamController;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -315,10 +321,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
-    final StreamController<CameraImageData> cameraImageDataStreamController =
-        ImageAnalysis.onStreamedFrameAvailableStreamController;
-    _configureCameraImageDataStreamController(cameraImageDataStreamController);
-    return cameraImageDataStreamController.stream;
+    _cameraImageDataStreamController = StreamController<CameraImageData>(
+      onListen: _onFrameStreamListen,
+      onCancel: _onFrameStreamCancel,
+    );
+    return _cameraImageDataStreamController!.stream;
   }
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
@@ -341,8 +348,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
   }
 
-  /// Configures and binds [imageAnalysis] instance to camera lifecycle
-  /// controlled by the [processCameraProvider].
+  /// Configures the [imageAnalysis] instance for image streaming and binds it
+  /// to camera lifecycle controlled by the [processCameraProvider].
   Future<void> _configureAndBindImageAnalysisToLifecycle() async {
     assert(processCameraProvider != null);
     assert(cameraSelector != null);
@@ -353,10 +360,34 @@ class AndroidCameraCameraX extends CameraPlatform {
       return;
     }
 
+    // Create Analyzer that can read image data for image streaming.
+    final Analyzer analyzer = Analyzer(analyze: (ImageProxy imageProxy) async {
+      final List<PlaneProxy> planes = await imageProxy.getPlanes();
+      final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
+      for (final PlaneProxy plane in planes) {
+        cameraImagePlanes.add(CameraImagePlane(
+            bytes: await plane.getBuffer(),
+            bytesPerRow: await plane.getRowStride(),
+            bytesPerPixel: await plane.getPixelStride()));
+      }
+
+      final int format = await imageProxy.getFormat();
+      final CameraImageFormat cameraImageFormat = CameraImageFormat(
+          _imageFormatGroupFromPlatformData(format),
+          raw: format);
+
+      final CameraImageData cameraImageData = CameraImageData(
+          format: cameraImageFormat,
+          planes: cameraImagePlanes,
+          height: await imageProxy.getHeight(),
+          width: await imageProxy.getWidth());
+      _cameraImageDataStreamController?.add(cameraImageData);
+    });
+
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.
     imageAnalysis = createImageAnalysis(null);
-    imageAnalysis!.setAnalyzer();
+    imageAnalysis!.setAnalyzer(analyzer);
 
     // TODO(camsim99): Reset live camera state observers here when
     // https://github.com/flutter/packages/pull/3419 lands.
@@ -379,14 +410,6 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods for configuring image streaming:
 
-  /// Sets [onListen] and [onCancel] callbacks for the stream controller
-  /// used for image streaming.
-  void _configureCameraImageDataStreamController(
-      StreamController<CameraImageData> controller) {
-    controller.onListen = _onFrameStreamListen;
-    controller.onCancel = _onFrameStreamCancel;
-  }
-
   /// The [onListen] callback for the stream controller used for image
   /// streaming.
   void _onFrameStreamListen() {
@@ -401,6 +424,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   FutureOr<void> _onFrameStreamCancel() async {
     assert(imageAnalysis != null);
     imageAnalysis!.clearAnalyzer();
+  }
+
+  // TODO(camsim99)
+  ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
+    switch (data) {
+      case 35: // android.graphics.ImageFormat.YUV_420_888
+        return ImageFormatGroup.yuv420;
+      case 256: // android.graphics.ImageFormat.JPEG
+        return ImageFormatGroup.jpeg;
+    }
+
+    return ImageFormatGroup.unknown;
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:
