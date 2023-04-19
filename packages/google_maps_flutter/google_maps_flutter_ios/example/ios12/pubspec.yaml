@@ -19,6 +19,8 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../../
   google_maps_flutter_platform_interface: ^2.2.1
+  maps_example_dart:
+    path: ../shared/maps_example_dart/
 
 dev_dependencies:
   flutter_driver:
