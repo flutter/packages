@@ -48,6 +48,7 @@ void main() {
 
     testWidgets('changeMarkers', (WidgetTester tester) async {
       gmaps.Marker? marker;
+      gmaps.LatLng? position;
 
       final Set<Marker> markers = <Marker>{
         const Marker(markerId: MarkerId('1')),
@@ -57,7 +58,12 @@ void main() {
       marker = controller.markers[const MarkerId('1')]?.marker;
       expect(marker, isNotNull);
       expect(marker!.draggable, isFalse);
-      expect(marker.position, isNull);
+
+      // By default, markers fall in LatLng(0, 0)
+      position = marker.position;
+      expect(position, isNotNull);
+      expect(position!.lat, equals(0));
+      expect(position.lng, equals(0));
 
       // Update the marker with draggable and position
       final Set<Marker> updatedMarkers = <Marker>{
@@ -74,14 +80,14 @@ void main() {
       expect(marker, isNotNull);
       expect(marker!.draggable, isTrue);
 
-      final gmaps.LatLng? position = marker.position;
+      position = marker.position;
       expect(position, isNotNull);
       expect(position!.lat, equals(42));
       expect(position.lng, equals(54));
     });
 
     testWidgets(
-        'changeMarkers can update a marker without resetting its position',
+        'changeMarkers resets marker position if not passed when updating!',
         (WidgetTester tester) async {
       gmaps.Marker? marker;
       gmaps.LatLng? position;
@@ -119,48 +125,8 @@ void main() {
 
       position = marker.position;
       expect(position, isNotNull);
-      expect(position!.lat, equals(42));
-      expect(position.lng, equals(54));
-    });
-
-    testWidgets('changeMarkers can place a marker really close to Null Island',
-        (WidgetTester tester) async {
-      gmaps.Marker? marker;
-      gmaps.LatLng? position;
-
-      final Set<Marker> markers = <Marker>{
-        const Marker(
-          markerId: MarkerId('1'),
-          position: LatLng(42, 54),
-        ),
-      };
-      controller.addMarkers(markers);
-
-      marker = controller.markers[const MarkerId('1')]?.marker;
-      expect(marker, isNotNull);
-
-      position = marker!.position;
-      expect(position, isNotNull);
-      expect(position!.lat, equals(42));
-      expect(position.lng, equals(54));
-
-      // Update the marker without position
-      final Set<Marker> updatedMarkers = <Marker>{
-        const Marker(
-          markerId: MarkerId('1'),
-          position: LatLng(0, 1e-10),
-        ),
-      };
-      controller.changeMarkers(updatedMarkers);
-      expect(controller.markers.length, 1);
-
-      marker = controller.markers[const MarkerId('1')]?.marker;
-      expect(marker, isNotNull);
-
-      position = marker!.position;
-      expect(position, isNotNull);
       expect(position!.lat, equals(0));
-      expect(position.lng, moreOrLessEquals(0));
+      expect(position.lng, equals(0));
     });
 
     testWidgets('removeMarkers', (WidgetTester tester) async {

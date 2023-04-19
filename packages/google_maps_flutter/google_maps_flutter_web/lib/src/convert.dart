@@ -294,22 +294,11 @@ gmaps.MarkerOptions _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,
 ) {
-  // The incoming Marker position always defaults to LatLng(0,0), so it's
-  // not possible to distinguish if users want to update the position of the
-  // marker or not.
-  // Since "Null Island" is an unlikely position for anything to happen, we
-  // assume that LatLng(0,0) means "do not change the current position", so
-  // Marker updates don't need to always specify a location.
-  // A workaround to position a Marker on "Null Island" is to pass an
-  // non-exactly-zero value (like Number.EPSILON) to either lat/lng of the
-  // update.
-  final gmaps.LatLng? newPosition =
-      (marker.position.latitude != 0 || marker.position.longitude != 0)
-          ? gmaps.LatLng(marker.position.latitude, marker.position.longitude)
-          : currentMarker?.position;
-
   return gmaps.MarkerOptions()
-    ..position = newPosition
+    ..position = gmaps.LatLng(
+      marker.position.latitude,
+      marker.position.longitude,
+    )
     ..title = sanitizeHtml(marker.infoWindow.title ?? '')
     ..zIndex = marker.zIndex
     ..visible = marker.visible
