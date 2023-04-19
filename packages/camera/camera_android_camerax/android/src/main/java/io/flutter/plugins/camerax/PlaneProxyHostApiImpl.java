@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageProxy;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PlaneProxyHostApi;
 import java.nio.ByteBuffer;
@@ -18,6 +19,8 @@ import java.util.Objects;
  */
 public class PlaneProxyHostApiImpl implements PlaneProxyHostApi {
   private final InstanceManager instanceManager;
+
+  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
 
   /**
    * Constructs a {@link PlaneProxyHostApiImpl}.
@@ -39,7 +42,7 @@ public class PlaneProxyHostApiImpl implements PlaneProxyHostApi {
   @Override
   public byte[] getBuffer(@NonNull Long identifier) {
     ByteBuffer byteBuffer = getPlaneProxyInstance(identifier).getBuffer();
-    byte[] bytes = new byte[byteBuffer.remaining()];
+    byte[] bytes = cameraXProxy.getBytesFromBuffer(byteBuffer.remaining());
     byteBuffer.get(bytes, 0, bytes.length);
     
     return bytes;
@@ -55,4 +58,5 @@ public class PlaneProxyHostApiImpl implements PlaneProxyHostApi {
   private ImageProxy.PlaneProxy getPlaneProxyInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
+
 }

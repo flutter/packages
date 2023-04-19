@@ -77,4 +77,9 @@ public class CameraXProxy {
   public ImageAnalysis.Builder createImageAnalysisBuilder() {
     return new ImageAnalysis.Builder();
   }
+
+  /** Creates an array of {@code byte}s with the size provided. */
+  public byte[] getBytesFromBuffer(int size) {
+    return new byte[size];
+  }
 }
