@@ -70,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               _hostCallResult ?? 'Waiting for host language...',
             ),
+            if (_hostCallResult == null) const CircularProgressIndicator(),
           ],
         ),
       ),

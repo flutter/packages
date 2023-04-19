@@ -11,6 +11,10 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
     # When depending on this package from a real application you should use:
     #   file_selector_windows: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
