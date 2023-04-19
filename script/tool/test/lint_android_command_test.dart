@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -39,7 +37,46 @@ void main() {
       runner.addCommand(command);
     });
 
-    void writeFakeBuildGradle(RepositoryPackage example, String pluginName,
+    void writeFakePluginBuildGradle(RepositoryPackage plugin,
+        {bool warningsConfigured = true}) {
+      const String warningConfig = '''
+    lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        baseline file("lint-baseline.xml")
+    }
+''';
+      final File gradleFile = plugin
+          .platformDirectory(FlutterPlatform.android)
+          .childFile('build.gradle');
+      gradleFile.createSync(recursive: true);
+      gradleFile.writeAsStringSync('''
+android {
+    compileSdkVersion 33
+
+    defaultConfig {
+        minSdkVersion 16
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+${warningsConfigured ? warningConfig : ''}
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.all {
+            testLogging {
+               events "passed", "skipped", "failed", "standardOut", "standardError"
+               outputs.upToDateWhen {false}
+               showStandardStreams = true
+            }
+        }
+    }
+}
+
+''');
+    }
+
+    void writeFakeExampleBuildGradle(
+        RepositoryPackage example, String pluginName,
         {bool warningsConfigured = true}) {
       final String warningConfig = '''
 gradle.projectsEvaluated {
@@ -80,7 +117,8 @@ ${warningsConfigured ? warningConfig : ''}
       ], platformSupport: <String, PlatformDetails>{
         platformAndroid: const PlatformDetails(PlatformSupport.inline)
       });
-      writeFakeBuildGradle(plugin.getExamples().first, 'plugin1');
+      writeFakePluginBuildGradle(plugin);
+      writeFakeExampleBuildGradle(plugin.getExamples().first, 'plugin1');
 
       final Directory androidDir =
           plugin.getExamples().first.platformDirectory(FlutterPlatform.android);
@@ -118,8 +156,9 @@ ${warningsConfigured ? warningConfig : ''}
           platformSupport: <String, PlatformDetails>{
             platformAndroid: const PlatformDetails(PlatformSupport.inline)
           });
+      writeFakePluginBuildGradle(plugin);
       for (final RepositoryPackage example in plugin.getExamples()) {
-        writeFakeBuildGradle(example, 'plugin1');
+        writeFakeExampleBuildGradle(example, 'plugin1');
       }
 
       final Iterable<Directory> exampleAndroidDirs = plugin.getExamples().map(
@@ -150,10 +189,11 @@ ${warningsConfigured ? warningConfig : ''}
     });
 
     test('fails if gradlew is missing', () async {
-      createFakePlugin('plugin1', packagesDir,
+      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir,
           platformSupport: <String, PlatformDetails>{
             platformAndroid: const PlatformDetails(PlatformSupport.inline)
           });
+      writeFakePluginBuildGradle(plugin);
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -178,7 +218,8 @@ ${warningsConfigured ? warningConfig : ''}
       ], platformSupport: <String, PlatformDetails>{
         platformAndroid: const PlatformDetails(PlatformSupport.inline)
       });
-      writeFakeBuildGradle(plugin.getExamples().first, 'plugin1');
+      writeFakePluginBuildGradle(plugin);
+      writeFakeExampleBuildGradle(plugin.getExamples().first, 'plugin1');
 
       final String gradlewPath = plugin
           .getExamples()
@@ -186,8 +227,8 @@ ${warningsConfigured ? warningConfig : ''}
           .platformDirectory(FlutterPlatform.android)
           .childFile('gradlew')
           .path;
-      processRunner.mockProcessesForExecutable[gradlewPath] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;
@@ -206,6 +247,34 @@ ${warningsConfigured ? warningConfig : ''}
           ));
     });
 
+    test('fails if gradle-driven lint-warnings-as-errors is missing', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
+        'example/android/gradlew',
+      ], platformSupport: <String, PlatformDetails>{
+        platformAndroid: const PlatformDetails(PlatformSupport.inline)
+      });
+      writeFakePluginBuildGradle(plugin, warningsConfigured: false);
+      writeFakeExampleBuildGradle(plugin.getExamples().first, 'plugin1');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['lint-android'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[
+              contains('This plugin is not configured to enable all '
+                  'Gradle-driven lint warnings and treat them as errors.'),
+              contains('The following packages had errors:'),
+            ],
+          ));
+    });
+
     test('fails if javac lint-warnings-as-errors is missing', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
@@ -213,7 +282,8 @@ ${warningsConfigured ? warningConfig : ''}
       ], platformSupport: <String, PlatformDetails>{
         platformAndroid: const PlatformDetails(PlatformSupport.inline)
       });
-      writeFakeBuildGradle(plugin.getExamples().first, 'plugin1',
+      writeFakePluginBuildGradle(plugin);
+      writeFakeExampleBuildGradle(plugin.getExamples().first, 'plugin1',
           warningsConfigured: false);
 
       Error? commandError;
@@ -227,7 +297,7 @@ ${warningsConfigured ? warningConfig : ''}
           output,
           containsAllInOrder(
             <Matcher>[
-              contains('The example example is not configured to treat javac '
+              contains('The example "example" is not configured to treat javac '
                   'lints and warnings as errors.'),
               contains('The following packages had errors:'),
             ],

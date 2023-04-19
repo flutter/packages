@@ -5,13 +5,12 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i9;
 
+import 'package:camera_android_camerax/src/analyzer.dart' as _i12;
 import 'package:camera_android_camerax/src/camera.dart' as _i4;
 import 'package:camera_android_camerax/src/camera_info.dart' as _i8;
 import 'package:camera_android_camerax/src/camera_selector.dart' as _i10;
 import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i3;
 import 'package:camera_android_camerax/src/image_analysis.dart' as _i11;
-import 'package:camera_android_camerax/src/image_analysis_analyzer.dart'
-    as _i12;
 import 'package:camera_android_camerax/src/image_capture.dart' as _i13;
 import 'package:camera_android_camerax/src/preview.dart' as _i14;
 import 'package:camera_android_camerax/src/process_camera_provider.dart'
@@ -193,8 +192,7 @@ class MockCameraSelector extends _i1.Mock implements _i10.CameraSelector {
 /// See the documentation for Mockito's code generation for more information.
 class MockImageAnalysis extends _i1.Mock implements _i11.ImageAnalysis {
   @override
-  _i9.Future<void> setAnalyzer(_i12.ImageAnalysisAnalyzer? analyzer) =>
-      (super.noSuchMethod(
+  _i9.Future<void> setAnalyzer(_i12.Analyzer? analyzer) => (super.noSuchMethod(
         Invocation.method(
           #setAnalyzer,
           [analyzer],
@@ -406,7 +404,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
         ),
       ) as _i5.InheritedWidget);
   @override
-  void visitAncestorElements(_i5.ConditionalElementVisitor? visitor) =>
+  void visitAncestorElements(bool Function(_i5.Element)? visitor) =>
       super.noSuchMethod(
         Invocation.method(
           #visitAncestorElements,

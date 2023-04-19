@@ -130,25 +130,50 @@ class WebKitWebViewController extends PlatformWebViewController {
         NSKeyValueObservingOptions.newValue,
       },
     );
+
+    _webView.addObserver(
+      _webView,
+      keyPath: 'URL',
+      options: <NSKeyValueObservingOptions>{
+        NSKeyValueObservingOptions.newValue,
+      },
+    );
   }
 
   /// The WebKit WebView being controlled.
   late final WKWebView _webView = _webKitParams.webKitProxy.createWebView(
     _webKitParams._configuration,
-    observeValue: withWeakRefenceTo(this, (
+    observeValue: withWeakReferenceTo(this, (
       WeakReference<WebKitWebViewController> weakReference,
     ) {
       return (
         String keyPath,
         NSObject object,
         Map<NSKeyValueChangeKey, Object?> change,
-      ) {
-        final ProgressCallback? progressCallback =
-            weakReference.target?._currentNavigationDelegate?._onProgress;
-        if (progressCallback != null) {
-          final double progress =
-              change[NSKeyValueChangeKey.newValue]! as double;
-          progressCallback((progress * 100).round());
+      ) async {
+        final WebKitWebViewController? controller = weakReference.target;
+        if (controller == null) {
+          return;
+        }
+
+        switch (keyPath) {
+          case 'estimatedProgress':
+            final ProgressCallback? progressCallback =
+                controller._currentNavigationDelegate?._onProgress;
+            if (progressCallback != null) {
+              final double progress =
+                  change[NSKeyValueChangeKey.newValue]! as double;
+              progressCallback((progress * 100).round());
+            }
+            break;
+          case 'URL':
+            final UrlChangeCallback? urlChangeCallback =
+                controller._currentNavigationDelegate?._onUrlChange;
+            if (urlChangeCallback != null) {
+              final NSUrl url = change[NSKeyValueChangeKey.newValue]! as NSUrl;
+              urlChangeCallback(UrlChange(url: await url.getAbsoluteString()));
+            }
+            break;
         }
       };
     }),
@@ -443,7 +468,7 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
     @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
   })  : assert(name.isNotEmpty),
         _messageHandler = webKitProxy.createScriptMessageHandler(
-          didReceiveScriptMessage: withWeakRefenceTo(
+          didReceiveScriptMessage: withWeakReferenceTo(
             onMessageReceived,
             (WeakReference<void Function(JavaScriptMessage)> weakReference) {
               return (
@@ -691,6 +716,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
+  UrlChangeCallback? _onUrlChange;
 
   @override
   Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {
@@ -719,5 +745,10 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
     NavigationRequestCallback onNavigationRequest,
   ) async {
     _onNavigationRequest = onNavigationRequest;
+  }
+
+  @override
+  Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
+    _onUrlChange = onUrlChange;
   }
 }

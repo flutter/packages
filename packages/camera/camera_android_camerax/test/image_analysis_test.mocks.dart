@@ -31,23 +31,30 @@ class MockTestImageAnalysisHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
-    _i3.ResolutionInfo? targetResolution,
+    _i3.ResolutionInfo? targetResolutionIdentifier,
   ) =>
       super.noSuchMethod(
         Invocation.method(
           #create,
           [
             identifier,
-            targetResolution,
+            targetResolutionIdentifier,
           ],
         ),
         returnValueForMissingStub: null,
       );
   @override
-  void setAnalyzer(int? identifier) => super.noSuchMethod(
+  void setAnalyzer(
+    int? identifier,
+    int? analyzerIdentifier,
+  ) =>
+      super.noSuchMethod(
         Invocation.method(
           #setAnalyzer,
-          [identifier],
+          [
+            identifier,
+            analyzerIdentifier,
+          ],
         ),
         returnValueForMissingStub: null,
       );

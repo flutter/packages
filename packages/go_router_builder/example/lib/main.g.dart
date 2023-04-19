@@ -8,12 +8,12 @@ part of 'main.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<GoRoute> get $appRoutes => [
+List<RouteBase> get $appRoutes => [
       $homeRoute,
       $loginRoute,
     ];
 
-GoRoute get $homeRoute => GoRouteData.$route(
+RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
       factory: $HomeRouteExtension._fromState,
       routes: [
@@ -118,7 +118,7 @@ extension<T extends Enum> on Map<T, String> {
       entries.singleWhere((element) => element.value == value).key;
 }
 
-GoRoute get $loginRoute => GoRouteData.$route(
+RouteBase get $loginRoute => GoRouteData.$route(
       path: '/login',
       factory: $LoginRouteExtension._fromState,
     );
