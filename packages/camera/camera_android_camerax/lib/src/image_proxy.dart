@@ -70,7 +70,7 @@ class _ImageProxyHostApiImpl extends ImageProxyHostApi {
     return planesAsObjects.map((int? planeIdentifier) {
       return instanceManager
           .getInstanceWithWeakReference<PlaneProxy>(planeIdentifier!)!;
-    }) as List<PlaneProxy>;
+    }).toList();
   }
 
   /// Returns the format of the image represented by the [instance].

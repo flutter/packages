@@ -375,13 +375,14 @@ class AndroidCameraCameraX extends CameraPlatform {
       final CameraImageFormat cameraImageFormat = CameraImageFormat(
           _imageFormatGroupFromPlatformData(format),
           raw: format);
-
       final CameraImageData cameraImageData = CameraImageData(
           format: cameraImageFormat,
           planes: cameraImagePlanes,
           height: await imageProxy.getHeight(),
           width: await imageProxy.getWidth());
+
       _cameraImageDataStreamController?.add(cameraImageData);
+      imageProxy.close();
     });
 
     // TODO(camsim99): Support resolution configuration.

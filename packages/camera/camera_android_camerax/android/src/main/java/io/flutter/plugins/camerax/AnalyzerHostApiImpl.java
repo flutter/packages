@@ -39,7 +39,10 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
    * Implementation of {@link ImageAnalysis.Analyzer} that passes arguments of callback methods to Dart.
    */
   public static class AnalyzerImpl implements ImageAnalysis.Analyzer {
+    private BinaryMessenger binaryMessenger;
+    private InstanceManager instanceManager;
     private AnalyzerFlutterApiImpl api;
+    private ImageProxyFlutterApiImpl imageProxyApi;
 
     /**
      * Constructs an instance of {@link ImageAnalysis.Analyzer} that passes arguments of callbacks methods
@@ -48,11 +51,15 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
     public AnalyzerImpl(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
       super();
+      this.binaryMessenger = binaryMessenger;
+      this.instanceManager = instanceManager;
       api = new AnalyzerFlutterApiImpl(binaryMessenger, instanceManager);
+      imageProxyApi = new ImageProxyFlutterApiImpl(binaryMessenger, instanceManager);
     }
 
     @Override
     public void analyze(ImageProxy imageProxy) {
+      imageProxyApi.create(imageProxy, reply -> {});
       api.analyze(this, imageProxy, reply -> {});
     }
 
