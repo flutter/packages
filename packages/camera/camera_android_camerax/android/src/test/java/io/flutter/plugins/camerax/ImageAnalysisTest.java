@@ -52,7 +52,7 @@ public class ImageAnalysisTest {
   }
 
   @Test
-  public void hostApiCreate() {
+  public void hostApiCreate_createsExpectedImageAnalysisInstanceWithExpectedIdentifier() {
     final ImageAnalysisHostApiImpl hostApi =
         new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
@@ -82,7 +82,7 @@ public class ImageAnalysisTest {
   }
 
   @Test
-  public void setAnalyzer() {
+  public void setAnalyzer_makesCallToSetAnalyzerOnExpectedImageAnalysisInstance() {
     final ImageAnalysisHostApiImpl hostApi =
         new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
         hostApi.setContext(context);
@@ -100,7 +100,7 @@ public class ImageAnalysisTest {
   }
 
   @Test
-  public void clearAnalyzer() {
+  public void clearAnalyzer_makesCallToClearAnalyzerOnExpectedImageAnalysisInstance() {
     final ImageAnalysisHostApiImpl hostApi =
         new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 0;

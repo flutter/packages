@@ -44,7 +44,7 @@ public class AnalyzerTest {
   }
 
   @Test
-  public void hostApiCreate() {
+  public void hostApiCreate_makesCallToCreateAnalyzerInstanceWithExpectedIdentifier() {
     final AnalyzerHostApiImpl hostApi =
         new AnalyzerHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
     final long instanceIdentifier = 0;
@@ -58,7 +58,7 @@ public class AnalyzerTest {
   }
 
   @Test
-  public void flutterApiCreate() {
+  public void flutterApiCreate_makesCallToDartCreate() {
     final AnalyzerFlutterApiImpl flutterApi =
         new AnalyzerFlutterApiImpl(mockBinaryMessenger, instanceManager);
 
@@ -73,7 +73,7 @@ public class AnalyzerTest {
   }
 
   @Test
-  public void analyze() {
+  public void analyze_makesCallToDartAnalyze() {
     final AnalyzerFlutterApiImpl flutterApi =
         new AnalyzerFlutterApiImpl(mockBinaryMessenger, instanceManager);
     final ImageProxy mockImageProxy = mock(ImageProxy.class);

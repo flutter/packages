@@ -44,7 +44,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void getPlanes() {
+  public void getPlanes_returnsExpectedPlanesFromExpectedImageProxyInstance() {
     final ImageProxyHostApiImpl hostApi =
         new ImageProxyHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 0;
@@ -65,7 +65,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void getFormat() {
+  public void getFormat_returnsExpectedFormatFromExpectedImageProxyInstance() {
     final ImageProxyHostApiImpl hostApi =
         new ImageProxyHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 0;
@@ -83,7 +83,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void getHeight() {
+  public void getHeight_returnsExpectedHeightFromExpectedImageProxyInstance() {
     final ImageProxyHostApiImpl hostApi =
         new ImageProxyHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 0;
@@ -101,7 +101,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void getWidth() {
+  public void getWidth_returnsExpectedHeightFromExpectedImageProxyInstance() {
     final ImageProxyHostApiImpl hostApi =
         new ImageProxyHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 0;
@@ -119,7 +119,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void close() {
+  public void close_makesCallToCloseExpectedImageProxyInstance() {
     final ImageProxyHostApiImpl hostApi =
         new ImageProxyHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 0;
@@ -132,7 +132,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void flutterApiCreate() {
+  public void flutterApiCreate_makesCallToDartCreate() {
     final ImageProxyFlutterApiImpl flutterApi =
         new ImageProxyFlutterApiImpl(mockBinaryMessenger, instanceManager);
 
