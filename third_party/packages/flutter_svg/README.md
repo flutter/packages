@@ -78,8 +78,6 @@ package, this package _does not render the data to an `Image` at any point_.
 This carries a performance penalty for some common use cases, but also allows
 for more flexibility around scaling.
 
-See [main.dart](/../master/example/lib/main.dart) for a complete sample.
-
 ## Precompiling and Optimizing SVGs
 
 The vector_graphics backend supports SVG compilation which produces a binary
