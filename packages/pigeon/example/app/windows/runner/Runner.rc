@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "app" "\0"
+            VALUE "CompanyName", "dev.flutter" "\0"
+            VALUE "FileDescription", "pigeon_example_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "app" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "app.exe" "\0"
-            VALUE "ProductName", "app" "\0"
+            VALUE "InternalName", "pigeon_example_app" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 dev.flutter. All rights reserved." "\0"
+            VALUE "OriginalFilename", "pigeon_example_app.exe" "\0"
+            VALUE "ProductName", "pigeon_example_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
