@@ -1,3 +1,7 @@
+## 3.5.3
+
+* Bumps gradle from 7.2.2 to 8.0.0.
+
 ## 3.5.2
 
 * Updates internal Java InstanceManager to only stop finalization callbacks when stopped.
