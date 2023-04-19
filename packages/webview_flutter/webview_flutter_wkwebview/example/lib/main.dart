@@ -142,7 +142,7 @@ Page resource error:
           debugPrint(
             'requesting permissions for ${request.types.map((WebViewPermissionResourceType type) => type.name)}',
           );
-          request.grant(const WebViewPermissionGrantParams());
+          request.grant();
         },
       )
       ..loadRequest(LoadRequestParams(

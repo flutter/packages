@@ -46,7 +46,7 @@
   NSNumber *configurationIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:configuration]);
   FWFWKNavigationActionData *navigationActionData =
-      FWFWKNavigationActionDataFromNavigationAction(navigationAction);
+      FWFWKNavigationActionDataFromNativeWKNavigationAction(navigationAction);
 
   [self onCreateWebViewForDelegateWithIdentifier:@([self identifierForDelegate:instance])
                                webViewIdentifier:
@@ -73,19 +73,21 @@
                                                    identifierWithStrongReferenceForInstance:
                                                        webView])
                                                       origin:
-                                                          FWFWKSecurityOriginDataFromWKSecurityOrigin(
+                                                          FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(
                                                               origin)
-                                                       frame:FWFWKFrameInfoDataFromWKFrameInfo(
-                                                                 frame)
+                                                       frame:
+                                                           FWFWKFrameInfoDataFromNativeWKFrameInfo(
+                                                               frame)
                                                         type:
-                                                            FWFWKMediaCaptureTypeDataFromWKMediaCaptureType(
+                                                            FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType(
                                                                 type)
                                                   completion:^(
                                                       FWFWKPermissionDecisionData *decision,
                                                       FlutterError *error) {
                                                     NSAssert(!error, @"%@", error);
                                                     completion(
-                                                        FWFWKPermissionDecisionFromData(decision));
+                                                        FWFNativeWKPermissionDecisionFromData(
+                                                            decision));
                                                   }];
 }
 @end

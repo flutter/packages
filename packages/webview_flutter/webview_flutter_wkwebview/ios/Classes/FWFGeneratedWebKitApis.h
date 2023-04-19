@@ -185,6 +185,8 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
   /// See
   /// https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
   FWFWKMediaCaptureTypeMicrophone = 2,
+  /// An unknown media device.
+  FWFWKMediaCaptureTypeUnknown = 3,
 };
 
 @class FWFNSKeyValueObservingOptionsEnumData;

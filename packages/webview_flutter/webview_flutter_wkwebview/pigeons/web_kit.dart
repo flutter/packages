@@ -237,6 +237,9 @@ enum WKMediaCaptureType {
   ///
   /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
   microphone,
+
+  /// An unknown media device.
+  unknown,
 }
 
 // TODO(bparrishMines): Enums need be wrapped in a data class because thay can't

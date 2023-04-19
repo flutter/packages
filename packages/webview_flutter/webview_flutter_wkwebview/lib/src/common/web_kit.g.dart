@@ -176,6 +176,9 @@ enum WKMediaCaptureType {
   ///
   /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
   microphone,
+
+  /// An unknown media device.
+  unknown,
 }
 
 class NSKeyValueObservingOptionsEnumData {
