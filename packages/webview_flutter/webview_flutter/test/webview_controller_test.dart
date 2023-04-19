@@ -392,11 +392,11 @@ void main() {
 class TestPlatformWebViewPermissionRequest
     extends PlatformWebViewPermissionRequest {
   const TestPlatformWebViewPermissionRequest()
-      : super(types: const <WebViewPermissionResourceType>[]);
+      : super(types: const <WebViewPermissionResourceType>{});
 
   @override
-  Future<void> grant(WebViewPermissionGrantParams params) async {}
+  Future<void> grant() async {}
 
   @override
-  Future<void> deny(WebViewPermissionDenyParams params) async {}
+  Future<void> deny() async {}
 }

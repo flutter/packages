@@ -43,11 +43,18 @@ import 'webview_widget.dart';
 class WebViewController {
   /// Constructs a [WebViewController].
   ///
-  /// `onPermissionRequest`: Sets a callback that notifies the host application
-  /// that web content is requesting permission to access the specified
-  /// resources. Apps that attempt to access device resources will most likely
-  /// require additional platform-specific steps for acquiring permission from
-  /// the user.
+  /// {@template webview_fluttter.WebViewController.constructor}
+  /// `onPermissionRequest`: A callback that notifies the host application that
+  /// web content is requesting permission to access the specified resources.
+  /// To grant access for a device resource, most platforms will need to update
+  /// their app configurations for the relevant system resource.
+  ///
+  /// For Android, you will need to update your `AndroidManifest.xml`. See
+  /// https://developer.android.com/training/permissions/declaring
+  ///
+  /// For iOS, you will need to update your `Info.plist`. See
+  /// https://developer.apple.com/documentation/uikit/protecting_the_user_s_privacy/requesting_access_to_protected_resources?language=objc.
+  /// {@endtemplate}
   ///
   /// See [WebViewController.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
@@ -61,13 +68,9 @@ class WebViewController {
   /// Constructs a [WebViewController] from creation params for a specific
   /// platform.
   ///
-  /// `onPermissionRequest`: Sets a callback that notifies the host application
-  /// that web content is requesting permission to access the specified
-  /// resources. Apps that attempt to access device resources will most likely
-  /// require additional platform-specific steps for acquiring permission from
-  /// the user.
+  /// {@macro webview_fluttter.WebViewController.constructor}
   ///
-  /// {@template webview_flutter.WebViewCookieManager.fromPlatformCreationParams}
+  /// {@template webview_flutter.WebViewController.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
   /// iOS and Android:
   ///
@@ -103,11 +106,7 @@ class WebViewController {
 
   /// Constructs a [WebViewController] from a specific platform implementation.
   ///
-  /// `onPermissionRequest`: Sets a callback that notifies the host application
-  /// that web content is requesting permission to access the specified
-  /// resources. Apps that attempt to access device resources will most likely
-  /// require additional platform-specific steps for acquiring permission from
-  /// the user.
+  /// {@macro webview_fluttter.WebViewController.constructor}
   WebViewController.fromPlatform(
     this.platform, {
     void Function(WebViewPermissionRequest request)? onPermissionRequest,
@@ -375,11 +374,11 @@ class WebViewPermissionRequest {
 
   /// Grant permission for the requested resource(s).
   Future<void> grant() {
-    return platform.grant(const WebViewPermissionGrantParams());
+    return platform.grant();
   }
 
   /// Deny permission for the requested resource(s).
   Future<void> deny() {
-    return platform.deny(const WebViewPermissionDenyParams());
+    return platform.deny();
   }
 }
