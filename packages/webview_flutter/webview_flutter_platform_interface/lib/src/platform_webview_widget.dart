@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'types/types.dart';
 import 'webview_platform.dart';
 
 /// Interface for a platform implementation of a web view widget.
