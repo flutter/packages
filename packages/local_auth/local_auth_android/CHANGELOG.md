@@ -1,3 +1,7 @@
+## 1.0.24
+
+* Remove unused resourece by Android lint warnings.
+
 ## 1.0.23
 
 * Switches internals to Pigeon and fixes Java warnings.
