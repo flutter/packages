@@ -207,12 +207,12 @@ Map<String, dynamic> buildPurchaseMap(PurchaseWrapper original) {
     'signature': original.signature,
     'skus': original.skus,
     'purchaseToken': original.purchaseToken,
-    'isAutoRenewing': original.isAutoRenewing,
+    'autoRenewing': original.isAutoRenewing,
     'originalJson': original.originalJson,
     'developerPayload': original.developerPayload,
     'purchaseState':
         const PurchaseStateConverter().toJson(original.purchaseState),
-    'isAcknowledged': original.isAcknowledged,
+    'acknowledged': original.isAcknowledged,
     'obfuscatedAccountId': original.obfuscatedAccountId,
     'obfuscatedProfileId': original.obfuscatedProfileId,
   };

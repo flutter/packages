@@ -345,14 +345,14 @@ void main() {
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
                   'skus': <String>[skuDetails.sku],
-                  'isAutoRenewing': false,
+                  'autoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
                   'purchaseToken': 'token',
                   'signature': 'sign',
                   'originalJson': 'json',
                   'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
+                  'acknowledged': true,
                   'purchaseState': 1,
                 }
               ]
@@ -447,14 +447,14 @@ void main() {
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
                   'skus': <String>[skuDetails.sku],
-                  'isAutoRenewing': false,
+                  'autoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
                   'purchaseToken': 'token',
                   'signature': 'sign',
                   'originalJson': 'json',
                   'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
+                  'acknowledged': true,
                   'purchaseState': 1,
                 }
               ]
@@ -562,14 +562,14 @@ void main() {
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
                   'skus': <String>[skuDetails.sku],
-                  'isAutoRenewing': false,
+                  'autoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
                   'purchaseToken': 'token',
                   'signature': 'sign',
                   'originalJson': 'json',
                   'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
+                  'acknowledged': true,
                   'purchaseState': 1,
                 }
               ]
@@ -640,14 +640,14 @@ void main() {
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
                   'skus': <String>[skuDetails.sku],
-                  'isAutoRenewing': false,
+                  'autoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
                   'purchaseToken': 'token',
                   'signature': 'sign',
                   'originalJson': 'json',
                   'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
+                  'acknowledged': true,
                   'purchaseState': 1,
                 }
               ]
@@ -706,14 +706,14 @@ void main() {
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
                   'sku': skuDetails.sku,
-                  'isAutoRenewing': false,
+                  'autoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
                   'purchaseToken': 'token',
                   'signature': 'sign',
                   'originalJson': 'json',
                   'developerPayload': 'dummy payload',
-                  'isAcknowledged': true,
+                  'acknowledged': true,
                   'purchaseState': 1,
                 }
               ]
