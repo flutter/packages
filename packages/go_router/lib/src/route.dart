@@ -579,31 +579,28 @@ class ShellRoute extends ShellRouteBase {
 ///
 /// Like [ShellRoute], either a [builder] or a [pageBuilder] must be provided
 /// when creating a StackedShellRoute. However, these builders differ slightly
-/// in that they accept a [StackedShellRouteState] parameter instead of a
-/// GoRouterState. The StackedShellRouteState can be used to access information
+/// in that they accept a [StackedNavigationShell] parameter instead of a
+/// child Widget. The StackedNavigationShell can be used to access information
 /// about the state of the route, as well as to switch the active branch (i.e.
 /// restoring the navigation stack of another branch). The latter is
-/// accomplished by using the method [StackedShellRouteState.goBranch], for
+/// accomplished by using the method [StackedNavigationShell.goBranch], for
 /// example:
 ///
 /// ```
-/// void _onItemTapped(StackedShellRouteState shellState, int index) {
-///   shellState.goBranch(index: index);
+/// void _onItemTapped(int index) {
+///   navigationShell.goBranch(index: index);
 /// }
 /// ```
 ///
-/// The final child parameter of the builders is a container Widget that manages
-/// and maintains the state of the branch Navigators. Typically, a shell is
-/// built around this Widget, for example by using it as the body of [Scaffold]
-/// with a [BottomNavigationBar].
+/// The StackedNavigationShell is also responsible for managing and maintaining
+/// the state of the branch Navigators. Typically, a shell is built around this
+/// Widget, for example by using it as the body of [Scaffold] with a
+/// [BottomNavigationBar].
 ///
 /// Sometimes greater control is needed over the layout and animations of the
 /// Widgets representing the branch Navigators. In such cases, a custom
-/// implementation can choose to ignore the child parameter of the builders and
-/// instead create a [StackedNavigationShell], which will manage the state
-/// of the StackedShellRoute. When creating this controller, a builder function
-/// is provided to create the container Widget for the branch Navigators. See
-/// [StackedNavigationContainerBuilder] for more details.
+/// implementation can choose to provide a [navigatorContainerBuilder], in
+/// which a custom container Widget can be provided for the branch Navigators.
 ///
 /// Below is a simple example of how a router configuration with
 /// StackedShellRoute could be achieved. In this example, a
@@ -622,9 +619,9 @@ class ShellRoute extends ShellRouteBase {
 ///   initialLocation: '/a',
 ///   routes: <RouteBase>[
 ///     StackedShellRoute(
-///       builder: (BuildContext context, StackedShellRouteState state,
-///             Widget child) {
-///         return ScaffoldWithNavBar(shellState: state, body: child);
+///       builder: (BuildContext context, GoRouterState state,
+///             StackedNavigationShell navigationShell) {
+///         return ScaffoldWithNavBar(navigationShell: navigationShell);
 ///       },
 ///       branches: [
 ///         /// The first branch, i.e. tab 'A'
@@ -703,15 +700,13 @@ class StackedShellRoute extends ShellRouteBase {
 
   /// The widget builder for a stateful shell route.
   ///
-  /// Similar to [GoRoute.builder], but with an additional child parameter. This
-  /// child parameter is the Widget managing the nested navigation for the
+  /// Similar to [GoRoute.builder], but with an additional
+  /// [StackedNavigationShell] parameter. StackedNavigationShell is a Widget
+  /// responsible for managing the nested navigation for the
   /// matching sub-routes. Typically, a shell route builds its shell around this
-  /// Widget.
-  ///
-  /// Instead of a GoRouterState, this builder function accepts a
-  /// [StackedShellRouteState] object, which can be used to access information
+  /// Widget. StackedNavigationShell can also be used to access information
   /// about which branch is active, and also to navigate to a different branch
-  /// (using [StackedShellRouteState.goBranch]).
+  /// (using [StackedNavigationShell.goBranch]).
   ///
   /// Custom implementations may choose to ignore the child parameter passed to
   /// the builder function, and instead use [StackedNavigationShell] to
@@ -720,15 +715,13 @@ class StackedShellRoute extends ShellRouteBase {
 
   /// The page builder for a stateful shell route.
   ///
-  /// Similar to [GoRoute.pageBuilder], but with an additional child parameter.
-  /// This child parameter is the Widget managing the nested navigation for the
+  /// Similar to [GoRoute.pageBuilder], but with an additional
+  /// [StackedNavigationShell] parameter. StackedNavigationShell is a Widget
+  /// responsible for managing the nested navigation for the
   /// matching sub-routes. Typically, a shell route builds its shell around this
-  /// Widget.
-  ///
-  /// Instead of a GoRouterState, this builder function accepts a
-  /// [StackedShellRouteState] object, which can be used to access information
+  /// Widget. StackedNavigationShell can also be used to access information
   /// about which branch is active, and also to navigate to a different branch
-  /// (using [StackedShellRouteState.goBranch]).
+  /// (using [StackedNavigationShell.goBranch]).
   ///
   /// Custom implementations may choose to ignore the child parameter passed to
   /// the builder function, and instead use [StackedNavigationShell] to
@@ -836,7 +829,7 @@ class StackedShellRoute extends ShellRouteBase {
 /// sub-routes ([routes]), however sometimes it may be convenient to also
 /// provide a [initialLocation]. The value of this parameter is used when
 /// loading the branch for the first time (for instance when switching branch
-/// using the goBranch method in [StackedShellRouteState]).
+/// using the goBranch method in [StackedNavigationShell]).
 ///
 /// A separate [Navigator] will be built for each StackedShellBranch in a
 /// [StackedShellRoute], and the routes of this branch will be placed onto that
