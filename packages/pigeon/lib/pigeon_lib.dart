@@ -718,6 +718,16 @@ List<Error> _validateAst(Root root, String source) {
               'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
         ));
       }
+      if (method.arguments.any((NamedType arg) =>
+          (arg.type.baseName == 'List' || arg.type.baseName == 'Map') &&
+          arg.type.typeArguments.any(
+              (TypeDeclaration genericType) => isEnum(root, genericType)))) {
+        result.add(Error(
+          message:
+              'Enums aren\'t yet supported for collection types: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
       for (final NamedType unnamedType in method.arguments
           .where((NamedType element) => element.type.baseName.isEmpty)) {
         result.add(Error(
