@@ -62,7 +62,7 @@ class RouteMatchList {
 
   /// Creates a copy of this RouteMatchList that can be modified without
   /// affecting the original.
-  RouteMatchList clone() {
+  RouteMatchList copy() {
     return RouteMatchList._(List<RouteMatch>.from(_matches), _uri,
         Map<String, String>.from(pathParameters), fullpath);
   }

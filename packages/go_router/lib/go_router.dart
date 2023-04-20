@@ -12,11 +12,11 @@ export 'src/configuration.dart'
         GoRouterState,
         RouteBase,
         ShellRoute,
-        ShellNavigatorContainerBuilder,
+        StackedNavigationContainerBuilder,
         StackedNavigationShell,
+        StackedNavigationShellState,
         StackedShellBranch,
-        StackedShellRoute,
-        StackedShellRouteState;
+        StackedShellRoute;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/pages/custom_transition_page.dart';

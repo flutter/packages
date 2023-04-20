@@ -183,6 +183,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
         queryParams: queryParams,
       );
 
+  /// Get the location for the provided route.
+  ///
+  /// Builds the absolute path for the route, by concatenating the paths of the
+  /// route and all its ancestors.
+  String? locationForRoute(RouteBase route) =>
+      _routeInformationParser.configuration.locationForRoute(route);
+
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
   void go(String location, {Object? extra}) {

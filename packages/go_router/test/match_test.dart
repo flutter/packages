@@ -160,7 +160,7 @@ void main() {
         const <String, String>{},
       );
 
-      final RouteMatchList list2 = list.clone();
+      final RouteMatchList list2 = list.copy();
 
       expect(RouteMatchList.matchListEquals(list, list2), true);
     });

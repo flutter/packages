@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import '../go_router.dart';
-import 'information_provider.dart';
 import 'matching.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
@@ -103,6 +102,13 @@ abstract class RouteBase {
 
   /// The list of child routes associated with this route.
   final List<RouteBase> routes;
+
+  /// Builds a lists containing the provided routes along with all their
+  /// descendant [routes].
+  static Iterable<RouteBase> routesRecursively(Iterable<RouteBase> routes) {
+    return routes.expand(
+        (RouteBase e) => <RouteBase>[e, ...routesRecursively(e.routes)]);
+  }
 }
 
 /// A route that is displayed visually above the matching parent route using the
@@ -351,30 +357,32 @@ abstract class ShellRouteBase extends RouteBase {
 class ShellRouteContext {
   /// Constructs a [ShellRouteContext].
   ShellRouteContext({
+    required this.route,
     required this.subRoute,
+    required this.routerState,
+    required this.navigatorKey,
     required this.routeMatchList,
     required this.navigatorBuilder,
   });
 
+  /// The associated shell route.
+  final ShellRouteBase route;
+
   /// The matched immediate sub-route of the associated shell route.
   final RouteBase subRoute;
+
+  /// The current route state associated with [route].
+  final GoRouterState routerState;
+
+  /// The [Navigator] key to be used for the nested navigation associated with
+  /// [route].
+  final GlobalKey<NavigatorState> navigatorKey;
 
   /// The route match list for the current location.
   final RouteMatchList routeMatchList;
 
-  /// The navigator builder.
+  /// Function used to build the [Navigator] for the current route.
   final NavigatorBuilder navigatorBuilder;
-
-  /// Builds the [Navigator] for the current route.
-  Widget buildNavigator({
-    List<NavigatorObserver>? observers,
-    String? restorationScopeId,
-  }) {
-    return navigatorBuilder(
-      observers,
-      restorationScopeId,
-    );
-  }
 }
 
 /// A route that displays a UI shell around the matching child route.
@@ -512,8 +520,8 @@ class ShellRoute extends ShellRouteBase {
   Widget? buildWidget(BuildContext context, GoRouterState state,
       ShellRouteContext shellRouteContext) {
     if (builder != null) {
-      final Widget navigator = shellRouteContext.buildNavigator(
-          observers: observers, restorationScopeId: restorationScopeId);
+      final Widget navigator =
+          shellRouteContext.navigatorBuilder(observers, restorationScopeId);
       return builder!(context, state, navigator);
     }
     return null;
@@ -523,8 +531,8 @@ class ShellRoute extends ShellRouteBase {
   Page<dynamic>? buildPage(BuildContext context, GoRouterState state,
       ShellRouteContext shellRouteContext) {
     if (pageBuilder != null) {
-      final Widget navigator = shellRouteContext.buildNavigator(
-          observers: observers, restorationScopeId: restorationScopeId);
+      final Widget navigator =
+          shellRouteContext.navigatorBuilder(observers, restorationScopeId);
       return pageBuilder!(context, state, navigator);
     }
     return null;
@@ -595,7 +603,7 @@ class ShellRoute extends ShellRouteBase {
 /// instead create a [StackedNavigationShell], which will manage the state
 /// of the StackedShellRoute. When creating this controller, a builder function
 /// is provided to create the container Widget for the branch Navigators. See
-/// [ShellNavigatorContainerBuilder] for more details.
+/// [StackedNavigationContainerBuilder] for more details.
 ///
 /// Below is a simple example of how a router configuration with
 /// StackedShellRoute could be achieved. In this example, a
@@ -678,6 +686,7 @@ class StackedShellRoute extends ShellRouteBase {
     required this.branches,
     this.builder,
     this.pageBuilder,
+    this.navigatorContainerBuilder,
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
         assert((pageBuilder != null) ^ (builder != null),
@@ -726,6 +735,19 @@ class StackedShellRoute extends ShellRouteBase {
   /// create a custom container for the branch Navigators.
   final StackedShellRoutePageBuilder? pageBuilder;
 
+  /// An optional builder for a custom container for the branch Navigators.
+  ///
+  /// StackedShellRoute provides a default implementation for managing the
+  /// Widgets representing the branch Navigators, but in some cases a different
+  /// implementation may be required. When providing an implementation for this
+  /// builder, access is provided to a List of Widgets representing the branch
+  /// Navigators, where the the index corresponds to the index of in [branches].
+  ///
+  /// The builder function is expected to return a Widget that ensures that the
+  /// state of the branch Widgets is maintained, for instance by inducting them
+  /// in the Widget tree.
+  final StackedNavigationContainerBuilder? navigatorContainerBuilder;
+
   /// Representations of the different stateful route branches that this
   /// shell route will manage.
   ///
@@ -740,9 +762,7 @@ class StackedShellRoute extends ShellRouteBase {
   Widget? buildWidget(BuildContext context, GoRouterState state,
       ShellRouteContext shellRouteContext) {
     if (builder != null) {
-      final StackedNavigationShell shell =
-          _createShell(context, state, shellRouteContext);
-      return builder!(context, shell.shellRouteState, shell);
+      return builder!(context, state, _createShell(context, shellRouteContext));
     }
     return null;
   }
@@ -751,9 +771,8 @@ class StackedShellRoute extends ShellRouteBase {
   Page<dynamic>? buildPage(BuildContext context, GoRouterState state,
       ShellRouteContext shellRouteContext) {
     if (pageBuilder != null) {
-      final StackedNavigationShell shell =
-          _createShell(context, state, shellRouteContext);
-      return pageBuilder!(context, shell.shellRouteState, shell);
+      return pageBuilder!(
+          context, state, _createShell(context, shellRouteContext));
     }
     return null;
   }
@@ -766,20 +785,12 @@ class StackedShellRoute extends ShellRouteBase {
     return branch!.navigatorKey;
   }
 
-  StackedNavigationShell _createShell(BuildContext context, GoRouterState state,
-      ShellRouteContext shellRouteContext) {
-    final GlobalKey<NavigatorState> navigatorKey =
-        navigatorKeyForSubRoute(shellRouteContext.subRoute);
-    final StackedShellRouteState shellRouteState = StackedShellRouteState._(
-      GoRouter.of(context),
-      this,
-      _shellStateKey,
-      state,
-      navigatorKey,
-      shellRouteContext,
-    );
-    return StackedNavigationShell(shellRouteState: shellRouteState);
-  }
+  StackedNavigationShell _createShell(
+          BuildContext context, ShellRouteContext shellRouteContext) =>
+      StackedNavigationShell(
+          shellRouteContext: shellRouteContext,
+          router: GoRouter.of(context),
+          containerBuilder: navigatorContainerBuilder);
 
   static List<RouteBase> _routes(List<StackedShellBranch> branches) =>
       branches.expand((StackedShellBranch e) => e.routes).toList();
@@ -858,10 +869,9 @@ class StackedShellBranch {
   /// The initial location for this route branch.
   ///
   /// If none is specified, the location of the first descendant [GoRoute] will
-  /// be used (i.e. first element in [routes], or a descendant). The default
-  /// location is used when loading the branch for the first time (for instance
-  /// when switching branch using the goBranch method in
-  /// [StackedShellRouteState]).
+  /// be used (i.e. [defaultRoute]). The initial location is used when loading
+  /// the branch for the first time (for instance when switching branch using
+  /// the goBranch method).
   final String? initialLocation;
 
   /// Restoration ID to save and restore the state of the navigator, including
@@ -872,11 +882,21 @@ class StackedShellBranch {
   ///
   /// The observers parameter is used by the [Navigator] built for this branch.
   final List<NavigatorObserver>? observers;
+
+  /// The default route of this branch, i.e. the first descendant [GoRoute].
+  ///
+  /// This route will be used when loading the branch for the first time, if
+  /// an [initialLocation] has not been provided.
+  GoRoute? get defaultRoute =>
+      RouteBase.routesRecursively(routes).whereType<GoRoute>().firstOrNull;
 }
 
-/// Builder for a custom container for shell route Navigators.
-typedef ShellNavigatorContainerBuilder = Widget Function(BuildContext context,
-    StackedShellRouteState shellRouteState, List<Widget> children);
+/// Builder for a custom container for the branch Navigators of a
+/// [StackedShellRoute].
+typedef StackedNavigationContainerBuilder = Widget Function(
+    BuildContext context,
+    StackedNavigationShell navigationShell,
+    List<Widget> children);
 
 /// Widget for managing the state of a [StackedShellRoute].
 ///
@@ -884,12 +904,13 @@ typedef ShellNavigatorContainerBuilder = Widget Function(BuildContext context,
 /// internally by StackedShellRoute. However, if a custom container for the
 /// branch Navigators is required, StackedNavigationShell can be used in
 /// the builder or pageBuilder methods of StackedShellRoute to facilitate this.
-/// The container is created using the provided [ShellNavigatorContainerBuilder],
+/// The container is created using the provided [StackedNavigationContainerBuilder],
 /// where the List of Widgets represent the Navigators for each branch.
 ///
 /// Example:
 /// ```
-/// builder: (BuildContext context, StackedShellRouteState state, Widget child) {
+/// builder: (BuildContext context, GoRouterState state,
+///     StackedNavigationShell navigationShell) {
 ///   return StackedNavigationShell(
 ///     shellRouteState: state,
 ///     containerBuilder: (_, __, List<Widget> children) => MyCustomShell(shellState: state, children: children),
@@ -899,25 +920,78 @@ typedef ShellNavigatorContainerBuilder = Widget Function(BuildContext context,
 class StackedNavigationShell extends StatefulWidget {
   /// Constructs an [_StackedNavigationShell].
   StackedNavigationShell({
-    required this.shellRouteState,
-    ShellNavigatorContainerBuilder? containerBuilder,
-  })  : containerBuilder = containerBuilder ?? _defaultChildBuilder,
-        super(key: shellRouteState._shellStateKey);
+    required this.shellRouteContext,
+    required GoRouter router,
+    this.containerBuilder,
+  })  : assert(shellRouteContext.route is StackedShellRoute),
+        _router = router,
+        currentIndex = _indexOfBranchNavigatorKey(
+            shellRouteContext.route as StackedShellRoute,
+            shellRouteContext.navigatorKey),
+        super(
+            key: (shellRouteContext.route as StackedShellRoute)._shellStateKey);
 
-  static Widget _defaultChildBuilder(BuildContext context,
-      StackedShellRouteState shellRouteState, List<Widget> children) {
-    return _IndexedStackedRouteBranchContainer(
-        currentIndex: shellRouteState.currentIndex, children: children);
-  }
-
-  /// The current state of the associated [StackedShellRoute].
-  final StackedShellRouteState shellRouteState;
+  /// The ShellRouteContext responsible for building the Navigator for the
+  /// current [StackedShellBranch]
+  final ShellRouteContext shellRouteContext;
 
   /// The builder for a custom container for shell route Navigators.
-  final ShellNavigatorContainerBuilder containerBuilder;
+  final StackedNavigationContainerBuilder? containerBuilder;
+
+  /// The index of the currently active [StackedShellBranch].
+  ///
+  /// Corresponds to the index in the branches field of [StackedShellRoute].
+  final int currentIndex;
+
+  final GoRouter _router;
+
+  /// Navigate to the last location of the [StackedShellBranch] at the provided
+  /// index in the associated [StackedShellBranch].
+  ///
+  /// This method will switch the currently active branch [Navigator] for the
+  /// [StackedShellRoute]. If the branch has not been visited before, this
+  /// method will navigate to initial location of the branch (see
+  /// [StackedShellBranch.initialLocation]).
+  void goBranch(int index) {
+    final StackedShellRoute route =
+        shellRouteContext.route as StackedShellRoute;
+    final StackedNavigationShellState? shellState =
+        route._shellStateKey.currentState;
+    if (shellState != null) {
+      shellState.goBranch(index);
+    } else {
+      _router.go(StackedNavigationShellState._effectiveInitialBranchLocation(
+          _router, route, index));
+    }
+  }
 
   @override
   State<StatefulWidget> createState() => StackedNavigationShellState();
+
+  /// Gets the state for the nearest stateful shell route in the Widget tree.
+  static StackedNavigationShellState of(BuildContext context) {
+    final StackedNavigationShellState? shellState =
+        context.findAncestorStateOfType<StackedNavigationShellState>();
+    assert(shellState != null);
+    return shellState!;
+  }
+
+  /// Gets the state for the nearest stateful shell route in the Widget tree.
+  ///
+  /// Returns null if no stateful shell route is found.
+  static StackedNavigationShellState? maybeOf(BuildContext context) {
+    final StackedNavigationShellState? shellState =
+        context.findAncestorStateOfType<StackedNavigationShellState>();
+    return shellState;
+  }
+
+  static int _indexOfBranchNavigatorKey(
+      StackedShellRoute route, GlobalKey<NavigatorState> navigatorKey) {
+    final int index = route.branches.indexWhere(
+        (StackedShellBranch branch) => branch.navigatorKey == navigatorKey);
+    assert(index >= 0);
+    return index;
+  }
 }
 
 /// State for StackedNavigationShell.
@@ -925,14 +999,11 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
     with RestorationMixin {
   final Map<Key, Widget> _branchNavigators = <Key, Widget>{};
 
-  StackedShellRoute get _route => widget.shellRouteState.route;
+  StackedShellRoute get _route =>
+      widget.shellRouteContext.route as StackedShellRoute;
 
-  StackedShellRouteState get _routeState => widget.shellRouteState;
-
-  GoRouter get _router => _routeState._router;
+  GoRouter get _router => widget._router;
   RouteMatcher get _matcher => _router.routeInformationParser.matcher;
-  GoRouteInformationProvider get _routeInformationProvider =>
-      _router.routeInformationProvider;
 
   final Map<StackedShellBranch, _RestorableRouteMatchList> _branchLocations =
       <StackedShellBranch, _RestorableRouteMatchList>{};
@@ -949,68 +1020,93 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
         : identityHashCode(branch).toString();
   }
 
-  _RestorableRouteMatchList _branchLocation(StackedShellBranch branch) {
+  _RestorableRouteMatchList _branchLocation(StackedShellBranch branch,
+      [bool register = true]) {
     return _branchLocations.putIfAbsent(branch, () {
       final _RestorableRouteMatchList branchLocation =
           _RestorableRouteMatchList(_matcher);
-      registerForRestoration(
-          branchLocation, _branchLocationRestorationScopeId(branch));
+      if (register) {
+        registerForRestoration(
+            branchLocation, _branchLocationRestorationScopeId(branch));
+      }
       return branchLocation;
     });
-  }
-
-  Widget? _navigatorForBranch(StackedShellBranch branch) {
-    return _branchNavigators[branch.navigatorKey];
-  }
-
-  void _setNavigatorForBranch(StackedShellBranch branch, Widget? navigator) {
-    navigator != null
-        ? _branchNavigators[branch.navigatorKey] = navigator
-        : _branchNavigators.remove(branch.navigatorKey);
   }
 
   RouteMatchList? _matchListForBranch(int index) =>
       _branchLocations[_route.branches[index]]?.value;
 
   void _updateCurrentBranchStateFromWidget() {
-    final StackedShellBranch branch = _route.branches[_routeState.currentIndex];
-    final ShellRouteContext shellRouteContext = _routeState._shellRouteContext;
+    final StackedShellBranch branch = _route.branches[widget.currentIndex];
+    final ShellRouteContext shellRouteContext = widget.shellRouteContext;
 
     /// Create an clone of the current RouteMatchList, to prevent mutations from
     /// affecting the copy saved as the current state for this branch.
     final RouteMatchList currentBranchLocation =
-        shellRouteContext.routeMatchList.clone();
+        shellRouteContext.routeMatchList.copy();
 
-    final _RestorableRouteMatchList branchLocation = _branchLocation(branch);
+    final _RestorableRouteMatchList branchLocation =
+        _branchLocation(branch, false);
     final RouteMatchList previousBranchLocation = branchLocation.value;
     branchLocation.value = currentBranchLocation;
-    final bool hasExistingNavigator = _navigatorForBranch(branch) != null;
+    final bool hasExistingNavigator =
+        _branchNavigators[branch.navigatorKey] != null;
 
     /// Only update the Navigator of the route match list has changed
     final bool locationChanged = !RouteMatchList.matchListEquals(
         previousBranchLocation, currentBranchLocation);
     if (locationChanged || !hasExistingNavigator) {
-      final Widget currentNavigator = shellRouteContext.buildNavigator(
-        observers: branch.observers,
-        restorationScopeId: branch.restorationScopeId,
-      );
-      _setNavigatorForBranch(branch, currentNavigator);
+      _branchNavigators[branch.navigatorKey] = shellRouteContext
+          .navigatorBuilder(branch.observers, branch.restorationScopeId);
     }
   }
 
-  void _goBranch(int index) {
+  Widget _indexedStackChildBuilder(BuildContext context,
+      StackedNavigationShell navigationShell, List<Widget> children) {
+    return _IndexedStackedRouteBranchContainer(
+        currentIndex: widget.currentIndex, children: children);
+  }
+
+  /// The index of the currently active [StackedShellBranch].
+  ///
+  /// Corresponds to the index in the branches field of [StackedShellRoute].
+  int get currentIndex => widget.currentIndex;
+
+  /// Navigate to the last location of the [StackedShellBranch] at the provided
+  /// index in the associated [StackedShellBranch].
+  ///
+  /// This method will switch the currently active branch [Navigator] for the
+  /// [StackedShellRoute]. If the branch has not been visited before, this
+  /// method will navigate to initial location of the branch (see
+  void goBranch(int index) {
     assert(index >= 0 && index < _route.branches.length);
     final RouteMatchList? matchlist = _matchListForBranch(index);
     if (matchlist != null && matchlist.isNotEmpty) {
-      _routeInformationProvider.value = matchlist.toPreParsedRouteInformation();
+      final RouteInformation preParsed =
+          matchlist.toPreParsedRouteInformation();
+      _router.go(preParsed.location!, extra: preParsed.state);
     } else {
-      _router.go(_routeState._effectiveInitialBranchLocation(index));
+      _router.go(_effectiveInitialBranchLocation(_router, _route, index));
+    }
+  }
+
+  static String _effectiveInitialBranchLocation(
+      GoRouter router, StackedShellRoute route, int index) {
+    final StackedShellBranch branch = route.branches[index];
+    final String? initialLocation = branch.initialLocation;
+    if (initialLocation != null) {
+      return initialLocation;
+    } else {
+      /// Recursively traverses the routes of the provided StackedShellBranch to
+      /// find the first GoRoute, from which a full path will be derived.
+      final GoRoute route = branch.defaultRoute!;
+      return router.locationForRoute(route)!;
     }
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     _updateCurrentBranchStateFromWidget();
   }
 
@@ -1039,26 +1135,39 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
         .map((StackedShellBranch branch) => _BranchNavigatorProxy(
             key: ObjectKey(branch),
             branch: branch,
-            navigatorForBranch: _navigatorForBranch))
+            navigatorForBranch: (StackedShellBranch b) =>
+                _branchNavigators[b.navigatorKey]))
         .toList();
-    return widget.containerBuilder(context, _routeState, children);
+
+    final StackedNavigationContainerBuilder containerBuilder =
+        widget.containerBuilder ?? _indexedStackChildBuilder;
+    return containerBuilder(context, widget, children);
   }
 }
 
 /// [RestorableProperty] for enabling state restoration of [RouteMatchList]s.
-class _RestorableRouteMatchList extends RestorableValue<RouteMatchList> {
+class _RestorableRouteMatchList extends RestorableProperty<RouteMatchList> {
   _RestorableRouteMatchList(RouteMatcher matcher)
       : _matchListCodec = RouteMatchListCodec(matcher);
 
   final RouteMatchListCodec _matchListCodec;
 
-  @override
-  RouteMatchList createDefaultValue() => RouteMatchList.empty;
+  RouteMatchList get value => _value;
+  RouteMatchList _value = RouteMatchList.empty;
+  set value(RouteMatchList newValue) {
+    if (newValue != _value) {
+      _value = newValue;
+      notifyListeners();
+    }
+  }
 
   @override
-  void didUpdateValue(RouteMatchList? oldValue) {
-    notifyListeners();
+  void initWithValue(RouteMatchList value) {
+    _value = value;
   }
+
+  @override
+  RouteMatchList createDefaultValue() => RouteMatchList.empty;
 
   @override
   RouteMatchList fromPrimitives(Object? data) {
@@ -1142,91 +1251,5 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
         child: child,
       ),
     );
-  }
-}
-
-/// The snapshot of the current state of a [StackedShellRoute].
-///
-/// Note that this an immutable class, that represents the snapshot of the state
-/// of a StackedShellRoute at a given point in time. Therefore, instances of
-/// this object should not be cached, but instead passed down from the builder
-/// functions of StackedShellRoute.
-@immutable
-class StackedShellRouteState {
-  /// Constructs a [_StackedShellRouteState].
-  StackedShellRouteState._(
-    this._router,
-    this.route,
-    this._shellStateKey,
-    this.routerState,
-    GlobalKey<NavigatorState> currentNavigatorKey,
-    this._shellRouteContext,
-  ) : currentIndex = _indexOfBranchNavigatorKey(route, currentNavigatorKey);
-
-  static int _indexOfBranchNavigatorKey(
-      StackedShellRoute route, GlobalKey<NavigatorState> navigatorKey) {
-    final int index = route.branches.indexWhere(
-        (StackedShellBranch branch) => branch.navigatorKey == navigatorKey);
-    assert(index >= 0);
-    return index;
-  }
-
-  final GoRouter _router;
-
-  /// The associated [StackedShellRoute]
-  final StackedShellRoute route;
-
-  final GlobalKey<StackedNavigationShellState> _shellStateKey;
-
-  /// The current route state associated with the [StackedShellRoute].
-  final GoRouterState routerState;
-
-  /// The ShellRouteContext responsible for building the Navigator for the
-  /// current [StackedShellBranch]
-  final ShellRouteContext _shellRouteContext;
-
-  /// The index of the currently active [StackedShellBranch].
-  ///
-  /// Corresponds to the index of the branch in the List returned from
-  /// branchBuilder of [StackedShellRoute].
-  final int currentIndex;
-
-  /// Navigate to the last location of the [StackedShellBranch] at the provided
-  /// index in the associated [StackedShellBranch].
-  ///
-  /// This method will switch the currently active branch [Navigator] for the
-  /// [StackedShellRoute]. If the branch has not been visited before, this
-  /// method will navigate to initial location of the branch (see
-  /// [StackedShellBranch.initialLocation]).
-  void goBranch({required int index}) {
-    final StackedNavigationShellState? shellState = _shellStateKey.currentState;
-    if (shellState != null) {
-      shellState._goBranch(index);
-    } else {
-      assert(_router != null);
-      _router.go(_effectiveInitialBranchLocation(index));
-    }
-  }
-
-  String _effectiveInitialBranchLocation(int index) {
-    return _router.routeInformationParser.configuration
-        .effectiveInitialBranchLocation(route.branches[index]);
-  }
-
-  /// Gets the state for the nearest stateful shell route in the Widget tree.
-  static StackedShellRouteState of(BuildContext context) {
-    final StackedNavigationShellState? shellState =
-        context.findAncestorStateOfType<StackedNavigationShellState>();
-    assert(shellState != null);
-    return shellState!._routeState;
-  }
-
-  /// Gets the state for the nearest stateful shell route in the Widget tree.
-  ///
-  /// Returns null if no stateful shell route is found.
-  static StackedShellRouteState? maybeOf(BuildContext context) {
-    final StackedNavigationShellState? shellState =
-        context.findAncestorStateOfType<StackedNavigationShellState>();
-    return shellState?._routeState;
   }
 }

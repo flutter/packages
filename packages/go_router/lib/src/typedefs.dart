@@ -37,15 +37,15 @@ typedef ShellRoutePageBuilder = Page<dynamic> Function(
 /// The widget builder for [StackedShellRoute].
 typedef StackedShellRouteBuilder = Widget Function(
   BuildContext context,
-  StackedShellRouteState state,
-  Widget child,
+  GoRouterState state,
+  StackedNavigationShell navigationShell,
 );
 
 /// The page builder for [StackedShellRoute].
 typedef StackedShellRoutePageBuilder = Page<dynamic> Function(
   BuildContext context,
-  StackedShellRouteState state,
-  Widget child,
+  GoRouterState state,
+  StackedNavigationShell navigationShell,
 );
 
 /// Signature of a go router builder function with navigator.

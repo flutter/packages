@@ -2501,13 +2501,13 @@ void main() {
 
     testWidgets('StackedShellRoute supports nested routes with params',
         (WidgetTester tester) async {
-      StackedShellRouteState? routeState;
+      StackedNavigationShell? routeState;
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState = state;
-            return child;
+          builder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(
@@ -2566,12 +2566,12 @@ void main() {
       expect(matches.pathParameters['fid'], fid);
       expect(matches.pathParameters['pid'], pid);
 
-      routeState?.goBranch(index: 0);
+      routeState?.goBranch(0);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.byType(PersonScreen), findsNothing);
 
-      routeState?.goBranch(index: 1);
+      routeState?.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.byType(PersonScreen), findsOneWidget);
@@ -3076,9 +3076,9 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-                  Widget child) =>
-              child,
+          builder: (BuildContext context, GoRouterState state,
+                  StackedNavigationShell navigationShell) =>
+              navigationShell,
           branches: <StackedShellBranch>[
             StackedShellBranch(routes: <GoRoute>[
               GoRoute(
@@ -3121,9 +3121,9 @@ void main() {
               const Text('Root'),
           routes: <RouteBase>[
             StackedShellRoute(
-              builder: (BuildContext context, StackedShellRouteState state,
-                      Widget child) =>
-                  child,
+              builder: (BuildContext context, GoRouterState state,
+                      StackedNavigationShell navigationShell) =>
+                  navigationShell,
               branches: <StackedShellBranch>[
                 StackedShellBranch(routes: <GoRoute>[
                   GoRoute(
@@ -3163,14 +3163,14 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StackedShellRouteState? routeState;
+      StackedNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState = state;
-            return child;
+          builder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(
@@ -3221,21 +3221,21 @@ void main() {
       expect(find.text('Screen C'), findsNothing);
       expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(index: 1);
+      routeState!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen C'), findsNothing);
       expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(index: 2);
+      routeState!.goBranch(2);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Screen C'), findsOneWidget);
       expect(find.text('Screen D'), findsNothing);
 
-      routeState!.goBranch(index: 3);
+      routeState!.goBranch(3);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
@@ -3244,7 +3244,7 @@ void main() {
 
       expect(() {
         // Verify that navigation to unknown index fails
-        routeState!.goBranch(index: 4);
+        routeState!.goBranch(4);
       }, throwsA(isA<Error>()));
     });
 
@@ -3255,14 +3255,14 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StackedShellRouteState? routeState;
+      StackedNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState = state;
-            return child;
+          builder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(routes: <GoRoute>[
@@ -3300,13 +3300,13 @@ void main() {
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
 
-      routeState!.goBranch(index: 1);
+      routeState!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen A Detail'), findsNothing);
       expect(find.text('Screen B'), findsOneWidget);
 
-      routeState!.goBranch(index: 0);
+      routeState!.goBranch(0);
       await tester.pumpAndSettle();
       expect(statefulWidgetKey.currentState?.counter, equals(1));
 
@@ -3325,23 +3325,23 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StackedShellRouteState? routeState1;
-      StackedShellRouteState? routeState2;
+      StackedNavigationShell? routeState1;
+      StackedNavigationShell? routeState2;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState1 = state;
-            return child;
+          builder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState1 = navigationShell;
+            return navigationShell;
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(routes: <RouteBase>[
               StackedShellRoute(
-                  builder: (BuildContext context, StackedShellRouteState state,
-                      Widget child) {
-                    routeState2 = state;
-                    return child;
+                  builder: (BuildContext context, GoRouterState state,
+                      StackedNavigationShell navigationShell) {
+                    routeState2 = navigationShell;
+                    return navigationShell;
                   },
                   branches: <StackedShellBranch>[
                     StackedShellBranch(routes: <RouteBase>[
@@ -3393,23 +3393,23 @@ void main() {
           initialLocation: '/a/detailA', navigatorKey: rootNavigatorKey);
       statefulWidgetKey.currentState?.increment();
       expect(find.text('Screen A Detail'), findsOneWidget);
-      routeState2!.goBranch(index: 1);
+      routeState2!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen B'), findsOneWidget);
 
-      routeState1!.goBranch(index: 1);
+      routeState1!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen D'), findsOneWidget);
 
-      routeState1!.goBranch(index: 0);
+      routeState1!.goBranch(0);
       await tester.pumpAndSettle();
       expect(find.text('Screen B'), findsOneWidget);
 
-      routeState2!.goBranch(index: 2);
+      routeState2!.goBranch(2);
       await tester.pumpAndSettle();
       expect(find.text('Screen C'), findsOneWidget);
 
-      routeState2!.goBranch(index: 0);
+      routeState2!.goBranch(0);
       await tester.pumpAndSettle();
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(statefulWidgetKey.currentState?.counter, equals(1));
@@ -3424,14 +3424,14 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<NavigatorState> sectionBNavigatorKey =
           GlobalKey<NavigatorState>();
-      StackedShellRouteState? routeState;
+      StackedNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState = state;
-            return child;
+          builder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(
@@ -3493,7 +3493,7 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
       expect(find.text('Screen B Detail'), findsNothing);
 
-      routeState!.goBranch(index: 0);
+      routeState!.goBranch(0);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen A Detail'), findsOneWidget);
@@ -3509,14 +3509,14 @@ void main() {
         'between branches in StackedShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StackedShellRouteState? routeState;
+      StackedNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState = state;
-            return child;
+          builder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(routes: <GoRoute>[
@@ -3546,12 +3546,12 @@ void main() {
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B - X'), findsOneWidget);
 
-      routeState!.goBranch(index: 0);
+      routeState!.goBranch(0);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B - X'), findsNothing);
 
-      routeState!.goBranch(index: 1);
+      routeState!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B - X'), findsOneWidget);
@@ -3563,7 +3563,7 @@ void main() {
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StackedShellRouteState? routeState;
+      StackedNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
@@ -3572,10 +3572,10 @@ void main() {
               Text('Common - ${state.extra}'),
         ),
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState = state;
-            return child;
+          builder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(routes: <GoRoute>[
@@ -3611,11 +3611,11 @@ void main() {
       expect(find.text('Screen B'), findsNothing);
       expect(find.text('Common - X'), findsOneWidget);
 
-      routeState!.goBranch(index: 0);
+      routeState!.goBranch(0);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsOneWidget);
 
-      routeState!.goBranch(index: 1);
+      routeState!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
@@ -3627,14 +3627,14 @@ void main() {
         'StackedShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StackedShellRouteState? routeState;
+      StackedNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
-          builder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState = state;
-            return child;
+          builder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(routes: <GoRoute>[
@@ -3699,19 +3699,19 @@ void main() {
       expect(find.text('Screen A'), findsOneWidget);
       expect(find.text('Screen B Detail'), findsNothing);
 
-      routeState!.goBranch(index: 1);
+      routeState!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B Detail1'), findsOneWidget);
 
-      routeState!.goBranch(index: 2);
+      routeState!.goBranch(2);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B Detail1'), findsNothing);
       expect(find.text('Screen C2'), findsOneWidget);
 
       redirectDestinationBranchB = '/b/details2';
-      routeState!.goBranch(index: 1);
+      routeState!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A'), findsNothing);
       expect(find.text('Screen B Detail2'), findsOneWidget);
@@ -4342,16 +4342,16 @@ void main() {
           GlobalKey<DummyRestorableStatefulWidgetState>();
       final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyC =
           GlobalKey<DummyRestorableStatefulWidgetState>();
-      StackedShellRouteState? routeState;
+      StackedNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           restorationScopeId: 'shell',
-          pageBuilder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeState = state;
+          pageBuilder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeState = navigationShell;
             return MaterialPage<dynamic>(
-                restorationId: 'shellWidget', child: child);
+                restorationId: 'shellWidget', child: navigationShell);
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(restorationScopeId: 'branchA', routes: <GoRoute>[
@@ -4436,7 +4436,7 @@ void main() {
       statefulWidgetKeyC.currentState?.increment();
       expect(statefulWidgetKeyC.currentState?.counter, equals(1));
 
-      routeState!.goBranch(index: 0);
+      routeState!.goBranch(0);
       await tester.pumpAndSettle();
       expect(find.text('Screen A Detail'), findsOneWidget);
 
@@ -4446,12 +4446,12 @@ void main() {
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
 
-      routeState!.goBranch(index: 1);
+      routeState!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen B Detail'), findsOneWidget);
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
 
-      routeState!.goBranch(index: 2);
+      routeState!.goBranch(2);
       await tester.pumpAndSettle();
       expect(find.text('Screen C Detail'), findsOneWidget);
       // State of branch C should not have been restored
@@ -4467,17 +4467,17 @@ void main() {
           GlobalKey<DummyRestorableStatefulWidgetState>();
       final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyB =
           GlobalKey<DummyRestorableStatefulWidgetState>();
-      StackedShellRouteState? routeStateRoot;
-      StackedShellRouteState? routeStateNested;
+      StackedNavigationShell? routeStateRoot;
+      StackedNavigationShell? routeStateNested;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           restorationScopeId: 'shell',
-          pageBuilder: (BuildContext context, StackedShellRouteState state,
-              Widget child) {
-            routeStateRoot = state;
+          pageBuilder: (BuildContext context, GoRouterState state,
+              StackedNavigationShell navigationShell) {
+            routeStateRoot = navigationShell;
             return MaterialPage<dynamic>(
-                restorationId: 'shellWidget', child: child);
+                restorationId: 'shellWidget', child: navigationShell);
           },
           branches: <StackedShellBranch>[
             StackedShellBranch(restorationScopeId: 'branchA', routes: <GoRoute>[
@@ -4505,11 +4505,12 @@ void main() {
                 routes: <RouteBase>[
                   StackedShellRoute(
                       restorationScopeId: 'branchB-nested-shell',
-                      pageBuilder: (BuildContext context,
-                          StackedShellRouteState state, Widget child) {
-                        routeStateNested = state;
+                      pageBuilder: (BuildContext context, GoRouterState state,
+                          StackedNavigationShell navigationShell) {
+                        routeStateNested = navigationShell;
                         return MaterialPage<dynamic>(
-                            restorationId: 'shellWidget-nested', child: child);
+                            restorationId: 'shellWidget-nested',
+                            child: navigationShell);
                       },
                       branches: <StackedShellBranch>[
                         StackedShellBranch(
@@ -4534,17 +4535,6 @@ void main() {
                                   ),
                                 ],
                               ),
-                              // GoRoute(
-                              //   path: '/bPushed',
-                              //   pageBuilder: createPageBuilder(
-                              //       restorationId: 'screenBDetail',
-                              //       child: Column(children: <Widget>[
-                              //         const Text('Screen B Pushed Detail'),
-                              //         DummyRestorableStatefulWidget(
-                              //             key: statefulWidgetKeyB,
-                              //             restorationId: 'counterB'),
-                              //       ])),
-                              // ),
                             ]),
                         StackedShellBranch(
                             restorationScopeId: 'branchC-nested',
@@ -4570,16 +4560,15 @@ void main() {
       statefulWidgetKeyA.currentState?.increment();
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(index: 1);
+      routeStateRoot!.goBranch(1);
       await tester.pumpAndSettle();
 
-      // router.push('/bPushed');
       router.go('/b/detailB');
       await tester.pumpAndSettle();
       statefulWidgetKeyB.currentState?.increment();
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(index: 0);
+      routeStateRoot!.goBranch(0);
       await tester.pumpAndSettle();
       expect(find.text('Screen A Detail'), findsOneWidget);
       expect(find.text('Screen B'), findsNothing);
@@ -4593,26 +4582,20 @@ void main() {
       expect(find.text('Screen B Pushed Detail'), findsNothing);
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
 
-      routeStateRoot!.goBranch(index: 1);
+      routeStateRoot!.goBranch(1);
       await tester.pumpAndSettle();
       expect(find.text('Screen A Detail'), findsNothing);
       expect(find.text('Screen B'), findsNothing);
-      //expect(find.text('Screen B Pushed Detail'), findsOneWidget);
       expect(find.text('Screen B Detail'), findsOneWidget);
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
 
-      routeStateNested!.goBranch(index: 1);
+      routeStateNested!.goBranch(1);
       await tester.pumpAndSettle();
-      routeStateNested!.goBranch(index: 0);
+      routeStateNested!.goBranch(0);
       await tester.pumpAndSettle();
 
       expect(find.text('Screen B Detail'), findsOneWidget);
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
-
-      // router.pop();
-      // await tester.pumpAndSettle();
-      // expect(find.text('Screen B'), findsOneWidget);
-      // expect(find.text('Screen B Pushed Detail'), findsNothing);
     });
   });
 }

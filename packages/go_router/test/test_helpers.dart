@@ -292,9 +292,9 @@ GoRouterPageBuilder createPageBuilder(
     (BuildContext context, GoRouterState state) =>
         MaterialPage<dynamic>(restorationId: restorationId, child: child);
 
-StackedShellRouteBuilder mockStackedShellBuilder =
-    (BuildContext context, StackedShellRouteState state, Widget child) {
-  return child;
+StackedShellRouteBuilder mockStackedShellBuilder = (BuildContext context,
+    GoRouterState state, StackedNavigationShell navigationShell) {
+  return navigationShell;
 };
 
 RouteMatch createRouteMatch(RouteBase route, String location) {

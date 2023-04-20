@@ -546,10 +546,14 @@ void main() {
           },
         );
 
-        expect('/a', config.findStackedShellBranchDefaultLocation(branchA));
-        expect(
-            '/a/x/y1', config.findStackedShellBranchDefaultLocation(branchY));
-        expect('/b1', config.findStackedShellBranchDefaultLocation(branchB));
+        String? initialLocation(StackedShellBranch branch) {
+          final GoRoute? route = branch.defaultRoute;
+          return route != null ? config.locationForRoute(route) : null;
+        }
+
+        expect('/a', initialLocation(branchA));
+        expect('/a/x/y1', initialLocation(branchY));
+        expect('/b1', initialLocation(branchB));
       },
     );
 

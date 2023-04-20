@@ -166,7 +166,7 @@ class RouteBuilder {
 
   Set<GlobalKey<NavigatorState>> _nestedStatefulNavigatorKeys(
       Iterable<StackedShellRoute> routes) {
-    return RouteConfiguration.routesRecursively(routes)
+    return RouteBase.routesRecursively(routes)
         .whereType<StackedShellRoute>()
         .expand((StackedShellRoute e) =>
             e.branches.map((StackedShellBranch b) => b.navigatorKey))
@@ -254,7 +254,10 @@ class RouteBuilder {
 
       // Call the ShellRouteBase to create/update the shell route state
       final ShellRouteContext shellRouteContext = ShellRouteContext(
+        route: route,
         subRoute: subRoute,
+        routerState: state,
+        navigatorKey: shellNavigatorKey,
         routeMatchList: matchList,
         navigatorBuilder: buildShellNavigator,
       );

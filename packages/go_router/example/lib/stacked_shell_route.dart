@@ -150,44 +150,47 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     ),
                   ]),
                 ],
-                builder: (BuildContext context, StackedShellRouteState state,
-                    Widget child) {
+                builder: (BuildContext context, GoRouterState state,
+                    StackedNavigationShell navigationShell) {
                   /// This nested StackedShellRoute demonstrates the use of a
                   /// custom container (TabBarView) for the branch Navigators.
-                  /// Here, the default branch Navigator container (`child`) is
-                  /// ignored, and the class StackedNavigationShell is
-                  /// instead used to provide access to the widgets representing
-                  /// the branch Navigators (`List<Widget> children`).
-                  ///
-                  /// See TabbedRootScreen for more details on how the children
-                  /// are used in the TabBarView.
-                  return StackedNavigationShell(
-                    shellRouteState: state,
-                    containerBuilder: (BuildContext context,
-                            StackedShellRouteState state,
-                            List<Widget> children) =>
-                        TabbedRootScreen(shellState: state, children: children),
-                  );
+                  /// In this implementation, no customization is done in the
+                  /// builder function (navigationShell itself is simply used as
+                  /// the Widget for the route). Instead, the
+                  /// navigatorContainerBuilder function below is provided to
+                  /// customize the container for the branch Navigators.
+                  return navigationShell;
                 },
+                navigatorContainerBuilder: (BuildContext context,
+                        StackedNavigationShell navigationShell,
+                        List<Widget> children) =>
+
+                    /// Returning a customized container for the branch
+                    /// Navigators (i.e. the `List<Widget> children` argument).
+                    ///
+                    /// See TabbedRootScreen for more details on how the children
+                    /// are used in the TabBarView.
+                    TabbedRootScreen(
+                        navigationShell: navigationShell, children: children),
               ),
             ],
           ),
         ],
-        builder:
-            (BuildContext context, StackedShellRouteState state, Widget child) {
+        builder: (BuildContext context, GoRouterState state,
+            StackedNavigationShell navigationShell) {
           /// This builder implementation uses the default container for the
           /// branch Navigators (provided in through the `child` argument). This
           /// is the simplest way to use StackedShellRoute, where the shell is
           /// built around the Navigator container (see ScaffoldWithNavBar).
-          return ScaffoldWithNavBar(shellState: state, body: child);
+          return ScaffoldWithNavBar(navigationShell: navigationShell);
         },
 
         /// If it's necessary to customize the Page for StackedShellRoute,
         /// provide a pageBuilder function instead of the builder, for example:
-        // pageBuilder: (BuildContext context, StackedShellRouteState state,
-        //     Widget child) {
+        // pageBuilder: (BuildContext context, GoRouterState state,
+        //             StackedNavigationShell navigationShell) {
         //   return NoTransitionPage<dynamic>(
-        //       child: ScaffoldWithNavBar(shellState: state, body: child));
+        //       child: ScaffoldWithNavBar(navigationShell: navigationShell));
         // },
       ),
     ],
@@ -210,29 +213,25 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
-    required this.shellState,
-    required this.body,
+    required this.navigationShell,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
-  /// The current state of the parent StackedShellRoute.
-  final StackedShellRouteState shellState;
-
-  /// Body, i.e. the container for the branch Navigators.
-  final Widget body;
+  /// The navigation shell and container for the branch Navigators.
+  final StackedNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: body,
+      body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
           BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
           BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
         ],
-        currentIndex: shellState.currentIndex,
-        onTap: (int tappedIndex) => shellState.goBranch(index: tappedIndex),
+        currentIndex: navigationShell.currentIndex,
+        onTap: (int tappedIndex) => navigationShell.goBranch(tappedIndex),
       ),
     );
   }
@@ -459,10 +458,10 @@ class ModalScreen extends StatelessWidget {
 class TabbedRootScreen extends StatefulWidget {
   /// Constructs a TabbedRootScreen
   const TabbedRootScreen(
-      {required this.shellState, required this.children, super.key});
+      {required this.navigationShell, required this.children, super.key});
 
   /// The current state of the parent StackedShellRoute.
-  final StackedShellRouteState shellState;
+  final StackedNavigationShell navigationShell;
 
   /// The children (Navigators) to display in the [TabBarView].
   final List<Widget> children;
@@ -476,12 +475,12 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
   late final TabController _tabController = TabController(
       length: widget.children.length,
       vsync: this,
-      initialIndex: widget.shellState.currentIndex);
+      initialIndex: widget.navigationShell.currentIndex);
 
   @override
   void didUpdateWidget(covariant TabbedRootScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _tabController.index = widget.shellState.currentIndex;
+    _tabController.index = widget.navigationShell.currentIndex;
   }
 
   @override
@@ -506,7 +505,7 @@ class _TabbedRootScreenState extends State<TabbedRootScreen>
   }
 
   void _onTabTap(BuildContext context, int index) {
-    widget.shellState.goBranch(index: index);
+    widget.navigationShell.goBranch(index);
   }
 }
 

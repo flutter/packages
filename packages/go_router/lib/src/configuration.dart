@@ -141,7 +141,13 @@ class RouteConfiguration {
             if (branch.initialLocation == null) {
               // Recursively search for the first GoRoute descendant. Will
               // throw assertion error if not found.
-              findStackedShellBranchDefaultLocation(branch);
+              final GoRoute? route = branch.defaultRoute;
+              final String? initialLocation =
+                  route != null ? locationForRoute(route) : null;
+              assert(
+                  initialLocation != null,
+                  'The initial location of a StackedShellBranch must be '
+                  'derivable from GoRoute descendant');
             } else {
               final RouteBase initialLocationRoute =
                   matcher.findMatch(branch.initialLocation!).last.route;
@@ -167,70 +173,75 @@ class RouteConfiguration {
     return true;
   }
 
-  /// Returns an Iterable that traverses the provided routes and their
-  /// sub-routes recursively.
-  static Iterable<RouteBase> routesRecursively(
-      Iterable<RouteBase> routes) sync* {
-    for (final RouteBase route in routes) {
-      yield route;
-      yield* routesRecursively(route.routes);
-    }
-  }
+  // /// Returns an Iterable that traverses the provided routes and their
+  // /// sub-routes recursively.
+  // static Iterable<RouteBase> routesRecursively(
+  //     Iterable<RouteBase> routes) sync* {
+  //   for (final RouteBase route in routes) {
+  //     yield route;
+  //     yield* routesRecursively(route.routes);
+  //   }
+  // }
+  //
+  // static Iterable<RouteBase> routesRecursively2(Iterable<RouteBase> routes) {
+  //   return routes.expand((RouteBase e) => [e, ...routesRecursively2(e.routes)]);
+  // }
 
-  static GoRoute? _findFirstGoRoute(List<RouteBase> routes) =>
-      routesRecursively(routes).whereType<GoRoute>().firstOrNull;
+  // static GoRoute? _findFirstGoRoute(List<RouteBase> routes) =>
+  //     routesRecursively(routes).whereType<GoRoute>().firstOrNull;
 
   /// Tests if a route is a descendant of, or same as, an ancestor route.
   bool _debugIsDescendantOrSame(
           {required RouteBase ancestor, required RouteBase route}) =>
-      ancestor == route || routesRecursively(ancestor.routes).contains(route);
+      ancestor == route ||
+      RouteBase.routesRecursively(ancestor.routes).contains(route);
 
-  /// Recursively traverses the routes of the provided StackedShellBranch to
-  /// find the first GoRoute, from which a full path will be derived.
-  String findStackedShellBranchDefaultLocation(StackedShellBranch branch) {
-    final GoRoute? route = _findFirstGoRoute(branch.routes);
-    final String? initialLocation =
-        route != null ? _fullPathForRoute(route, '', routes) : null;
-    assert(
-        initialLocation != null,
-        'The initial location of a StackedShellBranch must be derivable from '
-        'GoRoute descendant');
-    return initialLocation!;
-  }
+  // /// Recursively traverses the routes of the provided StackedShellBranch to
+  // /// find the first GoRoute, from which a full path will be derived.
+  // String findStackedShellBranchDefaultLocation(StackedShellBranch branch) {
+  //   final GoRoute? route = _findFirstGoRoute(branch.routes);
+  //   final String? initialLocation =
+  //       route != null ? fullPathForRoute(route, '', routes) : null;
+  //   assert(
+  //       initialLocation != null,
+  //       'The initial location of a StackedShellBranch must be derivable from '
+  //       'GoRoute descendant');
+  //   return initialLocation!;
+  // }
 
-  /// Returns the effective initial location of a StackedShellBranch.
-  ///
-  /// If the initial location of the branch is null,
-  /// [findStackedShellBranchDefaultLocation] is used to calculate the initial
-  /// location.
-  String effectiveInitialBranchLocation(StackedShellBranch branch) {
-    final String? initialLocation = branch.initialLocation;
-    if (initialLocation != null) {
-      return initialLocation;
-    } else {
-      return findStackedShellBranchDefaultLocation(branch);
-    }
-  }
+  // /// Returns the effective initial location of a StackedShellBranch.
+  // ///
+  // /// If the initial location of the branch is null,
+  // /// [findStackedShellBranchDefaultLocation] is used to calculate the initial
+  // /// location.
+  // String effectiveInitialBranchLocation(StackedShellBranch branch) {
+  //   final String? initialLocation = branch.initialLocation;
+  //   if (initialLocation != null) {
+  //     return initialLocation;
+  //   } else {
+  //     return findStackedShellBranchDefaultLocation(branch);
+  //   }
+  // }
 
-  static String? _fullPathForRoute(
-      RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
-    for (final RouteBase route in routes) {
-      final String fullPath = (route is GoRoute)
-          ? concatenatePaths(parentFullpath, route.path)
-          : parentFullpath;
-
-      if (route == targetRoute) {
-        return fullPath;
-      } else {
-        final String? subRoutePath =
-            _fullPathForRoute(targetRoute, fullPath, route.routes);
-        if (subRoutePath != null) {
-          return subRoutePath;
-        }
-      }
-    }
-    return null;
-  }
+  // static String? _fullPathForRoute(
+  //     RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
+  //   for (final RouteBase route in routes) {
+  //     final String fullPath = (route is GoRoute)
+  //         ? concatenatePaths(parentFullpath, route.path)
+  //         : parentFullpath;
+  //
+  //     if (route == targetRoute) {
+  //       return fullPath;
+  //     } else {
+  //       final String? subRoutePath =
+  //           _fullPathForRoute(targetRoute, fullPath, route.routes);
+  //       if (subRoutePath != null) {
+  //         return subRoutePath;
+  //       }
+  //     }
+  //   }
+  //   return null;
+  // }
 
   /// The list of top level routes used by [GoRouterDelegate].
   final List<RouteBase> routes;
@@ -287,6 +298,13 @@ class RouteConfiguration {
             queryParameters: queryParams.isEmpty ? null : queryParams)
         .toString();
   }
+
+  /// Get the location for the provided route.
+  ///
+  /// Builds the absolute path for the route, by concatenating the paths of the
+  /// route and all its ancestors.
+  String? locationForRoute(RouteBase route) =>
+      fullPathForRoute(route, '', routes);
 
   @override
   String toString() {

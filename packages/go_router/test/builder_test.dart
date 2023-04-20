@@ -337,9 +337,9 @@ void main() {
         routes: <RouteBase>[
           StackedShellRoute(
             restorationScopeId: 'shell',
-            builder: (BuildContext context, StackedShellRouteState state,
-                    Widget child) =>
-                _HomeScreen(child: child),
+            builder: (BuildContext context, GoRouterState state,
+                    StackedNavigationShell navigationShell) =>
+                _HomeScreen(child: navigationShell),
             branches: <StackedShellBranch>[
               StackedShellBranch(
                 navigatorKey: shellNavigatorKey,
@@ -445,7 +445,6 @@ class _BuilderTestWidget extends StatelessWidget {
     return MaterialApp(
       home: builder.tryBuild(context, matches, false,
           routeConfiguration.navigatorKey, <Page<Object?>, GoRouterState>{}),
-      // builder: (context, child) => ,
     );
   }
 }
