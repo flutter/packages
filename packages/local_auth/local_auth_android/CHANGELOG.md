@@ -1,3 +1,7 @@
+## 1.0.24
+
+* Fixes `getEnrolledBiometrics` return value handling.
+
 ## 1.0.23
 
 * Switches internals to Pigeon and fixes Java warnings.
