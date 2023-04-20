@@ -15,10 +15,10 @@ PurchaseWrapper _$PurchaseWrapperFromJson(Map json) => PurchaseWrapper(
       skus:
           (json['skus'] as List<dynamic>?)?.map((e) => e as String).toList() ??
               [],
-      isAutoRenewing: json['isAutoRenewing'] as bool,
+      isAutoRenewing: json['autoRenewing'] as bool,
       originalJson: json['originalJson'] as String? ?? '',
       developerPayload: json['developerPayload'] as String?,
-      isAcknowledged: json['isAcknowledged'] as bool? ?? false,
+      isAcknowledged: json['acknowledged'] as bool? ?? false,
       purchaseState: const PurchaseStateConverter()
           .fromJson(json['purchaseState'] as int?),
       obfuscatedAccountId: json['obfuscatedAccountId'] as String?,

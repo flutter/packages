@@ -122,6 +122,7 @@ class PurchaseWrapper {
   /// false.
   ///
   /// The value is `false` for [SkuType.inapp] products.
+  @JsonKey(name: 'autoRenewing')
   final bool isAutoRenewing;
 
   /// Details about this purchase, in JSON.
@@ -144,7 +145,7 @@ class PurchaseWrapper {
   ///
   /// A successful purchase has to be acknowledged within 3 days after the purchase via [BillingClient.acknowledgePurchase].
   /// * See also [BillingClient.acknowledgePurchase] for more details on acknowledging purchases.
-  @JsonKey(defaultValue: false)
+  @JsonKey(defaultValue: false, name: 'acknowledged')
   final bool isAcknowledged;
 
   /// Determines the current state of the purchase.
