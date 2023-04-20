@@ -24,24 +24,24 @@ platform_properties:
     properties:
       dependencies: >-
         [
-          {"dependency": "xcode", "version": "14a5294e"},
+          {"dependency": "xcode", "version": "14c18"},
           {"dependency": "gems", "version": "v3.3.14"}
         ]
       os: Mac-12
       device_type: none
       cpu: arm64
-      xcode: 14a5294e # xcode 14.0 beta 5
+      xcode: 14c18
   mac_x64:
     properties:
       dependencies: >-
         [
-          {"dependency": "xcode", "version": "14a5294e"},
+          {"dependency": "xcode", "version": "14c18"},
           {"dependency": "gems", "version": "v3.3.14"}
         ]
       os: Mac-12
       device_type: none
       cpu: x86
-      xcode: 14a5294e # xcode 14.0 beta 5
+      xcode: 14c18
 
 targets:
   ### iOS+macOS tasks ***
