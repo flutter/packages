@@ -421,8 +421,6 @@ NS_INLINE UIViewController *rootViewController() {
 
 - (void)seekTo:(int)location completionHandler:(void (^)(BOOL))completionHandler {
   [_player seekToTime:CMTimeMake(location, 1000)
-        toleranceBefore:kCMTimeZero
-         toleranceAfter:kCMTimeZero
       completionHandler:completionHandler];
 }
 
