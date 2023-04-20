@@ -31,7 +31,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   void setUp(BinaryMessenger binaryMessenger, Context context, TextureRegistry textureRegistry) {
     // Set up instance manager.
     instanceManager =
-        InstanceManager.open(
+        InstanceManager.create(
             identifier -> {
               new GeneratedCameraXLibrary.JavaObjectFlutterApi(binaryMessenger)
                   .dispose(identifier, reply -> {});
@@ -66,7 +66,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     if (instanceManager != null) {
-      instanceManager.close();
+      instanceManager.stopFinalizationListener();
     }
   }
 

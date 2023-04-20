@@ -6,10 +6,12 @@ package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
 import android.webkit.CookieManager;
+import androidx.annotation.NonNull;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CookieManagerHostApi;
 
-class CookieManagerHostApiImpl implements GeneratedAndroidWebView.CookieManagerHostApi {
+class CookieManagerHostApiImpl implements CookieManagerHostApi {
   @Override
-  public void clearCookies(GeneratedAndroidWebView.Result<Boolean> result) {
+  public void clearCookies(@NonNull GeneratedAndroidWebView.Result<Boolean> result) {
     CookieManager cookieManager = CookieManager.getInstance();
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       cookieManager.removeAllCookies(result::success);
@@ -19,7 +21,7 @@ class CookieManagerHostApiImpl implements GeneratedAndroidWebView.CookieManagerH
   }
 
   @Override
-  public void setCookie(String url, String value) {
+  public void setCookie(@NonNull String url, @NonNull String value) {
     CookieManager.getInstance().setCookie(url, value);
   }
 

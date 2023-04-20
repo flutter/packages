@@ -61,7 +61,8 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
    * won't react to changes in activity or context, unlike {@link WebViewFlutterPlugin}.
    */
   @SuppressWarnings({"unused", "deprecation"})
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     new WebViewFlutterPlugin()
         .setUp(
             registrar.messenger(),
@@ -77,7 +78,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
       Context context,
       FlutterAssetManager flutterAssetManager) {
     instanceManager =
-        InstanceManager.open(
+        InstanceManager.create(
             identifier ->
                 new GeneratedAndroidWebView.JavaObjectFlutterApi(binaryMessenger)
                     .dispose(identifier, reply -> {}));
@@ -144,7 +145,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     if (instanceManager != null) {
-      instanceManager.close();
+      instanceManager.stopFinalizationListener();
       instanceManager = null;
     }
   }

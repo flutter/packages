@@ -53,7 +53,7 @@ class WebViewController {
   /// Constructs a [WebViewController] from creation params for a specific
   /// platform.
   ///
-  /// {@template webview_flutter.WebViewCookieManager.fromPlatformCreationParams}
+  /// {@template webview_flutter.WebViewController.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
   /// iOS and Android:
   ///
@@ -247,7 +247,7 @@ class WebViewController {
   /// to asynchronously invoke the message handler which will print the message
   /// to standard output.
   ///
-  /// Adding a new JavaScript channel only takes affect after the next page is
+  /// Adding a new JavaScript channel only takes effect after the next page is
   /// loaded.
   ///
   /// A channel [name] cannot be the same for multiple channels.

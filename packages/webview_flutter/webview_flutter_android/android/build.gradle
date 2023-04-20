@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath 'com.android.tools.build:gradle:8.0.0'
     }
 }
 
@@ -30,9 +30,8 @@ android {
     }
 
     lintOptions {
-        // See https://sites.google.com/a/android.com/tools/tips/lint-checks for all available
-        // android lint checks.
-        error 'ViewConstructor'
+        checkAllWarnings true
+        warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
     }
 
