@@ -160,6 +160,8 @@ class AndroidWebViewController extends PlatformWebViewController {
                 .whereType<WebViewPermissionResourceType>()
                 .toSet();
 
+            // If the request didn't contain any permissions recognized by the
+            // implementation, deny by default.
             if (types.isEmpty) {
               return request.deny();
             }
