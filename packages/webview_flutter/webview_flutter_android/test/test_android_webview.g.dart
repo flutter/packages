@@ -1522,6 +1522,8 @@ abstract class TestWebStorageHostApi {
 ///
 /// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
 abstract class TestGeolocationPermissionsCallbackHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   /// Handles Dart method `GeolocationPermissionsCallback.invoke`.
@@ -1535,9 +1537,12 @@ abstract class TestGeolocationPermissionsCallbackHostApi {
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMockMessageHandler(null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        channel.setMockMessageHandler((Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke was null.');
           final List<Object?> args = (message as List<Object?>?)!;

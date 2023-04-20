@@ -2506,7 +2506,7 @@ public class GeneratedAndroidWebView {
         @NonNull Long instanceIdArg,
         @NonNull Long paramsInstanceIdArg,
         @NonNull String originArg,
-        Reply<Void> callback) {
+        @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -2518,7 +2518,7 @@ public class GeneratedAndroidWebView {
     }
     /** Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`. */
     public void onGeolocationPermissionsHidePrompt(
-        @NonNull Long identifierArg, Reply<Void> callback) {
+        @NonNull Long identifierArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -2682,14 +2682,16 @@ public class GeneratedAndroidWebView {
         @NonNull Boolean retain);
 
     /** The codec used by GeolocationPermissionsCallbackHostApi. */
-    static MessageCodec<Object> getCodec() {
+    static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
     /**
      * Sets up an instance of `GeolocationPermissionsCallbackHostApi` to handle messages through the
      * `binaryMessenger`.
      */
-    static void setup(BinaryMessenger binaryMessenger, GeolocationPermissionsCallbackHostApi api) {
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger,
+        @Nullable GeolocationPermissionsCallbackHostApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -2700,32 +2702,19 @@ public class GeneratedAndroidWebView {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                String originArg = (String) args.get(1);
+                Boolean allowArg = (Boolean) args.get(2);
+                Boolean retainArg = (Boolean) args.get(3);
                 try {
-                  ArrayList<Object> args = (ArrayList<Object>) message;
-                  assert args != null;
-                  Number instanceIdArg = (Number) args.get(0);
-                  if (instanceIdArg == null) {
-                    throw new NullPointerException("instanceIdArg unexpectedly null.");
-                  }
-                  String originArg = (String) args.get(1);
-                  if (originArg == null) {
-                    throw new NullPointerException("originArg unexpectedly null.");
-                  }
-                  Boolean allowArg = (Boolean) args.get(2);
-                  if (allowArg == null) {
-                    throw new NullPointerException("allowArg unexpectedly null.");
-                  }
-                  Boolean retainArg = (Boolean) args.get(3);
-                  if (retainArg == null) {
-                    throw new NullPointerException("retainArg unexpectedly null.");
-                  }
                   api.invoke(
                       (instanceIdArg == null) ? null : instanceIdArg.longValue(),
                       originArg,
                       allowArg,
                       retainArg);
                   wrapped.add(0, null);
-                } catch (Error | RuntimeException exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -2748,22 +2737,23 @@ public class GeneratedAndroidWebView {
    * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
    */
   public static class GeolocationPermissionsCallbackFlutterApi {
-    private final BinaryMessenger binaryMessenger;
+    private final @NonNull BinaryMessenger binaryMessenger;
 
-    public GeolocationPermissionsCallbackFlutterApi(BinaryMessenger argBinaryMessenger) {
+    public GeolocationPermissionsCallbackFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
       this.binaryMessenger = argBinaryMessenger;
     }
 
     /** Public interface for sending reply. */
+    @SuppressWarnings("UnknownNullness")
     public interface Reply<T> {
       void reply(T reply);
     }
     /** The codec used by GeolocationPermissionsCallbackFlutterApi. */
-    static MessageCodec<Object> getCodec() {
+    static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
     /** Create a new Dart instance and add it to the `InstanceManager`. */
-    public void create(@NonNull Long instanceIdArg, Reply<Void> callback) {
+    public void create(@NonNull Long instanceIdArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,

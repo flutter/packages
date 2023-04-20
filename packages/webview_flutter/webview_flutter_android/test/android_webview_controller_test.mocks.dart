@@ -353,6 +353,16 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnHttpError,
+          [onHttpError],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewController].

@@ -74,7 +74,9 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
 
   /** Passes arguments from {@link WebChromeClient#onGeolocationPermissionsShowPrompt} to Dart. */
   public void onGeolocationPermissionsShowPrompt(
-      @NonNull WebChromeClient webChromeClient, @NonNull String origin, @NonNull GeolocationPermissions.Callback callback) {
+      @NonNull WebChromeClient webChromeClient,
+      @NonNull String origin,
+      @NonNull GeolocationPermissions.Callback callback) {
 
     new GeolocationPermissionsCallbackFlutterApiImpl(binaryMessenger, instanceManager)
         .create(callback, reply -> {});

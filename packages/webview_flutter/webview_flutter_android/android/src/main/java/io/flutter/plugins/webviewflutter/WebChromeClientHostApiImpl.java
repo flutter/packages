@@ -53,7 +53,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
 
     @Override
     public void onGeolocationPermissionsShowPrompt(
-        String origin, GeolocationPermissions.Callback callback) {
+        @NonNull String origin, @NonNull GeolocationPermissions.Callback callback) {
       flutterApi.onGeolocationPermissionsShowPrompt(this, origin, callback);
     }
 
