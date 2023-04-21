@@ -33,7 +33,9 @@ void main() {
     RepositoryPackage package, {
     bool includeLanguageVersion = false,
     bool includeSourceCompat = false,
-    bool commentRequiredLine = false,
+    bool commentSourceLanguage = false,
+    bool includeNamespace = true,
+    bool commentNamespace = false,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -42,17 +44,19 @@ void main() {
 
     final String compileOptionsSection = '''
     compileOptions {
-        ${commentRequiredLine ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8
+        ${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8
     }
 ''';
     final String javaSection = '''
 java {
     toolchain {
-        ${commentRequiredLine ? '// ' : ''}languageVersion = JavaLanguageVersion.of(8)
+        ${commentSourceLanguage ? '// ' : ''}languageVersion = JavaLanguageVersion.of(8)
     }
 }
 
 ''';
+    final String namespace =
+        '${commentNamespace ? '// ' : ''}namespace dev.flutter.foo';
 
     buildGradle.writeAsStringSync('''
 group 'dev.flutter.plugins.fake'
@@ -69,6 +73,7 @@ apply plugin: 'com.android.library'
 
 ${includeLanguageVersion ? javaSection : ''}
 android {
+    ${includeNamespace ? namespace : ''}
     compileSdkVersion 33
 
     defaultConfig {
@@ -177,7 +182,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
-        includeSourceCompat: true, commentRequiredLine: true);
+        includeSourceCompat: true, commentSourceLanguage: true);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -199,7 +204,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
-        includeLanguageVersion: true, commentRequiredLine: true);
+        includeLanguageVersion: true, commentSourceLanguage: true);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -213,6 +218,69 @@ dependencies {
       containsAllInOrder(<Matcher>[
         contains(
             'build.gradle must set an explicit Java compatibility version.'),
+      ]),
+    );
+  });
+
+  test('fails when namespace is missing', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakeBuildGradle(package,
+        includeLanguageVersion: true, includeNamespace: false);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('build.gradle must set a "namespace"'),
+      ]),
+    );
+  });
+
+  test('fails when namespace is missing from example', () async {
+    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    writeFakeBuildGradle(package.getExamples().first,
+        includeLanguageVersion: true, includeNamespace: false);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('build.gradle must set a "namespace"'),
+      ]),
+    );
+  });
+
+  test('fails when namespace is commented out', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakeBuildGradle(package,
+        includeLanguageVersion: true, commentNamespace: true);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('build.gradle must set a "namespace"'),
       ]),
     );
   });

@@ -42,18 +42,42 @@ class GradleCheckCommand extends PackageLoopingCommand {
     return PackageResult.success();
   }
 
+  bool succeeded = true;
+
   bool _validateBuildGradle(RepositoryPackage package,
       {required bool isExample}) {
-    // Currently the only check is not relevant to examples; checks that apply
-    // to both plugins and examples should go above here.
-    if (!isExample) {
-      print('${indentation}Validating android/build.gradle.');
-      final String contents = package
-          .platformDirectory(FlutterPlatform.android)
-          .childFile('build.gradle')
-          .readAsStringSync();
-      final List<String> lines = contents.split('\n');
+    print('${indentation}Validating android/build.gradle.');
+    final String contents = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle')
+        .readAsStringSync();
+    final List<String> lines = contents.split('\n');
 
+    // Check for namespace, which is require for compatibility with apps that
+    // use AGP 8+.
+    if (!lines.any((String line) =>
+        line.contains('namespace ') && !line.trim().startsWith('//'))) {
+      const String errorMessage = '''
+build.gradle must set a "namespace":
+
+    android {
+        namespace 'dev.flutter.foo'
+    }
+
+The value should match the "package" attribute in AndroidManifest.xml.
+''';
+
+      printError(
+          '$indentation${errorMessage.split('\n').join('\n$indentation')}');
+      succeeded = false;
+    }
+
+    // Additional checks that only apply to the top-level package.
+    if (!isExample) {
+      // Check for a source compatibiltiy version, so that it's explicit
+      // rather than using whatever the client's local toolchaing defaults to
+      // (which can lead to compile errors that show up for clients, but not in
+      // CI).
       if (!lines.any((String line) =>
               line.contains('languageVersion') &&
               !line.trim().startsWith('//')) &&
@@ -83,10 +107,10 @@ for more details.''';
 
         printError(
             '$indentation${errorMessage.split('\n').join('\n$indentation')}');
-        return false;
+        succeeded = false;
       }
     }
 
-    return true;
+    return succeeded;
   }
 }
