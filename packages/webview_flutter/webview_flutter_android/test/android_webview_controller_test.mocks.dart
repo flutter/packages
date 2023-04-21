@@ -353,16 +353,6 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
-  @override
-  _i9.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnHttpError,
-          [onHttpError],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewController].
@@ -698,10 +688,7 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i9.Future<void>);
   @override
   _i9.Future<void> setGeolocationPermissionsPromptCallbacks({
-    void Function(
-      String,
-      _i2.GeolocationPermissionsCallback,
-    )? onShowPrompt,
+    void Function(_i8.GeolocationPermissionsRequest)? onShowPrompt,
     void Function()? onHidePrompt,
   }) =>
       (super.noSuchMethod(

@@ -621,7 +621,7 @@ void main() {
       expect(fileSelectorParams.mode, FileSelectorMode.open);
     });
 
-    test('setOnGeolocationPermissionsShowPrompt', () async {
+    test('setGeolocationPermissionsPromptCallbacks', () async {
       late final void Function(String origin,
               android_webview.GeolocationPermissionsCallback callback)
           onGeoPermissionHandle;
@@ -648,13 +648,11 @@ void main() {
         },
       );
 
-      late final android_webview.GeolocationPermissionsCallback outerCallback;
-      late final String outOrigin;
+      late final GeolocationPermissionsRequest outerRequest;
       controller.setGeolocationPermissionsPromptCallbacks(
-        onShowPrompt: (String origin,
-            android_webview.GeolocationPermissionsCallback callback) {
-          outOrigin = origin;
-          outerCallback = callback;
+        onShowPrompt: (GeolocationPermissionsRequest
+            geolocationPermissionsRequest) {
+          outerRequest = geolocationPermissionsRequest;
         },
         onHidePrompt: () {
           testValue = 'changed';
@@ -668,8 +666,7 @@ void main() {
         testCallback,
       );
 
-      expect(outOrigin, 'https://www.xxx.com');
-      expect(testCallback, outerCallback);
+      expect(outerRequest.origin, 'https://www.xxx.com');
 
       onGeoPermissionHidePromptHandle(mockWebChromeClient);
       expect(testValue, 'changed');
