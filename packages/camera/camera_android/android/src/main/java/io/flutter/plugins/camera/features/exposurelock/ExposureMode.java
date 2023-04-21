@@ -4,6 +4,9 @@
 
 package io.flutter.plugins.camera.features.exposurelock;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 // Mirrors exposure_mode.dart
 public enum ExposureMode {
   auto("auto"),
@@ -24,7 +27,8 @@ public enum ExposureMode {
    * @param modeStr String value to convert into an {@see ExposureMode} enum value.
    * @return Matching {@see ExposureMode} enum value, or null if no match is found.
    */
-  public static ExposureMode getValueForString(String modeStr) {
+  @Nullable
+  public static ExposureMode getValueForString(@NonNull String modeStr) {
     for (ExposureMode value : values()) {
       if (value.strValue.equals(modeStr)) {
         return value;
