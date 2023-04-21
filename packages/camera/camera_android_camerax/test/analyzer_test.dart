@@ -2,42 +2,39 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:camera_android_camerax/src/analyzer.dart';
+import 'package:camera_android_camerax/src/image_proxy.dart';
+import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:camera_android_camerax/src/instance_manager.dart';
 
-import 'image_analysis_analyzer_test.mocks.dart';
+import 'analyzer_test.mocks.dart';
+import 'test_camerax_library.g.dart';
 
-// TODO(bparrishMines): Move desired test implementations to test file or
-// remove .gen_api_impls from filename and follow todos below
-// TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
-// TODO(bparrishMines): Run build runner
-
-// @GenerateMocks(
-//     <Type>[TestImageAnalysisAnalyzerHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[TestAnalyzerHostApi, TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('ImageAnalysisAnalyzer', () {
+  group('Analyzer', () {
     setUp(() {});
 
     tearDown(() {
-      TestImageAnalysisAnalyzerHostApi.setup(null);
+      TestAnalyzerHostApi.setup(null);
       TestInstanceManagerHostApi.setup(null);
     });
 
     test('HostApi create', () {
-      final MockTestImageAnalysisAnalyzerHostApi mockApi =
-          MockTestImageAnalysisAnalyzerHostApi();
-      TestImageAnalysisAnalyzerHostApi.setup(mockApi);
+      final MockTestAnalyzerHostApi mockApi = MockTestAnalyzerHostApi();
+      TestAnalyzerHostApi.setup(mockApi);
       TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final ImageAnalysisAnalyzer instance = ImageAnalysisAnalyzer(
+      final Analyzer instance = Analyzer(
+        analyze: (ImageProxy imageProxy) async {},
         instanceManager: instanceManager,
       );
 
@@ -51,8 +48,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final ImageAnalysisAnalyzerFlutterApiImpl api =
-          ImageAnalysisAnalyzerFlutterApiImpl(
+      final AnalyzerFlutterApiImpl api = AnalyzerFlutterApiImpl(
         instanceManager: instanceManager,
       );
 
@@ -64,7 +60,7 @@ void main() {
 
       expect(
         instanceManager.getInstanceWithWeakReference(instanceIdentifier),
-        isA<ImageAnalysisAnalyzer>(),
+        isA<Analyzer>(),
       );
     });
 
@@ -74,14 +70,13 @@ void main() {
       );
 
       const int instanceIdentifier = 0;
-      late final List<Object?> callbackParameters;
-      final ImageAnalysisAnalyzer instance = ImageAnalysisAnalyzer.detached(
+      const int imageProxyIdentifier = 44;
+      late final Object callbackParameter;
+      final Analyzer instance = Analyzer.detached(
         analyze: (
-          ImageAnalysisAnalyzer instance,
-        ) {
-          callbackParameters = <Object?>[
-            instance,
-          ];
+          ImageProxy imageProxy,
+        ) async {
+          callbackParameter = imageProxy;
         },
         binaryMessenger: null,
         instanceManager: instanceManager,
@@ -89,26 +84,31 @@ void main() {
       instanceManager.addHostCreatedInstance(
         instance,
         instanceIdentifier,
-        onCopy: (ImageAnalysisAnalyzer original) =>
-            ImageAnalysisAnalyzer.detached(
+        onCopy: (Analyzer original) => Analyzer.detached(
           analyze: original.analyze,
           binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );
+      final ImageProxy imageProxy =
+          ImageProxy.detached(instanceManager: instanceManager);
+      instanceManager.addHostCreatedInstance(imageProxy, imageProxyIdentifier,
+          onCopy: (ImageProxy original) =>
+              ImageProxy.detached(instanceManager: instanceManager));
 
-      final ImageAnalysisAnalyzerFlutterApiImpl flutterApi =
-          ImageAnalysisAnalyzerFlutterApiImpl(
+      final AnalyzerFlutterApiImpl flutterApi = AnalyzerFlutterApiImpl(
         instanceManager: instanceManager,
       );
 
       flutterApi.analyze(
         instanceIdentifier,
+        imageProxyIdentifier,
       );
 
-      expect(callbackParameters, <Object?>[
-        instance,
-      ]);
+      expect(
+        callbackParameter,
+        imageProxy,
+      );
     });
   });
 }
