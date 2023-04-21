@@ -237,6 +237,8 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   final String path;
 
   /// The name that corresponds to this route.
+  /// Used by Analytics services such as Firebase Analytics 
+  /// to log the screen views in their system.
   ///
   /// See [GoRoute.name].
   ///
