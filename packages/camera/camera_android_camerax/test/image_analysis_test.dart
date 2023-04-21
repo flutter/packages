@@ -2,13 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:typed_data' show Uint8List;
-
+import 'package:camera_android_camerax/src/analyzer.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
+import 'package:camera_android_camerax/src/image_proxy.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
-import 'package:camera_platform_interface/camera_platform_interface.dart'
-    show CameraImageData, ImageFormatGroup;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -24,51 +22,42 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ImageAnalysis', () {
-    tearDown(() => TestImageAnalysisHostApi.setup(null));
+    setUp(() {});
 
-    test('detached create does not call create on the Java side', () async {
-      final MockTestImageAnalysisHostApi mockApi =
-          MockTestImageAnalysisHostApi();
-      TestImageAnalysisHostApi.setup(mockApi);
-
-      final InstanceManager instanceManager = InstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      ImageAnalysis.detached(
-        instanceManager: instanceManager,
-        targetResolution: ResolutionInfo(width: 50, height: 10),
-      );
-
-      verifyNever(
-          mockApi.create(argThat(isA<int>()), argThat(isA<ResolutionInfo>())));
+    tearDown(() {
+      TestImageAnalysisHostApi.setup(null);
+      TestInstanceManagerHostApi.setup(null);
     });
 
-    test('create calls create on the Java side', () async {
+    test('HostApi create', () {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
+      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      const int targetResolutionWidth = 10;
-      const int targetResolutionHeight = 50;
-      ImageAnalysis(
+
+      const int targetResolutionWidth = 65;
+      const int targetResolutionHeight = 99;
+      final ResolutionInfo targetResolution =
+          ResolutionInfo(width: 65, height: 99);
+      final ImageAnalysis instance = ImageAnalysis(
+        targetResolution: targetResolution,
         instanceManager: instanceManager,
-        targetResolution: ResolutionInfo(
-            width: targetResolutionWidth, height: targetResolutionHeight),
       );
 
-      final VerificationResult createVerification =
-          verify(mockApi.create(argThat(isA<int>()), captureAny));
+      final VerificationResult createVerification = verify(mockApi.create(
+          argThat(equals(instanceManager.getIdentifier(instance))),
+          captureAny));
       final ResolutionInfo capturedResolutionInfo =
           createVerification.captured.single as ResolutionInfo;
       expect(capturedResolutionInfo.width, equals(targetResolutionWidth));
       expect(capturedResolutionInfo.height, equals(targetResolutionHeight));
     });
 
-    test('setAnalyzer makes call to set analyzer on ImageAnalysis instance',
-        () async {
+    test('setAnalyzer', () async {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
@@ -76,23 +65,46 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      final ImageAnalysis imageAnalysis = ImageAnalysis.detached(
+
+      final ImageAnalysis instance = ImageAnalysis.detached(
+        targetResolution: ResolutionInfo(width: 75, height: 98),
         instanceManager: instanceManager,
       );
-      const int imageAnalysisIdentifier = 99;
+      const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
-        imageAnalysis,
-        imageAnalysisIdentifier,
-        onCopy: (_) => ImageAnalysis.detached(),
+        instance,
+        instanceIdentifier,
+        onCopy: (ImageAnalysis original) => ImageAnalysis.detached(
+          targetResolution: original.targetResolution,
+          instanceManager: instanceManager,
+        ),
       );
 
-      imageAnalysis.setAnalyzer();
+      final Analyzer analyzer = Analyzer.detached(
+        analyze: (ImageProxy imageProxy) async {},
+        instanceManager: instanceManager,
+      );
+      const int analyzerIdentifier = 10;
+      instanceManager.addHostCreatedInstance(
+        analyzer,
+        analyzerIdentifier,
+        onCopy: (_) => Analyzer.detached(
+          analyze: (ImageProxy imageProxy) async {},
+          instanceManager: instanceManager,
+        ),
+      );
 
-      verify(mockApi.setAnalyzer(imageAnalysisIdentifier));
+      await instance.setAnalyzer(
+        analyzer,
+      );
+
+      verify(mockApi.setAnalyzer(
+        instanceIdentifier,
+        analyzerIdentifier,
+      ));
     });
 
-    test('clearAnalyzer makes call to set analyzer on ImageAnalysis instance',
-        () async {
+    test('clearAnalyzer', () async {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
@@ -100,63 +112,26 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      final ImageAnalysis imageAnalysis = ImageAnalysis.detached(
+
+      final ImageAnalysis instance = ImageAnalysis.detached(
+        targetResolution: ResolutionInfo(width: 75, height: 98),
         instanceManager: instanceManager,
       );
-      const int imageAnalysisIdentifier = 59;
+      const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
-        imageAnalysis,
-        imageAnalysisIdentifier,
-        onCopy: (_) => ImageAnalysis.detached(),
+        instance,
+        instanceIdentifier,
+        onCopy: (ImageAnalysis original) => ImageAnalysis.detached(
+          targetResolution: original.targetResolution,
+          instanceManager: instanceManager,
+        ),
       );
 
-      imageAnalysis.clearAnalyzer();
+      await instance.clearAnalyzer();
 
-      verify(mockApi.clearAnalyzer(imageAnalysisIdentifier));
-    });
-
-    test(
-        'flutterApi onImageAnalyzed adds event with image information to expected stream',
-        () async {
-      final ImageAnalysisFlutterApiImpl flutterApi =
-          ImageAnalysisFlutterApiImpl();
-
-      // Fake image information for testing.
-      const int bytesPerRow = 5;
-      const int bytesPerPixel = 1;
-      final Uint8List bytes = Uint8List(50);
-      final List<ImagePlaneInformation> imagePlanesInformation =
-          <ImagePlaneInformation>[
-        ImagePlaneInformation(
-          bytesPerRow: bytesPerRow,
-          bytesPerPixel: bytesPerPixel,
-          bytes: bytes,
-        )
-      ];
-      const int height = 10;
-      const int width = 5;
-      const int format = 35;
-      final ImageInformation imageInformation = ImageInformation(
-        format: format,
-        imagePlanesInformation: imagePlanesInformation,
-        height: height,
-        width: width,
-      );
-
-      ImageAnalysis.onStreamedFrameAvailableStreamController.stream
-          .listen((CameraImageData cameraImageData) {
-        expect(cameraImageData.format.group, equals(ImageFormatGroup.yuv420));
-        expect(cameraImageData.planes.first, isNotNull);
-        expect(cameraImageData.planes.first.bytes, equals(bytes));
-        expect(cameraImageData.planes.first.bytesPerRow, equals(bytesPerRow));
-        expect(
-            cameraImageData.planes.first.bytesPerPixel, equals(bytesPerPixel));
-        expect(cameraImageData.format.raw, equals(format));
-        expect(cameraImageData.height, equals(height));
-        expect(cameraImageData.width, equals(width));
-      });
-
-      flutterApi.onImageAnalyzed(imageInformation);
+      verify(mockApi.clearAnalyzer(
+        instanceIdentifier,
+      ));
     });
   });
 }
