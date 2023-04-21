@@ -108,7 +108,7 @@ class AndroidWebViewController extends PlatformWebViewController {
           android_webview.GeolocationPermissionsCallback callback) {
         if (weakReference.target?._onGeolocationPermissionsShowPrompt != null) {
           weakReference.target!._onGeolocationPermissionsShowPrompt!(
-          GeolocationPermissionsRequest._(origin, callback));
+              GeolocationPermissionsRequest._(origin, callback));
         } else {
           // default don't allow
           callback.invoke(origin, false, false);
@@ -567,7 +567,8 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
-    @visibleForTesting InstanceManager? instanceManager,
+    @visibleForTesting
+        InstanceManager? instanceManager,
     @visibleForTesting
         this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =

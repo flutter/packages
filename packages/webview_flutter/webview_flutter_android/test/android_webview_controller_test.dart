@@ -650,8 +650,8 @@ void main() {
 
       late final GeolocationPermissionsRequest outerRequest;
       controller.setGeolocationPermissionsPromptCallbacks(
-        onShowPrompt: (GeolocationPermissionsRequest
-            geolocationPermissionsRequest) {
+        onShowPrompt:
+            (GeolocationPermissionsRequest geolocationPermissionsRequest) {
           outerRequest = geolocationPermissionsRequest;
         },
         onHidePrompt: () {
