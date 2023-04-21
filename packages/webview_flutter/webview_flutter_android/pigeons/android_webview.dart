@@ -345,6 +345,9 @@ abstract class WebChromeClientFlutterApi {
     int webViewInstanceId,
     int paramsInstanceId,
   );
+
+  /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
+  void onPermissionRequest(int instanceId, int requestInstanceId);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebStorageHostApi')
@@ -366,4 +369,33 @@ abstract class FileChooserParamsFlutterApi {
     FileChooserModeEnumData mode,
     String? filenameHint,
   );
+}
+
+/// Host API for `PermissionRequest`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/PermissionRequest.
+@HostApi(dartHostTestHandler: 'TestPermissionRequestHostApi')
+abstract class PermissionRequestHostApi {
+  /// Handles Dart method `PermissionRequest.grant`.
+  void grant(int instanceId, List<String> resources);
+
+  /// Handles Dart method `PermissionRequest.deny`.
+  void deny(int instanceId);
+}
+
+/// Flutter API for `PermissionRequest`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/PermissionRequest.
+@FlutterApi()
+abstract class PermissionRequestFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId, List<String> resources);
 }

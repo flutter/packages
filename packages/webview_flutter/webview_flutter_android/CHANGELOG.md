@@ -1,3 +1,7 @@
+## 3.6.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
 ## 3.5.3
 
 * Bumps gradle from 7.2.2 to 8.0.0.

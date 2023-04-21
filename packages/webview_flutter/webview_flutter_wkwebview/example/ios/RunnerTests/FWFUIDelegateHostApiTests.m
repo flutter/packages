@@ -97,4 +97,45 @@
                                                    isKindOfClass:[FWFWKNavigationActionData class]]
                                     completion:OCMOCK_ANY]);
 }
+
+- (void)testRequestMediaCapturePermissionForOrigin API_AVAILABLE(ios(15.0)) {
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+
+  FWFUIDelegate *mockDelegate = [self mockDelegateWithManager:instanceManager identifier:0];
+  FWFUIDelegateFlutterApiImpl *mockFlutterAPI = [self mockFlutterApiWithManager:instanceManager];
+
+  OCMStub([mockDelegate UIDelegateAPI]).andReturn(mockFlutterAPI);
+
+  WKWebView *mockWebView = OCMClassMock([WKWebView class]);
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
+
+  WKSecurityOrigin *mockSecurityOrigin = OCMClassMock([WKSecurityOrigin class]);
+  OCMStub([mockSecurityOrigin host]).andReturn(@"");
+  OCMStub([mockSecurityOrigin port]).andReturn(0);
+  OCMStub([mockSecurityOrigin protocol]).andReturn(@"");
+
+  WKFrameInfo *mockFrameInfo = OCMClassMock([WKFrameInfo class]);
+  OCMStub([mockFrameInfo isMainFrame]).andReturn(YES);
+
+  [mockDelegate webView:mockWebView
+      requestMediaCapturePermissionForOrigin:mockSecurityOrigin
+                            initiatedByFrame:mockFrameInfo
+                                        type:WKMediaCaptureTypeMicrophone
+                             decisionHandler:^(WKPermissionDecision decision){
+                             }];
+
+  OCMVerify([mockFlutterAPI
+      requestMediaCapturePermissionForDelegateWithIdentifier:@0
+                                           webViewIdentifier:@1
+                                                      origin:[OCMArg isKindOfClass:
+                                                                         [FWFWKSecurityOriginData
+                                                                             class]]
+                                                       frame:[OCMArg
+                                                                 isKindOfClass:[FWFWKFrameInfoData
+                                                                                   class]]
+                                                        type:[OCMArg isKindOfClass:
+                                                                         [FWFWKMediaCaptureTypeData
+                                                                             class]]
+                                                  completion:OCMOCK_ANY]);
+}
 @end
