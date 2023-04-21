@@ -51,6 +51,9 @@ public class PermissionRequestTest {
     assertEquals(PermissionRequest.RESOURCE_AUDIO_CAPTURE, "android.webkit.resource.AUDIO_CAPTURE");
     assertEquals(PermissionRequest.RESOURCE_VIDEO_CAPTURE, "android.webkit.resource.VIDEO_CAPTURE");
     assertEquals(PermissionRequest.RESOURCE_MIDI_SYSEX, "android.webkit.resource.MIDI_SYSEX");
+    assertEquals(
+        PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID,
+        "android.webkit.resource.PROTECTED_MEDIA_ID");
   }
 
   @Test

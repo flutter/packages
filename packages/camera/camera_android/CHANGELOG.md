@@ -1,6 +1,11 @@
+## 0.10.6
+
+* Fixes Java warnings.
+
 ## 0.10.5
 
 * Allows camera to be switched while video recording.
+
 ## 0.10.4+3
 
 * Clarifies explanation of endorsement in README.
