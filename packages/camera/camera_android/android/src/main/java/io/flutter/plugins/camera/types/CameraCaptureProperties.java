@@ -4,6 +4,9 @@
 
 package io.flutter.plugins.camera.types;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class CameraCaptureProperties {
 
   private Float lastLensAperture;
@@ -15,6 +18,7 @@ public class CameraCaptureProperties {
    *
    * @return the last known lens aperture. (As f-stop value)
    */
+  @Nullable
   public Float getLastLensAperture() {
     return lastLensAperture;
   }
@@ -24,7 +28,7 @@ public class CameraCaptureProperties {
    *
    * @param lastLensAperture - The last known lens aperture to set. (As f-stop value)
    */
-  public void setLastLensAperture(Float lastLensAperture) {
+  public void setLastLensAperture(@NonNull Float lastLensAperture) {
     this.lastLensAperture = lastLensAperture;
   }
 
@@ -33,6 +37,7 @@ public class CameraCaptureProperties {
    *
    * @return the last known sensor exposure time in nanoseconds.
    */
+  @Nullable
   public Long getLastSensorExposureTime() {
     return lastSensorExposureTime;
   }
@@ -42,7 +47,7 @@ public class CameraCaptureProperties {
    *
    * @param lastSensorExposureTime - The last known sensor exposure time to set, in nanoseconds.
    */
-  public void setLastSensorExposureTime(Long lastSensorExposureTime) {
+  public void setLastSensorExposureTime(@NonNull Long lastSensorExposureTime) {
     this.lastSensorExposureTime = lastSensorExposureTime;
   }
 
@@ -51,6 +56,7 @@ public class CameraCaptureProperties {
    *
    * @return the last known sensor sensitivity in ISO arithmetic units.
    */
+  @Nullable
   public Integer getLastSensorSensitivity() {
     return lastSensorSensitivity;
   }
@@ -61,7 +67,7 @@ public class CameraCaptureProperties {
    * @param lastSensorSensitivity - The last known sensor sensitivity to set, in ISO arithmetic
    *     units.
    */
-  public void setLastSensorSensitivity(Integer lastSensorSensitivity) {
+  public void setLastSensorSensitivity(@NonNull Integer lastSensorSensitivity) {
     this.lastSensorSensitivity = lastSensorSensitivity;
   }
 }
