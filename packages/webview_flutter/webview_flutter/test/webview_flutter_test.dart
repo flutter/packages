@@ -30,8 +30,6 @@ void main() {
       // ignore: unnecessary_statements
       main_file.PlatformWebViewCookieManagerCreationParams;
       // ignore: unnecessary_statements
-      main_file.PlatformWebViewPermissionRequest;
-      // ignore: unnecessary_statements
       main_file.PlatformWebViewWidgetCreationParams;
       // ignore: unnecessary_statements
       main_file.ProgressCallback;

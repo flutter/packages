@@ -16,7 +16,6 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         PlatformNavigationDelegateCreationParams,
         PlatformWebViewControllerCreationParams,
         PlatformWebViewCookieManagerCreationParams,
-        PlatformWebViewPermissionRequest,
         PlatformWebViewWidgetCreationParams,
         ProgressCallback,
         UrlChange,
