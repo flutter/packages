@@ -54,6 +54,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace 'io.flutter.plugins.inapppurchaseexample'
     signingConfigs {
         release {
             storeFile project.KEYSTORE_STORE_FILE
