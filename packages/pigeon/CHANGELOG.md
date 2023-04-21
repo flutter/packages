@@ -1,7 +1,3 @@
-## NEXT
-
-* Adds an example application that uses Pigeon directly, rather than in a plugin.
-
 ## 9.2.4
 
 * [objc] Fixes a warning due to a C++-style function signature in the codec
