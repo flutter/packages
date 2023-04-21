@@ -2,21 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:camera_android_camerax/src/image_proxy.dart';
+import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:camera_android_camerax/src/plane_proxy.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:camera_android_camerax/src/instance_manager.dart';
 
 import 'image_proxy_test.mocks.dart';
+import 'test_camerax_library.g.dart';
 
-// TODO(bparrishMines): Move desired test implementations to test file or
-// remove .gen_api_impls from filename and follow todos below
-// TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
-// TODO(bparrishMines): Run build runner
-
-// @GenerateMocks(<Type>[TestImageProxyHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[TestImageProxyHostApi, TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ImageProxy', () {
     setUp(() {});
@@ -35,7 +36,6 @@ void main() {
       );
 
       final ImageProxy instance = ImageProxy.detached(
-        binaryMessenger: null,
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
@@ -43,19 +43,25 @@ void main() {
         instance,
         instanceIdentifier,
         onCopy: (ImageProxy original) => ImageProxy.detached(
-          binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );
+      final PlaneProxy planeProxy =
+          PlaneProxy.detached(instanceManager: instanceManager);
+      const int planeProxyIdentifier = 48;
+      instanceManager.addHostCreatedInstance(planeProxy, planeProxyIdentifier,
+          onCopy: (PlaneProxy original) =>
+              PlaneProxy.detached(instanceManager: instanceManager));
 
-      final List result = <dynamic>[];
+      final List<int> result = <int>[planeProxyIdentifier];
       when(mockApi.getPlanes(
         instanceIdentifier,
       )).thenAnswer((_) {
-        return Future<List>.value(result);
+        return result;
       });
 
-      expect(await instance.getPlanes(), result);
+      final List<PlaneProxy> planes = await instance.getPlanes();
+      expect(planes[0], equals(planeProxy));
 
       verify(mockApi.getPlanes(
         instanceIdentifier,
@@ -71,7 +77,6 @@ void main() {
       );
 
       final ImageProxy instance = ImageProxy.detached(
-        binaryMessenger: null,
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
@@ -79,16 +84,15 @@ void main() {
         instance,
         instanceIdentifier,
         onCopy: (ImageProxy original) => ImageProxy.detached(
-          binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );
 
-      final int result = 0;
+      const int result = 0;
       when(mockApi.getFormat(
         instanceIdentifier,
       )).thenAnswer((_) {
-        return Future<int>.value(result);
+        return result;
       });
 
       expect(await instance.getFormat(), result);
@@ -107,7 +111,6 @@ void main() {
       );
 
       final ImageProxy instance = ImageProxy.detached(
-        binaryMessenger: null,
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
@@ -115,16 +118,15 @@ void main() {
         instance,
         instanceIdentifier,
         onCopy: (ImageProxy original) => ImageProxy.detached(
-          binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );
 
-      final int result = 0;
+      const int result = 0;
       when(mockApi.getHeight(
         instanceIdentifier,
       )).thenAnswer((_) {
-        return Future<int>.value(result);
+        return result;
       });
 
       expect(await instance.getHeight(), result);
@@ -143,7 +145,6 @@ void main() {
       );
 
       final ImageProxy instance = ImageProxy.detached(
-        binaryMessenger: null,
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
@@ -151,16 +152,15 @@ void main() {
         instance,
         instanceIdentifier,
         onCopy: (ImageProxy original) => ImageProxy.detached(
-          binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );
 
-      final int result = 0;
+      const int result = 0;
       when(mockApi.getWidth(
         instanceIdentifier,
       )).thenAnswer((_) {
-        return Future<int>.value(result);
+        return result;
       });
 
       expect(await instance.getWidth(), result);
@@ -179,7 +179,6 @@ void main() {
       );
 
       final ImageProxy instance = ImageProxy.detached(
-        binaryMessenger: null,
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
@@ -187,7 +186,6 @@ void main() {
         instance,
         instanceIdentifier,
         onCopy: (ImageProxy original) => ImageProxy.detached(
-          binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );
