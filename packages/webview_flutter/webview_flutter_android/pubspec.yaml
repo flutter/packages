@@ -30,9 +30,3 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.0
   pigeon: ^9.2.4
-
-
-# FOR TESTING ONLY. DO NOT MERGE.
-dependency_overrides:
-  webview_flutter_platform_interface:
-    path: ../../webview_flutter/webview_flutter_platform_interface
