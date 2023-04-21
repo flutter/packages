@@ -1,3 +1,7 @@
+## 0.10.5+1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 0.10.5
 
 * Allows camera to be switched while video recording.

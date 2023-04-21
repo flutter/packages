@@ -1,3 +1,7 @@
+## 0.2.5+1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 0.2.5
 
 * Fixes the management of `BillingClient` connection by handling `BillingResponse.serviceDisconnected`.

@@ -1,3 +1,7 @@
+## 3.5.4
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 3.5.3
 
 * Bumps gradle from 7.2.2 to 8.0.0.

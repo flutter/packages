@@ -1,3 +1,7 @@
+## 2.1.3
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 2.1.2
 
 * Sets the required Java compile version to 1.8 for new features used in 2.1.1.

@@ -1,3 +1,7 @@
+## 1.0.24
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 1.0.23
 
 * Switches internals to Pigeon and fixes Java warnings.
