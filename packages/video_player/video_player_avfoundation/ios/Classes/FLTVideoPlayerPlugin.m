@@ -420,16 +420,16 @@ NS_INLINE UIViewController *rootViewController() {
 }
 
 - (void)seekTo:(int)location completionHandler:(void (^)(BOOL))completionHandler {
-    CMTime locationCMT = CMTimeMake(location, 1000);
-    CMTimeValue duration = _player.currentItem.asset.duration.value;
-    CMTimeValue locationCM = locationCMT.value;
-    if (duration == locationCM) {
-        [_player seekToTime:_player.currentItem.currentTime
-            toleranceBefore:CMTimeMake(1, 1000)
-             toleranceAfter:CMTimeMake(1, 1000)
-            completionHandler:completionHandler];
-        return;
-    }
+  CMTime locationCMT = CMTimeMake(location, 1000);
+  CMTimeValue duration = _player.currentItem.asset.duration.value;
+  CMTimeValue locationCM = locationCMT.value;
+  if (duration == locationCM) {
+    [_player seekToTime:_player.currentItem.currentTime
+          toleranceBefore:CMTimeMake(1, 1000)
+           toleranceAfter:CMTimeMake(1, 1000)
+        completionHandler:completionHandler];
+    return;
+  }
   [_player seekToTime:locationCMT
         toleranceBefore:kCMTimeZero
          toleranceAfter:kCMTimeZero
