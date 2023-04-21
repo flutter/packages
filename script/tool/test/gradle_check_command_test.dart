@@ -11,6 +11,8 @@ import 'package:test/test.dart';
 
 import 'util.dart';
 
+const String _defaultFakeNamespace = 'dev.flutter.foo';
+
 void main() {
   late CommandRunner<void> runner;
   late FileSystem fileSystem;
@@ -56,7 +58,7 @@ java {
 
 ''';
     final String namespace =
-        '${commentNamespace ? '// ' : ''}namespace dev.flutter.foo';
+        "${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
 
     buildGradle.writeAsStringSync('''
 group 'dev.flutter.plugins.fake'
@@ -94,6 +96,26 @@ dependencies {
 ''');
   }
 
+  void writeFakeManifest(
+    RepositoryPackage package, {
+    required bool isApp,
+    String packageName = _defaultFakeNamespace,
+  }) {
+    final Directory androidDir =
+        package.platformDirectory(FlutterPlatform.android);
+    final Directory startDir =
+        isApp ? androidDir.childDirectory('app') : androidDir;
+    final File manifest = startDir
+        .childDirectory('src')
+        .childDirectory('main')
+        .childFile('AndroidManifest.xml');
+    manifest.createSync(recursive: true);
+    manifest.writeAsString('''
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="$packageName">
+</manifest>''');
+  }
+
   test('skips when package has no Android directory', () async {
     createFakePackage('a_package', packagesDir, examples: <String>[]);
 
@@ -112,6 +134,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package);
+    writeFakeManifest(package, isApp: false);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -133,6 +156,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package, includeSourceCompat: true);
+    writeFakeManifest(package, isApp: false);
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['gradle-check']);
@@ -149,6 +173,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
+    writeFakeManifest(package, isApp: false);
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['gradle-check']);
@@ -164,7 +189,10 @@ dependencies {
   test('does not require java version in examples', () async {
     final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
-    writeFakeBuildGradle(package.getExamples().first);
+    writeFakeManifest(package, isApp: false);
+    final RepositoryPackage example = package.getExamples().first;
+    writeFakeBuildGradle(example);
+    writeFakeManifest(example, isApp: true);
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['gradle-check']);
@@ -183,6 +211,7 @@ dependencies {
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
         includeSourceCompat: true, commentSourceLanguage: true);
+    writeFakeManifest(package, isApp: false);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -205,6 +234,7 @@ dependencies {
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
         includeLanguageVersion: true, commentSourceLanguage: true);
+    writeFakeManifest(package, isApp: false);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -222,11 +252,34 @@ dependencies {
     );
   });
 
+  test('fails when namespace does not match AndroidManifest.xml', () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    writeFakeManifest(package, isApp: false, packageName: 'wrong.package.name');
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+            'build.gradle "namespace" must match the "package" attribute in AndroidManifest.xml'),
+      ]),
+    );
+  });
+
   test('fails when namespace is missing', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
         includeLanguageVersion: true, includeNamespace: false);
+    writeFakeManifest(package, isApp: false);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -246,8 +299,11 @@ dependencies {
   test('fails when namespace is missing from example', () async {
     final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
-    writeFakeBuildGradle(package.getExamples().first,
+    writeFakeManifest(package, isApp: false);
+    final RepositoryPackage example = package.getExamples().first;
+    writeFakeBuildGradle(example,
         includeLanguageVersion: true, includeNamespace: false);
+    writeFakeManifest(example, isApp: true);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -264,11 +320,37 @@ dependencies {
     );
   });
 
+  test('fails when namespace in example does not match AndroidManifest.xml',
+      () async {
+    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    writeFakeManifest(package, isApp: false);
+    final RepositoryPackage example = package.getExamples().first;
+    writeFakeBuildGradle(example, includeLanguageVersion: true);
+    writeFakeManifest(example, isApp: true, packageName: 'wrong.package.name');
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+            'build.gradle "namespace" must match the "package" attribute in AndroidManifest.xml'),
+      ]),
+    );
+  });
+
   test('fails when namespace is commented out', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
         includeLanguageVersion: true, commentNamespace: true);
+    writeFakeManifest(package, isApp: false);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(

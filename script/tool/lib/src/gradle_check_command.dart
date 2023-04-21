@@ -42,8 +42,6 @@ class GradleCheckCommand extends PackageLoopingCommand {
     return PackageResult.success();
   }
 
-  bool succeeded = true;
-
   bool _validateBuildGradle(RepositoryPackage package,
       {required bool isExample}) {
     print('${indentation}Validating android/build.gradle.');
@@ -53,10 +51,14 @@ class GradleCheckCommand extends PackageLoopingCommand {
         .readAsStringSync();
     final List<String> lines = contents.split('\n');
 
+    bool succeeded = true;
+
     // Check for namespace, which is require for compatibility with apps that
     // use AGP 8+.
-    if (!lines.any((String line) =>
-        line.contains('namespace ') && !line.trim().startsWith('//'))) {
+    final RegExp namespaceRegex =
+        RegExp('^\\s*namespace\\s+[\'"](.*?)[\'"]', multiLine: true);
+    final RegExpMatch? namespaceMatch = namespaceRegex.firstMatch(contents);
+    if (namespaceMatch == null) {
       const String errorMessage = '''
 build.gradle must set a "namespace":
 
@@ -64,12 +66,16 @@ build.gradle must set a "namespace":
         namespace 'dev.flutter.foo'
     }
 
-The value should match the "package" attribute in AndroidManifest.xml.
+The value must match the "package" attribute in AndroidManifest.xml.
 ''';
 
       printError(
           '$indentation${errorMessage.split('\n').join('\n$indentation')}');
       succeeded = false;
+    } else {
+      succeeded = succeeded &&
+          _validateNamespace(package,
+              isExample: isExample, namespace: namespaceMatch.group(1)!);
     }
 
     // Additional checks that only apply to the top-level package.
@@ -112,5 +118,37 @@ for more details.''';
     }
 
     return succeeded;
+  }
+
+  // Validate that the given namespace matches the manifest package of [package]
+  // (if any; a package does not need to be in the manifest in cases where
+  // compatibility with AGP <7.3 is no longer required).
+  //
+  // Prints an error and returns false if validation fails.
+  bool _validateNamespace(RepositoryPackage package,
+      {required bool isExample, required String namespace}) {
+    final RegExp manifestPackageRegex = RegExp(r'package\s*=\s*"(.*?)"');
+    final Directory androidDir =
+        package.platformDirectory(FlutterPlatform.android);
+    final Directory baseDir =
+        isExample ? androidDir.childDirectory('app') : androidDir;
+    final String manifestContents = baseDir
+        .childDirectory('src')
+        .childDirectory('main')
+        .childFile('AndroidManifest.xml')
+        .readAsStringSync();
+    final RegExpMatch? packageMatch =
+        manifestPackageRegex.firstMatch(manifestContents);
+    if (packageMatch != null && namespace != packageMatch.group(1)) {
+      final String errorMessage = '''
+build.gradle "namespace" must match the "package" attribute in AndroidManifest.xml, if one is present.
+  build.gradle namespace: "$namespace"
+  AndroidMastifest.xml package: "${packageMatch.group(1)}"
+''';
+      printError(
+          '$indentation${errorMessage.split('\n').join('\n$indentation')}');
+      return false;
+    }
+    return true;
   }
 }
