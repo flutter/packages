@@ -110,7 +110,7 @@ extern FWFNSUrlRequestData *FWFNSUrlRequestDataFromNSURLRequest(NSURLRequest *re
  *
  * @return A FWFWKNavigationResponseData.
  */
-extern FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNavigationResponse(
+extern FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNativeNavigationResponse(
     WKNavigationResponse *response);
 /**
  * Converts a NSURLResponse to an FWFNSHttpUrlResponseData.
@@ -119,7 +119,8 @@ extern FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNavigationRes
  *
  * @return A FWFNSHttpUrlResponseData.
  */
-extern FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNSURLResponse(NSURLResponse *response);
+extern FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNativeNSURLResponse(
+    NSURLResponse *response);
 
 /**
  * Converts a WKFrameInfo to an FWFWKFrameInfoData.
@@ -147,7 +148,7 @@ extern WKNavigationActionPolicy FWFWKNavigationActionPolicyFromEnumData(
  *
  * @return A WKNavigationResponsePolicy or -1 if data could not be converted.
  */
-extern WKNavigationResponsePolicy FWFWKNavigationResponsePolicyFromEnumData(
+extern WKNavigationResponsePolicy FWFNativeWKNavigationResponsePolicyFromEnumData(
     FWFWKNavigationResponsePolicyEnumData *data);
 
 /**

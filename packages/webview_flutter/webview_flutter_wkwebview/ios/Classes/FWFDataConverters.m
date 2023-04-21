@@ -175,10 +175,10 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNSURLRequest(NSURLRequest *request) 
       allHttpHeaderFields:request.allHTTPHeaderFields ? request.allHTTPHeaderFields : @{}];
 }
 
-FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNavigationResponse(
+FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNativeNavigationResponse(
     WKNavigationResponse *response) {
   return [FWFWKNavigationResponseData
-      makeWithResponse:FWFNSHttpUrlResponseDataFromNSURLResponse(response.response)
+      makeWithResponse:FWFNSHttpUrlResponseDataFromNativeNSURLResponse(response.response)
           forMainFrame:@(response.forMainFrame)];
 }
 
@@ -188,7 +188,7 @@ FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNavigationResponse(
 /// This cast will always succeed because the NSURLResponse object actually is an instance of
 /// NSHTTPURLResponse. See:
 /// https://developer.apple.com/documentation/foundation/nsurlresponse#overview
-FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNSURLResponse(NSURLResponse *response) {
+FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNativeNSURLResponse(NSURLResponse *response) {
   NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
   return [FWFNSHttpUrlResponseData makeWithStatusCode:@(httpResponse.statusCode)];
 }
@@ -209,7 +209,7 @@ WKNavigationActionPolicy FWFWKNavigationActionPolicyFromEnumData(
   return -1;
 }
 
-WKNavigationResponsePolicy FWFWKNavigationResponsePolicyFromEnumData(
+WKNavigationResponsePolicy FWFNativeWKNavigationResponsePolicyFromEnumData(
     FWFWKNavigationResponsePolicyEnumData *data) {
   switch (data.value) {
     case FWFWKNavigationResponsePolicyEnumAllow:

@@ -29,11 +29,6 @@
 ## 3.2.0
 
 * Updates minimum Flutter version to 3.3 and iOS 11.
-* Aligns Dart and Flutter SDK constraints.
-
-## 3.2.0
-
-* Updates minimum Flutter version to 3.3 and iOS 11.
 
 ## 3.1.1
 

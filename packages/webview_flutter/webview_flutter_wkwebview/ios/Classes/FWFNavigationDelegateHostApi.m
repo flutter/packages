@@ -79,7 +79,7 @@
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   FWFWKNavigationResponseData *navigationResponseData =
-      FWFWKNavigationResponseDataFromNavigationResponse(navigationResponse);
+      FWFWKNavigationResponseDataFromNativeNavigationResponse(navigationResponse);
   [self decidePolicyForNavigationResponseForDelegateWithIdentifier:
             @([self identifierForDelegate:instance])
                                                  webViewIdentifier:webViewIdentifier
@@ -181,7 +181,8 @@
                                                      FlutterError *error) {
                                           NSAssert(!error, @"%@", error);
                                           decisionHandler(
-                                              FWFWKNavigationResponsePolicyFromEnumData(policy));
+                                              FWFNativeWKNavigationResponsePolicyFromEnumData(
+                                                  policy));
                                         }];
 }
 
