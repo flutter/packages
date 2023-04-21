@@ -89,11 +89,12 @@ class GeolocationPermissionsCallback extends JavaObject {
       _geolocationPermissionsCallbackApi;
 
   /// Sets the Geolocation permission state for the supplied origin.
-  /// The [origin] for which permissions are set.
   ///
-  /// Whether or not the origin should be [allow]ed to use the Geolocation API.
+  /// [origin]: The origin for which permissions are set.
   ///
-  /// Whether the permission should be [retain]ed beyond the lifetime of
+  /// [allow]: Whether or not the origin should be allowed to use the Geolocation API.
+  ///
+  /// [retain]: Whether the permission should be retained beyond the lifetime of
   /// a page currently being displayed by a WebView.
   Future<void> invoke(String origin, bool allow, bool retain) {
     return _geolocationPermissionsCallbackApi.invokeFromInstances(
