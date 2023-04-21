@@ -165,6 +165,17 @@ void _tap() => PersonRoute(pid: 'p1').go(context);
 
 This is the point of typed routing: the error is found statically.
 
+## Return value
+
+Starting from `go_router` 6.5.0, pushing a route and subsequently popping it, can produce
+a return value. The generated routes also follow this functionality.
+
+```dart
+void _tap() async {
+  final result = await PersonRoute(pid: 'p1').go(context);
+}
+```
+
 ## Query parameters
 
 Optional parameters (named or positional) indicate query parameters:
