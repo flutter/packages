@@ -33,15 +33,18 @@ void main() {
 
   void writeFakeBuildGradle(
     RepositoryPackage package, {
+    bool isApp = false,
     bool includeLanguageVersion = false,
     bool includeSourceCompat = false,
     bool commentSourceLanguage = false,
     bool includeNamespace = true,
     bool commentNamespace = false,
   }) {
-    final File buildGradle = package
-        .platformDirectory(FlutterPlatform.android)
-        .childFile('build.gradle');
+    final Directory androidDir =
+        package.platformDirectory(FlutterPlatform.android);
+    final Directory parentDir =
+        isApp ? androidDir.childDirectory('app') : androidDir;
+    final File buildGradle = parentDir.childFile('build.gradle');
     buildGradle.createSync(recursive: true);
 
     final String compileOptionsSection = '''
@@ -98,7 +101,7 @@ dependencies {
 
   void writeFakeManifest(
     RepositoryPackage package, {
-    required bool isApp,
+    bool isApp = false,
     String packageName = _defaultFakeNamespace,
   }) {
     final Directory androidDir =
@@ -134,7 +137,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -156,7 +159,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package, includeSourceCompat: true);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['gradle-check']);
@@ -173,7 +176,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['gradle-check']);
@@ -189,9 +192,9 @@ dependencies {
   test('does not require java version in examples', () async {
     final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
-    writeFakeBuildGradle(example);
+    writeFakeBuildGradle(example, isApp: true);
     writeFakeManifest(example, isApp: true);
 
     final List<String> output =
@@ -211,7 +214,7 @@ dependencies {
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
         includeSourceCompat: true, commentSourceLanguage: true);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -234,7 +237,7 @@ dependencies {
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
         includeLanguageVersion: true, commentSourceLanguage: true);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -256,7 +259,7 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
-    writeFakeManifest(package, isApp: false, packageName: 'wrong.package.name');
+    writeFakeManifest(package, packageName: 'wrong.package.name');
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -279,7 +282,7 @@ dependencies {
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
         includeLanguageVersion: true, includeNamespace: false);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -299,10 +302,10 @@ dependencies {
   test('fails when namespace is missing from example', () async {
     final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
     writeFakeBuildGradle(example,
-        includeLanguageVersion: true, includeNamespace: false);
+        isApp: true, includeLanguageVersion: true, includeNamespace: false);
     writeFakeManifest(example, isApp: true);
 
     Error? commandError;
@@ -324,9 +327,9 @@ dependencies {
       () async {
     final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
-    writeFakeBuildGradle(example, includeLanguageVersion: true);
+    writeFakeBuildGradle(example, isApp: true, includeLanguageVersion: true);
     writeFakeManifest(example, isApp: true, packageName: 'wrong.package.name');
 
     Error? commandError;
@@ -350,7 +353,7 @@ dependencies {
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package,
         includeLanguageVersion: true, commentNamespace: true);
-    writeFakeManifest(package, isApp: false);
+    writeFakeManifest(package);
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(

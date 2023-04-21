@@ -44,11 +44,15 @@ class GradleCheckCommand extends PackageLoopingCommand {
 
   bool _validateBuildGradle(RepositoryPackage package,
       {required bool isExample}) {
-    print('${indentation}Validating android/build.gradle.');
-    final String contents = package
-        .platformDirectory(FlutterPlatform.android)
-        .childFile('build.gradle')
-        .readAsStringSync();
+    final Directory androidDir =
+        package.platformDirectory(FlutterPlatform.android);
+    // For apps, the relevant files are in android/app, rather than android/.
+    final Directory parentDir =
+        isExample ? androidDir.childDirectory('app') : androidDir;
+    final File gradleFile = parentDir.childFile('build.gradle');
+    print('${indentation}Validating '
+        '${getRelativePosixPath(gradleFile, from: package.directory)}.');
+    final String contents = gradleFile.readAsStringSync();
     final List<String> lines = contents.split('\n');
 
     bool succeeded = true;
