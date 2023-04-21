@@ -61,6 +61,8 @@ class NavigationDelegate {
   /// Constructs a [NavigationDelegate] from creation params for a specific
   /// platform.
   ///
+  /// {@macro webview_fluttter.NavigationDelegate.constructor}
+  ///
   /// {@template webview_flutter.NavigationDelegate.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
   /// iOS and Android:
@@ -87,8 +89,6 @@ class NavigationDelegate {
   /// );
   /// ```
   /// {@endtemplate}
-  ///
-  /// {@macro webview_fluttter.NavigationDelegate.constructor}
   NavigationDelegate.fromPlatformCreationParams(
     PlatformNavigationDelegateCreationParams params, {
     FutureOr<NavigationDecision> Function(NavigationRequest request)?
