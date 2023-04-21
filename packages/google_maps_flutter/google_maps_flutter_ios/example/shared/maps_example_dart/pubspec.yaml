@@ -1,5 +1,5 @@
-name: google_maps_flutter_example
-description: Demonstrates how to use the google_maps_flutter plugin.
+name: maps_example_dart
+description: Shared Dart code for the example apps.
 publish_to: none
 
 environment:
@@ -17,18 +17,8 @@ dependencies:
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
-    path: ../
+    path: ../../../
   google_maps_flutter_platform_interface: ^2.2.1
-
-dev_dependencies:
-  flutter_driver:
-    sdk: flutter
-  flutter_test:
-    sdk: flutter
-  integration_test:
-    sdk: flutter
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/
