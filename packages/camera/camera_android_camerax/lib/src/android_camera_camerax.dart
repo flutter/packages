@@ -78,7 +78,13 @@ class AndroidCameraCameraX extends CameraPlatform {
           .where((CameraEvent event) => event.cameraId == cameraId);
 
   /// The controller we need to stream image data.
-  StreamController<CameraImageData>? _cameraImageDataStreamController;
+  @visibleForTesting
+  StreamController<CameraImageData>? cameraImageDataStreamController;
+
+  /// Conditional used to create detached instances for testing their
+  /// callback methods.
+  @visibleForTesting
+  bool createDetachedCallbacks = false;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -321,11 +327,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
-    _cameraImageDataStreamController = StreamController<CameraImageData>(
+    cameraImageDataStreamController = StreamController<CameraImageData>(
       onListen: _onFrameStreamListen,
       onCancel: _onFrameStreamCancel,
     );
-    return _cameraImageDataStreamController!.stream;
+    return cameraImageDataStreamController!.stream;
   }
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
@@ -361,7 +367,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     // Create Analyzer that can read image data for image streaming.
-    final Analyzer analyzer = Analyzer(analyze: (ImageProxy imageProxy) async {
+    Future<void> analyze(ImageProxy imageProxy) async {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
       for (final PlaneProxy plane in planes) {
@@ -375,15 +381,20 @@ class AndroidCameraCameraX extends CameraPlatform {
       final CameraImageFormat cameraImageFormat = CameraImageFormat(
           _imageFormatGroupFromPlatformData(format),
           raw: format);
+
       final CameraImageData cameraImageData = CameraImageData(
           format: cameraImageFormat,
           planes: cameraImagePlanes,
           height: await imageProxy.getHeight(),
           width: await imageProxy.getWidth());
 
-      _cameraImageDataStreamController?.add(cameraImageData);
+      cameraImageDataStreamController?.add(cameraImageData);
       imageProxy.close();
-    });
+    }
+
+    final Analyzer analyzer = createDetachedCallbacks
+        ? Analyzer.detached(analyze: analyze)
+        : Analyzer(analyze: analyze);
 
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.

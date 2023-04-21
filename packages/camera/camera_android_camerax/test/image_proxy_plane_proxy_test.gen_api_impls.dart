@@ -14,8 +14,8 @@ import 'image_proxy_plane_proxy_test.mocks.dart';
 // TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
 // TODO(bparrishMines): Run build runner
 
-@GenerateMocks(
-    <Type>[TestImageProxyPlaneProxyHostApi, TestInstanceManagerHostApi])
+// @GenerateMocks(
+//     <Type>[TestImageProxyPlaneProxyHostApi, TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

@@ -4,6 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i9;
+import 'dart:typed_data' as _i16;
 
 import 'package:camera_android_camerax/src/analyzer.dart' as _i12;
 import 'package:camera_android_camerax/src/camera.dart' as _i4;
@@ -12,16 +13,20 @@ import 'package:camera_android_camerax/src/camera_selector.dart' as _i10;
 import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i3;
 import 'package:camera_android_camerax/src/image_analysis.dart' as _i11;
 import 'package:camera_android_camerax/src/image_capture.dart' as _i13;
-import 'package:camera_android_camerax/src/preview.dart' as _i14;
+import 'package:camera_android_camerax/src/image_proxy.dart' as _i14;
+import 'package:camera_android_camerax/src/plane_proxy.dart' as _i15;
+import 'package:camera_android_camerax/src/preview.dart' as _i17;
 import 'package:camera_android_camerax/src/process_camera_provider.dart'
-    as _i15;
-import 'package:camera_android_camerax/src/use_case.dart' as _i16;
+    as _i18;
+import 'package:camera_android_camerax/src/use_case.dart' as _i19;
 import 'package:camera_platform_interface/camera_platform_interface.dart'
     as _i2;
 import 'package:flutter/foundation.dart' as _i7;
 import 'package:flutter/services.dart' as _i6;
 import 'package:flutter/widgets.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
+
+import 'test_camerax_library.g.dart' as _i20;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -235,10 +240,97 @@ class MockImageCapture extends _i1.Mock implements _i13.ImageCapture {
       ) as _i9.Future<String>);
 }
 
+/// A class which mocks [ImageProxy].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockImageProxy extends _i1.Mock implements _i14.ImageProxy {
+  @override
+  _i9.Future<List<_i15.PlaneProxy>> getPlanes() => (super.noSuchMethod(
+        Invocation.method(
+          #getPlanes,
+          [],
+        ),
+        returnValue:
+            _i9.Future<List<_i15.PlaneProxy>>.value(<_i15.PlaneProxy>[]),
+        returnValueForMissingStub:
+            _i9.Future<List<_i15.PlaneProxy>>.value(<_i15.PlaneProxy>[]),
+      ) as _i9.Future<List<_i15.PlaneProxy>>);
+  @override
+  _i9.Future<int> getFormat() => (super.noSuchMethod(
+        Invocation.method(
+          #getFormat,
+          [],
+        ),
+        returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
+      ) as _i9.Future<int>);
+  @override
+  _i9.Future<int> getHeight() => (super.noSuchMethod(
+        Invocation.method(
+          #getHeight,
+          [],
+        ),
+        returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
+      ) as _i9.Future<int>);
+  @override
+  _i9.Future<int> getWidth() => (super.noSuchMethod(
+        Invocation.method(
+          #getWidth,
+          [],
+        ),
+        returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
+      ) as _i9.Future<int>);
+  @override
+  _i9.Future<void> close() => (super.noSuchMethod(
+        Invocation.method(
+          #close,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+}
+
+/// A class which mocks [PlaneProxy].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockPlaneProxy extends _i1.Mock implements _i15.PlaneProxy {
+  @override
+  _i9.Future<_i16.Uint8List> getBuffer() => (super.noSuchMethod(
+        Invocation.method(
+          #getBuffer,
+          [],
+        ),
+        returnValue: _i9.Future<_i16.Uint8List>.value(_i16.Uint8List(0)),
+        returnValueForMissingStub:
+            _i9.Future<_i16.Uint8List>.value(_i16.Uint8List(0)),
+      ) as _i9.Future<_i16.Uint8List>);
+  @override
+  _i9.Future<int> getPixelStride() => (super.noSuchMethod(
+        Invocation.method(
+          #getPixelStride,
+          [],
+        ),
+        returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
+      ) as _i9.Future<int>);
+  @override
+  _i9.Future<int> getRowStride() => (super.noSuchMethod(
+        Invocation.method(
+          #getRowStride,
+          [],
+        ),
+        returnValue: _i9.Future<int>.value(0),
+        returnValueForMissingStub: _i9.Future<int>.value(0),
+      ) as _i9.Future<int>);
+}
+
 /// A class which mocks [Preview].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPreview extends _i1.Mock implements _i14.Preview {
+class MockPreview extends _i1.Mock implements _i17.Preview {
   @override
   _i9.Future<int> setSurfaceProvider() => (super.noSuchMethod(
         Invocation.method(
@@ -284,7 +376,7 @@ class MockPreview extends _i1.Mock implements _i14.Preview {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockProcessCameraProvider extends _i1.Mock
-    implements _i15.ProcessCameraProvider {
+    implements _i18.ProcessCameraProvider {
   @override
   _i9.Future<List<_i8.CameraInfo>> getAvailableCameraInfos() =>
       (super.noSuchMethod(
@@ -299,7 +391,7 @@ class MockProcessCameraProvider extends _i1.Mock
   @override
   _i9.Future<_i4.Camera> bindToLifecycle(
     _i10.CameraSelector? cameraSelector,
-    List<_i16.UseCase>? useCases,
+    List<_i19.UseCase>? useCases,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -331,7 +423,7 @@ class MockProcessCameraProvider extends _i1.Mock
         )),
       ) as _i9.Future<_i4.Camera>);
   @override
-  _i9.Future<bool> isBound(_i16.UseCase? useCase) => (super.noSuchMethod(
+  _i9.Future<bool> isBound(_i19.UseCase? useCase) => (super.noSuchMethod(
         Invocation.method(
           #isBound,
           [useCase],
@@ -340,7 +432,7 @@ class MockProcessCameraProvider extends _i1.Mock
         returnValueForMissingStub: _i9.Future<bool>.value(false),
       ) as _i9.Future<bool>);
   @override
-  void unbind(List<_i16.UseCase>? useCases) => super.noSuchMethod(
+  void unbind(List<_i19.UseCase>? useCases) => super.noSuchMethod(
         Invocation.method(
           #unbind,
           [useCases],
@@ -351,6 +443,21 @@ class MockProcessCameraProvider extends _i1.Mock
   void unbindAll() => super.noSuchMethod(
         Invocation.method(
           #unbindAll,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
+/// A class which mocks [TestInstanceManagerHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestInstanceManagerHostApi extends _i1.Mock
+    implements _i20.TestInstanceManagerHostApi {
+  @override
+  void clear() => super.noSuchMethod(
+        Invocation.method(
+          #clear,
           [],
         ),
         returnValueForMissingStub: null,

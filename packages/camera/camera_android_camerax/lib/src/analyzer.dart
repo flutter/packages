@@ -47,7 +47,7 @@ class Analyzer extends JavaObject {
   late final _AnalyzerHostApiImpl _api;
 
   /// Analyzes an image to produce a result.
-  final void Function(ImageProxy imageProxy) analyze;
+  final Future<void> Function(ImageProxy imageProxy) analyze;
 }
 
 /// Host API implementation of [Analyzer].
@@ -107,7 +107,7 @@ class AnalyzerFlutterApiImpl implements AnalyzerFlutterApi {
   ) {
     instanceManager.addHostCreatedInstance(
       Analyzer.detached(
-        analyze: (ImageProxy imageProxy) {},
+        analyze: (ImageProxy imageProxy) async {},
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),
@@ -129,7 +129,7 @@ class AnalyzerFlutterApiImpl implements AnalyzerFlutterApi {
         instanceManager.getInstanceWithWeakReference(identifier)!;
     final ImageProxy imageProxy =
         instanceManager.getInstanceWithWeakReference(imageProxyIdentifier)!;
-    return instance.analyze(
+    instance.analyze(
       imageProxy,
     );
   }

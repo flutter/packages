@@ -6,24 +6,28 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:camera_android_camerax/camera_android_camerax.dart';
+import 'package:camera_android_camerax/src/analyzer.dart';
 import 'package:camera_android_camerax/src/camera.dart';
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camera_selector.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/image_capture.dart';
+import 'package:camera_android_camerax/src/image_proxy.dart';
+import 'package:camera_android_camerax/src/plane_proxy.dart';
 import 'package:camera_android_camerax/src/preview.dart';
 import 'package:camera_android_camerax/src/process_camera_provider.dart';
 import 'package:camera_android_camerax/src/system_services.dart';
 import 'package:camera_android_camerax/src/use_case.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/services.dart' show DeviceOrientation;
+import 'package:flutter/services.dart' show DeviceOrientation, Uint8List;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'android_camera_camerax_test.mocks.dart';
+import 'test_camerax_library.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<Camera>(),
@@ -32,12 +36,18 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<CameraSelector>(),
   MockSpec<ImageAnalysis>(),
   MockSpec<ImageCapture>(),
+  MockSpec<ImageProxy>(),
+  MockSpec<PlaneProxy>(),
   MockSpec<Preview>(),
   MockSpec<ProcessCameraProvider>(),
+  MockSpec<TestInstanceManagerHostApi>(),
 ])
 @GenerateMocks(<Type>[BuildContext])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   test('Should fetch CameraDescription instances for available cameras',
       () async {
@@ -410,11 +420,12 @@ void main() {
   });
 
   test(
-      'onStreamedFrameAvailable emits CameraImageData when picked up from ImageAnalysis',
+      'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {
     final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
     camera.processCameraProvider = MockProcessCameraProvider();
     camera.cameraSelector = MockCameraSelector();
+    camera.createDetachedCallbacks = true;
 
     final CameraImageData mockCameraImageData = MockCameraImageData();
     final Stream<CameraImageData> imageStream =
@@ -422,26 +433,89 @@ void main() {
     final StreamQueue<CameraImageData> streamQueue =
         StreamQueue<CameraImageData>(imageStream);
 
-    ImageAnalysis.onStreamedFrameAvailableStreamController
-        .add(mockCameraImageData);
+    camera.cameraImageDataStreamController!.add(mockCameraImageData);
 
     expect(await streamQueue.next, equals(mockCameraImageData));
     await streamQueue.cancel();
   });
 
   test(
-      'onStreamedFrameAvaiable returns stream that responds expectedly to being listened to and canceled',
+      'onStreamedFrameAvaiable returns stream that responds expectedly to being listened to',
       () async {
     final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
     final ProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final CameraSelector mockCameraSelector = MockCameraSelector();
+    final Camera mockCamera = MockCamera();
+    final MockImageProxy mockImageProxy = MockImageProxy();
+    final MockPlaneProxy mockPlane = MockPlaneProxy();
+    final List<MockPlaneProxy> mockPlanes = <MockPlaneProxy>[mockPlane];
+    final Uint8List buffer = Uint8List(0);
+    const int pixelStride = 27;
+    const int rowStride = 58;
+    const int imageFormat = 582;
+    const int imageHeight = 100;
+    const int imageWidth = 200;
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = mockCameraSelector;
+    camera.createDetachedCallbacks = true;
 
-    // Test listening.
+    when(mockProcessCameraProvider.bindToLifecycle(
+            mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
+        .thenAnswer((_) async => mockCamera);
+    when(mockImageProxy.getPlanes())
+        .thenAnswer((_) => Future<List<PlaneProxy>>.value(mockPlanes));
+    when(mockPlane.getBuffer())
+        .thenAnswer((_) => Future<Uint8List>.value(buffer));
+    when(mockPlane.getRowStride())
+        .thenAnswer((_) => Future<int>.value(rowStride));
+    when(mockPlane.getPixelStride())
+        .thenAnswer((_) => Future<int>.value(pixelStride));
+    when(mockImageProxy.getFormat())
+        .thenAnswer((_) => Future<int>.value(imageFormat));
+    when(mockImageProxy.getHeight())
+        .thenAnswer((_) => Future<int>.value(imageHeight));
+    when(mockImageProxy.getWidth())
+        .thenAnswer((_) => Future<int>.value(imageWidth));
+
+    final StreamSubscription<CameraImageData>
+        onStreamedFrameAvailableSubscription =
+        camera.onStreamedFrameAvailable(22).listen((CameraImageData imageData) {
+      // Test Analyzer correctly process ImageProxy instances.
+      expect(imageData.planes.length, equals(0));
+      expect(imageData.planes[0].bytes, equals(buffer));
+      expect(imageData.planes[0].bytesPerRow, equals(rowStride));
+      expect(imageData.planes[0].bytesPerPixel, equals(pixelStride));
+      expect(imageData.format.raw, equals(imageFormat));
+      expect(imageData.height, equals(imageHeight));
+      expect(imageData.width, equals(imageWidth));
+    });
+
+    // Test ImageAnalysis use case is bound to ProcessCameraProvider.
+    final Analyzer capturedAnalyzer =
+        verify(camera.mockImageAnalysis.setAnalyzer(captureAny)).captured.single
+            as Analyzer;
+    verify(mockProcessCameraProvider.bindToLifecycle(
+        mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
+
+    await capturedAnalyzer.analyze(mockImageProxy);
+    onStreamedFrameAvailableSubscription.cancel();
+  });
+
+  test(
+      'onStreamedFrameAvaiable returns stream that responds expectedly to being canceled',
+      () async {
+    final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
+    final ProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final CameraSelector mockCameraSelector = MockCameraSelector();
     final Camera mockCamera = MockCamera();
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.cameraSelector = mockCameraSelector;
+    camera.createDetachedCallbacks = true;
+
     when(mockProcessCameraProvider.bindToLifecycle(
             mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
         .thenAnswer((_) async => mockCamera);
@@ -449,11 +523,6 @@ void main() {
     final StreamSubscription<CameraImageData> imageStreamSubscription =
         camera.onStreamedFrameAvailable(32).listen((CameraImageData data) {});
 
-    verify(camera.mockImageAnalysis.setAnalyzer());
-    verify(mockProcessCameraProvider.bindToLifecycle(
-        mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
-
-    // Test canceling.
     when(mockProcessCameraProvider.isBound(camera.mockImageAnalysis))
         .thenAnswer((_) async => Future<bool>.value(true));
 

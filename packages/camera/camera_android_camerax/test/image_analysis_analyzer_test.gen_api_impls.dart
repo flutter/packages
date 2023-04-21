@@ -14,8 +14,8 @@ import 'image_analysis_analyzer_test.mocks.dart';
 // TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
 // TODO(bparrishMines): Run build runner
 
-@GenerateMocks(
-    <Type>[TestImageAnalysisAnalyzerHostApi, TestInstanceManagerHostApi])
+// @GenerateMocks(
+//     <Type>[TestImageAnalysisAnalyzerHostApi, TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
