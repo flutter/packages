@@ -1071,15 +1071,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
-      final dart_ast.SimpleIdentifier returnTypeIdentifier =
-          getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
+      returnType as dart_ast.NamedType;
       _currentApi!.methods.add(
         Method(
           name: node.name.lexeme,
           returnType: TypeDeclaration(
-              baseName: returnTypeIdentifier.name,
-              typeArguments: typeAnnotationsToTypeArguments(
-                  (returnType as dart_ast.NamedType).typeArguments),
+              baseName: returnType.name.name,
+              typeArguments:
+                  typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
           arguments: arguments,
           isAsynchronous: isAsynchronous,
