@@ -78,7 +78,6 @@ void main() {
         ) async {
           callbackParameter = imageProxy;
         },
-        binaryMessenger: null,
         instanceManager: instanceManager,
       );
       instanceManager.addHostCreatedInstance(
@@ -86,7 +85,6 @@ void main() {
         instanceIdentifier,
         onCopy: (Analyzer original) => Analyzer.detached(
           analyze: original.analyze,
-          binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );

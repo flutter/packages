@@ -2,114 +2,91 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data';
+
+import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:camera_android_camerax/src/plane_proxy.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:camera_android_camerax/src/instance_manager.dart';
 
-import 'image_proxy_plane_proxy_test.mocks.dart';
+import 'plane_proxy_test.mocks.dart';
+import 'test_camerax_library.g.dart';
 
-// TODO(bparrishMines): Move desired test implementations to test file or
-// remove .gen_api_impls from filename and follow todos below
-// TODO(bparrishMines): Import generated pigeon files (the one in lib and test)
-// TODO(bparrishMines): Run build runner
-
-// @GenerateMocks(
-//     <Type>[TestImageProxyPlaneProxyHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[TestPlaneProxyHostApi, TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('ImageProxyPlaneProxy', () {
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
+  group('PlaneProxy', () {
     setUp(() {});
 
     tearDown(() {
-      TestImageProxyPlaneProxyHostApi.setup(null);
+      TestPlaneProxyHostApi.setup(null);
       TestInstanceManagerHostApi.setup(null);
     });
 
     test('getRowStride', () async {
-      final MockTestImageProxyPlaneProxyHostApi mockApi =
-          MockTestImageProxyPlaneProxyHostApi();
-      TestImageProxyPlaneProxyHostApi.setup(mockApi);
+      final MockTestPlaneProxyHostApi mockApi = MockTestPlaneProxyHostApi();
+      TestPlaneProxyHostApi.setup(mockApi);
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final ImageProxyPlaneProxy instance = ImageProxyPlaneProxy.detached(
-        binaryMessenger: null,
+      final PlaneProxy instance = PlaneProxy.detached(
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
         instance,
         instanceIdentifier,
-        onCopy: (ImageProxyPlaneProxy original) =>
-            ImageProxyPlaneProxy.detached(
-          binaryMessenger: null,
+        onCopy: (PlaneProxy original) => PlaneProxy.detached(
           instanceManager: instanceManager,
         ),
       );
 
-      final dynamic result = dynamic.detached(
-        // TODO(bparrishMines): This should include the missing params.
-        binaryMessenger: null,
-        instanceManager: instanceManager,
-      );
-      const int resultIdentifier = 1;
-      instanceManager.addHostCreatedInstance(
-        result,
-        resultIdentifier,
-        onCopy: (dynamic original) {
-          return dynamic.detached(
-            // TODO(bparrishMines): This should include the missing params.
-            binaryMessenger: null,
-            instanceManager: instanceManager,
-          );
-        },
-      );
-      when(mockApi.getRowStride(
+      final Uint8List result = Uint8List(0);
+      when(mockApi.getBuffer(
         instanceIdentifier,
       )).thenAnswer((_) {
-        return Future<int>.value(resultIdentifier);
+        return result;
       });
 
-      expect(await instance.getRowStride(), result);
+      expect(await instance.getBuffer(), result);
 
-      verify(mockApi.getRowStride(
+      verify(mockApi.getBuffer(
         instanceIdentifier,
       ));
     });
 
     test('getPixelStride', () async {
-      final MockTestImageProxyPlaneProxyHostApi mockApi =
-          MockTestImageProxyPlaneProxyHostApi();
-      TestImageProxyPlaneProxyHostApi.setup(mockApi);
+      final MockTestPlaneProxyHostApi mockApi = MockTestPlaneProxyHostApi();
+      TestPlaneProxyHostApi.setup(mockApi);
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final ImageProxyPlaneProxy instance = ImageProxyPlaneProxy.detached(
-        binaryMessenger: null,
+      final PlaneProxy instance = PlaneProxy.detached(
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
         instance,
         instanceIdentifier,
-        onCopy: (ImageProxyPlaneProxy original) =>
-            ImageProxyPlaneProxy.detached(
-          binaryMessenger: null,
+        onCopy: (PlaneProxy original) => PlaneProxy.detached(
           instanceManager: instanceManager,
         ),
       );
 
-      final int result = 0;
+      const int result = 39;
       when(mockApi.getPixelStride(
         instanceIdentifier,
       )).thenAnswer((_) {
-        return Future<int>.value(result);
+        return result;
       });
 
       expect(await instance.getPixelStride(), result);
@@ -120,34 +97,30 @@ void main() {
     });
 
     test('getRowStride', () async {
-      final MockTestImageProxyPlaneProxyHostApi mockApi =
-          MockTestImageProxyPlaneProxyHostApi();
-      TestImageProxyPlaneProxyHostApi.setup(mockApi);
+      final MockTestPlaneProxyHostApi mockApi = MockTestPlaneProxyHostApi();
+      TestPlaneProxyHostApi.setup(mockApi);
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final ImageProxyPlaneProxy instance = ImageProxyPlaneProxy.detached(
-        binaryMessenger: null,
+      final PlaneProxy instance = PlaneProxy.detached(
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
         instance,
         instanceIdentifier,
-        onCopy: (ImageProxyPlaneProxy original) =>
-            ImageProxyPlaneProxy.detached(
-          binaryMessenger: null,
+        onCopy: (PlaneProxy original) => PlaneProxy.detached(
           instanceManager: instanceManager,
         ),
       );
 
-      final int result = 0;
+      const int result = 0;
       when(mockApi.getRowStride(
         instanceIdentifier,
       )).thenAnswer((_) {
-        return Future<int>.value(result);
+        return result;
       });
 
       expect(await instance.getRowStride(), result);
@@ -162,8 +135,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final ImageProxyPlaneProxyFlutterApiImpl api =
-          ImageProxyPlaneProxyFlutterApiImpl(
+      final PlaneProxyFlutterApiImpl api = PlaneProxyFlutterApiImpl(
         instanceManager: instanceManager,
       );
 
@@ -175,7 +147,7 @@ void main() {
 
       expect(
         instanceManager.getInstanceWithWeakReference(instanceIdentifier),
-        isA<ImageProxyPlaneProxy>(),
+        isA<PlaneProxy>(),
       );
     });
   });
