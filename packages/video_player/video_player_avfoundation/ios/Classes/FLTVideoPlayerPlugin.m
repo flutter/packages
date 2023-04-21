@@ -424,6 +424,8 @@ NS_INLINE UIViewController *rootViewController() {
   CMTimeValue duration = _player.currentItem.asset.duration.value;
   CMTimeValue locationCM = locationCMT.value;
   if (duration == locationCM) {
+    // Without adding tolerance when seeking to duration,
+    // seekToTime will never complete, and this call will hang.
     [_player seekToTime:_player.currentItem.currentTime
           toleranceBefore:CMTimeMake(1, 1000)
            toleranceAfter:CMTimeMake(1, 1000)
