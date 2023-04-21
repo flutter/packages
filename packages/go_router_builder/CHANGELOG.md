@@ -1,3 +1,7 @@
+## 1.2.2
+
+* Supports returning value in generated `push` method. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650)
+
 ## 1.2.1
 
 * Supports opt-in required extra parameters. [#117261](https://github.com/flutter/flutter/issues/117261)

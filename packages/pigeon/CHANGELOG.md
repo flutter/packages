@@ -2,7 +2,6 @@
 
 * Reports an error when trying to use an enum directly in a `List` or `Map`
   argument.
-* Adds an example application that uses Pigeon directly, rather than in a plugin.
 
 ## 9.2.4
 
