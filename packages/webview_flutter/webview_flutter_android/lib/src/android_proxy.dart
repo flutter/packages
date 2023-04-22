@@ -39,6 +39,11 @@ class AndroidWebViewProxy {
       android_webview.WebChromeClient instance,
       android_webview.PermissionRequest request,
     )? onPermissionRequest,
+    void Function(String origin,
+        android_webview.GeolocationPermissionsCallback callback)?
+    onGeolocationPermissionsShowPrompt,
+    void Function(android_webview.WebChromeClient instance)?
+        onGeolocationPermissionsHidePrompt
   }) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].

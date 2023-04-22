@@ -120,9 +120,13 @@ public class WebChromeClientTest {
   public void onPermissionRequest() {
     final PermissionRequest mockRequest = mock(PermissionRequest.class);
     instanceManager.addDartCreatedInstance(mockRequest, 10);
-
     webChromeClient.onPermissionRequest(mockRequest);
-
     verify(mockFlutterApi).onPermissionRequest(eq(webChromeClient), eq(mockRequest), any());
+  }
+
+  @Test
+  public void onGeolocationPermissionsHidePrompt() {
+    webChromeClient.onGeolocationPermissionsHidePrompt();
+    verify(mockFlutterApi).onGeolocationPermissionsHidePrompt(eq(webChromeClient), any());
   }
 }
