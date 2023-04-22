@@ -150,13 +150,13 @@ class AndroidCameraCameraX extends CameraPlatform {
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
     final ResolutionInfo? previewTargetResolution =
-        _getTargetResolutionForPreview(resolutionPreset);
+        _getResolutionInfoFromPreset(resolutionPreset);
     preview = createPreview(targetRotation, previewTargetResolution);
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.
     final ResolutionInfo? imageCaptureTargetResolution =
-        _getTargetResolutionForImageCapture(_resolutionPreset);
+        _getResolutionInfoFromPreset(_resolutionPreset);
     imageCapture = createImageCapture(null, imageCaptureTargetResolution);
 
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
@@ -230,6 +230,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<CameraInitializedEvent> onCameraInitialized(int cameraId) {
     return _cameraEvents(cameraId).whereType<CameraInitializedEvent>();
+  }
+
+  /// The camera's resolution has changed.
+  @override
+  Stream<CameraResolutionChangedEvent> onCameraResolutionChanged(int cameraId) {
+    return _cameraEvents(cameraId).whereType<CameraResolutionChangedEvent>();
   }
 
   /// The camera experienced an error.
@@ -366,20 +372,26 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns [ResolutionInfo] that maps to the specified resolution preset for
-  /// a camera preview.
-  ResolutionInfo? _getTargetResolutionForPreview(ResolutionPreset? resolution) {
-    // TODO(camsim99): Implement resolution configuration.
-    // https://github.com/flutter/flutter/issues/120462
-    return null;
-  }
-
-  /// Returns [ResolutionInfo] that maps to the specified resolution preset for
-  /// image capture.
-  ResolutionInfo? _getTargetResolutionForImageCapture(
-      ResolutionPreset? resolution) {
-    // TODO(camsim99): Implement resolution configuration.
-    // https://github.com/flutter/flutter/issues/120462
-    return null;
+  ResolutionInfo? _getResolutionInfoFromPreset(ResolutionPreset? preset) {
+    // TODO(camsim99): File issue for adding warnings about CameraX limits on resolution configuration, and for allowing further configuration.
+    // TODO(camsim99): max is different for ImageAnalysis, so add further functionality once its PR is merged.
+    switch (preset) {
+      case ResolutionPreset.low:
+        return ResolutionInfo(width: 320, height: 240);
+      case ResolutionPreset.medium:
+        return ResolutionInfo(width: 720, height: 480);
+      case ResolutionPreset.high:
+        return ResolutionInfo(width: 1280, height: 720);
+      case ResolutionPreset.veryHigh:
+        return ResolutionInfo(width: 1920, height: 1080);
+      case ResolutionPreset.ultraHigh:
+        return ResolutionInfo(width: 3840, height: 2160);
+      case ResolutionPreset.max:
+      case null:
+        // Default to maximum resolution avaiable or highest device-preferred
+        // resolution that matches default aspect ratio.
+        return null;
+    }
   }
 
   // Methods for calls that need to be tested:
