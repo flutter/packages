@@ -205,8 +205,8 @@ extension $_extensionName on $_className {
   void go(BuildContext context) =>
       context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
-  void push(BuildContext context) =>
-      context.push(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
