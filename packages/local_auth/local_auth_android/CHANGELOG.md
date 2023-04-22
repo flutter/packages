@@ -1,3 +1,7 @@
+## 1.0.25
+
+* Remove unused resourece by Android lint warnings.
+
 ## 1.0.24
 
 * Fixes `getEnrolledBiometrics` return value handling.
