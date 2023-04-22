@@ -1,11 +1,12 @@
 ## 3.7.0
 
-* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
-* 
-## 3.6.0
-
 * Adds support for handling geolocation permissions. See
   `AndroidWebViewController.setOnGeolocationPermissionsShowPrompt`.
+
+## 3.6.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+*
 
 ## 3.5.3
 
