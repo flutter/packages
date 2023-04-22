@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerFlutterApi;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerFlutterApi;
 import java.util.Objects;
 
 /**
@@ -42,8 +42,7 @@ public class AnalyzerFlutterApiImpl {
    * added, this method does nothing.
    */
   public void create(
-      @NonNull ImageAnalysis.Analyzer instance,
-      @NonNull AnalyzerFlutterApi.Reply<Void> callback) {
+      @NonNull ImageAnalysis.Analyzer instance, @NonNull AnalyzerFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
       api.create(instanceManager.addHostCreatedInstance(instance), callback);
     }

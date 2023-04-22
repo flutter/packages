@@ -7,8 +7,8 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageProxyFlutterApi;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageProxyFlutterApi;
 
 /**
  * Flutter API implementation for {@link ImageProxy}.
@@ -35,9 +35,9 @@ public class ImageProxyFlutterApiImpl {
   }
 
   /**
-   * Stores the {@link ImageProxy} instance and notifies Dart to create and store a new {@link ImageProxy}
-   * instance that is attached to this one. If {@code instance} has already been added, this method does
-   * nothing.
+   * Stores the {@link ImageProxy} instance and notifies Dart to create and store a new {@link
+   * ImageProxy} instance that is attached to this one. If {@code instance} has already been added,
+   * this method does nothing.
    */
   public void create(
       @NonNull ImageProxy instance, @NonNull ImageProxyFlutterApi.Reply<Void> callback) {

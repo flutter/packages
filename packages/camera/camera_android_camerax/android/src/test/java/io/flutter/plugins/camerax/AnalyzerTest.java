@@ -11,10 +11,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import androidx.camera.core.ImageAnalysis.Analyzer;
 import androidx.camera.core.ImageProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerFlutterApi;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerFlutterApi;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -79,10 +78,9 @@ public class AnalyzerTest {
     final ImageProxy mockImageProxy = mock(ImageProxy.class);
     final long mockImageProxyIdentifier = 97;
     final AnalyzerHostApiImpl.AnalyzerImpl instance =
-        new AnalyzerHostApiImpl.AnalyzerImpl(
-            mockBinaryMessenger, instanceManager);
-            final long instanceIdentifier = 0;
-    
+        new AnalyzerHostApiImpl.AnalyzerImpl(mockBinaryMessenger, instanceManager);
+    final long instanceIdentifier = 0;
+
     flutterApi.setApi(mockFlutterApi);
     instance.setApi(flutterApi);
 

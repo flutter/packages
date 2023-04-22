@@ -7,8 +7,8 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PlaneProxyFlutterApi;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PlaneProxyFlutterApi;
 
 /**
  * Flutter API implementation for {@link ImageProxy.PlaneProxy}.
@@ -36,12 +36,11 @@ public class PlaneProxyFlutterApiImpl {
 
   /**
    * Stores the {@link ImageProxy.PlaneProxy} instance and notifies Dart to create and store a new
-   * {@link ImageProxy.PlaneProxy} instance that is attached to this one. If {@code instance} has already been
-   * added, this method does nothing.
+   * {@link ImageProxy.PlaneProxy} instance that is attached to this one. If {@code instance} has
+   * already been added, this method does nothing.
    */
   public void create(
-      @NonNull ImageProxy.PlaneProxy instance,
-      @NonNull PlaneProxyFlutterApi.Reply<Void> callback) {
+      @NonNull ImageProxy.PlaneProxy instance, @NonNull PlaneProxyFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
       api.create(instanceManager.addHostCreatedInstance(instance), callback);
     }

@@ -15,10 +15,8 @@ import android.content.Context;
 import android.util.Size;
 import androidx.camera.core.ImageAnalysis;
 import androidx.test.core.app.ApplicationProvider;
-import io.flutter.plugins.camerax.CameraXProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import io.flutter.plugin.common.BinaryMessenger;
-import java.util.Objects;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.util.concurrent.Executor;
 import org.junit.After;
 import org.junit.Before;
@@ -85,7 +83,7 @@ public class ImageAnalysisTest {
   public void setAnalyzer_makesCallToSetAnalyzerOnExpectedImageAnalysisInstance() {
     final ImageAnalysisHostApiImpl hostApi =
         new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
-        hostApi.setContext(context);
+    hostApi.setContext(context);
 
     final ImageAnalysis.Analyzer mockAnalyzer = mock(ImageAnalysis.Analyzer.class);
     final long analyzerIdentifier = 10;

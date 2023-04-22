@@ -12,9 +12,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.ImageProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageProxyFlutterApi;
 import io.flutter.plugin.common.BinaryMessenger;
-import java.util.ArrayList;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageProxyFlutterApi;
 import java.util.List;
 import java.util.Objects;
 import org.junit.After;
@@ -50,7 +49,7 @@ public class ImageProxyTest {
     final long instanceIdentifier = 0;
     final long mockPlaneProxyIdentifier = 45;
     final ImageProxy.PlaneProxy mockPlaneProxy = mock(ImageProxy.PlaneProxy.class);
-    final ImageProxy.PlaneProxy[] returnValue = new ImageProxy.PlaneProxy[]{ mockPlaneProxy };
+    final ImageProxy.PlaneProxy[] returnValue = new ImageProxy.PlaneProxy[] {mockPlaneProxy};
 
     instanceManager.addDartCreatedInstance(mockImageProxy, instanceIdentifier);
     instanceManager.addDartCreatedInstance(mockPlaneProxy, mockPlaneProxyIdentifier);

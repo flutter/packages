@@ -9,14 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.ImageProxy;
 import androidx.core.content.ContextCompat;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageAnalysisHostApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
@@ -54,13 +50,16 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   }
 
   /**
-   * Sets {@link ImageAnalysis.Analyzer} instance with specified {@code analyzerIdentifier} on the 
-   * {@link ImageAnalysis} instance with the specified {@code identifier} to receive and analyze images.
+   * Sets {@link ImageAnalysis.Analyzer} instance with specified {@code analyzerIdentifier} on the
+   * {@link ImageAnalysis} instance with the specified {@code identifier} to receive and analyze
+   * images.
    */
   @Override
   public void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier) {
     getImageAnalysisInstance(identifier)
-        .setAnalyzer(ContextCompat.getMainExecutor(context), Objects.requireNonNull(instanceManager.getInstance(analyzerIdentifier)));
+        .setAnalyzer(
+            ContextCompat.getMainExecutor(context),
+            Objects.requireNonNull(instanceManager.getInstance(analyzerIdentifier)));
   }
 
   /** Clears any analyzer previously set on the specified {@link ImageAnalysis} instance. */
@@ -71,7 +70,9 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     imageAnalysis.clearAnalyzer();
   }
 
-  /** Retrieives the {@link ImageAnalysis} instance associated with the specified {@code identifier}. */
+  /**
+   * Retrieives the {@link ImageAnalysis} instance associated with the specified {@code identifier}.
+   */
   private ImageAnalysis getImageAnalysisInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }

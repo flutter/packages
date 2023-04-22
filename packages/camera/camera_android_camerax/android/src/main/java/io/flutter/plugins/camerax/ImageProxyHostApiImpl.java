@@ -6,8 +6,8 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageProxyHostApi;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageProxyHostApi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,20 +28,23 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public ImageProxyHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger,
-       @NonNull InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
   }
 
-  /** Returns the array of identifiers for planes of the {@link ImageProxy} instance with the specified identifier. */
+  /**
+   * Returns the array of identifiers for planes of the {@link ImageProxy} instance with the
+   * specified identifier.
+   */
   @Override
   public List<Long> getPlanes(@NonNull Long identifier) {
     ImageProxy.PlaneProxy[] planes = getImageProxyInstance(identifier).getPlanes();
-    PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl = new PlaneProxyFlutterApiImpl(binaryMessenger, instanceManager);
+    PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl =
+        new PlaneProxyFlutterApiImpl(binaryMessenger, instanceManager);
     List<Long> planeIdentifiers = new ArrayList<Long>();
 
-    for(ImageProxy.PlaneProxy plane : planes) {
+    for (ImageProxy.PlaneProxy plane : planes) {
       planeProxyFlutterApiImpl.create(plane, reply -> {});
       planeIdentifiers.add(instanceManager.getIdentifierForStrongReference(plane));
     }
@@ -68,15 +71,17 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
   }
 
   /**
-   * Closes the {@link androidx.camera.core.Image} instance associated with the
-   * {@link ImageProxy} instance with the specified identifier.
+   * Closes the {@link androidx.camera.core.Image} instance associated with the {@link ImageProxy}
+   * instance with the specified identifier.
    */
   @Override
   public void close(@NonNull Long identifier) {
     getImageProxyInstance(identifier).close();
   }
 
-  /** Retrieives the {@link ImageProxy} instance associated with the specified {@code identifier}. */
+  /**
+   * Retrieives the {@link ImageProxy} instance associated with the specified {@code identifier}.
+   */
   private ImageProxy getImageProxyInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }

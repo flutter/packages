@@ -8,9 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerHostApi;
 import io.flutter.plugin.common.BinaryMessenger;
-import java.util.Objects;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerHostApi;
 
 /**
  * Host API implementation for {@link ImageAnalysis.Analyzer}.
@@ -30,13 +29,13 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
     /** Creates an instance of {@link AnalyzerImpl}. */
     public AnalyzerImpl create(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-      return new AnalyzerImpl(
-         binaryMessenger, instanceManager);
+      return new AnalyzerImpl(binaryMessenger, instanceManager);
     }
   }
 
   /**
-   * Implementation of {@link ImageAnalysis.Analyzer} that passes arguments of callback methods to Dart.
+   * Implementation of {@link ImageAnalysis.Analyzer} that passes arguments of callback methods to
+   * Dart.
    */
   public static class AnalyzerImpl implements ImageAnalysis.Analyzer {
     private BinaryMessenger binaryMessenger;
@@ -45,8 +44,8 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
     private ImageProxyFlutterApiImpl imageProxyApi;
 
     /**
-     * Constructs an instance of {@link ImageAnalysis.Analyzer} that passes arguments of callbacks methods
-     * to Dart.
+     * Constructs an instance of {@link ImageAnalysis.Analyzer} that passes arguments of callbacks
+     * methods to Dart.
      */
     public AnalyzerImpl(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
@@ -103,8 +102,8 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
   }
 
   /**
-   * Creates an {@link AnalyzerProxy} that represents an {@link ImageAnalysis.Analyzer}
-   * instance with the specified identifier. 
+   * Creates an {@link AnalyzerProxy} that represents an {@link ImageAnalysis.Analyzer} instance
+   * with the specified identifier.
    */
   @Override
   public void create(@NonNull Long identifier) {

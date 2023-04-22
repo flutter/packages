@@ -12,9 +12,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.ImageProxy;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PlaneProxyFlutterApi;
 import io.flutter.plugin.common.BinaryMessenger;
-
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PlaneProxyFlutterApi;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 import org.junit.After;
@@ -45,13 +44,13 @@ public class PlaneProxyTest {
 
   @Test
   public void getBuffer_returnsExpectedBytes() {
-    final PlaneProxyHostApiImpl hostApi =
-        new PlaneProxyHostApiImpl(instanceManager);
+    final PlaneProxyHostApiImpl hostApi = new PlaneProxyHostApiImpl(instanceManager);
     final long instanceIdentifier = 0;
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
     final ByteBuffer mockByteBuffer = mock(ByteBuffer.class);
     final int bufferRemaining = 23;
-    final byte[] returnValue = new byte[bufferRemaining];;
+    final byte[] returnValue = new byte[bufferRemaining];
+    ;
 
     instanceManager.addDartCreatedInstance(mockPlaneProxy, instanceIdentifier);
 
@@ -69,8 +68,7 @@ public class PlaneProxyTest {
 
   @Test
   public void getPixelStride_makesExpectedCallAndReturnsExpectedValue() {
-    final PlaneProxyHostApiImpl hostApi =
-        new PlaneProxyHostApiImpl(instanceManager);
+    final PlaneProxyHostApiImpl hostApi = new PlaneProxyHostApiImpl(instanceManager);
     final long instanceIdentifier = 0;
     final int returnValue = 0;
 
@@ -84,11 +82,9 @@ public class PlaneProxyTest {
     assertEquals(result, Long.valueOf(returnValue));
   }
 
-
   @Test
   public void getRowStride_makesExpectedCallAndReturnsExpectedValue() {
-    final PlaneProxyHostApiImpl hostApi =
-        new PlaneProxyHostApiImpl(instanceManager);
+    final PlaneProxyHostApiImpl hostApi = new PlaneProxyHostApiImpl(instanceManager);
     final long instanceIdentifier = 0;
     final int returnValue = 25;
 
@@ -102,7 +98,6 @@ public class PlaneProxyTest {
     assertEquals(result, Long.valueOf(returnValue));
   }
 
-
   @Test
   public void flutterApiCreate_makesCallToCreateInstanceWithExpectedIdentifier() {
     final PlaneProxyFlutterApiImpl flutterApi =
@@ -112,9 +107,8 @@ public class PlaneProxyTest {
 
     flutterApi.create(mockPlaneProxy, reply -> {});
     final long instanceIdentifier =
-        Objects.requireNonNull(
-            instanceManager.getIdentifierForStrongReference(mockPlaneProxy));
-    
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockPlaneProxy));
+
     verify(mockFlutterApi).create(eq(instanceIdentifier), any());
   }
 }

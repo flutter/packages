@@ -27,8 +27,7 @@ public class PlaneProxyHostApiImpl implements PlaneProxyHostApi {
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public PlaneProxyHostApiImpl(
-      @NonNull InstanceManager instanceManager) {
+  public PlaneProxyHostApiImpl(@NonNull InstanceManager instanceManager) {
     this.instanceManager = instanceManager;
   }
 
@@ -44,7 +43,7 @@ public class PlaneProxyHostApiImpl implements PlaneProxyHostApi {
     ByteBuffer byteBuffer = getPlaneProxyInstance(identifier).getBuffer();
     byte[] bytes = cameraXProxy.getBytesFromBuffer(byteBuffer.remaining());
     byteBuffer.get(bytes, 0, bytes.length);
-    
+
     return bytes;
   }
 
@@ -54,9 +53,11 @@ public class PlaneProxyHostApiImpl implements PlaneProxyHostApi {
     return Long.valueOf(getPlaneProxyInstance(identifier).getRowStride());
   }
 
-  /** Retrieives the {@link ImageProxy.PlaneProxy} instance associated with the specified {@code identifier}. */
+  /**
+   * Retrieives the {@link ImageProxy.PlaneProxy} instance associated with the specified {@code
+   * identifier}.
+   */
   private ImageProxy.PlaneProxy getPlaneProxyInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
-
 }
