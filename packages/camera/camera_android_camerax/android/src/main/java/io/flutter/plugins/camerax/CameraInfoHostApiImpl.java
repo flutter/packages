@@ -34,10 +34,8 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
     ExposureState exposureState = cameraInfo.getExposureState();
 
-    if(!instanceManager.containsInstance(exposureState)) {
-      ExposureStateFlutterApiImpl exposureStateFlutterApiImpl = new ExposureStateFlutterApiImpl(binaryMessenger);
-      exposureStateFlutterApiImpl.create(exposureState, result -> {});
-    }
+    ExposureStateFlutterApiImpl exposureStateFlutterApiImpl = new ExposureStateFlutterApiImpl(binaryMessenger);
+    exposureStateFlutterApiImpl.create(exposureState, result -> {});
 
     return instanceManager.getIdentifierForStrongReference(exposureState);
   }
@@ -51,10 +49,8 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
     ZoomState zoomState = cameraInfo.ZoomState().getValue();
 
-    if(!instanceManager.containsInstance(zoomState)) {
-      ZoomStateFlutterApiImpl zoomStateFlutterApiImpl = new ZoomStateFlutterApiImpl(binaryMessenger);
-      zoomStateFlutterApiImpl.create(zoomState, result -> {});
-    }
+    ZoomStateFlutterApiImpl zoomStateFlutterApiImpl = new ZoomStateFlutterApiImpl(binaryMessenger);
+    zoomStateFlutterApiImpl.create(zoomState, result -> {});
 
     return instanceManager.getIdentifierForStrongReference(zoomState);
   }

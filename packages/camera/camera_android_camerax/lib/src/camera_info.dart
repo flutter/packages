@@ -6,8 +6,10 @@ import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
+import 'exposure_state.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'zoom_state.dart';
 
 /// Represents the metadata of a camera.
 ///
@@ -35,8 +37,7 @@ class CameraInfo extends JavaObject {
       _api.getExposureStateFromInstance(this);
 
   /// Gets the zoom state of the camera.
-  Future<ZoomState> getZoomState() =>
-      _api.getZoomStateFromInstance(this);
+  Future<ZoomState> getZoomState() => _api.getZoomStateFromInstance(this);
 }
 
 /// Host API implementation of [CameraInfo].
@@ -60,23 +61,20 @@ class CameraInfoHostApiImpl extends CameraInfoHostApi {
   }
 
   /// Gets the [ExposureState] of the specified [CameraInfo] instance.
-  Future<ExposureState> getExposureStateFromInstance(CameraInfo instance) {
+  Future<ExposureState> getExposureStateFromInstance(
+      CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No CameraInfo has the identifer of that requested to get the resolution information for.');
-
-    final int exposureStateIdentifier = await getExposureState(identifier);
-    return instanceManager.getInstanceWithWeakReference<ExposureState>(exposureStateIdentifier!)!
+    final int exposureStateIdentifier = await getExposureState(identifier!);
+    return instanceManager
+        .getInstanceWithWeakReference<ExposureState>(exposureStateIdentifier)!;
   }
 
   /// Gets the [ZoomState] of the specified [CameraInfo] instance.
-  Future<Zoom> getExposureStateFromInstance(CameraInfo instance) {
+  Future<ZoomState> getZoomStateFromInstance(CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No CameraInfo has the identifer of that requested to get the resolution information for.');
-
-    final int exposureStateIdentifier = await getZoomState(identifier);
-    return instanceManager.getInstanceWithWeakReference<ZoomState>(exposureStateIdentifier!)!
+    final int zoomStateIdentifier = await getZoomState(identifier!);
+    return instanceManager
+        .getInstanceWithWeakReference<ZoomState>(zoomStateIdentifier)!;
   }
 }
 

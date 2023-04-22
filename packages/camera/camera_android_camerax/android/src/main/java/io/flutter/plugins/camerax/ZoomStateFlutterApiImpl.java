@@ -18,7 +18,13 @@ public class ZoomStateFlutterApiImpl extends ZoomStateFlutterApi {
     this.instanceManager = instanceManager;
   }
 
+  /** Creates a {@link ZoomState} on the Dart side with its minimum zoom ratio and maximum zoom ratio. */
   void create(@NonNull ZoomState zoomState, @NonNull Reply<Void> reply) {
-    create(instanceManager.addHostCreatedInstance(zoomState), reply);
+    final float minZoomRatio = zoomState.getMinZoomRatio();
+    final float maxZoomRatio = zoomState.getMaxZoomRatio();
+
+    if (!instanceManager.containsInstance(zoomState)) {
+    create(instanceManager.addHostCreatedInstance(zoomState),(Long) minZoomRatio, (Long) maxZoomRatio, reply);
+    }
   }
 }

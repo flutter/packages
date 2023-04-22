@@ -22,8 +22,8 @@ class AndroidCameraXCameraFlutterApis {
     CameraSelectorFlutterApiImpl? cameraSelectorFlutterApi,
     ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApi,
     SystemServicesFlutterApiImpl? systemServicesFlutterApi,
-    ExposureStateFlutterApiImpl? exposureStateFlutterApi,
-    ZoomStateFlutterApiImpl? zoomStateFlutterApi,
+    ExposureStateFlutterApiImpl? exposureStateFlutterApiImpl,
+    ZoomStateFlutterApiImpl? zoomStateFlutterApiImpl,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -36,10 +36,10 @@ class AndroidCameraXCameraFlutterApis {
     this.cameraFlutterApi = cameraFlutterApi ?? CameraFlutterApiImpl();
     this.systemServicesFlutterApi =
         systemServicesFlutterApi ?? SystemServicesFlutterApiImpl();
-    this.exposureStateFlutterApi =
-        exposureStateFlutterApi ?? ExposureStateFlutterApiImpl();
-    this.zoomStateFlutterApi =
-        zoomStateFlutterApi ?? ZoomStateFlutterApiImpl();
+    this.exposureStateFlutterApiImpl =
+        exposureStateFlutterApiImpl ?? ExposureStateFlutterApiImpl();
+    this.zoomStateFlutterApiImpl =
+        zoomStateFlutterApiImpl ?? ZoomStateFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -70,10 +70,10 @@ class AndroidCameraXCameraFlutterApis {
   late final SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
   /// Flutter Api for [ExposureState].
-  late final ExposureStateFlutterApiImpl exposureStateFlutterApi;
+  late final ExposureStateFlutterApiImpl exposureStateFlutterApiImpl;
 
   /// Flutter Api for [ZoomState].
-  late final ZoomStateFlutterApiImpl exposureStateFlutterApi;
+  late final ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
 
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
@@ -84,8 +84,8 @@ class AndroidCameraXCameraFlutterApis {
       ProcessCameraProviderFlutterApi.setup(processCameraProviderFlutterApi);
       CameraFlutterApi.setup(cameraFlutterApi);
       SystemServicesFlutterApi.setup(systemServicesFlutterApi);
-      ExposureStateFlutterApi.setup(exposureStateFlutterApi);
-      ZoomStateFlutterApiImpl.setup(exposureStateFlutterApi);
+      ExposureStateFlutterApi.setup(exposureStateFlutterApiImpl);
+      ZoomStateFlutterApi.setup(zoomStateFlutterApiImpl);
       _haveBeenSetUp = true;
     }
   }

@@ -15,62 +15,22 @@ import 'java_object.dart';
 class ExposureState extends JavaObject {
   /// Constructs a [CameraInfo] that is not automatically attached to a native object.
   ExposureState.detached(
-      {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
-      : super.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager) {
-    _api = ExposureStateHostApiImpl(
-        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+      {super.binaryMessenger,
+      super.instanceManager,
+      required this.exposureCompensationRange,
+      required this.exposureCompensationStep})
+      : super.detached() {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  late final ExposureStateHostApiImpl _api;
-
-/// Gets the maximum and minimum exposure compensation values for the camera
-/// represented by this instance.
-Future<ExposureRange> getExposureCompensationRange() => _api.getExposureCompensationRangeFromInstance(this);
-
-/// Gets the smallest step by which the exposure compensation can be changed for
-/// the camera represented by this instance. 
-Future<double> getExposureCompensationStep() => _api.getExposureCompensationStepFromInstance(this);
-}
-
-/// Host API implementation of [ExposureState].
-class ExposureStateHostApiImpl extends ExposureStateHostApi {
-  /// Constructs a [ExposureStateHostApiImpl].
-  ExposureStateHostApiImpl(
-      {super.binaryMessenger, InstanceManager? instanceManager}) {
-    this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-  }
-
-  /// Maintains instances stored to communicate with native language objects.
-  late final InstanceManager instanceManager;
-
- /// Gets the maximum and minimum exposure compensation values for the camera
- /// represented by the specified [ExposureState] instance.
-  Future<ExposureRange> getExposureCompensationRange(
-    ExposureState instance,
-  ) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No ExposureState has the identifer of that requested to get the resolution information for.');
-
-    final ExposureRange exposureCompensationRange = await getExposureCompensationRange(identifier);
-    return exposureCompensationRange;
-  }
+  /// Gets the maximum and minimum exposure compensation values for the camera
+  /// represented by this instance.
+  final ExposureRange exposureCompensationRange;
 
   /// Gets the smallest step by which the exposure compensation can be changed for
-  /// the camera represented by the specified [ExposureState] instance.
-  Future<double> getExposureCompensationStepFromInstance(ExposureState instance) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No ExposureState has the identifer of that requested to get the resolution information for.');
-
-    final double exposureCompensationState = await getExposureCompensationRange(identifier);
-    return exposureCompensationState;
-  }
+  /// the camera represented by this instance.
+  final double exposureCompensationStep;
 }
-
 
 /// Flutter API implementation of [ExposureState].
 class ExposureStateFlutterApiImpl implements ExposureStateFlutterApi {
@@ -90,14 +50,21 @@ class ExposureStateFlutterApiImpl implements ExposureStateFlutterApi {
   final InstanceManager instanceManager;
 
   @override
-  void create(int identifier) {
+  void create(int identifier, ExposureRange exposureCompensationRange,
+      double exposureCompensationStep) {
     instanceManager.addHostCreatedInstance(
       ExposureState.detached(
-          binaryMessenger: binaryMessenger, instanceManager: instanceManager),
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+          exposureCompensationRange: exposureCompensationRange,
+          exposureCompensationStep: exposureCompensationStep),
       identifier,
       onCopy: (ExposureState original) {
         return ExposureState.detached(
-            binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+            binaryMessenger: binaryMessenger,
+            instanceManager: instanceManager,
+            exposureCompensationRange: original.exposureCompensationRange,
+            exposureCompensationStep: original.exposureCompensationStep);
       },
     );
   }

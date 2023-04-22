@@ -15,60 +15,20 @@ import 'java_object.dart';
 class ZoomState extends JavaObject {
   /// Constructs a [CameraInfo] that is not automatically attached to a native object.
   ZoomState.detached(
-      {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
-      : super.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager) {
-    _api = ZoomStateHostApiImpl(
-        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+      {super.binaryMessenger,
+      super.instanceManager,
+      required this.minZoomRatio,
+      required this.maxZoomRatio})
+      : super.detached() {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  late final ZoomStateHostApiImpl _api;
+  /// The minimum zoom ratio of the camera represented by this instance.
+  final int minZoomRatio;
 
-/// Gets the maximum zoom ratio of the camera represented by this instance.
-Future<double> getMaxZoomRatio() => _api.getMaxZoomRatioFromInstance(this);
-
-/// Gets the minimum zoom ratio of the camera represented by this instance.
-Future<double> getMinZoomRatio() => _api.getMinZoomRatioFromInstance(this);
+  /// The maximum zoom ratio of the camera represented by this instance.
+  final int maxZoomRatio;
 }
-
-/// Host API implementation of [ZoomState].
-class ZoomStateHostApiImpl extends ZoomStateHostApi {
-  /// Constructs a [ZoomStateHostApiImpl].
-  ZoomStateHostApiImpl(
-      {super.binaryMessenger, InstanceManager? instanceManager}) {
-    this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-  }
-
-  /// Maintains instances stored to communicate with native language objects.
-  late final InstanceManager instanceManager;
-
-  /// Gets the maximum zoom ratio of the camera represented by the specified
-  /// [ZoomState] instance.
-  Future<double> getMaxZoomRatioFromInstance(
-    ZoomState instance,
-  ) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No ZoomState has the identifer of that requested to get the resolution information for.');
-
-    final double maxZoomRatio = await getMaxZoomRatio(identifier);
-    return maxZoomRatio;
-  }
-
-  /// Gets the minimum zoom ratio of the camera represented by the specified
-  /// [ZoomState] instance.
-  Future<double> getMinZoomRatioFromInstance(ZoomState instance) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No ZoomState has the identifer of that requested to get the resolution information for.');
-
-    final double minZoomRatio = await getMinZoomRatio(identifier);
-    return minZoomRatio;
-  }
-}
-
 
 /// Flutter API implementation of [ZoomState].
 class ZoomStateFlutterApiImpl implements ZoomStateFlutterApi {
@@ -88,14 +48,20 @@ class ZoomStateFlutterApiImpl implements ZoomStateFlutterApi {
   final InstanceManager instanceManager;
 
   @override
-  void create(int identifier) {
+  void create(int identifier, int minZoomRatio, int maxZoomRatio) {
     instanceManager.addHostCreatedInstance(
       ZoomState.detached(
-          binaryMessenger: binaryMessenger, instanceManager: instanceManager),
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+          minZoomRatio: minZoomRatio,
+          maxZoomRatio: maxZoomRatio),
       identifier,
       onCopy: (ZoomState original) {
         return ZoomState.detached(
-            binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+            binaryMessenger: binaryMessenger,
+            instanceManager: instanceManager,
+            minZoomRatio: original.minZoomRatio,
+            maxZoomRatio: original.maxZoomRatio);
       },
     );
   }

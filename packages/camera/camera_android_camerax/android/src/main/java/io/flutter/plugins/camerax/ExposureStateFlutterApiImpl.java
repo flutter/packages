@@ -18,7 +18,19 @@ public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
     this.instanceManager = instanceManager;
   }
 
+    /**
+     * Creates a {@link ExposureState} on the Dart side with its exposure compensation
+     * range that can be used to set the exposure compensation index and its exposure 
+     * compensation step, the smallest step by which the exposure compensation can be
+     * changed.
+     */
   void create(@NonNull ExposureState exposureState, @NonNull Reply<Void> reply) {
-    create(instanceManager.addHostCreatedInstance(exposureState), reply);
+    final Range<Integer> exposureCompensationRange = exposureState.getExposureCompensationRange();
+    ExposureRange exposureCompensationRangeAsExposureRange = ExposureRange.Builder().setMinCompensation(exposureCompensationRange.getLower()).setMaxCompensation(exposureCompensationRange.getUpper()).build()
+    final Double exposureCompensationStep = exposureState.getExposureCompensationStep().getValue();
+
+    if (!instanceManager.containsInstance(exposureState)) {
+    create(instanceManager.addHostCreatedInstance(exposureState), exposureCompensationRangeAsExposureRange, exposureCompensationStep, reply);
+    }
   }
 }

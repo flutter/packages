@@ -46,7 +46,7 @@ class CameraPermissionsErrorData {
   String description;
 }
 
-class ExposureRange{
+class ExposureRange {
   ExposureRange({
     required this.minCompensation,
     required this.maxCompensation,
@@ -171,26 +171,13 @@ abstract class ImageCaptureHostApi {
   String takePicture(int identifier);
 }
 
-@HostApi(dartHostTestHandler: 'TestExposureStateHostApi')
-abstract class ExposureStateHostApi {
-  ExposureRange getExposureCompensationRange(int identifier);
-
-  double getExposureCompensationStep(int identifier);
+@FlutterApi()
+abstract class ExposureStateFlutterApi {
+  void create(int identifier, ExposureRange exposureCompensationRange,
+      double exposureCompensationStep);
 }
 
 @FlutterApi()
-abstract class ExposureStateFlutterApi {
-  void create(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestExposureStateHostApi')
-abstract class ZoomStateHostApi {
-  double getMaxZoomRatio(int identifier);
-
-  double getMinZoomRatio(int identifier);
-}
-
-@FlutterApi()
-abstract class ExposureStateFlutterApi {
-  void create(int identifier);
+abstract class ZoomStateFlutterApi {
+  void create(int identifier, int minZoomRatio, int maxZoomRatio);
 }

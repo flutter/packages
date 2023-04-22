@@ -19,8 +19,6 @@ import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
 
-// TODO(camsim99): Get camerainfo and update it every time camera is updated.
-
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
   /// Registers this class as the default instance of [CameraPlatform].
@@ -252,8 +250,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(cameraInfo != null);
 
     ExposureState exposureState = await cameraInfo.getExposureState();
-    ExposureRange exposureCompensationRange = await exposureState.getExposureCompensationRange();
-    double exposureCompensationStep = await exposureState.getExposureCompensationStep();
+    ExposureRange exposureCompensationRange =
+        await exposureState.getExposureCompensationRange();
+    double exposureCompensationStep =
+        await exposureState.getExposureCompensationStep();
 
     return exposureCompensationRange.minCompensation * exposureCompensationStep;
   }
@@ -264,8 +264,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(cameraInfo != null);
 
     ExposureState exposureState = await cameraInfo.getExposureState();
-    ExposureRange exposureCompensationRange = await exposureState.getExposureCompensationRange();
-    double exposureCompensationStep = await exposureState.getExposureCompensationStep();
+    ExposureRange exposureCompensationRange =
+        await exposureState.getExposureCompensationRange();
+    double exposureCompensationStep =
+        await exposureState.getExposureCompensationStep();
 
     return exposureCompensationRange.maxCompensation * exposureCompensationStep;
   }
@@ -278,7 +280,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(cameraInfo != null);
 
     ExposureState exposureState = await cameraInfo.getExposureState();
-    double exposureCompensationStep = await exposureState.getExposureCompensationStep();
+    double exposureCompensationStep =
+        await exposureState.getExposureCompensationStep();
 
     return exposureCompensationStep;
   }
