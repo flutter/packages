@@ -27,6 +27,7 @@ import 'test_android_webview.g.dart';
   TestWebViewClientHostApi,
   TestWebViewHostApi,
   TestAssetManagerHostApi,
+  TestPermissionRequestHostApi,
   WebChromeClient,
   WebView,
   WebViewClient,
@@ -110,7 +111,7 @@ void main() {
       });
 
       test('create', () {
-        verify(mockPlatformHostApi.create(webViewInstanceId, false));
+        verify(mockPlatformHostApi.create(webViewInstanceId));
       });
 
       test('setWebContentsDebuggingEnabled true', () {
@@ -739,6 +740,33 @@ void main() {
         );
       });
 
+      test('doUpdateVisitedHistory', () {
+        late final List<Object> result;
+        when(mockWebViewClient.doUpdateVisitedHistory).thenReturn(
+          (
+            WebView webView,
+            String url,
+            bool isReload,
+          ) {
+            result = <Object>[webView, url, isReload];
+          },
+        );
+
+        flutterApi.doUpdateVisitedHistory(
+          mockWebViewClientInstanceId,
+          mockWebViewInstanceId,
+          'https://www.google.com',
+          false,
+        );
+
+        expect(
+          result,
+          containsAllInOrder(
+            <Object?>[mockWebView, 'https://www.google.com', false],
+          ),
+        );
+      });
+
       test('copy', () {
         expect(WebViewClient.detached().copy(), isA<WebViewClient>());
       });
@@ -943,6 +971,51 @@ void main() {
         );
       });
 
+      test('onPermissionRequest', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WebChromeClient instance = WebChromeClient.detached(
+          onPermissionRequest: (
+            WebChromeClient instance,
+            PermissionRequest request,
+          ) {
+            callbackParameters = <Object?>[
+              instance,
+              request,
+            ];
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WebChromeClientFlutterApiImpl flutterApi =
+            WebChromeClientFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        final PermissionRequest request = PermissionRequest.detached(
+          resources: <String>[],
+          binaryMessenger: null,
+          instanceManager: instanceManager,
+        );
+        const int requestIdentifier = 32;
+        instanceManager.addHostCreatedInstance(
+          request,
+          requestIdentifier,
+        );
+
+        flutterApi.onPermissionRequest(
+          instanceIdentifier,
+          requestIdentifier,
+        );
+
+        expect(callbackParameters, <Object?>[instance, request]);
+      });
+
       test('copy', () {
         expect(WebChromeClient.detached().copy(), isA<WebChromeClient>());
       });
@@ -1019,6 +1092,83 @@ void main() {
 
     test('copy', () {
       expect(WebStorage.detached().copy(), isA<WebStorage>());
+    });
+  });
+
+  group('PermissionRequest', () {
+    setUp(() {});
+
+    tearDown(() {
+      TestPermissionRequestHostApi.setup(null);
+    });
+
+    test('grant', () async {
+      final MockTestPermissionRequestHostApi mockApi =
+          MockTestPermissionRequestHostApi();
+      TestPermissionRequestHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequest instance = PermissionRequest.detached(
+        resources: <String>[],
+        binaryMessenger: null,
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      const List<String> resources = <String>[PermissionRequest.audioCapture];
+
+      await instance.grant(resources);
+
+      verify(mockApi.grant(
+        instanceIdentifier,
+        resources,
+      ));
+    });
+
+    test('deny', () async {
+      final MockTestPermissionRequestHostApi mockApi =
+          MockTestPermissionRequestHostApi();
+      TestPermissionRequestHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequest instance = PermissionRequest.detached(
+        resources: <String>[],
+        binaryMessenger: null,
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      await instance.deny();
+
+      verify(mockApi.deny(instanceIdentifier));
+    });
+
+    test('FlutterAPI create', () {
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequestFlutterApiImpl api =
+          PermissionRequestFlutterApiImpl(
+        instanceManager: instanceManager,
+      );
+
+      const int instanceIdentifier = 0;
+
+      api.create(instanceIdentifier, <String?>[]);
+
+      expect(
+        instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+        isA<PermissionRequest>(),
+      );
     });
   });
 }

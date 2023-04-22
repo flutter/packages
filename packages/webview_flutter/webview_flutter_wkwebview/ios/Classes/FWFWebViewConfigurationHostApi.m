@@ -22,7 +22,7 @@
 }
 
 - (void)createWithConfiguration:(WKWebViewConfiguration *)configuration
-                     completion:(void (^)(NSError *_Nullable))completion {
+                     completion:(void (^)(FlutterError *_Nullable))completion {
   long identifier = [self.instanceManager addHostCreatedInstance:configuration];
   [self createWithIdentifier:@(identifier) completion:completion];
 }
@@ -47,7 +47,7 @@
                                 keyPath:keyPath
                                  object:object
                                  change:change
-                             completion:^(NSError *error) {
+                             completion:^(FlutterError *error) {
                                NSAssert(!error, @"%@", error);
                              }];
 }
@@ -119,7 +119,7 @@
       (WKWebViewConfiguration *)[self webViewConfigurationForIdentifier:identifier];
   WKAudiovisualMediaTypes typesInt = 0;
   for (FWFWKAudiovisualMediaTypeEnumData *data in types) {
-    typesInt |= FWFWKAudiovisualMediaTypeFromEnumData(data);
+    typesInt |= FWFNativeWKAudiovisualMediaTypeFromEnumData(data);
   }
   [configuration setMediaTypesRequiringUserActionForPlayback:typesInt];
 }

@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 7.0.1" type="baseline" client="gradle" name="AGP (7.0.1)" variant="all" version="7.0.1">
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `TextureMessage` requires synthetic accessor"
+        errorLine1="        TextureMessage pigeonReturn = new TextureMessage();"
+        errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="53"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `LoopingMessage` requires synthetic accessor"
+        errorLine1="        LoopingMessage pigeonReturn = new LoopingMessage();"
+        errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="124"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `VolumeMessage` requires synthetic accessor"
+        errorLine1="        VolumeMessage pigeonReturn = new VolumeMessage();"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="199"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `PlaybackSpeedMessage` requires synthetic accessor"
+        errorLine1="        PlaybackSpeedMessage pigeonReturn = new PlaybackSpeedMessage();"
+        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="274"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `PositionMessage` requires synthetic accessor"
+        errorLine1="        PositionMessage pigeonReturn = new PositionMessage();"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="349"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `CreateMessage` requires synthetic accessor"
+        errorLine1="        CreateMessage pigeonReturn = new CreateMessage();"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="475"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `MixWithOthersMessage` requires synthetic accessor"
+        errorLine1="        MixWithOthersMessage pigeonReturn = new MixWithOthersMessage();"
+        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="539"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="671"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="696"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="721"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="746"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="771"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="798"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="823"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="848"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="873"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="898"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` method `wrapError` of class `Messages` requires synthetic accessor"
+        errorLine1="                  wrapped.put(&quot;error&quot;, wrapError(exception));"
+        errorLine2="                                       ~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="925"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` member of class `EndOfStreamEvent` requires synthetic accessor"
+        errorLine1="    enqueue(new EndOfStreamEvent());"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/QueuingEventSink.java"
+            line="31"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `textureRegistry` of class `FlutterState` requires synthetic accessor"
+        errorLine1="        flutterState.textureRegistry.createSurfaceTexture();"
+        errorLine2="                     ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="121"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `binaryMessenger` of class `FlutterState` requires synthetic accessor"
+        errorLine1="            flutterState.binaryMessenger, &quot;flutter.io/videoPlayer/videoEvents&quot; + handle.id());"
+        errorLine2="                         ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="124"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `keyForAssetAndPackageName` of class `FlutterState` requires synthetic accessor"
+        errorLine1="            flutterState.keyForAssetAndPackageName.get(arg.getAsset(), arg.getPackageName());"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="131"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `keyForAsset` of class `FlutterState` requires synthetic accessor"
+        errorLine1="        assetLookupKey = flutterState.keyForAsset.get(arg.getAsset());"
+        errorLine2="                                      ~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="133"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `applicationContext` of class `FlutterState` requires synthetic accessor"
+        errorLine1="              flutterState.applicationContext,"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="137"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `applicationContext` of class `FlutterState` requires synthetic accessor"
+        errorLine1="              flutterState.applicationContext,"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="149"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public String[] getDefaultCipherSuites() {"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="26"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public String[] getSupportedCipherSuites() {"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="31"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket() throws IOException {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="36"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(Socket s, String host, int port, boolean autoClose)"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="41"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(Socket s, String host, int port, boolean autoClose)"
+        errorLine2="                             ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="41"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(Socket s, String host, int port, boolean autoClose)"
+        errorLine2="                                       ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="41"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(String host, int port) throws IOException {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="47"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(String host, int port) throws IOException {"
+        errorLine2="                             ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="47"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(String host, int port, InetAddress localHost, int localPort)"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="52"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(String host, int port, InetAddress localHost, int localPort)"
+        errorLine2="                             ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="52"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(String host, int port, InetAddress localHost, int localPort)"
+        errorLine2="                                                    ~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="52"
+            column="53"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(InetAddress host, int port) throws IOException {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="58"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(InetAddress host, int port) throws IOException {"
+        errorLine2="                             ~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="58"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="63"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)"
+        errorLine2="                             ~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="63"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)"
+        errorLine2="                                                            ~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/CustomSSLSocketFactory.java"
+            line="63"
+            column="61"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    static MessageCodec&lt;Object> getCodec() {"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="650"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    static void setup(BinaryMessenger binaryMessenger, AndroidVideoPlayerApi api) {"
+        errorLine2="                      ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="658"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="    static void setup(BinaryMessenger binaryMessenger, AndroidVideoPlayerApi api) {"
+        errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/Messages.java"
+            line="658"
+            column="56"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="54"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void onAttachedToEngine(FlutterPluginBinding binding) {"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="64"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void onDetachedFromEngine(FlutterPluginBinding binding) {"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="90"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public TextureMessage create(CreateMessage arg) {"
+        errorLine2="         ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="119"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public TextureMessage create(CreateMessage arg) {"
+        errorLine2="                               ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="119"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void dispose(TextureMessage arg) {"
+        errorLine2="                      ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="163"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void setLooping(LoopingMessage arg) {"
+        errorLine2="                         ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="169"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void setVolume(VolumeMessage arg) {"
+        errorLine2="                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="174"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void setPlaybackSpeed(PlaybackSpeedMessage arg) {"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="179"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void play(TextureMessage arg) {"
+        errorLine2="                   ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="184"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public PositionMessage position(TextureMessage arg) {"
+        errorLine2="         ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="189"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public PositionMessage position(TextureMessage arg) {"
+        errorLine2="                                  ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="189"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void seekTo(PositionMessage arg) {"
+        errorLine2="                     ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="200"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void pause(TextureMessage arg) {"
+        errorLine2="                    ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="205"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void setMixWithOthers(MixWithOthersMessage arg) {"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/videoplayer/VideoPlayerPlugin.java"
+            line="211"
+            column="32"/>
+    </issue>
+
+</issues>

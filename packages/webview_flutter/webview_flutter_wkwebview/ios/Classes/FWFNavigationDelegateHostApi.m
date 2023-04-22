@@ -28,7 +28,7 @@
 - (void)didFinishNavigationForDelegate:(FWFNavigationDelegate *)instance
                                webView:(WKWebView *)webView
                                    URL:(NSString *)URL
-                            completion:(void (^)(NSError *_Nullable))completion {
+                            completion:(void (^)(FlutterError *_Nullable))completion {
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   [self didFinishNavigationForDelegateWithIdentifier:@([self identifierForDelegate:instance])
@@ -40,7 +40,7 @@
 - (void)didStartProvisionalNavigationForDelegate:(FWFNavigationDelegate *)instance
                                          webView:(WKWebView *)webView
                                              URL:(NSString *)URL
-                                      completion:(void (^)(NSError *_Nullable))completion {
+                                      completion:(void (^)(FlutterError *_Nullable))completion {
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   [self didStartProvisionalNavigationForDelegateWithIdentifier:@([self
@@ -56,11 +56,11 @@
                               navigationAction:(WKNavigationAction *)navigationAction
                                     completion:
                                         (void (^)(FWFWKNavigationActionPolicyEnumData *_Nullable,
-                                                  NSError *_Nullable))completion {
+                                                  FlutterError *_Nullable))completion {
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   FWFWKNavigationActionData *navigationActionData =
-      FWFWKNavigationActionDataFromNavigationAction(navigationAction);
+      FWFWKNavigationActionDataFromNativeWKNavigationAction(navigationAction);
   [self
       decidePolicyForNavigationActionForDelegateWithIdentifier:@([self
                                                                    identifierForDelegate:instance])
@@ -72,31 +72,32 @@
 - (void)didFailNavigationForDelegate:(FWFNavigationDelegate *)instance
                              webView:(WKWebView *)webView
                                error:(NSError *)error
-                          completion:(void (^)(NSError *_Nullable))completion {
+                          completion:(void (^)(FlutterError *_Nullable))completion {
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   [self didFailNavigationForDelegateWithIdentifier:@([self identifierForDelegate:instance])
                                  webViewIdentifier:webViewIdentifier
-                                             error:FWFNSErrorDataFromNSError(error)
+                                             error:FWFNSErrorDataFromNativeNSError(error)
                                         completion:completion];
 }
 
 - (void)didFailProvisionalNavigationForDelegate:(FWFNavigationDelegate *)instance
                                         webView:(WKWebView *)webView
                                           error:(NSError *)error
-                                     completion:(void (^)(NSError *_Nullable))completion {
+                                     completion:(void (^)(FlutterError *_Nullable))completion {
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   [self
       didFailProvisionalNavigationForDelegateWithIdentifier:@([self identifierForDelegate:instance])
                                           webViewIdentifier:webViewIdentifier
-                                                      error:FWFNSErrorDataFromNSError(error)
+                                                      error:FWFNSErrorDataFromNativeNSError(error)
                                                  completion:completion];
 }
 
 - (void)webViewWebContentProcessDidTerminateForDelegate:(FWFNavigationDelegate *)instance
                                                 webView:(WKWebView *)webView
-                                             completion:(void (^)(NSError *_Nullable))completion {
+                                             completion:
+                                                 (void (^)(FlutterError *_Nullable))completion {
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   [self webViewWebContentProcessDidTerminateForDelegateWithIdentifier:
@@ -122,7 +123,7 @@
   [self.navigationDelegateAPI didFinishNavigationForDelegate:self
                                                      webView:webView
                                                          URL:webView.URL.absoluteString
-                                                  completion:^(NSError *error) {
+                                                  completion:^(FlutterError *error) {
                                                     NSAssert(!error, @"%@", error);
                                                   }];
 }
@@ -131,7 +132,7 @@
   [self.navigationDelegateAPI didStartProvisionalNavigationForDelegate:self
                                                                webView:webView
                                                                    URL:webView.URL.absoluteString
-                                                            completion:^(NSError *error) {
+                                                            completion:^(FlutterError *error) {
                                                               NSAssert(!error, @"%@", error);
                                                             }];
 }
@@ -144,10 +145,10 @@
                                          webView:webView
                                 navigationAction:navigationAction
                                       completion:^(FWFWKNavigationActionPolicyEnumData *policy,
-                                                   NSError *error) {
+                                                   FlutterError *error) {
                                         NSAssert(!error, @"%@", error);
                                         decisionHandler(
-                                            FWFWKNavigationActionPolicyFromEnumData(policy));
+                                            FWFNativeWKNavigationActionPolicyFromEnumData(policy));
                                       }];
 }
 
@@ -157,7 +158,7 @@
   [self.navigationDelegateAPI didFailNavigationForDelegate:self
                                                    webView:webView
                                                      error:error
-                                                completion:^(NSError *error) {
+                                                completion:^(FlutterError *error) {
                                                   NSAssert(!error, @"%@", error);
                                                 }];
 }
@@ -168,17 +169,18 @@
   [self.navigationDelegateAPI didFailProvisionalNavigationForDelegate:self
                                                               webView:webView
                                                                 error:error
-                                                           completion:^(NSError *error) {
+                                                           completion:^(FlutterError *error) {
                                                              NSAssert(!error, @"%@", error);
                                                            }];
 }
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView {
-  [self.navigationDelegateAPI webViewWebContentProcessDidTerminateForDelegate:self
-                                                                      webView:webView
-                                                                   completion:^(NSError *error) {
-                                                                     NSAssert(!error, @"%@", error);
-                                                                   }];
+  [self.navigationDelegateAPI
+      webViewWebContentProcessDidTerminateForDelegate:self
+                                              webView:webView
+                                           completion:^(FlutterError *error) {
+                                             NSAssert(!error, @"%@", error);
+                                           }];
 }
 @end
 

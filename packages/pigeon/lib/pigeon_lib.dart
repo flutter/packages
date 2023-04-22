@@ -718,6 +718,16 @@ List<Error> _validateAst(Root root, String source) {
               'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
         ));
       }
+      if (method.arguments.any((NamedType arg) =>
+          (arg.type.baseName == 'List' || arg.type.baseName == 'Map') &&
+          arg.type.typeArguments.any(
+              (TypeDeclaration genericType) => isEnum(root, genericType)))) {
+        result.add(Error(
+          message:
+              'Enums aren\'t yet supported for collection types: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
       for (final NamedType unnamedType in method.arguments
           .where((NamedType element) => element.type.baseName.isEmpty)) {
         result.add(Error(
@@ -1071,15 +1081,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
-      final dart_ast.SimpleIdentifier returnTypeIdentifier =
-          getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
+      returnType as dart_ast.NamedType;
       _currentApi!.methods.add(
         Method(
           name: node.name.lexeme,
           returnType: TypeDeclaration(
-              baseName: returnTypeIdentifier.name,
-              typeArguments: typeAnnotationsToTypeArguments(
-                  (returnType as dart_ast.NamedType).typeArguments),
+              baseName: returnType.name.name,
+              typeArguments:
+                  typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
           arguments: arguments,
           isAsynchronous: isAsynchronous,
@@ -1314,10 +1323,16 @@ ${_argParser.usage}''';
       help: 'The package that generated Kotlin code will be in.',
       aliases: const <String>['experimental_kotlin_package'],
     )
-    ..addOption('experimental_cpp_header_out',
-        help: 'Path to generated C++ header file (.h). (experimental)')
-    ..addOption('experimental_cpp_source_out',
-        help: 'Path to generated C++ classes file (.cpp). (experimental)')
+    ..addOption(
+      'cpp_header_out',
+      help: 'Path to generated C++ header file (.h).',
+      aliases: const <String>['experimental_cpp_header_out'],
+    )
+    ..addOption(
+      'cpp_source_out',
+      help: 'Path to generated C++ classes file (.cpp).',
+      aliases: const <String>['experimental_cpp_source_out'],
+    )
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
     ..addOption('objc_header_out',
@@ -1364,8 +1379,8 @@ ${_argParser.usage}''';
       kotlinOptions: KotlinOptions(
         package: results['kotlin_package'] as String?,
       ),
-      cppHeaderOut: results['experimental_cpp_header_out'] as String?,
-      cppSourceOut: results['experimental_cpp_source_out'] as String?,
+      cppHeaderOut: results['cpp_header_out'] as String?,
+      cppSourceOut: results['cpp_source_out'] as String?,
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'] as String?,
       ),
