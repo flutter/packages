@@ -292,11 +292,28 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(cameraSelector != null);
     assert(imageCapture != null);
 
-    // TODO(camsim99): Add support for flash mode configuration.
-    // https://github.com/flutter/flutter/issues/120715
     final String picturePath = await imageCapture!.takePicture();
 
     return XFile(picturePath);
+  }
+
+  /// Sets the flash mode for the selected camera.
+  @override
+  Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    switch (mode) {
+      case FlashMode.off:
+        imageCapture!.setFlashMode(ImageCapture.flashModeOff);
+        break;
+      case FlashMode.auto:
+        imageCapture!.setFlashMode(ImageCapture.flashModeAuto);
+        break;
+      case FlashMode.always:
+        imageCapture!.setFlashMode(ImageCapture.flashModeOn);
+        break;
+      case FlashMode.torch:
+        // TODO(camsim99): Implement torch mode.
+        break;
+    }
   }
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
