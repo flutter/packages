@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.googlesignin;
 
+import androidx.annotation.NonNull;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.concurrent.BlockingQueue;
@@ -31,7 +32,7 @@ public final class BackgroundTaskRunner {
      * the future is guaranteed not to block). If the future completed with an exception, then
      * {@code get()} will throw an {@code ExecutionException}.
      */
-    void run(Future<T> future);
+    void run(@NonNull Future<T> future);
   }
 
   private final ThreadPoolExecutor executor;
@@ -53,16 +54,9 @@ public final class BackgroundTaskRunner {
    *
    * <p>The callback will be notified on the UI thread.
    */
-  public <T> void runInBackground(Callable<T> task, final Callback<T> callback) {
+  public <T> void runInBackground(@NonNull Callable<T> task, final @NonNull Callback<T> callback) {
     final ListenableFuture<T> future = runInBackground(task);
-    future.addListener(
-        new Runnable() {
-          @Override
-          public void run() {
-            callback.run(future);
-          }
-        },
-        Executors.uiThreadExecutor());
+    future.addListener(() -> callback.run(future), Executors.uiThreadExecutor());
   }
 
   /**
@@ -72,19 +66,16 @@ public final class BackgroundTaskRunner {
    * <p>Note: the future will be notified on the background thread. To be notified on the UI thread,
    * use {@link #runInBackground(Callable,Callback)}.
    */
-  public <T> ListenableFuture<T> runInBackground(final Callable<T> task) {
+  public @NonNull <T> ListenableFuture<T> runInBackground(final @NonNull Callable<T> task) {
     final SettableFuture<T> future = SettableFuture.create();
 
     executor.execute(
-        new Runnable() {
-          @Override
-          public void run() {
-            if (!future.isCancelled()) {
-              try {
-                future.set(task.call());
-              } catch (Throwable t) {
-                future.setException(t);
-              }
+        () -> {
+          if (!future.isCancelled()) {
+            try {
+              future.set(task.call());
+            } catch (Throwable t) {
+              future.setException(t);
             }
           }
         });

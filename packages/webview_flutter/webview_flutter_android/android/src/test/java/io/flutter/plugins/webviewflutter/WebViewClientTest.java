@@ -42,12 +42,14 @@ public class WebViewClientTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
 
     final WebViewClientCreator webViewClientCreator =
         new WebViewClientCreator() {
           @Override
-          public WebViewClient createWebViewClient(WebViewClientFlutterApiImpl flutterApi) {
+          @NonNull
+          public WebViewClient createWebViewClient(
+              @NonNull WebViewClientFlutterApiImpl flutterApi) {
             webViewClient = (WebViewClientCompatImpl) super.createWebViewClient(flutterApi);
             return webViewClient;
           }
@@ -60,7 +62,7 @@ public class WebViewClientTest {
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test

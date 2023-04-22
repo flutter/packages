@@ -109,6 +109,50 @@ void main() {
         ]));
   });
 
+  test('updates example readme when config is present', () async {
+    final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+    final Directory example = getExampleDir(package);
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['update-excerpts']);
+
+    expect(
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall(
+              'dart',
+              const <String>[
+                'run',
+                'build_runner',
+                'build',
+                '--config',
+                'excerpt',
+                '--output',
+                'excerpts',
+                '--delete-conflicting-outputs',
+              ],
+              example.path),
+          ProcessCall(
+              'dart',
+              const <String>[
+                'run',
+                'code_excerpt_updater',
+                '--write-in-place',
+                '--yaml',
+                '--no-escape-ng-interpolation',
+                'README.md',
+              ],
+              example.path),
+        ]));
+
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Ran for 1 package(s)'),
+        ]));
+  });
+
   test('skips when no config is present', () async {
     createFakePlugin('a_package', packagesDir);
 
@@ -228,6 +272,34 @@ void main() {
           contains('The following packages had errors:'),
           contains('a_package:\n'
               '    Unable to inject excerpts')
+        ]));
+  });
+
+  test('fails if example injection fails', () async {
+    createFakePlugin('a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+      FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
+      FakeProcessInfo(MockProcess(), <String>['run', 'code_excerpt_updater']),
+      FakeProcessInfo(
+          MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
+    ];
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['update-excerpts'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The following packages had errors:'),
+          contains('a_package:\n'
+              '    Unable to inject example excerpts')
         ]));
   });
 
