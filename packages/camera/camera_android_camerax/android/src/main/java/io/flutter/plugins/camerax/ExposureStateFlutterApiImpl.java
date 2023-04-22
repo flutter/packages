@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.camerax;
 
+import android.util.Range;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ExposureState;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureStateFlutterApi;;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureRange;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureStateFlutterApi;
 
 public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
   private final InstanceManager instanceManager;
@@ -18,19 +20,27 @@ public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
     this.instanceManager = instanceManager;
   }
 
-    /**
-     * Creates a {@link ExposureState} on the Dart side with its exposure compensation
-     * range that can be used to set the exposure compensation index and its exposure 
-     * compensation step, the smallest step by which the exposure compensation can be
-     * changed.
-     */
+  /**
+   * Creates a {@link ExposureState} on the Dart side with its exposure compensation range that can
+   * be used to set the exposure compensation index and its exposure compensation step, the smallest
+   * step by which the exposure compensation can be changed.
+   */
   void create(@NonNull ExposureState exposureState, @NonNull Reply<Void> reply) {
     final Range<Integer> exposureCompensationRange = exposureState.getExposureCompensationRange();
-    ExposureRange exposureCompensationRangeAsExposureRange = ExposureRange.Builder().setMinCompensation(exposureCompensationRange.getLower()).setMaxCompensation(exposureCompensationRange.getUpper()).build()
-    final Double exposureCompensationStep = exposureState.getExposureCompensationStep().getValue();
+    ExposureRange exposureCompensationRangeAsExposureRange =
+        new ExposureRange.Builder()
+            .setMinCompensation(exposureCompensationRange.getLower().longValue())
+            .setMaxCompensation(exposureCompensationRange.getUpper().longValue())
+            .build();
+    final Double exposureCompensationStep =
+        exposureState.getExposureCompensationStep().doubleValue();
 
     if (!instanceManager.containsInstance(exposureState)) {
-    create(instanceManager.addHostCreatedInstance(exposureState), exposureCompensationRangeAsExposureRange, exposureCompensationStep, reply);
+      create(
+          instanceManager.addHostCreatedInstance(exposureState),
+          exposureCompensationRangeAsExposureRange,
+          exposureCompensationStep,
+          reply);
     }
   }
 }

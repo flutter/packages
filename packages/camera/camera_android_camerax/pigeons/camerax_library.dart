@@ -52,8 +52,8 @@ class ExposureRange {
     required this.maxCompensation,
   });
 
-  double minCompensation;
-  double maxCompensation;
+  int minCompensation;
+  int maxCompensation;
 }
 
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
@@ -179,5 +179,5 @@ abstract class ExposureStateFlutterApi {
 
 @FlutterApi()
 abstract class ZoomStateFlutterApi {
-  void create(int identifier, int minZoomRatio, int maxZoomRatio);
+  void create(int identifier, double minZoomRatio, double maxZoomRatio);
 }

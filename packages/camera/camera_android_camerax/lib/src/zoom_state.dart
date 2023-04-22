@@ -24,10 +24,10 @@ class ZoomState extends JavaObject {
   }
 
   /// The minimum zoom ratio of the camera represented by this instance.
-  final int minZoomRatio;
+  final double minZoomRatio;
 
   /// The maximum zoom ratio of the camera represented by this instance.
-  final int maxZoomRatio;
+  final double maxZoomRatio;
 }
 
 /// Flutter API implementation of [ZoomState].
@@ -48,7 +48,7 @@ class ZoomStateFlutterApiImpl implements ZoomStateFlutterApi {
   final InstanceManager instanceManager;
 
   @override
-  void create(int identifier, int minZoomRatio, int maxZoomRatio) {
+  void create(int identifier, double minZoomRatio, double maxZoomRatio) {
     instanceManager.addHostCreatedInstance(
       ZoomState.detached(
           binaryMessenger: binaryMessenger,
