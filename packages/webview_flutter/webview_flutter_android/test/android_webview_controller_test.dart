@@ -751,8 +751,7 @@ void main() {
           void Function(
             android_webview.WebChromeClient instance,
             android_webview.PermissionRequest request,
-          )?
-              onPermissionRequest,
+          )? onPermissionRequest,
         }) {
           onPermissionRequestCallback = onPermissionRequest!;
           return mockWebChromeClient;

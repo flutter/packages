@@ -44,7 +44,8 @@ class AndroidWebViewControllerCreationParams
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
         AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting android_webview.WebStorage? androidWebStorage,
+    @visibleForTesting
+        android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -137,7 +138,8 @@ class AndroidWebViewController extends PlatformWebViewController {
         }
       };
     }),
-    onShowFileChooser: withWeakReferenceTo(this,
+    onShowFileChooser: withWeakReferenceTo(
+      this,
       (WeakReference<AndroidWebViewController> weakReference) {
         return (android_webview.WebView webView,
             android_webview.FileChooserParams params) async {
@@ -150,7 +152,8 @@ class AndroidWebViewController extends PlatformWebViewController {
         };
       },
     ),
-    onPermissionRequest: withWeakReferenceTo(this,
+    onPermissionRequest: withWeakReferenceTo(
+      this,
       (WeakReference<AndroidWebViewController> weakReference) {
         return (_, android_webview.PermissionRequest request) async {
           final void Function(PlatformWebViewPermissionRequest)? callback =
