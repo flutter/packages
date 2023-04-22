@@ -359,8 +359,28 @@ class WebViewController {
 
 /// Permissions request when web content requests access to protected resources.
 ///
-/// A response MUST be provided by calling [grant], [deny], or a method of
+/// A response MUST be provided by calling [grant], [deny], or a method from
 /// [platform].
+///
+/// ## Platform-Specific Features
+/// This class contains an underlying implementation provided by the current
+/// platform. Once a platform implementation is imported, the example below
+/// can be followed to use features provided by a platform's implementation.
+///
+/// Below is an example of accessing the platform-specific implementation for
+/// iOS and Android:
+///
+/// ```dart
+/// final WebViewPermissionRequest request = ...;
+///
+/// if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+///   final WebKitWebViewPermissionRequest webKitRequest =
+///       request.platform as WebKitWebViewPermissionRequest;
+/// } else if (WebViewPlatform.instance is AndroidWebViewPlatform) {
+///   final AndroidWebViewPermissionRequest androidRequest =
+///       request.platform as AndroidWebViewPermissionRequest;
+/// }
+/// ```
 @immutable
 class WebViewPermissionRequest {
   const WebViewPermissionRequest._(this.platform, {required this.types});
