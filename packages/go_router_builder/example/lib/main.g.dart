@@ -33,6 +33,10 @@ RouteBase get $homeRoute => GoRouteData.$route(
             ),
           ],
         ),
+        GoRouteData.$route(
+          path: 'family-count/:count',
+          factory: $FamilyCountRouteExtension._fromState,
+        ),
       ],
     );
 
@@ -45,7 +49,7 @@ extension $HomeRouteExtension on HomeRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -62,7 +66,7 @@ extension $FamilyRouteExtension on FamilyRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -80,7 +84,7 @@ extension $PersonRouteExtension on PersonRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -101,10 +105,28 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
 
   void go(BuildContext context) => context.go(location, extra: $extra);
 
-  void push(BuildContext context) => context.push(location, extra: $extra);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+}
+
+extension $FamilyCountRouteExtension on FamilyCountRoute {
+  static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
+        int.parse(state.params['count']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/family-count/${Uri.encodeComponent(count.toString())}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -137,7 +159,7 @@ extension $LoginRouteExtension on LoginRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);

@@ -130,14 +130,12 @@ class RouteConfig {
     InterfaceElement classElement, {
     required String keyName,
   }) {
-    bool whereStatic(FieldElement element) => element.isStatic;
-    bool whereKeyName(FieldElement element) => element.name == keyName;
     final String? fieldDisplayName = classElement.fields
-        .where(whereStatic)
-        .where(whereKeyName)
         .where((FieldElement element) {
           final DartType type = element.type;
-          if (type is! ParameterizedType) {
+          if (!element.isStatic ||
+              element.name != keyName ||
+              type is! ParameterizedType) {
             return false;
           }
           final List<DartType> typeArguments = type.typeArguments;
@@ -207,8 +205,8 @@ extension $_extensionName on $_className {
   void go(BuildContext context) =>
       context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
-  void push(BuildContext context) =>
-      context.push(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});

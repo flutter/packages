@@ -1,3 +1,7 @@
+## 3.4.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
 ## 3.3.0
 
 * Adds support for `PlatformNavigationDelegate.onUrlChange`.

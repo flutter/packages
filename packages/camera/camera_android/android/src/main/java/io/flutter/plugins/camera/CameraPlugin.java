@@ -5,7 +5,6 @@
 package io.flutter.plugins.camera;
 
 import android.app.Activity;
-import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -45,7 +44,8 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
    * won't react to changes in activity or context, unlike {@link CameraPlugin}.
    */
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     CameraPlugin plugin = new CameraPlugin();
     plugin.maybeStartListening(
         registrar.activity(),
@@ -97,11 +97,6 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
       BinaryMessenger messenger,
       PermissionsRegistry permissionsRegistry,
       TextureRegistry textureRegistry) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-      // If the sdk is less than 21 (min sdk for Camera2) we don't register the plugin.
-      return;
-    }
-
     methodCallHandler =
         new MethodCallHandlerImpl(
             activity, messenger, new CameraPermissions(), permissionsRegistry, textureRegistry);

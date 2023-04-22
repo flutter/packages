@@ -52,13 +52,13 @@ public class ProcessCameraProviderTest {
 
   @Before
   public void setUp() {
-    testInstanceManager = InstanceManager.open(identifier -> {});
+    testInstanceManager = InstanceManager.create(identifier -> {});
     context = ApplicationProvider.getApplicationContext();
   }
 
   @After
   public void tearDown() {
-    testInstanceManager.close();
+    testInstanceManager.stopFinalizationListener();
   }
 
   @Test
