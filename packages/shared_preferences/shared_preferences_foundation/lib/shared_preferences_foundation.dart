@@ -11,6 +11,9 @@ typedef _Setter = Future<void> Function(String key, Object value);
 /// iOS and macOS implementation of shared_preferences.
 class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   final UserDefaultsApi _api = UserDefaultsApi();
+
+  static const String _defautPrefix = 'flutter.';
+
   late final Map<String, _Setter> _setters = <String, _Setter>{
     'Bool': (String key, Object value) {
       return _api.setBool(key, value as bool);
@@ -37,13 +40,23 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
-    await _api.clear();
+    return clearWithPrefix(_defautPrefix);
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    await _api.clearWithPrefix(prefix);
     return true;
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    final Map<String?, Object?> result = await _api.getAll();
+    return getAllWithPrefix(_defautPrefix);
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    final Map<String?, Object?> result = await _api.getAllWithPrefix(prefix);
     return result.cast<String, Object>();
   }
 

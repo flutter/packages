@@ -4,35 +4,40 @@
 
 package io.flutter.plugins.camera.features.flash;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
+import androidx.annotation.NonNull;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
 
 /** Controls the flash configuration on the {@link android.hardware.camera2} API. */
 public class FlashFeature extends CameraFeature<FlashMode> {
-  private FlashMode currentSetting = FlashMode.auto;
+  @NonNull private FlashMode currentSetting = FlashMode.auto;
 
   /**
    * Creates a new instance of the {@link FlashFeature}.
    *
    * @param cameraProperties Collection of characteristics for the current camera device.
    */
-  public FlashFeature(CameraProperties cameraProperties) {
+  public FlashFeature(@NonNull CameraProperties cameraProperties) {
     super(cameraProperties);
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "FlashFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @NonNull
   @Override
   public FlashMode getValue() {
     return currentSetting;
   }
 
   @Override
-  public void setValue(FlashMode value) {
+  public void setValue(@NonNull FlashMode value) {
     this.currentSetting = value;
   }
 
@@ -43,7 +48,7 @@ public class FlashFeature extends CameraFeature<FlashMode> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     if (!checkIsSupported()) {
       return;
     }

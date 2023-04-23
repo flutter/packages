@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io' as io;
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
@@ -94,8 +93,9 @@ void main() {
         }
       };
 
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(stdout: jsonEncode(devices)),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: jsonEncode(devices)),
+            <String>['simctl', 'list']),
       ];
 
       expect(await xcode.findBestAvailableIphoneSimulator(), expectedDeviceId);
@@ -138,16 +138,17 @@ void main() {
         }
       };
 
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(stdout: jsonEncode(devices)),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: jsonEncode(devices)),
+            <String>['simctl', 'list']),
       ];
 
       expect(await xcode.findBestAvailableIphoneSimulator(), null);
     });
 
     test('returns null if simctl fails', () async {
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['simctl', 'list']),
       ];
 
       expect(await xcode.findBestAvailableIphoneSimulator(), null);
@@ -217,8 +218,8 @@ void main() {
     });
 
     test('returns error codes', () async {
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['xcodebuild']),
       ];
       final Directory directory = const LocalFileSystem().currentDirectory;
 
@@ -267,8 +268,8 @@ void main() {
     ]
   }
 }''';
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(stdout: stdout),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: stdout), <String>['xcodebuild']),
       ];
 
       final Directory project =
@@ -308,8 +309,8 @@ void main() {
     ]
   }
 }''';
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(stdout: stdout),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: stdout), <String>['xcodebuild']),
       ];
 
       final Directory project =
@@ -332,8 +333,8 @@ void main() {
     });
 
     test('returns null for unexpected output', () async {
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(stdout: '{}'),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '{}'), <String>['xcodebuild']),
       ];
 
       final Directory project =
@@ -356,8 +357,8 @@ void main() {
     });
 
     test('returns null for invalid output', () async {
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(stdout: ':)'),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: ':)'), <String>['xcodebuild']),
       ];
 
       final Directory project =
@@ -380,8 +381,9 @@ void main() {
     });
 
     test('returns null for failure', () async {
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-        MockProcess(exitCode: 1), // xcodebuild -list
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['xcodebuild', '-list'])
       ];
 
       final Directory project =
