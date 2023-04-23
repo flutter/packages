@@ -1,6 +1,9 @@
 ## 0.4.1
 
 * Add "My Location" Widget. Issue [#64073](https://github.com/flutter/flutter/issues/64073)
+
+## 0.4.0+8
+
 * Updates minimum Flutter version to 3.3.
 * Allows marker position updates. Issue [#83467](https://github.com/flutter/flutter/issues/83467).
 
