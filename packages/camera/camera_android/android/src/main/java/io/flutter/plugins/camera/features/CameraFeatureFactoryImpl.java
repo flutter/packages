@@ -27,37 +27,42 @@ import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
  * android.hardware.camera2.CaptureRequest}.
  */
 public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
-
+  @NonNull
   @Override
   public AutoFocusFeature createAutoFocusFeature(
       @NonNull CameraProperties cameraProperties, boolean recordingVideo) {
     return new AutoFocusFeature(cameraProperties, recordingVideo);
   }
 
+  @NonNull
   @Override
   public ExposureLockFeature createExposureLockFeature(@NonNull CameraProperties cameraProperties) {
     return new ExposureLockFeature(cameraProperties);
   }
 
+  @NonNull
   @Override
   public ExposureOffsetFeature createExposureOffsetFeature(
       @NonNull CameraProperties cameraProperties) {
     return new ExposureOffsetFeature(cameraProperties);
   }
 
+  @NonNull
   @Override
   public FlashFeature createFlashFeature(@NonNull CameraProperties cameraProperties) {
     return new FlashFeature(cameraProperties);
   }
 
+  @NonNull
   @Override
   public ResolutionFeature createResolutionFeature(
       @NonNull CameraProperties cameraProperties,
-      ResolutionPreset initialSetting,
-      String cameraName) {
+      @NonNull ResolutionPreset initialSetting,
+      @NonNull String cameraName) {
     return new ResolutionFeature(cameraProperties, initialSetting, cameraName);
   }
 
+  @NonNull
   @Override
   public FocusPointFeature createFocusPointFeature(
       @NonNull CameraProperties cameraProperties,
@@ -65,11 +70,13 @@ public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
     return new FocusPointFeature(cameraProperties, sensorOrientationFeature);
   }
 
+  @NonNull
   @Override
   public FpsRangeFeature createFpsRangeFeature(@NonNull CameraProperties cameraProperties) {
     return new FpsRangeFeature(cameraProperties);
   }
 
+  @NonNull
   @Override
   public SensorOrientationFeature createSensorOrientationFeature(
       @NonNull CameraProperties cameraProperties,
@@ -78,11 +85,13 @@ public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
     return new SensorOrientationFeature(cameraProperties, activity, dartMessenger);
   }
 
+  @NonNull
   @Override
   public ZoomLevelFeature createZoomLevelFeature(@NonNull CameraProperties cameraProperties) {
     return new ZoomLevelFeature(cameraProperties);
   }
 
+  @NonNull
   @Override
   public ExposurePointFeature createExposurePointFeature(
       @NonNull CameraProperties cameraProperties,
@@ -90,6 +99,7 @@ public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
     return new ExposurePointFeature(cameraProperties, sensorOrientationFeature);
   }
 
+  @NonNull
   @Override
   public NoiseReductionFeature createNoiseReductionFeature(
       @NonNull CameraProperties cameraProperties) {

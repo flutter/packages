@@ -1,3 +1,7 @@
+## 0.13.4+4
+
+* Allows code excerpts in `example/README.md`.
+
 ## 0.13.4+3
 
 * Moves source to flutter/packages.

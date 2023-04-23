@@ -6,8 +6,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'types/types.dart';
 
-import 'webview_platform.dart';
+import 'webview_platform.dart' show WebViewPlatform;
 
 /// Signature for callbacks that report a pending navigation request.
 typedef NavigationRequestCallback = FutureOr<NavigationDecision> Function(

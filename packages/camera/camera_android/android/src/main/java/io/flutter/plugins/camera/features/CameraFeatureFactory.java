@@ -35,6 +35,7 @@ public interface CameraFeatureFactory {
    * @param recordingVideo indicates if the camera is currently recording.
    * @return newly created instance of the AutoFocusFeature class.
    */
+  @NonNull
   AutoFocusFeature createAutoFocusFeature(
       @NonNull CameraProperties cameraProperties, boolean recordingVideo);
 
@@ -45,6 +46,7 @@ public interface CameraFeatureFactory {
    *     cameras features.
    * @return newly created instance of the ExposureLockFeature class.
    */
+  @NonNull
   ExposureLockFeature createExposureLockFeature(@NonNull CameraProperties cameraProperties);
 
   /**
@@ -54,6 +56,7 @@ public interface CameraFeatureFactory {
    *     cameras features.
    * @return newly created instance of the ExposureOffsetFeature class.
    */
+  @NonNull
   ExposureOffsetFeature createExposureOffsetFeature(@NonNull CameraProperties cameraProperties);
 
   /**
@@ -63,6 +66,7 @@ public interface CameraFeatureFactory {
    *     cameras features.
    * @return newly created instance of the FlashFeature class.
    */
+  @NonNull
   FlashFeature createFlashFeature(@NonNull CameraProperties cameraProperties);
 
   /**
@@ -74,10 +78,11 @@ public interface CameraFeatureFactory {
    * @param cameraName the name of the camera which can be used to identify the camera device.
    * @return newly created instance of the ResolutionFeature class.
    */
+  @NonNull
   ResolutionFeature createResolutionFeature(
       @NonNull CameraProperties cameraProperties,
-      ResolutionPreset initialSetting,
-      String cameraName);
+      @NonNull ResolutionPreset initialSetting,
+      @NonNull String cameraName);
 
   /**
    * Creates a new instance of the focus point feature.
@@ -88,6 +93,7 @@ public interface CameraFeatureFactory {
    *     information about the sensor and device orientation.
    * @return newly created instance of the FocusPointFeature class.
    */
+  @NonNull
   FocusPointFeature createFocusPointFeature(
       @NonNull CameraProperties cameraProperties,
       @NonNull SensorOrientationFeature sensorOrientationFeature);
@@ -99,6 +105,7 @@ public interface CameraFeatureFactory {
    *     cameras features.
    * @return newly created instance of the FpsRangeFeature class.
    */
+  @NonNull
   FpsRangeFeature createFpsRangeFeature(@NonNull CameraProperties cameraProperties);
 
   /**
@@ -111,6 +118,7 @@ public interface CameraFeatureFactory {
    *     Dart.
    * @return newly created instance of the SensorOrientationFeature class.
    */
+  @NonNull
   SensorOrientationFeature createSensorOrientationFeature(
       @NonNull CameraProperties cameraProperties,
       @NonNull Activity activity,
@@ -123,6 +131,7 @@ public interface CameraFeatureFactory {
    *     cameras features.
    * @return newly created instance of the ZoomLevelFeature class.
    */
+  @NonNull
   ZoomLevelFeature createZoomLevelFeature(@NonNull CameraProperties cameraProperties);
 
   /**
@@ -134,6 +143,7 @@ public interface CameraFeatureFactory {
    *     information about the sensor and device orientation.
    * @return newly created instance of the ExposurePointFeature class.
    */
+  @NonNull
   ExposurePointFeature createExposurePointFeature(
       @NonNull CameraProperties cameraProperties,
       @NonNull SensorOrientationFeature sensorOrientationFeature);
@@ -145,5 +155,6 @@ public interface CameraFeatureFactory {
    *     cameras features.
    * @return newly created instance of the NoiseReductionFeature class.
    */
+  @NonNull
   NoiseReductionFeature createNoiseReductionFeature(@NonNull CameraProperties cameraProperties);
 }
