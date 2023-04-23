@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath 'com.android.tools.build:gradle:8.0.0'
     }
 }
 
@@ -33,7 +33,6 @@ android {
         checkAllWarnings true
         warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
-        baseline file("lint-baseline.xml")
     }
 
     dependencies {

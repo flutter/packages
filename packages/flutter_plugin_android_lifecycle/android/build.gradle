@@ -29,6 +29,11 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'proguard.txt'
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true

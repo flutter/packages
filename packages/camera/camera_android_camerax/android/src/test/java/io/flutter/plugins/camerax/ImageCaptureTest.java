@@ -48,14 +48,14 @@ public class ImageCaptureTest {
 
   @Before
   public void setUp() throws Exception {
-    testInstanceManager = spy(InstanceManager.open(identifier -> {}));
+    testInstanceManager = spy(InstanceManager.create(identifier -> {}));
     context = mock(Context.class);
     mockedStaticFile = mockStatic(File.class);
   }
 
   @After
   public void tearDown() {
-    testInstanceManager.close();
+    testInstanceManager.stopFinalizationListener();
     mockedStaticFile.close();
   }
 

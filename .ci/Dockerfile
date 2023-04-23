@@ -2,7 +2,7 @@
 # before running. What matters is that the base image is pinned to minimize
 # unintended changes when modifying this file.
 # This is the hash for the 3.0.0 image.
-FROM cirrusci/flutter@sha256:794fbbce5422e79aae1dbf6e6cbfcf5fe89aff50350d7c018853b3cfdf35821a
+FROM cirrusci/flutter@sha256:d99b1ba2602240a74722970b5c0cd704bbe60a7eba7557157c784f2f693c393f
 
 RUN apt-get update -y
 
