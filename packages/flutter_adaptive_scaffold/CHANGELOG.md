@@ -1,3 +1,7 @@
+## 0.2.0
+
+* Adds `transitionDuration` parameter for specifying how long the animation should be.
+
 ## 0.1.3
 
 * Fixes `groupAlignment` property not available in `standardNavigationRail` - [flutter/flutter#121994](https://github.com/flutter/flutter/issues/121994)

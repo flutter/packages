@@ -45,7 +45,10 @@ class MyApp extends StatelessWidget {
 /// [AdaptiveScaffold].
 class MyHomePage extends StatefulWidget {
   /// Creates a const [MyHomePage].
-  const MyHomePage({super.key});
+  const MyHomePage({super.key, this.transTime = 1000});
+
+  /// Declare transition duration.
+  final int transTime;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -53,6 +56,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedTab = 0;
+  int _transTime = 1000;
+
+  // Initialize transition time variable.
+  @override
+  void initState(){
+    super.initState();
+    setState(() {
+      _transTime = widget.transTime;
+    });
+  }
 
   // #docregion Example
   @override
@@ -68,11 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         )
     ];
-
     return AdaptiveScaffold(
       // An option to override the default breakpoints used for small, medium,
       // and large.
-      transitionDuration: const Duration(milliseconds: 500),
+      transitionDuration: Duration(milliseconds: _transTime),
       smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
       mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
       largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
