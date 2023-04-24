@@ -1513,3 +1513,74 @@ abstract class TestWebStorageHostApi {
     }
   }
 }
+
+/// Host API for `PermissionRequest`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/PermissionRequest.
+abstract class TestPermissionRequestHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles Dart method `PermissionRequest.grant`.
+  void grant(int instanceId, List<String?> resources);
+
+  /// Handles Dart method `PermissionRequest.deny`.
+  void deny(int instanceId);
+
+  static void setup(TestPermissionRequestHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.PermissionRequestHostApi.grant', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.PermissionRequestHostApi.grant was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.PermissionRequestHostApi.grant was null, expected non-null int.');
+          final List<String?>? arg_resources =
+              (args[1] as List<Object?>?)?.cast<String?>();
+          assert(arg_resources != null,
+              'Argument for dev.flutter.pigeon.PermissionRequestHostApi.grant was null, expected non-null List<String?>.');
+          api.grant(arg_instanceId!, arg_resources!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.PermissionRequestHostApi.deny', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.PermissionRequestHostApi.deny was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.PermissionRequestHostApi.deny was null, expected non-null int.');
+          api.deny(arg_instanceId!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
