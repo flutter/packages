@@ -255,7 +255,8 @@ dependencies {
     );
   });
 
-  test('fails when namespace does not match AndroidManifest.xml', () async {
+  test('fails when plugin namespace does not match AndroidManifest.xml',
+      () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakeBuildGradle(package, includeLanguageVersion: true);
@@ -323,6 +324,10 @@ dependencies {
     );
   });
 
+  // TODO(stuartmorgan): Consider removing this in the future; we may at some
+  // point decide that we have a use case of example apps having different
+  // app IDs and namespaces. For now, it's enforced for consistency so they
+  // don't just accidentally diverge.
   test('fails when namespace in example does not match AndroidManifest.xml',
       () async {
     final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
