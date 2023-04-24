@@ -1,7 +1,11 @@
 ## 0.4.1
 
 * Adds options for gesture handling and tilt controls.
+
+## 0.4.0+8
+
 * Updates minimum Flutter version to 3.3.
+* Allows marker position updates. Issue [#83467](https://github.com/flutter/flutter/issues/83467).
 
 ## 0.4.0+7
 

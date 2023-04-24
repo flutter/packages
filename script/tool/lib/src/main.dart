@@ -19,6 +19,7 @@ import 'federation_safety_check_command.dart';
 import 'firebase_test_lab_command.dart';
 import 'fix_command.dart';
 import 'format_command.dart';
+import 'gradle_check_command.dart';
 import 'license_check_command.dart';
 import 'lint_android_command.dart';
 import 'list_command.dart';
@@ -66,6 +67,7 @@ void main(List<String> args) {
     ..addCommand(FirebaseTestLabCommand(packagesDir))
     ..addCommand(FixCommand(packagesDir))
     ..addCommand(FormatCommand(packagesDir))
+    ..addCommand(GradleCheckCommand(packagesDir))
     ..addCommand(LicenseCheckCommand(packagesDir))
     ..addCommand(LintAndroidCommand(packagesDir))
     ..addCommand(PodspecCheckCommand(packagesDir))
