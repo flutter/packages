@@ -422,14 +422,14 @@ NS_INLINE UIViewController *rootViewController() {
 - (void)seekTo:(int)location completionHandler:(void (^)(BOOL))completionHandler {
   CMTime locationCMT = CMTimeMake(location, 1000);
   CMTimeValue duration = _player.currentItem.asset.duration.value;
-    // Without adding tolerance when seeking to duration,
-    // seekToTime will never complete, and this call will hang.
-    // see issue https://github.com/flutter/flutter/issues/124475.
-    CMTime tolerance = location == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
-    [_player seekToTime:locationCMT
-          toleranceBefore:tolerance
-           toleranceAfter:tolerance
-        completionHandler:completionHandler];
+  // Without adding tolerance when seeking to duration,
+  // seekToTime will never complete, and this call will hang.
+  // see issue https://github.com/flutter/flutter/issues/124475.
+  CMTime tolerance = location == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
+  [_player seekToTime:locationCMT
+        toleranceBefore:tolerance
+          toleranceAfter:tolerance
+      completionHandler:completionHandler];
 }
 
 - (void)setIsLooping:(BOOL)isLooping {
