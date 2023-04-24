@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camera.features.exposureoffset;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
 import android.util.Range;
 import androidx.annotation.NonNull;
@@ -12,7 +13,6 @@ import io.flutter.plugins.camera.features.CameraFeature;
 
 /** Controls the exposure offset making the resulting image brighter or darker. */
 public class ExposureOffsetFeature extends CameraFeature<Double> {
-
   private double currentSetting = 0;
 
   /**
@@ -20,15 +20,18 @@ public class ExposureOffsetFeature extends CameraFeature<Double> {
    *
    * @param cameraProperties Collection of the characteristics for the current camera device.
    */
-  public ExposureOffsetFeature(CameraProperties cameraProperties) {
+  public ExposureOffsetFeature(@NonNull CameraProperties cameraProperties) {
     super(cameraProperties);
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "ExposureOffsetFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @NonNull
   @Override
   public Double getValue() {
     return currentSetting;
@@ -47,7 +50,7 @@ public class ExposureOffsetFeature extends CameraFeature<Double> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     if (!checkIsSupported()) {
       return;
     }

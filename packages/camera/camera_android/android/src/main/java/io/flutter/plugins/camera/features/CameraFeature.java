@@ -25,6 +25,7 @@ public abstract class CameraFeature<T> {
   }
 
   /** Debug name for this feature. */
+  @NonNull
   public abstract String getDebugName();
 
   /**
@@ -56,5 +57,5 @@ public abstract class CameraFeature<T> {
    * @param requestBuilder A {@see android.hardware.camera2.CaptureRequest.Builder} instance used to
    *     configure the settings and outputs needed to capture a single image from the camera device.
    */
-  public abstract void updateBuilder(CaptureRequest.Builder requestBuilder);
+  public abstract void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder);
 }

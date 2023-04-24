@@ -1,6 +1,10 @@
-## 3.6.0
+## 3.7.0
 
 * Adds support for the native `onRenderProcessGone` callback.
+
+## 3.6.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
 
 ## 3.5.3
 
