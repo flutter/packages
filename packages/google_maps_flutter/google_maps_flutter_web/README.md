@@ -6,8 +6,10 @@ This is an implementation of the [google_maps_flutter](https://pub.dev/packages/
 
 ### Depend on the package
 
-This package is not an endorsed implementation of the google_maps_flutter plugin yet, so you'll need to 
+This package is not an endorsed implementation of the google_maps_flutter plugin yet, so you'll need to
 [add it explicitly](https://pub.dev/packages/google_maps_flutter_web/install).
+
+Once you do, you can use the `google_maps_flutter` APIs as you normally would.
 
 ### Modify web/index.html
 

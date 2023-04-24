@@ -52,7 +52,14 @@ String decodeParameter(ParameterElement element) {
   final DartType paramType = element.type;
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(paramType)) {
-      return helper._decode(element);
+      String decoded = helper._decode(element);
+      if (element.isOptional && element.hasDefaultValue) {
+        if (element.type.isNullableType) {
+          throw NullableDefaultValueError(element);
+        }
+        decoded += ' ?? ${element.defaultValueCode!}';
+      }
+      return decoded;
     }
   }
 
@@ -95,14 +102,7 @@ String _stateValueAccess(ParameterElement element) {
   }
 
   if (element.isOptional) {
-    String value = 'queryParams[${escapeDartString(element.name.kebab)}]';
-    if (element.hasDefaultValue) {
-      if (element.type.isNullableType) {
-        throw NullableDefaultValueError(element);
-      }
-      value += ' ?? ${element.defaultValueCode!}';
-    }
-    return value;
+    return 'queryParams[${escapeDartString(element.name.kebab)}]';
   }
 
   throw InvalidGenerationSourceError(
@@ -292,6 +292,7 @@ state.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
 
   @override
   String _encode(String fieldName, DartType type) {
+    final String nullAwareAccess = type.isNullableType ? '?' : '';
     if (type is ParameterizedType) {
       final DartType iterableType = type.typeArguments.first;
 
@@ -300,7 +301,7 @@ state.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType)) {
           entriesTypeEncoder = '''
-?.map((e) => ${helper._encode('e', iterableType)}).toList()''';
+$nullAwareAccess.map((e) => ${helper._encode('e', iterableType)}).toList()''';
         }
       }
       return '''
@@ -308,7 +309,7 @@ $fieldName$entriesTypeEncoder''';
     }
 
     return '''
-$fieldName?.map((e) => e.toString()).toList()''';
+$fieldName$nullAwareAccess.map((e) => e.toString()).toList()''';
   }
 
   @override
@@ -326,14 +327,10 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
     final DartType paramType = parameterElement.type;
 
     if (!parameterElement.isRequired) {
-      String decoded = '$convertMapValueHelperName('
+      return '$convertMapValueHelperName('
           '${escapeDartString(parameterElement.name.kebab)}, '
           'state.queryParams, '
           '${helperName(paramType)})';
-      if (parameterElement.hasDefaultValue) {
-        decoded += ' ?? ${parameterElement.defaultValueCode!}';
-      }
-      return decoded;
     }
     return '${helperName(paramType)}'
         '(state.${_stateValueAccess(parameterElement)})';

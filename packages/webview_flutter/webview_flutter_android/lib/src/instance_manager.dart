@@ -7,10 +7,7 @@ import 'package:flutter/foundation.dart';
 /// An immutable object that can provide functional copies of itself.
 ///
 /// All implementers are expected to be immutable as defined by the annotation.
-// TODO(bparrishMines): Uncomment annotation once
-// https://github.com/flutter/plugins/pull/5831 lands or when making a breaking
-// change for https://github.com/flutter/flutter/issues/107199.
-// @immutable
+@immutable
 mixin Copyable {
   /// Instantiates and returns a functionally identical object to oneself.
   ///
@@ -82,8 +79,6 @@ class InstanceManager {
   ///
   /// Returns the randomly generated id of the [instance] added.
   int addDartCreatedInstance(Copyable instance) {
-    assert(getIdentifier(instance) == null);
-
     final int identifier = _nextUniqueIdentifier();
     _addInstanceWithIdentifier(instance, identifier);
     return identifier;
@@ -95,7 +90,7 @@ class InstanceManager {
   /// Returns the identifier associated with the removed instance. Otherwise,
   /// `null` if the instance was not found in this manager.
   ///
-  /// This does not remove the the strong referenced instance associated with
+  /// This does not remove the strong referenced instance associated with
   /// [instance]. This can be done with [remove].
   int? removeWeakReference(Copyable instance) {
     final int? identifier = getIdentifier(instance);
@@ -117,7 +112,7 @@ class InstanceManager {
   /// it was removed. Returns `null` if [identifier] was not associated with
   /// any strong reference.
   ///
-  /// This does not remove the the weak referenced instance associtated with
+  /// This does not remove the weak referenced instance associated with
   /// [identifier]. This can be done with [removeWeakReference].
   T? remove<T extends Copyable>(int identifier) {
     return _strongInstances.remove(identifier) as T?;
@@ -168,13 +163,14 @@ class InstanceManager {
   ///
   /// Returns unique identifier of the [instance] added.
   void addHostCreatedInstance(Copyable instance, int identifier) {
-    assert(!containsIdentifier(identifier));
-    assert(getIdentifier(instance) == null);
-    assert(identifier >= 0);
     _addInstanceWithIdentifier(instance, identifier);
   }
 
   void _addInstanceWithIdentifier(Copyable instance, int identifier) {
+    assert(!containsIdentifier(identifier));
+    assert(getIdentifier(instance) == null);
+    assert(identifier >= 0);
+
     _identifiers[instance] = identifier;
     _weakInstances[identifier] = WeakReference<Copyable>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
