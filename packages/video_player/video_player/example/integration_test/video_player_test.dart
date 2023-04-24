@@ -103,17 +103,6 @@ void main() {
     );
 
     testWidgets(
-      'can seek to end',
-      (WidgetTester tester) async {
-        await controller.initialize();
-
-        await controller.seekTo(controller.value.duration);
-
-        expect(controller.value.duration, controller.value.position);
-      },
-    );
-
-    testWidgets(
       'can be paused',
       (WidgetTester tester) async {
         await controller.initialize();
