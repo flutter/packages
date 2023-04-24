@@ -614,6 +614,18 @@ void main() {
     ]);
   });
 
+  test('Encodes image data with various formats', () {
+    final buffer = VectorGraphicsBuffer();
+
+    for (final int format in ImageFormatTypes.values) {
+      expect(
+        codec.writeImage(
+            buffer, format, Uint8List.fromList(<int>[0, 1, 3, 4, 5])),
+        greaterThan(-1),
+      );
+    }
+  });
+
   test('Basic message encode and decode with shaded path and image', () {
     final buffer = VectorGraphicsBuffer();
     final TestListener listener = TestListener();

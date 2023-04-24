@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.5+1
+
+- Remove/update some invalid assertions related to image formats.
+
 ## 1.1.5
 
 - Support for encoding path control points as IEEE 754-2008 half precision

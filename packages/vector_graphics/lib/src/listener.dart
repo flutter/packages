@@ -714,7 +714,6 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     Uint8List data, {
     VectorGraphicsErrorListener? onError,
   }) {
-    assert(format == 0); // Only PNG is supported.
     final Completer<void> completer = Completer<void>();
     _pendingImages.add(completer.future);
     final ImageStreamCompleter? cacheCompleter =

@@ -74,6 +74,8 @@ abstract class ImageFormatTypes {
 
   /// A Windows Bitmap format image.
   static const int bmp = 4;
+
+  static const List<int> values = <int>[png, jpeg, webp, gif, bmp];
 }
 
 class DecodeResponse {
@@ -768,7 +770,7 @@ class VectorGraphicsCodec {
   ) {
     buffer._checkPhase(_CurrentSection.images);
     assert(buffer._nextImageId < kMaxId);
-    assert(format == 0);
+    assert(ImageFormatTypes.values.contains(format));
 
     final int id = buffer._nextImageId;
     buffer._nextImageId += 1;

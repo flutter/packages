@@ -780,9 +780,9 @@ class SvgParser {
         endElement(event);
       } else if (_inTextOrTSpan) {
         if (event is XmlCDATAEvent) {
-          _appendText(event.text);
+          _appendText(event.value);
         } else if (event is XmlTextEvent) {
-          _appendText(event.text);
+          _appendText(event.value);
         }
       }
     }
