@@ -1,6 +1,6 @@
 ## 1.0.25
 
-* Remove unused resourece by Android lint warnings.
+* Removes unused resources as indicated by Android lint warnings.
 
 ## 1.0.24
 
