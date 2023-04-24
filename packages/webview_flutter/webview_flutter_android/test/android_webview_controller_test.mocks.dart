@@ -365,20 +365,22 @@ class MockAndroidNavigationDelegate extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-<<<<<<< HEAD
   _i9.Future<void> setOnRenderProcessGone(
           void Function(_i8.RenderProcessGoneInfo)? onRenderProcessGone) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnRenderProcessGone,
           [onRenderProcessGone],
-=======
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
   _i9.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnHttpError,
           [onHttpError],
->>>>>>> 2c0fc55ba93886bc4937a438b559eb997e6b677d
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
