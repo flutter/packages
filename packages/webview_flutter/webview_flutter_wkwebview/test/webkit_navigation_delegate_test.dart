@@ -33,7 +33,7 @@ void main() {
     });
 
     test('setOnPageFinished', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -43,7 +43,7 @@ void main() {
       );
 
       late final String callbackUrl;
-      webKitDelgate.setOnPageFinished((String url) => callbackUrl = url);
+      webKitDelegate.setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFinishNavigation!(
         WKWebView.detached(),
@@ -54,7 +54,7 @@ void main() {
     });
 
     test('setOnPageStarted', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -64,7 +64,7 @@ void main() {
       );
 
       late final String callbackUrl;
-      webKitDelgate.setOnPageStarted((String url) => callbackUrl = url);
+      webKitDelegate.setOnPageStarted((String url) => callbackUrl = url);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didStartProvisionalNavigation!(
@@ -76,7 +76,7 @@ void main() {
     });
 
     test('onWebResourceError from didFailNavigation', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -90,7 +90,7 @@ void main() {
         callbackError = error as WebKitWebResourceError;
       }
 
-      webKitDelgate.setOnWebResourceError(onWebResourceError);
+      webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
         WKWebView.detached(),
@@ -109,7 +109,7 @@ void main() {
     });
 
     test('onWebResourceError from didFailProvisionalNavigation', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -123,7 +123,7 @@ void main() {
         callbackError = error as WebKitWebResourceError;
       }
 
-      webKitDelgate.setOnWebResourceError(onWebResourceError);
+      webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didFailProvisionalNavigation!(
@@ -143,7 +143,7 @@ void main() {
     });
 
     test('onWebResourceError from webViewWebContentProcessDidTerminate', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -157,7 +157,7 @@ void main() {
         callbackError = error as WebKitWebResourceError;
       }
 
-      webKitDelgate.setOnWebResourceError(onWebResourceError);
+      webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.webViewWebContentProcessDidTerminate!(
@@ -175,7 +175,7 @@ void main() {
     });
 
     test('onNavigationRequest from decidePolicyForNavigationAction', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -191,7 +191,7 @@ void main() {
         return NavigationDecision.navigate;
       }
 
-      webKitDelgate.setOnNavigationRequest(onNavigationRequest);
+      webKitDelegate.setOnNavigationRequest(onNavigationRequest);
 
       expect(
         CapturingNavigationDelegate

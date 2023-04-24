@@ -1199,7 +1199,7 @@ class CopyableObjectWithCallback with Copyable {
 class ClassWithCallbackClass {
   ClassWithCallbackClass() {
     callbackClass = CopyableObjectWithCallback(
-      withWeakRefenceTo(
+      withWeakReferenceTo(
         this,
         (WeakReference<ClassWithCallbackClass> weakReference) {
           return () {

@@ -45,6 +45,7 @@ class AndroidWebViewFlutterApis {
     WebChromeClientFlutterApiImpl? webChromeClientFlutterApi,
     JavaScriptChannelFlutterApiImpl? javaScriptChannelFlutterApi,
     FileChooserParamsFlutterApiImpl? fileChooserParamsFlutterApi,
+    WebViewFlutterApiImpl? webViewFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -58,6 +59,7 @@ class AndroidWebViewFlutterApis {
         javaScriptChannelFlutterApi ?? JavaScriptChannelFlutterApiImpl();
     this.fileChooserParamsFlutterApi =
         fileChooserParamsFlutterApi ?? FileChooserParamsFlutterApiImpl();
+    this.webViewFlutterApi = webViewFlutterApi ?? WebViewFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -85,6 +87,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [FileChooserParams].
   late final FileChooserParamsFlutterApiImpl fileChooserParamsFlutterApi;
 
+  /// Flutter Api for [WebView].
+  late final WebViewFlutterApiImpl webViewFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -94,6 +99,7 @@ class AndroidWebViewFlutterApis {
       WebChromeClientFlutterApi.setup(webChromeClientFlutterApi);
       JavaScriptChannelFlutterApi.setup(javaScriptChannelFlutterApi);
       FileChooserParamsFlutterApi.setup(fileChooserParamsFlutterApi);
+      WebViewFlutterApi.setup(webViewFlutterApi);
       _haveBeenSetUp = true;
     }
   }
@@ -146,10 +152,7 @@ class WebViewHostApiImpl extends WebViewHostApi {
 
   /// Helper method to convert instances ids to objects.
   Future<void> createFromInstance(WebView instance) {
-    return create(
-      instanceManager.addDartCreatedInstance(instance),
-      instance.useHybridComposition,
-    );
+    return create(instanceManager.addDartCreatedInstance(instance));
   }
 
   /// Helper method to convert the instances ids to objects.
@@ -346,6 +349,33 @@ class WebViewHostApiImpl extends WebViewHostApi {
   }
 }
 
+/// Flutter API implementation for [WebView].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+class WebViewFlutterApiImpl implements WebViewFlutterApi {
+  /// Constructs a [WebViewFlutterApiImpl].
+  WebViewFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(int identifier) {
+    instanceManager.addHostCreatedInstance(WebView.detached(), identifier);
+  }
+}
+
 /// Host api implementation for [WebSettings].
 class WebSettingsHostApiImpl extends WebSettingsHostApi {
   /// Constructs a [WebSettingsHostApiImpl].
@@ -432,6 +462,14 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
     bool support,
   ) {
     return setSupportZoom(instanceManager.getIdentifier(instance)!, support);
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSetTextZoomFromInstance(
+    WebSettings instance,
+    int textZoom,
+  ) {
+    return setTextZoom(instanceManager.getIdentifier(instance)!, textZoom);
   }
 
   /// Helper method to convert instances ids to objects.
@@ -525,7 +563,7 @@ class JavaScriptChannelFlutterApiImpl extends JavaScriptChannelFlutterApi {
         .getInstanceWithWeakReference(instanceId) as JavaScriptChannel?;
     assert(
       instance != null,
-      'InstanceManager does not contain an JavaScriptChannel with instanceId: $instanceId',
+      'InstanceManager does not contain a JavaScriptChannel with instanceId: $instanceId',
     );
     instance!.postMessage(message);
   }
@@ -579,11 +617,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.onPageFinished != null) {
       instance.onPageFinished!(webViewInstance!, url);
@@ -598,11 +636,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.onPageStarted != null) {
       instance.onPageStarted!(webViewInstance!, url);
@@ -623,11 +661,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     // ignore: deprecated_member_use_from_same_package
     if (instance!.onReceivedError != null) {
@@ -653,11 +691,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.onReceivedRequestError != null) {
       instance.onReceivedRequestError!(
@@ -680,11 +718,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.requestLoading != null) {
       instance.requestLoading!(
@@ -706,11 +744,11 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.urlLoading != null) {
       instance.urlLoading!(webViewInstance!, url);
@@ -760,7 +798,7 @@ class DownloadListenerFlutterApiImpl extends DownloadListenerFlutterApi {
         .getInstanceWithWeakReference(instanceId) as DownloadListener?;
     assert(
       instance != null,
-      'InstanceManager does not contain an DownloadListener with instanceId: $instanceId',
+      'InstanceManager does not contain a DownloadListener with instanceId: $instanceId',
     );
     instance!.onDownloadStart(
       url,
@@ -820,11 +858,11 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebChromeClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebChromeClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.onProgressChanged != null) {
       instance.onProgressChanged!(webViewInstance!, progress);
@@ -880,8 +918,16 @@ class WebStorageHostApiImpl extends WebStorageHostApi {
 /// Flutter api implementation for [FileChooserParams].
 class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
   /// Constructs a [FileChooserParamsFlutterApiImpl].
-  FileChooserParamsFlutterApiImpl({InstanceManager? instanceManager})
-      : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  FileChooserParamsFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with java objects.
   final InstanceManager instanceManager;
@@ -900,6 +946,8 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
         acceptTypes: acceptTypes.cast(),
         mode: mode.value,
         filenameHint: filenameHint,
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
       ),
       instanceId,
     );

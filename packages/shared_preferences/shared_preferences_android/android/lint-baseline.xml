@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="5" by="lint 4.1.0" client="gradle" variant="debug" version="4.1.0">
+<issues format="6" by="lint 7.0.1" type="baseline" client="gradle" name="AGP (7.0.1)" variant="all" version="7.0.1">
 
     <issue
         id="CommitPrefEdits"
@@ -52,7 +52,7 @@
         errorLine2="                      ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/sharedpreferences/MethodCallHandlerImpl.java"
-            line="96"
+            line="98"
             column="23"/>
     </issue>
 
@@ -63,7 +63,7 @@
         errorLine2="              ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/sharedpreferences/MethodCallHandlerImpl.java"
-            line="101"
+            line="103"
             column="15"/>
     </issue>
 
@@ -74,8 +74,52 @@
         errorLine2="                      ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/io/flutter/plugins/sharedpreferences/MethodCallHandlerImpl.java"
-            line="111"
+            line="114"
             column="23"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `handler` of class `MethodCallHandlerImpl` requires synthetic accessor"
+        errorLine1="            handler.post("
+        errorLine2="            ~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/sharedpreferences/MethodCallHandlerImpl.java"
+            line="146"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/sharedpreferences/SharedPreferencesPlugin.java"
+            line="19"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding binding) {"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/sharedpreferences/SharedPreferencesPlugin.java"
+            line="25"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        errorLine1="  public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/sharedpreferences/SharedPreferencesPlugin.java"
+            line="30"
+            column="36"/>
     </issue>
 
 </issues>

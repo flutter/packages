@@ -1,6 +1,7 @@
 ## 2.3.0
 
 * Adds options for gesture handling and tilt controls on web.
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.2.6

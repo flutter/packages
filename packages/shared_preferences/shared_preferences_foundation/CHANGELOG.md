@@ -1,5 +1,14 @@
-## NEXT
+## 2.2.1
 
+* Updates pigeon for null value handling fixes.
+
+## 2.2.0
+
+* Adds `getAllWithPrefix` and `clearWithPrefix` methods.
+
+## 2.1.5
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.1.4

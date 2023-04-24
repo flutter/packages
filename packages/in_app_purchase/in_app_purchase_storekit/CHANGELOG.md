@@ -1,5 +1,10 @@
-## NEXT
+## 0.3.6+3
 
+* Adds a null check, to prevent a new diagnostic.
+
+## 0.3.6+2
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.3.6+1
@@ -12,7 +17,7 @@
 
 ## 0.3.5+2
 
-* Fix a crash when `appStoreReceiptURL` is nil.
+* Fixes a crash when `appStoreReceiptURL` is nil.
 
 ## 0.3.5+1
 

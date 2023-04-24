@@ -5,12 +5,11 @@ host platform type-safe, easier and faster.
 
 ## Supported Platforms
 
-Currently Pigeon supports generating Objective-C and experimental Swift code
-for usage on iOS, Java and experimental Kotlin code for Android, 
-and has experimental support for C++ for Windows.
-The Objective-C code is
-[accessible to Swift](https://developer.apple.com/documentation/swift/imported_c_and_objective-c_apis/importing_objective-c_into_swift)
-and the Java code is accessible to Kotlin.
+Currently Pigeon supports generating:
+* Kotlin and Java code for Android,
+* Swift and Objective-C code for iOS
+* Swift code for macOS
+* C++ code for Windows
 
 ## Runtime Requirements
 
@@ -23,8 +22,8 @@ doesn't need to worry about conflicting versions of Pigeon.
 1) Add Pigeon as a `dev_dependency`.
 1) Make a ".dart" file outside of your "lib" directory for defining the
    communication interface.
-1) Run pigeon on your ".dart" file to generate the required Dart and 
-   host-language code: `flutter pub get` then `flutter pub run pigeon` 
+1) Run pigeon on your ".dart" file to generate the required Dart and
+   host-language code: `flutter pub get` then `flutter pub run pigeon`
    with suitable arguments (see [example](./example)).
 1) Add the generated Dart code to `./lib` for compilation.
 1) Implement the host-language code and add it to your build (see below).
@@ -34,11 +33,8 @@ doesn't need to worry about conflicting versions of Pigeon.
 
 1) Add the generated Objective-C or Swift code to your Xcode project for compilation
    (e.g. `ios/Runner.xcworkspace` or `.podspec`).
-1) Implement the generated iOS protocol for handling the calls on iOS, set it up
+1) Implement the generated protocol for handling the calls on iOS, set it up
    as the handler for the messages.
-
-**Note:** Swift code generation for iOS is experimental while we get more usage and add more
-testing. Not all features may be supported.
 
 ### Flutter calling into Android Steps
 
@@ -47,9 +43,6 @@ testing. Not all features may be supported.
 1) Implement the generated Java or Kotlin interface for handling the calls on Android, set
    it up as the handler for the messages.
 
-**Note:** Kotlin code generation for Android is experimental while we get more usage and add more
-testing and works just with Flutter 3.3.0 or later. Not all features may be supported.
-
 ### Flutter calling into Windows Steps
 
 1) Add the generated C++ code to your `./windows` directory for compilation, and
@@ -57,8 +50,12 @@ testing and works just with Flutter 3.3.0 or later. Not all features may be supp
 1) Implement the generated C++ abstract class for handling the calls on Windows,
    set it up as the handler for the messages.
 
-**Note:** Windows C++ is experimental while we get more usage and add more
-testing.  Not all features may be supported.
+### Flutter calling into macOS steps
+
+1) Add the generated Objective-C or Swift code to your Xcode project for compilation
+   (e.g. `macos/Runner.xcworkspace` or `.podspec`).
+1) Implement the generated protocol for handling the calls on macOS, set it up
+   as the handler for the messages.
 
 ### Calling into Flutter from the host platform
 
@@ -112,9 +109,9 @@ abstract class Api2Host {
 Generates:
 
 ```objc
-// Objc
+// Objective-C
 @protocol Api2Host
--(void)calculate:(nullable Value *)input 
+-(void)calculate:(nullable Value *)input
       completion:(void(^)(Value *_Nullable, FlutterError *_Nullable))completion;
 @end
 ```
@@ -145,7 +142,7 @@ public interface Api2Host {
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
 interface Api2Host {
-   fun calculate(value: Value, callback: (Value) -> Unit)
+   fun calculate(value: Value, callback: (Result<Value>) -> Unit)
 }
 ```
 
@@ -166,20 +163,9 @@ Pigeon supports generating null-safe code, but it doesn't yet support:
 1) Nullable generics type arguments
 1) Nullable enum arguments to methods
 
-It does support:
-
-1) Nullable and Non-nullable class fields.
-1) Nullable return values
-1) Nullable method parameters
-
-The default is to generate null-safe code but in order to generate non-null-safe
-code run Pigeon with the extra argument `--no-dart_null_safety`. For example:
-`flutter pub run pigeon --input ./pigeons/messages.dart --no-dart_null_safety --dart_out stdout`.
-
 ### Enums
 
-As of version 0.2.2 Pigeon supports enum generation in class fields.  For
-example:
+Pigeon supports enum generation in class fields.  For example:
 ```dart
 enum State {
   pending,
@@ -224,8 +210,63 @@ abstract class Api2Host {
 }
 ```
 
+### Error Handling
+
+#### Kotlin, Java and Swift
+
+All Host API exceptions are translated into Flutter `PlatformException`.
+* For synchronous methods, thrown exceptions will be caught and translated.
+* For asynchronous methods, there is no default exception handling; errors should be returned via the provided callback.
+
+To pass custom details into `PlatformException` for error handling, use `FlutterError` in your Host API.
+For example:
+
+```kotlin
+// Kotlin
+class MyApi : GeneratedApi {
+  // For synchronous methods
+  override fun doSomething() {
+    throw FlutterError('error_code', 'message', 'details')
+  }
+
+  // For async methods
+  override fun doSomethingAsync(callback: (Result<Unit>) -> Unit) {
+    callback(Result.failure(FlutterError('error_code', 'message', 'details'))
+  }
+}
+```
+
+#### Objective-C and C++
+
+Likewise, Host API errors can be sent using the provided `FlutterError` class (translated into `PlatformException`).
+
+For synchronous methods:
+* Objective-C - Assign the `error` argument to a `FlutterError` reference.
+* C++ - Return a `FlutterError` directly (for void methods) or within an `ErrorOr` instance.
+
+For async methods:
+* Both - Return a `FlutterError` through the provided callback.
+
+#### Handling the errors
+
+Then you can implement error handling on the Flutter side:
+
+```dart
+// Dart
+void doSomething() {
+  try {
+    myApi.doSomething()
+  } catch (PlatformException e) {
+    if (e.code == 'error_code') {
+      // Perform custom error handling
+      assert(e.message == 'message')
+      assert(e.details == 'details')
+    }
+  }
+}
+```
 
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with the
-word 'pigeon' clearly in the title and cc **@gaaclarke**.
+word "pigeon" in the title.

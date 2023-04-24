@@ -247,7 +247,7 @@ class WebViewController {
   /// to asynchronously invoke the message handler which will print the message
   /// to standard output.
   ///
-  /// Adding a new JavaScript channel only takes affect after the next page is
+  /// Adding a new JavaScript channel only takes effect after the next page is
   /// loaded.
   ///
   /// A channel [name] cannot be the same for multiple channels.
