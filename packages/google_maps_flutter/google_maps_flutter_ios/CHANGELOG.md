@@ -2,6 +2,11 @@
 
 * Adds support for heatmap layers.
 
+## 2.2.2
+
+* Sets an upper bound on the `GoogleMaps` SDK version that can be used, to
+  avoid future breakage.
+
 ## 2.2.1
 
 * Clarifies explanation of endorsement in README.

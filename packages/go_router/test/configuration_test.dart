@@ -502,6 +502,77 @@ void main() {
         throwsAssertionError,
       );
     });
+
+    test(
+      'All known route strings returned by debugKnownRoutes are correct',
+      () {
+        final GlobalKey<NavigatorState> root =
+            GlobalKey<NavigatorState>(debugLabel: 'root');
+        final GlobalKey<NavigatorState> shell =
+            GlobalKey<NavigatorState>(debugLabel: 'shell');
+
+        expect(
+          RouteConfiguration(
+            navigatorKey: root,
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/a',
+                parentNavigatorKey: root,
+                builder: _mockScreenBuilder,
+                routes: <RouteBase>[
+                  ShellRoute(
+                    navigatorKey: shell,
+                    builder: _mockShellBuilder,
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'b',
+                        parentNavigatorKey: shell,
+                        builder: _mockScreenBuilder,
+                      ),
+                      GoRoute(
+                        path: 'c',
+                        parentNavigatorKey: shell,
+                        builder: _mockScreenBuilder,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: '/d',
+                parentNavigatorKey: root,
+                builder: _mockScreenBuilder,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'e',
+                    parentNavigatorKey: root,
+                    builder: _mockScreenBuilder,
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'f',
+                        parentNavigatorKey: root,
+                        builder: _mockScreenBuilder,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+            redirectLimit: 10,
+            topRedirect: (BuildContext context, GoRouterState state) {
+              return null;
+            },
+          ).debugKnownRoutes(),
+          'Full paths for routes:\n'
+          '  => /a\n'
+          '  =>   /a/b\n'
+          '  =>   /a/c\n'
+          '  => /d\n'
+          '  =>   /d/e\n'
+          '  =>     /d/e/f\n',
+        );
+      },
+    );
   });
 }
 
