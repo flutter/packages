@@ -2,6 +2,10 @@
 
 * Adds support for the native `onRenderProcessGone` callback.
 
+## 3.6.1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 3.6.0
 
 * Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
