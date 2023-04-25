@@ -6,6 +6,7 @@ import 'package:file/file.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to enforce gradle file conventions and best practices.
@@ -262,14 +263,22 @@ for more details.''';
     return true;
   }
 
-  /// Validates whether the given example app's gradle content is configured to
-  /// build its plugin target with javac lints enabled and treated as errors.
+  /// Validates whether the given [example]'s gradle content is configured to
+  /// build its plugin target with javac lints enabled and treated as errors,
+  /// if the enclosing package is a plugin.
   ///
   /// This can only be called on example packages. (Plugin packages should not
   /// be configured this way, since it would affect clients.)
+  ///
+  /// If [example]'s enclosing package is not a plugin package, this just
+  /// returns true.
   bool _validateJavacLintConfig(
       RepositoryPackage example, List<String> gradleLines) {
     final RepositoryPackage enclosingPackage = example.getEnclosingPackage()!;
+    if (!pluginSupportsPlatform(platformAndroid, enclosingPackage,
+        requiredMode: PlatformSupport.inline)) {
+      return true;
+    }
     final String enclosingPackageName = enclosingPackage.directory.basename;
 
     // The check here is intentionally somewhat loose, to allow for the

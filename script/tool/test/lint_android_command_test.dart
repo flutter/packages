@@ -110,7 +110,7 @@ void main() {
     });
 
     test('fails if gradlew is missing', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir,
+      createFakePlugin('plugin1', packagesDir,
           platformSupport: <String, PlatformDetails>{
             platformAndroid: const PlatformDetails(PlatformSupport.inline)
           });

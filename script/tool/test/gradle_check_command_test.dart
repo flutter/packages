@@ -6,6 +6,7 @@ import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
+import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/gradle_check_command.dart';
 import 'package:test/test.dart';
 
@@ -528,9 +529,13 @@ dependencies {
         ));
   });
 
-  test('fails if javac lint-warnings-as-errors is missing', () async {
+  test('fails if plugin example javac lint-warnings-as-errors is missing',
+      () async {
     const String pluginName = 'a_plugin';
-    final RepositoryPackage plugin = createFakePlugin(pluginName, packagesDir);
+    final RepositoryPackage plugin = createFakePlugin(pluginName, packagesDir,
+        platformSupport: <String, PlatformDetails>{
+          platformAndroid: const PlatformDetails(PlatformSupport.inline),
+        });
     writeFakePluginBuildGradle(plugin, includeLanguageVersion: true);
     writeFakeManifest(plugin);
     final RepositoryPackage example = plugin.getExamples().first;
@@ -552,6 +557,29 @@ dependencies {
             contains('The example "example" is not configured to treat javac '
                 'lints and warnings as errors.'),
             contains('The following packages had errors:'),
+          ],
+        ));
+  });
+
+  test(
+      'passes if non-plugin package example javac lint-warnings-as-errors is missing',
+      () async {
+    const String packageName = 'a_package';
+    final RepositoryPackage plugin =
+        createFakePackage(packageName, packagesDir);
+    final RepositoryPackage example = plugin.getExamples().first;
+    writeFakeExampleBuildGradles(example,
+        pluginName: packageName, warningsConfigured: false);
+    writeFakeManifest(example, isApp: true);
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['gradle-check']);
+
+    expect(
+        output,
+        containsAllInOrder(
+          <Matcher>[
+            contains('Validating android/build.gradle'),
           ],
         ));
   });
