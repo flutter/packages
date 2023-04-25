@@ -1,7 +1,14 @@
-## NEXT
+## 2.3.0
+
+* Adds support to receive permission requests. See
+  `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
+## 2.2.0
 
 * Updates minimum Flutter version to 3.3.
 * Fixes common typos in tests and documentation.
+* Adds support for listening to HTTP errors. See
+  `PlatformNavigationDelegate.setOnHttpError`.
 
 ## 2.1.0
 

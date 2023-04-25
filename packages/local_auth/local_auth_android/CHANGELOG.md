@@ -1,3 +1,19 @@
+## 1.0.25
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 1.0.24
+
+* Fixes `getEnrolledBiometrics` return value handling.
+
+## 1.0.23
+
+* Switches internals to Pigeon and fixes Java warnings.
+
+## 1.0.22
+
+* Sets an explicit Java compatibility version.
+
 ## 1.0.21
 
 * Clarifies explanation of endorsement in README.

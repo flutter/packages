@@ -26,7 +26,7 @@ class RouteConfiguration {
         assert(_debugCheckParentNavigatorKeys(
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
     _cacheNameToPath('', routes);
-    log.info(_debugKnownRoutes());
+    log.info(debugKnownRoutes());
   }
 
   static bool _debugCheckPath(List<RouteBase> routes, bool isTopLevel) {
@@ -172,7 +172,12 @@ class RouteConfiguration {
     return 'RouterConfiguration: $routes';
   }
 
-  String _debugKnownRoutes() {
+  /// Returns the full path of [routes].
+  ///
+  /// Each path is indented based depth of the hierarchy, and its `name`
+  /// is also appended if not null
+  @visibleForTesting
+  String debugKnownRoutes() {
     final StringBuffer sb = StringBuffer();
     sb.writeln('Full paths for routes:');
     _debugFullPathsFor(routes, '', 0, sb);
@@ -194,6 +199,8 @@ class RouteConfiguration {
         final String fullpath = concatenatePaths(parentFullpath, route.path);
         sb.writeln('  => ${''.padLeft(depth * 2)}$fullpath');
         _debugFullPathsFor(route.routes, fullpath, depth + 1, sb);
+      } else if (route is ShellRoute) {
+        _debugFullPathsFor(route.routes, parentFullpath, depth, sb);
       }
     }
   }

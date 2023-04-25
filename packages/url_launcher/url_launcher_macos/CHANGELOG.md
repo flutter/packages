@@ -1,3 +1,7 @@
+## 3.0.5
+
+* Converts method channel to Pigeon.
+
 ## 3.0.4
 
 * Clarifies explanation of endorsement in README.

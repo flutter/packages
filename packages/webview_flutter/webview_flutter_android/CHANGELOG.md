@@ -1,5 +1,27 @@
-## NEXT
+## 3.6.1
 
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 3.6.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
+## 3.5.3
+
+* Bumps gradle from 7.2.2 to 8.0.0.
+
+## 3.5.2
+
+* Updates internal Java InstanceManager to only stop finalization callbacks when stopped.
+
+## 3.5.1
+
+* Updates pigeon dev dependency to `9.2.4`.
+* Fixes Android lint warnings.
+
+## 3.5.0
+
+* Adds support for `PlatformNavigationDelegate.onUrlChange`.
 * Bumps androidx.webkit:webkit from 1.6.0 to 1.6.1.
 * Fixes common typos in tests and documentation.
 

@@ -1,3 +1,15 @@
+## 6.5.8
+
+- Adds name parameter to `TypedGoRoute`
+
+## 6.5.7
+
+- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s. 
+
+## 6.5.6
+
+- Fixes an issue where ShellRoute routes were not logged when debugLogDiagnostic was enabled.
+
 ## 6.5.5
 
 - Fixes an issue when popping pageless route would accidentally complete imperative page.
