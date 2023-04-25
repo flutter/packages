@@ -132,7 +132,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     return succeeded;
   }
 
-  /// Validates that [gradleContents] sets a namespace, which is require for
+  /// Validates that [gradleContents] sets a namespace, which is required for
   /// compatibility with apps that use AGP 8+.
   bool _validateNamespace(RepositoryPackage package, String gradleContents,
       {required bool isExample}) {
