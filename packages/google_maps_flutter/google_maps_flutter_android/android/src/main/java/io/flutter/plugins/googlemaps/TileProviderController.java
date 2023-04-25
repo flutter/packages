@@ -18,9 +18,9 @@ class TileProviderController implements TileProvider {
 
   private static final String TAG = "TileProviderController";
 
-  private final String tileOverlayId;
-  private final MethodChannel methodChannel;
-  private final Handler handler = new Handler(Looper.getMainLooper());
+  protected final String tileOverlayId;
+  protected final MethodChannel methodChannel;
+  protected final Handler handler = new Handler(Looper.getMainLooper());
 
   TileProviderController(MethodChannel methodChannel, String tileOverlayId) {
     this.tileOverlayId = tileOverlayId;
