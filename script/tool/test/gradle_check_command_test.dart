@@ -31,25 +31,28 @@ void main() {
     runner.addCommand(command);
   });
 
-  void writeFakeBuildGradle(
+  /// Writes a fake android/build.gradle file for plugin [package] with the
+  /// given options.
+  void writeFakePluginBuildGradle(
     RepositoryPackage package, {
-    bool isApp = false,
     bool includeLanguageVersion = false,
     bool includeSourceCompat = false,
     bool commentSourceLanguage = false,
     bool includeNamespace = true,
     bool commentNamespace = false,
+    bool warningsConfigured = true,
   }) {
-    final Directory androidDir =
-        package.platformDirectory(FlutterPlatform.android);
-    final Directory parentDir =
-        isApp ? androidDir.childDirectory('app') : androidDir;
-    final File buildGradle = parentDir.childFile('build.gradle');
+    final File buildGradle = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle');
     buildGradle.createSync(recursive: true);
 
-    final String compileOptionsSection = '''
-    compileOptions {
-        ${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8
+    const String warningConfig = '''
+    lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        baseline file("lint-baseline.xml")
     }
 ''';
     final String javaSection = '''
@@ -59,6 +62,11 @@ java {
     }
 }
 
+''';
+    final String compileOptionsSection = '''
+    compileOptions {
+        ${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8
+    }
 ''';
     final String namespace =
         "${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
@@ -84,19 +92,135 @@ android {
     defaultConfig {
         minSdkVersion 30
     }
-    lintOptions {
-        checkAllWarnings true
-    }
+${warningsConfigured ? warningConfig : ''}
+${includeSourceCompat ? compileOptionsSection : ''}
     testOptions {
         unitTests.includeAndroidResources = true
     }
-${includeSourceCompat ? compileOptionsSection : ''}
 }
 
 dependencies {
     implementation 'fake.package:fake:1.0.0'
 }
 ''');
+  }
+
+  /// Writes a fake android/build.gradle file for an example [package] with the
+  /// given options.
+  void writeFakeExampleTopLevelBuildGradle(
+    RepositoryPackage package, {
+    required String pluginName,
+    required bool warningsConfigured,
+  }) {
+    final File buildGradle = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle');
+    buildGradle.createSync(recursive: true);
+
+    final String warningConfig = '''
+gradle.projectsEvaluated {
+    project(":$pluginName") {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" << "-Werror"
+        }
+    }
+}
+''';
+    buildGradle.writeAsStringSync('''
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'fake.package:fake:1.0.0'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "\${rootProject.buildDir}/\${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+${warningsConfigured ? warningConfig : ''}
+''');
+  }
+
+  /// Writes a fake android/app/build.gradle file for an example [package] with
+  /// the given options.
+  void writeFakeExampleAppBuildGradle(
+    RepositoryPackage package, {
+    required bool includeNamespace,
+    required bool commentNamespace,
+  }) {
+    final File buildGradle = package
+        .platformDirectory(FlutterPlatform.android)
+        .childDirectory('app')
+        .childFile('build.gradle');
+    buildGradle.createSync(recursive: true);
+
+    final String namespace =
+        "${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
+    buildGradle.writeAsStringSync('''
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+apply plugin: 'com.android.application'
+apply from: "\$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    ${includeNamespace ? namespace : ''}
+    compileSdkVersion flutter.compileSdkVersion
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    defaultConfig {
+        applicationId "io.flutter.plugins.cameraexample"
+        minSdkVersion 21
+        targetSdkVersion 28
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    testImplementation 'fake.package:fake:1.0.0'
+}
+''');
+  }
+
+  void writeFakeExampleBuildGradles(
+    RepositoryPackage package, {
+    required String pluginName,
+    bool includeNamespace = true,
+    bool commentNamespace = false,
+    bool warningsConfigured = true,
+  }) {
+    writeFakeExampleTopLevelBuildGradle(package,
+        pluginName: pluginName, warningsConfigured: warningsConfigured);
+    writeFakeExampleAppBuildGradle(package,
+        includeNamespace: includeNamespace, commentNamespace: commentNamespace);
   }
 
   void writeFakeManifest(
@@ -136,7 +260,7 @@ dependencies {
   test('fails when build.gradle has no java compatibility version', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakeBuildGradle(package);
+    writeFakePluginBuildGradle(package);
     writeFakeManifest(package);
 
     Error? commandError;
@@ -158,7 +282,7 @@ dependencies {
   test('passes when sourceCompatibility is specified', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakeBuildGradle(package, includeSourceCompat: true);
+    writeFakePluginBuildGradle(package, includeSourceCompat: true);
     writeFakeManifest(package);
 
     final List<String> output =
@@ -175,7 +299,7 @@ dependencies {
   test('passes when toolchain languageVersion is specified', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    writeFakePluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package);
 
     final List<String> output =
@@ -190,11 +314,12 @@ dependencies {
   });
 
   test('does not require java version in examples', () async {
-    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
-    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    const String pluginName = 'a_plugin';
+    final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
+    writeFakePluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
-    writeFakeBuildGradle(example, isApp: true);
+    writeFakeExampleBuildGradles(example, pluginName: pluginName);
     writeFakeManifest(example, isApp: true);
 
     final List<String> output =
@@ -212,7 +337,7 @@ dependencies {
   test('fails when java compatibility version is commented out', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakeBuildGradle(package,
+    writeFakePluginBuildGradle(package,
         includeSourceCompat: true, commentSourceLanguage: true);
     writeFakeManifest(package);
 
@@ -235,7 +360,7 @@ dependencies {
   test('fails when languageVersion is commented out', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakeBuildGradle(package,
+    writeFakePluginBuildGradle(package,
         includeLanguageVersion: true, commentSourceLanguage: true);
     writeFakeManifest(package);
 
@@ -259,7 +384,7 @@ dependencies {
       () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    writeFakePluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package, packageName: 'wrong.package.name');
 
     Error? commandError;
@@ -281,7 +406,7 @@ dependencies {
   test('fails when namespace is missing', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakeBuildGradle(package,
+    writeFakePluginBuildGradle(package,
         includeLanguageVersion: true, includeNamespace: false);
     writeFakeManifest(package);
 
@@ -301,12 +426,13 @@ dependencies {
   });
 
   test('fails when namespace is missing from example', () async {
-    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
-    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    const String pluginName = 'a_plugin';
+    final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
+    writeFakePluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
-    writeFakeBuildGradle(example,
-        isApp: true, includeLanguageVersion: true, includeNamespace: false);
+    writeFakeExampleBuildGradles(example,
+        pluginName: pluginName, includeNamespace: false);
     writeFakeManifest(example, isApp: true);
 
     Error? commandError;
@@ -330,11 +456,12 @@ dependencies {
   // don't just accidentally diverge.
   test('fails when namespace in example does not match AndroidManifest.xml',
       () async {
-    final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
-    writeFakeBuildGradle(package, includeLanguageVersion: true);
+    const String pluginName = 'a_plugin';
+    final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
+    writeFakePluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
-    writeFakeBuildGradle(example, isApp: true, includeLanguageVersion: true);
+    writeFakeExampleBuildGradles(example, pluginName: pluginName);
     writeFakeManifest(example, isApp: true, packageName: 'wrong.package.name');
 
     Error? commandError;
@@ -356,7 +483,7 @@ dependencies {
   test('fails when namespace is commented out', () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
-    writeFakeBuildGradle(package,
+    writeFakePluginBuildGradle(package,
         includeLanguageVersion: true, commentNamespace: true);
     writeFakeManifest(package);
 

@@ -84,6 +84,8 @@ class GradleCheckCommand extends PackageLoopingCommand {
         .childFile('AndroidManifest.xml');
   }
 
+  bool _isCommented(String line) => line.trim().startsWith('//');
+
   /// Validates the build.gradle file for a plugin
   /// (some_plugin/android/build.gradle).
   bool _validatePluginBuildGradle(RepositoryPackage package, File gradleFile) {
@@ -101,6 +103,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
     if (!_validateSourceCompatibilityVersion(lines)) {
       succeeded = false;
     }
+    if (!_validateGradleDrivenLintConfig(package, lines)) {
+      succeeded = false;
+    }
     return succeeded;
   }
 
@@ -110,9 +115,16 @@ class GradleCheckCommand extends PackageLoopingCommand {
       RepositoryPackage package, File gradleFile) {
     print('${indentation}Validating '
         '${getRelativePosixPath(gradleFile, from: package.directory)}.');
-    // TODO(stuartmorgan): Move the -Xlint validation from lint_android_command
-    // to here.
-    return true;
+    final String contents = gradleFile.readAsStringSync();
+    final List<String> lines = contents.split('\n');
+
+    // This is tracked as a variable rather than a sequence of &&s so that all
+    // failures are reported at once, not just the first one.
+    bool succeeded = true;
+    if (!_validateJavacLintConfig(package, lines)) {
+      succeeded = false;
+    }
+    return succeeded;
   }
 
   /// Validates the app-level build.gradle for an example app (e.g.,
@@ -193,11 +205,9 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
   /// lead to compile errors that show up for clients, but not in CI).
   bool _validateSourceCompatibilityVersion(List<String> gradleLines) {
     if (!gradleLines.any((String line) =>
-            line.contains('languageVersion') &&
-            !line.trim().startsWith('//')) &&
+            line.contains('languageVersion') && !_isCommented(line)) &&
         !gradleLines.any((String line) =>
-            line.contains('sourceCompatibility') &&
-            !line.trim().startsWith('//'))) {
+            line.contains('sourceCompatibility') && !_isCommented(line))) {
       const String errorMessage = '''
 build.gradle must set an explicit Java compatibility version.
 
@@ -221,6 +231,69 @@ for more details.''';
 
       printError(
           '$indentation${errorMessage.split('\n').join('\n$indentation')}');
+      return false;
+    }
+    return true;
+  }
+
+  /// Returns whether the given gradle content is configured to enable all
+  /// Gradle-driven lints (those checked by ./gradlew lint) and treat them as
+  /// errors.
+  bool _validateGradleDrivenLintConfig(
+      RepositoryPackage package, List<String> gradleLines) {
+    final List<String> gradleBuildContents = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle')
+        .readAsLinesSync();
+    if (!gradleBuildContents.any((String line) =>
+            line.contains('checkAllWarnings true') && !_isCommented(line)) ||
+        !gradleBuildContents.any((String line) =>
+            line.contains('warningsAsErrors true') && !_isCommented(line))) {
+      printError('${indentation}This package is not configured to enable all '
+          'Gradle-driven lint warnings and treat them as errors. '
+          'Please add the following to the lintOptions section of '
+          'android/build.gradle:');
+      print('''
+        checkAllWarnings true
+        warningsAsErrors true
+''');
+      return false;
+    }
+    return true;
+  }
+
+  /// Validates whether the given example app's gradle content is configured to
+  /// build its plugin target with javac lints enabled and treated as errors.
+  ///
+  /// This can only be called on example packages. (Plugin packages should not
+  /// be configured this way, since it would affect clients.)
+  bool _validateJavacLintConfig(
+      RepositoryPackage example, List<String> gradleLines) {
+    final RepositoryPackage enclosingPackage = example.getEnclosingPackage()!;
+    final String enclosingPackageName = enclosingPackage.directory.basename;
+
+    // The check here is intentionally somewhat loose, to allow for the
+    // possibility of variations (e.g., not using Xlint:all in some cases, or
+    // passing other arguments).
+    if (!(gradleLines.any((String line) =>
+            line.contains('project(":$enclosingPackageName")')) &&
+        gradleLines.any((String line) =>
+            line.contains('options.compilerArgs') &&
+            line.contains('-Xlint') &&
+            line.contains('-Werror')))) {
+      printError('The example '
+          '"${getRelativePosixPath(example.directory, from: enclosingPackage.directory)}" '
+          'is not configured to treat javac lints and warnings as errors. '
+          'Please add the following to its build.gradle:');
+      print('''
+gradle.projectsEvaluated {
+    project(":$enclosingPackageName") {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" << "-Werror"
+        }
+    }
+}
+''');
       return false;
     }
     return true;
