@@ -5,180 +5,412 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth_android/src/messages.g.dart';
+import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
+import 'local_auth_test.mocks.dart';
+
+@GenerateMocks(<Type>[LocalAuthApi])
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  late MockLocalAuthApi api;
+  late LocalAuthAndroid plugin;
 
-  group('LocalAuth', () {
-    const MethodChannel channel = MethodChannel(
-      'plugins.flutter.io/local_auth_android',
-    );
+  setUp(() {
+    api = MockLocalAuthApi();
+    plugin = LocalAuthAndroid(api: api);
+  });
 
-    final List<MethodCall> log = <MethodCall>[];
-    late LocalAuthAndroid localAuthentication;
+  test('registers instance', () {
+    LocalAuthAndroid.registerWith();
+    expect(LocalAuthPlatform.instance, isA<LocalAuthAndroid>());
+  });
 
-    setUp(() {
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-        log.add(methodCall);
-        switch (methodCall.method) {
-          case 'getEnrolledBiometrics':
-            return Future<List<String>>.value(<String>['weak', 'strong']);
-          default:
-            return Future<dynamic>.value(true);
-        }
-      });
-      localAuthentication = LocalAuthAndroid();
-      log.clear();
+  group('deviceSupportsBiometrics', () {
+    test('handles true', () async {
+      when(api.deviceCanSupportBiometrics()).thenAnswer((_) async => true);
+      expect(await plugin.deviceSupportsBiometrics(), true);
     });
 
-    test('deviceSupportsBiometrics calls platform', () async {
-      final bool result = await localAuthentication.deviceSupportsBiometrics();
+    test('handles false', () async {
+      when(api.deviceCanSupportBiometrics()).thenAnswer((_) async => false);
+      expect(await plugin.deviceSupportsBiometrics(), false);
+    });
+  });
 
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('deviceSupportsBiometrics', arguments: null),
-        ],
-      );
-      expect(result, true);
+  group('isDeviceSupported', () {
+    test('handles true', () async {
+      when(api.isDeviceSupported()).thenAnswer((_) async => true);
+      expect(await plugin.isDeviceSupported(), true);
     });
 
-    test('getEnrolledBiometrics calls platform', () async {
-      final List<BiometricType> result =
-          await localAuthentication.getEnrolledBiometrics();
+    test('handles false', () async {
+      when(api.isDeviceSupported()).thenAnswer((_) async => false);
+      expect(await plugin.isDeviceSupported(), false);
+    });
+  });
 
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('getEnrolledBiometrics', arguments: null),
-        ],
-      );
+  group('stopAuthentication', () {
+    test('handles true', () async {
+      when(api.stopAuthentication()).thenAnswer((_) async => true);
+      expect(await plugin.stopAuthentication(), true);
+    });
+
+    test('handles false', () async {
+      when(api.stopAuthentication()).thenAnswer((_) async => false);
+      expect(await plugin.stopAuthentication(), false);
+    });
+  });
+
+  group('getEnrolledBiometrics', () {
+    test('translates values', () async {
+      when(api.getEnrolledBiometrics())
+          .thenAnswer((_) async => <AuthClassificationWrapper>[
+                AuthClassificationWrapper(value: AuthClassification.weak),
+                AuthClassificationWrapper(value: AuthClassification.strong),
+              ]);
+
+      final List<BiometricType> result = await plugin.getEnrolledBiometrics();
+
       expect(result, <BiometricType>[
         BiometricType.weak,
         BiometricType.strong,
       ]);
     });
 
-    test('isDeviceSupported calls platform', () async {
-      await localAuthentication.isDeviceSupported();
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('isDeviceSupported', arguments: null),
-        ],
-      );
-    });
+    test('handles emtpy', () async {
+      when(api.getEnrolledBiometrics())
+          .thenAnswer((_) async => <AuthClassificationWrapper>[]);
 
-    test('stopAuthentication calls platform', () async {
-      await localAuthentication.stopAuthentication();
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('stopAuthentication', arguments: null),
-        ],
-      );
-    });
+      final List<BiometricType> result = await plugin.getEnrolledBiometrics();
 
-    group('With device auth fail over', () {
-      test('authenticate with no args.', () async {
-        await localAuthentication.authenticate(
-          authMessages: <AuthMessages>[const AndroidAuthMessages()],
-          localizedReason: 'Needs secure',
-          options: const AuthenticationOptions(biometricOnly: true),
-        );
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall('authenticate',
-                arguments: <String, dynamic>{
-                  'localizedReason': 'Needs secure',
-                  'useErrorDialogs': true,
-                  'stickyAuth': false,
-                  'sensitiveTransaction': true,
-                  'biometricOnly': true,
-                }..addAll(const AndroidAuthMessages().args)),
-          ],
-        );
+      expect(result, <BiometricType>[]);
+    });
+  });
+
+  group('authenticate', () {
+    group('strings', () {
+      test('passes default values when nothing is provided', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.success));
+
+        const String reason = 'test reason';
+        await plugin.authenticate(
+            localizedReason: reason, authMessages: <AuthMessages>[]);
+
+        final VerificationResult result =
+            verify(api.authenticate(any, captureAny));
+        final AuthStrings strings = result.captured[0] as AuthStrings;
+        expect(strings.reason, reason);
+        // These should all be the default values from
+        // auth_messages_android.dart
+        expect(strings.biometricHint, androidBiometricHint);
+        expect(strings.biometricNotRecognized, androidBiometricNotRecognized);
+        expect(strings.biometricRequiredTitle, androidBiometricRequiredTitle);
+        expect(strings.cancelButton, androidCancelButton);
+        expect(strings.deviceCredentialsRequiredTitle,
+            androidDeviceCredentialsRequiredTitle);
+        expect(strings.deviceCredentialsSetupDescription,
+            androidDeviceCredentialsSetupDescription);
+        expect(strings.goToSettingsButton, goToSettings);
+        expect(strings.goToSettingsDescription, androidGoToSettingsDescription);
+        expect(strings.signInTitle, androidSignInTitle);
       });
 
-      test('authenticate with no sensitive transaction.', () async {
-        await localAuthentication.authenticate(
-          authMessages: <AuthMessages>[const AndroidAuthMessages()],
-          localizedReason: 'Insecure',
-          options: const AuthenticationOptions(
-            sensitiveTransaction: false,
-            useErrorDialogs: false,
-            biometricOnly: true,
+      test('passes default values when only other platform values are provided',
+          () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.success));
+
+        const String reason = 'test reason';
+        await plugin.authenticate(
+            localizedReason: reason,
+            authMessages: <AuthMessages>[AnotherPlatformAuthMessages()]);
+
+        final VerificationResult result =
+            verify(api.authenticate(any, captureAny));
+        final AuthStrings strings = result.captured[0] as AuthStrings;
+        expect(strings.reason, reason);
+        // These should all be the default values from
+        // auth_messages_android.dart
+        expect(strings.biometricHint, androidBiometricHint);
+        expect(strings.biometricNotRecognized, androidBiometricNotRecognized);
+        expect(strings.biometricRequiredTitle, androidBiometricRequiredTitle);
+        expect(strings.cancelButton, androidCancelButton);
+        expect(strings.deviceCredentialsRequiredTitle,
+            androidDeviceCredentialsRequiredTitle);
+        expect(strings.deviceCredentialsSetupDescription,
+            androidDeviceCredentialsSetupDescription);
+        expect(strings.goToSettingsButton, goToSettings);
+        expect(strings.goToSettingsDescription, androidGoToSettingsDescription);
+        expect(strings.signInTitle, androidSignInTitle);
+      });
+
+      test('passes all non-default values correctly', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.success));
+
+        // These are arbitrary values; all that matters is that:
+        // - they are different from the defaults, and
+        // - they are different from each other.
+        const String reason = 'A';
+        const String hint = 'B';
+        const String bioNotRecognized = 'C';
+        const String bioRequired = 'D';
+        const String cancel = 'E';
+        const String credentialsRequired = 'F';
+        const String credentialsSetup = 'G';
+        const String goButton = 'H';
+        const String goDescription = 'I';
+        const String signInTitle = 'J';
+        await plugin
+            .authenticate(localizedReason: reason, authMessages: <AuthMessages>[
+          const AndroidAuthMessages(
+            biometricHint: hint,
+            biometricNotRecognized: bioNotRecognized,
+            biometricRequiredTitle: bioRequired,
+            cancelButton: cancel,
+            deviceCredentialsRequiredTitle: credentialsRequired,
+            deviceCredentialsSetupDescription: credentialsSetup,
+            goToSettingsButton: goButton,
+            goToSettingsDescription: goDescription,
+            signInTitle: signInTitle,
           ),
-        );
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall('authenticate',
-                arguments: <String, dynamic>{
-                  'localizedReason': 'Insecure',
-                  'useErrorDialogs': false,
-                  'stickyAuth': false,
-                  'sensitiveTransaction': false,
-                  'biometricOnly': true,
-                }..addAll(const AndroidAuthMessages().args)),
-          ],
-        );
+          AnotherPlatformAuthMessages(),
+        ]);
+
+        final VerificationResult result =
+            verify(api.authenticate(any, captureAny));
+        final AuthStrings strings = result.captured[0] as AuthStrings;
+        expect(strings.reason, reason);
+        expect(strings.biometricHint, hint);
+        expect(strings.biometricNotRecognized, bioNotRecognized);
+        expect(strings.biometricRequiredTitle, bioRequired);
+        expect(strings.cancelButton, cancel);
+        expect(strings.deviceCredentialsRequiredTitle, credentialsRequired);
+        expect(strings.deviceCredentialsSetupDescription, credentialsSetup);
+        expect(strings.goToSettingsButton, goButton);
+        expect(strings.goToSettingsDescription, goDescription);
+        expect(strings.signInTitle, signInTitle);
+      });
+
+      test('passes provided messages with default fallbacks', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.success));
+
+        // These are arbitrary values; all that matters is that:
+        // - they are different from the defaults, and
+        // - they are different from each other.
+        const String reason = 'A';
+        const String hint = 'B';
+        const String bioNotRecognized = 'C';
+        const String bioRequired = 'D';
+        const String cancel = 'E';
+        await plugin
+            .authenticate(localizedReason: reason, authMessages: <AuthMessages>[
+          const AndroidAuthMessages(
+            biometricHint: hint,
+            biometricNotRecognized: bioNotRecognized,
+            biometricRequiredTitle: bioRequired,
+            cancelButton: cancel,
+          ),
+        ]);
+
+        final VerificationResult result =
+            verify(api.authenticate(any, captureAny));
+        final AuthStrings strings = result.captured[0] as AuthStrings;
+        expect(strings.reason, reason);
+        // These should all be the provided values.
+        expect(strings.biometricHint, hint);
+        expect(strings.biometricNotRecognized, bioNotRecognized);
+        expect(strings.biometricRequiredTitle, bioRequired);
+        expect(strings.cancelButton, cancel);
+        // These were non set, so should all be the default values from
+        // auth_messages_android.dart
+        expect(strings.deviceCredentialsRequiredTitle,
+            androidDeviceCredentialsRequiredTitle);
+        expect(strings.deviceCredentialsSetupDescription,
+            androidDeviceCredentialsSetupDescription);
+        expect(strings.goToSettingsButton, goToSettings);
+        expect(strings.goToSettingsDescription, androidGoToSettingsDescription);
+        expect(strings.signInTitle, androidSignInTitle);
       });
     });
 
-    group('With biometrics only', () {
-      test('authenticate with no args.', () async {
-        await localAuthentication.authenticate(
-          authMessages: <AuthMessages>[const AndroidAuthMessages()],
-          localizedReason: 'Needs secure',
-        );
-        expect(
-          log,
-          <Matcher>[
-            isMethodCall('authenticate',
-                arguments: <String, dynamic>{
-                  'localizedReason': 'Needs secure',
-                  'useErrorDialogs': true,
-                  'stickyAuth': false,
-                  'sensitiveTransaction': true,
-                  'biometricOnly': false,
-                }..addAll(const AndroidAuthMessages().args)),
-          ],
-        );
+    group('options', () {
+      test('passes default values', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.success));
+
+        await plugin.authenticate(
+            localizedReason: 'reason', authMessages: <AuthMessages>[]);
+
+        final VerificationResult result =
+            verify(api.authenticate(captureAny, any));
+        final AuthOptions options = result.captured[0] as AuthOptions;
+        expect(options.biometricOnly, false);
+        expect(options.sensitiveTransaction, true);
+        expect(options.sticky, false);
+        expect(options.useErrorDialgs, true);
       });
 
-      test('authenticate with no sensitive transaction.', () async {
-        await localAuthentication.authenticate(
-          authMessages: <AuthMessages>[const AndroidAuthMessages()],
-          localizedReason: 'Insecure',
-          options: const AuthenticationOptions(
-            sensitiveTransaction: false,
-            useErrorDialogs: false,
-          ),
-        );
+      test('passes provided non-default values', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.success));
+
+        await plugin.authenticate(
+            localizedReason: 'reason',
+            authMessages: <AuthMessages>[],
+            options: const AuthenticationOptions(
+              biometricOnly: true,
+              sensitiveTransaction: false,
+              stickyAuth: true,
+              useErrorDialogs: false,
+            ));
+
+        final VerificationResult result =
+            verify(api.authenticate(captureAny, any));
+        final AuthOptions options = result.captured[0] as AuthOptions;
+        expect(options.biometricOnly, true);
+        expect(options.sensitiveTransaction, false);
+        expect(options.sticky, true);
+        expect(options.useErrorDialgs, false);
+      });
+    });
+
+    group('return values', () {
+      test('handles success', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.success));
+
+        final bool result = await plugin.authenticate(
+            localizedReason: 'reason', authMessages: <AuthMessages>[]);
+
+        expect(result, true);
+      });
+
+      test('handles failure', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.failure));
+
+        final bool result = await plugin.authenticate(
+            localizedReason: 'reason', authMessages: <AuthMessages>[]);
+
+        expect(result, false);
+      });
+
+      test('converts errorAlreadyInProgress to legacy PlatformException',
+          () async {
+        when(api.authenticate(any, any)).thenAnswer((_) async =>
+            AuthResultWrapper(value: AuthResult.errorAlreadyInProgress));
+
         expect(
-          log,
-          <Matcher>[
-            isMethodCall('authenticate',
-                arguments: <String, dynamic>{
-                  'localizedReason': 'Insecure',
-                  'useErrorDialogs': false,
-                  'stickyAuth': false,
-                  'sensitiveTransaction': false,
-                  'biometricOnly': false,
-                }..addAll(const AndroidAuthMessages().args)),
-          ],
-        );
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having(
+                    (PlatformException e) => e.code, 'code', 'auth_in_progress')
+                .having((PlatformException e) => e.message, 'message',
+                    'Authentication in progress')));
+      });
+
+      test('converts errorNoActivity to legacy PlatformException', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.errorNoActivity));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'no_activity')
+                .having((PlatformException e) => e.message, 'message',
+                    'local_auth plugin requires a foreground activity')));
+      });
+
+      test('converts errorNotFragmentActivity to legacy PlatformException',
+          () async {
+        when(api.authenticate(any, any)).thenAnswer((_) async =>
+            AuthResultWrapper(value: AuthResult.errorNotFragmentActivity));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code',
+                    'no_fragment_activity')
+                .having((PlatformException e) => e.message, 'message',
+                    'local_auth plugin requires activity to be a FragmentActivity.')));
+      });
+
+      test('converts errorNotAvailable to legacy PlatformException', () async {
+        when(api.authenticate(any, any)).thenAnswer((_) async =>
+            AuthResultWrapper(value: AuthResult.errorNotAvailable));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'NotAvailable')
+                .having((PlatformException e) => e.message, 'message',
+                    'Security credentials not available.')));
+      });
+
+      test('converts errorNotEnrolled to legacy PlatformException', () async {
+        when(api.authenticate(any, any)).thenAnswer(
+            (_) async => AuthResultWrapper(value: AuthResult.errorNotEnrolled));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'NotEnrolled')
+                .having((PlatformException e) => e.message, 'message',
+                    'No Biometrics enrolled on this device.')));
+      });
+
+      test('converts errorLockedOutTemporarily to legacy PlatformException',
+          () async {
+        when(api.authenticate(any, any)).thenAnswer((_) async =>
+            AuthResultWrapper(value: AuthResult.errorLockedOutTemporarily));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'LockedOut')
+                .having(
+                    (PlatformException e) => e.message,
+                    'message',
+                    'The operation was canceled because the API is locked out '
+                        'due to too many attempts. This occurs after 5 failed '
+                        'attempts, and lasts for 30 seconds.')));
+      });
+
+      test('converts errorLockedOutPermanently to legacy PlatformException',
+          () async {
+        when(api.authenticate(any, any)).thenAnswer((_) async =>
+            AuthResultWrapper(value: AuthResult.errorLockedOutPermanently));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code',
+                    'PermanentlyLockedOut')
+                .having(
+                    (PlatformException e) => e.message,
+                    'message',
+                    'The operation was canceled because ERROR_LOCKOUT occurred '
+                        'too many times. Biometric authentication is disabled '
+                        'until the user unlocks with strong '
+                        'authentication (PIN/Pattern/Password)')));
       });
     });
   });
 }
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+class AnotherPlatformAuthMessages extends AuthMessages {
+  @override
+  Map<String, String> get args => throw UnimplementedError();
+}

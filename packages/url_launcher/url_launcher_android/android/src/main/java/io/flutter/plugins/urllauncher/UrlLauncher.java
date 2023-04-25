@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /** Launches components for URLs. */
@@ -37,7 +38,7 @@ class UrlLauncher {
   }
 
   /** Returns whether the given {@code url} resolves into an existing component. */
-  boolean canLaunch(String url) {
+  boolean canLaunch(@NonNull String url) {
     Intent launchIntent = new Intent(Intent.ACTION_VIEW);
     launchIntent.setData(Uri.parse(url));
     ComponentName componentName =
@@ -65,8 +66,8 @@ class UrlLauncher {
    *     launchIntent}. {@link LaunchStatus#OK} otherwise.
    */
   LaunchStatus launch(
-      String url,
-      Bundle headersBundle,
+      @NonNull String url,
+      @NonNull Bundle headersBundle,
       boolean useWebView,
       boolean enableJavaScript,
       boolean enableDomStorage) {
