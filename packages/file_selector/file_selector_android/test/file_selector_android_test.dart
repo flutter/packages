@@ -12,7 +12,7 @@ class MockFileSelectorAndroidPlatform
     with MockPlatformInterfaceMixin
     implements FileSelectorAndroidPlatform {
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<String?> getPlatformVersion() => Future<String>.value('42');
 }
 
 void main() {

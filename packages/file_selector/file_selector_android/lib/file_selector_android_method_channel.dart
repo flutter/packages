@@ -11,11 +11,12 @@ import 'file_selector_android_platform_interface.dart';
 class MethodChannelFileSelectorAndroid extends FileSelectorAndroidPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('file_selector_android');
+  final MethodChannel methodChannel =
+      const MethodChannel('file_selector_android');
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version =
+    final String? version =
         await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
