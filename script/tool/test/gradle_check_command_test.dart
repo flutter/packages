@@ -501,4 +501,58 @@ dependencies {
       ]),
     );
   });
+
+  test('fails if gradle-driven lint-warnings-as-errors is missing', () async {
+    const String pluginName = 'a_plugin';
+    final RepositoryPackage plugin =
+        createFakePlugin(pluginName, packagesDir, examples: <String>[]);
+    writeFakePluginBuildGradle(plugin,
+        includeLanguageVersion: true, warningsConfigured: false);
+    writeFakeManifest(plugin);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(
+          <Matcher>[
+            contains('This package is not configured to enable all '
+                'Gradle-driven lint warnings and treat them as errors.'),
+            contains('The following packages had errors:'),
+          ],
+        ));
+  });
+
+  test('fails if javac lint-warnings-as-errors is missing', () async {
+    const String pluginName = 'a_plugin';
+    final RepositoryPackage plugin = createFakePlugin(pluginName, packagesDir);
+    writeFakePluginBuildGradle(plugin, includeLanguageVersion: true);
+    writeFakeManifest(plugin);
+    final RepositoryPackage example = plugin.getExamples().first;
+    writeFakeExampleBuildGradles(example,
+        pluginName: pluginName, warningsConfigured: false);
+    writeFakeManifest(example, isApp: true);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(
+          <Matcher>[
+            contains('The example "example" is not configured to treat javac '
+                'lints and warnings as errors.'),
+            contains('The following packages had errors:'),
+          ],
+        ));
+  });
 }
