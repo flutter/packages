@@ -5,7 +5,7 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 2.1.10
 
 environment:
-  sdk: ">=2.17.0 <4.0.0"
+  sdk: ">=2.19.0 <4.0.0"
   flutter: ">=3.0.0"
 
 flutter:
@@ -16,12 +16,12 @@ flutter:
         dartPluginClass: PathProviderLinux
 
 dependencies:
-  ffi: ">=1.1.2 <3.0.0"
+  ffi: ">=2.0.1"
   flutter:
     sdk: flutter
-  path: ^1.8.0
-  path_provider_platform_interface: ^2.0.0
-  xdg_directories: ">=0.2.0 <2.0.0"
+  path: ^1.8.2
+  path_provider_platform_interface: ^2.0.6
+  xdg_directories: ">=1.0.0"
 
 dev_dependencies:
   flutter_test:

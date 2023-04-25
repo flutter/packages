@@ -7,14 +7,14 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 2.0.6
 
 environment:
-  sdk: ">=2.17.0 <4.0.0"
+  sdk: ">=2.19.0 <4.0.0"
   flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  platform: ^3.0.0
-  plugin_platform_interface: ^2.1.0
+  platform: ^3.1.0
+  plugin_platform_interface: ^2.1.4
 
 dev_dependencies:
   flutter_test:
