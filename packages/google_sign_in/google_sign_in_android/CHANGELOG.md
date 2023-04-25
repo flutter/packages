@@ -1,3 +1,7 @@
+## 6.1.12
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 6.1.11
 
 * Fixes Java warnings.
