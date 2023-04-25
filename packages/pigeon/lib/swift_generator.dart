@@ -431,7 +431,7 @@ import FlutterMacOS
             indent.addScoped('{ $messageVarName, reply in', '}', () {
               final List<String> methodArgument = <String>[];
               if (components.arguments.isNotEmpty) {
-                indent.writeln('let args = message as! [Any]');
+                indent.writeln('let args = message as! [Any?]');
                 enumerate(components.arguments,
                     (int index, _SwiftFunctionArgument arg) {
                   final String argName =
@@ -605,8 +605,7 @@ import FlutterMacOS
             'nullable enums require special code that this helper does not supply');
         return '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
       } else if (type.baseName == 'Object') {
-        // Special-cased to avoid warnings about using 'as' with Any.
-        return value;
+        return value + (type.isNullable ? '' : '!');
       } else if (type.baseName == 'int') {
         if (type.isNullable) {
           // Nullable ints need to check for NSNull, and Int32 before casting can be done safely.
@@ -739,9 +738,9 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
   if (type.typeArguments.isEmpty) {
     if (type.baseName == 'List') {
-      return '[Any]';
+      return '[Any?]';
     } else if (type.baseName == 'Map') {
-      return '[AnyHashable: Any]';
+      return '[AnyHashable: Any?]';
     } else {
       return 'Any';
     }
