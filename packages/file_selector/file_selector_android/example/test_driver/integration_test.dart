@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package io.flutter.plugins.file_selector_android_example;
+import 'package:integration_test/integration_test_driver.dart';
 
-import io.flutter.embedding.android.FlutterActivity;
-
-public class MainActivity extends FlutterActivity {
-}
+Future<void> main() => integrationDriver();

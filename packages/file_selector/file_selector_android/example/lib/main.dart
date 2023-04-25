@@ -1,8 +1,14 @@
-import 'package:flutter/material.dart';
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: public_member_api_docs
+
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:file_selector_android/file_selector_android.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +23,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _fileSelectorAndroidPlugin = FileSelectorAndroid();
+  final FileSelectorAndroid _fileSelectorAndroidPlugin = FileSelectorAndroid();
 
   @override
   void initState() {
@@ -40,7 +46,9 @@ class _MyAppState extends State<MyApp> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     setState(() {
       _platformVersion = platformVersion;
