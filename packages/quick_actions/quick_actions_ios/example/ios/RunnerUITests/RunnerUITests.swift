@@ -5,6 +5,9 @@
 import XCTest
 
 private let elementWaitingTime: TimeInterval = 30
+private let quickActionPressDuration: TimeInterval = 1.5
+// Max number of tries to open the quick action menu if failed.
+private let quickActionMaxRetries: Int = 3;
 
 class RunnerUITests: XCTestCase {
 
@@ -31,7 +34,7 @@ class RunnerUITests: XCTestCase {
       )
     }
 
-    quickActionsAppIcon.press(forDuration: 2)
+    quickActionsAppIcon.press(forDuration: quickActionPressDuration)
 
     let actionTwo = springboard.buttons["Action two"]
     if !actionTwo.waitForExistence(timeout: elementWaitingTime) {
@@ -73,7 +76,7 @@ class RunnerUITests: XCTestCase {
       )
     }
 
-    quickActionsAppIcon.press(forDuration: 2)
+    quickActionsAppIcon.press(forDuration: quickActionPressDuration)
 
     let actionOne = springboard.buttons["Action one"]
     if !actionOne.waitForExistence(timeout: elementWaitingTime) {
