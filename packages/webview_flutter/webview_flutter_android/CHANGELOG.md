@@ -1,6 +1,10 @@
-## 3.5.4
+## 3.6.1
 
 * Adds a namespace for compatibility with AGP 8.0.
+
+## 3.6.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
 
 ## 3.5.3
 

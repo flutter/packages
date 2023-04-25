@@ -1929,6 +1929,9 @@ abstract class WebChromeClientFlutterApi {
   Future<List<String?>> onShowFileChooser(
       int instanceId, int webViewInstanceId, int paramsInstanceId);
 
+  /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
+  void onPermissionRequest(int instanceId, int requestInstanceId);
+
   static void setup(WebChromeClientFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1982,6 +1985,29 @@ abstract class WebChromeClientFlutterApi {
           final List<String?> output = await api.onShowFileChooser(
               arg_instanceId!, arg_webViewInstanceId!, arg_paramsInstanceId!);
           return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest was null, expected non-null int.');
+          final int? arg_requestInstanceId = (args[1] as int?);
+          assert(arg_requestInstanceId != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest was null, expected non-null int.');
+          api.onPermissionRequest(arg_instanceId!, arg_requestInstanceId!);
+          return;
         });
       }
     }
@@ -2106,6 +2132,111 @@ abstract class FileChooserParamsFlutterApi {
           final String? arg_filenameHint = (args[4] as String?);
           api.create(arg_instanceId!, arg_isCaptureEnabled!, arg_acceptTypes!,
               arg_mode!, arg_filenameHint);
+          return;
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `PermissionRequest`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/PermissionRequest.
+class PermissionRequestHostApi {
+  /// Constructor for [PermissionRequestHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  PermissionRequestHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles Dart method `PermissionRequest.grant`.
+  Future<void> grant(int arg_instanceId, List<String?> arg_resources) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PermissionRequestHostApi.grant', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_instanceId, arg_resources]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Handles Dart method `PermissionRequest.deny`.
+  Future<void> deny(int arg_instanceId) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PermissionRequestHostApi.deny', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_instanceId]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+/// Flutter API for `PermissionRequest`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/PermissionRequest.
+abstract class PermissionRequestFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId, List<String?> resources);
+
+  static void setup(PermissionRequestFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.PermissionRequestFlutterApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.PermissionRequestFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.PermissionRequestFlutterApi.create was null, expected non-null int.');
+          final List<String?>? arg_resources =
+              (args[1] as List<Object?>?)?.cast<String?>();
+          assert(arg_resources != null,
+              'Argument for dev.flutter.pigeon.PermissionRequestFlutterApi.create was null, expected non-null List<String?>.');
+          api.create(arg_instanceId!, arg_resources!);
           return;
         });
       }
