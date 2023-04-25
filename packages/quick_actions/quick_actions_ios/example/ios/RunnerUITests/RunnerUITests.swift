@@ -34,16 +34,23 @@ class RunnerUITests: XCTestCase {
       )
     }
 
-    quickActionsAppIcon.press(forDuration: quickActionPressDuration)
-
-    let actionTwo = springboard.buttons["Action two"]
-    if !actionTwo.waitForExistence(timeout: elementWaitingTime) {
+    var actionTwo: XCUIElement?
+    for _ in 1...quickActionMaxRetries {
+      quickActionsAppIcon.press(forDuration: quickActionPressDuration)
+      actionTwo = springboard.buttons["Action two"]
+      if actionTwo!.waitForExistence(timeout: elementWaitingTime) {
+        break
+      }
+      // Reset to previous state.
+      XCUIDevice.shared.press(XCUIDevice.Button.home)
+    }
+    if (!actionTwo!.exists) {
       XCTFail(
         "Failed due to not able to find the actionTwo button from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
       )
     }
 
-    actionTwo.tap()
+    actionTwo!.tap()
 
     let actionTwoConfirmation = exampleApp.otherElements["action_two"]
     if !actionTwoConfirmation.waitForExistence(timeout: elementWaitingTime) {
@@ -76,16 +83,23 @@ class RunnerUITests: XCTestCase {
       )
     }
 
-    quickActionsAppIcon.press(forDuration: quickActionPressDuration)
-
-    let actionOne = springboard.buttons["Action one"]
-    if !actionOne.waitForExistence(timeout: elementWaitingTime) {
+    var actionOne: XCUIElement?
+    for _ in 1...quickActionMaxRetries {
+      quickActionsAppIcon.press(forDuration: quickActionPressDuration)
+      actionOne = springboard.buttons["Action one"]
+      if actionOne!.waitForExistence(timeout: elementWaitingTime) {
+        break
+      }
+      // Reset to previous state.
+      XCUIDevice.shared.press(XCUIDevice.Button.home)
+    }
+    if (!actionOne!.exists) {
       XCTFail(
         "Failed due to not able to find the actionOne button from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
       )
     }
 
-    actionOne.tap()
+    actionOne!.tap()
 
     let actionOneConfirmation = exampleApp.otherElements["action_one"]
     if !actionOneConfirmation.waitForExistence(timeout: elementWaitingTime) {
