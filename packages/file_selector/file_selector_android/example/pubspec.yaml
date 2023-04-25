@@ -6,6 +6,9 @@ environment:
   sdk: ">=2.18.0 <4.0.0"
   flutter: ">=3.3.0"
 
+flutter:
+  uses-material-design: true
+
 dependencies:
   file_selector_android:
     # When depending on this package from a real application you should use:
@@ -22,6 +25,3 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-
-flutter:
-  uses-material-design: true
