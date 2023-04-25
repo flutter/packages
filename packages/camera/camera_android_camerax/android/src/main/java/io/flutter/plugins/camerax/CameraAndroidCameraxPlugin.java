@@ -91,6 +91,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     updateContext(pluginBinding.getApplicationContext());
 
     Activity activity = activityPluginBinding.getActivity();
+    // TODO(camsim99): Handle case where activity is not a LifecycleOwner.
     processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
     liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
     systemServicesHostApi.setActivity(activity);

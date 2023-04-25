@@ -119,7 +119,7 @@ public class CameraStateFlutterApiWrapper {
         return cameraStateErrorDescription
             + "The camera could not be opened because 'Do Not Disturb' mode is enabled. Please disable this mode, and try opening the camera again.";
       default:
-        return "There was an unspecified issue with the current camera state.";
+        return cameraStateErrorDescription + "There was an unspecified issue with the current camera state.";
     }
   }
 

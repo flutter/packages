@@ -22,12 +22,19 @@ class CameraStateError extends JavaObject {
       : super.detached();
 
   /// The code of this error.
+  ///
+  /// Will map to one of the CameraX CameraState codes:
+  /// https://developer.android.com/reference/androidx/camera/core/CameraState#constants_1.
   final int code;
 
   /// The description of this error corresponding to its [code].
   ///
   /// This is not directly provided by the CameraX library, but is determined on
   /// the Java side based on the error type.
+  ///
+  /// Descriptions are required to instantiate a [CameraStateError], as they
+  /// are used in the camera plugin implementation to send camera error events
+  /// to developers using the plugin.
   final String description;
 }
 

@@ -12,7 +12,7 @@ import 'observer.dart';
 
 /// A data holder class that can be observed.
 ///
-/// For this wrapped class, observance can only fall within the lifecycle of the
+/// For this wrapped class, observation can only fall within the lifecycle of the
 /// Android Activity to which this plugin is attached.
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/LiveData.

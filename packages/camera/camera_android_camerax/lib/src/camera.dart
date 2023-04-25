@@ -66,7 +66,7 @@ class CameraHostApiImpl extends CameraHostApi {
 
 /// Flutter API implementation of [Camera].
 class CameraFlutterApiImpl implements CameraFlutterApi {
-  /// Constructs a [CameraSelectorFlutterApiImpl].
+  /// Constructs a [CameraFlutterApiImpl].
   CameraFlutterApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,

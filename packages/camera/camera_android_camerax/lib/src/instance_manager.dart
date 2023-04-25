@@ -124,9 +124,9 @@ class InstanceManager {
       final T? strongInstance = _strongInstances[identifier] as T?;
       if (strongInstance != null) {
         final Function copyCallback = _copyCallbacks[identifier]!;
-        // This cast is safe since it matches the argument type for
-        // _addInstanceWithIdentifier, which is the only place _copyCallbacks
-        // is populated.
+        // This avoid_dynamic_calls is safe since the type of strongInstance
+        // matches the argument type for _addInstanceWithIdentifier, which is
+        // the only place _copyCallbacks is populated.
         // ignore: avoid_dynamic_calls
         final T copy = copyCallback(strongInstance) as T;
         _identifiers[copy] = identifier;

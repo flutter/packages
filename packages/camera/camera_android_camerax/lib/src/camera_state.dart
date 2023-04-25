@@ -27,6 +27,47 @@ class CameraState extends JavaObject {
 
   /// The error that the camera has encountered, if any.
   final CameraStateError? error;
+
+  /// Error code indicating that the camera device is already in use.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_CAMERA_IN_USE()
+  static int errorCameraInUse = 1;
+
+  /// Error code indicating that the limit number of open cameras has been
+  /// reached.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_MAX_CAMERAS_IN_USE()
+  static int errorMaxCamerasInUse = 2;
+
+  /// Error code indicating that the camera device has encountered a recoverable
+  /// error.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_OTHER_RECOVERABLE_ERROR()
+  static int errorOtherRecoverableError = 3;
+
+  /// Error code inidcating that configuring the camera has failed.
+  ///
+  /// https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_STREAM_CONFIG()
+  static int errorStreamConfig = 4;
+
+  /// Error code indicating that the camera device could not be opened due to a
+  /// device policy.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_CAMERA_DISABLED()
+  static int errorCameraDisabled = 5;
+
+  /// Error code indicating that the camera device was closed due to a fatal
+  /// error.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_CAMERA_FATAL_ERROR()
+  static int errorCameraFatalError = 6;
+
+  /// Error code indicating that the camera could not be opened because
+  /// "Do Not Disturb" mode is enabled on devices affected by a bug in Android 9
+  /// (API level 28).
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_DO_NOT_DISTURB_MODE_ENABLED()
+  static int errorDoNotDisturbModeEnabled = 7;
 }
 
 /// Flutter API implementation for [CameraState].
