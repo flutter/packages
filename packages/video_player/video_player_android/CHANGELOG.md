@@ -1,3 +1,7 @@
+## 2.4.5
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 2.4.4
 
 * Synchronizes `VideoPlayerValue.isPlaying` with `ExoPlayer`.
