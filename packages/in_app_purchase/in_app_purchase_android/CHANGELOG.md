@@ -1,3 +1,7 @@
+## 0.2.5+2
+
+* Updates androidx.annotation:annotation from 1.5.0 to 1.6.0.
+
 ## 0.2.5+1
 
 * Adds a namespace for compatibility with AGP 8.0.
