@@ -22,6 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'io.flutter.plugins.googlemaps'
     compileSdkVersion 33
 
     defaultConfig {

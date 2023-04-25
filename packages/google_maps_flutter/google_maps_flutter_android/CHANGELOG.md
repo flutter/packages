@@ -1,6 +1,6 @@
 ## 2.4.11
 
-* Fixes Java warnings.
+* Adds a namespace for compatibility with AGP 8.0.
 
 ## 2.4.10
 
