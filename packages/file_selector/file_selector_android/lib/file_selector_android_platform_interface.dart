@@ -14,7 +14,8 @@ abstract class FileSelectorAndroidPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static FileSelectorAndroidPlatform _instance = MethodChannelFileSelectorAndroid();
+  static FileSelectorAndroidPlatform _instance =
+      MethodChannelFileSelectorAndroid();
 
   /// The default instance of [FileSelectorAndroidPlatform] to use.
   ///
