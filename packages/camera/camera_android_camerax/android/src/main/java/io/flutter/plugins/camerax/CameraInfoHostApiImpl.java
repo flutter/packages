@@ -53,6 +53,7 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
     // Retrieves the current value of the LiveData<ZoomState>.
+    // TODO(camsim99): Create/return LiveData<ZoomState> once https://github.com/flutter/packages/pull/3419 lands.
     ZoomState zoomState = cameraInfo.getZoomState().getValue();
 
     ZoomStateFlutterApiImpl zoomStateFlutterApiImpl =

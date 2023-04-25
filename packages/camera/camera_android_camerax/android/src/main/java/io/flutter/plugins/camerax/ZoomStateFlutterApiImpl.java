@@ -22,15 +22,15 @@ public class ZoomStateFlutterApiImpl extends ZoomStateFlutterApi {
    * ratio.
    */
   void create(@NonNull ZoomState zoomState, @NonNull Reply<Void> reply) {
-    final Float minZoomRatio = zoomState.getMinZoomRatio();
-    final Float maxZoomRatio = zoomState.getMaxZoomRatio();
-
-    if (!instanceManager.containsInstance(zoomState)) {
+    if (instanceManager.containsInstance(zoomState)) {
+      return;
+    }
+      final Float minZoomRatio = zoomState.getMinZoomRatio();
+      final Float maxZoomRatio = zoomState.getMaxZoomRatio();
       create(
           instanceManager.addHostCreatedInstance(zoomState),
           minZoomRatio.doubleValue(),
           maxZoomRatio.doubleValue(),
           reply);
-    }
   }
 }

@@ -15,7 +15,7 @@ public class CameraHostApiImpl implements CameraHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  public CameraHostApiImpl(BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+  public CameraHostApiImpl(@NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
   }

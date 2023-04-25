@@ -38,6 +38,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Camera? camera;
 
   /// The [CameraInfo] instance that corresponds to the [camera] instance.
+  @visibleForTesting
   CameraInfo? cameraInfo;
 
   /// The [Preview] instance that can be configured to present a live camera preview.
@@ -167,6 +168,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
+    // print(camera);
     cameraInfo = await camera!.getCameraInfo();
     _previewIsPaused = false;
 

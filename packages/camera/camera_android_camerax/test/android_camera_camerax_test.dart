@@ -100,7 +100,9 @@ void main() {
       'createCamera requests permissions, starts listening for device orientation changes, and returns flutter surface texture ID',
       () async {
     final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
-    camera.processCameraProvider = MockProcessCameraProvider();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
@@ -111,8 +113,14 @@ void main() {
     const bool enableAudio = true;
     const int testSurfaceTextureId = 6;
 
+    camera.processCameraProvider = mockProcessCameraProvider;
+
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => testSurfaceTextureId);
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
 
     expect(
         await camera.createCamera(testCameraDescription, testResolutionPreset,
@@ -140,7 +148,9 @@ void main() {
       'createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance',
       () async {
     final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
-    camera.processCameraProvider = MockProcessCameraProvider();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
@@ -149,6 +159,15 @@ void main() {
         sensorOrientation: testSensorOrientation);
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const bool enableAudio = true;
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    when(mockProcessCameraProvider.bindToLifecycle(
+            camera.mockBackCameraSelector,
+            <UseCase>[camera.testPreview, camera.testImageCapture]))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
 
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
@@ -166,7 +185,8 @@ void main() {
 
   test('initializeCamera sends expected CameraInitializedEvent', () async {
     final MockAndroidCameraCamerax camera = MockAndroidCameraCamerax();
-    camera.processCameraProvider = MockProcessCameraProvider();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
     const int cameraId = 10;
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
@@ -196,17 +216,21 @@ void main() {
             FocusMode.auto,
             false);
 
+    camera.processCameraProvider = mockProcessCameraProvider;
+
     // Call createCamera.
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => cameraId);
-    await camera.createCamera(testCameraDescription, testResolutionPreset,
-        enableAudio: enableAudio);
 
-    when(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
-            <UseCase>[camera.testPreview, camera.testImageCapture]))
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
     when(camera.testPreview.getResolutionInfo())
         .thenAnswer((_) async => testResolutionInfo);
+
+    await camera.createCamera(testCameraDescription, testResolutionPreset,
+        enableAudio: enableAudio);
 
     // Start listening to camera events stream to verify the proper CameraInitializedEvent is sent.
     camera.cameraEventStreamController.stream.listen((CameraEvent event) {
@@ -314,13 +338,21 @@ void main() {
   test('resumePreview does not bind preview to lifecycle if already bound',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
 
-    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
 
     when(camera.processCameraProvider!.isBound(camera.preview!))
         .thenAnswer((_) async => true);
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
 
     await camera.resumePreview(78);
 
@@ -331,10 +363,18 @@ void main() {
   test('resumePreview binds preview to lifecycle if not already bound',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
 
-    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
 
     await camera.resumePreview(78);
 
@@ -346,11 +386,19 @@ void main() {
       'buildPreview returns a FutureBuilder that does not return a Texture until the preview is bound to the lifecycle',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
     const int textureId = 75;
 
-    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
 
     final FutureBuilder<void> previewWidget =
         camera.buildPreview(textureId) as FutureBuilder<void>;
@@ -373,11 +421,19 @@ void main() {
       'buildPreview returns a FutureBuilder that returns a Texture once the preview is bound to the lifecycle',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
     const int textureId = 75;
 
-    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
 
     final FutureBuilder<void> previewWidget =
         camera.buildPreview(textureId) as FutureBuilder<void>;

@@ -26,6 +26,10 @@ public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
    * step by which the exposure compensation can be changed.
    */
   void create(@NonNull ExposureState exposureState, @NonNull Reply<Void> reply) {
+    if (instanceManager.containsInstance(exposureState)) {
+      return;
+    }
+
     final Range<Integer> exposureCompensationRange = exposureState.getExposureCompensationRange();
     ExposureRange exposureCompensationRangeAsExposureRange =
         new ExposureRange.Builder()
@@ -35,12 +39,10 @@ public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
     final Double exposureCompensationStep =
         exposureState.getExposureCompensationStep().doubleValue();
 
-    if (!instanceManager.containsInstance(exposureState)) {
       create(
           instanceManager.addHostCreatedInstance(exposureState),
           exposureCompensationRangeAsExposureRange,
           exposureCompensationStep,
           reply);
-    }
   }
 }
