@@ -15,7 +15,7 @@
         android:paddingTop="24dp"
         android:paddingBottom="20dp"
         android:textColor="@color/black_text"
-        android:textIsSelectable="true"
+        android:textIsSelectable="false"
         android:textSize="@dimen/huge_text_size" />
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="28dp"
         android:textColor="@color/grey_text"
-        android:textIsSelectable="true"
+        android:textIsSelectable="false"
         android:textSize="@dimen/medium_text_size"
         android:textStyle="normal" />
 </LinearLayout>
