@@ -1,3 +1,7 @@
+## 1.0.26
+
+* Removes unused resources as indicated by Android lint warnings.
+
 ## 1.0.25
 
 * Adds a namespace for compatibility with AGP 8.0.
