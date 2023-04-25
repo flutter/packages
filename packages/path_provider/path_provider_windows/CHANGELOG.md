@@ -1,3 +1,7 @@
+## 2.1.6
+
+* Adds compatibility with `win32` 4.x.
+
 ## 2.1.5
 
 * Clarifies explanation of endorsement in README.
