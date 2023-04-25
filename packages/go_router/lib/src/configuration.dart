@@ -128,14 +128,14 @@ class RouteConfiguration {
   /// Looks up the url location by a [GoRoute]'s name.
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) {
     assert(() {
       log.info('getting location for name: '
           '"$name"'
-          '${params.isEmpty ? '' : ', params: $params'}'
-          '${queryParams.isEmpty ? '' : ', queryParams: $queryParams'}');
+          '${pathParameters.isEmpty ? '' : ', pathParameters: $pathParameters'}'
+          '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
       return true;
     }());
     final String keyName = name.toLowerCase();
@@ -146,24 +146,24 @@ class RouteConfiguration {
       final List<String> paramNames = <String>[];
       patternToRegExp(path, paramNames);
       for (final String paramName in paramNames) {
-        assert(params.containsKey(paramName),
+        assert(pathParameters.containsKey(paramName),
             'missing param "$paramName" for $path');
       }
 
       // Check that there are no extra params
-      for (final String key in params.keys) {
+      for (final String key in pathParameters.keys) {
         assert(paramNames.contains(key), 'unknown param "$key" for $path');
       }
       return true;
     }());
     final Map<String, String> encodedParams = <String, String>{
-      for (final MapEntry<String, String> param in params.entries)
+      for (final MapEntry<String, String> param in pathParameters.entries)
         param.key: Uri.encodeComponent(param.value)
     };
     final String location = patternToPath(path, encodedParams);
     return Uri(
             path: location,
-            queryParameters: queryParams.isEmpty ? null : queryParams)
+            queryParameters: queryParameters.isEmpty ? null : queryParameters)
         .toString();
   }
 

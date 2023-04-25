@@ -55,7 +55,7 @@ after the `?`), use [GoRouterState][]. For example, a URL path such as
 ```dart
 GoRoute(
   path: '/users',
-  builder: (context, state) => const UsersScreen(filter: state.queryParams['filter']),
+  builder: (context, state) => const UsersScreen(filter: state.queryParameters['filter']),
 ),
 ```
 

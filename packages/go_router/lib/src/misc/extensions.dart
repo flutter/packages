@@ -12,11 +12,11 @@ extension GoRouterHelper on BuildContext {
   /// Get a location from route name and parameters.
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) =>
-      GoRouter.of(this)
-          .namedLocation(name, params: params, queryParams: queryParams);
+      GoRouter.of(this).namedLocation(name,
+          pathParameters: pathParameters, queryParameters: queryParameters);
 
   /// Navigate to a location.
   void go(String location, {Object? extra}) =>
@@ -25,14 +25,14 @@ extension GoRouterHelper on BuildContext {
   /// Navigate to a named route.
   void goNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
       GoRouter.of(this).goNamed(
         name,
-        params: params,
-        queryParams: queryParams,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
         extra: extra,
       );
 
@@ -50,14 +50,14 @@ extension GoRouterHelper on BuildContext {
   /// Navigate to a named route onto the page stack.
   Future<T?> pushNamed<T extends Object?>(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
       GoRouter.of(this).pushNamed<T>(
         name,
-        params: params,
-        queryParams: queryParams,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
         extra: extra,
       );
 
@@ -89,14 +89,14 @@ extension GoRouterHelper on BuildContext {
   /// * [pushNamed] which pushes a named route onto the page stack.
   void pushReplacementNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
       GoRouter.of(this).pushReplacementNamed(
         name,
-        params: params,
-        queryParams: queryParams,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
         extra: extra,
       );
 
@@ -126,8 +126,8 @@ extension GoRouterHelper on BuildContext {
   ///   stack but always uses a new page key.
   void replaceNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
       GoRouter.of(this).replaceNamed(name, extra: extra);
