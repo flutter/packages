@@ -1,3 +1,7 @@
+## 0.10.6+1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 0.10.6
 
 * Fixes Java warnings.

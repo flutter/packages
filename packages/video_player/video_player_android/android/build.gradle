@@ -27,6 +27,7 @@ project.getTasks().withType(JavaCompile){
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'io.flutter.plugins.videoplayer'
     compileSdkVersion 33
 
     defaultConfig {

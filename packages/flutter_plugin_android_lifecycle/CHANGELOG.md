@@ -1,3 +1,7 @@
+## 2.0.11
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 2.0.10
 
 * Sets an explicit Java compatibility version.
