@@ -41,7 +41,7 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
     private BinaryMessenger binaryMessenger;
     private InstanceManager instanceManager;
     private AnalyzerFlutterApiImpl api;
-    
+
     @VisibleForTesting public ImageProxyFlutterApiImpl imageProxyApi;
 
     /**
@@ -63,7 +63,7 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
       Long imageHeight = Long.valueOf(imageProxy.getHeight());
       Long imageWidth = Long.valueOf(imageProxy.getWidth());
       imageProxyApi.create(imageProxy, imageFormat, imageHeight, imageWidth, reply -> {});
-      
+
       api.analyze(this, imageProxy, reply -> {});
     }
 

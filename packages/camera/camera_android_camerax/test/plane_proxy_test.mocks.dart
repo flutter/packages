@@ -3,8 +3,6 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:typed_data' as _i3;
-
 import 'package:mockito/mockito.dart' as _i1;
 
 import 'test_camerax_library.g.dart' as _i2;
@@ -19,41 +17,6 @@ import 'test_camerax_library.g.dart' as _i2;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
-
-/// A class which mocks [TestPlaneProxyHostApi].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockTestPlaneProxyHostApi extends _i1.Mock
-    implements _i2.TestPlaneProxyHostApi {
-  MockTestPlaneProxyHostApi() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  int getPixelStride(int? identifier) => (super.noSuchMethod(
-        Invocation.method(
-          #getPixelStride,
-          [identifier],
-        ),
-        returnValue: 0,
-      ) as int);
-  @override
-  _i3.Uint8List getBuffer(int? identifier) => (super.noSuchMethod(
-        Invocation.method(
-          #getBuffer,
-          [identifier],
-        ),
-        returnValue: _i3.Uint8List(0),
-      ) as _i3.Uint8List);
-  @override
-  int getRowStride(int? identifier) => (super.noSuchMethod(
-        Invocation.method(
-          #getRowStride,
-          [identifier],
-        ),
-        returnValue: 0,
-      ) as int);
-}
 
 /// A class which mocks [TestInstanceManagerHostApi].
 ///

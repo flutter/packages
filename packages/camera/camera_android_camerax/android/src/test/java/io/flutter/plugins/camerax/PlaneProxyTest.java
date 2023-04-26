@@ -4,17 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import androidx.camera.core.ImageProxy;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PlaneProxyFlutterApi;
-import java.nio.ByteBuffer;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -56,6 +52,7 @@ public class PlaneProxyTest {
     final long instanceIdentifier =
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockPlaneProxy));
 
-    verify(mockFlutterApi).create(eq(instanceIdentifier), eq(buffer), eq(pixelStride), eq(rowStride), any());
+    verify(mockFlutterApi)
+        .create(eq(instanceIdentifier), eq(buffer), eq(pixelStride), eq(rowStride), any());
   }
 }

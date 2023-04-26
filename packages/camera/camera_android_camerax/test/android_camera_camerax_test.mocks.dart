@@ -245,6 +245,24 @@ class MockImageCapture extends _i1.Mock implements _i13.ImageCapture {
 /// See the documentation for Mockito's code generation for more information.
 class MockImageProxy extends _i1.Mock implements _i14.ImageProxy {
   @override
+  int get format => (super.noSuchMethod(
+        Invocation.getter(#format),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+  @override
+  int get height => (super.noSuchMethod(
+        Invocation.getter(#height),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+  @override
+  int get width => (super.noSuchMethod(
+        Invocation.getter(#width),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+  @override
   _i9.Future<List<_i15.PlaneProxy>> getPlanes() => (super.noSuchMethod(
         Invocation.method(
           #getPlanes,
@@ -255,33 +273,6 @@ class MockImageProxy extends _i1.Mock implements _i14.ImageProxy {
         returnValueForMissingStub:
             _i9.Future<List<_i15.PlaneProxy>>.value(<_i15.PlaneProxy>[]),
       ) as _i9.Future<List<_i15.PlaneProxy>>);
-  @override
-  _i9.Future<int> getFormat() => (super.noSuchMethod(
-        Invocation.method(
-          #getFormat,
-          [],
-        ),
-        returnValue: _i9.Future<int>.value(0),
-        returnValueForMissingStub: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
-  @override
-  _i9.Future<int> getHeight() => (super.noSuchMethod(
-        Invocation.method(
-          #getHeight,
-          [],
-        ),
-        returnValue: _i9.Future<int>.value(0),
-        returnValueForMissingStub: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
-  @override
-  _i9.Future<int> getWidth() => (super.noSuchMethod(
-        Invocation.method(
-          #getWidth,
-          [],
-        ),
-        returnValue: _i9.Future<int>.value(0),
-        returnValueForMissingStub: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
   @override
   _i9.Future<void> close() => (super.noSuchMethod(
         Invocation.method(
@@ -298,33 +289,23 @@ class MockImageProxy extends _i1.Mock implements _i14.ImageProxy {
 /// See the documentation for Mockito's code generation for more information.
 class MockPlaneProxy extends _i1.Mock implements _i15.PlaneProxy {
   @override
-  _i9.Future<_i16.Uint8List> getBuffer() => (super.noSuchMethod(
-        Invocation.method(
-          #getBuffer,
-          [],
-        ),
-        returnValue: _i9.Future<_i16.Uint8List>.value(_i16.Uint8List(0)),
-        returnValueForMissingStub:
-            _i9.Future<_i16.Uint8List>.value(_i16.Uint8List(0)),
-      ) as _i9.Future<_i16.Uint8List>);
+  _i16.Uint8List get buffer => (super.noSuchMethod(
+        Invocation.getter(#buffer),
+        returnValue: _i16.Uint8List(0),
+        returnValueForMissingStub: _i16.Uint8List(0),
+      ) as _i16.Uint8List);
   @override
-  _i9.Future<int> getPixelStride() => (super.noSuchMethod(
-        Invocation.method(
-          #getPixelStride,
-          [],
-        ),
-        returnValue: _i9.Future<int>.value(0),
-        returnValueForMissingStub: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
+  int get pixelStride => (super.noSuchMethod(
+        Invocation.getter(#pixelStride),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
   @override
-  _i9.Future<int> getRowStride() => (super.noSuchMethod(
-        Invocation.method(
-          #getRowStride,
-          [],
-        ),
-        returnValue: _i9.Future<int>.value(0),
-        returnValueForMissingStub: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
+  int get rowStride => (super.noSuchMethod(
+        Invocation.getter(#rowStride),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
 }
 
 /// A class which mocks [Preview].

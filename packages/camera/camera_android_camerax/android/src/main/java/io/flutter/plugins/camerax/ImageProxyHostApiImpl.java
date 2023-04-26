@@ -36,8 +36,7 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    planeProxyFlutterApiImpl =
-    new PlaneProxyFlutterApiImpl(binaryMessenger, instanceManager);
+    planeProxyFlutterApiImpl = new PlaneProxyFlutterApiImpl(binaryMessenger, instanceManager);
   }
 
   /**

@@ -468,18 +468,12 @@ void main() {
         .thenAnswer((_) async => mockCamera);
     when(mockImageProxy.getPlanes())
         .thenAnswer((_) => Future<List<PlaneProxy>>.value(mockPlanes));
-    when(mockPlane.getBuffer())
-        .thenAnswer((_) => Future<Uint8List>.value(buffer));
-    when(mockPlane.getRowStride())
-        .thenAnswer((_) => Future<int>.value(rowStride));
-    when(mockPlane.getPixelStride())
-        .thenAnswer((_) => Future<int>.value(pixelStride));
-    when(mockImageProxy.getFormat())
-        .thenAnswer((_) => Future<int>.value(imageFormat));
-    when(mockImageProxy.getHeight())
-        .thenAnswer((_) => Future<int>.value(imageHeight));
-    when(mockImageProxy.getWidth())
-        .thenAnswer((_) => Future<int>.value(imageWidth));
+    when(mockPlane.buffer).thenReturn(buffer);
+    when(mockPlane.rowStride).thenReturn(rowStride);
+    when(mockPlane.pixelStride).thenReturn(pixelStride);
+    when(mockImageProxy.format).thenReturn(imageFormat);
+    when(mockImageProxy.height).thenReturn(imageHeight);
+    when(mockImageProxy.width).thenReturn(imageWidth);
 
     final StreamSubscription<CameraImageData>
         onStreamedFrameAvailableSubscription = camera

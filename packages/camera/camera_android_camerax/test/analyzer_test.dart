@@ -88,11 +88,14 @@ void main() {
           instanceManager: instanceManager,
         ),
       );
-      final ImageProxy imageProxy =
-          ImageProxy.detached(instanceManager: instanceManager);
+      final ImageProxy imageProxy = ImageProxy.detached(
+          instanceManager: instanceManager, format: 3, height: 4, width: 5);
       instanceManager.addHostCreatedInstance(imageProxy, imageProxyIdentifier,
-          onCopy: (ImageProxy original) =>
-              ImageProxy.detached(instanceManager: instanceManager));
+          onCopy: (ImageProxy original) => ImageProxy.detached(
+              instanceManager: instanceManager,
+              format: original.format,
+              height: original.height,
+              width: original.width));
 
       final AnalyzerFlutterApiImpl flutterApi = AnalyzerFlutterApiImpl(
         instanceManager: instanceManager,

@@ -36,30 +36,6 @@ class MockTestImageProxyHostApi extends _i1.Mock
         returnValue: <int?>[],
       ) as List<int?>);
   @override
-  int getFormat(int? identifier) => (super.noSuchMethod(
-        Invocation.method(
-          #getFormat,
-          [identifier],
-        ),
-        returnValue: 0,
-      ) as int);
-  @override
-  int getHeight(int? identifier) => (super.noSuchMethod(
-        Invocation.method(
-          #getHeight,
-          [identifier],
-        ),
-        returnValue: 0,
-      ) as int);
-  @override
-  int getWidth(int? identifier) => (super.noSuchMethod(
-        Invocation.method(
-          #getWidth,
-          [identifier],
-        ),
-        returnValue: 0,
-      ) as int);
-  @override
   void close(int? identifier) => super.noSuchMethod(
         Invocation.method(
           #close,

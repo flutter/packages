@@ -40,9 +40,18 @@ public class PlaneProxyFlutterApiImpl {
    * already been added, this method does nothing.
    */
   public void create(
-      @NonNull ImageProxy.PlaneProxy instance, @NonNull byte[] bytes, @NonNull Long pixelStride, @NonNull Long rowStride,  @NonNull PlaneProxyFlutterApi.Reply<Void> callback) {
+      @NonNull ImageProxy.PlaneProxy instance,
+      @NonNull byte[] bytes,
+      @NonNull Long pixelStride,
+      @NonNull Long rowStride,
+      @NonNull PlaneProxyFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      api.create(instanceManager.addHostCreatedInstance(instance), bytes, pixelStride, rowStride, callback);
+      api.create(
+          instanceManager.addHostCreatedInstance(instance),
+          bytes,
+          pixelStride,
+          rowStride,
+          callback);
     }
   }
 

@@ -50,7 +50,8 @@ public class ImageProxyTest {
     final ImageProxyHostApiImpl hostApi =
         new ImageProxyHostApiImpl(mockBinaryMessenger, instanceManager);
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
-    final PlaneProxyFlutterApiImpl mockPlaneProxyFlutterApiImpl = mock(PlaneProxyFlutterApiImpl.class);
+    final PlaneProxyFlutterApiImpl mockPlaneProxyFlutterApiImpl =
+        mock(PlaneProxyFlutterApiImpl.class);
     final long instanceIdentifier = 24;
     final long mockPlaneProxyIdentifier = 45;
     final ImageProxy.PlaneProxy mockPlaneProxy = mock(ImageProxy.PlaneProxy.class);
@@ -73,11 +74,16 @@ public class ImageProxyTest {
     when(mockPlaneProxy.getPixelStride()).thenReturn(pixelStride);
     when(mockPlaneProxy.getRowStride()).thenReturn(rowStride);
 
-
     final List<Long> result = hostApi.getPlanes(instanceIdentifier);
 
     verify(mockImageProxy).getPlanes();
-    verify(mockPlaneProxyFlutterApiImpl).create(eq(mockPlaneProxy), eq(buffer), eq(Long.valueOf(pixelStride)), eq(Long.valueOf(rowStride)), any());
+    verify(mockPlaneProxyFlutterApiImpl)
+        .create(
+            eq(mockPlaneProxy),
+            eq(buffer),
+            eq(Long.valueOf(pixelStride)),
+            eq(Long.valueOf(rowStride)),
+            any());
     assertEquals(result.size(), 1);
   }
 

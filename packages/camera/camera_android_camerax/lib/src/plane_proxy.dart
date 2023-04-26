@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
@@ -19,14 +18,12 @@ import 'java_object.dart';
 class PlaneProxy extends JavaObject {
   /// Constructs a [PlaneProxy] that is not automatically attached to a native object.
   PlaneProxy.detached(
-      {BinaryMessenger? binaryMessenger,
-      InstanceManager? instanceManager,
+      {super.binaryMessenger,
+      super.instanceManager,
       required this.buffer,
       required this.pixelStride,
       required this.rowStride})
-      : super.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager) {
+      : super.detached() {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 

@@ -9,8 +9,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import io.flutter.plugins.camerax.InstanceManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

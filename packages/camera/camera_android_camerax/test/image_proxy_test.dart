@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data';
+
 import 'package:camera_android_camerax/src/image_proxy.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/plane_proxy.dart';
@@ -36,22 +38,26 @@ void main() {
       );
 
       final ImageProxy instance = ImageProxy.detached(
-        instanceManager: instanceManager,
-      );
+          instanceManager: instanceManager, format: 2, height: 7, width: 10);
       const int instanceIdentifier = 0;
-      instanceManager.addHostCreatedInstance(
-        instance,
-        instanceIdentifier,
-        onCopy: (ImageProxy original) => ImageProxy.detached(
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier,
+          onCopy: (ImageProxy original) => ImageProxy.detached(
+              instanceManager: instanceManager,
+              format: original.format,
+              height: original.height,
+              width: original.width));
+      final PlaneProxy planeProxy = PlaneProxy.detached(
           instanceManager: instanceManager,
-        ),
-      );
-      final PlaneProxy planeProxy =
-          PlaneProxy.detached(instanceManager: instanceManager);
+          buffer: Uint8List(3),
+          pixelStride: 3,
+          rowStride: 20);
       const int planeProxyIdentifier = 48;
       instanceManager.addHostCreatedInstance(planeProxy, planeProxyIdentifier,
-          onCopy: (PlaneProxy original) =>
-              PlaneProxy.detached(instanceManager: instanceManager));
+          onCopy: (PlaneProxy original) => PlaneProxy.detached(
+              instanceManager: instanceManager,
+              buffer: original.buffer,
+              pixelStride: original.pixelStride,
+              rowStride: original.rowStride));
 
       final List<int> result = <int>[planeProxyIdentifier];
       when(mockApi.getPlanes(
@@ -68,108 +74,6 @@ void main() {
       ));
     });
 
-    test('getFormat', () async {
-      final MockTestImageProxyHostApi mockApi = MockTestImageProxyHostApi();
-      TestImageProxyHostApi.setup(mockApi);
-
-      final InstanceManager instanceManager = InstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
-      final ImageProxy instance = ImageProxy.detached(
-        instanceManager: instanceManager,
-      );
-      const int instanceIdentifier = 0;
-      instanceManager.addHostCreatedInstance(
-        instance,
-        instanceIdentifier,
-        onCopy: (ImageProxy original) => ImageProxy.detached(
-          instanceManager: instanceManager,
-        ),
-      );
-
-      const int result = 0;
-      when(mockApi.getFormat(
-        instanceIdentifier,
-      )).thenAnswer((_) {
-        return result;
-      });
-
-      expect(await instance.getFormat(), result);
-
-      verify(mockApi.getFormat(
-        instanceIdentifier,
-      ));
-    });
-
-    test('getHeight', () async {
-      final MockTestImageProxyHostApi mockApi = MockTestImageProxyHostApi();
-      TestImageProxyHostApi.setup(mockApi);
-
-      final InstanceManager instanceManager = InstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
-      final ImageProxy instance = ImageProxy.detached(
-        instanceManager: instanceManager,
-      );
-      const int instanceIdentifier = 0;
-      instanceManager.addHostCreatedInstance(
-        instance,
-        instanceIdentifier,
-        onCopy: (ImageProxy original) => ImageProxy.detached(
-          instanceManager: instanceManager,
-        ),
-      );
-
-      const int result = 0;
-      when(mockApi.getHeight(
-        instanceIdentifier,
-      )).thenAnswer((_) {
-        return result;
-      });
-
-      expect(await instance.getHeight(), result);
-
-      verify(mockApi.getHeight(
-        instanceIdentifier,
-      ));
-    });
-
-    test('getWidth', () async {
-      final MockTestImageProxyHostApi mockApi = MockTestImageProxyHostApi();
-      TestImageProxyHostApi.setup(mockApi);
-
-      final InstanceManager instanceManager = InstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
-      final ImageProxy instance = ImageProxy.detached(
-        instanceManager: instanceManager,
-      );
-      const int instanceIdentifier = 0;
-      instanceManager.addHostCreatedInstance(
-        instance,
-        instanceIdentifier,
-        onCopy: (ImageProxy original) => ImageProxy.detached(
-          instanceManager: instanceManager,
-        ),
-      );
-
-      const int result = 0;
-      when(mockApi.getWidth(
-        instanceIdentifier,
-      )).thenAnswer((_) {
-        return result;
-      });
-
-      expect(await instance.getWidth(), result);
-
-      verify(mockApi.getWidth(
-        instanceIdentifier,
-      ));
-    });
-
     test('close', () async {
       final MockTestImageProxyHostApi mockApi = MockTestImageProxyHostApi();
       TestImageProxyHostApi.setup(mockApi);
@@ -179,16 +83,14 @@ void main() {
       );
 
       final ImageProxy instance = ImageProxy.detached(
-        instanceManager: instanceManager,
-      );
+          instanceManager: instanceManager, format: 2, height: 7, width: 10);
       const int instanceIdentifier = 0;
-      instanceManager.addHostCreatedInstance(
-        instance,
-        instanceIdentifier,
-        onCopy: (ImageProxy original) => ImageProxy.detached(
-          instanceManager: instanceManager,
-        ),
-      );
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier,
+          onCopy: (ImageProxy original) => ImageProxy.detached(
+              instanceManager: instanceManager,
+              format: original.format,
+              height: original.height,
+              width: original.width));
 
       await instance.close();
 
@@ -207,15 +109,23 @@ void main() {
       );
 
       const int instanceIdentifier = 0;
+      const int format = 9;
+      const int height = 55;
+      const int width = 11;
 
       api.create(
         instanceIdentifier,
+        format,
+        height,
+        width,
       );
 
-      expect(
-        instanceManager.getInstanceWithWeakReference(instanceIdentifier),
-        isA<ImageProxy>(),
-      );
+      final ImageProxy imageProxy =
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier)!;
+
+      expect(imageProxy.format, equals(format));
+      expect(imageProxy.height, equals(height));
+      expect(imageProxy.width, equals(width));
     });
   });
 }
