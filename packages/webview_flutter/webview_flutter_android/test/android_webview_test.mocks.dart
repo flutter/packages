@@ -986,6 +986,40 @@ class MockTestAssetManagerHostApi extends _i1.Mock
       ) as String);
 }
 
+/// A class which mocks [TestPermissionRequestHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestPermissionRequestHostApi extends _i1.Mock
+    implements _i6.TestPermissionRequestHostApi {
+  MockTestPermissionRequestHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void grant(
+    int? instanceId,
+    List<String?>? resources,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #grant,
+          [
+            instanceId,
+            resources,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void deny(int? instanceId) => super.noSuchMethod(
+        Invocation.method(
+          #deny,
+          [instanceId],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [WebChromeClient].
 ///
 /// See the documentation for Mockito's code generation for more information.

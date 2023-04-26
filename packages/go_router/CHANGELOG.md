@@ -1,6 +1,14 @@
-## 6.5.7
+## 6.5.9
 
 - Removes navigator keys from `GoRouteData` and `ShellRouteData`.
+
+## 6.5.8
+
+- Adds name parameter to `TypedGoRoute`
+
+## 6.5.7
+
+- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s. 
 
 ## 6.5.6
 

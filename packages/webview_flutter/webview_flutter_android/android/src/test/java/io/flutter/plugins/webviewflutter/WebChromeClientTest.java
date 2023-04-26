@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import android.net.Uri;
 import android.os.Message;
+import android.webkit.PermissionRequest;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebView.WebViewTransport;
@@ -46,7 +47,7 @@ public class WebChromeClientTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
 
     final WebChromeClientCreator webChromeClientCreator =
         new WebChromeClientCreator() {
@@ -66,7 +67,7 @@ public class WebChromeClientTest {
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
@@ -113,5 +114,15 @@ public class WebChromeClientTest {
         onCreateWindowWebViewClient.shouldOverrideUrlLoading(
             mockOnCreateWindowWebView, mockRequest));
     verify(mockWebView).loadUrl("https://www.google.com");
+  }
+
+  @Test
+  public void onPermissionRequest() {
+    final PermissionRequest mockRequest = mock(PermissionRequest.class);
+    instanceManager.addDartCreatedInstance(mockRequest, 10);
+
+    webChromeClient.onPermissionRequest(mockRequest);
+
+    verify(mockFlutterApi).onPermissionRequest(eq(webChromeClient), eq(mockRequest), any());
   }
 }

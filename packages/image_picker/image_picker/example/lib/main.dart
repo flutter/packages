@@ -189,7 +189,13 @@ class _MyHomePageState extends State<MyHomePage> {
               label: 'image_picker_example_picked_image',
               child: kIsWeb
                   ? Image.network(_imageFileList![index].path)
-                  : Image.file(File(_imageFileList![index].path)),
+                  : Image.file(
+                      File(_imageFileList![index].path),
+                      errorBuilder: (BuildContext context, Object error,
+                              StackTrace? stackTrace) =>
+                          const Center(
+                              child: Text('This image type is not supported')),
+                    ),
             );
           },
           itemCount: _imageFileList!.length,
