@@ -1010,13 +1010,13 @@ class ResolutionStrategyHostApi {
   static const MessageCodec<Object?> codec = _ResolutionStrategyHostApiCodec();
 
   /// Create a new native instance and add it to the `InstanceManager`.
-  Future<void> create(
-      int arg_identifier, CameraSize arg_size, int arg_fallbackRule) async {
+  Future<void> create(int arg_identifier, CameraSize arg_boundSize,
+      int arg_fallbackRule) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ResolutionStrategyHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel
-            .send(<Object?>[arg_identifier, arg_size, arg_fallbackRule])
+            .send(<Object?>[arg_identifier, arg_boundSize, arg_fallbackRule])
         as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(

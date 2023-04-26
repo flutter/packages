@@ -736,7 +736,7 @@ abstract class TestResolutionStrategyHostApi {
       _TestResolutionStrategyHostApiCodec();
 
   /// Create a new native instance and add it to the `InstanceManager`.
-  void create(int identifier, CameraSize size, int fallbackRule);
+  void create(int identifier, CameraSize boundSize, int fallbackRule);
 
   static void setup(TestResolutionStrategyHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -757,13 +757,13 @@ abstract class TestResolutionStrategyHostApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ResolutionStrategyHostApi.create was null, expected non-null int.');
-          final CameraSize? arg_size = (args[1] as CameraSize?);
-          assert(arg_size != null,
+          final CameraSize? arg_boundSize = (args[1] as CameraSize?);
+          assert(arg_boundSize != null,
               'Argument for dev.flutter.pigeon.ResolutionStrategyHostApi.create was null, expected non-null CameraSize.');
           final int? arg_fallbackRule = (args[2] as int?);
           assert(arg_fallbackRule != null,
               'Argument for dev.flutter.pigeon.ResolutionStrategyHostApi.create was null, expected non-null int.');
-          api.create(arg_identifier!, arg_size!, arg_fallbackRule!);
+          api.create(arg_identifier!, arg_boundSize!, arg_fallbackRule!);
           return <Object?>[];
         });
       }

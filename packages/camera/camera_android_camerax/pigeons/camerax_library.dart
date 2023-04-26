@@ -167,7 +167,7 @@ abstract class ImageCaptureHostApi {
 @HostApi(dartHostTestHandler: 'TestResolutionStrategyHostApi')
 abstract class ResolutionStrategyHostApi {
   /// Create a new native instance and add it to the `InstanceManager`.
-  void create(int identifier, CameraSize size, int fallbackRule);
+  void create(int identifier, CameraSize boundSize, int fallbackRule);
 }
 
 /// Host API for `ResolutionSelector`.
