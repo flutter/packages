@@ -1,7 +1,3 @@
-## 2.2.1
-
-* CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
-
 ## 2.2.0
 
 * Adds `getAllWithPrefix` and `clearWithPrefix` method.
