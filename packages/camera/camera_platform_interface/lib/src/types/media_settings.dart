@@ -8,7 +8,7 @@ import 'resolution_preset.dart';
 
 /// recording media settings.
 class MediaSettings {
-  /// constructor
+  /// Creates a [MediaSettings].
   const MediaSettings({
     this.resolutionPreset,
     this.fps,
