@@ -1,6 +1,6 @@
 name: google_fonts
 description: A Flutter package to use fonts from fonts.google.com. Supports HTTP fetching, caching, and asset bundling.
-version: 4.0.3
+version: 4.0.4
 repository: https://github.com/material-foundation/flutter-packages/tree/main/packages/google_fonts
 issue_tracker: https://github.com/material-foundation/flutter-packages/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_fonts%22
 screenshots:
@@ -10,7 +10,7 @@ screenshots:
    path: screenshots/hot_reload.gif
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.14.0 <3.0.0"
   flutter: ">=2.10.0-0"
 
 dependencies:

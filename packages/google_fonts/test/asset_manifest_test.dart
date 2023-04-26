@@ -16,7 +16,7 @@ late AssetManifest assetManifest;
 
 void main() {
   setUpAll(() async {
-    ServicesBinding.instance.defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', (message) {
       _assetManifestLoadCount++;
       final Uint8List encoded = utf8.encoder.convert(_fakeAssetManifestText);

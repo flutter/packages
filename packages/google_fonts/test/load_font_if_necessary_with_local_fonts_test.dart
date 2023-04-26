@@ -65,7 +65,7 @@ void main() {
     });
 
     // Add Foo-BlackItalic to mock asset bundle.
-    ServicesBinding.instance.defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', (message) {
       final Uint8List encoded =
           utf8.encoder.convert('{"google_fonts/Foo-BlackItalic.ttf":'
