@@ -2501,6 +2501,20 @@ public class GeneratedAndroidWebView {
             callback.reply(output);
           });
     }
+    /** Callback to Dart function `WebChromeClient.onPermissionRequest`. */
+    public void onPermissionRequest(
+        @NonNull Long instanceIdArg,
+        @NonNull Long requestInstanceIdArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.WebChromeClientFlutterApi.onPermissionRequest",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, requestInstanceIdArg)),
+          channelReply -> callback.reply(null));
+    }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebStorageHostApi {
@@ -2632,6 +2646,122 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(
               Arrays.asList(
                   instanceIdArg, isCaptureEnabledArg, acceptTypesArg, modeArg, filenameHintArg)),
+          channelReply -> callback.reply(null));
+    }
+  }
+  /**
+   * Host API for `PermissionRequest`.
+   *
+   * <p>This class may handle instantiating and adding native object instances that are attached to
+   * a Dart instance or handle method calls on the associated native class or an instance of the
+   * class.
+   *
+   * <p>See https://developer.android.com/reference/android/webkit/PermissionRequest.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface PermissionRequestHostApi {
+    /** Handles Dart method `PermissionRequest.grant`. */
+    void grant(@NonNull Long instanceId, @NonNull List<String> resources);
+    /** Handles Dart method `PermissionRequest.deny`. */
+    void deny(@NonNull Long instanceId);
+
+    /** The codec used by PermissionRequestHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `PermissionRequestHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable PermissionRequestHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.PermissionRequestHostApi.grant", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                List<String> resourcesArg = (List<String>) args.get(1);
+                try {
+                  api.grant(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(), resourcesArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.PermissionRequestHostApi.deny", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                try {
+                  api.deny((instanceIdArg == null) ? null : instanceIdArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /**
+   * Flutter API for `PermissionRequest`.
+   *
+   * <p>This class may handle instantiating and adding Dart instances that are attached to a native
+   * instance or receiving callback methods from an overridden native class.
+   *
+   * <p>See https://developer.android.com/reference/android/webkit/PermissionRequest.
+   *
+   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   */
+  public static class PermissionRequestFlutterApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public PermissionRequestFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    @SuppressWarnings("UnknownNullness")
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by PermissionRequestFlutterApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /** Create a new Dart instance and add it to the `InstanceManager`. */
+    public void create(
+        @NonNull Long instanceIdArg,
+        @NonNull List<String> resourcesArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.PermissionRequestFlutterApi.create", getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, resourcesArg)),
           channelReply -> callback.reply(null));
     }
   }

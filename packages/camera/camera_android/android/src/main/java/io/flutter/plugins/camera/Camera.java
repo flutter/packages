@@ -96,7 +96,7 @@ class Camera
    * Holds all of the camera features/settings and will be used to update the request builder when
    * one changes.
    */
-  private CameraFeatures cameraFeatures;
+  CameraFeatures cameraFeatures;
 
   private String imageFormatGroup;
 
@@ -116,28 +116,28 @@ class Camera
   private final ResolutionPreset resolutionPreset;
   private final boolean enableAudio;
   private final Context applicationContext;
-  private final DartMessenger dartMessenger;
+  final DartMessenger dartMessenger;
   private CameraProperties cameraProperties;
   private final CameraFeatureFactory cameraFeatureFactory;
   private final Activity activity;
   /** A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture. */
   private final CameraCaptureCallback cameraCaptureCallback;
   /** A {@link Handler} for running tasks in the background. */
-  private Handler backgroundHandler;
+  Handler backgroundHandler;
 
   /** An additional thread for running tasks that shouldn't block the UI. */
   private HandlerThread backgroundHandlerThread;
 
-  private CameraDeviceWrapper cameraDevice;
-  private CameraCaptureSession captureSession;
+  CameraDeviceWrapper cameraDevice;
+  CameraCaptureSession captureSession;
   private ImageReader pictureImageReader;
-  private ImageReader imageStreamReader;
+  ImageReader imageStreamReader;
   /** {@link CaptureRequest.Builder} for the camera preview */
-  private CaptureRequest.Builder previewRequestBuilder;
+  CaptureRequest.Builder previewRequestBuilder;
 
   private MediaRecorder mediaRecorder;
   /** True when recording video. */
-  private boolean recordingVideo;
+  boolean recordingVideo;
   /** True when the preview is paused. */
   private boolean pausedPreview;
 
@@ -148,13 +148,13 @@ class Camera
   /** Holds the last known capture properties */
   private CameraCaptureProperties captureProps;
 
-  private MethodChannel.Result flutterResult;
+  MethodChannel.Result flutterResult;
 
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
     private final CameraDevice cameraDevice;
 
-    private DefaultCameraDeviceWrapper(CameraDevice cameraDevice) {
+    DefaultCameraDeviceWrapper(CameraDevice cameraDevice) {
       this.cameraDevice = cameraDevice;
     }
 
@@ -171,7 +171,6 @@ class Camera
       cameraDevice.createCaptureSession(config);
     }
 
-    @TargetApi(VERSION_CODES.LOLLIPOP)
     @SuppressWarnings("deprecation")
     @Override
     public void createCaptureSession(
@@ -235,9 +234,11 @@ class Camera
    *
    * @param requestBuilder request builder to update.
    */
-  private void updateBuilderSettings(CaptureRequest.Builder requestBuilder) {
+  void updateBuilderSettings(CaptureRequest.Builder requestBuilder) {
     for (CameraFeature<?> feature : cameraFeatures.getAllFeatures()) {
-      Log.d(TAG, "Updating builder with feature: " + feature.getDebugName());
+      if (BuildConfig.DEBUG) {
+        Log.d(TAG, "Updating builder with feature: " + feature.getDebugName());
+      }
       feature.updateBuilder(requestBuilder);
     }
   }
@@ -331,7 +332,9 @@ class Camera
                     cameraFeatures.getFocusPoint().checkIsSupported());
 
             } catch (Exception e) {
-              Log.i(TAG, "open | onOpened error: " + e.getMessage());
+              if (BuildConfig.DEBUG) {
+                Log.i(TAG, "open | onOpened error: " + e.getMessage());
+              }
               dartMessenger.sendCameraErrorEvent(e.getMessage());
               close();
             }
@@ -489,7 +492,6 @@ class Camera
             callback));
   }
 
-  @TargetApi(VERSION_CODES.LOLLIPOP)
   @SuppressWarnings("deprecation")
   private void createCaptureSession(
       List<Surface> surfaces, CameraCaptureSession.StateCallback callback)
@@ -498,7 +500,7 @@ class Camera
   }
 
   // Send a repeating request to refresh  capture session.
-  private void refreshPreviewCaptureSession(
+  void refreshPreviewCaptureSession(
       @Nullable Runnable onSuccessCallback, @NonNull ErrorCallback onErrorCallback) {
     Log.i(TAG, "refreshPreviewCaptureSession");
 
@@ -722,7 +724,7 @@ class Camera
   }
 
   /** Cancel and reset auto focus state and refresh the preview session. */
-  private void unlockAutoFocus() {
+  void unlockAutoFocus() {
     Log.i(TAG, "unlockAutoFocus");
     if (captureSession == null) {
       Log.i(TAG, "[unlockAutoFocus] captureSession null, returning");
@@ -1194,7 +1196,7 @@ class Camera
         });
   }
 
-  private void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
+  void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
     imageStreamReader.setOnImageAvailableListener(
         reader -> {
           Image img = reader.acquireNextImage();
@@ -1234,7 +1236,7 @@ class Camera
         backgroundHandler);
   }
 
-  private void closeCaptureSession() {
+  void closeCaptureSession() {
     if (captureSession != null) {
       Log.i(TAG, "closeCaptureSession");
 

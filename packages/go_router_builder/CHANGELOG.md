@@ -1,6 +1,10 @@
+## 1.2.3
+
+* Supports name parameter for `TypedGoRoute`.
+
 ## 1.2.2
 
-* Supports name parameter for `TypedGoRoute`. 
+* Supports returning value in generated `push` method. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650)
 
 ## 1.2.1
 

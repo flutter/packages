@@ -1,3 +1,11 @@
+## 2.4.12
+
+* Fixes Java warnings.
+
+## 2.4.11
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 2.4.10
 
 * Bump RoboElectric dependency to 4.4.1 to support AndroidX.

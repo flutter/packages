@@ -54,7 +54,7 @@ public class WebViewTest {
 
   @Before
   public void setUp() {
-    testInstanceManager = InstanceManager.open(identifier -> {});
+    testInstanceManager = InstanceManager.create(identifier -> {});
 
     when(mockWebViewProxy.createWebView(mockContext, mockBinaryMessenger, testInstanceManager))
         .thenReturn(mockWebView);
@@ -66,7 +66,7 @@ public class WebViewTest {
 
   @After
   public void tearDown() {
-    testInstanceManager.close();
+    testInstanceManager.stopFinalizationListener();
   }
 
   @Test
@@ -325,7 +325,7 @@ public class WebViewTest {
 
   @Test
   public void flutterApiCreate() {
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
     final WebViewFlutterApiImpl flutterApiImpl =
         new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
@@ -339,7 +339,7 @@ public class WebViewTest {
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
     verify(mockFlutterApi).create(eq(instanceIdentifier), any());
 
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test

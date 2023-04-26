@@ -4,10 +4,13 @@
 
 package io.flutter.plugins.camera.features.noisereduction;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import io.flutter.BuildConfig;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
 import java.util.HashMap;
@@ -18,7 +21,7 @@ import java.util.HashMap;
  * https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#NOISE_REDUCTION_AVAILABLE_NOISE_REDUCTION_MODES
  */
 public class NoiseReductionFeature extends CameraFeature<NoiseReductionMode> {
-  private NoiseReductionMode currentSetting = NoiseReductionMode.fast;
+  @NonNull private NoiseReductionMode currentSetting = NoiseReductionMode.fast;
 
   private final HashMap<NoiseReductionMode, Integer> NOISE_REDUCTION_MODES = new HashMap<>();
 
@@ -27,7 +30,7 @@ public class NoiseReductionFeature extends CameraFeature<NoiseReductionMode> {
    *
    * @param cameraProperties Collection of the characteristics for the current camera device.
    */
-  public NoiseReductionFeature(CameraProperties cameraProperties) {
+  public NoiseReductionFeature(@NonNull CameraProperties cameraProperties) {
     super(cameraProperties);
     NOISE_REDUCTION_MODES.put(NoiseReductionMode.off, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
     NOISE_REDUCTION_MODES.put(NoiseReductionMode.fast, CaptureRequest.NOISE_REDUCTION_MODE_FAST);
@@ -41,18 +44,21 @@ public class NoiseReductionFeature extends CameraFeature<NoiseReductionMode> {
     }
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "NoiseReductionFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @NonNull
   @Override
   public NoiseReductionMode getValue() {
     return currentSetting;
   }
 
   @Override
-  public void setValue(NoiseReductionMode value) {
+  public void setValue(@NonNull NoiseReductionMode value) {
     this.currentSetting = value;
   }
 
@@ -77,12 +83,14 @@ public class NoiseReductionFeature extends CameraFeature<NoiseReductionMode> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     if (!checkIsSupported()) {
       return;
     }
 
-    Log.i("Camera", "updateNoiseReduction | currentSetting: " + currentSetting);
+    if (BuildConfig.DEBUG) {
+      Log.i("Camera", "updateNoiseReduction | currentSetting: " + currentSetting);
+    }
 
     // Always use fast mode.
     requestBuilder.set(
