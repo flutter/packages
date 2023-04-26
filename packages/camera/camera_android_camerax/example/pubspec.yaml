@@ -29,6 +29,7 @@ dependency_overrides:
     path: ../../../camera/camera_platform_interface
 
 dev_dependencies:
+  espresso: ^0.2.0
   flutter_test:
     sdk: flutter
   integration_test:

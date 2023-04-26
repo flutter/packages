@@ -5,6 +5,7 @@
 package io.flutter.plugins.camera.features;
 
 import android.app.Activity;
+import androidx.annotation.NonNull;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.DartMessenger;
 import io.flutter.plugins.camera.features.autofocus.AutoFocusFeature;
@@ -23,6 +24,7 @@ import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * These are all of our available features in the camera. Used in the Camera to access all features
@@ -45,12 +47,13 @@ public class CameraFeatures {
   private static final String VIDEO_BITRATE = "VIDEO_BITRATE";
   private static final String AUDIO_BITRATE = "AUDIO_BITRATE";
 
+  @NonNull
   public static CameraFeatures init(
-      CameraFeatureFactory cameraFeatureFactory,
-      CameraProperties cameraProperties,
-      Activity activity,
-      DartMessenger dartMessenger,
-      ResolutionPreset resolutionPreset) {
+      @NonNull CameraFeatureFactory cameraFeatureFactory,
+      @NonNull CameraProperties cameraProperties,
+      @NonNull Activity activity,
+      @NonNull DartMessenger dartMessenger,
+      @NonNull ResolutionPreset resolutionPreset) {
     CameraFeatures cameraFeatures = new CameraFeatures();
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, false));
@@ -78,13 +81,14 @@ public class CameraFeatures {
     return cameraFeatures;
   }
 
-  private Map<String, CameraFeature<?>> featureMap = new HashMap<>();
+  private final Map<String, CameraFeature<?>> featureMap = new HashMap<>();
 
   /**
    * Gets a collection of all features that have been set.
    *
    * @return A collection of all features that have been set.
    */
+  @NonNull
   public Collection<CameraFeature<?>> getAllFeatures() {
     return this.featureMap.values();
   }
@@ -94,6 +98,7 @@ public class CameraFeatures {
    *
    * @return the auto focus feature.
    */
+  @NonNull
   public AutoFocusFeature getAutoFocus() {
     return (AutoFocusFeature) featureMap.get(AUTO_FOCUS);
   }
@@ -103,7 +108,7 @@ public class CameraFeatures {
    *
    * @param autoFocus the {@link AutoFocusFeature} instance to set.
    */
-  public void setAutoFocus(AutoFocusFeature autoFocus) {
+  public void setAutoFocus(@NonNull AutoFocusFeature autoFocus) {
     this.featureMap.put(AUTO_FOCUS, autoFocus);
   }
 
@@ -112,6 +117,7 @@ public class CameraFeatures {
    *
    * @return the exposure lock feature.
    */
+  @NonNull
   public ExposureLockFeature getExposureLock() {
     return (ExposureLockFeature) featureMap.get(EXPOSURE_LOCK);
   }
@@ -121,7 +127,7 @@ public class CameraFeatures {
    *
    * @param exposureLock the {@link ExposureLockFeature} instance to set.
    */
-  public void setExposureLock(ExposureLockFeature exposureLock) {
+  public void setExposureLock(@NonNull ExposureLockFeature exposureLock) {
     this.featureMap.put(EXPOSURE_LOCK, exposureLock);
   }
 
@@ -130,8 +136,9 @@ public class CameraFeatures {
    *
    * @return the exposure offset feature.
    */
+  @NonNull
   public ExposureOffsetFeature getExposureOffset() {
-    return (ExposureOffsetFeature) featureMap.get(EXPOSURE_OFFSET);
+    return (ExposureOffsetFeature) Objects.requireNonNull(featureMap.get(EXPOSURE_OFFSET));
   }
 
   /**
@@ -139,7 +146,7 @@ public class CameraFeatures {
    *
    * @param exposureOffset the {@link ExposureOffsetFeature} instance to set.
    */
-  public void setExposureOffset(ExposureOffsetFeature exposureOffset) {
+  public void setExposureOffset(@NonNull ExposureOffsetFeature exposureOffset) {
     this.featureMap.put(EXPOSURE_OFFSET, exposureOffset);
   }
 
@@ -148,8 +155,9 @@ public class CameraFeatures {
    *
    * @return the exposure point feature.
    */
+  @NonNull
   public ExposurePointFeature getExposurePoint() {
-    return (ExposurePointFeature) featureMap.get(EXPOSURE_POINT);
+    return (ExposurePointFeature) Objects.requireNonNull(featureMap.get(EXPOSURE_POINT));
   }
 
   /**
@@ -157,7 +165,7 @@ public class CameraFeatures {
    *
    * @param exposurePoint the {@link ExposurePointFeature} instance to set.
    */
-  public void setExposurePoint(ExposurePointFeature exposurePoint) {
+  public void setExposurePoint(@NonNull ExposurePointFeature exposurePoint) {
     this.featureMap.put(EXPOSURE_POINT, exposurePoint);
   }
 
@@ -166,8 +174,9 @@ public class CameraFeatures {
    *
    * @return the flash feature.
    */
+  @NonNull
   public FlashFeature getFlash() {
-    return (FlashFeature) featureMap.get(FLASH);
+    return (FlashFeature) Objects.requireNonNull(featureMap.get(FLASH));
   }
 
   /**
@@ -175,7 +184,7 @@ public class CameraFeatures {
    *
    * @param flash the {@link FlashFeature} instance to set.
    */
-  public void setFlash(FlashFeature flash) {
+  public void setFlash(@NonNull FlashFeature flash) {
     this.featureMap.put(FLASH, flash);
   }
 
@@ -184,8 +193,9 @@ public class CameraFeatures {
    *
    * @return the focus point feature.
    */
+  @NonNull
   public FocusPointFeature getFocusPoint() {
-    return (FocusPointFeature) featureMap.get(FOCUS_POINT);
+    return (FocusPointFeature) Objects.requireNonNull(featureMap.get(FOCUS_POINT));
   }
 
   /**
@@ -193,7 +203,7 @@ public class CameraFeatures {
    *
    * @param focusPoint the {@link FocusPointFeature} instance to set.
    */
-  public void setFocusPoint(FocusPointFeature focusPoint) {
+  public void setFocusPoint(@NonNull FocusPointFeature focusPoint) {
     this.featureMap.put(FOCUS_POINT, focusPoint);
   }
 
@@ -202,8 +212,9 @@ public class CameraFeatures {
    *
    * @return the fps range feature.
    */
+  @NonNull
   public FpsRangeFeature getFpsRange() {
-    return (FpsRangeFeature) featureMap.get(FPS_RANGE);
+    return (FpsRangeFeature) Objects.requireNonNull(featureMap.get(FPS_RANGE));
   }
 
   /**
@@ -211,7 +222,7 @@ public class CameraFeatures {
    *
    * @param fpsRange the {@link FpsRangeFeature} instance to set.
    */
-  public void setFpsRange(FpsRangeFeature fpsRange) {
+  public void setFpsRange(@NonNull FpsRangeFeature fpsRange) {
     this.featureMap.put(FPS_RANGE, fpsRange);
   }
 
@@ -220,8 +231,9 @@ public class CameraFeatures {
    *
    * @return the noise reduction feature.
    */
+  @NonNull
   public NoiseReductionFeature getNoiseReduction() {
-    return (NoiseReductionFeature) featureMap.get(NOISE_REDUCTION);
+    return (NoiseReductionFeature) Objects.requireNonNull(featureMap.get(NOISE_REDUCTION));
   }
 
   /**
@@ -229,7 +241,7 @@ public class CameraFeatures {
    *
    * @param noiseReduction the {@link NoiseReductionFeature} instance to set.
    */
-  public void setNoiseReduction(NoiseReductionFeature noiseReduction) {
+  public void setNoiseReduction(@NonNull NoiseReductionFeature noiseReduction) {
     this.featureMap.put(NOISE_REDUCTION, noiseReduction);
   }
 
@@ -238,8 +250,9 @@ public class CameraFeatures {
    *
    * @return the resolution feature.
    */
+  @NonNull
   public ResolutionFeature getResolution() {
-    return (ResolutionFeature) featureMap.get(RESOLUTION);
+    return (ResolutionFeature) Objects.requireNonNull(featureMap.get(RESOLUTION));
   }
 
   /**
@@ -247,7 +260,7 @@ public class CameraFeatures {
    *
    * @param resolution the {@link ResolutionFeature} instance to set.
    */
-  public void setResolution(ResolutionFeature resolution) {
+  public void setResolution(@NonNull ResolutionFeature resolution) {
     this.featureMap.put(RESOLUTION, resolution);
   }
 
@@ -256,8 +269,9 @@ public class CameraFeatures {
    *
    * @return the sensor orientation feature.
    */
+  @NonNull
   public SensorOrientationFeature getSensorOrientation() {
-    return (SensorOrientationFeature) featureMap.get(SENSOR_ORIENTATION);
+    return (SensorOrientationFeature) Objects.requireNonNull(featureMap.get(SENSOR_ORIENTATION));
   }
 
   /**
@@ -265,7 +279,7 @@ public class CameraFeatures {
    *
    * @param sensorOrientation the {@link SensorOrientationFeature} instance to set.
    */
-  public void setSensorOrientation(SensorOrientationFeature sensorOrientation) {
+  public void setSensorOrientation(@NonNull SensorOrientationFeature sensorOrientation) {
     this.featureMap.put(SENSOR_ORIENTATION, sensorOrientation);
   }
 
@@ -274,8 +288,9 @@ public class CameraFeatures {
    *
    * @return the zoom level feature.
    */
+  @NonNull
   public ZoomLevelFeature getZoomLevel() {
-    return (ZoomLevelFeature) featureMap.get(ZOOM_LEVEL);
+    return (ZoomLevelFeature) Objects.requireNonNull(featureMap.get(ZOOM_LEVEL));
   }
 
   /**
@@ -283,7 +298,7 @@ public class CameraFeatures {
    *
    * @param zoomLevel the {@link ZoomLevelFeature} instance to set.
    */
-  public void setZoomLevel(ZoomLevelFeature zoomLevel) {
+  public void setZoomLevel(@NonNull ZoomLevelFeature zoomLevel) {
     this.featureMap.put(ZOOM_LEVEL, zoomLevel);
   }
 

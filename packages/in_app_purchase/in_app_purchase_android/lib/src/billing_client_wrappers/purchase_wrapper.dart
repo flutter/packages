@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'billing_client_manager.dart';
 import 'billing_client_wrapper.dart';
 import 'sku_details_wrapper.dart';
 
@@ -265,7 +266,7 @@ class PurchaseHistoryRecordWrapper {
 @JsonSerializable()
 @BillingResponseConverter()
 @immutable
-class PurchasesResultWrapper {
+class PurchasesResultWrapper implements HasBillingResponse {
   /// Creates a [PurchasesResultWrapper] with the given purchase result details.
   const PurchasesResultWrapper(
       {required this.responseCode,
@@ -300,6 +301,7 @@ class PurchasesResultWrapper {
   ///
   /// This can represent either the status of the "query purchase history" half
   /// of the operation and the "user made purchases" transaction itself.
+  @override
   final BillingResponse responseCode;
 
   /// The list of successful purchases made in this transaction.
@@ -316,7 +318,7 @@ class PurchasesResultWrapper {
 @JsonSerializable()
 @BillingResponseConverter()
 @immutable
-class PurchasesHistoryResult {
+class PurchasesHistoryResult implements HasBillingResponse {
   /// Creates a [PurchasesHistoryResult] with the provided history.
   const PurchasesHistoryResult(
       {required this.billingResult, required this.purchaseHistoryRecordList});
@@ -324,6 +326,9 @@ class PurchasesHistoryResult {
   /// Factory for creating a [PurchasesHistoryResult] from a [Map] with the history result details.
   factory PurchasesHistoryResult.fromJson(Map<String, dynamic> map) =>
       _$PurchasesHistoryResultFromJson(map);
+
+  @override
+  BillingResponse get responseCode => billingResult.responseCode;
 
   @override
   bool operator ==(Object other) {

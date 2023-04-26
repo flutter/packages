@@ -184,12 +184,18 @@ class _MyHomePageState extends State<MyHomePage> {
           key: UniqueKey(),
           itemBuilder: (BuildContext context, int index) {
             // Why network for web?
-            // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
+            // See https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
             return Semantics(
               label: 'image_picker_example_picked_image',
               child: kIsWeb
                   ? Image.network(_imageFileList![index].path)
-                  : Image.file(File(_imageFileList![index].path)),
+                  : Image.file(
+                      File(_imageFileList![index].path),
+                      errorBuilder: (BuildContext context, Object error,
+                              StackTrace? stackTrace) =>
+                          const Center(
+                              child: Text('This image type is not supported')),
+                    ),
             );
           },
           itemCount: _imageFileList!.length,

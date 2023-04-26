@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
                       keyPath:(NSString *)keyPath
                        object:(NSObject *)object
                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
-                   completion:(void (^)(NSError *_Nullable))completion;
+                   completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /**

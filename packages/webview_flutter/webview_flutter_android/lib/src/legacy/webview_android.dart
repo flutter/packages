@@ -40,7 +40,6 @@ class AndroidWebView implements WebViewPlatform {
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
   }) {
     return WebViewAndroidWidget(
-      useHybridComposition: false,
       creationParams: creationParams,
       callbacksHandler: webViewPlatformCallbacksHandler,
       javascriptChannelRegistry: javascriptChannelRegistry,

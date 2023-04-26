@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,6 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    namespace 'com.example.test_plugin'
     compileSdkVersion 33
 
     compileOptions {
@@ -57,8 +58,14 @@ android {
         }
     }
 
+    lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+    }
+
     dependencies {
         testImplementation 'junit:junit:4.+'
-        testImplementation "io.mockk:mockk:1.13.4"
+        testImplementation "io.mockk:mockk:1.13.5"
     }
 }

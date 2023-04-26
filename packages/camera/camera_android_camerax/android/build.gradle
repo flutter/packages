@@ -22,6 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'io.flutter.plugins.camerax'
     // CameraX dependencies require compilation against version 33 or later.
     compileSdkVersion 33
 
@@ -49,8 +50,10 @@ android {
     }
 
     lintOptions {
-        disable 'AndroidGradlePluginVersion'
-        disable 'GradleDependency'
+        checkAllWarnings true
+        warningsAsErrors true
+        disable 'AndroidGradlePluginVersion', 'GradleDependency', 'InvalidPackage'
+        baseline file("lint-baseline.xml")
     }
 }
 

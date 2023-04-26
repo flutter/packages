@@ -29,7 +29,8 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
    * won't react to changes in activity or context, unlike {@link UrlLauncherPlugin}.
    */
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     MethodCallHandlerImpl handler =
         new MethodCallHandlerImpl(new UrlLauncher(registrar.context(), registrar.activity()));
     handler.startListening(registrar.messenger());
@@ -61,6 +62,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       return;
     }
 
+    assert urlLauncher != null;
     urlLauncher.setActivity(binding.getActivity());
   }
 
@@ -71,6 +73,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       return;
     }
 
+    assert urlLauncher != null;
     urlLauncher.setActivity(null);
   }
 

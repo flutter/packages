@@ -1,6 +1,16 @@
-## NEXT
+## 3.4.0
 
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
+## 3.3.0
+
+* Adds support for `PlatformNavigationDelegate.onUrlChange`.
+
+## 3.2.4
+
+* Updates pigeon to fix warnings with clang 15.
 * Updates minimum Flutter version to 3.3.
+* Fixes common typos in tests and documentation.
 
 ## 3.2.3
 

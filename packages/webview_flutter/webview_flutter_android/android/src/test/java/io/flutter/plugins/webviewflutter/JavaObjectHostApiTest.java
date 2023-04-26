@@ -11,7 +11,7 @@ import org.junit.Test;
 public class JavaObjectHostApiTest {
   @Test
   public void dispose() {
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
     final JavaObjectHostApiImpl hostApi = new JavaObjectHostApiImpl(instanceManager);
 
@@ -27,6 +27,6 @@ public class JavaObjectHostApiTest {
 
     assertNull(instanceManager.getInstance(0));
 
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 }

@@ -61,9 +61,7 @@ void main() {
       when(mockWebView.settings).thenReturn(mockWebSettings);
 
       mockWebViewProxy = MockWebViewProxy();
-      when(mockWebViewProxy.createWebView(
-        useHybridComposition: anyNamed('useHybridComposition'),
-      )).thenReturn(mockWebView);
+      when(mockWebViewProxy.createWebView()).thenReturn(mockWebView);
       when(mockWebViewProxy.createWebViewClient(
         onPageStarted: anyNamed('onPageStarted'),
         onPageFinished: anyNamed('onPageFinished'),
@@ -86,7 +84,6 @@ void main() {
       bool useHybridComposition = false,
     }) async {
       await tester.pumpWidget(WebViewAndroidWidget(
-        useHybridComposition: useHybridComposition,
         creationParams: creationParams ??
             CreationParams(
                 webSettings: WebSettings(
@@ -132,7 +129,7 @@ void main() {
       'Create Widget with Hybrid Composition',
       (WidgetTester tester) async {
         await buildWidget(tester, useHybridComposition: true);
-        verify(mockWebViewProxy.createWebView(useHybridComposition: true));
+        verify(mockWebViewProxy.createWebView());
       },
     );
 
@@ -396,7 +393,7 @@ void main() {
       });
 
       testWidgets(
-          'loadFlutterAsset throws ArgumentError when asset does not exists',
+          'loadFlutterAsset throws ArgumentError when asset does not exist',
           (WidgetTester tester) async {
         await buildWidget(tester);
         const String assetKey = 'test_assets/index.html';

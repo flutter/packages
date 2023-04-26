@@ -130,7 +130,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final _NavigatorStateIterator iterator = _createNavigatorStateIterator();
     while (iterator.moveNext()) {
       if (iterator.current.canPop()) {
-        iterator.matchList.last.complete(result);
         iterator.current.pop<T>(result);
         return;
       }
@@ -152,10 +151,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }
     final Page<Object?> page = route.settings as Page<Object?>;
     final RouteMatch? match = builder.getRouteMatchForPage(page);
-    if (match == null) {
-      return true;
+    assert(match != null);
+    if (match is ImperativeRouteMatch) {
+      match.complete(result);
     }
-    _matchList.remove(match);
+    _matchList.remove(match!);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
@@ -311,7 +311,6 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
 }
 
 /// The route match that represent route pushed through [GoRouter.push].
-// TODO(chunhtai): Removes this once imperative API no longer insert route match.
 class ImperativeRouteMatch<T> extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
   ImperativeRouteMatch({
@@ -329,7 +328,8 @@ class ImperativeRouteMatch<T> extends RouteMatch {
   /// The completer for the future returned by [GoRouter.push].
   final Completer<T?> _completer;
 
-  @override
+  /// Called when the corresponding [Route] associated with this route match is
+  /// completed.
   void complete([dynamic value]) {
     _completer.complete(value as T?);
   }

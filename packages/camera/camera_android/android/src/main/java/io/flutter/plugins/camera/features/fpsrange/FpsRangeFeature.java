@@ -4,9 +4,12 @@
 
 package io.flutter.plugins.camera.features.fpsrange;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
 import android.os.Build;
 import android.util.Range;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
 
@@ -16,14 +19,14 @@ import io.flutter.plugins.camera.features.CameraFeature;
  */
 public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
   private static final Range<Integer> MAX_PIXEL4A_RANGE = new Range<>(30, 30);
-  private Range<Integer> currentSetting;
+  @Nullable private Range<Integer> currentSetting;
 
   /**
    * Creates a new instance of the {@link FpsRangeFeature}.
    *
    * @param cameraProperties Collection of characteristics for the current camera device.
    */
-  public FpsRangeFeature(CameraProperties cameraProperties) {
+  public FpsRangeFeature(@NonNull CameraProperties cameraProperties) {
     super(cameraProperties);
 
     if (isPixel4A()) {
@@ -56,18 +59,21 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
     return "google".equals(Build.BRAND) && "Pixel 4a".equals(Build.MODEL);
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "FpsRangeFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @Nullable
   @Override
   public Range<Integer> getValue() {
     return currentSetting;
   }
 
   @Override
-  public void setValue(Range<Integer> value) {
+  public void setValue(@NonNull Range<Integer> value) {
     this.currentSetting = value;
   }
 
@@ -78,7 +84,7 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     if (!checkIsSupported()) {
       return;
     }

@@ -13,6 +13,7 @@
 #import "FWFScrollViewHostApi.h"
 #import "FWFUIDelegateHostApi.h"
 #import "FWFUIViewHostApi.h"
+#import "FWFURLHostApi.h"
 #import "FWFUserContentControllerHostApi.h"
 #import "FWFWebViewConfigurationHostApi.h"
 #import "FWFWebViewHostApi.h"
@@ -60,7 +61,7 @@
 
         dispatch_async(dispatch_get_main_queue(), ^{
           [objectApi disposeObjectWithIdentifier:@(identifier)
-                                      completion:^(NSError *error) {
+                                      completion:^(FlutterError *error) {
                                         NSAssert(!error, @"%@", error);
                                       }];
         });
@@ -100,6 +101,9 @@
   FWFWKWebViewHostApiSetup(registrar.messenger, [[FWFWebViewHostApiImpl alloc]
                                                     initWithBinaryMessenger:registrar.messenger
                                                             instanceManager:instanceManager]);
+  FWFNSUrlHostApiSetup(registrar.messenger,
+                       [[FWFURLHostApiImpl alloc] initWithBinaryMessenger:registrar.messenger
+                                                          instanceManager:instanceManager]);
 
   FWFWebViewFactory *webviewFactory = [[FWFWebViewFactory alloc] initWithManager:instanceManager];
   [registrar registerViewFactory:webviewFactory withId:@"plugins.flutter.io/webview"];

@@ -1,3 +1,11 @@
+## 2.0.26
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 2.0.25
+
+* Fixes Java warnings.
+
 ## 2.0.24
 
 * Clarifies explanation of endorsement in README.

@@ -60,9 +60,6 @@ class RouteMatch {
     throw MatcherError('Unexpected route type: $route', restLoc);
   }
 
-  /// Called when the corresponding [Route] associated with this route match is completed.
-  void complete([Object? value]) {}
-
   /// The matched route.
   final RouteBase route;
 

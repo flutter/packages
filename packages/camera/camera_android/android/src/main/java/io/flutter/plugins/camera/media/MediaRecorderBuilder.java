@@ -92,16 +92,19 @@ public class MediaRecorderBuilder {
     this.audioBitrate = audioBitrate;
   }
 
+  @NonNull
   public MediaRecorderBuilder setEnableAudio(boolean enableAudio) {
     this.enableAudio = enableAudio;
     return this;
   }
 
+  @NonNull
   public MediaRecorderBuilder setMediaOrientation(int orientation) {
     this.mediaOrientation = orientation;
     return this;
   }
 
+  @NonNull
   public MediaRecorder build() throws IOException, NullPointerException, IndexOutOfBoundsException {
     MediaRecorder mediaRecorder = recorderFactory.makeMediaRecorder();
 
@@ -127,7 +130,7 @@ public class MediaRecorderBuilder {
       mediaRecorder.setVideoFrameRate((null != fps && 0 < fps) ? fps : videoProfile.getFrameRate());
       mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
       mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
-    } else {
+    } else if (camcorderProfile != null) {
       mediaRecorder.setOutputFormat(camcorderProfile.fileFormat);
       if (enableAudio) {
         mediaRecorder.setAudioEncoder(camcorderProfile.audioCodec);

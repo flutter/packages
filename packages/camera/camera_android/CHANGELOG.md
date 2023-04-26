@@ -1,11 +1,17 @@
-## 0.10.5+1
+## 0.10.6+1
 
+* Adds a namespace for compatibility with AGP 8.0.
 * Adds `CameraPlatfrom.createCameraWithSettings` to allow recorded video fps and bitrate control.
 * Bump: `com.android.tools.build:gradle:7.2.0`
+
+## 0.10.6
+
+* Fixes Java warnings.
 
 ## 0.10.5
 
 * Allows camera to be switched while video recording.
+
 ## 0.10.4+3
 
 * Clarifies explanation of endorsement in README.

@@ -499,6 +499,50 @@ void main() {
       );
     },
   );
+
+  // This test checks whether AdaptiveScaffold.standardNavigationRail function
+  // creates a NavigationRail widget as expected with groupAlignment provided,
+  // and checks whether the NavigationRail's groupAlignment matches the expected value.
+  testWidgets(
+      'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
+      (WidgetTester tester) async {
+    const List<NavigationRailDestination> destinations =
+        <NavigationRailDestination>[
+      NavigationRailDestination(
+        icon: Icon(Icons.home),
+        label: Text('Home'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.account_circle),
+        label: Text('Profile'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.settings),
+        label: Text('Settings'),
+      ),
+    ];
+
+    // Align to bottom.
+    const double groupAlignment = 1.0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return AdaptiveScaffold.standardNavigationRail(
+                destinations: destinations,
+                groupAlignment: groupAlignment,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    final NavigationRail rail =
+        tester.widget<NavigationRail>(find.byType(NavigationRail));
+    expect(rail.groupAlignment, equals(groupAlignment));
+  });
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that

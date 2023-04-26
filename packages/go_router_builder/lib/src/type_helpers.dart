@@ -93,12 +93,12 @@ String encodeField(PropertyAccessorElement element) {
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
 String _stateValueAccess(ParameterElement element) {
-  if (element.isRequired) {
-    return 'params[${escapeDartString(element.name)}]!';
+  if (element.isExtraField) {
+    return 'extra as ${element.type.getDisplayString(withNullability: element.isOptional)}';
   }
 
-  if (element.isExtraField) {
-    return 'extra as ${element.type.getDisplayString(withNullability: true)}';
+  if (element.isRequired) {
+    return 'params[${escapeDartString(element.name)}]!';
   }
 
   if (element.isOptional) {
