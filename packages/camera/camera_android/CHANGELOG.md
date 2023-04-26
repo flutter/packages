@@ -1,6 +1,7 @@
 ## 0.10.5+1
 
 * Adds `CameraPlatfrom.createCameraWithSettings` to allow recorded video fps and bitrate control.
+* Bump: `com.android.tools.build:gradle:7.2.0`
 
 ## 0.10.5
 
