@@ -6,7 +6,10 @@
 
 import 'resolution_preset.dart';
 
-/// recording media settings.
+/// Recording media settings.
+///
+/// Used in [CameraPlatform.createCameraWithSettings].
+/// Allows to tune recorded video parameters, such as resolution, frame rate, bitrate.
 class MediaSettings {
   /// Creates a [MediaSettings].
   const MediaSettings({
@@ -17,19 +20,19 @@ class MediaSettings {
     this.enableAudio = false,
   });
 
-  /// resolution preset
+  /// [ResolutionPreset] affect the quality of video recording and image capture.
   final ResolutionPreset? resolutionPreset;
 
-  /// camera fps
+  /// Rate at which frames should be captured by the camera in frames per second.
   final int? fps;
 
-  /// recording video bitrate
+  /// Sets the video encoding bit rate for recording.
   final int? videoBitrate;
 
-  /// recording audio bitrate
+  /// Sets the audio encoding bit rate for recording.
   final int? audioBitrate;
 
-  /// enable audio
+  /// Controls audio presence in recorded video.
   final bool enableAudio;
 
   @override

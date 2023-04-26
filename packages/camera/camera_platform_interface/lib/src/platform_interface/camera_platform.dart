@@ -47,6 +47,7 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
   /// Creates an uninitialized camera instance and returns the cameraId.
+  ///
   /// Method will be deprecated. Use [createCameraWithSettings].
   Future<int> createCamera(
     CameraDescription cameraDescription,
