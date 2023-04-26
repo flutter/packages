@@ -35,7 +35,7 @@ void main() {
       );
 
       const int instanceIdentifier = 0;
-      final Uint8List buffer = Uint8List(4);
+      final Uint8List buffer = Uint8List(1);
       const int pixelStride = 3;
       const int rowStride = 6;
 
