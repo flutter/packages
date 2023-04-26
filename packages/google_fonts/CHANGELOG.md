@@ -1,3 +1,7 @@
+## 4.0.4 - 2023-04-26
+### Changed
+- Bumped minimum SDK version to 2.14
+
 ## 4.0.3 - 2023-02-03
 ### Added
 - Added screenshots
