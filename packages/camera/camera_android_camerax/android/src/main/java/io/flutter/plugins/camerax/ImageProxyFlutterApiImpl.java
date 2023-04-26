@@ -40,9 +40,9 @@ public class ImageProxyFlutterApiImpl {
    * this method does nothing.
    */
   public void create(
-      @NonNull ImageProxy instance, @NonNull ImageProxyFlutterApi.Reply<Void> callback) {
+      @NonNull ImageProxy instance, @NonNull Long imageFormat, @NonNull Long imageHeight, @NonNull Long imageWidth, @NonNull ImageProxyFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      api.create(instanceManager.addHostCreatedInstance(instance), callback);
+      api.create(instanceManager.addHostCreatedInstance(instance), imageFormat, imageHeight, imageWidth, callback);
     }
   }
 

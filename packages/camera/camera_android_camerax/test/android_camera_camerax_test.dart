@@ -423,13 +423,14 @@ void main() {
       'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {
     final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
+    const int cameraId = 22;
     camera.processCameraProvider = MockProcessCameraProvider();
     camera.cameraSelector = MockCameraSelector();
     camera.createDetachedCallbacks = true;
 
     final CameraImageData mockCameraImageData = MockCameraImageData();
     final Stream<CameraImageData> imageStream =
-        camera.onStreamedFrameAvailable(22);
+        camera.onStreamedFrameAvailable(cameraId);
     final StreamQueue<CameraImageData> streamQueue =
         StreamQueue<CameraImageData>(imageStream);
 
@@ -443,6 +444,7 @@ void main() {
       'onStreamedFrameAvaiable returns stream that responds expectedly to being listened to',
       () async {
     final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
+    const int cameraId = 33;
     final ProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final CameraSelector mockCameraSelector = MockCameraSelector();
@@ -480,8 +482,9 @@ void main() {
         .thenAnswer((_) => Future<int>.value(imageWidth));
 
     final StreamSubscription<CameraImageData>
-        onStreamedFrameAvailableSubscription =
-        camera.onStreamedFrameAvailable(22).listen((CameraImageData imageData) {
+        onStreamedFrameAvailableSubscription = camera
+            .onStreamedFrameAvailable(cameraId)
+            .listen((CameraImageData imageData) {
       // Test Analyzer correctly process ImageProxy instances.
       expect(imageData.planes.length, equals(0));
       expect(imageData.planes[0].bytes, equals(buffer));
@@ -507,6 +510,7 @@ void main() {
       'onStreamedFrameAvaiable returns stream that responds expectedly to being canceled',
       () async {
     final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
+    const int cameraId = 32;
     final ProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final CameraSelector mockCameraSelector = MockCameraSelector();
@@ -520,8 +524,9 @@ void main() {
             mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
         .thenAnswer((_) async => mockCamera);
 
-    final StreamSubscription<CameraImageData> imageStreamSubscription =
-        camera.onStreamedFrameAvailable(32).listen((CameraImageData data) {});
+    final StreamSubscription<CameraImageData> imageStreamSubscription = camera
+        .onStreamedFrameAvailable(cameraId)
+        .listen((CameraImageData data) {});
 
     when(mockProcessCameraProvider.isBound(camera.mockImageAnalysis))
         .thenAnswer((_) async => Future<bool>.value(true));

@@ -5,7 +5,6 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
-import 'package:simple_ast/annotations.dart';
 
 import 'analyzer.dart';
 import 'android_camera_camerax_flutter_api_impls.dart';
@@ -17,7 +16,6 @@ import 'use_case.dart';
 /// Use case for providing CPU accessible images for performing image analysis.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.
-@SimpleClassAnnotation()
 class ImageAnalysis extends UseCase {
   /// Creates an [ImageAnalysis].
   ImageAnalysis(

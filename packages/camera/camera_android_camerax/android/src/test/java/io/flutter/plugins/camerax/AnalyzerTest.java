@@ -8,12 +8,15 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.ImageProxy;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AnalyzerFlutterApi;
+
+import java.text.Format;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +49,7 @@ public class AnalyzerTest {
   public void hostApiCreate_makesCallToCreateAnalyzerInstanceWithExpectedIdentifier() {
     final AnalyzerHostApiImpl hostApi =
         new AnalyzerHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
-    final long instanceIdentifier = 0;
+    final long instanceIdentifier = 90;
 
     when(mockProxy.create(mockBinaryMessenger, instanceManager))
         .thenReturn(mockImageAnalysisAnalyzer);
@@ -79,16 +82,27 @@ public class AnalyzerTest {
     final long mockImageProxyIdentifier = 97;
     final AnalyzerHostApiImpl.AnalyzerImpl instance =
         new AnalyzerHostApiImpl.AnalyzerImpl(mockBinaryMessenger, instanceManager);
-    final long instanceIdentifier = 0;
+    final ImageProxyFlutterApiImpl mockImageProxyApi = spy(new ImageProxyFlutterApiImpl(mockBinaryMessenger, instanceManager));
+    final long instanceIdentifier = 20;
+    final long format = 3;
+    final long height = 2;
+    final long width = 1;
 
     flutterApi.setApi(mockFlutterApi);
     instance.setApi(flutterApi);
+    instance.imageProxyApi = mockImageProxyApi;
 
     instanceManager.addDartCreatedInstance(instance, instanceIdentifier);
     instanceManager.addDartCreatedInstance(mockImageProxy, mockImageProxyIdentifier);
 
+    when(mockImageProxy.getFormat()).thenReturn(3);
+    when(mockImageProxy.getHeight()).thenReturn(2);
+    when(mockImageProxy.getWidth()).thenReturn(1);
+
+
     instance.analyze(mockImageProxy);
 
     verify(mockFlutterApi).analyze(eq(instanceIdentifier), eq(mockImageProxyIdentifier), any());
+    verify(mockImageProxyApi).create(eq(mockImageProxy), eq(format), eq(height), eq(width), any());
   }
 }

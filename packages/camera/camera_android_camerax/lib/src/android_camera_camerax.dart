@@ -372,12 +372,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
       for (final PlaneProxy plane in planes) {
         cameraImagePlanes.add(CameraImagePlane(
-            bytes: await plane.getBuffer(),
-            bytesPerRow: await plane.getRowStride(),
-            bytesPerPixel: await plane.getPixelStride()));
+            bytes: plane.buffer,
+            bytesPerRow: plane.rowStride,
+            bytesPerPixel: plane.pixelStride));
       }
 
-      final int format = await imageProxy.getFormat();
+      final int format = imageProxy.format;
       final CameraImageFormat cameraImageFormat = CameraImageFormat(
           _imageFormatGroupFromPlatformData(format),
           raw: format);
@@ -385,9 +385,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       final CameraImageData cameraImageData = CameraImageData(
           format: cameraImageFormat,
           planes: cameraImagePlanes,
-          height: await imageProxy.getHeight(),
-          width: await imageProxy.getWidth());
-
+          height: imageProxy.height,
+          width: imageProxy.width);
       cameraImageDataStreamController?.add(cameraImageData);
       imageProxy.close();
     }

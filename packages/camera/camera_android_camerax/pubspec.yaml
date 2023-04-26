@@ -23,11 +23,6 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  meta: ^1.7.0
-  simple_ast:
-    git:
-      url: git@github.com:bparrishMines/penguin.git
-      path: packages/simple_ast
   stream_transform: ^2.1.0
 
 dev_dependencies:

@@ -19,73 +19,27 @@ import 'java_object.dart';
 class PlaneProxy extends JavaObject {
   /// Constructs a [PlaneProxy] that is not automatically attached to a native object.
   PlaneProxy.detached(
-      {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
+      {BinaryMessenger? binaryMessenger,
+      InstanceManager? instanceManager,
+      required this.buffer,
+      required this.pixelStride,
+      required this.rowStride})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
-    _api = _PlaneProxyHostApiImpl(
-        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  late final _PlaneProxyHostApiImpl _api;
-
   /// Returns the pixels buffer containing frame data.
-  Future<Uint8List> getBuffer() {
-    return _api.getBufferfromInstances(this);
-  }
+  final Uint8List buffer;
 
   /// Returns the pixel stride, the distance between adjacent pixel samples, in
   /// bytes.
-  Future<int> getPixelStride() {
-    return _api.getPixelStridefromInstances(this);
-  }
+  final int pixelStride;
 
   /// Returns the row stride, the distance between the start of two consecutive
   /// rows of pixels in the image, in bytes.
-  Future<int> getRowStride() {
-    return _api.getRowStridefromInstances(this);
-  }
-}
-
-/// Host API implementation of [PlaneProxy].
-class _PlaneProxyHostApiImpl extends PlaneProxyHostApi {
-  _PlaneProxyHostApiImpl({
-    this.binaryMessenger,
-    InstanceManager? instanceManager,
-  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
-        super(binaryMessenger: binaryMessenger);
-
-  final BinaryMessenger? binaryMessenger;
-
-  final InstanceManager instanceManager;
-
-  /// Returns the pixel stride of the [instance].
-  Future<int> getPixelStridefromInstances(
-    PlaneProxy instance,
-  ) {
-    return getPixelStride(
-      instanceManager.getIdentifier(instance)!,
-    );
-  }
-
-  /// Returns the pixels buffer of the [instance].
-  Future<Uint8List> getBufferfromInstances(
-    PlaneProxy instance,
-  ) {
-    return getBuffer(
-      instanceManager.getIdentifier(instance)!,
-    );
-  }
-
-  /// Returns the row stride of the [instance].
-  Future<int> getRowStridefromInstances(
-    PlaneProxy instance,
-  ) async {
-    return getRowStride(
-      instanceManager.getIdentifier(instance)!,
-    );
-  }
+  final int rowStride;
 }
 
 /// Flutter API implementation for [PlaneProxy].
@@ -113,17 +67,25 @@ class PlaneProxyFlutterApiImpl implements PlaneProxyFlutterApi {
   @override
   void create(
     int identifier,
+    Uint8List buffer,
+    int pixelStride,
+    int rowStride,
   ) {
     instanceManager.addHostCreatedInstance(
       PlaneProxy.detached(
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
+        buffer: buffer,
+        pixelStride: pixelStride,
+        rowStride: rowStride,
       ),
       identifier,
       onCopy: (PlaneProxy original) => PlaneProxy.detached(
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
-      ),
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+          buffer: buffer,
+          pixelStride: pixelStride,
+          rowStride: rowStride),
     );
   }
 }

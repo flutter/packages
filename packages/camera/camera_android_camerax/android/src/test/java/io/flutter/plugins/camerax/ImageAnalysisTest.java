@@ -87,7 +87,7 @@ public class ImageAnalysisTest {
 
     final ImageAnalysis.Analyzer mockAnalyzer = mock(ImageAnalysis.Analyzer.class);
     final long analyzerIdentifier = 10;
-    final long instanceIdentifier = 0;
+    final long instanceIdentifier = 94;
 
     instanceManager.addDartCreatedInstance(mockAnalyzer, analyzerIdentifier);
     instanceManager.addDartCreatedInstance(mockImageAnalysis, instanceIdentifier);
@@ -101,7 +101,7 @@ public class ImageAnalysisTest {
   public void clearAnalyzer_makesCallToClearAnalyzerOnExpectedImageAnalysisInstance() {
     final ImageAnalysisHostApiImpl hostApi =
         new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
-    final long instanceIdentifier = 0;
+    final long instanceIdentifier = 22;
 
     instanceManager.addDartCreatedInstance(mockImageAnalysis, instanceIdentifier);
 

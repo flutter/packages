@@ -5,9 +5,11 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageProxy;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageProxyHostApi;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +24,9 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
+  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
+
   /**
    * Constructs a {@link ImageProxyHostApiImpl}.
    *
@@ -31,6 +36,8 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
+    planeProxyFlutterApiImpl =
+    new PlaneProxyFlutterApiImpl(binaryMessenger, instanceManager);
   }
 
   /**
@@ -40,34 +47,20 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
   @Override
   public List<Long> getPlanes(@NonNull Long identifier) {
     ImageProxy.PlaneProxy[] planes = getImageProxyInstance(identifier).getPlanes();
-    PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl =
-        new PlaneProxyFlutterApiImpl(binaryMessenger, instanceManager);
     List<Long> planeIdentifiers = new ArrayList<Long>();
 
     for (ImageProxy.PlaneProxy plane : planes) {
-      planeProxyFlutterApiImpl.create(plane, reply -> {});
+      ByteBuffer byteBuffer = plane.getBuffer();
+      byte[] bytes = cameraXProxy.getBytesFromBuffer(byteBuffer.remaining());
+      byteBuffer.get(bytes, 0, bytes.length);
+      Long pixelStride = Long.valueOf(plane.getPixelStride());
+      Long rowStride = Long.valueOf(plane.getRowStride());
+
+      planeProxyFlutterApiImpl.create(plane, bytes, pixelStride, rowStride, reply -> {});
       planeIdentifiers.add(instanceManager.getIdentifierForStrongReference(plane));
     }
 
     return planeIdentifiers;
-  }
-
-  /** Returns the image format of the {@link ImageProxy} instance with the specified identifier. */
-  @Override
-  public Long getFormat(@NonNull Long identifier) {
-    return Long.valueOf(getImageProxyInstance(identifier).getFormat());
-  }
-
-  /** Returns the image height of the {@link ImageProxy} instance with the specified identifier. */
-  @Override
-  public Long getHeight(@NonNull Long identifier) {
-    return Long.valueOf(getImageProxyInstance(identifier).getHeight());
-  }
-
-  /** Returns the image width of the {@link ImageProxy} instance with the specified identifier. */
-  @Override
-  public Long getWidth(@NonNull Long identifier) {
-    return Long.valueOf(getImageProxyInstance(identifier).getWidth());
   }
 
   /**

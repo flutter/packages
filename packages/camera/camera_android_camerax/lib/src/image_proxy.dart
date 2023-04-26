@@ -19,7 +19,11 @@ import 'plane_proxy.dart';
 class ImageProxy extends JavaObject {
   /// Constructs a [ImageProxy] that is not automatically attached to a native object.
   ImageProxy.detached(
-      {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
+      {BinaryMessenger? binaryMessenger,
+      InstanceManager? instanceManager,
+      required this.format,
+      required this.height,
+      required this.width})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -28,19 +32,19 @@ class ImageProxy extends JavaObject {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
+  /// The image format.
+  final int format;
+
+  /// The image height.
+  final int height;
+
+  /// The image width.
+  final int width;
+
   late final _ImageProxyHostApiImpl _api;
 
   /// Returns the list of color planes of image data.
   Future<List<PlaneProxy>> getPlanes() => _api.getPlanesFromInstances(this);
-
-  /// Returns the image format.
-  Future<int> getFormat() => _api.getFormatFromInstances(this);
-
-  /// Returns the image height.
-  Future<int> getHeight() => _api.getHeightFromInstances(this);
-
-  /// Returns the image width.
-  Future<int> getWidth() => _api.getWidthFromInstances(this);
 
   /// Closes the underlying image.
   Future<void> close() => _api.closeFromInstances(this);
@@ -71,33 +75,6 @@ class _ImageProxyHostApiImpl extends ImageProxyHostApi {
       return instanceManager
           .getInstanceWithWeakReference<PlaneProxy>(planeIdentifier!)!;
     }).toList();
-  }
-
-  /// Returns the format of the image represented by the [instance].
-  Future<int> getFormatFromInstances(
-    ImageProxy instance,
-  ) {
-    return getFormat(
-      instanceManager.getIdentifier(instance)!,
-    );
-  }
-
-  /// Returns the height of the image represented by the [instance].
-  Future<int> getHeightFromInstances(
-    ImageProxy instance,
-  ) {
-    return getHeight(
-      instanceManager.getIdentifier(instance)!,
-    );
-  }
-
-  /// Returns the width of the image represented by the [instance].
-  Future<int> getWidthFromInstances(
-    ImageProxy instance,
-  ) {
-    return getWidth(
-      instanceManager.getIdentifier(instance)!,
-    );
   }
 
   /// Closes the underlying image of the [instance].
@@ -135,17 +112,25 @@ class ImageProxyFlutterApiImpl implements ImageProxyFlutterApi {
   @override
   void create(
     int identifier,
+    int format,
+    int height,
+    int width,
   ) {
     instanceManager.addHostCreatedInstance(
       ImageProxy.detached(
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
+        format: format,
+        height: height,
+        width: width,
       ),
       identifier,
       onCopy: (ImageProxy original) => ImageProxy.detached(
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
-      ),
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+          format: original.format,
+          height: original.height,
+          width: original.width),
     );
   }
 }

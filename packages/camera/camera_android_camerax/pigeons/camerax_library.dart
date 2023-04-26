@@ -177,30 +177,15 @@ abstract class AnalyzerFlutterApi {
 abstract class ImageProxyHostApi {
   List<int> getPlanes(int identifier);
 
-  int getFormat(int identifier);
-
-  int getHeight(int identifier);
-
-  int getWidth(int identifier);
-
   void close(int identifier);
 }
 
 @FlutterApi()
 abstract class ImageProxyFlutterApi {
-  void create(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestPlaneProxyHostApi')
-abstract class PlaneProxyHostApi {
-  int getPixelStride(int identifier);
-
-  Uint8List getBuffer(int identifier);
-
-  int getRowStride(int identifier);
+  void create(int identifier, int format, int height, int width);
 }
 
 @FlutterApi()
 abstract class PlaneProxyFlutterApi {
-  void create(int identifier);
+  void create(int identifier, Uint8List buffer, int pixelStride, int rowStride);
 }
