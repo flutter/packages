@@ -339,6 +339,9 @@ NS_INLINE UIViewController *rootViewController(void) {
   } else if (context == playbackBufferEmptyContext) {
     if (_eventSink != nil) {
       _eventSink(@{@"event" : @"bufferingStart"});
+      if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
+        _eventSink(@{@"event" : @"bufferingEnd"});
+      }
     }
   } else if (context == playbackBufferFullContext) {
     if (_eventSink != nil) {
