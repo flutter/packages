@@ -1,6 +1,6 @@
 ## 0.10.3+3
 
-* Allows recorded video fps and bitrate control.
+* Adds support to control video fps and bitrate.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
