@@ -27,6 +27,7 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
   public static class AnalyzerProxy {
 
     /** Creates an instance of {@link AnalyzerImpl}. */
+    @NonNull
     public AnalyzerImpl create(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
       return new AnalyzerImpl(binaryMessenger, instanceManager);
