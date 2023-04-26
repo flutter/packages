@@ -151,9 +151,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         _getTargetRotation(cameraDescription.sensorOrientation);
 
     final ResolutionInfo? previewTargetResolution =
-        null != mediaSettings?.resolutionPreset
-            ? _getTargetResolutionForPreview(mediaSettings!.resolutionPreset)
-            : null;
+        _getTargetResolutionForPreview(mediaSettings?.resolutionPreset);
 
     preview = createPreview(targetRotation, previewTargetResolution);
 
