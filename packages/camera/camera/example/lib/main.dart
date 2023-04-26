@@ -643,8 +643,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       // re-creates the controller.
       controller = null;
       await oldController.dispose();
+    } else {
+      return _initializeCameraController(cameraDescription);
     }
+  }
 
+  Future<void> _initializeCameraController(
+      CameraDescription cameraDescription) async {
     final CameraController cameraController = CameraController.withSettings(
       cameraDescription,
       mediaSettings: MediaSettings(
