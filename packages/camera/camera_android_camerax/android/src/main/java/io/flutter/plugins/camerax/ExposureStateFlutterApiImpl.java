@@ -39,10 +39,10 @@ public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
     final Double exposureCompensationStep =
         exposureState.getExposureCompensationStep().doubleValue();
 
-      create(
-          instanceManager.addHostCreatedInstance(exposureState),
-          exposureCompensationRangeAsExposureRange,
-          exposureCompensationStep,
-          reply);
+    create(
+        instanceManager.addHostCreatedInstance(exposureState),
+        exposureCompensationRangeAsExposureRange,
+        exposureCompensationStep,
+        reply);
   }
 }

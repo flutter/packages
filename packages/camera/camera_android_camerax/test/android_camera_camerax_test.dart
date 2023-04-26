@@ -10,11 +10,13 @@ import 'package:camera_android_camerax/src/camera.dart';
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camera_selector.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/image_capture.dart';
 import 'package:camera_android_camerax/src/preview.dart';
 import 'package:camera_android_camerax/src/process_camera_provider.dart';
 import 'package:camera_android_camerax/src/system_services.dart';
 import 'package:camera_android_camerax/src/use_case.dart';
+import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart' show DeviceOrientation;
 import 'package:flutter/widgets.dart';
@@ -23,18 +25,25 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'android_camera_camerax_test.mocks.dart';
+import 'test_camerax_library.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
   MockSpec<CameraSelector>(),
+  MockSpec<ExposureState>(),
   MockSpec<ImageCapture>(),
   MockSpec<Preview>(),
   MockSpec<ProcessCameraProvider>(),
+  MockSpec<TestInstanceManagerHostApi>(),
+  MockSpec<ZoomState>(),
 ])
 @GenerateMocks(<Type>[BuildContext])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   test('Should fetch CameraDescription instances for available cameras',
       () async {
@@ -151,6 +160,7 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
@@ -167,13 +177,17 @@ void main() {
             <UseCase>[camera.testPreview, camera.testImageCapture]))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
     when(mockCamera.getCameraInfo())
-        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
 
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
 
+    // Verify expected UseCases were bound.
     verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
         <UseCase>[camera.testPreview, camera.testImageCapture]));
+
+    // Verify the camera's CameraInfo instance got updated.
+    expect(camera.cameraInfo, equals(mockCameraInfo));
   });
 
   test(
@@ -341,6 +355,7 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
@@ -352,12 +367,13 @@ void main() {
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
     when(mockCamera.getCameraInfo())
-        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
 
     await camera.resumePreview(78);
 
     verifyNever(camera.processCameraProvider!
         .bindToLifecycle(camera.cameraSelector!, <UseCase>[camera.preview!]));
+    expect(camera.cameraInfo, isNot(mockCameraInfo));
   });
 
   test('resumePreview binds preview to lifecycle if not already bound',
@@ -366,6 +382,7 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
@@ -374,12 +391,13 @@ void main() {
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
     when(mockCamera.getCameraInfo())
-        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
 
     await camera.resumePreview(78);
 
     verify(camera.processCameraProvider!
         .bindToLifecycle(camera.cameraSelector!, <UseCase>[camera.preview!]));
+    expect(camera.cameraInfo, equals(mockCameraInfo));
   });
 
   test(
@@ -424,6 +442,7 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int textureId = 75;
 
     camera.processCameraProvider = mockProcessCameraProvider;
@@ -433,7 +452,7 @@ void main() {
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
     when(mockCamera.getCameraInfo())
-        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
 
     final FutureBuilder<void> previewWidget =
         camera.buildPreview(textureId) as FutureBuilder<void>;
@@ -460,6 +479,87 @@ void main() {
     final XFile imageFile = await camera.takePicture(3);
 
     expect(imageFile.path, equals(testPicturePath));
+  });
+
+  test('getMinExposureOffset returns expected exposure offset', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final ExposureState exposureState = ExposureState.detached(
+        exposureCompensationRange:
+            ExposureRange(minCompensation: 3, maxCompensation: 4),
+        exposureCompensationStep: 0.2);
+
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCameraInfo.getExposureState())
+        .thenAnswer((_) async => exposureState);
+
+    // We expect the minimum exposure to be the minimum exposure compensation * exposure compensation step.
+    expect(
+        double.parse(
+            (await camera.getMinExposureOffset(35)).toStringAsFixed(1)),
+        0.6);
+  });
+
+  test('getMaxExposureOffset returns expected exposure offset', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final ExposureState exposureState = ExposureState.detached(
+        exposureCompensationRange:
+            ExposureRange(minCompensation: 3, maxCompensation: 4),
+        exposureCompensationStep: 0.2);
+
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCameraInfo.getExposureState())
+        .thenAnswer((_) async => exposureState);
+
+    // We expect the maximum exposure to be the maximum exposure compensation * exposure compensation step.
+    expect(await camera.getMaxExposureOffset(35), 0.8);
+  });
+
+  test('getExposureOffsetStepSize returns expected exposure offset', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final ExposureState exposureState = ExposureState.detached(
+        exposureCompensationRange:
+            ExposureRange(minCompensation: 3, maxCompensation: 4),
+        exposureCompensationStep: 0.2);
+
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCameraInfo.getExposureState())
+        .thenAnswer((_) async => exposureState);
+
+    expect(await camera.getExposureOffsetStepSize(55), 0.2);
+  });
+
+  test('getMaxZoomLevel returns expected exposure offset', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    const double maxZoomRatio = 1;
+    final ZoomState zoomState =
+        ZoomState.detached(maxZoomRatio: maxZoomRatio, minZoomRatio: 0);
+
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCameraInfo.getZoomState()).thenAnswer((_) async => zoomState);
+
+    expect(await camera.getMaxZoomLevel(55), maxZoomRatio);
+  });
+
+  test('getMinZoomLevel returns expected exposure offset', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    const double minZoomRatio = 0;
+    final ZoomState zoomState =
+        ZoomState.detached(maxZoomRatio: 1, minZoomRatio: minZoomRatio);
+
+    camera.cameraInfo = mockCameraInfo;
+
+    when(mockCameraInfo.getZoomState()).thenAnswer((_) async => zoomState);
+
+    expect(await camera.getMinZoomLevel(55), minZoomRatio);
   });
 }
 

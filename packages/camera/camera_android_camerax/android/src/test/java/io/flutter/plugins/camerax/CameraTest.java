@@ -9,8 +9,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraInfo;
@@ -44,7 +44,8 @@ public class CameraTest {
 
   @Test
   public void getCameraInfo_retrievesExpectedCameraInfoInstance() {
-    final CameraHostApiImpl cameraHostApiImpl = new CameraHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final CameraHostApiImpl cameraHostApiImpl =
+        new CameraHostApiImpl(mockBinaryMessenger, testInstanceManager);
     final CameraInfo mockCameraInfo = mock(CameraInfo.class);
     final Long cameraIdentifier = 34L;
     final Long mockCameraInfoIdentifier = 97L;

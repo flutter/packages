@@ -7,19 +7,14 @@ package io.flutter.plugins.camerax;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import androidx.camera.core.Camera;
-import androidx.camera.core.CameraInfo;
-import androidx.camera.core.ExposureState;
-import androidx.camera.core.ZoomState;
 import android.util.Range;
 import android.util.Rational;
+import androidx.camera.core.ExposureState;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.ExposureStateFlutterApiImpl;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureRange;
 import java.util.Objects;
 import org.junit.After;
@@ -36,45 +31,50 @@ import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 public class ExposureStateTest {
-    @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    @Mock public BinaryMessenger mockBinaryMessenger;
-    @Mock public ExposureState mockExposureState;
-  
-    InstanceManager testInstanceManager;
-  
-    @Before
-    public void setUp() {
-      testInstanceManager = InstanceManager.create(identifier -> {});
-    }
-  
-    @After
-    public void tearDown() {
-      testInstanceManager.stopFinalizationListener();
-    }
+  @Mock public BinaryMessenger mockBinaryMessenger;
+  @Mock public ExposureState mockExposureState;
 
-    @Config(sdk = 21)
-    @Test
-    public void create_makesExpectedCallToCreateInstanceOnDartSide() {
-        ExposureStateFlutterApiImpl exposureStateFlutterApiImpl = spy(new ExposureStateFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
-        final int minExposureCompensation  = 0;
-        final int maxExposureCompensation = 1;
-        Range<Integer> testExposueCompensationRange = new Range<Integer>(minExposureCompensation, maxExposureCompensation);
-        Rational textExposureCompensationStep = new Rational(1, 5); // Makes expected Double value 0.2.
+  InstanceManager testInstanceManager;
 
-        when(mockExposureState.getExposureCompensationRange()).thenReturn(testExposueCompensationRange);
-        when(mockExposureState.getExposureCompensationStep()).thenReturn(textExposureCompensationStep);
+  @Before
+  public void setUp() {
+    testInstanceManager = InstanceManager.create(identifier -> {});
+  }
 
-        final ArgumentCaptor<ExposureRange> exposureRangeCaptor = ArgumentCaptor.forClass(ExposureRange.class);
+  @After
+  public void tearDown() {
+    testInstanceManager.stopFinalizationListener();
+  }
 
-        exposureStateFlutterApiImpl.create(mockExposureState, reply -> {});
+  @Config(sdk = 21)
+  @Test
+  public void create_makesExpectedCallToCreateInstanceOnDartSide() {
+    ExposureStateFlutterApiImpl exposureStateFlutterApiImpl =
+        spy(new ExposureStateFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
+    final int minExposureCompensation = 0;
+    final int maxExposureCompensation = 1;
+    Range<Integer> testExposueCompensationRange =
+        new Range<Integer>(minExposureCompensation, maxExposureCompensation);
+    Rational textExposureCompensationStep = new Rational(1, 5); // Makes expected Double value 0.2.
 
-        final long identifier =
-        Objects.requireNonNull(testInstanceManager.getIdentifierForStrongReference(mockExposureState));
-        verify(exposureStateFlutterApiImpl).create(eq(identifier), exposureRangeCaptor.capture(), eq(0.2), any());
+    when(mockExposureState.getExposureCompensationRange()).thenReturn(testExposueCompensationRange);
+    when(mockExposureState.getExposureCompensationStep()).thenReturn(textExposureCompensationStep);
 
-        ExposureRange exposureRange = exposureRangeCaptor.getValue();
-        assertEquals(exposureRange.getMinCompensation().intValue(), minExposureCompensation);
-        assertEquals(exposureRange.getMaxCompensation().intValue(), maxExposureCompensation);
-    }    
+    final ArgumentCaptor<ExposureRange> exposureRangeCaptor =
+        ArgumentCaptor.forClass(ExposureRange.class);
+
+    exposureStateFlutterApiImpl.create(mockExposureState, reply -> {});
+
+    final long identifier =
+        Objects.requireNonNull(
+            testInstanceManager.getIdentifierForStrongReference(mockExposureState));
+    verify(exposureStateFlutterApiImpl)
+        .create(eq(identifier), exposureRangeCaptor.capture(), eq(0.2), any());
+
+    ExposureRange exposureRange = exposureRangeCaptor.getValue();
+    assertEquals(exposureRange.getMinCompensation().intValue(), minExposureCompensation);
+    assertEquals(exposureRange.getMaxCompensation().intValue(), maxExposureCompensation);
+  }
 }

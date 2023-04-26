@@ -4,20 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import androidx.camera.core.Camera;
-import androidx.camera.core.CameraInfo;
-import androidx.camera.core.ExposureState;
 import androidx.camera.core.ZoomState;
-import android.util.Range;
-import android.util.Rational;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
 import org.junit.After;
@@ -29,37 +22,42 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 public class ZoomStateTest {
-    @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    @Mock public BinaryMessenger mockBinaryMessenger;
-    @Mock public ZoomState mockZoomState;
-  
-    InstanceManager testInstanceManager;
-  
-    @Before
-    public void setUp() {
-      testInstanceManager = InstanceManager.create(identifier -> {});
-    }
-  
-    @After
-    public void tearDown() {
-      testInstanceManager.stopFinalizationListener();
-    }
-    
+  @Mock public BinaryMessenger mockBinaryMessenger;
+  @Mock public ZoomState mockZoomState;
 
-    @Test
-    public void create_makesExpectedCallToCreateInstanceOnDartSide() {
-      ZoomStateFlutterApiImpl zoomStateFlutterApiImpl = spy(new ZoomStateFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
-      final Float testMinZoomRatio = 0F;
-      final Float testMaxZoomRatio = 1F;
+  InstanceManager testInstanceManager;
 
-      when(mockZoomState.getMinZoomRatio()).thenReturn(testMinZoomRatio);
-      when(mockZoomState.getMaxZoomRatio()).thenReturn(testMaxZoomRatio);
+  @Before
+  public void setUp() {
+    testInstanceManager = InstanceManager.create(identifier -> {});
+  }
 
-      zoomStateFlutterApiImpl.create(mockZoomState, reply -> {});
+  @After
+  public void tearDown() {
+    testInstanceManager.stopFinalizationListener();
+  }
 
-      final long identifier =
-      Objects.requireNonNull(testInstanceManager.getIdentifierForStrongReference(mockZoomState));
-      verify(zoomStateFlutterApiImpl).create(eq(identifier), eq(testMinZoomRatio.doubleValue()), eq(testMaxZoomRatio.doubleValue()), any());
-    }  
+  @Test
+  public void create_makesExpectedCallToCreateInstanceOnDartSide() {
+    ZoomStateFlutterApiImpl zoomStateFlutterApiImpl =
+        spy(new ZoomStateFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
+    final Float testMinZoomRatio = 0F;
+    final Float testMaxZoomRatio = 1F;
+
+    when(mockZoomState.getMinZoomRatio()).thenReturn(testMinZoomRatio);
+    when(mockZoomState.getMaxZoomRatio()).thenReturn(testMaxZoomRatio);
+
+    zoomStateFlutterApiImpl.create(mockZoomState, reply -> {});
+
+    final long identifier =
+        Objects.requireNonNull(testInstanceManager.getIdentifierForStrongReference(mockZoomState));
+    verify(zoomStateFlutterApiImpl)
+        .create(
+            eq(identifier),
+            eq(testMinZoomRatio.doubleValue()),
+            eq(testMaxZoomRatio.doubleValue()),
+            any());
+  }
 }
