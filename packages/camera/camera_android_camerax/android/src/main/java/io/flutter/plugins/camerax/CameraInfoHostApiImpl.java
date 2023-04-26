@@ -16,12 +16,13 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  public CameraInfoHostApiImpl(BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+  public CameraInfoHostApiImpl(@NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
   }
 
   @Override
+  @NonNull
   public Long getSensorRotationDegrees(@NonNull Long identifier) {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
@@ -32,6 +33,7 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
    * Retrieves the {@link ExposureState} of the {@link CameraInfo} with the specified identifier.
    */
   @Override
+  @NonNull
   public Long getExposureState(@NonNull Long identifier) {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
@@ -48,6 +50,7 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
    * Retrieves the current {@link ZoomState} value of the {@link CameraInfo} with the specified
    * identifier.
    */
+  @NonNull
   @Override
   public Long getZoomState(@NonNull Long identifier) {
     CameraInfo cameraInfo =

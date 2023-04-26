@@ -15,7 +15,7 @@ public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
   private final InstanceManager instanceManager;
 
   public ExposureStateFlutterApiImpl(
-      BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     super(binaryMessenger);
     this.instanceManager = instanceManager;
   }
