@@ -101,7 +101,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     if (!_validateNamespace(package, contents, isExample: false)) {
       succeeded = false;
     }
-    if (!_validateSourceCompatibilityVersion(lines)) {
+    if (!_validateCompatibilityVersions(lines)) {
       succeeded = false;
     }
     if (!_validateGradleDrivenLintConfig(package, lines)) {
@@ -204,18 +204,27 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
   /// Checks for a source compatibiltiy version, so that it's explicit rather
   /// than using whatever the client's local toolchaing defaults to (which can
   /// lead to compile errors that show up for clients, but not in CI).
-  bool _validateSourceCompatibilityVersion(List<String> gradleLines) {
-    if (!gradleLines.any((String line) =>
-            line.contains('languageVersion') && !_isCommented(line)) &&
-        !gradleLines.any((String line) =>
-            line.contains('sourceCompatibility') && !_isCommented(line))) {
+  bool _validateCompatibilityVersions(List<String> gradleLines) {
+    final bool hasLanguageVersion = gradleLines.any((String line) =>
+        line.contains('languageVersion') && !_isCommented(line));
+    final bool hasCompabilityVersions = gradleLines.any((String line) =>
+            line.contains('sourceCompatibility') && !_isCommented(line)) &&
+        // Newer toolchains default targetCompatibility to the same value as
+        // sourceCompatibility, but older toolchains require it to be set
+        // explicitly. The exact version cutoff (and of which piece of the
+        // toolchain; likely AGP) is unknown; for context see
+        // https://github.com/flutter/flutter/issues/125482
+        gradleLines.any((String line) =>
+            line.contains('targetCompatibility') && !_isCommented(line));
+    if (!hasLanguageVersion && !hasCompabilityVersions) {
       const String errorMessage = '''
 build.gradle must set an explicit Java compatibility version.
 
-This can be done either via "sourceCompatibility":
+This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
         }
     }
 

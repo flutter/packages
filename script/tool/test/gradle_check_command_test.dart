@@ -38,6 +38,7 @@ void main() {
     RepositoryPackage package, {
     bool includeLanguageVersion = false,
     bool includeSourceCompat = false,
+    bool includeTargetCompat = false,
     bool commentSourceLanguage = false,
     bool includeNamespace = true,
     bool commentNamespace = false,
@@ -64,11 +65,10 @@ java {
 }
 
 ''';
-    final String compileOptionsSection = '''
-    compileOptions {
-        ${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8
-    }
-''';
+    final String sourceCompat =
+        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility JavaVersion.VERSION_1_8';
+    final String targetCompat =
+        '${commentSourceLanguage ? '// ' : ''}targetCompatibility JavaVersion.VERSION_1_8';
     final String namespace =
         "${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
 
@@ -94,7 +94,10 @@ android {
         minSdkVersion 30
     }
 ${warningsConfigured ? warningConfig : ''}
-${includeSourceCompat ? compileOptionsSection : ''}
+    compileOptions {
+        ${includeSourceCompat ? sourceCompat : ''}
+        ${includeTargetCompat ? targetCompat : ''}
+    }
     testOptions {
         unitTests.includeAndroidResources = true
     }
@@ -280,10 +283,36 @@ dependencies {
     );
   });
 
-  test('passes when sourceCompatibility is specified', () async {
+  test(
+      'fails when sourceCompatibility is provided with out targetCompatibility',
+      () async {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakePluginBuildGradle(package, includeSourceCompat: true);
+    writeFakeManifest(package);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+            'build.gradle must set an explicit Java compatibility version.'),
+      ]),
+    );
+  });
+
+  test('passes when sourceCompatibility and targetCompatibility are specified',
+      () async {
+    final RepositoryPackage package =
+        createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
+    writeFakePluginBuildGradle(package,
+        includeSourceCompat: true, includeTargetCompat: true);
     writeFakeManifest(package);
 
     final List<String> output =
@@ -339,7 +368,9 @@ dependencies {
     final RepositoryPackage package =
         createFakePlugin('a_plugin', packagesDir, examples: <String>[]);
     writeFakePluginBuildGradle(package,
-        includeSourceCompat: true, commentSourceLanguage: true);
+        includeSourceCompat: true,
+        includeTargetCompat: true,
+        commentSourceLanguage: true);
     writeFakeManifest(package);
 
     Error? commandError;
