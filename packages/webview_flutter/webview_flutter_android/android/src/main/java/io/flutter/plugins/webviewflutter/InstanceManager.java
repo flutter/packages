@@ -146,8 +146,7 @@ public class InstanceManager {
 
     if (containsInstance(instance)) {
       throw new IllegalArgumentException(
-        "Instance of " + instance.getClass() + " has already been added."
-      );
+          "Instance of " + instance.getClass() + " has already been added.");
     }
     final long identifier = nextIdentifier++;
     addInstance(instance, identifier);

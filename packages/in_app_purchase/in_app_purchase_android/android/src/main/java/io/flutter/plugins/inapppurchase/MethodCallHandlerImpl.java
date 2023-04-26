@@ -232,9 +232,9 @@ class MethodCallHandlerImpl
     if (skuDetails == null) {
       result.error(
           "NOT_FOUND",
-          "Details for sku " +
-              sku +
-              " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
+          "Details for sku "
+              + sku
+              + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
               + LOAD_SKU_DOC_URL,
           null);
       return;
@@ -250,7 +250,8 @@ class MethodCallHandlerImpl
     } else if (oldSku != null && !cachedSkus.containsKey(oldSku)) {
       result.error(
           "IN_APP_PURCHASE_INVALID_OLD_SKU",
-          "Details for sku " + oldSku
+          "Details for sku "
+              + oldSku
               + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
               + LOAD_SKU_DOC_URL,
           null);
@@ -448,7 +449,8 @@ class MethodCallHandlerImpl
     if (skuDetails == null) {
       result.error(
           "NOT_FOUND",
-          "Details for sku " + sku
+          "Details for sku "
+              + sku
               + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
               + LOAD_SKU_DOC_URL,
           null);
