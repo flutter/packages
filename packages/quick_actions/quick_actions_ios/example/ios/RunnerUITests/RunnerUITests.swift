@@ -4,10 +4,11 @@
 
 import XCTest
 
-private let elementWaitingTime: TimeInterval = 30
+private let elementWaitingTime: TimeInterval = 5
 private let quickActionPressDuration: TimeInterval = 1.5
+private let pressDurationRetryAdjustment: TimeInterval = 0.2
 // Max number of tries to open the quick action menu if failed.
-private let quickActionMaxRetries: Int = 3;
+private let quickActionMaxRetries: Int = 4;
 
 class RunnerUITests: XCTestCase {
 
@@ -28,29 +29,8 @@ class RunnerUITests: XCTestCase {
   func testQuickActionWithFreshStart() {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let quickActionsAppIcon = springboard.icons["quick_actions_example"]
-    if !quickActionsAppIcon.waitForExistence(timeout: elementWaitingTime) {
-      XCTFail(
-        "Failed due to not able to find the example app from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
-      )
-    }
 
-    var actionTwo: XCUIElement?
-    for _ in 1...quickActionMaxRetries {
-      quickActionsAppIcon.press(forDuration: quickActionPressDuration)
-      actionTwo = springboard.buttons["Action two"]
-      if actionTwo!.waitForExistence(timeout: elementWaitingTime) {
-        break
-      }
-      // Reset to previous state.
-      XCUIDevice.shared.press(XCUIDevice.Button.home)
-    }
-    if (!actionTwo!.exists) {
-      XCTFail(
-        "Failed due to not able to find the actionTwo button from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
-      )
-    }
-
-    actionTwo!.tap()
+    findAndTapQuickActionButton(buttonName: "Action two", quickActionsAppIcon: quickActionsAppIcon, springboard: springboard);
 
     let actionTwoConfirmation = exampleApp.otherElements["action_two"]
     if !actionTwoConfirmation.waitForExistence(timeout: elementWaitingTime) {
@@ -83,23 +63,7 @@ class RunnerUITests: XCTestCase {
       )
     }
 
-    var actionOne: XCUIElement?
-    for _ in 1...quickActionMaxRetries {
-      quickActionsAppIcon.press(forDuration: quickActionPressDuration)
-      actionOne = springboard.buttons["Action one"]
-      if actionOne!.waitForExistence(timeout: elementWaitingTime) {
-        break
-      }
-      // Reset to previous state.
-      XCUIDevice.shared.press(XCUIDevice.Button.home)
-    }
-    if (!actionOne!.exists) {
-      XCTFail(
-        "Failed due to not able to find the actionOne button from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
-      )
-    }
-
-    actionOne!.tap()
+    findAndTapQuickActionButton(buttonName: "Action one", quickActionsAppIcon: quickActionsAppIcon, springboard: springboard);
 
     let actionOneConfirmation = exampleApp.otherElements["action_one"]
     if !actionOneConfirmation.waitForExistence(timeout: elementWaitingTime) {
@@ -109,5 +73,40 @@ class RunnerUITests: XCTestCase {
     }
 
     XCTAssert(actionOneConfirmation.exists)
+  }
+
+  private func findAndTapQuickActionButton(buttonName: String, quickActionsAppIcon: XCUIElement, springboard: XCUIElement) {
+    var actionButton: XCUIElement?
+    var pressDuration = quickActionPressDuration
+    for _ in 1...quickActionMaxRetries {
+      if !quickActionsAppIcon.waitForExistence(timeout: elementWaitingTime) {
+        XCTFail(
+          "Failed due to not able to find the example app from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
+        )
+      }
+      quickActionsAppIcon.press(forDuration: pressDuration)
+      actionButton = springboard.buttons[buttonName]
+      if actionButton!.waitForExistence(timeout: elementWaitingTime) {
+        // find the button, exit the retry loop.
+        break
+      }
+      let deleteButton = springboard.buttons["DeleteButton"]
+      if deleteButton.waitForExistence(timeout: elementWaitingTime) {
+        // Found delete button instead, we pressed too long, reduce the press time.
+        pressDuration -= pressDurationRetryAdjustment
+      } else {
+        // Neither action button nor delete button was found, we need a longer press.
+        pressDuration += pressDurationRetryAdjustment
+      }
+      // Reset to previous state.
+      XCUIDevice.shared.press(XCUIDevice.Button.home)
+    }
+    if (!actionButton!.exists) {
+      XCTFail(
+        "Failed due to not able to find the \(buttonName) button from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
+      )
+    }
+
+    actionButton!.tap();
   }
 }
