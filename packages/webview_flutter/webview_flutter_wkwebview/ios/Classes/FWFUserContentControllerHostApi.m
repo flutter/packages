@@ -70,7 +70,7 @@
                                       userScript:(nonnull FWFWKUserScriptData *)userScript
                                            error:(FlutterError *_Nullable *_Nonnull)error {
   [[self userContentControllerForIdentifier:identifier]
-      addUserScript:FWFWKUserScriptFromScriptData(userScript)];
+      addUserScript:FWFNativeWKUserScriptFromScriptData(userScript)];
 }
 
 - (void)removeAllUserScriptsForControllerWithIdentifier:(nonnull NSNumber *)identifier

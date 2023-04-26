@@ -4,9 +4,11 @@
 
 package io.flutter.plugins.camera.features.zoomlevel;
 
+import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.hardware.camera2.CaptureRequest;
 import android.os.Build;
+import androidx.annotation.NonNull;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
 
@@ -15,16 +17,16 @@ public class ZoomLevelFeature extends CameraFeature<Float> {
   private static final Float DEFAULT_ZOOM_LEVEL = 1.0f;
   private final boolean hasSupport;
   private final Rect sensorArraySize;
-  private Float currentSetting = DEFAULT_ZOOM_LEVEL;
+  @NonNull private Float currentSetting = DEFAULT_ZOOM_LEVEL;
   private Float minimumZoomLevel = currentSetting;
-  private Float maximumZoomLevel;
+  private final Float maximumZoomLevel;
 
   /**
    * Creates a new instance of the {@link ZoomLevelFeature}.
    *
    * @param cameraProperties Collection of characteristics for the current camera device.
    */
-  public ZoomLevelFeature(CameraProperties cameraProperties) {
+  public ZoomLevelFeature(@NonNull CameraProperties cameraProperties) {
     super(cameraProperties);
 
     sensorArraySize = cameraProperties.getSensorInfoActiveArraySize();
@@ -50,18 +52,21 @@ public class ZoomLevelFeature extends CameraFeature<Float> {
     hasSupport = (Float.compare(maximumZoomLevel, minimumZoomLevel) > 0);
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "ZoomLevelFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @NonNull
   @Override
   public Float getValue() {
     return currentSetting;
   }
 
   @Override
-  public void setValue(Float value) {
+  public void setValue(@NonNull Float value) {
     currentSetting = value;
   }
 
@@ -71,7 +76,7 @@ public class ZoomLevelFeature extends CameraFeature<Float> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     if (!checkIsSupported()) {
       return;
     }

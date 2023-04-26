@@ -138,6 +138,49 @@ enum WKNavigationType {
   other,
 }
 
+/// Possible permission decisions for device resource access.
+///
+/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision?language=objc.
+enum WKPermissionDecision {
+  /// Deny permission for the requested resource.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiondeny?language=objc.
+  deny,
+
+  /// Deny permission for the requested resource.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiongrant?language=objc.
+  grant,
+
+  /// Prompt the user for permission for the requested resource.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisionprompt?language=objc.
+  prompt,
+}
+
+/// List of the types of media devices that can capture audio, video, or both.
+///
+/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype?language=objc.
+enum WKMediaCaptureType {
+  /// A media device that can capture video.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecamera?language=objc.
+  camera,
+
+  /// A media device or devices that can capture audio and video.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecameraandmicrophone?language=objc.
+  cameraAndMicrophone,
+
+  /// A media device that can capture audio.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
+  microphone,
+
+  /// An unknown media device.
+  unknown,
+}
+
 class NSKeyValueObservingOptionsEnumData {
   NSKeyValueObservingOptionsEnumData({
     required this.value,
@@ -281,6 +324,48 @@ class NSHttpCookiePropertyKeyEnumData {
     result as List<Object?>;
     return NSHttpCookiePropertyKeyEnumData(
       value: NSHttpCookiePropertyKeyEnum.values[result[0]! as int],
+    );
+  }
+}
+
+class WKPermissionDecisionData {
+  WKPermissionDecisionData({
+    required this.value,
+  });
+
+  WKPermissionDecision value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static WKPermissionDecisionData decode(Object result) {
+    result as List<Object?>;
+    return WKPermissionDecisionData(
+      value: WKPermissionDecision.values[result[0]! as int],
+    );
+  }
+}
+
+class WKMediaCaptureTypeData {
+  WKMediaCaptureTypeData({
+    required this.value,
+  });
+
+  WKMediaCaptureType value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static WKMediaCaptureTypeData decode(Object result) {
+    result as List<Object?>;
+    return WKMediaCaptureTypeData(
+      value: WKMediaCaptureType.values[result[0]! as int],
     );
   }
 }
@@ -479,6 +564,40 @@ class WKScriptMessageData {
     return WKScriptMessageData(
       name: result[0]! as String,
       body: result[1] as Object?,
+    );
+  }
+}
+
+/// Mirror of WKSecurityOrigin.
+///
+/// See https://developer.apple.com/documentation/webkit/wksecurityorigin?language=objc.
+class WKSecurityOriginData {
+  WKSecurityOriginData({
+    required this.host,
+    required this.port,
+    required this.protocol,
+  });
+
+  String host;
+
+  int port;
+
+  String protocol;
+
+  Object encode() {
+    return <Object?>[
+      host,
+      port,
+      protocol,
+    ];
+  }
+
+  static WKSecurityOriginData decode(Object result) {
+    result as List<Object?>;
+    return WKSecurityOriginData(
+      host: result[0]! as String,
+      port: result[1]! as int,
+      protocol: result[2]! as String,
     );
   }
 }
@@ -1858,23 +1977,32 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
     } else if (value is WKFrameInfoData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKMediaCaptureTypeData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKPermissionDecisionData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is WKWebsiteDataTypeEnumData) {
+    } else if (value is WKSecurityOriginData) {
       buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptData) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
+      buffer.putUint8(144);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(145);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1903,16 +2031,22 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
       case 136:
         return WKFrameInfoData.decode(readValue(buffer)!);
       case 137:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKMediaCaptureTypeData.decode(readValue(buffer)!);
       case 138:
-        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+        return WKNavigationActionData.decode(readValue(buffer)!);
       case 139:
-        return WKScriptMessageData.decode(readValue(buffer)!);
+        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       case 140:
-        return WKUserScriptData.decode(readValue(buffer)!);
+        return WKPermissionDecisionData.decode(readValue(buffer)!);
       case 141:
-        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+        return WKScriptMessageData.decode(readValue(buffer)!);
       case 142:
+        return WKSecurityOriginData.decode(readValue(buffer)!);
+      case 143:
+        return WKUserScriptData.decode(readValue(buffer)!);
+      case 144:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 145:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2407,8 +2541,17 @@ class _WKUIDelegateFlutterApiCodec extends StandardMessageCodec {
     } else if (value is WKFrameInfoData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKMediaCaptureTypeData) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is WKNavigationActionData) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is WKPermissionDecisionData) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is WKSecurityOriginData) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2423,7 +2566,13 @@ class _WKUIDelegateFlutterApiCodec extends StandardMessageCodec {
       case 129:
         return WKFrameInfoData.decode(readValue(buffer)!);
       case 130:
+        return WKMediaCaptureTypeData.decode(readValue(buffer)!);
+      case 131:
         return WKNavigationActionData.decode(readValue(buffer)!);
+      case 132:
+        return WKPermissionDecisionData.decode(readValue(buffer)!);
+      case 133:
+        return WKSecurityOriginData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2438,6 +2587,14 @@ abstract class WKUIDelegateFlutterApi {
 
   void onCreateWebView(int identifier, int webViewIdentifier,
       int configurationIdentifier, WKNavigationActionData navigationAction);
+
+  /// Callback to Dart function `WKUIDelegate.requestMediaCapturePermission`.
+  Future<WKPermissionDecisionData> requestMediaCapturePermission(
+      int identifier,
+      int webViewIdentifier,
+      WKSecurityOriginData origin,
+      WKFrameInfoData frame,
+      WKMediaCaptureTypeData type);
 
   static void setup(WKUIDelegateFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -2468,6 +2625,42 @@ abstract class WKUIDelegateFlutterApi {
           api.onCreateWebView(arg_identifier!, arg_webViewIdentifier!,
               arg_configurationIdentifier!, arg_navigationAction!);
           return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WKUIDelegateFlutterApi.requestMediaCapturePermission',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WKUIDelegateFlutterApi.requestMediaCapturePermission was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null int.');
+          final int? arg_webViewIdentifier = (args[1] as int?);
+          assert(arg_webViewIdentifier != null,
+              'Argument for dev.flutter.pigeon.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null int.');
+          final WKSecurityOriginData? arg_origin =
+              (args[2] as WKSecurityOriginData?);
+          assert(arg_origin != null,
+              'Argument for dev.flutter.pigeon.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null WKSecurityOriginData.');
+          final WKFrameInfoData? arg_frame = (args[3] as WKFrameInfoData?);
+          assert(arg_frame != null,
+              'Argument for dev.flutter.pigeon.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null WKFrameInfoData.');
+          final WKMediaCaptureTypeData? arg_type =
+              (args[4] as WKMediaCaptureTypeData?);
+          assert(arg_type != null,
+              'Argument for dev.flutter.pigeon.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null WKMediaCaptureTypeData.');
+          final WKPermissionDecisionData output =
+              await api.requestMediaCapturePermission(arg_identifier!,
+                  arg_webViewIdentifier!, arg_origin!, arg_frame!, arg_type!);
+          return output;
         });
       }
     }

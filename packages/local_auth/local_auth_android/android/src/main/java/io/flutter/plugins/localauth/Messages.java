@@ -538,6 +538,55 @@ public class Messages {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class AuthClassificationWrapper {
+    private @NonNull AuthClassification value;
+
+    public @NonNull AuthClassification getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull AuthClassification setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AuthClassificationWrapper() {}
+
+    public static final class Builder {
+
+      private @Nullable AuthClassification value;
+
+      public @NonNull Builder setValue(@NonNull AuthClassification setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull AuthClassificationWrapper build() {
+        AuthClassificationWrapper pigeonReturn = new AuthClassificationWrapper();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(value == null ? null : value.index);
+      return toListResult;
+    }
+
+    static @NonNull AuthClassificationWrapper fromList(@NonNull ArrayList<Object> list) {
+      AuthClassificationWrapper pigeonResult = new AuthClassificationWrapper();
+      Object value = list.get(0);
+      pigeonResult.setValue(value == null ? null : AuthClassification.values()[(int) value]);
+      return pigeonResult;
+    }
+  }
+
   public interface Result<T> {
     @SuppressWarnings("UnknownNullness")
     void success(T result);
@@ -554,10 +603,12 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return AuthOptions.fromList((ArrayList<Object>) readValue(buffer));
+          return AuthClassificationWrapper.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return AuthResultWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AuthOptions.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
+          return AuthResultWrapper.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
           return AuthStrings.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -566,14 +617,17 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof AuthOptions) {
+      if (value instanceof AuthClassificationWrapper) {
         stream.write(128);
+        writeValue(stream, ((AuthClassificationWrapper) value).toList());
+      } else if (value instanceof AuthOptions) {
+        stream.write(129);
         writeValue(stream, ((AuthOptions) value).toList());
       } else if (value instanceof AuthResultWrapper) {
-        stream.write(129);
+        stream.write(130);
         writeValue(stream, ((AuthResultWrapper) value).toList());
       } else if (value instanceof AuthStrings) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((AuthStrings) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -603,7 +657,7 @@ public class Messages {
      * Returns the biometric types that are enrolled, and can thus be used without additional setup.
      */
     @NonNull
-    List<AuthClassification> getEnrolledBiometrics();
+    List<AuthClassificationWrapper> getEnrolledBiometrics();
     /**
      * Attempts to authenticate the user with the provided [options], and using [strings] for any
      * UI.
@@ -695,7 +749,7 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
-                  List<AuthClassification> output = api.getEnrolledBiometrics();
+                  List<AuthClassificationWrapper> output = api.getEnrolledBiometrics();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

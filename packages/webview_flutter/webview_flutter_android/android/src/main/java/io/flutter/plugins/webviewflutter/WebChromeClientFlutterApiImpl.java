@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
+import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
@@ -68,6 +69,24 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(fileChooserParams)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onPermissionRequest` on the Dart object
+   * representing `instance`.
+   */
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  public void onPermissionRequest(
+      @NonNull WebChromeClient instance,
+      @NonNull PermissionRequest request,
+      @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    new PermissionRequestFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(request, request.getResources(), reply -> {});
+
+    super.onPermissionRequest(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(request)),
         callback);
   }
 
