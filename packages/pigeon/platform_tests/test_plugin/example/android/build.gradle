@@ -29,3 +29,11 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+gradle.projectsEvaluated {
+    project(":test_plugin") {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" << "-Werror"
+        }
+    }
+}
