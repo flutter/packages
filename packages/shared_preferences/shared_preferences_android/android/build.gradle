@@ -30,6 +30,7 @@ allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'io.flutter.plugins.sharedpreferences'
     compileSdkVersion 33
 
     compileOptions {
