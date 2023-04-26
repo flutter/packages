@@ -287,26 +287,56 @@ public class CameraFeatures {
     this.featureMap.put(ZOOM_LEVEL, zoomLevel);
   }
 
+  /**
+   * Sets the instance of the fps feature.
+   *
+   * @param fps the {@link IntFeature} instance to set.
+   */
   public void setFps(IntFeature fps) {
     this.featureMap.put(FPS, fps);
   }
 
+  /**
+   * Gets the fps feature if it has been set.
+   *
+   * @return the fps feature.
+   */
   public IntFeature getFps() {
     return (IntFeature) featureMap.get(FPS);
   }
 
+  /**
+   * Sets the instance of the videoBitrate feature.
+   *
+   * @param videoBitrate the {@link IntFeature} instance to set.
+   */
   public void setVideoBitrate(IntFeature videoBitrate) {
     this.featureMap.put(VIDEO_BITRATE, videoBitrate);
   }
 
+  /**
+   * Gets the videoBitrate feature if it has been set.
+   *
+   * @return the videoBitrate feature.
+   */
   public IntFeature getVideoBitrate() {
     return (IntFeature) featureMap.get(VIDEO_BITRATE);
   }
 
+  /**
+   * Sets the instance of the getAudioBitrate feature.
+   *
+   * @param getAudioBitrate the {@link IntFeature} instance to set.
+   */
   public void setAudioBitrate(IntFeature audioBitrate) {
     this.featureMap.put(AUDIO_BITRATE, audioBitrate);
   }
 
+  /**
+   * Gets the getAudioBitrate feature if it has been set.
+   *
+   * @return the getAudioBitrate feature.
+   */
   public IntFeature getAudioBitrate() {
     return (IntFeature) featureMap.get(AUDIO_BITRATE);
   }
