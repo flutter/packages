@@ -26,6 +26,7 @@ public class CameraHostApiImpl implements CameraHostApi {
    * instance with the specified identifier.
    */
   @Override
+  @NonNull
   public Long getCameraInfo(@NonNull Long identifier) {
     Camera camera = (Camera) Objects.requireNonNull(instanceManager.getInstance(identifier));
     CameraInfo cameraInfo = camera.getCameraInfo();
