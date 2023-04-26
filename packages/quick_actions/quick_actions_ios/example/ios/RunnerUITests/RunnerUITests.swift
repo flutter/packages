@@ -4,10 +4,20 @@
 
 import XCTest
 
-private let elementWaitingTime: TimeInterval = 5
+private let elementWaitingTime: TimeInterval = 30
+// The duration in when pressing the app icon to open the
+// quick action menu. This duration is undocumented by Apple.
+// The duration will be adjusted with `pressDurationRetryAdjustment` if
+// this duration does not result in the quick action menu opened.
 private let quickActionPressDuration: TimeInterval = 1.5
+// If the previous try to open quick action menu did not work,
+// a new try with adjust the press time by this value.
+// The adjusment could be + or - depends on the result of the previous try.
 private let pressDurationRetryAdjustment: TimeInterval = 0.2
 // Max number of tries to open the quick action menu if failed.
+// This is to deflake a situation where the quick action menu is not present after
+// the long press.
+// See: https://github.com/flutter/flutter/issues/125509
 private let quickActionMaxRetries: Int = 4;
 
 class RunnerUITests: XCTestCase {
