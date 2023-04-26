@@ -100,7 +100,7 @@ final class MethodCallHandlerImpl implements MethodCallHandler {
     } else if (launchStatus == LaunchStatus.ACTIVITY_NOT_FOUND) {
       result.error(
           "ACTIVITY_NOT_FOUND",
-          String.format("No Activity found to handle intent { %s }", url),
+          "No Activity found to handle intent { " + url + " }",
           null);
     } else {
       result.success(true);
