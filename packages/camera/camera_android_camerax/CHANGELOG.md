@@ -1,5 +1,5 @@
 ## NEXT
-
+* `com.android.tools.build:gradle:7.2.0` (at least now '7.2.0' is the version of gradle, required by apps, generated with current stable flutter: 3.7.12) 
 * Updates minimum Flutter version to 3.3.
 * Creates camera_android_camerax plugin for development.
 * Adds CameraInfo class and removes unnecessary code from plugin.
