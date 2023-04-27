@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -79,9 +80,17 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         pluginBinding.getApplicationContext(),
         pluginBinding.getTextureRegistry());
     updateContext(pluginBinding.getApplicationContext());
-    processCameraProviderHostApi.setLifecycleOwner(
-        (LifecycleOwner) activityPluginBinding.getActivity());
-    systemServicesHostApi.setActivity(activityPluginBinding.getActivity());
+
+    Activity activity = activityPluginBinding.getActivity();
+
+    if (activity instanceof LifecycleOwner) {
+      processCameraProviderHostApi.setLifecycleOwner((LifecycleOwner) activity);
+    } else {
+      ProxyLifecycleProvider proxyLifecycleProvider = new ProxyLifecycleProvider(activity);
+      processCameraProviderHostApi.setLifecycleOwner(proxyLifecycleProvider);
+    }
+
+    systemServicesHostApi.setActivity(activity);
     systemServicesHostApi.setPermissionsRegistry(
         activityPluginBinding::addRequestPermissionsResultListener);
   }
