@@ -1,3 +1,7 @@
+## 6.0.31
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 6.0.30
 
 * Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
