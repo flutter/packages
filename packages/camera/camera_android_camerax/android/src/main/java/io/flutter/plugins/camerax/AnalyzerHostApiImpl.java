@@ -43,7 +43,7 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
     private InstanceManager instanceManager;
     private AnalyzerFlutterApiImpl api;
 
-    @VisibleForTesting public ImageProxyFlutterApiImpl imageProxyApi;
+    @VisibleForTesting @NonNull public ImageProxyFlutterApiImpl imageProxyApi;
 
     /**
      * Constructs an instance of {@link ImageAnalysis.Analyzer} that passes arguments of callbacks
