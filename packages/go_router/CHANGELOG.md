@@ -1,3 +1,7 @@
+## 7.1.0
+
+- Adds `onExit` to `GoRoute` and `ShellRoute`.
+
 ## 7.0.1
 
 - Adds a workaround for the `dart fix --apply` issue, https://github.com/dart-lang/sdk/issues/52233.
@@ -24,11 +28,11 @@
 
 ## 6.5.8
 
-- Adds name parameter to `TypedGoRoute`
+- Adds name parameter to `TypedGoRoute`.
 
 ## 6.5.7
 
-- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s. 
+- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s.
 
 ## 6.5.6
 
