@@ -166,6 +166,8 @@ $namespaceConditional {
     $exampleSetNamespace
 }''';
     }
+    // Wrap the namespace command in an `android` block, adding the indentation
+    // to make it line up correctly.
     final String exampleAndroidNamespaceBlock = '''
     android {
         ${exampleSetNamespace.split('\n').join('\n        ')}
