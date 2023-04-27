@@ -12,7 +12,8 @@ import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ZoomStateFlutterApi;
 public class ZoomStateFlutterApiImpl extends ZoomStateFlutterApi {
   private final InstanceManager instanceManager;
 
-  public ZoomStateFlutterApiImpl(@NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
+  public ZoomStateFlutterApiImpl(
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     super(binaryMessenger);
     this.instanceManager = instanceManager;
   }
