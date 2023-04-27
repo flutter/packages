@@ -24,13 +24,9 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  @VisibleForTesting 
-  @NonNull
-  public CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
 
-  @VisibleForTesting
-  @NonNull
-  public PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
+  @VisibleForTesting @NonNull public PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
 
   /**
    * Constructs a {@link ImageProxyHostApiImpl}.

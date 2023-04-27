@@ -21,9 +21,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   private BinaryMessenger binaryMessenger;
   private Context context;
 
-  @VisibleForTesting
-  @NonNull
-  public CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
 
   public ImageAnalysisHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
