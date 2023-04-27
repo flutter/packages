@@ -1,3 +1,7 @@
+## 6.1.13
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
 ## 6.1.12
 
 * Adds a namespace for compatibility with AGP 8.0.

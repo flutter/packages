@@ -1,3 +1,7 @@
+## 2.0.12
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
 ## 2.0.11
 
 * Adds a namespace for compatibility with AGP 8.0.
