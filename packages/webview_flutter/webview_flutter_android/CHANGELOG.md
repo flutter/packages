@@ -1,3 +1,11 @@
+## 3.6.1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 3.6.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
 ## 3.5.3
 
 * Bumps gradle from 7.2.2 to 8.0.0.

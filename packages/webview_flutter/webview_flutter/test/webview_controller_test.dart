@@ -365,4 +365,38 @@ void main() {
       mockPlatformNavigationDelegate,
     ));
   });
+
+  test('onPermissionRequest', () async {
+    bool permissionRequestCallbackCalled = false;
+
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+    WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+      onPermissionRequest: (WebViewPermissionRequest request) {
+        permissionRequestCallbackCalled = true;
+      },
+    );
+
+    final void Function(PlatformWebViewPermissionRequest request)
+        requestCallback = verify(mockPlatformWebViewController
+                .setOnPlatformPermissionRequest(captureAny))
+            .captured
+            .single as void Function(PlatformWebViewPermissionRequest request);
+
+    requestCallback(const TestPlatformWebViewPermissionRequest());
+    expect(permissionRequestCallbackCalled, isTrue);
+  });
+}
+
+class TestPlatformWebViewPermissionRequest
+    extends PlatformWebViewPermissionRequest {
+  const TestPlatformWebViewPermissionRequest()
+      : super(types: const <WebViewPermissionResourceType>{});
+
+  @override
+  Future<void> grant() async {}
+
+  @override
+  Future<void> deny() async {}
 }
