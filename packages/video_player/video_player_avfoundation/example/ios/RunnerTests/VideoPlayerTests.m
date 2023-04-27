@@ -207,6 +207,52 @@
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
 }
 
+- (void)testBufferingStateFromPlayer {
+  NSObject<FlutterPluginRegistry> *registry =
+      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [registry registrarForPlugin:@"testLiveStreamBufferEndFromPlayer"];
+  FLTVideoPlayerPlugin *videoPlayerPlugin =
+      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+
+  FLTCreateMessage *create = [FLTCreateMessage
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+        packageName:nil
+         formatHint:nil
+        httpHeaders:@{}];
+  FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(textureMessage);
+  FLTVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
+  XCTAssertNotNil(player);
+  AVPlayer *avPlayer = player.player;
+  [avPlayer play];
+
+  [player onListenWithArguments:nil
+                      eventSink:^(NSDictionary<NSString *, id> *event) {
+                        if ([event[@"event"] isEqualToString:@"bufferingEnd"]) {
+                          XCTAssertTrue(avPlayer.currentItem.isPlaybackLikelyToKeepUp);
+                        }
+
+                        if ([event[@"event"] isEqualToString:@"bufferingStart"]) {
+                          XCTAssertFalse(avPlayer.currentItem.isPlaybackLikelyToKeepUp);
+                        }
+                      }];
+  XCTestExpectation *bufferingStateExpectation =
+      [self expectationWithDescription:@"bufferingState"];
+  NSTimeInterval timeout = 10;
+  dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, timeout * NSEC_PER_SEC);
+  dispatch_after(delay, dispatch_get_main_queue(), ^{
+    [bufferingStateExpectation fulfill];
+  });
+  [self waitForExpectationsWithTimeout:timeout + 1 handler:nil];
+}
+
 - (void)testVideoControls {
   NSObject<FlutterPluginRegistry> *registry =
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
