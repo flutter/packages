@@ -21,7 +21,9 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   private BinaryMessenger binaryMessenger;
   private Context context;
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting
+  @NonNull
+  public CameraXProxy cameraXProxy = new CameraXProxy();
 
   public ImageAnalysisHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
@@ -32,7 +34,7 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   /**
    * Sets the context that will be used to run an {@link ImageAnalysis.Analyzer} on the main thread.
    */
-  public void setContext(Context context) {
+  public void setContext(@NonNull Context context) {
     this.context = context;
   }
 

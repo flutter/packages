@@ -24,8 +24,13 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
+  @VisibleForTesting 
+  @NonNull
+  public CameraXProxy cameraXProxy = new CameraXProxy();
+
+  @VisibleForTesting
+  @NonNull
+  public PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
 
   /**
    * Constructs a {@link ImageProxyHostApiImpl}.
@@ -44,6 +49,7 @@ public class ImageProxyHostApiImpl implements ImageProxyHostApi {
    * specified identifier.
    */
   @Override
+  @NonNull
   public List<Long> getPlanes(@NonNull Long identifier) {
     ImageProxy.PlaneProxy[] planes = getImageProxyInstance(identifier).getPlanes();
     List<Long> planeIdentifiers = new ArrayList<Long>();

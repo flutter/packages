@@ -69,16 +69,19 @@ public class CameraXProxy {
   /**
    * Creates an {@link ImageCapture.OutputFileOptions} to configure where to save a captured image.
    */
+  @NonNull
   public ImageCapture.OutputFileOptions createImageCaptureOutputFileOptions(@NonNull File file) {
     return new ImageCapture.OutputFileOptions.Builder(file).build();
   }
 
   /** Creates an instance of {@link ImageAnalysis.Builder}. */
+  @NonNull
   public ImageAnalysis.Builder createImageAnalysisBuilder() {
     return new ImageAnalysis.Builder();
   }
 
   /** Creates an array of {@code byte}s with the size provided. */
+  @NonNull
   public byte[] getBytesFromBuffer(int size) {
     return new byte[size];
   }

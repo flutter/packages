@@ -59,7 +59,7 @@ public class AnalyzerHostApiImpl implements AnalyzerHostApi {
     }
 
     @Override
-    public void analyze(ImageProxy imageProxy) {
+    public void analyze(@NonNull ImageProxy imageProxy) {
       Long imageFormat = Long.valueOf(imageProxy.getFormat());
       Long imageHeight = Long.valueOf(imageProxy.getHeight());
       Long imageWidth = Long.valueOf(imageProxy.getWidth());
