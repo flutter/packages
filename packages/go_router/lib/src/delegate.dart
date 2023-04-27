@@ -156,9 +156,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (match!.route.onExit != null) {
       // This function needs to return before calling onExit.
       Future<void>.microtask(() async {
-        final bool result =
-            await match.route.onExit!(navigatorKey.currentContext!);
-        if (result) {
+        final FutureOr<bool> result =
+            match.route.onExit!(navigatorKey.currentContext!);
+        if ((result is bool && route.didPop(result)) || await result) {
           _removeMatchFromList(match, result);
         }
       });

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -104,7 +106,7 @@ abstract class RouteBase {
   final List<RouteBase> routes;
 
   /// Return false to prevent the route from being popped.
-  final Future<bool> Function(BuildContext context)? onExit;
+  final FutureOr<bool> Function(BuildContext context)? onExit;
 }
 
 /// A route that is displayed visually above the matching parent route using the
