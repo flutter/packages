@@ -1,3 +1,7 @@
+## 3.6.2
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 3.6.1
 
 * Adds a namespace for compatibility with AGP 8.0.

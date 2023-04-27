@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 0.8.6+8
 
 * Adds a namespace for compatibility with AGP 8.0.

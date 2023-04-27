@@ -1,3 +1,7 @@
+## 2.4.13
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 2.4.12
 
 * Fixes Java warnings.

@@ -1,3 +1,7 @@
+## 0.2.5+3
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 0.2.5+2
 
 * Updates androidx.annotation:annotation from 1.5.0 to 1.6.0.
