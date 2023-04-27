@@ -1,3 +1,8 @@
+## 3.7.0
+
+* Adds support to accept third party cookies. See
+  `AndroidWebViewCookieManager.setAcceptThirdPartyCookies`.
+
 ## 3.6.1
 
 * Adds a namespace for compatibility with AGP 8.0.
