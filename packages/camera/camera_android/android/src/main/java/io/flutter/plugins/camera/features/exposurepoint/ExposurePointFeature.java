@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.camera.features.exposurepoint;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Size;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.CameraRegionUtils;
@@ -19,10 +21,11 @@ import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFea
 public class ExposurePointFeature extends CameraFeature<Point> {
 
   private Size cameraBoundaries;
+  @Nullable private Point exposurePoint;
   private Point exposurePoint;
   private MeteringRectangle[] defaultExposureRectangle;
   private MeteringRectangle exposureRectangle;
-  private final SensorOrientationFeature sensorOrientationFeature;
+  @NonNull private final SensorOrientationFeature sensorOrientationFeature;
 
   /**
    * Creates a new instance of the {@link ExposurePointFeature}.
@@ -30,7 +33,8 @@ public class ExposurePointFeature extends CameraFeature<Point> {
    * @param cameraProperties Collection of the characteristics for the current camera device.
    */
   public ExposurePointFeature(
-      CameraProperties cameraProperties, SensorOrientationFeature sensorOrientationFeature) {
+      @NonNull CameraProperties cameraProperties,
+      @NonNull SensorOrientationFeature sensorOrientationFeature) {
     super(cameraProperties);
     this.sensorOrientationFeature = sensorOrientationFeature;
   }
@@ -45,18 +49,21 @@ public class ExposurePointFeature extends CameraFeature<Point> {
     this.buildExposureRectangle();
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "ExposurePointFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @Nullable
   @Override
   public Point getValue() {
     return exposurePoint;
   }
 
   @Override
-  public void setValue(Point value) {
+  public void setValue(@Nullable Point value) {
     this.exposurePoint = (value == null || value.x == null || value.y == null) ? null : value;
     this.buildExposureRectangle();
   }
@@ -69,7 +76,7 @@ public class ExposurePointFeature extends CameraFeature<Point> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     if (!checkIsSupported()) {
       return;
     }

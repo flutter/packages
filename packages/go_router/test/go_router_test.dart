@@ -1008,11 +1008,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-          'location': '/settings',
-          'state': null,
-          'replace': false
-        }),
+        const IsRouteUpdateCall('/settings', false, null),
       ]);
     });
 
@@ -1037,11 +1033,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-          'location': '/',
-          'state': null,
-          'replace': false
-        }),
+        const IsRouteUpdateCall('/', false, null),
       ]);
     });
 
@@ -1072,11 +1064,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-          'location': '/',
-          'state': null,
-          'replace': false
-        }),
+        const IsRouteUpdateCall('/', false, null),
       ]);
     });
 
@@ -1101,11 +1089,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-          'location': '/',
-          'state': null,
-          'replace': false
-        }),
+        const IsRouteUpdateCall('/', false, null),
       ]);
     });
 
@@ -1131,11 +1115,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-          'location': '/',
-          'state': null,
-          'replace': false
-        }),
+        const IsRouteUpdateCall('/', false, null),
       ]);
     });
 
@@ -1191,11 +1171,7 @@ void main() {
       expect(find.text('Screen C'), findsOneWidget);
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-          'location': '/b/c',
-          'state': null,
-          'replace': false
-        }),
+        const IsRouteUpdateCall('/b/c', false, null),
       ]);
 
       log.clear();
@@ -1205,11 +1181,7 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-          'location': '/',
-          'state': null,
-          'replace': false
-        }),
+        const IsRouteUpdateCall('/', false, null),
       ]);
     });
 
@@ -1243,11 +1215,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        isMethodCall('routeInformationUpdated', arguments: <String, dynamic>{
-          'location': '/login',
-          'state': null,
-          'replace': false
-        }),
+        const IsRouteUpdateCall('/login', false, null),
       ]);
     });
   });
@@ -3522,6 +3490,48 @@ class TestInheritedNotifier extends InheritedNotifier<ValueNotifier<String>> {
     required super.notifier,
     required super.child,
   });
+}
+
+class IsRouteUpdateCall extends Matcher {
+  const IsRouteUpdateCall(this.uri, this.replace, this.state);
+
+  final String uri;
+  final bool replace;
+  final Object? state;
+
+  @override
+  bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
+    if (item is! MethodCall) {
+      return false;
+    }
+    if (item.method != 'routeInformationUpdated') {
+      return false;
+    }
+    if (item.arguments is! Map) {
+      return false;
+    }
+    final Map<String, dynamic> arguments =
+        item.arguments as Map<String, dynamic>;
+    // TODO(chunhtai): update this when minimum flutter version includes
+    // https://github.com/flutter/flutter/pull/119968.
+    // https://github.com/flutter/flutter/issues/124045.
+    if (arguments['uri'] != uri && arguments['location'] != uri) {
+      return false;
+    }
+    return arguments['state'] == state && arguments['replace'] == replace;
+  }
+
+  @override
+  Description describe(Description description) {
+    return description
+        .add("has method name: 'routeInformationUpdated'")
+        .add(' with uri: ')
+        .addDescriptionOf(uri)
+        .add(' with state: ')
+        .addDescriptionOf(state)
+        .add(' with replace: ')
+        .addDescriptionOf(replace);
+  }
 }
 
 /// This allows a value of type T or T? to be treated as a value of type T?.
