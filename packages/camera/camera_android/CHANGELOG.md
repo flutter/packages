@@ -1,3 +1,8 @@
+## 0.10.7
+
+* Adds support for NV21 as a new streaming format in Android which includes correct handling of
+  image padding when present.
+
 ## 0.10.6+1
 
 * Adds a namespace for compatibility with AGP 8.0.
@@ -8,7 +13,6 @@
 
 ## 0.10.5
 
-* Adds support for NV21 as a new streaming format in Android which includes correct handling of image padding when present.
 * Allows camera to be switched while video recording.
 
 ## 0.10.4+3
