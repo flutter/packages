@@ -41,7 +41,9 @@ public class ImageStreamReader {
    */
   @VisibleForTesting
   public ImageStreamReader(
-          @NonNull ImageReader imageReader, int dartImageFormat, @NonNull ImageStreamReaderUtils imageStreamReaderUtils) {
+      @NonNull ImageReader imageReader,
+      int dartImageFormat,
+      @NonNull ImageStreamReaderUtils imageStreamReaderUtils) {
     this.imageReader = imageReader;
     this.dartImageFormat = dartImageFormat;
     this.imageStreamReaderUtils = imageStreamReaderUtils;
@@ -197,9 +199,9 @@ public class ImageStreamReader {
    * @param handler is generally the background handler of the camera as {@link Handler}
    */
   public void subscribeListener(
-          @NonNull CameraCaptureProperties captureProps,
-          @NonNull EventChannel.EventSink imageStreamSink,
-          @NonNull Handler handler) {
+      @NonNull CameraCaptureProperties captureProps,
+      @NonNull EventChannel.EventSink imageStreamSink,
+      @NonNull Handler handler) {
     imageReader.setOnImageAvailableListener(
         reader -> {
           Image image = reader.acquireNextImage();

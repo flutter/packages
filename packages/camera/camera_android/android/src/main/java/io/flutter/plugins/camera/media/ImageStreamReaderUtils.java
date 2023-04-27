@@ -32,7 +32,8 @@ public class ImageStreamReaderUtils {
    * <p>https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/BitmapUtils.java
    */
   @NonNull
-  public ByteBuffer yuv420ThreePlanesToNV21(@NonNull Image.Plane[] yuv420888planes, int width, int height) {
+  public ByteBuffer yuv420ThreePlanesToNV21(
+      @NonNull Image.Plane[] yuv420888planes, int width, int height) {
     int imageSize = width * height;
     byte[] out = new byte[imageSize + 2 * (imageSize / 4)];
 
