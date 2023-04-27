@@ -1114,10 +1114,8 @@ class CookieManagerHostApiImpl extends CookieManagerHostApi {
   }
 
   /// Helper method to convert instance ids to objects.
-  Future<bool> clearCookiesFromInstances(
-    CookieManager instance,
-  ) {
-    return clearCookies(instanceManager.getIdentifier(instance)!);
+  Future<bool> removeAllCookiesFromInstances(CookieManager instance) {
+    return removeAllCookies(instanceManager.getIdentifier(instance)!);
   }
 
   /// Helper method to convert instance ids to objects.

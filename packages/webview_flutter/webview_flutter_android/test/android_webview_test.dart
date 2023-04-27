@@ -49,10 +49,6 @@ void main() {
         TestJavaObjectHostApi.setup(mockPlatformHostApi);
       });
 
-      tearDown(() {
-        TestJavaObjectHostApi.setup(null);
-      });
-
       test('JavaObject.dispose', () async {
         int? callbackIdentifier;
         final InstanceManager instanceManager = InstanceManager(
@@ -1108,13 +1104,13 @@ void main() {
       instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
 
       const bool result = true;
-      when(mockApi.clearCookies(
+      when(mockApi.removeAllCookies(
         instanceIdentifier,
-      )).thenReturn(result);
+      )).thenAnswer((_) => Future<bool>.value(result));
 
-      expect(await instance.clearCookies(), result);
+      expect(await instance.removeAllCookies(), result);
 
-      verify(mockApi.clearCookies(instanceIdentifier));
+      verify(mockApi.removeAllCookies(instanceIdentifier));
     });
 
     test('setAcceptThirdPartyCookies', () async {

@@ -18,7 +18,7 @@ class WebViewAndroidCookieManager extends WebViewCookieManagerPlatform {
   final android_webview.CookieManager _cookieManager;
 
   @override
-  Future<bool> clearCookies() => _cookieManager.clearCookies();
+  Future<bool> clearCookies() => _cookieManager.removeAllCookies();
 
   @override
   Future<void> setCookie(WebViewCookie cookie) {

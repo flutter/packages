@@ -48,7 +48,7 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
 
   @override
   Future<bool> clearCookies() {
-    return _cookieManager.clearCookies();
+    return _cookieManager.removeAllCookies();
   }
 
   @override

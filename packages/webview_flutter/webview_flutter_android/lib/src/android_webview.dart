@@ -461,8 +461,8 @@ class CookieManager extends JavaObject {
   /// Removes all cookies.
   ///
   /// The returned future resolves to true if any cookies were removed.
-  Future<bool> clearCookies() {
-    return _cookieManagerApi.clearCookiesFromInstances(this);
+  Future<bool> removeAllCookies() {
+    return _cookieManagerApi.removeAllCookiesFromInstances(this);
   }
 
   /// Sets whether the WebView should allow third party cookies to be set.

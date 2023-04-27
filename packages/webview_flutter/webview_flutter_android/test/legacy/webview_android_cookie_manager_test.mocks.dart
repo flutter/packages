@@ -54,9 +54,9 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
   @override
-  _i3.Future<bool> clearCookies() => (super.noSuchMethod(
+  _i3.Future<bool> removeAllCookies() => (super.noSuchMethod(
         Invocation.method(
-          #clearCookies,
+          #removeAllCookies,
           [],
         ),
         returnValue: _i3.Future<bool>.value(false),

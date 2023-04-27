@@ -145,9 +145,9 @@ class MockCookieManagerHostApi extends _i1.Mock
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
-  _i5.Future<bool> clearCookies(int? arg_identifier) => (super.noSuchMethod(
+  _i5.Future<bool> removeAllCookies(int? arg_identifier) => (super.noSuchMethod(
         Invocation.method(
-          #clearCookies,
+          #removeAllCookies,
           [arg_identifier],
         ),
         returnValue: _i5.Future<bool>.value(false),
@@ -288,13 +288,13 @@ class MockTestCookieManagerHostApi extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  bool clearCookies(int? identifier) => (super.noSuchMethod(
+  _i5.Future<bool> removeAllCookies(int? identifier) => (super.noSuchMethod(
         Invocation.method(
-          #clearCookies,
+          #removeAllCookies,
           [identifier],
         ),
-        returnValue: false,
-      ) as bool);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
   @override
   void setAcceptThirdPartyCookies(
     int? identifier,

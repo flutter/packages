@@ -18,12 +18,12 @@ void main() {
 
   test('clearCookies should call android_webview.clearCookies', () {
     final MockCookieManager mockCookieManager = MockCookieManager();
-    when(mockCookieManager.clearCookies())
+    when(mockCookieManager.removeAllCookies())
         .thenAnswer((_) => Future<bool>.value(true));
     WebViewAndroidCookieManager(
       cookieManager: mockCookieManager,
     ).clearCookies();
-    verify(mockCookieManager.clearCookies());
+    verify(mockCookieManager.removeAllCookies());
   });
 
   test('setCookie should throw ArgumentError for cookie with invalid path', () {

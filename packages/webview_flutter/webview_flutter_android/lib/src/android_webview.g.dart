@@ -320,10 +320,10 @@ class CookieManagerHostApi {
     }
   }
 
-  /// Handles Dart method `CookieManager.clearCookies`.
-  Future<bool> clearCookies(int arg_identifier) async {
+  /// Handles Dart method `CookieManager.removeAllCookies`.
+  Future<bool> removeAllCookies(int arg_identifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.CookieManagerHostApi.clearCookies', codec,
+        'dev.flutter.pigeon.CookieManagerHostApi.removeAllCookies', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
