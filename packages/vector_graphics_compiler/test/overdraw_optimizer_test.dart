@@ -299,6 +299,28 @@ void main() {
     ]);
   });
 
+  test('Does not attempt to optimize overdraw when a mask is involved', () {
+    final Node node = parseAndResolve('''
+<svg width="289" height="528" viewBox="0 0 289 528" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <mask id="mask0" x="0" y="0" width="289" height="528">
+    <rect width="288.75" height="528" rx="21.5625" fill="white" />
+  </mask>
+  <g mask="url(#mask0)">
+    <path fill-rule="evenodd" clip-rule="evenodd"
+      d="M44.1855 464.814H244.564V64.0564H44.1855V464.814ZM45.8428 462.333H242.081V65.7158H45.8428V462.333Z"
+      fill="#DADCE0" />
+    <path d="M103.803 481.375H184.948" stroke="#DADCE0" stroke-width="3.77344" />
+  </g>
+</svg>
+''');
+
+    final Node result = OverdrawOptimizer().apply(node);
+    expect(
+      queryChildren<ResolvedPathNode>(result),
+      queryChildren<ResolvedPathNode>(node),
+    );
+  });
+
   test('Multiple opaque and semi-trasnparent shapes', () {
     final Node node = parseAndResolve(complexOpacityTest);
     final VectorInstructions instructions = parse(complexOpacityTest);
@@ -309,12 +331,9 @@ void main() {
     final List<ResolvedPathNode> pathNodesNew =
         queryChildren<ResolvedPathNode>(newNode);
 
-    expect(pathNodesNew.length, 23);
+    expect(pathNodesNew.length, 22);
 
     expect(instructions.paints, const <Paint>[
-      Paint(
-          blendMode: BlendMode.srcOver,
-          stroke: Stroke(color: Color(0xff0000ff))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffff0000))),
       Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xccff0000))),
@@ -331,15 +350,6 @@ void main() {
     ]);
 
     expect(instructions.paths, <Path>[
-      Path(
-        commands: const <PathCommand>[
-          MoveToCommand(1.0, 1.0),
-          LineToCommand(1199.0, 1.0),
-          LineToCommand(1199.0, 349.0),
-          LineToCommand(1.0, 349.0),
-          CloseCommand()
-        ],
-      ),
       Path(
         fillType: PathFillType.evenOdd,
         commands: const <PathCommand>[

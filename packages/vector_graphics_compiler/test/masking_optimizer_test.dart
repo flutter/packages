@@ -28,10 +28,10 @@ void main() {
     }
   });
 
-  test('Only resolve MaskNode if the mask is described by a singular PathNode',
+  test('Only remove MaskNode if the mask is described by a singular PathNode',
       () {
     final Node node = parseAndResolve(
-        ''' <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        '''<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <mask id="a" maskUnits="userSpaceOnUse" x="3" y="7" width="18" height="11">
     <path fill-rule="evenodd" clip-rule="evenodd" d="M15.094 17.092a.882.882 0 01-.623-1.503l2.656-2.66H4.28a.883.883 0 010-1.765h12.846L14.47 8.503a.88.88 0 011.245-1.245l4.611 4.611a.252.252 0 010 .354l-4.611 4.611a.876.876 0 01-.622.258z" fill="#fff" />
   </mask>
@@ -49,16 +49,18 @@ void main() {
     expect(maskNodesNew.length, 0);
   });
 
-  test("Don't resolve MaskNode if the mask is described by multiple PathNodes",
+  test("Don't remove MaskNode if the mask is described by multiple PathNodes",
       () {
-    final Node node = parseAndResolve('''<svg viewBox="-10 -10 120 120">
-      <mask id="myMask">
-        <rect x="0" y="0" width="100" height="100" fill="white" />
-        <path d="M10,35 A20,20,0,0,1,50,35 A20,20,0,0,1,90,35 Q90,65,50,95 Q10,65,10,35 Z" fill="black" />
-      </mask>
+    final Node node = parseAndResolve('''
+<svg viewBox="-10 -10 120 120">
+  <mask id="myMask">
+    <rect x="0" y="0" width="100" height="100" fill="white" />
+      <path d="M10,35 A20,20,0,0,1,50,35 A20,20,0,0,1,90,35 Q90,65,50,95 Q10,65,10,35 Z" fill="black" />
+    </mask>
 
-      <circle cx="50" cy="50" r="50" mask="url(#myMask)" />
-      </svg>''');
+    <circle cx="50" cy="50" r="50" mask="url(#myMask)" />
+</svg>
+''');
     final MaskingOptimizer visitor = MaskingOptimizer();
     final Node newNode = visitor.apply(node);
 
@@ -71,16 +73,16 @@ void main() {
   test(
       "Don't resolve a MaskNode if one of PathNodes it's applied to has stroke.width set",
       () {
-    final Node node = parseAndResolve(
-        ''' <svg xmlns="http://www.w3.org/2000/svg" width="94" height="92" viewBox="0 0 94 92" fill="none">
-        <mask id="c" maskUnits="userSpaceOnUse" x="46" y="16" width="15" height="15">
-           <path d="M58.645 16.232L46.953 28.72l2.024 1.895 11.691-12.486" fill="#fff"/>
-           </mask>
-        <g mask="url(#c)">
-        <path d="M51.797 28.046l-2.755-2.578" stroke="#FDDA73" stroke-width="2"/>
-        </g>
-        </svg>
-        ''');
+    final Node node = parseAndResolve('''
+<svg xmlns="http://www.w3.org/2000/svg" width="94" height="92" viewBox="0 0 94 92" fill="none">
+  <mask id="c" maskUnits="userSpaceOnUse" x="46" y="16" width="15" height="15">
+    <path d="M58.645 16.232L46.953 28.72l2.024 1.895 11.691-12.486" fill="#fff"/>
+  </mask>
+  <g mask="url(#c)">
+    <path d="M51.797 28.046l-2.755-2.578" stroke="#FDDA73" stroke-width="2"/>
+  </g>
+</svg>
+''');
 
     final MaskingOptimizer visitor = MaskingOptimizer();
     final Node newNode = visitor.apply(node);
@@ -91,12 +93,12 @@ void main() {
     expect(maskNodesNew.length, 1);
   });
 
-  test("Don't resolve MaskNode if intersection of Mask and Path is empty", () {
-    final Node node = parseAndResolve(
-        '''<svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <mask id="a">
-        <path d="M58.645 16.232L46.953 28.72l2.024 1.895 11.691-12.486"/>
-    </mask>
+  test("Don't remove MaskNode if intersection of Mask and Path is empty", () {
+    final Node node = parseAndResolve('''
+<svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <mask id="a">
+    <path d="M58.645 16.232L46.953 28.72l2.024 1.895 11.691-12.486"/>
+  </mask>
   <path mask="url(#a)" d="M0 0 z"/>
 </svg>
 ''');
@@ -221,6 +223,76 @@ void main() {
       DrawCommand(DrawCommandType.path, objectId: 1, paintId: 3),
       DrawCommand(DrawCommandType.restore),
       DrawCommand(DrawCommandType.restore)
+    ]);
+  });
+
+  test('Does not partially apply mask to some children but not others', () {
+    final VectorInstructions instructions = parse('''
+<svg width="289" height="528" viewBox="0 0 289 528" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <mask id="mask0" x="0" y="0" width="289" height="528">
+    <rect width="288.75" height="528" rx="21.5625" fill="white" />
+  </mask>
+  <g mask="url(#mask0)">
+    <path fill-rule="evenodd" clip-rule="evenodd"
+      d="M44.1855 464.814H244.564V64.0564H44.1855V464.814ZM45.8428 462.333H242.081V65.7158H45.8428V462.333Z"
+      fill="#DADCE0" />
+    <path d="M103.803 481.375H184.948" stroke="#DADCE0" stroke-width="3.77344" />
+  </g>
+</svg>
+''');
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 2),
+      DrawCommand(DrawCommandType.mask),
+      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(44.1855, 464.814),
+          LineToCommand(244.564, 464.814),
+          LineToCommand(244.564, 64.0564),
+          LineToCommand(44.1855, 64.0564),
+          LineToCommand(44.1855, 464.814),
+          CloseCommand(),
+          MoveToCommand(45.8428, 462.333),
+          LineToCommand(242.081, 462.333),
+          LineToCommand(242.081, 65.7158),
+          LineToCommand(45.8428, 65.7158),
+          LineToCommand(45.8428, 462.333),
+          CloseCommand()
+        ],
+        fillType: PathFillType.evenOdd,
+      ),
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(103.803, 481.375),
+          LineToCommand(184.948, 481.375)
+        ],
+      ),
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(21.5625, 0.0),
+          LineToCommand(267.1875, 0.0),
+          CubicToCommand(279.0881677156519, 0.0, 288.75, 9.661832284348126,
+              288.75, 21.5625),
+          LineToCommand(288.75, 506.4375),
+          CubicToCommand(288.75, 518.3381677156518, 279.0881677156519, 528.0,
+              267.1875, 528.0),
+          LineToCommand(21.5625, 528.0),
+          CubicToCommand(
+              9.661832284348126, 528.0, 0.0, 518.3381677156518, 0.0, 506.4375),
+          LineToCommand(0.0, 21.5625),
+          CubicToCommand(
+              0.0, 9.661832284348126, 9.661832284348126, 0.0, 21.5625, 0.0),
+          CloseCommand()
+        ],
+      ),
     ]);
   });
 }

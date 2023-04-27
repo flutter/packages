@@ -10,12 +10,12 @@ import '../../vector_graphics_compiler.dart';
 import 'path_ops.dart' as path_ops;
 
 class _Result {
-  _Result(this.node);
+  _Result(this.node, {this.deleteMaskNode = true});
 
   final Node node;
   final List<Node> children = <Node>[];
   Node parent = Node.empty;
-  bool deleteMaskNode = true;
+  final bool deleteMaskNode;
 }
 
 /// Converts a vector_graphics PathFillType to a path_ops FillType.
@@ -178,13 +178,12 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   _Result visitParentNode(ParentNode parentNode, Node data) {
     final List<Node> newChildren = <Node>[];
-    bool deleteMaskNode = true;
 
     for (Node child in parentNode.children) {
       final _Result childResult = child.accept(this, parentNode);
       newChildren.add(childResult.node);
       if (childResult.deleteMaskNode == false) {
-        deleteMaskNode = false;
+        return _Result(parentNode, deleteMaskNode: false);
       }
     }
 
@@ -192,8 +191,6 @@ class MaskingOptimizer extends Visitor<_Result, Node>
         precalculatedTransform: parentNode.transform, children: newChildren);
 
     final _Result _result = _Result(newParentNode);
-
-    _result.deleteMaskNode = deleteMaskNode;
 
     return _result;
   }
@@ -256,15 +253,12 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   _Result visitResolvedPath(ResolvedPathNode pathNode, Node data) {
     _Result _result = _Result(pathNode);
-    bool hasStrokeWidth = false;
-    bool deleteMaskNode = true;
 
     if (pathNode.paint.stroke?.width != null) {
-      hasStrokeWidth = true;
-      _result.deleteMaskNode = false;
+      return _Result(pathNode, deleteMaskNode: false);
     }
 
-    if (masksToApply.isNotEmpty && !hasStrokeWidth) {
+    if (masksToApply.isNotEmpty) {
       ResolvedPathNode newPathNode = pathNode;
       for (ResolvedPathNode maskPathNode in masksToApply) {
         final ResolvedPathNode intersection =
@@ -272,12 +266,10 @@ class MaskingOptimizer extends Visitor<_Result, Node>
         if (intersection.path.commands.isNotEmpty) {
           newPathNode = intersection;
         } else {
-          deleteMaskNode = false;
-          break;
+          return _Result(pathNode, deleteMaskNode: false);
         }
       }
       _result = _Result(newPathNode);
-      _result.deleteMaskNode = deleteMaskNode;
     }
 
     return _result;
@@ -335,8 +327,8 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   _Result visitResolvedImageNode(
       ResolvedImageNode resolvedImageNode, Node data) {
-    final _Result _result = _Result(resolvedImageNode);
-    _result.deleteMaskNode = false;
+    final _Result _result = _Result(resolvedImageNode, deleteMaskNode: false);
+
     return _result;
   }
 

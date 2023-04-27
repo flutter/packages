@@ -805,17 +805,8 @@ class SvgParser {
 
     Node newRoot = _root!.accept(resolvingVisitor, AffineMatrix.identity);
 
-    if (enableOverdrawOptimizer == true) {
-      if (path_ops.isPathOpsInitialized) {
-        newRoot = overdrawOptimizer.apply(newRoot);
-      } else {
-        throw Exception('PathOps library was not initialized.');
-      }
-    }
-    if (isTesselatorInitialized) {
-      newRoot = newRoot.accept(tessellator, null);
-    }
-
+    // The order of these matters. The overdraw optimizer can do its best if
+    // masks and unnecessary clips have been eliminated.
     if (enableMaskingOptimizer == true) {
       if (path_ops.isPathOpsInitialized) {
         newRoot = maskingOptimizer.apply(newRoot);
@@ -830,6 +821,18 @@ class SvgParser {
       } else {
         throw Exception('PathOps library was not initialized.');
       }
+    }
+
+    if (enableOverdrawOptimizer == true) {
+      if (path_ops.isPathOpsInitialized) {
+        newRoot = overdrawOptimizer.apply(newRoot);
+      } else {
+        throw Exception('PathOps library was not initialized.');
+      }
+    }
+
+    if (isTesselatorInitialized) {
+      newRoot = newRoot.accept(tessellator, null);
     }
 
     /// Convert to vector instructions

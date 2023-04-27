@@ -1126,8 +1126,6 @@ const String solidOverTrasnparent =
 const String complexOpacityTest =
     '''<svg width="12cm" height="3.5cm" viewBox="0 0 1200 350"
      xmlns="http://www.w3.org/2000/svg" version="1.1">
-  <rect x="1" y="1" width="1198" height="348"
-        fill="none" stroke="blue" />
   <rect x="100" y="100" width="1000" height="150" fill="#0000ff"  />
   <circle cx="200" cy="100" r="50" fill="red" opacity="1"  />
   <circle cx="400" cy="100" r="50" fill="red" opacity=".8"  />

@@ -204,6 +204,11 @@ class OverdrawOptimizer extends Visitor<_Result, Node>
                 lastPathNodeIndex = null;
               }
             }
+            // } else {
+            //   // Conservatively bail out here. There's some child that isn't
+            //   // optimizable, and there aren't sufficient checks to make sure
+            //   // we can make sense of what's actually going on anymore.
+            //   return _Result(parentNode);
           }
           index++;
         }
