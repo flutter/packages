@@ -86,6 +86,16 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   bool createDetachedCallbacks = false;
 
+  /// Constant representing the multi-plane Android YUV 420 image format.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/ImageFormat#YUV_420_888.
+  static const int imageFormatYuv420_888 = 35;
+
+  /// Constant representing the compressed JPEG image format.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/ImageFormat#JPEG.
+  static const int imageFormatJpeg = 256;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -266,7 +276,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> pausePreview(int cameraId) async {
-    assert(preview != null);
     _unbindUseCaseFromLifecycle(preview!);
     _previewIsPaused = true;
   }
@@ -442,9 +451,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// See https://developer.android.com/reference/android/graphics/ImageFormat.
   ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
     switch (data) {
-      case 35: // android.graphics.ImageFormat.YUV_420_888
+      case imageFormatYuv420_888: // android.graphics.ImageFormat.YUV_420_888
         return ImageFormatGroup.yuv420;
-      case 256: // android.graphics.ImageFormat.JPEG
+      case imageFormatJpeg: // android.graphics.ImageFormat.JPEG
         return ImageFormatGroup.jpeg;
     }
 

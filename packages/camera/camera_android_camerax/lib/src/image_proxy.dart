@@ -52,6 +52,11 @@ class ImageProxy extends JavaObject {
 
 /// Host API implementation of [ImageProxy].
 class _ImageProxyHostApiImpl extends ImageProxyHostApi {
+  /// Constructor for [_ImageProxyHostApiImpl].
+  ///
+  /// An [instanceManager] should be passed if another instance of
+  /// [InstanceManager] has been used to maintain the Dart & native creation
+  /// of objects for an implementation of this plugin.
   _ImageProxyHostApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
