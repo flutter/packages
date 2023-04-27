@@ -171,10 +171,10 @@ void main() {
   });
 
   test(
-      'initializeCamera throws AssertionError when createCamera has not been called before initializedCamera',
+      'initializeCamera throws a CameraException when createCamera has not been called before initializedCamera',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    expect(() => camera.initializeCamera(3), throwsAssertionError);
+    expect(() => camera.initializeCamera(3), throwsA(isA<CameraException>()));
   });
 
   test('initializeCamera sends expected CameraInitializedEvent', () async {

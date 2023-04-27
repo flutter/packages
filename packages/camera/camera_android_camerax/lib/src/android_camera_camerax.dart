@@ -213,10 +213,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Configure CameraInitializedEvent to send as representation of a
     // configured camera:
     // Retrieve preview resolution.
-    assert(
-      preview != null,
-      'Preview instance not found. Please call the "createCamera" method before calling "initializeCamera"',
-    );
+    if (preview == null) {
+      // No camera has been created; createCamera must be called before initializeCamera.
+      throw CameraException(
+        'cameraNotFound',
+        "Camera not found. Please call the 'create' method before calling 'initialize'",
+      );
+    }
+
     final ResolutionInfo previewResolutionInfo =
         await preview!.getResolutionInfo();
 
@@ -312,10 +316,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<XFile> takePicture(int cameraId) async {
-    assert(processCameraProvider != null);
-    assert(cameraSelector != null);
-    assert(imageCapture != null);
-
     // TODO(camsim99): Add support for flash mode configuration.
     // https://github.com/flutter/flutter/issues/120715
     final String picturePath = await imageCapture!.takePicture();
@@ -349,10 +349,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Binds [preview] instance to the camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _bindPreviewToLifecycle() async {
-    assert(processCameraProvider != null);
-    assert(cameraSelector != null);
-    assert(preview != null);
-
     final bool previewIsBound = await processCameraProvider!.isBound(preview!);
     if (previewIsBound || _previewIsPaused) {
       // Only bind if preview is not already bound or intentionally paused.
@@ -366,9 +362,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Configures the [imageAnalysis] instance for image streaming and binds it
   /// to camera lifecycle controlled by the [processCameraProvider].
   Future<void> _configureAndBindImageAnalysisToLifecycle() async {
-    assert(processCameraProvider != null);
-    assert(cameraSelector != null);
-
     if (imageAnalysis != null &&
         await processCameraProvider!.isBound(imageAnalysis!)) {
       // imageAnalysis already configured and bound to lifecycle.
@@ -418,8 +411,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Unbinds [useCase] from camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _unbindUseCaseFromLifecycle(UseCase useCase) async {
-    assert(processCameraProvider != null);
-
     final bool useCaseIsBound = await processCameraProvider!.isBound(useCase);
     if (!useCaseIsBound) {
       return;
@@ -442,7 +433,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Removes the previously set analyzer on the [imageAnalysis] instance, since
   /// image information should no longer be streamed.
   FutureOr<void> _onFrameStreamCancel() async {
-    assert(imageAnalysis != null);
     imageAnalysis!.clearAnalyzer();
   }
 
