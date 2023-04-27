@@ -327,7 +327,7 @@ class IterableDefaultValueRoute extends GoRouteData {
 }
 
 @ShouldGenerate(r'''
-GoRoute get $namedRoute => GoRouteData.$route(
+RouteBase get $namedRoute => GoRouteData.$route(
       path: '/named-route',
       name: 'namedRoute',
       factory: $NamedRouteExtension._fromState,
@@ -342,7 +342,7 @@ extension $NamedRouteExtension on NamedRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
