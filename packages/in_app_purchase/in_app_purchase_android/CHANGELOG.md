@@ -1,3 +1,7 @@
+## 0.2.5+3
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 0.2.5+2
 
 * Updates androidx.annotation:annotation from 1.5.0 to 1.6.0.
