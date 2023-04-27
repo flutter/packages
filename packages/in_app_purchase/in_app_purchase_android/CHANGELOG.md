@@ -1,6 +1,6 @@
 ## 0.2.5+3
 
-* Updates gradle, AGP and fixes some lint errors.
+* Updates com.android.billingclient:billing from 5.1.0 to 5.2.0.
 
 ## 0.2.5+2
 
