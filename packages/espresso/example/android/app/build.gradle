@@ -31,7 +31,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion flutter.compileSdkVersion
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
