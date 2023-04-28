@@ -121,11 +121,6 @@ abstract class GoRouteData extends RouteData {
   static final Expando<GoRouteData> _stateObjectExpando = Expando<GoRouteData>(
     'GoRouteState to GoRouteData expando',
   );
-
-  /// [navigatorKey] is used to point to a certain navigator
-  ///
-  /// It will use the given key to find the right navigator for [GoRoute]
-  GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
 /// Base class for supporting
@@ -208,9 +203,6 @@ abstract class ShellRouteData extends RouteData {
       Expando<ShellRouteData>(
     'GoRouteState to ShellRouteData expando',
   );
-
-  /// It will be used to instantiate [Navigator] with the given key
-  GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
 /// A superclass for each typed route descendant
