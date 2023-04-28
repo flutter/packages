@@ -3,6 +3,10 @@
 * Adds support for handling geolocation permissions. See
   `AndroidWebViewController.setGeolocationPermissionsPromptCallbacks`.
 
+## 3.6.2
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 3.6.1
 
 * Adds a namespace for compatibility with AGP 8.0.
