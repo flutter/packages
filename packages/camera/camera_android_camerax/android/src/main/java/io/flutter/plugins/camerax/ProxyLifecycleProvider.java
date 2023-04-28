@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Lifecycle.Event;
 import androidx.lifecycle.LifecycleOwner;
@@ -21,7 +22,7 @@ import androidx.lifecycle.LifecycleRegistry;
  */
 public class ProxyLifecycleProvider implements ActivityLifecycleCallbacks, LifecycleOwner {
 
-  @VisibleForTesting public final LifecycleRegistry lifecycle = new LifecycleRegistry(this);
+  @VisibleForTesting public LifecycleRegistry lifecycle = new LifecycleRegistry(this);
   private final int registrarActivityHashCode;
 
   ProxyLifecycleProvider(Activity activity) {
