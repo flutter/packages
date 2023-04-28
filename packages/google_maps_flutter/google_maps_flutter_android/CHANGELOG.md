@@ -1,3 +1,7 @@
+## 2.4.13
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 2.4.12
 
 * Fixes Java warnings.
