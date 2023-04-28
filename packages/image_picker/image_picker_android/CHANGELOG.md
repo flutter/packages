@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 0.8.6+10
 
 * Offloads picker result handling to separate thread.
