@@ -481,7 +481,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// this method is only called for requests originating from secure origins such as https.
   /// On non-secure origins geolocation requests are automatically denied.
   ///
-  /// Params [onHidePrompt] notify the host application that a request for Geolocation permissions,
+  /// Param [onHidePrompt] notifies the host application that a request for Geolocation permissions,
   /// made with a previous call to onGeolocationPermissionsShowPrompt() has been canceled.
   /// Any related UI should therefore be hidden.
   ///
