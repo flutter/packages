@@ -22,9 +22,7 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     this.instanceManager = instanceManager;
   }
 
-  /**
-   * Retrieves the sensor rotation in degrees, relative to the device's default orientation.
-   */
+  /** Retrieves the sensor rotation in degrees, relative to the device's default orientation. */
   @Override
   @NonNull
   public Long getSensorRotationDegrees(@NonNull Long identifier) {
