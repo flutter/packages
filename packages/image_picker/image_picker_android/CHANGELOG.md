@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## NEXT
 
 * Updates gradle, AGP and fixes some lint errors.
