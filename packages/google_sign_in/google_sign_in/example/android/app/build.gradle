@@ -28,9 +28,6 @@ android {
     namespace 'io.flutter.plugins.googlesigninexample'
     compileSdkVersion flutter.compileSdkVersion
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId "io.flutter.plugins.googlesigninexample"
@@ -52,6 +49,9 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    lint {
+        disable 'InvalidPackage'
     }
 }
 
