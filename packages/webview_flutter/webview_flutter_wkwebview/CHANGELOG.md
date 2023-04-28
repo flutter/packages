@@ -1,6 +1,6 @@
 ## 3.4.1
 
-* Fixes an exception caused by the `onUrlChange` callback returning a null url.
+* Fixes an exception caused by the `onUrlChange` callback passing a null `NSUrl`.
 
 ## 3.4.0
 
