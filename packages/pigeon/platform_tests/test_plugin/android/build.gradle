@@ -25,7 +25,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'com.example.test_plugin'
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.example.test_plugin'
+    }
     compileSdkVersion 33
 
     compileOptions {

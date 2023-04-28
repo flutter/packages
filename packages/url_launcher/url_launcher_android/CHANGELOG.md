@@ -1,6 +1,10 @@
-## 6.0.31
+## 6.0.32
 
 * Updates gradle, AGP and fixes some lint errors.
+
+## 6.0.31
+
+* Fixes compatibility with AGP versions older than 4.2.
 
 ## 6.0.30
 
