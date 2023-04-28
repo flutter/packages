@@ -13,7 +13,7 @@ import 'java_object.dart';
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ExposureState.
 class ExposureState extends JavaObject {
-  /// Constructs a [CameraInfo] that is not automatically attached to a native object.
+  /// Constructs a [ExposureState] that is not automatically attached to a native object.
   ExposureState.detached(
       {super.binaryMessenger,
       super.instanceManager,

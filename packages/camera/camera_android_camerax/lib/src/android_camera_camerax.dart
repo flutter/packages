@@ -150,6 +150,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// In the CameraX library, cameras are accessed by combining [UseCase]s
   /// to an instance of a [ProcessCameraProvider]. Thus, to create an
   /// unitialized camera instance, this method retrieves a
+  /// [ProcessCameraProvider] instance.
   ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
@@ -278,7 +279,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
   @override
   Future<double> getMinExposureOffset(int cameraId) async {
-    // TODO(camsim99): Ensure cameraInfo is properly updated after future changes are merged into this PR.
     final ExposureState exposureState = await cameraInfo!.getExposureState();
     return exposureState.exposureCompensationRange.minCompensation *
         exposureState.exposureCompensationStep;
@@ -436,6 +436,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           planes: cameraImagePlanes,
           height: imageProxy.height,
           width: imageProxy.width);
+
       cameraImageDataStreamController?.add(cameraImageData);
       imageProxy.close();
     }
@@ -453,6 +454,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // https://github.com/flutter/packages/pull/3419 lands.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+    cameraInfo = await camera!.getCameraInfo();
   }
 
   /// Unbinds [useCase] from camera lifecycle controlled by the
@@ -470,7 +472,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The [onListen] callback for the stream controller used for image
   /// streaming.
-  void _onFrameStreamListen() {
+  Future<void> _onFrameStreamListen() async {
     _configureAndBindImageAnalysisToLifecycle();
   }
 

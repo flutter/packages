@@ -22,6 +22,9 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     this.instanceManager = instanceManager;
   }
 
+  /**
+   * Retrieves the sensor rotation in degrees, relative to the device's default orientation.
+   */
   @Override
   @NonNull
   public Long getSensorRotationDegrees(@NonNull Long identifier) {
@@ -56,7 +59,6 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
   public Long getZoomState(@NonNull Long identifier) {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
-    // Retrieves the current value of the LiveData<ZoomState>.
     // TODO(camsim99): Create/return LiveData<ZoomState> once https://github.com/flutter/packages/pull/3419 lands.
     ZoomState zoomState = cameraInfo.getZoomState().getValue();
 

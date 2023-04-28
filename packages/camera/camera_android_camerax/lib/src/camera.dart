@@ -38,6 +38,9 @@ class Camera extends JavaObject {
 /// Host API implementation of [Camera].
 class CameraHostApiImpl extends CameraHostApi {
   /// Constructs a [CameraHostApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created.
   CameraHostApiImpl({this.binaryMessenger, InstanceManager? instanceManager})
       : super(binaryMessenger: binaryMessenger) {
     this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
@@ -55,10 +58,8 @@ class CameraHostApiImpl extends CameraHostApi {
   /// Gets the [CameraInfo] associated with the specified instance of [Camera].
   Future<CameraInfo> getCameraInfoFromInstance(Camera instance) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
-
-    assert(identifier != null,
-        'No Camera has the identifer of that which was requested.');
     final int cameraInfoId = await getCameraInfo(identifier);
+
     return instanceManager
         .getInstanceWithWeakReference<CameraInfo>(cameraInfoId)!;
   }
@@ -69,7 +70,7 @@ class CameraFlutterApiImpl implements CameraFlutterApi {
   /// Constructs a [CameraFlutterApiImpl].
   ///
   /// An [instanceManager] is typically passed when a copy of an instance
-  /// contained by an `InstanceManager` is being created.
+  /// contained by an [InstanceManager] is being created.
   CameraFlutterApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,

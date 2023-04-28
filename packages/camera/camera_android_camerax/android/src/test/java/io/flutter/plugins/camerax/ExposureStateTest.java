@@ -51,6 +51,7 @@ public class ExposureStateTest {
   @Config(sdk = 21)
   @Test
   public void create_makesExpectedCallToCreateInstanceOnDartSide() {
+    // SDK version configured because ExposureState requires Android 21.
     ExposureStateFlutterApiImpl exposureStateFlutterApiImpl =
         spy(new ExposureStateFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
     final int minExposureCompensation = 0;

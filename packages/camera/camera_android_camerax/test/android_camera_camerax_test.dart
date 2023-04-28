@@ -568,14 +568,25 @@ void main() {
     when(mockCameraInfo.getZoomState()).thenAnswer((_) async => zoomState);
 
     expect(await camera.getMinZoomLevel(55), minZoomRatio);
+  });
+
   test(
       'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {
     final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
     const int cameraId = 22;
-    camera.processCameraProvider = MockProcessCameraProvider();
+
+    camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.createDetachedCallbacks = true;
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
 
     final CameraImageData mockCameraImageData = MockCameraImageData();
     final Stream<CameraImageData> imageStream =
@@ -598,6 +609,7 @@ void main() {
         MockProcessCameraProvider();
     final CameraSelector mockCameraSelector = MockCameraSelector();
     final Camera mockCamera = MockCamera();
+    final CameraInfo mockCameraInfo = MockCameraInfo();
     final MockImageProxy mockImageProxy = MockImageProxy();
     final MockPlaneProxy mockPlane = MockPlaneProxy();
     final List<MockPlaneProxy> mockPlanes = <MockPlaneProxy>[mockPlane];
@@ -615,6 +627,7 @@ void main() {
     when(mockProcessCameraProvider.bindToLifecycle(
             mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
         .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockImageProxy.getPlanes())
         .thenAnswer((_) => Future<List<PlaneProxy>>.value(mockPlanes));
     when(mockPlane.buffer).thenReturn(buffer);
@@ -627,7 +640,7 @@ void main() {
     final StreamSubscription<CameraImageData>
         onStreamedFrameAvailableSubscription = camera
             .onStreamedFrameAvailable(cameraId)
-            .listen((CameraImageData imageData) {
+            .listen(expectAsync1((CameraImageData imageData) {
       // Test Analyzer correctly process ImageProxy instances.
       expect(imageData.planes.length, equals(0));
       expect(imageData.planes[0].bytes, equals(buffer));
@@ -636,7 +649,11 @@ void main() {
       expect(imageData.format.raw, equals(imageFormat));
       expect(imageData.height, equals(imageHeight));
       expect(imageData.width, equals(imageWidth));
-    });
+
+      // Verify camera and cameraInfo were properly updated.
+      expect(camera.camera, equals(mockCamera));
+      expect(camera.cameraInfo, equals(mockCameraInfo));
+    }));
 
     // Test ImageAnalysis use case is bound to ProcessCameraProvider.
     final Analyzer capturedAnalyzer =
@@ -666,6 +683,7 @@ void main() {
     when(mockProcessCameraProvider.bindToLifecycle(
             mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
         .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => MockCameraInfo());
 
     final StreamSubscription<CameraImageData> imageStreamSubscription = camera
         .onStreamedFrameAvailable(cameraId)
@@ -678,7 +696,6 @@ void main() {
 
     verify(camera.mockImageAnalysis.clearAnalyzer());
   });
-}
 }
 
 /// Mock of [AndroidCameraCameraX] that stubs behavior of some methods for
@@ -732,5 +749,4 @@ class MockAndroidCameraCameraX extends AndroidCameraCameraX {
   ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
     return mockImageAnalysis;
   }
-}
 }
