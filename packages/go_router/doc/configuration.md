@@ -43,7 +43,7 @@ the builder callback:
 ```dart
 GoRoute(
   path: '/users/:userId',
-  builder: (context, state) => const UserScreen(id: state.params['userId']),
+  builder: (context, state) => const UserScreen(id: state.pathParameters['userId']),
 ),
 ```
 

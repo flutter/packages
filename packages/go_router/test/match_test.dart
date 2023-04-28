@@ -33,7 +33,7 @@ void main() {
       expect(match.pageKey, isNotNull);
     });
 
-    test('subloc', () {
+    test('matchedLocation', () {
       final GoRoute route = GoRoute(
         path: 'users/:userId',
         builder: _builder,

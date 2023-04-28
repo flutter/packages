@@ -105,7 +105,7 @@ class GoRouterState {
   /// class MyWidget extends StatelessWidget {
   ///   @override
   ///   Widget build(BuildContext context) {
-  ///     return Text('${GoRouterState.of(context).params['id']}');
+  ///     return Text('${GoRouterState.of(context).pathParameters['id']}');
   ///   }
   /// }
   /// ```

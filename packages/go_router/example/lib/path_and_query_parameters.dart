@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 //
 // The route segments that start with ':' are treated as path parameters when
 // defining GoRoute[s]. The parameter values can be accessed through
-// GoRouterState.params.
+// GoRouterState.pathParameters.
 //
 // The query parameters are automatically stored in GoRouterState.queryParameters.
 

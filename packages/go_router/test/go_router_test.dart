@@ -594,7 +594,7 @@ void main() {
       await tester.pumpAndSettle();
       final List<RouteMatch> matches = router.routerDelegate.matches.matches;
 
-      // NOTE: match the lower case, since subloc is canonicalized to match the
+      // NOTE: match the lower case, since location is canonicalized to match the
       // path case whereas the location can be any case; so long as the path
       // produces a match regardless of the location case, we win!
       expect(router.location.toLowerCase(), loc.toLowerCase());
@@ -1842,7 +1842,7 @@ void main() {
       expect(screen.ex, isNotNull);
     });
 
-    testWidgets('expect null path/fullpath on top-level redirect',
+    testWidgets('expect null path/fullPath on top-level redirect',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(

@@ -297,7 +297,7 @@ List<RouteMatch>? _getLocRouteRecursively({
     if (match.route is GoRoute &&
         match.matchedLocation.toLowerCase() == location.toLowerCase()) {
       // If it is a complete match, then return the matched route
-      // NOTE: need a lower case match because subloc is canonicalized to match
+      // NOTE: need a lower case match because matchedLocation is canonicalized to match
       // the path case whereas the location can be of any case and still match
       result = <RouteMatch>[match];
     } else if (route.routes.isEmpty) {

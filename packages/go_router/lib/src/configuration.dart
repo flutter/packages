@@ -97,7 +97,7 @@ class RouteConfiguration {
       if (route is! GoRoute) {
         continue;
       }
-      for (final String pathParam in route.pathParams) {
+      for (final String pathParam in route.pathParameters) {
         if (usedPathParams.containsKey(pathParam)) {
           final bool sameRoute = usedPathParams[pathParam] == route;
           throw GoError(
@@ -106,7 +106,7 @@ class RouteConfiguration {
         usedPathParams[pathParam] = route;
       }
       _debugVerifyNoDuplicatePathParameter(route.routes, usedPathParams);
-      route.pathParams.forEach(usedPathParams.remove);
+      route.pathParameters.forEach(usedPathParams.remove);
     }
     return true;
   }
@@ -196,9 +196,9 @@ class RouteConfiguration {
       int depth, StringBuffer sb) {
     for (final RouteBase route in routes) {
       if (route is GoRoute) {
-        final String fullpath = concatenatePaths(parentFullpath, route.path);
-        sb.writeln('  => ${''.padLeft(depth * 2)}$fullpath');
-        _debugFullPathsFor(route.routes, fullpath, depth + 1, sb);
+        final String fullPath = concatenatePaths(parentFullpath, route.path);
+        sb.writeln('  => ${''.padLeft(depth * 2)}$fullPath');
+        _debugFullPathsFor(route.routes, fullPath, depth + 1, sb);
       } else if (route is ShellRoute) {
         _debugFullPathsFor(route.routes, parentFullpath, depth, sb);
       }

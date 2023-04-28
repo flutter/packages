@@ -81,7 +81,7 @@ extension GoRouterHelper on BuildContext {
       GoRouter.of(this).pushReplacement(location, extra: extra);
 
   /// Replaces the top-most page of the page stack with the named route w/
-  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
+  /// optional parameters, e.g. `name='person', pathParameters={'fid': 'f2', 'pid':
   /// 'p1'}`.
   ///
   /// See also:
@@ -117,8 +117,8 @@ extension GoRouterHelper on BuildContext {
   /// preserving the page key.
   ///
   /// This will preserve the state and not run any page animation. Optional
-  /// parameters can be providded to the named route, e.g. `name='person',
-  /// params={'fid': 'f2', 'pid': 'p1'}`.
+  /// parameters can be provided to the named route, e.g. `name='person',
+  /// pathParameters={'fid': 'f2', 'pid': 'p1'}`.
   ///
   /// See also:
   /// * [pushNamed] which pushes the given location onto the page stack.

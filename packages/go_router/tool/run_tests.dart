@@ -12,8 +12,8 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 Future<void> main(List<String> args) async {
-  if (Platform.isLinux) {
-    print("This test can't be run on Linux.");
+  if (!Platform.isMacOS) {
+    print('This test can only be run on macOS.');
     exit(0);
   }
   final Directory packageRoot =

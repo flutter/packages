@@ -204,7 +204,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.
-  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  /// `name='person', pathParameters={'fid': 'f2', 'pid': 'p1'}`
   /// Navigate to the named route.
   void goNamed(
     String name, {
@@ -247,7 +247,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Push a named route onto the page stack w/ optional parameters, e.g.
-  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  /// `name='person', pathParameters={'fid': 'f2', 'pid': 'p1'}`
   Future<T?> pushNamed<T extends Object?>(
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
@@ -286,7 +286,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Replaces the top-most page of the page stack with the named route w/
-  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
+  /// optional parameters, e.g. `name='person', pathParameters={'fid': 'f2', 'pid':
   /// 'p1'}`.
   ///
   /// See also:
@@ -336,7 +336,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///
   /// This will preserve the state and not run any page animation. Optional
   /// parameters can be providded to the named route, e.g. `name='person',
-  /// params={'fid': 'f2', 'pid': 'p1'}`.
+  /// pathParameters={'fid': 'f2', 'pid': 'p1'}`.
   ///
   /// See also:
   /// * [pushNamed] which pushes the given location onto the page stack.

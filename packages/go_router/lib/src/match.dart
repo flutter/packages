@@ -57,10 +57,10 @@ class RouteMatch {
         pathParameters[param.key] = Uri.decodeComponent(param.value);
       }
       final String pathLoc = patternToPath(route.path, encodedParams);
-      final String subloc = concatenatePaths(matchedLocation, pathLoc);
+      final String newMatchedLocation = concatenatePaths(matchedLocation, pathLoc);
       return RouteMatch(
         route: route,
-        matchedLocation: subloc,
+        matchedLocation: newMatchedLocation,
         extra: extra,
         error: null,
         pageKey: ValueKey<String>(route.hashCode.toString()),
