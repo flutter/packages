@@ -321,15 +321,15 @@ class Camera
             cameraDevice = new DefaultCameraDeviceWrapper(device);
             try {
               startPreview();
-              if (!recordingVideo) // only send initialization if we werent already recording and switching cameras
-              dartMessenger.sendCameraInitializedEvent(
+              if (!recordingVideo) { // only send initialization if we werent already recording and switching cameras
+                dartMessenger.sendCameraInitializedEvent(
                     resolutionFeature.getPreviewSize().getWidth(),
                     resolutionFeature.getPreviewSize().getHeight(),
                     cameraFeatures.getExposureLock().getValue(),
                     cameraFeatures.getAutoFocus().getValue(),
                     cameraFeatures.getExposurePoint().checkIsSupported(),
                     cameraFeatures.getFocusPoint().checkIsSupported());
-
+              }
             } catch (Exception e) {
               if (BuildConfig.DEBUG) {
                 Log.i(TAG, "open | onOpened error: " + e.getMessage());

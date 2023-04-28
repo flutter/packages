@@ -1,3 +1,7 @@
+## 3.6.3
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 3.6.2
 
 * Fixes compatibility with AGP versions older than 4.2.
