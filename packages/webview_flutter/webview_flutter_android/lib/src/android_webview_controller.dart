@@ -471,7 +471,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// Sets the callback that is invoked when the client request handle geolocation permissions.
   ///
-  /// Params [onShowPrompt] notify the host application that web content from the specified origin is attempting to use the Geolocation API,
+  /// Param [onShowPrompt] notifies the host application that web content from the specified origin is attempting to use the Geolocation API,
   /// but no permission state is currently set for that origin.
   ///
   /// The host application should invoke the specified callback with the desired permission state.
