@@ -95,6 +95,9 @@ class ImageCapture extends UseCase {
 /// Host API implementation of [ImageCapture].
 class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
   /// Constructs a [ImageCaptureHostApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   ImageCaptureHostApiImpl(
       {this.binaryMessenger, InstanceManager? instanceManager}) {
     this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
@@ -109,7 +112,7 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates a [ImageCapture] instance with the flash mode and target resolution
+  /// Creates an [ImageCapture] instance with the flash mode and target resolution
   /// if specified.
   void createFromInstance(ImageCapture instance, int? targetFlashMode,
       ResolutionInfo? targetResolution) {

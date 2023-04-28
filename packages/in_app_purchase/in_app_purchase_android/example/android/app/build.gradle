@@ -66,9 +66,6 @@ android {
         }
     }
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId project.APP_ID
@@ -99,6 +96,9 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    lint {
+        disable 'InvalidPackage'
     }
 }
 
