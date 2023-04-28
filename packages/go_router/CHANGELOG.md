@@ -1,3 +1,7 @@
+## 6.5.9
+
+- Removes navigator keys from `GoRouteData` and `ShellRouteData`.
+
 ## 6.5.8
 
 - Adds name parameter to `TypedGoRoute`
@@ -16,7 +20,7 @@
 
 ## 6.5.4
 
-- Remove navigator keys from `TypedGoRoute` and `TypedShellRoute`.
+- Removes navigator keys from `TypedGoRoute` and `TypedShellRoute`.
 
 ## 6.5.3
 

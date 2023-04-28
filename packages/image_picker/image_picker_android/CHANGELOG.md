@@ -1,3 +1,11 @@
+## 0.8.6+10
+
+* Offloads picker result handling to separate thread.
+
+## 0.8.6+9
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 0.8.6+8
 
 * Adds a namespace for compatibility with AGP 8.0.
