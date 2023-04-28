@@ -18,6 +18,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
   private ProcessCameraProviderHostApiImpl processCameraProviderHostApi;
+  private ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
   private ImageCaptureHostApiImpl imageCaptureHostApi;
   public SystemServicesHostApiImpl systemServicesHostApi;
 
@@ -56,6 +57,12 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, new PreviewHostApiImpl(binaryMessenger, instanceManager, textureRegistry));
     imageCaptureHostApi = new ImageCaptureHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApi);
+    imageAnalysisHostApiImpl = new ImageAnalysisHostApiImpl(binaryMessenger, instanceManager);
+    GeneratedCameraXLibrary.ImageAnalysisHostApi.setup(binaryMessenger, imageAnalysisHostApiImpl);
+    GeneratedCameraXLibrary.AnalyzerHostApi.setup(
+        binaryMessenger, new AnalyzerHostApiImpl(binaryMessenger, instanceManager));
+    GeneratedCameraXLibrary.ImageProxyHostApi.setup(
+        binaryMessenger, new ImageProxyHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override
@@ -112,6 +119,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     }
     if (imageCaptureHostApi != null) {
       processCameraProviderHostApi.setContext(context);
+    }
+    if (imageAnalysisHostApiImpl != null) {
+      imageAnalysisHostApiImpl.setContext(context);
     }
   }
 }
