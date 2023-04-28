@@ -5,14 +5,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// This sample app shows an app with two screens.
+/// This sample app shows an app with two screens and demonstrates how to use
+/// GoRoute.onExit.
 ///
 /// The first route '/' is mapped to [HomeScreen], and the second route
 /// '/details' is mapped to [DetailsScreen].
-///
-/// The buttons use context.go() to navigate to each destination. On mobile
-/// devices, each destination is deep-linkable and on the web, can be navigated
-/// to using the address bar.
 void main() => runApp(const MyApp());
 
 /// The route configuration.
@@ -28,6 +25,28 @@ final GoRouter _router = GoRouter(
           path: 'details',
           builder: (BuildContext context, GoRouterState state) {
             return const DetailsScreen();
+          },
+          onExit: (BuildContext context) async {
+            final bool? confirmed = await showDialog<bool>(
+              context: context,
+              builder: (_) {
+                return AlertDialog(
+                  title: const Text('Confirm'),
+                  content: const Text('Are you sure you want to leave?'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('No'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Yes'),
+                    ),
+                  ],
+                );
+              },
+            );
+            return confirmed ?? false;
           },
         ),
       ],
@@ -81,15 +100,9 @@ class DetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Details Screen')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <ElevatedButton>[
-            ElevatedButton(
-              onPressed: () => context.go('/'),
-              child: const Text('Go back to the Home screen'),
-            ),
-          ],
+      body: const Center(
+        child: Text(
+          'Click on the back arrow in the AppBar to show the confirmation dialog',
         ),
       ),
     );
