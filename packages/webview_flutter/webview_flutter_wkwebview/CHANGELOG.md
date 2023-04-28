@@ -1,3 +1,7 @@
+## 3.4.1
+
+* Fixes an exception caused by the `onUrlChange` callback returning a null url.
+
 ## 3.4.0
 
 * Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
