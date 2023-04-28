@@ -1,3 +1,7 @@
+## 2.4.14
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 2.4.13
 
 * Fixes compatibility with AGP versions older than 4.2.

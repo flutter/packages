@@ -1,3 +1,7 @@
+## 0.10.8
+
+* Updates gradle, AGP and fixes some lint errors.
+
 ## 0.10.7
 
 * Adds support for NV21 as a new streaming format in Android which includes correct handling of
