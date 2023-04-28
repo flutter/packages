@@ -22,16 +22,16 @@ import androidx.lifecycle.LifecycleRegistry;
  */
 public class ProxyLifecycleProvider implements ActivityLifecycleCallbacks, LifecycleOwner {
 
-  @VisibleForTesting public LifecycleRegistry lifecycle = new LifecycleRegistry(this);
+  @VisibleForTesting @NonNull public LifecycleRegistry lifecycle = new LifecycleRegistry(this);
   private final int registrarActivityHashCode;
 
-  ProxyLifecycleProvider(Activity activity) {
+  ProxyLifecycleProvider(@NonNull Activity activity) {
     this.registrarActivityHashCode = activity.hashCode();
     activity.getApplication().registerActivityLifecycleCallbacks(this);
   }
 
   @Override
-  public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+  public void onActivityCreated(@NonNull Activity activity, @NonNull Bundle savedInstanceState) {
     if (activity.hashCode() != registrarActivityHashCode) {
       return;
     }
@@ -39,7 +39,7 @@ public class ProxyLifecycleProvider implements ActivityLifecycleCallbacks, Lifec
   }
 
   @Override
-  public void onActivityStarted(Activity activity) {
+  public void onActivityStarted(@NonNull Activity activity) {
     if (activity.hashCode() != registrarActivityHashCode) {
       return;
     }
@@ -47,7 +47,7 @@ public class ProxyLifecycleProvider implements ActivityLifecycleCallbacks, Lifec
   }
 
   @Override
-  public void onActivityResumed(Activity activity) {
+  public void onActivityResumed(@NonNull Activity activity) {
     if (activity.hashCode() != registrarActivityHashCode) {
       return;
     }
@@ -55,7 +55,7 @@ public class ProxyLifecycleProvider implements ActivityLifecycleCallbacks, Lifec
   }
 
   @Override
-  public void onActivityPaused(Activity activity) {
+  public void onActivityPaused(@NonNull Activity activity) {
     if (activity.hashCode() != registrarActivityHashCode) {
       return;
     }
@@ -63,7 +63,7 @@ public class ProxyLifecycleProvider implements ActivityLifecycleCallbacks, Lifec
   }
 
   @Override
-  public void onActivityStopped(Activity activity) {
+  public void onActivityStopped(@NonNull Activity activity) {
     if (activity.hashCode() != registrarActivityHashCode) {
       return;
     }
@@ -71,10 +71,10 @@ public class ProxyLifecycleProvider implements ActivityLifecycleCallbacks, Lifec
   }
 
   @Override
-  public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+  public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
 
   @Override
-  public void onActivityDestroyed(Activity activity) {
+  public void onActivityDestroyed(@NonNull Activity activity) {
     if (activity.hashCode() != registrarActivityHashCode) {
       return;
     }
