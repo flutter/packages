@@ -1,3 +1,12 @@
+## 0.10.7
+
+* Adds support for NV21 as a new streaming format in Android which includes correct handling of
+  image padding when present.
+
+## 0.10.6+2
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 0.10.6+1
 
 * Adds a namespace for compatibility with AGP 8.0.

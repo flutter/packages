@@ -1,3 +1,7 @@
+## 1.0.27
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 1.0.26
 
 * Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.

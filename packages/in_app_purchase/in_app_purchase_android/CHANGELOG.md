@@ -1,3 +1,7 @@
+## 0.2.5+4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 0.2.5+3
 
 * Updates com.android.billingclient:billing from 5.1.0 to 5.2.0.
