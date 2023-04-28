@@ -78,7 +78,6 @@ typedef NS_ENUM(NSUInteger, FWFWKWebsiteDataTypeEnum) {
   FWFWKWebsiteDataTypeEnumSessionStorage = 5,
   FWFWKWebsiteDataTypeEnumWebSQLDatabases = 6,
   FWFWKWebsiteDataTypeEnumIndexedDBDatabases = 7,
-  FWFWKWebsiteDataTypeEnumUnknown = 8,
 };
 
 /// Mirror of WKNavigationActionPolicy.

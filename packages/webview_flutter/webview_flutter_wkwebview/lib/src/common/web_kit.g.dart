@@ -73,7 +73,6 @@ enum WKWebsiteDataTypeEnum {
   sessionStorage,
   webSQLDatabases,
   indexedDBDatabases,
-  unknown,
 }
 
 /// Mirror of WKNavigationActionPolicy.
