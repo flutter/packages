@@ -22,6 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.example.espresso'
+    }
     compileSdkVersion 33
 
     defaultConfig {
@@ -31,6 +35,7 @@ android {
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     lintOptions {

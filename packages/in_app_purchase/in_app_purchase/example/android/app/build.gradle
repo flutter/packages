@@ -54,6 +54,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace 'io.flutter.plugins.inapppurchaseexample'
     signingConfigs {
         release {
             storeFile project.KEYSTORE_STORE_FILE
@@ -65,9 +66,6 @@ android {
 
     compileSdkVersion flutter.compileSdkVersion
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId project.APP_ID
@@ -98,6 +96,9 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    lint {
+        disable 'InvalidPackage'
     }
 }
 

@@ -30,6 +30,7 @@ import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import io.flutter.plugins.localauth.Messages.AuthClassification;
+import io.flutter.plugins.localauth.Messages.AuthClassificationWrapper;
 import io.flutter.plugins.localauth.Messages.AuthOptions;
 import io.flutter.plugins.localauth.Messages.AuthResult;
 import io.flutter.plugins.localauth.Messages.AuthResultWrapper;
@@ -291,7 +292,7 @@ public class LocalAuthTest {
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE);
     plugin.setBiometricManager(mockBiometricManager);
 
-    final List<AuthClassification> enrolled = plugin.getEnrolledBiometrics();
+    final List<AuthClassificationWrapper> enrolled = plugin.getEnrolledBiometrics();
     assertTrue(enrolled.isEmpty());
   }
 
@@ -304,7 +305,7 @@ public class LocalAuthTest {
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED);
     plugin.setBiometricManager(mockBiometricManager);
 
-    final List<AuthClassification> enrolled = plugin.getEnrolledBiometrics();
+    final List<AuthClassificationWrapper> enrolled = plugin.getEnrolledBiometrics();
     assertTrue(enrolled.isEmpty());
   }
 
@@ -319,9 +320,9 @@ public class LocalAuthTest {
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED);
     plugin.setBiometricManager(mockBiometricManager);
 
-    final List<AuthClassification> enrolled = plugin.getEnrolledBiometrics();
+    final List<AuthClassificationWrapper> enrolled = plugin.getEnrolledBiometrics();
     assertEquals(1, enrolled.size());
-    assertEquals(AuthClassification.WEAK, enrolled.get(0));
+    assertEquals(AuthClassification.WEAK, enrolled.get(0).getValue());
   }
 
   @Test
@@ -335,10 +336,10 @@ public class LocalAuthTest {
         .thenReturn(BiometricManager.BIOMETRIC_SUCCESS);
     plugin.setBiometricManager(mockBiometricManager);
 
-    final List<AuthClassification> enrolled = plugin.getEnrolledBiometrics();
+    final List<AuthClassificationWrapper> enrolled = plugin.getEnrolledBiometrics();
     assertEquals(2, enrolled.size());
-    assertEquals(AuthClassification.WEAK, enrolled.get(0));
-    assertEquals(AuthClassification.STRONG, enrolled.get(1));
+    assertEquals(AuthClassification.WEAK, enrolled.get(0).getValue());
+    assertEquals(AuthClassification.STRONG, enrolled.get(1).getValue());
   }
 
   @Test
