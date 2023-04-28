@@ -19,7 +19,6 @@ RouteBase get $homeRoute => GoRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: 'family/:familyId',
-          name: null,
           factory: $FamilyRouteExtension._fromState,
         ),
       ],

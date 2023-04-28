@@ -14,72 +14,58 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       path: '/',
-      name: null,
       factory: $AllTypesBaseRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
           path: 'big-int-route/:requiredBigIntField',
-          name: null,
           factory: $BigIntRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'bool-route/:requiredBoolField',
-          name: null,
           factory: $BoolRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'date-time-route/:requiredDateTimeField',
-          name: null,
           factory: $DateTimeRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'double-route/:requiredDoubleField',
-          name: null,
           factory: $DoubleRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'int-route/:requiredIntField',
-          name: null,
           factory: $IntRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'num-route/:requiredNumField',
-          name: null,
           factory: $NumRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'double-route/:requiredDoubleField',
-          name: null,
           factory: $DoubleRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'enum-route/:requiredEnumField',
-          name: null,
           factory: $EnumRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'enhanced-enum-route/:requiredEnumField',
-          name: null,
           factory: $EnhancedEnumRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'string-route/:requiredStringField',
-          name: null,
           factory: $StringRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'uri-route/:requiredUriField',
-          name: null,
           factory: $UriRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'iterable-route',
-          name: null,
           factory: $IterableRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'iterable-route-with-default-values',
-          name: null,
           factory: $IterableRouteWithDefaultValuesExtension._fromState,
         ),
       ],

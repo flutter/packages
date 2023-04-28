@@ -76,6 +76,7 @@ class RouteConfig {
     final bool isShellRoute = type.element.name == 'TypedShellRoute';
 
     String? path;
+    String? name;
 
     if (!isShellRoute) {
       final ConstantReader pathValue = reader.read('path');
@@ -86,10 +87,10 @@ class RouteConfig {
         );
       }
       path = pathValue.stringValue;
-    }
 
-    final ConstantReader nameValue = reader.read('name');
-    final String? name = nameValue.isNull ? null : nameValue.stringValue;
+      final ConstantReader nameValue = reader.read('name');
+      name = nameValue.isNull ? null : nameValue.stringValue;
+    }
 
     final DartType typeParamType = type.typeArguments.single;
     if (typeParamType is! InterfaceType) {
