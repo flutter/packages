@@ -1,6 +1,10 @@
+## 1.0.27
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 1.0.26
 
-* Removes unused resources as indicated by Android lint warnings.
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
 
 ## 1.0.25
 
