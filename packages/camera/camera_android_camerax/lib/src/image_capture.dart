@@ -96,9 +96,8 @@ class ImageCapture extends UseCase {
 class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
   /// Constructs a [ImageCaptureHostApiImpl].
   ///
-  /// An [instanceManager] should be passed if another instance of
-  /// [InstanceManager] has been used to maintain the Dart & native creation
-  /// of objects for an implementation of this plugin.
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   ImageCaptureHostApiImpl(
       {this.binaryMessenger, InstanceManager? instanceManager}) {
     this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;

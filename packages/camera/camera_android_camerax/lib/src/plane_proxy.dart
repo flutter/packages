@@ -47,6 +47,9 @@ class PlaneProxy extends JavaObject {
 @protected
 class PlaneProxyFlutterApiImpl implements PlaneProxyFlutterApi {
   /// Constructs a [PlaneProxyFlutterApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   PlaneProxyFlutterApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,

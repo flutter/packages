@@ -61,9 +61,8 @@ class ImageAnalysis extends UseCase {
 class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
   /// Constructor for [_ImageAnalysisHostApiImpl].
   ///
-  /// An [instanceManager] should be passed if another instance of
-  /// [InstanceManager] has been used to maintain the Dart & native creation
-  /// of objects for an implementation of this plugin.
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   _ImageAnalysisHostApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
