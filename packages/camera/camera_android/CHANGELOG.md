@@ -1,6 +1,11 @@
-## 0.10.7
+## 0.10.8
 
 * Provides a default exposure point if null.
+
+## 0.10.7
+
+* Adds support for NV21 as a new streaming format in Android which includes correct handling of
+  image padding when present.
 
 ## 0.10.6+2
 
