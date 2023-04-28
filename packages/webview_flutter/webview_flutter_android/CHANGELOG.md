@@ -10,7 +10,6 @@
 ## 3.6.0
 
 * Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
-*
 
 ## 3.5.3
 
