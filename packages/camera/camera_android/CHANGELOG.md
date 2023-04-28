@@ -2,6 +2,10 @@
 
 * Provides a default exposure point if null.
 
+## 0.10.6+2
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 0.10.6+1
 
 * Adds a namespace for compatibility with AGP 8.0.
