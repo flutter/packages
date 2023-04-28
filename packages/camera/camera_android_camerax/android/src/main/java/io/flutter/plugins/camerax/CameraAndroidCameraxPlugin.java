@@ -34,7 +34,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
 
   @VisibleForTesting
   public void setUp(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull Context context, @NonNull TextureRegistry textureRegistry) {
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull Context context,
+      @NonNull TextureRegistry textureRegistry) {
     // Set up instance manager.
     instanceManager =
         InstanceManager.create(
