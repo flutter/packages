@@ -34,7 +34,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
 
   @VisibleForTesting
   public void setUp(
-      BinaryMessenger binaryMessenger, Context context, TextureRegistry textureRegistry) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull Context context, @NonNull TextureRegistry textureRegistry) {
     // Set up instance manager.
     instanceManager =
         InstanceManager.create(
@@ -127,7 +127,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
    * Updates context that is used to fetch the corresponding instance of a {@code
    * ProcessCameraProvider}.
    */
-  public void updateContext(Context context) {
+  public void updateContext(@NonNull Context context) {
     if (processCameraProviderHostApiImpl != null) {
       processCameraProviderHostApiImpl.setContext(context);
     }
