@@ -1,0 +1,3 @@
+buildFlags:
+  _pluginToolsConfigGlobalKey:
+    - "--no-tree-shake-icons"
