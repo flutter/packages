@@ -103,6 +103,17 @@ void main() {
         }));
   });
 
+  test('getTokens will not pass null for shouldRecoverAuth', () async {
+    await googleSignIn.getTokens(
+        email: 'example@example.com', shouldRecoverAuth: null);
+    expect(
+        log[0],
+        isMethodCall('getTokens', arguments: <String, dynamic>{
+          'email': 'example@example.com',
+          'shouldRecoverAuth': true,
+        }));
+  });
+
   test('Other functions pass through arguments to the channel', () async {
     final Map<void Function(), Matcher> tests = <void Function(), Matcher>{
       () {

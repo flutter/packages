@@ -2,11 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'analyzer.dart';
 import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camerax_library.g.dart';
+import 'image_proxy.dart';
 import 'java_object.dart';
+import 'plane_proxy.dart';
 import 'process_camera_provider.dart';
 import 'system_services.dart';
 
@@ -20,6 +23,9 @@ class AndroidCameraXCameraFlutterApis {
     CameraSelectorFlutterApiImpl? cameraSelectorFlutterApi,
     ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApi,
     SystemServicesFlutterApiImpl? systemServicesFlutterApi,
+    AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
+    ImageProxyFlutterApiImpl? imageProxyFlutterApiImpl,
+    PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -32,6 +38,12 @@ class AndroidCameraXCameraFlutterApis {
     this.cameraFlutterApi = cameraFlutterApi ?? CameraFlutterApiImpl();
     this.systemServicesFlutterApi =
         systemServicesFlutterApi ?? SystemServicesFlutterApiImpl();
+    this.analyzerFlutterApiImpl =
+        analyzerFlutterApiImpl ?? AnalyzerFlutterApiImpl();
+    this.imageProxyFlutterApiImpl =
+        imageProxyFlutterApiImpl ?? ImageProxyFlutterApiImpl();
+    this.planeProxyFlutterApiImpl =
+        planeProxyFlutterApiImpl ?? PlaneProxyFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -61,6 +73,15 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api for [SystemServices].
   late final SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
+  /// Flutter Api implementation for [Analyzer].
+  late final AnalyzerFlutterApiImpl analyzerFlutterApiImpl;
+
+  /// Flutter Api implementation for [ImageProxy].
+  late final ImageProxyFlutterApiImpl imageProxyFlutterApiImpl;
+
+  /// Flutter Api implementation for [PlaneProxy].
+  late final PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -70,6 +91,9 @@ class AndroidCameraXCameraFlutterApis {
       ProcessCameraProviderFlutterApi.setup(processCameraProviderFlutterApi);
       CameraFlutterApi.setup(cameraFlutterApi);
       SystemServicesFlutterApi.setup(systemServicesFlutterApi);
+      AnalyzerFlutterApi.setup(analyzerFlutterApiImpl);
+      ImageProxyFlutterApi.setup(imageProxyFlutterApiImpl);
+      PlaneProxyFlutterApi.setup(planeProxyFlutterApiImpl);
       _haveBeenSetUp = true;
     }
   }

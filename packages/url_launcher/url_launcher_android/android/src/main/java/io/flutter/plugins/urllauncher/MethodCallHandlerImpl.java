@@ -6,6 +6,7 @@ package io.flutter.plugins.urllauncher;
 
 import android.os.Bundle;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -30,7 +31,7 @@ final class MethodCallHandlerImpl implements MethodCallHandler {
   }
 
   @Override
-  public void onMethodCall(MethodCall call, Result result) {
+  public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
     final String url = call.argument("url");
     switch (call.method) {
       case "canLaunch":
@@ -80,11 +81,11 @@ final class MethodCallHandlerImpl implements MethodCallHandler {
     channel = null;
   }
 
-  private void onCanLaunch(Result result, String url) {
+  private void onCanLaunch(@NonNull Result result, @NonNull String url) {
     result.success(urlLauncher.canLaunch(url));
   }
 
-  private void onLaunch(MethodCall call, Result result, String url) {
+  private void onLaunch(@NonNull MethodCall call, @NonNull Result result, @NonNull String url) {
     final boolean useWebView = call.argument("useWebView");
     final boolean enableJavaScript = call.argument("enableJavaScript");
     final boolean enableDomStorage = call.argument("enableDomStorage");
@@ -98,9 +99,7 @@ final class MethodCallHandlerImpl implements MethodCallHandler {
       result.error("NO_ACTIVITY", "Launching a URL requires a foreground activity.", null);
     } else if (launchStatus == LaunchStatus.ACTIVITY_NOT_FOUND) {
       result.error(
-          "ACTIVITY_NOT_FOUND",
-          String.format("No Activity found to handle intent { %s }", url),
-          null);
+          "ACTIVITY_NOT_FOUND", "No Activity found to handle intent { " + url + " }", null);
     } else {
       result.success(true);
     }
@@ -111,7 +110,7 @@ final class MethodCallHandlerImpl implements MethodCallHandler {
     result.success(null);
   }
 
-  private static Bundle extractBundle(Map<String, String> headersMap) {
+  private static @NonNull Bundle extractBundle(Map<String, String> headersMap) {
     final Bundle headersBundle = new Bundle();
     for (String key : headersMap.keySet()) {
       final String value = headersMap.get(key);

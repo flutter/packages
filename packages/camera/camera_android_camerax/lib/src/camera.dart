@@ -23,7 +23,10 @@ class Camera extends JavaObject {
 
 /// Flutter API implementation of [Camera].
 class CameraFlutterApiImpl implements CameraFlutterApi {
-  /// Constructs a [CameraSelectorFlutterApiImpl].
+  /// Constructs a [CameraFlutterApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   CameraFlutterApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,

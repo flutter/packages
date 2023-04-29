@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import androidx.annotation.NonNull;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaScriptChannelFlutterApi;
 
@@ -22,14 +23,16 @@ public class JavaScriptChannelFlutterApiImpl extends JavaScriptChannelFlutterApi
    * @param instanceManager Maintains instances stored to communicate with Dart objects.
    */
   public JavaScriptChannelFlutterApiImpl(
-      BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     super(binaryMessenger);
     this.instanceManager = instanceManager;
   }
 
   /** Passes arguments from {@link JavaScriptChannel#postMessage} to Dart. */
   public void postMessage(
-      JavaScriptChannel javaScriptChannel, String messageArg, Reply<Void> callback) {
+      @NonNull JavaScriptChannel javaScriptChannel,
+      @NonNull String messageArg,
+      @NonNull Reply<Void> callback) {
     super.postMessage(getIdentifierForJavaScriptChannel(javaScriptChannel), messageArg, callback);
   }
 

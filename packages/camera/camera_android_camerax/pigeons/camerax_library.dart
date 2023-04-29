@@ -151,3 +151,41 @@ abstract class ImageCaptureHostApi {
   @async
   String takePicture(int identifier);
 }
+
+@HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
+abstract class ImageAnalysisHostApi {
+  void create(int identifier, ResolutionInfo? targetResolutionIdentifier);
+
+  void setAnalyzer(int identifier, int analyzerIdentifier);
+
+  void clearAnalyzer(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestAnalyzerHostApi')
+abstract class AnalyzerHostApi {
+  void create(int identifier);
+}
+
+@FlutterApi()
+abstract class AnalyzerFlutterApi {
+  void create(int identifier);
+
+  void analyze(int identifier, int imageProxyIdentifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestImageProxyHostApi')
+abstract class ImageProxyHostApi {
+  List<int> getPlanes(int identifier);
+
+  void close(int identifier);
+}
+
+@FlutterApi()
+abstract class ImageProxyFlutterApi {
+  void create(int identifier, int format, int height, int width);
+}
+
+@FlutterApi()
+abstract class PlaneProxyFlutterApi {
+  void create(int identifier, Uint8List buffer, int pixelStride, int rowStride);
+}

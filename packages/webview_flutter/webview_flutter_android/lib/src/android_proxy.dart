@@ -35,6 +35,10 @@ class AndroidWebViewProxy {
       android_webview.WebView webView,
       android_webview.FileChooserParams params,
     )? onShowFileChooser,
+    void Function(
+      android_webview.WebChromeClient instance,
+      android_webview.PermissionRequest request,
+    )? onPermissionRequest,
   }) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
@@ -58,6 +62,8 @@ class AndroidWebViewProxy {
       android_webview.WebResourceRequest request,
     )? requestLoading,
     void Function(android_webview.WebView webView, String url)? urlLoading,
+    void Function(android_webview.WebView webView, String url, bool isReload)?
+        doUpdateVisitedHistory,
   }) createAndroidWebViewClient;
 
   /// Constructs a [android_webview.FlutterAssetManager].

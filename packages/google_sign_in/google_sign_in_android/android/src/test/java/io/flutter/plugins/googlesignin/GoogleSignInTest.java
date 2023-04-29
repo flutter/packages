@@ -75,7 +75,9 @@ public class GoogleSignInTest {
 
   @Test
   public void requestScopes_ResultErrorIfAccountIsNull() {
-    MethodCall methodCall = new MethodCall("requestScopes", null);
+    HashMap<String, List<String>> arguments = new HashMap<>();
+    arguments.put("scopes", Collections.singletonList("requestedScope"));
+    MethodCall methodCall = new MethodCall("requestScopes", arguments);
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(null);
     plugin.onMethodCall(methodCall, result);
     verify(result).error("sign_in_required", "No account to grant scopes.", null);
