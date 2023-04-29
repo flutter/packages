@@ -105,16 +105,14 @@ class AndroidWebViewController extends PlatformWebViewController {
   late final android_webview.WebView _webView =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebView(
           onScrollChanged: withWeakReferenceTo(this,
-                  (WeakReference<AndroidWebViewController> weakReference) {
-                return (int l, int t, int oldL, int oldT) async {
-                  if (weakReference.target?._onContentOffsetChangedCallback !=
-                      null) {
-                    return weakReference.target!._onContentOffsetChangedCallback!(
-                        l, t, oldL, oldT);
-                  }
-                };
-              })
-      );
+              (WeakReference<AndroidWebViewController> weakReference) {
+    return (int l, int t, int oldL, int oldT) async {
+      if (weakReference.target?._onContentOffsetChangedCallback != null) {
+        return weakReference.target!._onContentOffsetChangedCallback!(
+            l, t, oldL, oldT);
+      }
+    };
+  }));
 
   late final android_webview.WebChromeClient _webChromeClient =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebChromeClient(

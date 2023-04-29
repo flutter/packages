@@ -159,8 +159,8 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     @Override
     protected void onScrollChanged(int l, int t, int oldL, int oldT) {
       super.onScrollChanged(l, t, oldL, oldT);
-      webViewFlutterApi.onScrollChanged(
-              this, (long) l, (long) t, (long) oldL, (long) oldT, reply -> {});
+      api.onScrollChanged(
+          this, (long) l, (long) t, (long) oldL, (long) oldT, reply -> {});
     }
 
     /**

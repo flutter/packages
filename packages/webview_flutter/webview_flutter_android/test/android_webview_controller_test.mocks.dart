@@ -677,6 +677,22 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
+  _i9.Future<void> setOnContentOffsetChanged(
+          void Function(
+            int,
+            int,
+            int,
+            int,
+          )? onOffsetChange) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnContentOffsetChanged,
+          [onOffsetChange],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
   _i9.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -727,17 +743,41 @@ class MockAndroidWebViewController extends _i1.Mock
 class MockAndroidWebViewProxy extends _i1.Mock
     implements _i10.AndroidWebViewProxy {
   @override
-  _i2.WebView Function() get createAndroidWebView => (super.noSuchMethod(
+  _i2.WebView Function(
+      dynamic Function(
+        int,
+        int,
+        int,
+        int,
+      )?) get createAndroidWebView => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebView),
-        returnValue: () => _FakeWebView_7(
+        returnValue: (dynamic Function(
+                  int,
+                  int,
+                  int,
+                  int,
+                )? onScrollChanged) =>
+            _FakeWebView_7(
           this,
           Invocation.getter(#createAndroidWebView),
         ),
-        returnValueForMissingStub: () => _FakeWebView_7(
+        returnValueForMissingStub: (dynamic Function(
+                  int,
+                  int,
+                  int,
+                  int,
+                )? onScrollChanged) =>
+            _FakeWebView_7(
           this,
           Invocation.getter(#createAndroidWebView),
         ),
-      ) as _i2.WebView Function());
+      ) as _i2.WebView Function(
+          dynamic Function(
+            int,
+            int,
+            int,
+            int,
+          )?));
   @override
   _i2.WebChromeClient Function({
     void Function(

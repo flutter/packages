@@ -359,7 +359,7 @@ public class WebViewTest {
 
   @Test
   public void onScrollPosChange() {
-    final InstanceManager instanceManager = InstanceManager.open(identifier -> {});
+    final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
     final WebViewFlutterApiImpl flutterApiImpl =
         new WebViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
@@ -375,6 +375,6 @@ public class WebViewTest {
     verify(mockFlutterApi)
         .onScrollPosChange(eq(instanceIdentifier), eq(0L), eq(1L), eq(2L), eq(3L), any());
 
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 }

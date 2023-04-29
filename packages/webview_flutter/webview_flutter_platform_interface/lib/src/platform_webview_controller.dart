@@ -274,7 +274,7 @@ abstract class PlatformWebViewController extends PlatformInterface {
   /// Toggle the listener for content offset changes. Set to null to stop listening.
   Future<void> setOnContentOffsetChanged(
       void Function(int left, int top, int oldLeft, int oldTop)?
-      onOffsetChange) {
+          onOffsetChange) {
     throw UnimplementedError(
         'setOnContentOffsetChanged is not implemented on the current platform');
   }
