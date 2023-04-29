@@ -165,6 +165,17 @@ void _tap() => PersonRoute(pid: 'p1').go(context);
 
 This is the point of typed routing: the error is found statically.
 
+## Return value
+
+Starting from `go_router` 6.5.0, pushing a route and subsequently popping it, can produce
+a return value. The generated routes also follow this functionality.
+
+```dart
+void _tap() async {
+  final result = await PersonRoute(pid: 'p1').go(context);
+}
+```
+
 ## Query parameters
 
 Optional parameters (named or positional) indicate query parameters:
@@ -327,3 +338,44 @@ class FancyRoute extends GoRouteData {
     ),
 }
 ```
+
+## TypedShellRoute and navigator keys
+
+There may be situations were a child route of a shell needs to be displayed on a
+different navigator. This kind of scenarios can be achieved by declaring a
+**static** navigator key named:
+
+- `$navigatorKey` for ShellRoutes
+- `$parentNavigatorKey` for GoRoutes
+
+Example:
+
+```dart
+// For ShellRoutes:
+final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
+
+class MyShellRouteData extends ShellRouteData {
+  const MyShellRouteData();
+
+  static final GlobalKey<NavigatorState> $navigatorKey = shellNavigatorKey;
+
+  @override
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
+    // ...
+  }
+}
+
+// For GoRoutes:
+class MyGoRouteData extends GoRouteData {
+  const MyGoRouteData();
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    // ...
+  }
+}
+```
+
+An example is available [here](https://github.com/flutter/packages/blob/main/packages/go_router_builder/example/lib/shell_route_with_keys_example.dart).

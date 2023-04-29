@@ -26,7 +26,7 @@ class RouteConfiguration {
         assert(_debugCheckParentNavigatorKeys(
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
     _cacheNameToPath('', routes);
-    log.info(_debugKnownRoutes());
+    log.info(debugKnownRoutes());
   }
 
   static bool _debugCheckPath(List<RouteBase> routes, bool isTopLevel) {
@@ -97,7 +97,7 @@ class RouteConfiguration {
       if (route is! GoRoute) {
         continue;
       }
-      for (final String pathParam in route.pathParams) {
+      for (final String pathParam in route.pathParameters) {
         if (usedPathParams.containsKey(pathParam)) {
           final bool sameRoute = usedPathParams[pathParam] == route;
           throw GoError(
@@ -106,7 +106,7 @@ class RouteConfiguration {
         usedPathParams[pathParam] = route;
       }
       _debugVerifyNoDuplicatePathParameter(route.routes, usedPathParams);
-      route.pathParams.forEach(usedPathParams.remove);
+      route.pathParameters.forEach(usedPathParams.remove);
     }
     return true;
   }
@@ -128,14 +128,14 @@ class RouteConfiguration {
   /// Looks up the url location by a [GoRoute]'s name.
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) {
     assert(() {
       log.info('getting location for name: '
           '"$name"'
-          '${params.isEmpty ? '' : ', params: $params'}'
-          '${queryParams.isEmpty ? '' : ', queryParams: $queryParams'}');
+          '${pathParameters.isEmpty ? '' : ', pathParameters: $pathParameters'}'
+          '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
       return true;
     }());
     final String keyName = name.toLowerCase();
@@ -146,24 +146,24 @@ class RouteConfiguration {
       final List<String> paramNames = <String>[];
       patternToRegExp(path, paramNames);
       for (final String paramName in paramNames) {
-        assert(params.containsKey(paramName),
+        assert(pathParameters.containsKey(paramName),
             'missing param "$paramName" for $path');
       }
 
       // Check that there are no extra params
-      for (final String key in params.keys) {
+      for (final String key in pathParameters.keys) {
         assert(paramNames.contains(key), 'unknown param "$key" for $path');
       }
       return true;
     }());
     final Map<String, String> encodedParams = <String, String>{
-      for (final MapEntry<String, String> param in params.entries)
+      for (final MapEntry<String, String> param in pathParameters.entries)
         param.key: Uri.encodeComponent(param.value)
     };
     final String location = patternToPath(path, encodedParams);
     return Uri(
             path: location,
-            queryParameters: queryParams.isEmpty ? null : queryParams)
+            queryParameters: queryParameters.isEmpty ? null : queryParameters)
         .toString();
   }
 
@@ -172,7 +172,12 @@ class RouteConfiguration {
     return 'RouterConfiguration: $routes';
   }
 
-  String _debugKnownRoutes() {
+  /// Returns the full path of [routes].
+  ///
+  /// Each path is indented based depth of the hierarchy, and its `name`
+  /// is also appended if not null
+  @visibleForTesting
+  String debugKnownRoutes() {
     final StringBuffer sb = StringBuffer();
     sb.writeln('Full paths for routes:');
     _debugFullPathsFor(routes, '', 0, sb);
@@ -191,9 +196,11 @@ class RouteConfiguration {
       int depth, StringBuffer sb) {
     for (final RouteBase route in routes) {
       if (route is GoRoute) {
-        final String fullpath = concatenatePaths(parentFullpath, route.path);
-        sb.writeln('  => ${''.padLeft(depth * 2)}$fullpath');
-        _debugFullPathsFor(route.routes, fullpath, depth + 1, sb);
+        final String fullPath = concatenatePaths(parentFullpath, route.path);
+        sb.writeln('  => ${''.padLeft(depth * 2)}$fullPath');
+        _debugFullPathsFor(route.routes, fullPath, depth + 1, sb);
+      } else if (route is ShellRoute) {
+        _debugFullPathsFor(route.routes, parentFullpath, depth, sb);
       }
     }
   }

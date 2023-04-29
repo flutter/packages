@@ -1,3 +1,33 @@
+## NEXT
+
+* Adds an example application that uses Pigeon directly, rather than in a plugin.
+
+## 9.2.5
+
+* Reports an error when trying to use an enum directly in a `List` or `Map`
+  argument.
+
+## 9.2.4
+
+* [objc] Fixes a warning due to a C++-style function signature in the codec
+  getter's definition.
+
+## 9.2.3
+
+* [java] Fixes `UnknownNullability` and `SyntheticAccessor` warnings.
+
+## 9.2.2
+
+* [cpp] Minor changes to output style.
+
+## 9.2.1
+
+* [swift] Fixes NSNull casting crash.
+
+## 9.2.0
+
+* [cpp] Removes experimental tags.
+
 ## 9.1.4
 
 * Migrates off deprecated `BinaryMessenger` API.

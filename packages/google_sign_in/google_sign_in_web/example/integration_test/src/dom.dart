@@ -24,6 +24,9 @@ extension DomHtmlDocumentExtension on DomHtmlDocument {
 
   /// document.createElement
   external DomHtmlElement createElement(String tagName);
+
+  /// document.querySelector
+  external DomHtmlElement? querySelector(String selector);
 }
 
 /// An instance of an HTMLElement
@@ -33,8 +36,16 @@ abstract class DomHtmlElement {}
 
 /// (Some) methods of HtmlElement
 extension DomHtmlElementExtension on DomHtmlElement {
+  external String get id;
+  external set id(String id);
+  external set innerText(String innerText);
+  external String? getAttribute(String attributeName);
+
   /// Node.appendChild
   external DomHtmlElement appendChild(DomHtmlElement child);
+
+  /// Element.setAttribute
+  external void setAttribute(String name, Object value);
 
   /// Element.remove
   external void remove();

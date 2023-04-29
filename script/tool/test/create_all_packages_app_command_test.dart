@@ -161,8 +161,8 @@ void main() {
       createFakePlugin('plugina', packagesDir);
 
       processRunner.mockProcessesForExecutable[
-          getFlutterCommand(const LocalPlatform())] = <io.Process>[
-        MockProcess(exitCode: 1)
+          getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
       ];
       Error? commandError;
       final List<String> output = await runCapturingPrint(

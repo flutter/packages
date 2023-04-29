@@ -42,7 +42,7 @@ import 'typedefs.dart';
 ///         GoRoute(
 ///           path: 'family/:fid',
 ///           pageBuilder: (BuildContext context, GoRouterState state) {
-///             final Family family = Families.family(state.params['fid']!);
+///             final Family family = Families.family(state.pathParameters['fid']!);
 ///             return MaterialPage<void>(
 ///               key: state.pageKey,
 ///               child: FamilyPage(family: family),
@@ -52,8 +52,8 @@ import 'typedefs.dart';
 ///             GoRoute(
 ///               path: 'person/:pid',
 ///               pageBuilder: (BuildContext context, GoRouterState state) {
-///                 final Family family = Families.family(state.params['fid']!);
-///                 final Person person = family.person(state.params['pid']!);
+///                 final Family family = Families.family(state.pathParameters['fid']!);
+///                 final Person person = family.person(state.pathParameters['pid']!);
 ///                 return MaterialPage<void>(
 ///                   key: state.pageKey,
 ///                   child: PersonPage(family: family, person: person),
@@ -137,7 +137,7 @@ class GoRoute extends RouteBase {
             'builder, pageBuilder, or redirect must be provided'),
         super._() {
     // cache the path regexp and parameters
-    _pathRE = patternToRegExp(path, pathParams);
+    _pathRE = patternToRegExp(path, pathParameters);
   }
 
   /// Optional name of the route.
@@ -169,8 +169,8 @@ class GoRoute extends RouteBase {
   ///
   /// context.go(
   ///   context.namedLocation('family'),
-  ///   params: <String, String>{'fid': 123},
-  ///   queryParams: <String, String>{'qid': 'quid'},
+  ///   pathParameters: <String, String>{'fid': 123},
+  ///   queryParameters: <String, String>{'qid': 'quid'},
   /// );
   /// ```
   ///
@@ -228,7 +228,7 @@ class GoRoute extends RouteBase {
   ///   path: '/',
   ///   builder: (BuildContext context, GoRouterState state) => FamilyPage(
   ///     families: Families.family(
-  ///       state.params['id'],
+  ///       state.pathParameters['id'],
   ///     ),
   ///   ),
   /// ),
@@ -292,13 +292,11 @@ class GoRoute extends RouteBase {
   /// re-evaluation will be triggered if the [InheritedWidget] changes.
   final GoRouterRedirect? redirect;
 
-  /// {@template go_router.GoRoute.parentNavigatorKey}
   /// An optional key specifying which Navigator to display this route's screen
   /// onto.
   ///
   /// Specifying the root Navigator will stack this route onto that
   /// Navigator instead of the nearest ShellRoute ancestor.
-  /// {@endtemplate}
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
@@ -308,11 +306,11 @@ class GoRoute extends RouteBase {
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
-      extractPathParameters(pathParams, match);
+      extractPathParameters(pathParameters, match);
 
   /// The path parameters in this route.
   @internal
-  final List<String> pathParams = <String>[];
+  final List<String> pathParameters = <String>[];
 
   @override
   String toString() {
@@ -456,10 +454,8 @@ class ShellRoute extends RouteBase {
   /// sub-route's observers.
   final List<NavigatorObserver>? observers;
 
-  /// {@template go_router.ShellRoute.navigatorKey}
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
-  /// {@endtemplate}
   final GlobalKey<NavigatorState> navigatorKey;
 }

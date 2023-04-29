@@ -33,8 +33,7 @@ public class CookieManagerHostApiImplTest {
     when(cookieManager.hasCookies()).thenReturn(true);
     doAnswer(
             answer -> {
-              @SuppressWarnings("unchecked")
-              ValueCallback<Boolean> callback = (ValueCallback<Boolean>) answer.getArgument(0);
+              ValueCallback<Boolean> callback = answer.getArgument(0);
               (callback).onReceiveValue(true);
               return null;
             })

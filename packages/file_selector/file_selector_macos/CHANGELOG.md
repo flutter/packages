@@ -1,5 +1,6 @@
-## NEXT
+## 0.9.0+8
 
+* Updates pigeon for null value handling fixes.
 * Updates minimum Flutter version to 3.3.
 
 ## 0.9.0+7

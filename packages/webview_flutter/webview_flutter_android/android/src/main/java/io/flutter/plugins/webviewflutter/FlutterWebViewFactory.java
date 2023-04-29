@@ -5,6 +5,8 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
@@ -17,9 +19,15 @@ class FlutterWebViewFactory extends PlatformViewFactory {
     this.instanceManager = instanceManager;
   }
 
+  @NonNull
   @Override
-  public PlatformView create(Context context, int id, Object args) {
-    final PlatformView view = (PlatformView) instanceManager.getInstance((Integer) args);
+  public PlatformView create(Context context, int viewId, @Nullable Object args) {
+    final Integer identifier = (Integer) args;
+    if (identifier == null) {
+      throw new IllegalStateException("An identifier is required to retrieve WebView instance.");
+    }
+
+    final PlatformView view = instanceManager.getInstance(identifier);
     if (view == null) {
       throw new IllegalStateException("Unable to find WebView instance: " + args);
     }

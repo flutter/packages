@@ -79,6 +79,7 @@ abstract class GoRouteData extends RouteData {
   /// Should not be used directly.
   static GoRoute $route<T extends GoRouteData>({
     required String path,
+    String? name,
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
@@ -106,6 +107,7 @@ abstract class GoRouteData extends RouteData {
 
     return GoRoute(
       path: path,
+      name: name,
       builder: builder,
       pageBuilder: pageBuilder,
       redirect: redirect,
@@ -119,11 +121,6 @@ abstract class GoRouteData extends RouteData {
   static final Expando<GoRouteData> _stateObjectExpando = Expando<GoRouteData>(
     'GoRouteState to GoRouteData expando',
   );
-
-  /// [navigatorKey] is used to point to a certain navigator
-  ///
-  /// It will use the given key to find the right navigator for [GoRoute]
-  GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
 /// Base class for supporting
@@ -206,9 +203,6 @@ abstract class ShellRouteData extends RouteData {
       Expando<ShellRouteData>(
     'GoRouteState to ShellRouteData expando',
   );
-
-  /// It will be used to instantiate [Navigator] with the given key
-  GlobalKey<NavigatorState>? get navigatorKey => null;
 }
 
 /// A superclass for each typed route descendant
@@ -223,8 +217,8 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   /// Default const constructor
   const TypedGoRoute({
     required this.path,
+    this.name,
     this.routes = const <TypedRoute<RouteData>>[],
-    this.parentNavigatorKey,
   });
 
   /// The path that corresponds to this route.
@@ -234,13 +228,18 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   ///
   final String path;
 
+  /// The name that corresponds to this route.
+  /// Used by Analytics services such as Firebase Analytics
+  /// to log the screen views in their system.
+  ///
+  /// See [GoRoute.name].
+  ///
+  final String? name;
+
   /// Child route definitions.
   ///
   /// See [RouteBase.routes].
   final List<TypedRoute<RouteData>> routes;
-
-  /// {@macro go_router.GoRoute.parentNavigatorKey}
-  final GlobalKey<NavigatorState>? parentNavigatorKey;
 }
 
 /// A superclass for each typed shell route descendant
@@ -249,16 +248,12 @@ class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// Default const constructor
   const TypedShellRoute({
     this.routes = const <TypedRoute<RouteData>>[],
-    this.navigatorKey,
   });
 
   /// Child route definitions.
   ///
   /// See [RouteBase.routes].
   final List<TypedRoute<RouteData>> routes;
-
-  /// {@macro go_router.ShellRoute.navigatorKey}
-  final GlobalKey<NavigatorState>? navigatorKey;
 }
 
 /// Internal class used to signal that the default page behavior should be used.

@@ -43,7 +43,6 @@ class SurfaceAndroidWebView extends AndroidWebView {
     required WebViewPlatformCallbacksHandler webViewPlatformCallbacksHandler,
   }) {
     return WebViewAndroidWidget(
-      useHybridComposition: true,
       creationParams: creationParams,
       callbacksHandler: webViewPlatformCallbacksHandler,
       javascriptChannelRegistry: javascriptChannelRegistry,

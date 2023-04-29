@@ -106,6 +106,7 @@ task:
           # run with --require-excerpts and no exclusions.
           - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
         dependabot_script: $PLUGIN_TOOL_COMMAND dependabot-check
+        gradle_script: $PLUGIN_TOOL_COMMAND gradle-check
         version_script:
           # For pre-submit, pass the PR labels to the script to allow for
           # check overrides.

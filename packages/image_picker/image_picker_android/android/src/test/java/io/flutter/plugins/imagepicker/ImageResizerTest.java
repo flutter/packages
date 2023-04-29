@@ -6,6 +6,7 @@ package io.flutter.plugins.imagepicker;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertNotNull;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
@@ -26,6 +29,7 @@ public class ImageResizerTest {
 
   ImageResizer resizer;
   File imageFile;
+  File svgImageFile;
   File externalDirectory;
   Bitmap originalImageBitmap;
 
@@ -35,6 +39,7 @@ public class ImageResizerTest {
   public void setUp() throws IOException {
     mockCloseable = MockitoAnnotations.openMocks(this);
     imageFile = new File(getClass().getClassLoader().getResource("pngImage.png").getFile());
+    svgImageFile = new File(getClass().getClassLoader().getResource("flutter_image.svg").getFile());
     originalImageBitmap = BitmapFactory.decodeFile(imageFile.getPath());
     TemporaryFolder temporaryFolder = new TemporaryFolder();
     temporaryFolder.create();
@@ -77,5 +82,24 @@ public class ImageResizerTest {
     ImageResizer invalidResizer = new ImageResizer(nonExistentDirectory, new ExifDataCopier());
     String outputFile = invalidResizer.resizeImageIfNeeded(imageFile.getPath(), null, 50.0, 100);
     assertThat(outputFile, equalTo(nonExistentDirectory.getPath() + "/scaled_pngImage.png"));
+  }
+
+  @Test
+  public void onResizeImageIfNeeded_whenImagePathIsNotBitmap_shouldReturnPathAndNotNull() {
+    String nonBitmapImagePath = svgImageFile.getPath();
+
+    // Mock the static method
+    try (MockedStatic<BitmapFactory> mockedBitmapFactory =
+        Mockito.mockStatic(BitmapFactory.class)) {
+      // Configure the method to return null when called with a non-bitmap image
+      mockedBitmapFactory
+          .when(() -> BitmapFactory.decodeFile(nonBitmapImagePath, null))
+          .thenReturn(null);
+
+      String resizedImagePath = resizer.resizeImageIfNeeded(nonBitmapImagePath, null, null, 100);
+
+      assertNotNull(resizedImagePath);
+      assertThat(resizedImagePath, equalTo(nonBitmapImagePath));
+    }
   }
 }

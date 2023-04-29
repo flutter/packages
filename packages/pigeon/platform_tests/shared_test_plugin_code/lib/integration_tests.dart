@@ -1255,6 +1255,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject, sentObject);
     });
 
+    testWidgets('nullable big ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentObject = _biggerThanBigInt;
+      final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
+      expect(echoObject, sentObject);
+    });
+
     testWidgets('null ints serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();

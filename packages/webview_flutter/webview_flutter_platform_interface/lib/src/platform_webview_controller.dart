@@ -7,7 +7,8 @@ import 'package:flutter/painting.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'platform_navigation_delegate.dart';
-import 'webview_platform.dart';
+import 'types/types.dart';
+import 'webview_platform.dart' show WebViewPlatform;
 
 /// Interface for a platform implementation of a web view controller.
 ///
@@ -260,10 +261,20 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'setUserAgent is not implemented on the current platform');
   }
 
+  /// Sets a callback that notifies the host application that web content is
+  /// requesting permission to access the specified resources.
+  Future<void> setOnPlatformPermissionRequest(
+    void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
+  ) {
+    throw UnimplementedError(
+      'setOnPermissionRequest is not implemented on the current platform',
+    );
+  }
+
   /// Toggle the listener for content offset changes. Set to null to stop listening.
   Future<void> setOnContentOffsetChanged(
       void Function(int left, int top, int oldLeft, int oldTop)?
-          onOffsetChange) {
+      onOffsetChange) {
     throw UnimplementedError(
         'setOnContentOffsetChanged is not implemented on the current platform');
   }

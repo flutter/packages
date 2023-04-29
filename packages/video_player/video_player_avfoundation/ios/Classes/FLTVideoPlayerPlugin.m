@@ -62,6 +62,7 @@ static void *durationContext = &durationContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *playbackBufferEmptyContext = &playbackBufferEmptyContext;
 static void *playbackBufferFullContext = &playbackBufferFullContext;
+static void *rateContext = &rateContext;
 
 @implementation FLTVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset frameUpdater:(FLTFrameUpdater *)frameUpdater {
@@ -69,7 +70,7 @@ static void *playbackBufferFullContext = &playbackBufferFullContext;
   return [self initWithURL:[NSURL fileURLWithPath:path] frameUpdater:frameUpdater httpHeaders:@{}];
 }
 
-- (void)addObservers:(AVPlayerItem *)item {
+- (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
   [item addObserver:self
          forKeyPath:@"loadedTimeRanges"
             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
@@ -98,6 +99,13 @@ static void *playbackBufferFullContext = &playbackBufferFullContext;
          forKeyPath:@"playbackBufferFull"
             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
             context:playbackBufferFullContext];
+
+  // Add observer to AVPlayer instead of AVPlayerItem since the AVPlayerItem does not have a "rate"
+  // property
+  [player addObserver:self
+           forKeyPath:@"rate"
+              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+              context:rateContext];
 
   // Add an observer that will respond to itemDidPlayToEndTime
   [[NSNotificationCenter defaultCenter] addObserver:self
@@ -252,7 +260,7 @@ NS_INLINE UIViewController *rootViewController() {
 
   [self createVideoOutputAndDisplayLink:frameUpdater];
 
-  [self addObservers:item];
+  [self addObserversForItem:item player:_player];
 
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
@@ -316,6 +324,14 @@ NS_INLINE UIViewController *rootViewController() {
   } else if (context == playbackBufferFullContext) {
     if (_eventSink != nil) {
       _eventSink(@{@"event" : @"bufferingEnd"});
+    }
+  } else if (context == rateContext) {
+    // Important: Make sure to cast the object to AVPlayer when observing the rate property,
+    // as it is not available in AVPlayerItem.
+    AVPlayer *player = (AVPlayer *)object;
+    if (_eventSink != nil) {
+      _eventSink(
+          @{@"event" : @"isPlayingStateUpdate", @"isPlaying" : player.rate > 0 ? @YES : @NO});
     }
   }
 }

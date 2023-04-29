@@ -130,7 +130,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
   /// Methods for handling navigation changes and tracking navigation requests.
   @visibleForTesting
-  late final WKNavigationDelegate navigationDelegate = withWeakRefenceTo(
+  late final WKNavigationDelegate navigationDelegate = withWeakReferenceTo(
     this,
     (WeakReference<WebKitWebViewPlatformController> weakReference) {
       return webViewProxy.createNavigationDelegate(
@@ -199,7 +199,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
     webView = webViewProxy.createWebView(
       configuration,
-      observeValue: withWeakRefenceTo(
+      observeValue: withWeakReferenceTo(
         callbacksHandler,
         (WeakReference<WebViewPlatformCallbacksHandler> weakReference) {
           return (
@@ -437,7 +437,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
         (String channelName) {
           final WKScriptMessageHandler handler =
               webViewProxy.createScriptMessageHandler(
-            didReceiveScriptMessage: withWeakRefenceTo(
+            didReceiveScriptMessage: withWeakReferenceTo(
               javascriptChannelRegistry,
               (WeakReference<JavascriptChannelRegistry> weakReference) {
                 return (

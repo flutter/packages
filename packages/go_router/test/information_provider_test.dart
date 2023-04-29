@@ -6,7 +6,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/information_provider.dart';
 
+// TODO(chunhtai): remove this ignore and migrate the code
+// https://github.com/flutter/flutter/issues/124045.
+// ignore: deprecated_member_use
 const RouteInformation initialRoute = RouteInformation(location: '/');
+// TODO(chunhtai): remove this ignore and migrate the code
+// https://github.com/flutter/flutter/issues/124045.
+// ignore: deprecated_member_use
 const RouteInformation newRoute = RouteInformation(location: '/new');
 
 void main() {
