@@ -2505,16 +2505,16 @@ void main() {
 
     testWidgets('StackedShellRoute supports nested routes with params',
         (WidgetTester tester) async {
-      StackedNavigationShell? routeState;
+      StatefulNavigationShell? routeState;
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
             return navigationShell;
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                   path: '/a',
@@ -2523,7 +2523,7 @@ void main() {
                 ),
               ],
             ),
-            StackedShellBranch(
+            StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                     path: '/family',
@@ -3081,17 +3081,17 @@ void main() {
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-                  StackedNavigationShell navigationShell) =>
+                  StatefulNavigationShell navigationShell) =>
               navigationShell,
-          branches: <StackedShellBranch>[
-            StackedShellBranch(routes: <GoRoute>[
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/a',
                 builder: (BuildContext context, GoRouterState state) =>
                     const Text('Screen A'),
               ),
             ]),
-            StackedShellBranch(routes: <GoRoute>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/b',
                 builder: (BuildContext context, GoRouterState state) =>
@@ -3126,17 +3126,17 @@ void main() {
           routes: <RouteBase>[
             StackedShellRoute(
               builder: (BuildContext context, GoRouterState state,
-                      StackedNavigationShell navigationShell) =>
+                      StatefulNavigationShell navigationShell) =>
                   navigationShell,
-              branches: <StackedShellBranch>[
-                StackedShellBranch(routes: <GoRoute>[
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(routes: <GoRoute>[
                   GoRoute(
                     path: 'a',
                     builder: (BuildContext context, GoRouterState state) =>
                         const Text('Screen A'),
                   ),
                 ]),
-                StackedShellBranch(routes: <GoRoute>[
+                StatefulShellBranch(routes: <GoRoute>[
                   GoRoute(
                     path: 'b',
                     builder: (BuildContext context, GoRouterState state) =>
@@ -3167,17 +3167,17 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StackedNavigationShell? routeState;
+      StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
             return navigationShell;
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                   path: '/a',
@@ -3186,7 +3186,7 @@ void main() {
                 ),
               ],
             ),
-            StackedShellBranch(
+            StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                   path: '/b',
@@ -3195,7 +3195,7 @@ void main() {
                 ),
               ],
             ),
-            StackedShellBranch(
+            StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                   path: '/c',
@@ -3204,7 +3204,7 @@ void main() {
                 ),
               ],
             ),
-            StackedShellBranch(
+            StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
                   path: '/d',
@@ -3259,17 +3259,17 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StackedNavigationShell? routeState;
+      StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
             return navigationShell;
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(routes: <GoRoute>[
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/a',
                 builder: (BuildContext context, GoRouterState state) =>
@@ -3286,7 +3286,7 @@ void main() {
                 ],
               ),
             ]),
-            StackedShellBranch(routes: <GoRoute>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/b',
                 builder: (BuildContext context, GoRouterState state) =>
@@ -3329,26 +3329,26 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<DummyStatefulWidgetState> statefulWidgetKey =
           GlobalKey<DummyStatefulWidgetState>();
-      StackedNavigationShell? routeState1;
-      StackedNavigationShell? routeState2;
+      StatefulNavigationShell? routeState1;
+      StatefulNavigationShell? routeState2;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState1 = navigationShell;
             return navigationShell;
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(routes: <RouteBase>[
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <RouteBase>[
               StackedShellRoute(
                   builder: (BuildContext context, GoRouterState state,
-                      StackedNavigationShell navigationShell) {
+                      StatefulNavigationShell navigationShell) {
                     routeState2 = navigationShell;
                     return navigationShell;
                   },
-                  branches: <StackedShellBranch>[
-                    StackedShellBranch(routes: <RouteBase>[
+                  branches: <StatefulShellBranch>[
+                    StatefulShellBranch(routes: <RouteBase>[
                       GoRoute(
                         path: '/a',
                         builder: (BuildContext context, GoRouterState state) =>
@@ -3366,14 +3366,14 @@ void main() {
                         ],
                       ),
                     ]),
-                    StackedShellBranch(routes: <RouteBase>[
+                    StatefulShellBranch(routes: <RouteBase>[
                       GoRoute(
                         path: '/b',
                         builder: (BuildContext context, GoRouterState state) =>
                             const Text('Screen B'),
                       ),
                     ]),
-                    StackedShellBranch(routes: <RouteBase>[
+                    StatefulShellBranch(routes: <RouteBase>[
                       GoRoute(
                         path: '/c',
                         builder: (BuildContext context, GoRouterState state) =>
@@ -3382,7 +3382,7 @@ void main() {
                     ]),
                   ]),
             ]),
-            StackedShellBranch(routes: <GoRoute>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/d',
                 builder: (BuildContext context, GoRouterState state) =>
@@ -3428,17 +3428,17 @@ void main() {
           GlobalKey<NavigatorState>();
       final GlobalKey<NavigatorState> sectionBNavigatorKey =
           GlobalKey<NavigatorState>();
-      StackedNavigationShell? routeState;
+      StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
             return navigationShell;
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
                 navigatorKey: sectionANavigatorKey,
                 routes: <GoRoute>[
                   GoRoute(
@@ -3454,7 +3454,7 @@ void main() {
                     ],
                   ),
                 ]),
-            StackedShellBranch(
+            StatefulShellBranch(
                 navigatorKey: sectionBNavigatorKey,
                 routes: <GoRoute>[
                   GoRoute(
@@ -3513,24 +3513,24 @@ void main() {
         'between branches in StackedShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StackedNavigationShell? routeState;
+      StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
             return navigationShell;
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(routes: <GoRoute>[
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/a',
                 builder: (BuildContext context, GoRouterState state) =>
                     const Text('Screen A'),
               ),
             ]),
-            StackedShellBranch(routes: <GoRoute>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/b',
                 builder: (BuildContext context, GoRouterState state) =>
@@ -3567,7 +3567,7 @@ void main() {
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StackedNavigationShell? routeState;
+      StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         GoRoute(
@@ -3577,19 +3577,19 @@ void main() {
         ),
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
             return navigationShell;
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(routes: <GoRoute>[
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/a',
                 builder: (BuildContext context, GoRouterState state) =>
                     const Text('Screen A'),
               ),
             ]),
-            StackedShellBranch(routes: <GoRoute>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/b',
                 builder: (BuildContext context, GoRouterState state) =>
@@ -3631,24 +3631,24 @@ void main() {
         'StackedShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      StackedNavigationShell? routeState;
+      StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           builder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
             return navigationShell;
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(routes: <GoRoute>[
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/a',
                 builder: (BuildContext context, GoRouterState state) =>
                     const Text('Screen A'),
               ),
             ]),
-            StackedShellBranch(routes: <GoRoute>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/b',
                 builder: (BuildContext context, GoRouterState state) =>
@@ -3667,7 +3667,7 @@ void main() {
                 ],
               ),
             ]),
-            StackedShellBranch(routes: <GoRoute>[
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/c',
                 redirect: (_, __) => '/c/main2',
@@ -3851,8 +3851,8 @@ void main() {
             routes: <RouteBase>[
               StackedShellRoute(
                 builder: mockStackedShellBuilder,
-                branches: <StackedShellBranch>[
-                  StackedShellBranch(routes: <GoRoute>[
+                branches: <StatefulShellBranch>[
+                  StatefulShellBranch(routes: <GoRoute>[
                     GoRoute(
                       path: '/a',
                       builder: (BuildContext context, _) {
@@ -3862,7 +3862,7 @@ void main() {
                       },
                     ),
                   ]),
-                  StackedShellBranch(routes: <GoRoute>[
+                  StatefulShellBranch(routes: <GoRoute>[
                     GoRoute(
                       path: '/b',
                       builder: (BuildContext context, _) {
@@ -4257,85 +4257,6 @@ void main() {
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
     });
 
-    testWidgets('Restores state for imperative routes correctly',
-        (WidgetTester tester) async {
-      final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyA =
-          GlobalKey<DummyRestorableStatefulWidgetState>();
-      final GlobalKey<DummyRestorableStatefulWidgetState>
-          statefulWidgetKeyPushed =
-          GlobalKey<DummyRestorableStatefulWidgetState>();
-
-      final List<RouteBase> routes = <RouteBase>[
-        GoRoute(
-          path: '/a',
-          pageBuilder: createPageBuilder(
-              restorationId: 'screenA', child: const Text('Screen A')),
-          routes: <RouteBase>[
-            GoRoute(
-              path: 'detail',
-              pageBuilder: createPageBuilder(
-                  restorationId: 'screenADetail',
-                  child: Column(children: <Widget>[
-                    const Text('Screen A Detail'),
-                    DummyRestorableStatefulWidget(
-                        key: statefulWidgetKeyA, restorationId: 'counterA'),
-                  ])),
-            ),
-          ],
-        ),
-        GoRoute(
-          path: '/pushed',
-          pageBuilder: createPageBuilder(
-              restorationId: 'pushed',
-              child: Column(children: <Widget>[
-                const Text('Pushed screen'),
-                DummyRestorableStatefulWidget(
-                    key: statefulWidgetKeyPushed,
-                    restorationId: 'counterPushed'),
-              ])),
-        ),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester,
-          initialLocation: '/a/detail', restorationScopeId: 'test');
-      await tester.pumpAndSettle();
-      statefulWidgetKeyA.currentState?.increment();
-      expect(statefulWidgetKeyA.currentState?.counter, equals(1));
-
-      router.push('/pushed');
-      await tester.pumpAndSettle();
-      expect(find.text('Pushed screen'), findsOneWidget);
-      expect(find.text('Screen A Detail'), findsNothing);
-      statefulWidgetKeyPushed.currentState?.increment(2);
-      expect(statefulWidgetKeyPushed.currentState?.counter, equals(2));
-      await tester.pumpAndSettle(); // Give state change time to persist
-
-      await tester.restartAndRestore();
-
-      await tester.pumpAndSettle();
-      expect(find.text('Pushed screen'), findsOneWidget);
-      expect(find.text('Screen A Detail'), findsNothing);
-      expect(statefulWidgetKeyPushed.currentState?.counter, equals(2));
-      // Verify that the page key is restored correctly
-      expect(router.routerDelegate.matches.last.pageKey.value,
-          equals('/pushed-p0'));
-
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(find.text('Pushed screen'), findsNothing);
-      expect(find.text('Screen A Detail'), findsOneWidget);
-      expect(statefulWidgetKeyA.currentState?.counter, equals(1));
-
-      router.push('/pushed');
-      await tester.pumpAndSettle();
-      expect(find.text('Pushed screen'), findsOneWidget);
-      expect(find.text('Screen A Detail'), findsNothing);
-      // Verify that the page key is incremented correctly after restore (i.e.
-      // not starting at 0)
-      expect(router.routerDelegate.matches.last.pageKey.value,
-          equals('/pushed-p1'));
-    });
-
     testWidgets('Restores state of branches in StackedShellRoute correctly',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
@@ -4346,59 +4267,65 @@ void main() {
           GlobalKey<DummyRestorableStatefulWidgetState>();
       final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyC =
           GlobalKey<DummyRestorableStatefulWidgetState>();
-      StackedNavigationShell? routeState;
+      StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           restorationScopeId: 'shell',
           pageBuilder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
             return MaterialPage<dynamic>(
                 restorationId: 'shellWidget', child: navigationShell);
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(restorationScopeId: 'branchA', routes: <GoRoute>[
-              GoRoute(
-                path: '/a',
-                pageBuilder: createPageBuilder(
-                    restorationId: 'screenA', child: const Text('Screen A')),
-                routes: <RouteBase>[
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+                restorationScopeId: 'branchA',
+                routes: <GoRoute>[
                   GoRoute(
-                    path: 'detailA',
+                    path: '/a',
                     pageBuilder: createPageBuilder(
-                        restorationId: 'screenADetail',
-                        child: Column(children: <Widget>[
-                          const Text('Screen A Detail'),
-                          DummyRestorableStatefulWidget(
-                              key: statefulWidgetKeyA,
-                              restorationId: 'counterA'),
-                        ])),
+                        restorationId: 'screenA',
+                        child: const Text('Screen A')),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'detailA',
+                        pageBuilder: createPageBuilder(
+                            restorationId: 'screenADetail',
+                            child: Column(children: <Widget>[
+                              const Text('Screen A Detail'),
+                              DummyRestorableStatefulWidget(
+                                  key: statefulWidgetKeyA,
+                                  restorationId: 'counterA'),
+                            ])),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ]),
-            StackedShellBranch(restorationScopeId: 'branchB', routes: <GoRoute>[
-              GoRoute(
-                path: '/b',
-                pageBuilder: createPageBuilder(
-                    restorationId: 'screenB', child: const Text('Screen B')),
-                routes: <RouteBase>[
+                ]),
+            StatefulShellBranch(
+                restorationScopeId: 'branchB',
+                routes: <GoRoute>[
                   GoRoute(
-                    path: 'detailB',
+                    path: '/b',
                     pageBuilder: createPageBuilder(
-                        restorationId: 'screenBDetail',
-                        child: Column(children: <Widget>[
-                          const Text('Screen B Detail'),
-                          DummyRestorableStatefulWidget(
-                              key: statefulWidgetKeyB,
-                              restorationId: 'counterB'),
-                        ])),
+                        restorationId: 'screenB',
+                        child: const Text('Screen B')),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'detailB',
+                        pageBuilder: createPageBuilder(
+                            restorationId: 'screenBDetail',
+                            child: Column(children: <Widget>[
+                              const Text('Screen B Detail'),
+                              DummyRestorableStatefulWidget(
+                                  key: statefulWidgetKeyB,
+                                  restorationId: 'counterB'),
+                            ])),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ]),
-            StackedShellBranch(routes: <GoRoute>[
+                ]),
+            StatefulShellBranch(routes: <GoRoute>[
               GoRoute(
                 path: '/c',
                 pageBuilder: createPageBuilder(
@@ -4471,53 +4398,56 @@ void main() {
           GlobalKey<DummyRestorableStatefulWidgetState>();
       final GlobalKey<DummyRestorableStatefulWidgetState> statefulWidgetKeyB =
           GlobalKey<DummyRestorableStatefulWidgetState>();
-      StackedNavigationShell? routeStateRoot;
-      StackedNavigationShell? routeStateNested;
+      StatefulNavigationShell? routeStateRoot;
+      StatefulNavigationShell? routeStateNested;
 
       final List<RouteBase> routes = <RouteBase>[
         StackedShellRoute(
           restorationScopeId: 'shell',
           pageBuilder: (BuildContext context, GoRouterState state,
-              StackedNavigationShell navigationShell) {
+              StatefulNavigationShell navigationShell) {
             routeStateRoot = navigationShell;
             return MaterialPage<dynamic>(
                 restorationId: 'shellWidget', child: navigationShell);
           },
-          branches: <StackedShellBranch>[
-            StackedShellBranch(restorationScopeId: 'branchA', routes: <GoRoute>[
-              GoRoute(
-                path: '/a',
-                pageBuilder: createPageBuilder(
-                    restorationId: 'screenA', child: const Text('Screen A')),
-                routes: <RouteBase>[
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+                restorationScopeId: 'branchA',
+                routes: <GoRoute>[
                   GoRoute(
-                    path: 'detailA',
+                    path: '/a',
                     pageBuilder: createPageBuilder(
-                        restorationId: 'screenADetail',
-                        child: Column(children: <Widget>[
-                          const Text('Screen A Detail'),
-                          DummyRestorableStatefulWidget(
-                              key: statefulWidgetKeyA,
-                              restorationId: 'counterA'),
-                        ])),
+                        restorationId: 'screenA',
+                        child: const Text('Screen A')),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'detailA',
+                        pageBuilder: createPageBuilder(
+                            restorationId: 'screenADetail',
+                            child: Column(children: <Widget>[
+                              const Text('Screen A Detail'),
+                              DummyRestorableStatefulWidget(
+                                  key: statefulWidgetKeyA,
+                                  restorationId: 'counterA'),
+                            ])),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ]),
-            StackedShellBranch(
+                ]),
+            StatefulShellBranch(
                 restorationScopeId: 'branchB',
                 routes: <RouteBase>[
                   StackedShellRoute(
                       restorationScopeId: 'branchB-nested-shell',
                       pageBuilder: (BuildContext context, GoRouterState state,
-                          StackedNavigationShell navigationShell) {
+                          StatefulNavigationShell navigationShell) {
                         routeStateNested = navigationShell;
                         return MaterialPage<dynamic>(
                             restorationId: 'shellWidget-nested',
                             child: navigationShell);
                       },
-                      branches: <StackedShellBranch>[
-                        StackedShellBranch(
+                      branches: <StatefulShellBranch>[
+                        StatefulShellBranch(
                             restorationScopeId: 'branchB-nested',
                             routes: <GoRoute>[
                               GoRoute(
@@ -4540,7 +4470,7 @@ void main() {
                                 ],
                               ),
                             ]),
-                        StackedShellBranch(
+                        StatefulShellBranch(
                             restorationScopeId: 'branchC-nested',
                             routes: <GoRoute>[
                               GoRoute(

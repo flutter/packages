@@ -329,7 +329,7 @@ class GoRoute extends RouteBase {
 }
 
 /// Base class for classes that act as shells for sub-routes, such
-/// as [ShellRoute] and [StackedShellRoute].
+/// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   /// Constructs a [ShellRouteBase].
   const ShellRouteBase._({super.routes}) : super._();
@@ -571,19 +571,19 @@ class ShellRoute extends ShellRouteBase {
 /// implementing a UI with a [BottomNavigationBar], with a persistent navigation
 /// state for each tab.
 ///
-/// A StackedShellRoute is created by specifying a List of
-/// [StackedShellBranch] items, each representing a separate stateful branch
-/// in the route tree. StackedShellBranch provides the root routes and the
+/// A StatefulShellRoute is created by specifying a List of
+/// [StatefulShellBranch] items, each representing a separate stateful branch
+/// in the route tree. StatefulShellBranch provides the root routes and the
 /// Navigator key ([GlobalKey]) for the branch, as well as an optional initial
 /// location.
 ///
 /// Like [ShellRoute], either a [builder] or a [pageBuilder] must be provided
-/// when creating a StackedShellRoute. However, these builders differ slightly
-/// in that they accept a [StackedNavigationShell] parameter instead of a
-/// child Widget. The StackedNavigationShell can be used to access information
+/// when creating a StatefulShellRoute. However, these builders differ slightly
+/// in that they accept a [StatefulNavigationShell] parameter instead of a
+/// child Widget. The StatefulNavigationShell can be used to access information
 /// about the state of the route, as well as to switch the active branch (i.e.
 /// restoring the navigation stack of another branch). The latter is
-/// accomplished by using the method [StackedNavigationShell.goBranch], for
+/// accomplished by using the method [StatefulNavigationShell.goBranch], for
 /// example:
 ///
 /// ```
@@ -592,18 +592,23 @@ class ShellRoute extends ShellRouteBase {
 /// }
 /// ```
 ///
-/// The StackedNavigationShell is also responsible for managing and maintaining
+/// The StatefulNavigationShell is also responsible for managing and maintaining
 /// the state of the branch Navigators. Typically, a shell is built around this
 /// Widget, for example by using it as the body of [Scaffold] with a
 /// [BottomNavigationBar].
 ///
-/// Sometimes greater control is needed over the layout and animations of the
-/// Widgets representing the branch Navigators. In such cases, a custom
-/// implementation can choose to provide a [navigatorContainerBuilder], in
-/// which a custom container Widget can be provided for the branch Navigators.
+/// When creating a StatefulShellRoute, a [navigatorContainerBuilder] function
+/// must be provided. This function is responsible for building the actual
+/// container for the Widgets representing the branch Navigators. Typically,
+/// the Widget returned by this function handles the layout (including
+/// [Offstage] handling etc) of the branch Navigators and any animations needed
+/// when switching active branch.
+///
+/// For a default implementation of [navigatorContainerBuilder], consider using
+/// [StackedShellRoute].
 ///
 /// Below is a simple example of how a router configuration with
-/// StackedShellRoute could be achieved. In this example, a
+/// StatefulShellRoute could be achieved. In this example, a
 /// BottomNavigationBar with two tabs is used, and each of the tabs gets its
 /// own Navigator. A container widget responsible for managing the Navigators
 /// for all route branches will then be passed as the child argument
@@ -618,14 +623,18 @@ class ShellRoute extends ShellRouteBase {
 /// final GoRouter _router = GoRouter(
 ///   initialLocation: '/a',
 ///   routes: <RouteBase>[
-///     StackedShellRoute(
+///     StatefulShellRoute(
 ///       builder: (BuildContext context, GoRouterState state,
-///             StackedNavigationShell navigationShell) {
+///             StatefulNavigationShell navigationShell) {
 ///         return ScaffoldWithNavBar(navigationShell: navigationShell);
 ///       },
+///       navigatorContainerBuilder: (BuildContext context,
+///             StatefulNavigationShell navigationShell,
+///             List<Widget> children) =>
+///                 MyCustomContainer(children: children),
 ///       branches: [
 ///         /// The first branch, i.e. tab 'A'
-///         StackedShellBranch(
+///         StatefulShellBranch(
 ///           navigatorKey: _tabANavigatorKey,
 ///           routes: <RouteBase>[
 ///             GoRoute(
@@ -644,7 +653,7 @@ class ShellRoute extends ShellRouteBase {
 ///           ],
 ///         ),
 ///         /// The second branch, i.e. tab 'B'
-///         StackedShellBranch(
+///         StatefulShellBranch(
 ///           navigatorKey: _tabBNavigatorKey,
 ///           routes: <RouteBase>[
 ///             GoRoute(
@@ -669,21 +678,20 @@ class ShellRoute extends ShellRouteBase {
 /// ```
 ///
 /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
-/// for a complete runnable example using StackedShellRoute.
-class StackedShellRoute extends ShellRouteBase {
-  /// Constructs a [StackedShellRoute] from a list of [StackedShellBranch]es,
+/// for a complete runnable example using StatefulShellRoute and StackedShellRoute.
+class StatefulShellRoute extends ShellRouteBase {
+  /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch]es,
   /// each representing a separate nested navigation tree (branch).
   ///
   /// A separate [Navigator] will be created for each of the branches, using
-  /// the navigator key specified in [StackedShellBranch]. Note that unlike
-  /// [ShellRoute], a builder must always be provided when creating a
-  /// StackedShellRoute. The pageBuilder however is optional, and is used
-  /// in addition to the builder.
-  StackedShellRoute({
+  /// the navigator key specified in [StatefulShellBranch]. The Widget
+  /// implementing the container for the branch Navigators is provided by
+  /// [navigatorContainerBuilder].
+  StatefulShellRoute({
     required this.branches,
     this.builder,
     this.pageBuilder,
-    this.navigatorContainerBuilder,
+    required this.navigatorContainerBuilder,
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
         assert((pageBuilder != null) ^ (builder != null),
@@ -701,55 +709,54 @@ class StackedShellRoute extends ShellRouteBase {
   /// The widget builder for a stateful shell route.
   ///
   /// Similar to [GoRoute.builder], but with an additional
-  /// [StackedNavigationShell] parameter. StackedNavigationShell is a Widget
+  /// [StatefulNavigationShell] parameter. StatefulNavigationShell is a Widget
   /// responsible for managing the nested navigation for the
   /// matching sub-routes. Typically, a shell route builds its shell around this
-  /// Widget. StackedNavigationShell can also be used to access information
+  /// Widget. StatefulNavigationShell can also be used to access information
   /// about which branch is active, and also to navigate to a different branch
-  /// (using [StackedNavigationShell.goBranch]).
+  /// (using [StatefulNavigationShell.goBranch]).
   ///
   /// Custom implementations may choose to ignore the child parameter passed to
-  /// the builder function, and instead use [StackedNavigationShell] to
+  /// the builder function, and instead use [StatefulNavigationShell] to
   /// create a custom container for the branch Navigators.
-  final StackedShellRouteBuilder? builder;
+  final StatefulShellRouteBuilder? builder;
 
   /// The page builder for a stateful shell route.
   ///
   /// Similar to [GoRoute.pageBuilder], but with an additional
-  /// [StackedNavigationShell] parameter. StackedNavigationShell is a Widget
+  /// [StatefulNavigationShell] parameter. StatefulNavigationShell is a Widget
   /// responsible for managing the nested navigation for the
   /// matching sub-routes. Typically, a shell route builds its shell around this
-  /// Widget. StackedNavigationShell can also be used to access information
+  /// Widget. StatefulNavigationShell can also be used to access information
   /// about which branch is active, and also to navigate to a different branch
-  /// (using [StackedNavigationShell.goBranch]).
+  /// (using [StatefulNavigationShell.goBranch]).
   ///
   /// Custom implementations may choose to ignore the child parameter passed to
-  /// the builder function, and instead use [StackedNavigationShell] to
+  /// the builder function, and instead use [StatefulNavigationShell] to
   /// create a custom container for the branch Navigators.
-  final StackedShellRoutePageBuilder? pageBuilder;
+  final StatefulShellRoutePageBuilder? pageBuilder;
 
-  /// An optional builder for a custom container for the branch Navigators.
+  /// The builder for the branch Navigator container.
   ///
-  /// StackedShellRoute provides a default implementation for managing the
-  /// Widgets representing the branch Navigators, but in some cases a different
-  /// implementation may be required. When providing an implementation for this
-  /// builder, access is provided to a List of Widgets representing the branch
-  /// Navigators, where the the index corresponds to the index of in [branches].
+  /// The function responsible for building the container for the branch
+  /// Navigators. When this function is invoked, access is provided to a List of
+  /// Widgets representing the branch Navigators, where the the index
+  /// corresponds to the index of in [branches].
   ///
   /// The builder function is expected to return a Widget that ensures that the
   /// state of the branch Widgets is maintained, for instance by inducting them
   /// in the Widget tree.
-  final StackedNavigationContainerBuilder? navigatorContainerBuilder;
+  final ShellNavigationContainerBuilder navigatorContainerBuilder;
 
   /// Representations of the different stateful route branches that this
   /// shell route will manage.
   ///
   /// Each branch uses a separate [Navigator], identified
-  /// [StackedShellBranch.navigatorKey].
-  final List<StackedShellBranch> branches;
+  /// [StatefulShellBranch.navigatorKey].
+  final List<StatefulShellBranch> branches;
 
-  final GlobalKey<StackedNavigationShellState> _shellStateKey =
-      GlobalKey<StackedNavigationShellState>();
+  final GlobalKey<StatefulNavigationShellState> _shellStateKey =
+      GlobalKey<StatefulNavigationShellState>();
 
   @override
   Widget? buildWidget(BuildContext context, GoRouterState state,
@@ -772,30 +779,30 @@ class StackedShellRoute extends ShellRouteBase {
 
   @override
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
-    final StackedShellBranch? branch = branches.firstWhereOrNull(
-        (StackedShellBranch e) => e.routes.contains(subRoute));
+    final StatefulShellBranch? branch = branches.firstWhereOrNull(
+        (StatefulShellBranch e) => e.routes.contains(subRoute));
     assert(branch != null);
     return branch!.navigatorKey;
   }
 
-  StackedNavigationShell _createShell(
+  StatefulNavigationShell _createShell(
           BuildContext context, ShellRouteContext shellRouteContext) =>
-      StackedNavigationShell(
+      StatefulNavigationShell(
           shellRouteContext: shellRouteContext,
           router: GoRouter.of(context),
           containerBuilder: navigatorContainerBuilder);
 
-  static List<RouteBase> _routes(List<StackedShellBranch> branches) =>
-      branches.expand((StackedShellBranch e) => e.routes).toList();
+  static List<RouteBase> _routes(List<StatefulShellBranch> branches) =>
+      branches.expand((StatefulShellBranch e) => e.routes).toList();
 
   static Set<GlobalKey<NavigatorState>> _debugUniqueNavigatorKeys(
-          List<StackedShellBranch> branches) =>
+          List<StatefulShellBranch> branches) =>
       Set<GlobalKey<NavigatorState>>.from(
-          branches.map((StackedShellBranch e) => e.navigatorKey));
+          branches.map((StatefulShellBranch e) => e.navigatorKey));
 
   static bool _debugValidateParentNavigatorKeys(
-      List<StackedShellBranch> branches) {
-    for (final StackedShellBranch branch in branches) {
+      List<StatefulShellBranch> branches) {
+    for (final StatefulShellBranch branch in branches) {
       for (final RouteBase route in branch.routes) {
         if (route is GoRoute) {
           assert(route.parentNavigatorKey == null ||
@@ -807,40 +814,68 @@ class StackedShellRoute extends ShellRouteBase {
   }
 
   static bool _debugValidateRestorationScopeIds(
-      String? restorationScopeId, List<StackedShellBranch> branches) {
+      String? restorationScopeId, List<StatefulShellBranch> branches) {
     if (branches
-        .map((StackedShellBranch e) => e.restorationScopeId)
+        .map((StatefulShellBranch e) => e.restorationScopeId)
         .whereNotNull()
         .isNotEmpty) {
       assert(
           restorationScopeId != null,
           'A restorationScopeId must be set for '
-          'the StackedShellRoute when using restorationScopeIds on one or more '
+          'the StatefulShellRoute when using restorationScopeIds on one or more '
           'of the branches');
     }
     return true;
   }
 }
 
-/// Representation of a separate branch in a stateful navigation tree, used to
-/// configure [StackedShellRoute].
+/// A stateful shell route implementation that uses an [IndexedStack] for its
+/// nested [Navigator]s.
 ///
-/// The only required argument when creating a StackedShellBranch is the
+/// StackedShellRoute provides an IndexedStack based implementation for the
+/// container ([navigatorContainerBuilder]) used to managing the Widgets
+/// representing the branch Navigators. StackedShellRoute is created in the same
+/// way as [StatefulShellRoute], but without the need to provide a
+/// navigatorContainerBuilder parameter.
+///
+/// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
+/// for a complete runnable example using StatefulShellRoute and StackedShellRoute.
+class StackedShellRoute extends StatefulShellRoute {
+  /// Constructs a [StackedShellRoute] from a list of [StatefulShellBranch]es,
+  /// each representing a separate nested navigation tree (branch).
+  StackedShellRoute({
+    required super.branches,
+    super.builder,
+    super.pageBuilder,
+    super.restorationScopeId,
+  }) : super(navigatorContainerBuilder: _navigatorContainerBuilder);
+
+  static Widget _navigatorContainerBuilder(BuildContext context,
+      StatefulNavigationShell navigationShell, List<Widget> children) {
+    return _IndexedStackedRouteBranchContainer(
+        currentIndex: navigationShell.currentIndex, children: children);
+  }
+}
+
+/// Representation of a separate branch in a stateful navigation tree, used to
+/// configure [StatefulShellRoute].
+///
+/// The only required argument when creating a StatefulShellBranch is the
 /// sub-routes ([routes]), however sometimes it may be convenient to also
 /// provide a [initialLocation]. The value of this parameter is used when
 /// loading the branch for the first time (for instance when switching branch
-/// using the goBranch method in [StackedNavigationShell]).
+/// using the goBranch method in [StatefulNavigationShell]).
 ///
-/// A separate [Navigator] will be built for each StackedShellBranch in a
-/// [StackedShellRoute], and the routes of this branch will be placed onto that
+/// A separate [Navigator] will be built for each StatefulShellBranch in a
+/// [StatefulShellRoute], and the routes of this branch will be placed onto that
 /// Navigator instead of the root Navigator. A custom [navigatorKey] can be
-/// provided when creating a StackedShellBranch, which can be useful when the
+/// provided when creating a StatefulShellBranch, which can be useful when the
 /// Navigator needs to be accessed elsewhere. If no key is provided, a default
 /// one will be created.
 @immutable
-class StackedShellBranch {
-  /// Constructs a [StackedShellBranch].
-  StackedShellBranch({
+class StatefulShellBranch {
+  /// Constructs a [StatefulShellBranch].
+  StatefulShellBranch({
     required this.routes,
     GlobalKey<NavigatorState>? navigatorKey,
     this.initialLocation,
@@ -850,8 +885,8 @@ class StackedShellBranch {
 
   /// The [GlobalKey] to be used by the [Navigator] built for this branch.
   ///
-  /// A separate Navigator will be built for each StackedShellBranch in a
-  /// [StackedShellRoute] and this key will be used to identify the Navigator.
+  /// A separate Navigator will be built for each StatefulShellBranch in a
+  /// [StatefulShellRoute] and this key will be used to identify the Navigator.
   /// The routes associated with this branch will be placed o onto that
   /// Navigator instead of the root Navigator.
   final GlobalKey<NavigatorState> navigatorKey;
@@ -885,86 +920,105 @@ class StackedShellBranch {
 }
 
 /// Builder for a custom container for the branch Navigators of a
-/// [StackedShellRoute].
-typedef StackedNavigationContainerBuilder = Widget Function(
-    BuildContext context,
-    StackedNavigationShell navigationShell,
-    List<Widget> children);
+/// [StatefulShellRoute].
+typedef ShellNavigationContainerBuilder = Widget Function(BuildContext context,
+    StatefulNavigationShell navigationShell, List<Widget> children);
 
-/// Widget for managing the state of a [StackedShellRoute].
+/// Widget for managing the state of a [StatefulShellRoute].
 ///
 /// Normally, this widget is not used directly, but is instead created
-/// internally by StackedShellRoute. However, if a custom container for the
-/// branch Navigators is required, StackedNavigationShell can be used in
-/// the builder or pageBuilder methods of StackedShellRoute to facilitate this.
-/// The container is created using the provided [StackedNavigationContainerBuilder],
+/// internally by StatefulShellRoute. However, if a custom container for the
+/// branch Navigators is required, StatefulNavigationShell can be used in
+/// the builder or pageBuilder methods of StatefulShellRoute to facilitate this.
+/// The container is created using the provided [ShellNavigationContainerBuilder],
 /// where the List of Widgets represent the Navigators for each branch.
 ///
 /// Example:
 /// ```
 /// builder: (BuildContext context, GoRouterState state,
-///     StackedNavigationShell navigationShell) {
-///   return StackedNavigationShell(
+///     StatefulNavigationShell navigationShell) {
+///   return StatefulNavigationShell(
 ///     shellRouteState: state,
 ///     containerBuilder: (_, __, List<Widget> children) => MyCustomShell(shellState: state, children: children),
 ///   );
 /// }
 /// ```
-class StackedNavigationShell extends StatefulWidget {
-  /// Constructs an [_StackedNavigationShell].
-  StackedNavigationShell({
+class StatefulNavigationShell extends StatefulWidget {
+  /// Constructs an [StatefulNavigationShell].
+  StatefulNavigationShell({
     required this.shellRouteContext,
     required GoRouter router,
-    this.containerBuilder,
-  })  : assert(shellRouteContext.route is StackedShellRoute),
+    required this.containerBuilder,
+  })  : assert(shellRouteContext.route is StatefulShellRoute),
         _router = router,
         currentIndex = _indexOfBranchNavigatorKey(
-            shellRouteContext.route as StackedShellRoute,
+            shellRouteContext.route as StatefulShellRoute,
             shellRouteContext.navigatorKey),
         super(
-            key: (shellRouteContext.route as StackedShellRoute)._shellStateKey);
+            key:
+                (shellRouteContext.route as StatefulShellRoute)._shellStateKey);
 
   /// The ShellRouteContext responsible for building the Navigator for the
-  /// current [StackedShellBranch]
+  /// current [StatefulShellBranch]
   final ShellRouteContext shellRouteContext;
 
   /// The builder for a custom container for shell route Navigators.
-  final StackedNavigationContainerBuilder? containerBuilder;
+  final ShellNavigationContainerBuilder containerBuilder;
 
-  /// The index of the currently active [StackedShellBranch].
+  /// The index of the currently active [StatefulShellBranch].
   ///
-  /// Corresponds to the index in the branches field of [StackedShellRoute].
+  /// Corresponds to the index in the branches field of [StatefulShellRoute].
   final int currentIndex;
 
   final GoRouter _router;
 
-  /// Navigate to the last location of the [StackedShellBranch] at the provided
-  /// index in the associated [StackedShellBranch].
+  /// Navigate to the last location of the [StatefulShellBranch] at the provided
+  /// index in the associated [StatefulShellBranch].
   ///
   /// This method will switch the currently active branch [Navigator] for the
-  /// [StackedShellRoute]. If the branch has not been visited before, this
+  /// [StatefulShellRoute]. If the branch has not been visited before, this
   /// method will navigate to initial location of the branch (see
-  /// [StackedShellBranch.initialLocation]).
+  /// [StatefulShellBranch.initialLocation]).
   void goBranch(int index) {
-    final StackedShellRoute route =
-        shellRouteContext.route as StackedShellRoute;
-    final StackedNavigationShellState? shellState =
+    final StatefulShellRoute route =
+        shellRouteContext.route as StatefulShellRoute;
+    final StatefulNavigationShellState? shellState =
         route._shellStateKey.currentState;
     if (shellState != null) {
       shellState.goBranch(index);
     } else {
-      _router.go(StackedNavigationShellState._effectiveInitialBranchLocation(
-          _router, route, index));
+      _router.go(effectiveInitialBranchLocation(index));
+    }
+  }
+
+  /// Gets the effective initial location for the branch at the provided index
+  /// in the associated [StatefulShellRoute].
+  ///
+  /// The effective initial location is either the
+  /// [StackedShellBranch.initialLocation], if specified, or the location of the
+  /// [StackedShellBranch.defaultRoute].
+  String effectiveInitialBranchLocation(int index) {
+    final StatefulShellRoute route =
+        shellRouteContext.route as StatefulShellRoute;
+    final StatefulShellBranch branch = route.branches[index];
+    final String? initialLocation = branch.initialLocation;
+    if (initialLocation != null) {
+      return initialLocation;
+    } else {
+      /// Recursively traverses the routes of the provided StackedShellBranch to
+      /// find the first GoRoute, from which a full path will be derived.
+      final GoRoute route = branch.defaultRoute!;
+      return _router.locationForRoute(route)!;
     }
   }
 
   @override
-  State<StatefulWidget> createState() => StackedNavigationShellState();
+  State<StatefulWidget> createState() => StatefulNavigationShellState();
 
   /// Gets the state for the nearest stateful shell route in the Widget tree.
-  static StackedNavigationShellState of(BuildContext context) {
-    final StackedNavigationShellState? shellState =
-        context.findAncestorStateOfType<StackedNavigationShellState>();
+  static StatefulNavigationShellState of(BuildContext context) {
+    final StatefulNavigationShellState? shellState =
+        context.findAncestorStateOfType<StatefulNavigationShellState>();
     assert(shellState != null);
     return shellState!;
   }
@@ -972,34 +1026,34 @@ class StackedNavigationShell extends StatefulWidget {
   /// Gets the state for the nearest stateful shell route in the Widget tree.
   ///
   /// Returns null if no stateful shell route is found.
-  static StackedNavigationShellState? maybeOf(BuildContext context) {
-    final StackedNavigationShellState? shellState =
-        context.findAncestorStateOfType<StackedNavigationShellState>();
+  static StatefulNavigationShellState? maybeOf(BuildContext context) {
+    final StatefulNavigationShellState? shellState =
+        context.findAncestorStateOfType<StatefulNavigationShellState>();
     return shellState;
   }
 
   static int _indexOfBranchNavigatorKey(
-      StackedShellRoute route, GlobalKey<NavigatorState> navigatorKey) {
+      StatefulShellRoute route, GlobalKey<NavigatorState> navigatorKey) {
     final int index = route.branches.indexWhere(
-        (StackedShellBranch branch) => branch.navigatorKey == navigatorKey);
+        (StatefulShellBranch branch) => branch.navigatorKey == navigatorKey);
     assert(index >= 0);
     return index;
   }
 }
 
-/// State for StackedNavigationShell.
-class StackedNavigationShellState extends State<StackedNavigationShell>
+/// State for StatefulNavigationShell.
+class StatefulNavigationShellState extends State<StatefulNavigationShell>
     with RestorationMixin {
   final Map<Key, Widget> _branchNavigators = <Key, Widget>{};
 
-  StackedShellRoute get _route =>
-      widget.shellRouteContext.route as StackedShellRoute;
+  StatefulShellRoute get _route =>
+      widget.shellRouteContext.route as StatefulShellRoute;
 
   GoRouter get _router => widget._router;
   RouteMatcher get _matcher => _router.routeInformationParser.matcher;
 
-  final Map<StackedShellBranch, _RestorableRouteMatchList> _branchLocations =
-      <StackedShellBranch, _RestorableRouteMatchList>{};
+  final Map<StatefulShellBranch, _RestorableRouteMatchList> _branchLocations =
+      <StatefulShellBranch, _RestorableRouteMatchList>{};
 
   @override
   String? get restorationId => _route.restorationScopeId;
@@ -1007,13 +1061,13 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
   /// Generates a derived restoration ID for the branch location property,
   /// falling back to the identity hash code of the branch to ensure an ID is
   /// always returned (needed for _RestorableRouteMatchList/RestorableValue).
-  String _branchLocationRestorationScopeId(StackedShellBranch branch) {
+  String _branchLocationRestorationScopeId(StatefulShellBranch branch) {
     return branch.restorationScopeId != null
         ? '${branch.restorationScopeId}-location'
         : identityHashCode(branch).toString();
   }
 
-  _RestorableRouteMatchList _branchLocation(StackedShellBranch branch,
+  _RestorableRouteMatchList _branchLocation(StatefulShellBranch branch,
       [bool register = true]) {
     return _branchLocations.putIfAbsent(branch, () {
       final _RestorableRouteMatchList branchLocation =
@@ -1030,7 +1084,7 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
       _branchLocations[_route.branches[index]]?.value;
 
   void _updateCurrentBranchStateFromWidget() {
-    final StackedShellBranch branch = _route.branches[widget.currentIndex];
+    final StatefulShellBranch branch = _route.branches[widget.currentIndex];
     final ShellRouteContext shellRouteContext = widget.shellRouteContext;
 
     /// Create an clone of the current RouteMatchList, to prevent mutations from
@@ -1054,22 +1108,16 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
     }
   }
 
-  Widget _indexedStackChildBuilder(BuildContext context,
-      StackedNavigationShell navigationShell, List<Widget> children) {
-    return _IndexedStackedRouteBranchContainer(
-        currentIndex: widget.currentIndex, children: children);
-  }
-
-  /// The index of the currently active [StackedShellBranch].
+  /// The index of the currently active [StatefulShellBranch].
   ///
-  /// Corresponds to the index in the branches field of [StackedShellRoute].
+  /// Corresponds to the index in the branches field of [StatefulShellRoute].
   int get currentIndex => widget.currentIndex;
 
-  /// Navigate to the last location of the [StackedShellBranch] at the provided
-  /// index in the associated [StackedShellBranch].
+  /// Navigate to the last location of the [StatefulShellBranch] at the provided
+  /// index in the associated [StatefulShellBranch].
   ///
   /// This method will switch the currently active branch [Navigator] for the
-  /// [StackedShellRoute]. If the branch has not been visited before, this
+  /// [StatefulShellRoute]. If the branch has not been visited before, this
   /// method will navigate to initial location of the branch (see
   void goBranch(int index) {
     assert(index >= 0 && index < _route.branches.length);
@@ -1079,21 +1127,7 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
           matchlist.toPreParsedRouteInformation();
       _router.go(preParsed.location!, extra: preParsed.state);
     } else {
-      _router.go(_effectiveInitialBranchLocation(_router, _route, index));
-    }
-  }
-
-  static String _effectiveInitialBranchLocation(
-      GoRouter router, StackedShellRoute route, int index) {
-    final StackedShellBranch branch = route.branches[index];
-    final String? initialLocation = branch.initialLocation;
-    if (initialLocation != null) {
-      return initialLocation;
-    } else {
-      /// Recursively traverses the routes of the provided StackedShellBranch to
-      /// find the first GoRoute, from which a full path will be derived.
-      final GoRoute route = branch.defaultRoute!;
-      return router.locationForRoute(route)!;
+      _router.go(widget.effectiveInitialBranchLocation(index));
     }
   }
 
@@ -1106,7 +1140,7 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
   @override
   void dispose() {
     super.dispose();
-    for (final StackedShellBranch branch in _route.branches) {
+    for (final StatefulShellBranch branch in _route.branches) {
       _branchLocations[branch]?.dispose();
     }
   }
@@ -1117,7 +1151,7 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
   }
 
   @override
-  void didUpdateWidget(covariant StackedNavigationShell oldWidget) {
+  void didUpdateWidget(covariant StatefulNavigationShell oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateCurrentBranchStateFromWidget();
   }
@@ -1125,16 +1159,14 @@ class StackedNavigationShellState extends State<StackedNavigationShell>
   @override
   Widget build(BuildContext context) {
     final List<Widget> children = _route.branches
-        .map((StackedShellBranch branch) => _BranchNavigatorProxy(
+        .map((StatefulShellBranch branch) => _BranchNavigatorProxy(
             key: ObjectKey(branch),
             branch: branch,
-            navigatorForBranch: (StackedShellBranch b) =>
+            navigatorForBranch: (StatefulShellBranch b) =>
                 _branchNavigators[b.navigatorKey]))
         .toList();
 
-    final StackedNavigationContainerBuilder containerBuilder =
-        widget.containerBuilder ?? _indexedStackChildBuilder;
-    return containerBuilder(context, widget, children);
+    return widget.containerBuilder(context, widget, children);
   }
 }
 
@@ -1176,7 +1208,7 @@ class _RestorableRouteMatchList extends RestorableProperty<RouteMatchList> {
   }
 }
 
-typedef _NavigatorForBranch = Widget? Function(StackedShellBranch);
+typedef _NavigatorForBranch = Widget? Function(StatefulShellBranch);
 
 /// Widget that serves as the proxy for a branch Navigator Widget, which
 /// possibly hasn't been created yet.
@@ -1193,7 +1225,7 @@ class _BranchNavigatorProxy extends StatefulWidget {
     required this.navigatorForBranch,
   });
 
-  final StackedShellBranch branch;
+  final StatefulShellBranch branch;
   final _NavigatorForBranch navigatorForBranch;
 
   @override

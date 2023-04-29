@@ -325,7 +325,7 @@ void main() {
           'scope1');
     });
 
-    testWidgets('Uses the correct restorationScopeId for StackedShellRoute',
+    testWidgets('Uses the correct restorationScopeId for StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -338,10 +338,10 @@ void main() {
           StackedShellRoute(
             restorationScopeId: 'shell',
             builder: (BuildContext context, GoRouterState state,
-                    StackedNavigationShell navigationShell) =>
+                    StatefulNavigationShell navigationShell) =>
                 _HomeScreen(child: navigationShell),
-            branches: <StackedShellBranch>[
-              StackedShellBranch(
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
                 navigatorKey: shellNavigatorKey,
                 restorationScopeId: 'scope1',
                 routes: <RouteBase>[
@@ -436,7 +436,7 @@ class _BuilderTestWidget extends StatelessWidget {
       },
       restorationScopeId: null,
       observers: <NavigatorObserver>[],
-      onPopPage: (_, __, ___) => false,
+      onPopPageWithRouteMatch: (_, __, ___) => false,
     );
   }
 

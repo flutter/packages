@@ -33,7 +33,7 @@ An example to demonstrate how to use handle a sign-in flow with a stream authent
 ## [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
 `flutter run lib/stacked_shell_route.dart`
 
-An example to demonstrate how to use a `StackedShellRoute` to create stateful nested navigation, with a
+An example to demonstrate how to use a `StatefulShellRoute` to create stateful nested navigation, with a
 `BottomNavigationBar`.
 
 ## [Books app](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/books)

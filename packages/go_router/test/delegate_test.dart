@@ -33,15 +33,15 @@ Future<GoRouter> createGoRouter(
   return router;
 }
 
-Future<GoRouter> createGoRouterWithStackedShellRoute(
+Future<GoRouter> createGoRouterWithStatefulShellRoute(
     WidgetTester tester) async {
   final GoRouter router = GoRouter(
     initialLocation: '/',
     routes: <RouteBase>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
       GoRoute(path: '/a', builder: (_, __) => const DummyStatefulWidget()),
-      StackedShellRoute(branches: <StackedShellBranch>[
-        StackedShellBranch(routes: <RouteBase>[
+      StackedShellRoute(branches: <StatefulShellBranch>[
+        StatefulShellBranch(routes: <RouteBase>[
           GoRoute(
               path: '/c',
               builder: (_, __) => const DummyStatefulWidget(),
@@ -54,7 +54,7 @@ Future<GoRouter> createGoRouterWithStackedShellRoute(
                     builder: (_, __) => const DummyStatefulWidget()),
               ]),
         ]),
-        StackedShellBranch(routes: <RouteBase>[
+        StatefulShellBranch(routes: <RouteBase>[
           GoRoute(
               path: '/d',
               builder: (_, __) => const DummyStatefulWidget(),
@@ -125,10 +125,10 @@ void main() {
 
     testWidgets(
       'It should successfully push a route from outside the the current '
-      'StackedShellRoute',
+      'StatefulShellRoute',
       (WidgetTester tester) async {
         final GoRouter goRouter =
-            await createGoRouterWithStackedShellRoute(tester);
+            await createGoRouterWithStatefulShellRoute(tester);
         goRouter.push('/c/c1');
         await tester.pumpAndSettle();
 
@@ -145,10 +145,10 @@ void main() {
 
     testWidgets(
       'It should successfully push a route that is a descendant of the current '
-      'StackedShellRoute branch',
+      'StatefulShellRoute branch',
       (WidgetTester tester) async {
         final GoRouter goRouter =
-            await createGoRouterWithStackedShellRoute(tester);
+            await createGoRouterWithStatefulShellRoute(tester);
         goRouter.push('/c/c1');
         await tester.pumpAndSettle();
 
@@ -164,11 +164,11 @@ void main() {
     );
 
     testWidgets(
-      'It should successfully push the root of the current StackedShellRoute '
+      'It should successfully push the root of the current StatefulShellRoute '
       'branch upon itself',
       (WidgetTester tester) async {
         final GoRouter goRouter =
-            await createGoRouterWithStackedShellRoute(tester);
+            await createGoRouterWithStatefulShellRoute(tester);
         goRouter.push('/c');
         await tester.pumpAndSettle();
 

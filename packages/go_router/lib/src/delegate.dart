@@ -27,9 +27,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
-  })  : _configuration = configuration,
-        _restorablePropertiesRestorationId =
-            '${restorationScopeId ?? ''}._GoRouterDelegateRestorableProperties' {
+  })  : _configuration = configuration {
     builder = RouteBuilder(
       configuration: configuration,
       builderWithNav: builderWithNav,
@@ -37,7 +35,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       errorBuilder: errorBuilder,
       restorationScopeId: restorationScopeId,
       observers: observers,
-      onPopPage: _onPopPage,
+      onPopPageWithRouteMatch: _handlePopPageWithRouteMatch,
     );
   }
 
@@ -52,12 +50,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   final RouteConfiguration _configuration;
 
-  final String _restorablePropertiesRestorationId;
-  final GlobalKey<_GoRouterDelegateRestorablePropertiesState>
-      _restorablePropertiesKey =
-      GlobalKey<_GoRouterDelegateRestorablePropertiesState>();
-
-  /// Increments the stored number of times each route route has been pushed.
+  /// Stores the number of times each route route has been pushed.
   ///
   /// This is used to generate a unique key for each route.
   ///
@@ -68,18 +61,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///   'family/:fid': 2,
   /// }
   /// ```
-  int _incrementPushCount(String path) {
-    final _GoRouterDelegateRestorablePropertiesState?
-        restorablePropertiesState = _restorablePropertiesKey.currentState;
-    assert(restorablePropertiesState != null);
-
-    final Map<String, int> pushCounts =
-        restorablePropertiesState!.pushCount.value;
-    final int count = (pushCounts[path] ?? -1) + 1;
-    pushCounts[path] = count;
-    restorablePropertiesState.pushCount.value = pushCounts;
-    return count;
-  }
+  final Map<String, int> _pushCounts = <String, int>{};
 
   _NavigatorStateIterator _createNavigatorStateIterator() =>
       _NavigatorStateIterator(_matchList, navigatorKey.currentState!);
@@ -98,7 +80,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   ValueKey<String> _getNewKeyForPath(String path) {
     // Remap the pageKey to allow any number of the same page on the stack
-    final int count = _incrementPushCount(path);
+    final int count = (_pushCounts[path] ?? -1) + 1;
+    _pushCounts[path] = count;
     return ValueKey<String>('$path-p$count');
   }
 
@@ -161,7 +144,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     );
   }
 
-  bool _onPopPage(Route<Object?> route, Object? result, RouteMatch? match) {
+  bool _handlePopPageWithRouteMatch(
+      Route<Object?> route, Object? result, RouteMatch? match) {
     if (!route.didPop(result)) {
       return false;
     }
@@ -226,14 +210,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Widget build(BuildContext context) {
-    return _GoRouterDelegateRestorableProperties(
-      key: _restorablePropertiesKey,
-      restorationId: _restorablePropertiesRestorationId,
-      builder: (BuildContext context) => builder.build(
-        context,
-        _matchList,
-        routerNeglect,
-      ),
+    return builder.build(
+      context,
+      _matchList,
+      routerNeglect,
     );
   }
 
@@ -360,56 +340,4 @@ class ImperativeRouteMatch<T> extends RouteMatch {
   /// The future of the [RouteMatch] completer.
   /// When the future completes, this will return the value passed to [complete].
   Future<T?> get _future => _completer.future;
-}
-
-class _GoRouterDelegateRestorableProperties extends StatefulWidget {
-  const _GoRouterDelegateRestorableProperties(
-      {required super.key, required this.restorationId, required this.builder});
-
-  final String restorationId;
-  final WidgetBuilder builder;
-
-  @override
-  State<StatefulWidget> createState() =>
-      _GoRouterDelegateRestorablePropertiesState();
-}
-
-class _GoRouterDelegateRestorablePropertiesState
-    extends State<_GoRouterDelegateRestorableProperties> with RestorationMixin {
-  final _RestorablePushCount pushCount = _RestorablePushCount();
-
-  @override
-  String? get restorationId => widget.restorationId;
-
-  @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(pushCount, 'push_count');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.builder(context);
-  }
-}
-
-class _RestorablePushCount extends RestorableValue<Map<String, int>> {
-  @override
-  Map<String, int> createDefaultValue() => <String, int>{};
-
-  @override
-  Map<String, int> fromPrimitives(Object? data) {
-    if (data is Map) {
-      return data.map<String, int>((Object? key, Object? value) =>
-          MapEntry<String, int>(key! as String, value! as int));
-    }
-    return <String, int>{};
-  }
-
-  @override
-  Object? toPrimitives() => value;
-
-  @override
-  void didUpdateValue(Map<String, int>? oldValue) {
-    notifyListeners();
-  }
 }

@@ -21,7 +21,7 @@ import 'typedefs.dart';
 ///
 /// This is a specialized version of [Navigator.onPopPage], used when creating
 /// Navigators in [RouteBuilder].
-typedef RouteBuilderPopPageCallback = bool Function(
+typedef PopPageWithRouteMatchCallback = bool Function(
     Route<dynamic> route, dynamic result, RouteMatch? match);
 
 /// Builds the top-level Navigator for GoRouter.
@@ -34,7 +34,7 @@ class RouteBuilder {
     required this.errorBuilder,
     required this.restorationScopeId,
     required this.observers,
-    required this.onPopPage,
+    required this.onPopPageWithRouteMatch,
   });
 
   /// Builder function for a go router with Navigator.
@@ -59,7 +59,7 @@ class RouteBuilder {
 
   /// Function used as [Navigator.onPopPage] callback, that additionally
   /// provides the [RouteMatch] associated with the popped Page.
-  final RouteBuilderPopPageCallback onPopPage;
+  final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
 
   final GoRouterStateRegistry _registry = GoRouterStateRegistry();
 
@@ -92,8 +92,8 @@ class RouteBuilder {
             return GoRouterStateRegistryScope(
                 registry: _registry, child: result);
           } on _RouteBuilderError catch (e) {
-            return _buildErrorNavigator(
-                context, e, matchList, onPopPage, configuration.navigatorKey);
+            return _buildErrorNavigator(context, e, matchList.uri,
+                onPopPageWithRouteMatch, configuration.navigatorKey);
           }
         },
       ),
@@ -112,7 +112,8 @@ class RouteBuilder {
     GlobalKey<NavigatorState> navigatorKey,
     Map<Page<Object?>, GoRouterState> registry,
   ) {
-    final _PagePopContext pagePopContext = _PagePopContext._(onPopPage);
+    final _PagePopContext pagePopContext =
+        _PagePopContext._(onPopPageWithRouteMatch);
     return builderWithNav(
       context,
       _buildNavigator(
@@ -148,14 +149,15 @@ class RouteBuilder {
       return keyToPage[navigatorKey]!;
     } on _RouteBuilderError catch (e) {
       return <Page<Object?>>[
-        _buildErrorPage(context, e, matchList),
+        _buildErrorPage(context, e, matchList.uri),
       ];
     } finally {
       /// Clean up previous cache to prevent memory leak, making sure any nested
       /// stateful shell routes for the current match list are kept.
-      final Iterable<StackedShellRoute> matchListShellRoutes = matchList.matches
+      final Iterable<StatefulShellRoute> matchListShellRoutes = matchList
+          .matches
           .map((RouteMatch e) => e.route)
-          .whereType<StackedShellRoute>();
+          .whereType<StatefulShellRoute>();
 
       final Set<Key> activeKeys = keyToPage.keys.toSet()
         ..addAll(_nestedStatefulNavigatorKeys(matchListShellRoutes));
@@ -165,11 +167,11 @@ class RouteBuilder {
   }
 
   Set<GlobalKey<NavigatorState>> _nestedStatefulNavigatorKeys(
-      Iterable<StackedShellRoute> routes) {
+      Iterable<StatefulShellRoute> routes) {
     return RouteBase.routesRecursively(routes)
-        .whereType<StackedShellRoute>()
-        .expand((StackedShellRoute e) =>
-            e.branches.map((StackedShellBranch b) => b.navigatorKey))
+        .whereType<StatefulShellRoute>()
+        .expand((StatefulShellRoute e) =>
+            e.branches.map((StatefulShellBranch b) => b.navigatorKey))
         .toSet();
   }
 
@@ -353,8 +355,14 @@ class RouteBuilder {
     }
 
     page ??= buildPage(context, state, Builder(builder: (BuildContext context) {
-      return _callRouteBuilder(context, state, match,
-          shellNavigatorBuilder: shellRouteContext);
+      final RouteBase route = match.route;
+      if (route is GoRoute) {
+        return _callGoRouteBuilder(context, state, route);
+      } else if (route is ShellRouteBase) {
+        return _callShellRouteBaseBuilder(
+            context, state, route, shellRouteContext);
+      }
+      throw _RouteBuilderException('Unsupported route type $route');
     }));
     pagePopContext._setRouteMatchForPage(page, match);
 
@@ -362,33 +370,30 @@ class RouteBuilder {
     return page;
   }
 
-  /// Calls the user-provided route builder from the [RouteMatch]'s [RouteBase].
-  Widget _callRouteBuilder(
-      BuildContext context, GoRouterState state, RouteMatch match,
-      {ShellRouteContext? shellNavigatorBuilder}) {
-    final RouteBase route = match.route;
+  /// Calls the user-provided route builder from the [GoRoute].
+  Widget _callGoRouteBuilder(
+      BuildContext context, GoRouterState state, GoRoute route) {
+    final GoRouterWidgetBuilder? builder = route.builder;
 
-    if (route is GoRoute) {
-      final GoRouterWidgetBuilder? builder = route.builder;
-
-      if (builder == null) {
-        throw _RouteBuilderError('No routeBuilder provided to GoRoute: $route');
-      }
-
-      return builder(context, state);
-    } else if (route is ShellRouteBase) {
-      assert(shellNavigatorBuilder != null,
-          'ShellRouteContext must be provided for ${route.runtimeType}');
-      final Widget? widget =
-          route.buildWidget(context, state, shellNavigatorBuilder!);
-      if (widget == null) {
-        throw _RouteBuilderError('No builder provided to ShellRoute: $route');
-      }
-
-      return widget;
+    if (builder == null) {
+      throw _RouteBuilderError('No routeBuilder provided to GoRoute: $route');
     }
 
-    throw _RouteBuilderException('Unsupported route type $route');
+    return builder(context, state);
+  }
+
+  /// Calls the user-provided route builder from the [ShellRouteBase].
+  Widget _callShellRouteBaseBuilder(BuildContext context, GoRouterState state,
+      ShellRouteBase route, ShellRouteContext? shellRouteContext) {
+    assert(shellRouteContext != null,
+        'ShellRouteContext must be provided for ${route.runtimeType}');
+    final Widget? widget =
+        route.buildWidget(context, state, shellRouteContext!);
+    if (widget == null) {
+      throw _RouteBuilderError('No builder provided to ShellRoute: $route');
+    }
+
+    return widget;
   }
 
   _PageBuilderForAppType? _pageBuilderForAppType;
@@ -466,13 +471,13 @@ class RouteBuilder {
   Widget _buildErrorNavigator(
       BuildContext context,
       _RouteBuilderError e,
-      RouteMatchList matchList,
-      RouteBuilderPopPageCallback onPopPage,
+      Uri uri,
+      PopPageWithRouteMatchCallback onPopPage,
       GlobalKey<NavigatorState> navigatorKey) {
     return _buildNavigator(
       (Route<dynamic> route, dynamic result) => onPopPage(route, result, null),
       <Page<Object?>>[
-        _buildErrorPage(context, e, matchList),
+        _buildErrorPage(context, e, uri),
       ],
       navigatorKey,
     );
@@ -482,9 +487,8 @@ class RouteBuilder {
   Page<void> _buildErrorPage(
     BuildContext context,
     _RouteBuilderError error,
-    RouteMatchList matchList,
+    Uri uri,
   ) {
-    final Uri uri = matchList.uri;
     final GoRouterState state = GoRouterState(
       configuration,
       location: uri.toString(),
@@ -573,13 +577,13 @@ class _RouteBuilderException implements Exception {
 
 /// Context used to provide a route to page association when popping routes.
 class _PagePopContext {
-  _PagePopContext._(this.routeBuilderOnPopPage);
+  _PagePopContext._(this.onPopPageWithRouteMatch);
 
   final Map<Page<dynamic>, RouteMatch> _routeMatchLookUp =
       <Page<Object?>, RouteMatch>{};
 
   /// On pop page callback that includes the associated [RouteMatch].
-  final RouteBuilderPopPageCallback routeBuilderOnPopPage;
+  final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
 
   /// Looks for the [RouteMatch] for a given [Page].
   ///
@@ -593,10 +597,10 @@ class _PagePopContext {
 
   /// Function used as [Navigator.onPopPage] callback when creating Navigators.
   ///
-  /// This function forwards to [routeBuilderOnPopPage], including the
+  /// This function forwards to [onPopPageWithRouteMatch], including the
   /// [RouteMatch] associated with the popped route.
   bool onPopPage(Route<dynamic> route, dynamic result) {
     final Page<Object?> page = route.settings as Page<Object?>;
-    return routeBuilderOnPopPage(route, result, _routeMatchLookUp[page]);
+    return onPopPageWithRouteMatch(route, result, _routeMatchLookUp[page]);
   }
 }

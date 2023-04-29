@@ -16,7 +16,7 @@ final GlobalKey<NavigatorState> _tabANavigatorKey =
 // navigation state is maintained separately for each tab. This setup also
 // enables deep linking into nested pages.
 //
-// This example demonstrates how to display routes within a StackedShellRoute,
+// This example demonstrates how to display routes within a StatefulShellRoute,
 // that are places on separate navigators. The example also demonstrates how
 // state is maintained when switching between different tabs (and thus branches
 // and Navigators).
@@ -41,9 +41,9 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             const ModalScreen(),
       ),
       StackedShellRoute(
-        branches: <StackedShellBranch>[
+        branches: <StatefulShellBranch>[
           /// The route branch for the first tab of the bottom navigation bar.
-          StackedShellBranch(
+          StatefulShellBranch(
             navigatorKey: _tabANavigatorKey,
             routes: <RouteBase>[
               GoRoute(
@@ -67,7 +67,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           ),
 
           /// The route branch for the second tab of the bottom navigation bar.
-          StackedShellBranch(
+          StatefulShellBranch(
             /// It's not necessary to provide a navigatorKey if it isn't also
             /// needed elsewhere. If not provided, a default key will be used.
             // navigatorKey: _tabBNavigatorKey,
@@ -98,18 +98,18 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           ),
 
           /// The route branch for the third tab of the bottom navigation bar.
-          StackedShellBranch(
-            /// StackedShellBranch will automatically use the first descendant
+          StatefulShellBranch(
+            /// StatefulShellBranch will automatically use the first descendant
             /// GoRoute as the initial location of the branch. If another route
             /// is desired, specify the location of it using the defaultLocation
             /// parameter.
             // defaultLocation: '/c2',
             routes: <RouteBase>[
-              StackedShellRoute(
+              StatefulShellRoute(
                 /// This bottom tab uses a nested shell, wrapping sub routes in a
                 /// top TabBar.
-                branches: <StackedShellBranch>[
-                  StackedShellBranch(routes: <GoRoute>[
+                branches: <StatefulShellBranch>[
+                  StatefulShellBranch(routes: <GoRoute>[
                     GoRoute(
                       path: '/c1',
                       builder: (BuildContext context, GoRouterState state) =>
@@ -129,7 +129,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                       ],
                     ),
                   ]),
-                  StackedShellBranch(routes: <GoRoute>[
+                  StatefulShellBranch(routes: <GoRoute>[
                     GoRoute(
                       path: '/c2',
                       builder: (BuildContext context, GoRouterState state) =>
@@ -151,8 +151,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                   ]),
                 ],
                 builder: (BuildContext context, GoRouterState state,
-                    StackedNavigationShell navigationShell) {
-                  /// This nested StackedShellRoute demonstrates the use of a
+                    StatefulNavigationShell navigationShell) {
+                  /// This nested StatefulShellRoute demonstrates the use of a
                   /// custom container (TabBarView) for the branch Navigators.
                   /// In this implementation, no customization is done in the
                   /// builder function (navigationShell itself is simply used as
@@ -162,7 +162,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                   return navigationShell;
                 },
                 navigatorContainerBuilder: (BuildContext context,
-                        StackedNavigationShell navigationShell,
+                        StatefulNavigationShell navigationShell,
                         List<Widget> children) =>
 
                     /// Returning a customized container for the branch
@@ -177,18 +177,18 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           ),
         ],
         builder: (BuildContext context, GoRouterState state,
-            StackedNavigationShell navigationShell) {
+            StatefulNavigationShell navigationShell) {
           /// This builder implementation uses the default container for the
           /// branch Navigators (provided in through the `child` argument). This
-          /// is the simplest way to use StackedShellRoute, where the shell is
+          /// is the simplest way to use StatefulShellRoute, where the shell is
           /// built around the Navigator container (see ScaffoldWithNavBar).
           return ScaffoldWithNavBar(navigationShell: navigationShell);
         },
 
-        /// If it's necessary to customize the Page for StackedShellRoute,
+        /// If it's necessary to customize the Page for StatefulShellRoute,
         /// provide a pageBuilder function instead of the builder, for example:
         // pageBuilder: (BuildContext context, GoRouterState state,
-        //             StackedNavigationShell navigationShell) {
+        //             StatefulNavigationShell navigationShell) {
         //   return NoTransitionPage<dynamic>(
         //       child: ScaffoldWithNavBar(navigationShell: navigationShell));
         // },
@@ -218,7 +218,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   /// The navigation shell and container for the branch Navigators.
-  final StackedNavigationShell navigationShell;
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
@@ -231,9 +231,21 @@ class ScaffoldWithNavBar extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
         ],
         currentIndex: navigationShell.currentIndex,
-        onTap: (int tappedIndex) => navigationShell.goBranch(tappedIndex),
+        onTap: (int index) => _onTap(context, index),
       ),
     );
+  }
+
+  void _onTap(BuildContext context, int index) {
+    // Navigate to the current location of branch at the provided index. If
+    // tapping the bar item for the current branch, go to the initial location
+    // instead.
+    if (index == navigationShell.currentIndex) {
+      GoRouter.of(context)
+          .go(navigationShell.effectiveInitialBranchLocation(index));
+    } else {
+      navigationShell.goBranch(index);
+    }
   }
 }
 
@@ -460,8 +472,8 @@ class TabbedRootScreen extends StatefulWidget {
   const TabbedRootScreen(
       {required this.navigationShell, required this.children, super.key});
 
-  /// The current state of the parent StackedShellRoute.
-  final StackedNavigationShell navigationShell;
+  /// The current state of the parent StatefulShellRoute.
+  final StatefulNavigationShell navigationShell;
 
   /// The children (Navigators) to display in the [TabBarView].
   final List<Widget> children;
