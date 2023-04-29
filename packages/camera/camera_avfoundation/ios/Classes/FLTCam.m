@@ -1101,18 +1101,30 @@ NSString *const errorMethod = @"error";
     return NO;
   }
 
-  NSDictionary *videoSettings = [_captureVideoOutput
-      recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeMPEG4];
-  NSMutableDictionary *modifiedVideoSettings = [videoSettings mutableCopy];
-  modifiedVideoSettings[AVVideoCodecKey] = AVVideoCodecTypeH264;
+  NSDictionary *videoCompressionProperties = @{
+    AVVideoAverageBitRateKey : @(1280 * 720 * 30),
+    AVVideoExpectedSourceFrameRateKey : @30,
+    AVVideoMaxKeyFrameIntervalKey : @30,
+    AVVideoProfileLevelKey : AVVideoProfileLevelH264HighAutoLevel
+  };
+
+  NSDictionary *videoSettings = @{
+    AVVideoCodecKey : AVVideoCodecTypeH264,
+    AVVideoScalingModeKey : AVVideoScalingModeResizeAspectFill,
+    AVVideoWidthKey : @1280,
+    AVVideoHeightKey : @720,
+    AVVideoCompressionPropertiesKey : videoCompressionProperties
+  };
+
   _videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
-                                                         outputSettings:modifiedVideoSettings];
+                                                        outputSettings:videoSettings];
 
   _videoAdaptor = [AVAssetWriterInputPixelBufferAdaptor
-      assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
-                                 sourcePixelBufferAttributes:@{
-                                   (NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)
-                                 }];
+    assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
+                                sourcePixelBufferAttributes:@{
+                                  (NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)
+                                }];
+
 
   NSParameterAssert(_videoWriterInput);
 
