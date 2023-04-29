@@ -23,6 +23,7 @@ public class ExposurePointFeature extends CameraFeature<Point> {
   private Size cameraBoundaries;
   @Nullable private Point exposurePoint;
   private MeteringRectangle exposureRectangle;
+  private MeteringRectangle[] defaultExposureRectangle;
   @NonNull private final SensorOrientationFeature sensorOrientationFeature;
 
   /**
@@ -78,9 +79,13 @@ public class ExposurePointFeature extends CameraFeature<Point> {
     if (!checkIsSupported()) {
       return;
     }
-    requestBuilder.set(
-        CaptureRequest.CONTROL_AE_REGIONS,
-        exposureRectangle == null ? null : new MeteringRectangle[] {exposureRectangle});
+    if (exposureRectangle != null) {
+      requestBuilder.set(
+          CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
+    } else if (shouldReset(requestBuilder)) {
+      defaultExposureRectangle = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
+      requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultExposureRectangle);
+    }
   }
 
   private void buildExposureRectangle() {
@@ -101,5 +106,10 @@ public class ExposurePointFeature extends CameraFeature<Point> {
           CameraRegionUtils.convertPointToMeteringRectangle(
               this.cameraBoundaries, this.exposurePoint.x, this.exposurePoint.y, orientation);
     }
+  }
+
+  public boolean shouldReset(CaptureRequest.Builder requestBuilder) {
+    MeteringRectangle[] currentRectangles = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
+    return currentRectangles == null || currentRectangles.length == 0;
   }
 }

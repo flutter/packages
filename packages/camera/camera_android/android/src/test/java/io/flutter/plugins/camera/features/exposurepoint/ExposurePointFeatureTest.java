@@ -35,6 +35,8 @@ public class ExposurePointFeatureTest {
   Size mockCameraBoundaries;
   SensorOrientationFeature mockSensorOrientationFeature;
   DeviceOrientationManager mockDeviceOrientationManager;
+  MeteringRectangle[] mockDefaultExposureRectangle;
+  MeteringRectangle mockExposureRectangle;
 
   @Before
   public void setUp() {
@@ -309,5 +311,22 @@ public class ExposurePointFeatureTest {
     exposurePointFeature.setValue(new Point(null, 0d));
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
     verify(mockCaptureRequestBuilder, times(3)).set(any(), isNull());
+  }
+
+  @Test
+  public void testShouldResetReturnsFalse() {
+    CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
+    MeteringRectangle[] defaultRectangles = new MeteringRectangle[1];
+    defaultRectangles[0] = mock(MeteringRectangle.class);
+    when(mockCaptureRequestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS))
+        .thenReturn(defaultRectangles);
+    mockCaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultRectangles);
+
+    ExposurePointFeature exposurePointFeature = mock(ExposurePointFeature.class);
+    exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
+    exposurePointFeature.setValue(new Point(0.5, 0.5));
+    exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
+
+    assertFalse(exposurePointFeature.shouldReset(mockCaptureRequestBuilder));
   }
 }
