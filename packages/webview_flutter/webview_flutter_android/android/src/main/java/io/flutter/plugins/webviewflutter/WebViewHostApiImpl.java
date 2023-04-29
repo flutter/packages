@@ -160,7 +160,7 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     protected void onScrollChanged(int l, int t, int oldL, int oldT) {
       super.onScrollChanged(l, t, oldL, oldT);
       api.onScrollChanged(
-          this, (long) l, (long) t, (long) oldL, (long) oldT, reply -> {});
+          this, (long) l, (long) t, reply -> {});
     }
 
     /**

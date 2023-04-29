@@ -8,6 +8,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'platform_navigation_delegate.dart';
 import 'types/types.dart';
+import 'types/content_offset_change.dart';
 import 'webview_platform.dart' show WebViewPlatform;
 
 /// Interface for a platform implementation of a web view controller.
@@ -273,7 +274,7 @@ abstract class PlatformWebViewController extends PlatformInterface {
 
   /// Toggle the listener for content offset changes. Set to null to stop listening.
   Future<void> setOnContentOffsetChanged(
-      void Function(int left, int top, int oldLeft, int oldTop)?
+      void Function(ContentOffsetChange contentOffsetChange)?
           onOffsetChange) {
     throw UnimplementedError(
         'setOnContentOffsetChanged is not implemented on the current platform');

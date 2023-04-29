@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -115,7 +116,7 @@ class WebView extends JavaObject {
   late final WebSettings settings = WebSettings(this);
 
   /// The [ScrollChangedCallback] object used to listen for scroll changed events.
-  final Function(int left, int top, int oldLeft, int oldTop)? onScrollChanged;
+  final Function(ContentOffsetChange contentOffsetChange)? onScrollChanged;
 
   /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.
   ///

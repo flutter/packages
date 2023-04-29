@@ -91,7 +91,7 @@ void main() {
                   }) =>
                       MockWebChromeClient(),
               createAndroidWebView:
-                  ({dynamic Function(int, int, int, int)? onScrollChanged}) =>
+                  ({dynamic Function(ContentOffsetChange contentOffsetChange)? onScrollChanged}) =>
                       nonNullMockWebView,
               createAndroidWebViewClient: ({
                 void Function(android_webview.WebView webView, String url)?

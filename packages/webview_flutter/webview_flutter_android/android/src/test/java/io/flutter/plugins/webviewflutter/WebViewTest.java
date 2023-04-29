@@ -358,7 +358,7 @@ public class WebViewTest {
   }
 
   @Test
-  public void onScrollPosChange() {
+  public void onScrollChanged() {
     final InstanceManager instanceManager = InstanceManager.create(identifier -> {});
 
     final WebViewFlutterApiImpl flutterApiImpl =
@@ -368,12 +368,12 @@ public class WebViewTest {
     flutterApiImpl.setApi(mockFlutterApi);
     flutterApiImpl.create(mockWebView, reply -> {});
 
-    flutterApiImpl.onScrollChanged(mockWebView, 0L, 1L, 2L, 3L, reply -> {});
+    flutterApiImpl.onScrollChanged(mockWebView, 0L, 1L, reply -> {});
 
     final long instanceIdentifier =
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockWebView));
     verify(mockFlutterApi)
-        .onScrollPosChange(eq(instanceIdentifier), eq(0L), eq(1L), eq(2L), eq(3L), any());
+        .onScrollPosChange(eq(instanceIdentifier), eq(0L), eq(1L), any());
 
     instanceManager.stopFinalizationListener();
   }

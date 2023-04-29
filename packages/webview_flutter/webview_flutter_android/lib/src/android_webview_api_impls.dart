@@ -8,6 +8,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart' show ContentOffsetChange;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -384,14 +385,14 @@ class WebViewFlutterApiImpl implements WebViewFlutterApi {
 
   @override
   void onScrollPosChange(
-      int webViewInstanceId, int x, int y, int oldX, int oldY) {
+      int webViewInstanceId, int x, int y) {
     final WebView? webViewInstance = instanceManager
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       webViewInstance != null,
       'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
-    webViewInstance!.onScrollChanged!(x, y, oldX, oldY);
+    webViewInstance!.onScrollChanged!(ContentOffsetChange(x, y));
   }
 }
 

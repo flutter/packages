@@ -106,13 +106,11 @@ class AndroidWebViewController extends PlatformWebViewController {
       _androidWebViewParams.androidWebViewProxy.createAndroidWebView(
           onScrollChanged: withWeakReferenceTo(this,
               (WeakReference<AndroidWebViewController> weakReference) {
-    return (int l, int t, int oldL, int oldT) async {
-      if (weakReference.target?._onContentOffsetChangedCallback != null) {
-        return weakReference.target!._onContentOffsetChangedCallback!(
-            l, t, oldL, oldT);
-      }
-    };
-  }));
+            return (ContentOffsetChange contentOffsetChange) async {
+              final Function(ContentOffsetChange)? callback = weakReference.target?._onContentOffsetChangedCallback;
+              callback?.call(contentOffsetChange);
+            };
+          }));
 
   late final android_webview.WebChromeClient _webChromeClient =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebChromeClient(
@@ -198,7 +196,7 @@ class AndroidWebViewController extends PlatformWebViewController {
       _onShowFileSelectorCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
-  Function(int left, int top, int oldLeft, int oldTop)?
+  Function(ContentOffsetChange contentOffsetChange)?
       _onContentOffsetChangedCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
@@ -420,7 +418,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setOnContentOffsetChanged(
-      void Function(int left, int top, int oldLeft, int oldTop)?
+      void Function(ContentOffsetChange contentOffsetChange)?
           onOffsetChange) async {
     _onContentOffsetChangedCallback = onOffsetChange;
   }

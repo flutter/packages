@@ -62,15 +62,11 @@ public class WebViewFlutterApiImpl {
       @NonNull WebView instance,
       @NonNull Long xArg,
       @NonNull Long yArg,
-      @NonNull Long oldXArg,
-      @NonNull Long oldYArg,
       @NonNull WebViewFlutterApi.Reply<Void> callback) {
     api.onScrollPosChange(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         xArg,
         yArg,
-        oldXArg,
-        oldYArg,
         callback);
   }
 }

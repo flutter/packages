@@ -1,6 +1,6 @@
 ## 3.6.4
 
-* Added `setOnContentOffsetChanged` method to the `AndroidWebViewController`.
+* Adds support for `setOnContentOffsetChanged` method to the `AndroidWebViewController`.
 
 ## 3.6.3
 
