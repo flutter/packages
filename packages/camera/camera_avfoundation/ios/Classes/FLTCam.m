@@ -1117,14 +1117,13 @@ NSString *const errorMethod = @"error";
   };
 
   _videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
-                                                        outputSettings:videoSettings];
+                                                         outputSettings:videoSettings];
 
   _videoAdaptor = [AVAssetWriterInputPixelBufferAdaptor
-    assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
-                                sourcePixelBufferAttributes:@{
-                                  (NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)
-                                }];
-
+      assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
+                                 sourcePixelBufferAttributes:@{
+                                   (NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)
+                                 }];
 
   NSParameterAssert(_videoWriterInput);
 
