@@ -37,11 +37,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<PickedFile>? _imageFileList;
+  List<XFile>? _imageFileList;
 
   // This must be called from within a setState() callback
-  void _setImageFileListFromFile(PickedFile? value) {
-    _imageFileList = value == null ? null : <PickedFile>[value];
+  void _setImageFileListFromFile(XFile? value) {
+    _imageFileList = value == null ? null : <XFile>[value];
   }
 
   dynamic _pickImageError;
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController maxHeightController = TextEditingController();
   final TextEditingController qualityController = TextEditingController();
 
-  Future<void> _playVideo(PickedFile? file) async {
+  Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
       await _disposeVideoController();
       final VideoPlayerController controller =
@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await _displayPickImageDialog(context,
         (double? maxWidth, double? maxHeight, int? quality) async {
       try {
-        final List<PickedFile>? pickedFileList = await _picker.pickMultiImage(
+        final List<XFile>? pickedFileList = await _picker.getMultiImage(
           maxWidth: maxWidth,
           maxHeight: maxHeight,
           imageQuality: quality,
@@ -95,11 +95,13 @@ class _MyHomePageState extends State<MyHomePage> {
     await _displayPickImageDialog(context,
         (double? maxWidth, double? maxHeight, int? quality) async {
       try {
-        final PickedFile? pickedFile = await _picker.pickImage(
+        final XFile? pickedFile = await _picker.getImageFromSource(
           source: source,
-          maxWidth: maxWidth,
-          maxHeight: maxHeight,
-          imageQuality: quality,
+          options: ImagePickerOptions(
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            imageQuality: quality,
+          ),
         );
         setState(() {
           _setImageFileListFromFile(pickedFile);
@@ -119,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     if (context.mounted) {
       if (_isVideo) {
-        final PickedFile? file = await _picker.pickVideo(
+        final XFile? file = await _picker.getVideo(
             source: source, maxDuration: const Duration(seconds: 10));
         await _playVideo(file);
       } else if (isMultiImage) {
