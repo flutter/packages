@@ -21,12 +21,12 @@ class CameraInfo extends JavaObject {
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
-    _api = CameraInfoHostApiImpl(
+    _api = _CameraInfoHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  late final CameraInfoHostApiImpl _api;
+  late final _CameraInfoHostApiImpl _api;
 
   /// Gets sensor orientation degrees of the camera.
   Future<int> getSensorRotationDegrees() =>
@@ -41,9 +41,9 @@ class CameraInfo extends JavaObject {
 }
 
 /// Host API implementation of [CameraInfo].
-class CameraInfoHostApiImpl extends CameraInfoHostApi {
-  /// Constructs a [CameraInfoHostApiImpl].
-  CameraInfoHostApiImpl(
+class _CameraInfoHostApiImpl extends CameraInfoHostApi {
+  /// Constructs a [_CameraInfoHostApiImpl].
+  _CameraInfoHostApiImpl(
       {super.binaryMessenger, InstanceManager? instanceManager}) {
     this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
   }
