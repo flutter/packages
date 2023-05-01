@@ -95,5 +95,9 @@ public class FlutterLifecycleAdapterTest {
     @Override
     public void removeOnSaveStateListener(
         @NonNull ActivityPluginBinding.OnSaveInstanceStateListener listener) {}
+
+    @Override
+    public void removeOnWindowFocusChangedListener(
+        @NonNull PluginRegistry.WindowFocusChangedListener listener) {}
   }
 }
