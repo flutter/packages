@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraState;
+import androidx.camera.core.ExposureState;
+import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LiveData;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraInfoHostApi;
@@ -54,5 +56,41 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     liveDataFlutterApiWrapper.create(
         liveCameraState, LiveDataSupportedType.CAMERA_STATE, reply -> {});
     return instanceManager.getIdentifierForStrongReference(liveCameraState);
+  }
+
+  /**
+   * Retrieves the {@link ExposureState} of the {@link CameraInfo} with the specified identifier.
+   */
+  @Override
+  @NonNull
+  public Long getExposureState(@NonNull Long identifier) {
+    CameraInfo cameraInfo =
+        (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    ExposureState exposureState = cameraInfo.getExposureState();
+
+    ExposureStateFlutterApiImpl exposureStateFlutterApiImpl =
+        new ExposureStateFlutterApiImpl(binaryMessenger, instanceManager);
+    exposureStateFlutterApiImpl.create(exposureState, result -> {});
+
+    return instanceManager.getIdentifierForStrongReference(exposureState);
+  }
+
+  /**
+   * Retrieves the current {@link ZoomState} value of the {@link CameraInfo} with the specified
+   * identifier.
+   */
+  @NonNull
+  @Override
+  public Long getZoomState(@NonNull Long identifier) {
+    CameraInfo cameraInfo =
+        (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    // TODO(camsim99): Create/return LiveData<ZoomState> once https://github.com/flutter/packages/pull/3419 lands.
+    ZoomState zoomState = cameraInfo.getZoomState().getValue();
+
+    ZoomStateFlutterApiImpl zoomStateFlutterApiImpl =
+        new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager);
+    zoomStateFlutterApiImpl.create(zoomState, result -> {});
+
+    return instanceManager.getIdentifierForStrongReference(zoomState);
   }
 }

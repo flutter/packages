@@ -22,16 +22,6 @@ import 'test_camerax_library.g.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeLiveData_0<T> extends _i1.SmartFake implements _i2.LiveData<T> {
-  _FakeLiveData_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
 /// A class which mocks [LiveData].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -58,20 +48,6 @@ class MockLiveData<T> extends _i1.Mock implements _i2.LiveData<T> {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
-  @override
-  _i2.LiveData<S> cast<S>() => (super.noSuchMethod(
-        Invocation.method(
-          #cast,
-          [],
-        ),
-        returnValue: _FakeLiveData_0<S>(
-          this,
-          Invocation.method(
-            #cast,
-            [],
-          ),
-        ),
-      ) as _i2.LiveData<S>);
 }
 
 /// A class which mocks [TestCameraInfoHostApi].
@@ -95,6 +71,22 @@ class MockTestCameraInfoHostApi extends _i1.Mock
   int getLiveCameraState(int? identifier) => (super.noSuchMethod(
         Invocation.method(
           #getLiveCameraState,
+          [identifier],
+        ),
+        returnValue: 0,
+      ) as int);
+  @override
+  int getExposureState(int? identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #getExposureState,
+          [identifier],
+        ),
+        returnValue: 0,
+      ) as int);
+  @override
+  int getZoomState(int? identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #getZoomState,
           [identifier],
         ),
         returnValue: 0,

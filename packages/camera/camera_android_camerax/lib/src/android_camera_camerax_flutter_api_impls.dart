@@ -9,6 +9,7 @@ import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camera_state_error.dart';
 import 'camerax_library.g.dart';
+import 'exposure_state.dart';
 import 'image_proxy.dart';
 import 'java_object.dart';
 import 'live_data.dart';
@@ -16,6 +17,7 @@ import 'observer.dart';
 import 'plane_proxy.dart';
 import 'process_camera_provider.dart';
 import 'system_services.dart';
+import 'zoom_state.dart';
 
 /// Handles initialization of Flutter APIs for the Android CameraX library.
 class AndroidCameraXCameraFlutterApis {
@@ -29,6 +31,8 @@ class AndroidCameraXCameraFlutterApis {
     SystemServicesFlutterApiImpl? systemServicesFlutterApiImpl,
     CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
     CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
+    ExposureStateFlutterApiImpl? exposureStateFlutterApiImpl,
+    ZoomStateFlutterApiImpl? zoomStateFlutterApiImpl,
     LiveDataFlutterApiImpl? liveDataFlutterApiImpl,
     ObserverFlutterApiImpl? observerFlutterApiImpl,
     ImageProxyFlutterApiImpl? imageProxyFlutterApiImpl,
@@ -51,6 +55,10 @@ class AndroidCameraXCameraFlutterApis {
         cameraStateErrorFlutterApiImpl ?? CameraStateErrorFlutterApiImpl();
     this.cameraStateFlutterApiImpl =
         cameraStateFlutterApiImpl ?? CameraStateFlutterApiImpl();
+    this.exposureStateFlutterApiImpl =
+        exposureStateFlutterApiImpl ?? ExposureStateFlutterApiImpl();
+    this.zoomStateFlutterApiImpl =
+        zoomStateFlutterApiImpl ?? ZoomStateFlutterApiImpl();
     this.liveDataFlutterApiImpl =
         liveDataFlutterApiImpl ?? LiveDataFlutterApiImpl();
     this.observerFlutterApiImpl =
@@ -102,6 +110,12 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api implementation for [Observer].
   late final ObserverFlutterApiImpl? observerFlutterApiImpl;
 
+  /// Flutter Api for [ExposureState].
+  late final ExposureStateFlutterApiImpl exposureStateFlutterApiImpl;
+
+  /// Flutter Api for [ZoomState].
+  late final ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
+
   /// Flutter Api implementation for [Analyzer].
   late final AnalyzerFlutterApiImpl analyzerFlutterApiImpl;
 
@@ -123,6 +137,8 @@ class AndroidCameraXCameraFlutterApis {
       SystemServicesFlutterApi.setup(systemServicesFlutterApiImpl);
       CameraStateErrorFlutterApi.setup(cameraStateErrorFlutterApiImpl);
       CameraStateFlutterApi.setup(cameraStateFlutterApiImpl);
+      ExposureStateFlutterApi.setup(exposureStateFlutterApiImpl);
+      ZoomStateFlutterApi.setup(zoomStateFlutterApiImpl);
       AnalyzerFlutterApi.setup(analyzerFlutterApiImpl);
       ImageProxyFlutterApi.setup(imageProxyFlutterApiImpl);
       PlaneProxyFlutterApi.setup(planeProxyFlutterApiImpl);

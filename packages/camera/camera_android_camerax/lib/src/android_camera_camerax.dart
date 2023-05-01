@@ -15,6 +15,7 @@ import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
+import 'exposure_state.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
@@ -26,6 +27,7 @@ import 'process_camera_provider.dart';
 import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
+import 'zoom_state.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
@@ -42,6 +44,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// bound to the lifecycle of the camera it manages.
   @visibleForTesting
   Camera? camera;
+
+  /// The [CameraInfo] instance that corresponds to the [camera] instance.
+  @visibleForTesting
+  CameraInfo? cameraInfo;
 
   /// The [LiveData] of the [CameraState] that represents the state of the
   /// [camera] instance.
@@ -199,6 +205,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
     await _updateLiveCameraState(flutterSurfaceTextureId);
+    cameraInfo = await camera!.getCameraInfo();
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -287,6 +294,55 @@ class AndroidCameraCameraX extends CameraPlatform {
       }),
       _cameraEvents(cameraId).whereType<CameraErrorEvent>()
     ]);
+  }
+
+  /// Gets the minimum supported exposure offset for the selected camera in EV units.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMinExposureOffset(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationRange.minCompensation *
+        exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the maximum supported exposure offset for the selected camera in EV units.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMaxExposureOffset(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationRange.maxCompensation *
+        exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the supported step size for exposure offset for the selected camera in EV units.
+  ///
+  /// Returns 0 when exposure compensation is not supported.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getExposureOffsetStepSize(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the maximum supported zoom level for the selected camera.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMaxZoomLevel(int cameraId) async {
+    final ZoomState exposureState = await cameraInfo!.getZoomState();
+    return exposureState.maxZoomRatio;
+  }
+
+  /// Gets the minimum supported zoom level for the selected camera.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMinZoomLevel(int cameraId) async {
+    final ZoomState exposureState = await cameraInfo!.getZoomState();
+    return exposureState.minZoomRatio;
   }
 
   /// The ui orientation changed.
@@ -378,6 +434,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
     await _updateLiveCameraState(cameraId);
+    cameraInfo = await camera!.getCameraInfo();
   }
 
   /// Configures the [imageAnalysis] instance for image streaming and binds it
@@ -410,6 +467,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           planes: cameraImagePlanes,
           height: imageProxy.height,
           width: imageProxy.width);
+
       cameraImageDataStreamController?.add(cameraImageData);
       imageProxy.close();
     }
@@ -427,6 +485,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // https://github.com/flutter/packages/pull/3419 lands.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+    cameraInfo = await camera!.getCameraInfo();
   }
 
   /// Unbinds [useCase] from camera lifecycle controlled by the
@@ -444,7 +503,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The [onListen] callback for the stream controller used for image
   /// streaming.
-  void _onFrameStreamListen() {
+  Future<void> _onFrameStreamListen() async {
     _configureAndBindImageAnalysisToLifecycle();
   }
 

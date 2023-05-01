@@ -69,6 +69,16 @@ class LiveDataSupportedTypeData {
   late LiveDataSupportedType value;
 }
 
+class ExposureCompensationRange {
+  ExposureCompensationRange({
+    required this.minCompensation,
+    required this.maxCompensation,
+  });
+
+  int minCompensation;
+  int maxCompensation;
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -92,6 +102,10 @@ abstract class CameraInfoHostApi {
   int getSensorRotationDegrees(int identifier);
 
   int getLiveCameraState(int identifier);
+
+  int getExposureState(int identifier);
+
+  int getZoomState(int identifier);
 }
 
 @FlutterApi()
@@ -185,6 +199,19 @@ abstract class ImageCaptureHostApi {
 @FlutterApi()
 abstract class CameraStateFlutterApi {
   void create(int identifier, CameraStateTypeData type, int? errorIdentifier);
+}
+
+@FlutterApi()
+abstract class ExposureStateFlutterApi {
+  void create(
+      int identifier,
+      ExposureCompensationRange exposureCompensationRange,
+      double exposureCompensationStep);
+}
+
+@FlutterApi()
+abstract class ZoomStateFlutterApi {
+  void create(int identifier, double minZoomRatio, double maxZoomRatio);
 }
 
 @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')

@@ -22,40 +22,39 @@ void main() {
   group('Camera', () {
     tearDown(() => TestCameraHostApi.setup(null));
 
-    test('getCameraInfo makes call to retrieve CameraInfo', () async {
+    test('getCameraInfo makes call to retrieve expected CameraInfo', () async {
       final MockTestCameraHostApi mockApi = MockTestCameraHostApi();
       TestCameraHostApi.setup(mockApi);
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
+
       final Camera camera = Camera.detached(
         instanceManager: instanceManager,
       );
-      const int cameraIdentifier = 34;
-      final CameraInfo cameraInfo = CameraInfo.detached(
-        instanceManager: instanceManager,
-      );
-      const int cameraInfoIdentifier = 28;
+      const int cameraIdentifier = 24;
+      final CameraInfo cameraInfo = CameraInfo.detached();
+      const int cameraInfoIdentifier = 88;
       instanceManager.addHostCreatedInstance(
         camera,
         cameraIdentifier,
-        onCopy: (_) => Camera.detached(),
+        onCopy: (_) => Camera.detached(instanceManager: instanceManager),
       );
       instanceManager.addHostCreatedInstance(
         cameraInfo,
         cameraInfoIdentifier,
-        onCopy: (_) => CameraInfo.detached(),
+        onCopy: (_) => CameraInfo.detached(instanceManager: instanceManager),
       );
 
       when(mockApi.getCameraInfo(cameraIdentifier))
-          .thenReturn(cameraInfoIdentifier);
+          .thenAnswer((_) => cameraInfoIdentifier);
 
       expect(await camera.getCameraInfo(), equals(cameraInfo));
       verify(mockApi.getCameraInfo(cameraIdentifier));
     });
 
-    test('create makes call to add instance to instance manager', () {
+    test('flutterApiCreate makes call to add instance to instance manager', () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );

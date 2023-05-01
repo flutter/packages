@@ -50,21 +50,6 @@ class MockTestLiveDataHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-  @override
-  void cast(
-    int? oldIdentifier,
-    int? newIdentifier,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #cast,
-          [
-            oldIdentifier,
-            newIdentifier,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
