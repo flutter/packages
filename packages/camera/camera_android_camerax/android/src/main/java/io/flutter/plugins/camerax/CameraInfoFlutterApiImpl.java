@@ -18,7 +18,7 @@ public class CameraInfoFlutterApiImpl extends CameraInfoFlutterApi {
   }
 
   void create(CameraInfo cameraInfo, Reply<Void> reply) {
-    if (instanceManager.containsInstance(cameraInfo)) {
+    if (!instanceManager.containsInstance(cameraInfo)) {
       create(instanceManager.addHostCreatedInstance(cameraInfo), reply);
     }
   }
