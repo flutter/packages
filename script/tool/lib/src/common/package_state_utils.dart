@@ -181,6 +181,8 @@ Future<bool> _isDevChange(List<String> pathComponents,
       pathComponents.contains('lint-baseline.xml') ||
       // Example build files are very unlikely to be interesting to clients.
       _isExampleBuildFile(pathComponents) ||
+      // Build flags are very unlikely to be interesting to clients.
+      pathComponents.contains('.pluginToolsConfig.yaml') ||
       // Test-only gradle depenedencies don't affect clients.
       await _isGradleTestDependencyChange(pathComponents,
           git: git, repoPath: repoPath);
