@@ -54,6 +54,14 @@ class MockTestCameraInfoHostApi extends _i1.Mock
       ) as int);
 
   @override
+  int getLiveCameraState(int? identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #getLiveCameraState,
+          [identifier],
+        ),
+        returnValue: 0,
+      ) as int);
+  @override
   int getExposureState(int? identifier) => (super.noSuchMethod(
         Invocation.method(
           #getExposureState,
