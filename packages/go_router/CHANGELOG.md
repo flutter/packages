@@ -1,3 +1,7 @@
+## 7.0.1
+
+- Fixes the `dart fix --apply` command not working
+
 ## 7.0.0
 
 - **BREAKING CHANGE**:
