@@ -23,7 +23,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
   public SystemServicesHostApiImpl systemServicesHostApiImpl;
 
-  @VisibleForTesting ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
+  @VisibleForTesting public ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
+  @VisibleForTesting public LiveDataHostApiImpl liveDataHostApiImpl;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -67,6 +68,12 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     imageCaptureHostApiImpl =
         new ImageCaptureHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApiImpl);
+    GeneratedCameraXLibrary.CameraHostApi.setup(
+        binaryMessenger, new CameraHostApiImpl(binaryMessenger, instanceManager));
+    liveDataHostApiImpl = new LiveDataHostApiImpl(binaryMessenger, instanceManager);
+    GeneratedCameraXLibrary.LiveDataHostApi.setup(binaryMessenger, liveDataHostApiImpl);
+    GeneratedCameraXLibrary.ObserverHostApi.setup(
+        binaryMessenger, new ObserverHostApiImpl(binaryMessenger, instanceManager));
     imageAnalysisHostApiImpl = new ImageAnalysisHostApiImpl(binaryMessenger, instanceManager);
     GeneratedCameraXLibrary.ImageAnalysisHostApi.setup(binaryMessenger, imageAnalysisHostApiImpl);
     GeneratedCameraXLibrary.AnalyzerHostApi.setup(
@@ -91,19 +98,21 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding activityPluginBinding) {
-    setUp(
-        pluginBinding.getBinaryMessenger(),
-        pluginBinding.getApplicationContext(),
-        pluginBinding.getTextureRegistry());
-    updateContext(pluginBinding.getApplicationContext());
-
     Activity activity = activityPluginBinding.getActivity();
+    Context applicationContext = activity.getApplicationContext();
+
+    setUp(
+        pluginBinding.getBinaryMessenger(), applicationContext, pluginBinding.getTextureRegistry());
+    updateContext(applicationContext);
 
     if (activity instanceof LifecycleOwner) {
       processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+      liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+
     } else {
       ProxyLifecycleProvider proxyLifecycleProvider = new ProxyLifecycleProvider(activity);
       processCameraProviderHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
+      liveDataHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
     }
 
     systemServicesHostApiImpl.setActivity(activity);

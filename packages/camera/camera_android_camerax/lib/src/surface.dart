@@ -8,7 +8,7 @@ import 'java_object.dart';
 ///
 /// See https://developer.android.com/reference/android/view/Surface.html.
 class Surface extends JavaObject {
-  /// Creates a detached [UseCase].
+  /// Creates a detached [Surface].
   Surface.detached({super.binaryMessenger, super.instanceManager})
       : super.detached();
 

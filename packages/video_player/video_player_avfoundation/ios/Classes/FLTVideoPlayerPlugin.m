@@ -146,7 +146,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return degrees;
 };
 
-NS_INLINE UIViewController *rootViewController(void) {
+NS_INLINE UIViewController *rootViewController() {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // TODO: (hellohuanlin) Provide a non-deprecated codepath. See

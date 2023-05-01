@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:camera_android_camerax/src/camera_info.dart';
+import 'package:camera_android_camerax/src/camera_state.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
@@ -15,7 +16,11 @@ import 'package:mockito/mockito.dart';
 import 'camera_info_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestCameraInfoHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[
+  LiveData<CameraInfo>,
+  TestCameraInfoHostApi,
+  TestInstanceManagerHostApi
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -51,6 +56,40 @@ void main() {
       verify(mockApi.getSensorRotationDegrees(0));
     });
 
+    test('getLiveCameraState makes call to retrieve live camera state',
+        () async {
+      final MockTestCameraInfoHostApi mockApi = MockTestCameraInfoHostApi();
+      TestCameraInfoHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      final CameraInfo cameraInfo = CameraInfo.detached(
+        instanceManager: instanceManager,
+      );
+      const int cameraIdentifier = 55;
+      final MockLiveData<CameraState> mockLiveCameraState =
+          MockLiveData<CameraState>();
+      const int liveCameraStateIdentifier = 73;
+      instanceManager.addHostCreatedInstance(
+        cameraInfo,
+        cameraIdentifier,
+        onCopy: (_) => CameraInfo.detached(),
+      );
+      instanceManager.addHostCreatedInstance(
+        mockLiveCameraState,
+        liveCameraStateIdentifier,
+        onCopy: (_) => MockLiveData<CameraState>(),
+      );
+
+      when(mockApi.getLiveCameraState(cameraIdentifier))
+          .thenReturn(liveCameraStateIdentifier);
+
+      expect(
+          await cameraInfo.getLiveCameraState(), equals(mockLiveCameraState));
+      verify(mockApi.getLiveCameraState(cameraIdentifier));
+    });
+
     test('getExposureState makes call to retrieve expected ExposureState',
         () async {
       final MockTestCameraInfoHostApi mockApi = MockTestCameraInfoHostApi();
@@ -59,7 +98,6 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-
       final CameraInfo cameraInfo = CameraInfo.detached(
         instanceManager: instanceManager,
       );

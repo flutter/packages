@@ -3,9 +3,13 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:async' as _i3;
+
+import 'package:camera_android_camerax/src/live_data.dart' as _i2;
+import 'package:camera_android_camerax/src/observer.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'test_camerax_library.g.dart' as _i2;
+import 'test_camerax_library.g.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -18,11 +22,39 @@ import 'test_camerax_library.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+/// A class which mocks [LiveData].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLiveData<T> extends _i1.Mock implements _i2.LiveData<T> {
+  MockLiveData() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<void> observe(_i4.Observer<T>? observer) => (super.noSuchMethod(
+        Invocation.method(
+          #observe,
+          [observer],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+  @override
+  _i3.Future<void> removeObservers() => (super.noSuchMethod(
+        Invocation.method(
+          #removeObservers,
+          [],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+}
+
 /// A class which mocks [TestCameraInfoHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestCameraInfoHostApi extends _i1.Mock
-    implements _i2.TestCameraInfoHostApi {
+    implements _i5.TestCameraInfoHostApi {
   MockTestCameraInfoHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -65,7 +97,7 @@ class MockTestCameraInfoHostApi extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i2.TestInstanceManagerHostApi {
+    implements _i5.TestInstanceManagerHostApi {
   MockTestInstanceManagerHostApi() {
     _i1.throwOnMissingStub(this);
   }

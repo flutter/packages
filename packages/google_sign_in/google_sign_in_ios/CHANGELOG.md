@@ -1,7 +1,3 @@
-## 5.6.2
-
-* Updates functions without a prototype to avoid deprecation warning.
-
 ## 5.6.1
 
 * Clarifies explanation of endorsement in README.

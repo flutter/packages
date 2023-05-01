@@ -46,6 +46,29 @@ class CameraPermissionsErrorData {
   String description;
 }
 
+/// The states the camera can be in.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraState.Type.
+enum CameraStateType {
+  closed,
+  closing,
+  open,
+  opening,
+  pendingOpen,
+}
+
+class CameraStateTypeData {
+  late CameraStateType value;
+}
+
+enum LiveDataSupportedType {
+  cameraState,
+}
+
+class LiveDataSupportedTypeData {
+  late LiveDataSupportedType value;
+}
+
 class ExposureCompensationRange {
   ExposureCompensationRange({
     required this.minCompensation,
@@ -184,6 +207,11 @@ abstract class ImageCaptureHostApi {
 }
 
 @FlutterApi()
+abstract class CameraStateFlutterApi {
+  void create(int identifier, CameraStateTypeData type, int? errorIdentifier);
+}
+
+@FlutterApi()
 abstract class ExposureStateFlutterApi {
   void create(
       int identifier,
@@ -221,6 +249,33 @@ abstract class ImageAnalysisHostApi {
 @HostApi(dartHostTestHandler: 'TestAnalyzerHostApi')
 abstract class AnalyzerHostApi {
   void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestObserverHostApi')
+abstract class ObserverHostApi {
+  void create(int identifier);
+}
+
+@FlutterApi()
+abstract class ObserverFlutterApi {
+  void onChanged(int identifier, int valueIdentifier);
+}
+
+@FlutterApi()
+abstract class CameraStateErrorFlutterApi {
+  void create(int identifier, int code);
+}
+
+@HostApi(dartHostTestHandler: 'TestLiveDataHostApi')
+abstract class LiveDataHostApi {
+  void observe(int identifier, int observerIdentifier);
+
+  void removeObservers(int identifier);
+}
+
+@FlutterApi()
+abstract class LiveDataFlutterApi {
+  void create(int identifier, LiveDataSupportedTypeData type);
 }
 
 @FlutterApi()

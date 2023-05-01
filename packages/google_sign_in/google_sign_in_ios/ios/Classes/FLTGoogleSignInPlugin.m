@@ -14,7 +14,7 @@ static NSString *const kClientIdKey = @"CLIENT_ID";
 
 static NSString *const kServerClientIdKey = @"SERVER_CLIENT_ID";
 
-static NSDictionary<NSString *, id> *loadGoogleServiceInfo(void) {
+static NSDictionary<NSString *, id> *loadGoogleServiceInfo() {
   NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"GoogleService-Info"
                                                         ofType:@"plist"];
   if (plistPath) {
