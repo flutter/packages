@@ -305,4 +305,76 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     );
     return pickedImages ?? <XFile>[];
   }
+
+  /// Returns true if the implementation supports [source].
+  ///
+  /// Defaults to true for the original image sources, `gallery` and `camera`,
+  /// for backwards compatibility.
+  bool supportsImageSource(ImageSource source) {
+    return source == ImageSource.gallery || source == ImageSource.camera;
+  }
+}
+
+/// A base class for an [ImagePickerPlatform] implementation that does not
+/// directly support [ImageSource.camera], but supports delegating to a
+/// provided [ImagePickerCameraDelegate].
+abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
+  /// A delegate to respond to calls that use [ImageSource.camera].
+  ///
+  /// When it is null, attempting to use [ImageSource.camera] will throw a
+  /// [StateError].
+  ImagePickerCameraDelegate? cameraDelegate;
+
+  @override
+  bool supportsImageSource(ImageSource source) {
+    if (source == ImageSource.camera) {
+      return cameraDelegate != null;
+    }
+    return super.supportsImageSource(source);
+  }
+
+  Future<XFile?> getImageFromSource({
+    required ImageSource source,
+    ImagePickerOptions options = const ImagePickerOptions(),
+  }) async {
+    if (source == ImageSource.camera) {
+      final ImagePickerCameraDelegate? delegate = cameraDelegate;
+      if (delegate == null) {
+        throw StateError(
+            'This implementation of ImagePickerPlatform requires a '
+            '"cameraDelegate" in order to use ImageSource.camera');
+      } else {
+        return delegate.takePhoto(
+            options: ImagePickerCameraDelegateOptions(
+          preferredCameraDevice: options.preferredCameraDevice,
+        ));
+      }
+    }
+    return super.getImageFromSource(source: source, options: options);
+  }
+
+  @override
+  Future<XFile?> getVideo({
+    required ImageSource source,
+    CameraDevice preferredCameraDevice = CameraDevice.rear,
+    Duration? maxDuration,
+  }) async {
+    if (source == ImageSource.camera) {
+      final ImagePickerCameraDelegate? delegate = cameraDelegate;
+      if (delegate == null) {
+        throw StateError(
+            'This implementation of ImagePickerPlatform requires a '
+            '"cameraDelegate" in order to use ImageSource.camera');
+      } else {
+        return delegate.takeVideo(
+            options: ImagePickerCameraDelegateOptions(
+                preferredCameraDevice: preferredCameraDevice,
+                maxVideoDuration: maxDuration));
+      }
+    }
+    return super.getVideo(
+        source: source,
+        preferredCameraDevice: preferredCameraDevice,
+        maxDuration: maxDuration);
+  }
 }
