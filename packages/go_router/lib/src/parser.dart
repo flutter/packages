@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
-import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
@@ -83,12 +82,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // If there is a matching error for the initial location, we should
       // still try to process the top-level redirects.
       initialMatches = RouteMatchList(
-        <RouteMatch>[],
+        matches: const <RouteMatch>[],
         // TODO(chunhtai): remove this ignore and migrate the code
         // https://github.com/flutter/flutter/issues/124045.
         // ignore: deprecated_member_use, unnecessary_non_null_assertion
-        Uri.parse(canonicalUri(routeInformation.location!)),
-        const <String, String>{},
+        uri: Uri.parse(canonicalUri(routeInformation.location!)),
+        pathParameters: const <String, String>{},
       );
     }
     return processRedirection(initialMatches, context,

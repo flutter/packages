@@ -88,7 +88,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     builder: (BuildContext context, GoRouterState state) =>
                         DetailsScreen(
                       label: 'B',
-                      param: state.params['param'],
+                      param: state.pathParameters['param'],
                       extra: state.extra,
                     ),
                   ),

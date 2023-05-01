@@ -18,8 +18,8 @@ void main() {
       final Map<String, String> pathParameters = <String, String>{};
       final RouteMatch? match = RouteMatch.match(
         route: route,
-        restLoc: '/users/123',
-        parentSubloc: '',
+        remainingLocation: '/users/123',
+        matchedLocation: '',
         pathParameters: pathParameters,
         extra: const _Extra('foo'),
       );
@@ -27,14 +27,14 @@ void main() {
         fail('Null match');
       }
       expect(match.route, route);
-      expect(match.subloc, '/users/123');
+      expect(match.matchedLocation, '/users/123');
       expect(pathParameters['userId'], '123');
       expect(match.extra, const _Extra('foo'));
       expect(match.error, isNull);
       expect(match.pageKey, isNotNull);
     });
 
-    test('subloc', () {
+    test('matchedLocation', () {
       final GoRoute route = GoRoute(
         path: 'users/:userId',
         builder: _builder,
@@ -42,8 +42,8 @@ void main() {
       final Map<String, String> pathParameters = <String, String>{};
       final RouteMatch? match = RouteMatch.match(
         route: route,
-        restLoc: 'users/123',
-        parentSubloc: '/home',
+        remainingLocation: 'users/123',
+        matchedLocation: '/home',
         pathParameters: pathParameters,
         extra: const _Extra('foo'),
       );
@@ -51,7 +51,7 @@ void main() {
         fail('Null match');
       }
       expect(match.route, route);
-      expect(match.subloc, '/home/users/123');
+      expect(match.matchedLocation, '/home/users/123');
       expect(pathParameters['userId'], '123');
       expect(match.extra, const _Extra('foo'));
       expect(match.error, isNull);
@@ -71,8 +71,8 @@ void main() {
       final Map<String, String> pathParameters = <String, String>{};
       final RouteMatch? match = RouteMatch.match(
         route: route,
-        restLoc: 'users/123',
-        parentSubloc: '/home',
+        remainingLocation: 'users/123',
+        matchedLocation: '/home',
         pathParameters: pathParameters,
         extra: const _Extra('foo'),
       );
@@ -95,16 +95,16 @@ void main() {
       final Map<String, String> pathParameters = <String, String>{};
       final RouteMatch? match1 = RouteMatch.match(
         route: route,
-        restLoc: 'users/123',
-        parentSubloc: '/home',
+        remainingLocation: 'users/123',
+        matchedLocation: '/home',
         pathParameters: pathParameters,
         extra: const _Extra('foo'),
       );
 
       final RouteMatch? match2 = RouteMatch.match(
         route: route,
-        restLoc: 'users/1234',
-        parentSubloc: '/home',
+        remainingLocation: 'users/1234',
+        matchedLocation: '/home',
         pathParameters: pathParameters,
         extra: const _Extra('foo1'),
       );
@@ -120,16 +120,16 @@ void main() {
       final Map<String, String> pathParameters = <String, String>{};
       final RouteMatch? match1 = RouteMatch.match(
         route: route,
-        restLoc: 'users/123',
-        parentSubloc: '/home',
+        remainingLocation: 'users/123',
+        matchedLocation: '/home',
         pathParameters: pathParameters,
         extra: const _Extra('foo'),
       );
 
       final RouteMatch? match2 = RouteMatch.match(
         route: route,
-        restLoc: 'users/1234',
-        parentSubloc: '/home',
+        remainingLocation: 'users/1234',
+        matchedLocation: '/home',
         pathParameters: pathParameters,
         extra: const _Extra('foo1'),
       );
@@ -148,16 +148,16 @@ void main() {
       );
       final RouteMatch match1 = RouteMatch(
         route: route,
-        subloc: '/a',
+        matchedLocation: '/a',
         extra: null,
         error: null,
         pageKey: const ValueKey<String>('/a'),
       );
 
       final RouteMatchList list = RouteMatchList(
-        <RouteMatch>[match1],
-        Uri.parse('/'),
-        const <String, String>{},
+        matches: <RouteMatch>[match1],
+        uri: Uri.parse('/'),
+        pathParameters: const <String, String>{},
       );
 
       final RouteMatchList list2 = list.copy();

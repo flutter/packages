@@ -32,17 +32,17 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-          <RouteMatch>[
+          matches: <RouteMatch>[
             RouteMatch(
               route: config.routes.first as GoRoute,
-              subloc: '/',
+              matchedLocation: '/',
               extra: null,
               error: null,
               pageKey: const ValueKey<String>('/'),
             ),
           ],
-          Uri.parse('/'),
-          const <String, String>{});
+          uri: Uri.parse('/'),
+          pathParameters: const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -79,12 +79,12 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-        <RouteMatch>[
+        matches: <RouteMatch>[
           createRouteMatch(config.routes.first, '/'),
           createRouteMatch(config.routes.first.routes.first, '/'),
         ],
-        Uri.parse('/'),
-        const <String, String>{},
+        uri: Uri.parse('/'),
+        pathParameters: const <String, String>{},
       );
 
       await tester.pumpWidget(
@@ -117,17 +117,17 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-          <RouteMatch>[
+          matches: <RouteMatch>[
             RouteMatch(
               route: config.routes.first as GoRoute,
-              subloc: '/',
+              matchedLocation: '/',
               extra: null,
               error: null,
               pageKey: const ValueKey<String>('/'),
             ),
           ],
-          Uri.parse('/'),
-          const <String, String>{});
+          uri: Uri.parse('/'),
+          pathParameters: const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -172,24 +172,24 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-          <RouteMatch>[
+          matches: <RouteMatch>[
             RouteMatch(
               route: config.routes.first,
-              subloc: '',
+              matchedLocation: '',
               extra: null,
               error: null,
               pageKey: const ValueKey<String>(''),
             ),
             RouteMatch(
               route: config.routes.first.routes.first,
-              subloc: '/details',
+              matchedLocation: '/details',
               extra: null,
               error: null,
               pageKey: const ValueKey<String>('/details'),
             ),
           ],
-          Uri.parse('/details'),
-          const <String, String>{});
+          uri: Uri.parse('/details'),
+          pathParameters: const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -247,17 +247,17 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-          <RouteMatch>[
+          matches: <RouteMatch>[
             RouteMatch(
               route: config.routes.first.routes.first as GoRoute,
-              subloc: '/a/details',
+              matchedLocation: '/a/details',
               extra: null,
               error: null,
               pageKey: const ValueKey<String>('/a/details'),
             ),
           ],
-          Uri.parse('/a/details'),
-          const <String, String>{});
+          uri: Uri.parse('/a/details'),
+          pathParameters: const <String, String>{});
 
       await tester.pumpWidget(
         _BuilderTestWidget(
@@ -304,12 +304,13 @@ void main() {
       );
 
       final RouteMatchList matches = RouteMatchList(
-          <RouteMatch>[
-            createRouteMatch(config.routes.first, ''),
-            createRouteMatch(config.routes.first.routes.first, '/a'),
-          ],
-          Uri.parse('/b'),
-          const <String, String>{});
+        matches: <RouteMatch>[
+          createRouteMatch(config.routes.first, ''),
+          createRouteMatch(config.routes.first.routes.first, '/a'),
+        ],
+        uri: Uri.parse('/b'),
+        pathParameters: const <String, String>{},
+      );
 
       await tester.pumpWidget(
         _BuilderTestWidget(
