@@ -16,8 +16,8 @@ flutter:
         dartPluginClass: ImagePickerMacOS
 
 dependencies:
-  file_selector_macos: ^0.9.1
-  file_selector_platform_interface: ^2.2.0
+  file_selector_macos: ^0.9.1+1
+  file_selector_platform_interface: ^2.3.0
   flutter:
     sdk: flutter
   image_picker_platform_interface: ^2.4.3
