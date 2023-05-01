@@ -32,8 +32,6 @@ abstract class ImagePickerPlatform extends PlatformInterface {
 
   /// Platform-specific plugins should set this with their own platform-specific
   /// class that extends [ImagePickerPlatform] when they register themselves.
-  // TODO(amirh): Extract common platform interface logic.
-  // https://github.com/flutter/flutter/issues/43368
   static set instance(ImagePickerPlatform instance) {
     PlatformInterface.verify(instance, _token);
     _instance = instance;
@@ -333,6 +331,7 @@ abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
     return super.supportsImageSource(source);
   }
 
+  @override
   Future<XFile?> getImageFromSource({
     required ImageSource source,
     ImagePickerOptions options = const ImagePickerOptions(),
