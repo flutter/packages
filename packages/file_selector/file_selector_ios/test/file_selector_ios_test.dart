@@ -40,14 +40,14 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
+        uniformTypeIdentifiers: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
           label: 'image',
           extensions: <String>['jpg'],
           mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image'],
+          uniformTypeIdentifiers: <String>['public.image'],
           webWildCards: <String>['image/*']);
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
@@ -56,7 +56,7 @@ void main() {
       final FileSelectorConfig config =
           result.captured[0] as FileSelectorConfig;
 
-      // iOS only accepts macUTIs.
+      // iOS only accepts uniformTypeIdentifiers.
       expect(listEquals(config.utis, <String>['public.text', 'public.image']),
           isTrue);
       expect(config.allowMultiSelection, isFalse);
@@ -92,14 +92,14 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
+        uniformTypeIdentifiers: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
           label: 'image',
           extensions: <String>['jpg'],
           mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image'],
+          uniformTypeIdentifiers: <String>['public.image'],
           webWildCards: <String>['image/*']);
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
@@ -108,7 +108,7 @@ void main() {
       final FileSelectorConfig config =
           result.captured[0] as FileSelectorConfig;
 
-      // iOS only accepts macUTIs.
+      // iOS only accepts uniformTypeIdentifiers.
       expect(listEquals(config.utis, <String>['public.text', 'public.image']),
           isTrue);
       expect(config.allowMultiSelection, isTrue);
