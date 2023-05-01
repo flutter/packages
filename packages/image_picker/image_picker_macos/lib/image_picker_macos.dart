@@ -91,6 +91,9 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
       case ImageSource.camera:
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
+        // TODO(stuartmorgan): Add a native implementation that can use
+        // PHPickerViewController on macOS 13+, with this as a fallback for
+        // older OS versions: https://github.com/flutter/flutter/issues/125829.
         const XTypeGroup typeGroup = XTypeGroup(
             label: 'images', uniformTypeIdentifiers: <String>['public.image']);
         final XFile? file = await fileSelector
@@ -141,6 +144,9 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
+    // TODO(stuartmorgan): Add a native implementation that can use
+    // PHPickerViewController on macOS 13+, with this as a fallback for
+    // older OS versions: https://github.com/flutter/flutter/issues/125829.
     const XTypeGroup typeGroup = XTypeGroup(
         label: 'images', uniformTypeIdentifiers: <String>['public.image']);
     final List<XFile> files = await fileSelector
