@@ -224,9 +224,10 @@ class MethodCallHandlerImpl
     if (productDetails == null) {
       result.error(
           "NOT_FOUND",
-          String.format(
-              "Details for product %s are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: %s",
-              product, LOAD_PRODUCT_DOC_URL),
+          "Details for product "
+              + product
+              + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
+              + LOAD_PRODUCT_DOC_URL,
           null);
       return;
     }
@@ -245,9 +246,12 @@ class MethodCallHandlerImpl
       if (!isValidOfferToken) {
         result.error(
             "INVALID_OFFER_TOKEN",
-            String.format(
-                "Offer token %s for product %s is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: %s",
-                offerToken, product, LOAD_PRODUCT_DOC_URL),
+            "Offer token "
+                + offerToken
+                + " for product "
+                + product
+                + " is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: "
+                + LOAD_PRODUCT_DOC_URL,
             null);
         return;
       }
@@ -263,9 +267,10 @@ class MethodCallHandlerImpl
     } else if (oldProduct != null && !cachedProducts.containsKey(oldProduct)) {
       result.error(
           "IN_APP_PURCHASE_INVALID_OLD_PRODUCT",
-          String.format(
-              "Details for product %s are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: %s",
-              oldProduct, LOAD_PRODUCT_DOC_URL),
+          "Details for product "
+              + oldProduct
+              + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
+              + LOAD_PRODUCT_DOC_URL,
           null);
       return;
     }
@@ -273,9 +278,9 @@ class MethodCallHandlerImpl
     if (activity == null) {
       result.error(
           "ACTIVITY_UNAVAILABLE",
-          String.format(
-              "Details for product %s are not available. This method must be run with the app in foreground.",
-              product),
+          "Details for product "
+              + product
+              + " are not available. This method must be run with the app in foreground.",
           null);
       return;
     }
