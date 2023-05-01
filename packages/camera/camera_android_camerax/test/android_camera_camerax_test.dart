@@ -503,10 +503,8 @@ void main() {
         .thenAnswer((_) async => exposureState);
 
     // We expect the minimum exposure to be the minimum exposure compensation * exposure compensation step.
-    expect(
-        double.parse(
-            (await camera.getMinExposureOffset(35)).toStringAsFixed(1)),
-        0.6);
+    // Delta is included due to avoid catching rounding errors.
+    expect(await camera.getMinExposureOffset(35), closeTo(0.6, 0.0000000001));
   });
 
   test('getMaxExposureOffset returns expected exposure offset', () async {
@@ -637,24 +635,14 @@ void main() {
     when(mockImageProxy.height).thenReturn(imageHeight);
     when(mockImageProxy.width).thenReturn(imageWidth);
 
-    void callback(CameraImageData imageData) {
-      // Test Analyzer correctly process ImageProxy instances.
-      expect(imageData.planes.length, equals(0));
-      expect(imageData.planes[0].bytes, equals(buffer));
-      expect(imageData.planes[0].bytesPerRow, equals(rowStride));
-      expect(imageData.planes[0].bytesPerPixel, equals(pixelStride));
-      expect(imageData.format.raw, equals(imageFormat));
-      expect(imageData.height, equals(imageHeight));
-      expect(imageData.width, equals(imageWidth));
-
-      // Verify camera and cameraInfo were properly updated.
-      expect(camera.camera, equals(mockCamera));
-      expect(camera.cameraInfo, equals(mockCameraInfo));
-    }
-
+    final Completer<CameraImageData> imageDataCompleter =
+        Completer<CameraImageData>();
     final StreamSubscription<CameraImageData>
-        onStreamedFrameAvailableSubscription =
-        camera.onStreamedFrameAvailable(cameraId).listen(callback);
+        onStreamedFrameAvailableSubscription = camera
+            .onStreamedFrameAvailable(cameraId)
+            .listen((CameraImageData imageData) {
+      imageDataCompleter.complete(imageData);
+    });
 
     // Test ImageAnalysis use case is bound to ProcessCameraProvider.
     final Analyzer capturedAnalyzer =
@@ -663,8 +651,21 @@ void main() {
     verify(mockProcessCameraProvider.bindToLifecycle(
         mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
 
-    expectAsync1(callback);
     await capturedAnalyzer.analyze(mockImageProxy);
+    final CameraImageData imageData = await imageDataCompleter.future;
+
+    // Test Analyzer correctly process ImageProxy instances.
+    expect(imageData.planes.length, equals(1));
+    expect(imageData.planes[0].bytes, equals(buffer));
+    expect(imageData.planes[0].bytesPerRow, equals(rowStride));
+    expect(imageData.planes[0].bytesPerPixel, equals(pixelStride));
+    expect(imageData.format.raw, equals(imageFormat));
+    expect(imageData.height, equals(imageHeight));
+    expect(imageData.width, equals(imageWidth));
+
+    // Verify camera and cameraInfo were properly updated.
+    expect(camera.camera, equals(mockCamera));
+    expect(camera.cameraInfo, equals(mockCameraInfo));
     onStreamedFrameAvailableSubscription.cancel();
   });
 
