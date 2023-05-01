@@ -11,6 +11,7 @@ export 'navigation_request.dart';
 export 'platform_navigation_delegate_creation_params.dart';
 export 'platform_webview_controller_creation_params.dart';
 export 'platform_webview_cookie_manager_creation_params.dart';
+export 'platform_webview_permission_request.dart';
 export 'platform_webview_widget_creation_params.dart';
 export 'url_change.dart';
 export 'web_resource_error.dart';

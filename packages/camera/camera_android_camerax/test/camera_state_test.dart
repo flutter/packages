@@ -11,13 +11,12 @@ import 'package:mockito/annotations.dart';
 
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestCameraStateHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('CameraState', () {
     tearDown(() {
-      TestCameraStateHostApi.setup(null);
       TestInstanceManagerHostApi.setup(null);
     });
 

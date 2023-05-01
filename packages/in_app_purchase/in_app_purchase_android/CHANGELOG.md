@@ -1,3 +1,23 @@
+## 0.2.5+5
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 0.2.5+4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.2.5+3
+
+* Updates com.android.billingclient:billing from 5.1.0 to 5.2.0.
+
+## 0.2.5+2
+
+* Updates androidx.annotation:annotation from 1.5.0 to 1.6.0.
+
+## 0.2.5+1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 0.2.5
 
 * Fixes the management of `BillingClient` connection by handling `BillingResponse.serviceDisconnected`.

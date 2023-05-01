@@ -76,7 +76,8 @@ class App extends StatelessWidget {
           ],
         ),
       ],
-    )
+    ),
+    TypedGoRoute<FamilyCountRoute>(path: 'family-count/:count'),
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -149,6 +150,17 @@ class PersonDetailsRoute extends GoRouteData {
   }
 }
 
+class FamilyCountRoute extends GoRouteData {
+  const FamilyCountRoute(this.count);
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => FamilyCountScreen(
+        count: count,
+      );
+}
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -161,14 +173,38 @@ class HomeScreen extends StatelessWidget {
         title: const Text(App.title),
         centerTitle: true,
         actions: <Widget>[
-          ElevatedButton(
-            onPressed: () => const PersonRoute('f1', 1).push(context),
-            child: const Text('Push a route'),
-          ),
-          IconButton(
-            onPressed: info.logout,
-            tooltip: 'Logout: ${info.userName}',
-            icon: const Icon(Icons.logout),
+          PopupMenuButton<String>(
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuItem<String>>[
+                PopupMenuItem<String>(
+                  value: '1',
+                  child: const Text('Push w/o return value'),
+                  onTap: () => const PersonRoute('f1', 1).push(context),
+                ),
+                PopupMenuItem<String>(
+                  value: '2',
+                  child: const Text('Push w/ return value'),
+                  onTap: () async {
+                    FamilyCountRoute(familyData.length)
+                        .push<int>(context)
+                        .then((int? value) {
+                      if (value != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Age was: $value'),
+                          ),
+                        );
+                      }
+                    });
+                  },
+                ),
+                PopupMenuItem<String>(
+                  value: '3',
+                  child: Text('Logout: ${info.userName}'),
+                  onTap: () => info.logout(),
+                ),
+              ];
+            },
           ),
         ],
       ),
@@ -273,6 +309,35 @@ class PersonDetailsPage extends StatelessWidget {
             if (extra != null)
               ListTile(title: Text('Extra click count: $extra')),
           ],
+        ),
+      );
+}
+
+class FamilyCountScreen extends StatelessWidget {
+  const FamilyCountScreen({super.key, required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Family Count')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Center(
+                child: Text(
+                  'There are $count families',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => context.pop(count),
+                child: Text('Pop with return value $count'),
+              ),
+            ],
+          ),
         ),
       );
 }

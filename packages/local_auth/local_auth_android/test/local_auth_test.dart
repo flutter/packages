@@ -65,11 +65,11 @@ void main() {
 
   group('getEnrolledBiometrics', () {
     test('translates values', () async {
-      when(api.getEnrolledBiometrics()).thenAnswer((_) async =>
-          <AuthClassification>[
-            AuthClassification.weak,
-            AuthClassification.strong
-          ]);
+      when(api.getEnrolledBiometrics())
+          .thenAnswer((_) async => <AuthClassificationWrapper>[
+                AuthClassificationWrapper(value: AuthClassification.weak),
+                AuthClassificationWrapper(value: AuthClassification.strong),
+              ]);
 
       final List<BiometricType> result = await plugin.getEnrolledBiometrics();
 
@@ -81,7 +81,7 @@ void main() {
 
     test('handles emtpy', () async {
       when(api.getEnrolledBiometrics())
-          .thenAnswer((_) async => <AuthClassification>[]);
+          .thenAnswer((_) async => <AuthClassificationWrapper>[]);
 
       final List<BiometricType> result = await plugin.getEnrolledBiometrics();
 

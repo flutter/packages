@@ -1,3 +1,12 @@
+## NEXT
+
+* Adds an example application that uses Pigeon directly, rather than in a plugin.
+
+## 9.2.5
+
+* Reports an error when trying to use an enum directly in a `List` or `Map`
+  argument.
+
 ## 9.2.4
 
 * [objc] Fixes a warning due to a C++-style function signature in the codec

@@ -1,3 +1,15 @@
+## 2.0.13
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.0.12
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 2.0.11
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 2.0.10
 
 * Sets an explicit Java compatibility version.

@@ -18,4 +18,6 @@
 * Implements image capture.
 * Fixes cast of CameraInfo to fix integration test failure.
 * Updates internal Java InstanceManager to only stop finalization callbacks when stopped.
+* Implements image streaming.
+* Provides LifecycleOwner implementation for Activities that use the plugin that do not implement it themselves.
 * Implements onCameraClosing callback method for indicating the camera is closing and bumps CameraX version to 1.3.0-alpha05.

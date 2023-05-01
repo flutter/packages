@@ -18,16 +18,6 @@ import 'test_camerax_library.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [TestCameraStateHostApi].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockTestCameraStateHostApi extends _i1.Mock
-    implements _i2.TestCameraStateHostApi {
-  MockTestCameraStateHostApi() {
-    _i1.throwOnMissingStub(this);
-  }
-}
-
 /// A class which mocks [TestInstanceManagerHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.

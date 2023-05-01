@@ -145,6 +145,50 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
   FWFWKNavigationTypeOther = 5,
 };
 
+/// Possible permission decisions for device resource access.
+///
+/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision?language=objc.
+typedef NS_ENUM(NSUInteger, FWFWKPermissionDecision) {
+  /// Deny permission for the requested resource.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiondeny?language=objc.
+  FWFWKPermissionDecisionDeny = 0,
+  /// Deny permission for the requested resource.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiongrant?language=objc.
+  FWFWKPermissionDecisionGrant = 1,
+  /// Prompt the user for permission for the requested resource.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisionprompt?language=objc.
+  FWFWKPermissionDecisionPrompt = 2,
+};
+
+/// List of the types of media devices that can capture audio, video, or both.
+///
+/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype?language=objc.
+typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
+  /// A media device that can capture video.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecamera?language=objc.
+  FWFWKMediaCaptureTypeCamera = 0,
+  /// A media device or devices that can capture audio and video.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecameraandmicrophone?language=objc.
+  FWFWKMediaCaptureTypeCameraAndMicrophone = 1,
+  /// A media device that can capture audio.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
+  FWFWKMediaCaptureTypeMicrophone = 2,
+  /// An unknown media device.
+  FWFWKMediaCaptureTypeUnknown = 3,
+};
+
 @class FWFNSKeyValueObservingOptionsEnumData;
 @class FWFNSKeyValueChangeKeyEnumData;
 @class FWFWKUserScriptInjectionTimeEnumData;
@@ -152,12 +196,15 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 @class FWFWKWebsiteDataTypeEnumData;
 @class FWFWKNavigationActionPolicyEnumData;
 @class FWFNSHttpCookiePropertyKeyEnumData;
+@class FWFWKPermissionDecisionData;
+@class FWFWKMediaCaptureTypeData;
 @class FWFNSUrlRequestData;
 @class FWFWKUserScriptData;
 @class FWFWKNavigationActionData;
 @class FWFWKFrameInfoData;
 @class FWFNSErrorData;
 @class FWFWKScriptMessageData;
+@class FWFWKSecurityOriginData;
 @class FWFNSHttpCookieData;
 @class FWFObjectOrIdentifier;
 
@@ -208,6 +255,20 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithValue:(FWFNSHttpCookiePropertyKeyEnum)value;
 @property(nonatomic, assign) FWFNSHttpCookiePropertyKeyEnum value;
+@end
+
+@interface FWFWKPermissionDecisionData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(FWFWKPermissionDecision)value;
+@property(nonatomic, assign) FWFWKPermissionDecision value;
+@end
+
+@interface FWFWKMediaCaptureTypeData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithValue:(FWFWKMediaCaptureType)value;
+@property(nonatomic, assign) FWFWKMediaCaptureType value;
 @end
 
 /// Mirror of NSURLRequest.
@@ -287,6 +348,18 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
 + (instancetype)makeWithName:(NSString *)name body:(id)body;
 @property(nonatomic, copy) NSString *name;
 @property(nonatomic, strong) id body;
+@end
+
+/// Mirror of WKSecurityOrigin.
+///
+/// See https://developer.apple.com/documentation/webkit/wksecurityorigin?language=objc.
+@interface FWFWKSecurityOriginData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithHost:(NSString *)host port:(NSNumber *)port protocol:(NSString *)protocol;
+@property(nonatomic, copy) NSString *host;
+@property(nonatomic, strong) NSNumber *port;
+@property(nonatomic, copy) NSString *protocol;
 @end
 
 /// Mirror of NSHttpCookieData.
@@ -696,6 +769,16 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void);
                          configurationIdentifier:(NSNumber *)configurationIdentifier
                                 navigationAction:(FWFWKNavigationActionData *)navigationAction
                                       completion:(void (^)(FlutterError *_Nullable))completion;
+/// Callback to Dart function `WKUIDelegate.requestMediaCapturePermission`.
+- (void)requestMediaCapturePermissionForDelegateWithIdentifier:(NSNumber *)identifier
+                                             webViewIdentifier:(NSNumber *)webViewIdentifier
+                                                        origin:(FWFWKSecurityOriginData *)origin
+                                                         frame:(FWFWKFrameInfoData *)frame
+                                                          type:(FWFWKMediaCaptureTypeData *)type
+                                                    completion:
+                                                        (void (^)(
+                                                            FWFWKPermissionDecisionData *_Nullable,
+                                                            FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFWKHttpCookieStoreHostApi.

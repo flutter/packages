@@ -1,3 +1,7 @@
+## 0.8.7+4
+
+* Updates README to mention usage of `launchMode: singleInstance` for Android.
+
 ## 0.8.7+3
 
 * Adds handling of unsupported image types to the example.

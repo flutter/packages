@@ -15,7 +15,7 @@ public class CameraHostApiImpl implements CameraHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  public CameraHostApiImpl(BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+  public CameraHostApiImpl(@NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
   }
@@ -25,6 +25,7 @@ public class CameraHostApiImpl implements CameraHostApi {
    * instance with the specified identifier.
    */
   @Override
+  @NonNull
   public Long getCameraInfo(@NonNull Long identifier) {
     Camera camera = (Camera) Objects.requireNonNull(instanceManager.getInstance(identifier));
     CameraInfo cameraInfo = camera.getCameraInfo();
