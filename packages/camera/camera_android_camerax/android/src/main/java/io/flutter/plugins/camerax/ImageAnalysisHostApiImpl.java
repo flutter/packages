@@ -42,7 +42,8 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     ImageAnalysis.Builder imageAnalysisBuilder = cameraXProxy.createImageAnalysisBuilder();
 
     if (targetResolution != null) {
-      imageAnalysisBuilder.setTargetResolution(CameraXProxy.sizeFromResolution(targetResolution));
+      imageAnalysisBuilder.setResolutionSelector(
+          CameraXProxy.resolutionSelectorFromResolution(targetResolution));
     }
 
     ImageAnalysis imageAnalysis = imageAnalysisBuilder.build();

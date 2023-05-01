@@ -13,6 +13,8 @@ import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.Preview;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.io.File;
@@ -23,8 +25,21 @@ public class CameraXProxy {
    * Converts a {@link ResolutionInfo} instance to a {@link Size} for setting the target resolution
    * of {@link UseCase}s.
    */
-  public static Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
+  private static Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
     return new Size(resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
+  }
+
+  /**
+   * Takes a {@link ResolutionInfo} instance and uses it to build a {@link ResolutionStrategy},
+   * which is then used to create the {@link ResolutionSelector} that we return.
+   */
+  @NonNull
+  public static ResolutionSelector resolutionSelectorFromResolution(
+      @NonNull ResolutionInfo resolutionInfo) {
+    Size size = sizeFromResolution(resolutionInfo);
+    ResolutionStrategy strategy =
+        new ResolutionStrategy(size, ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER);
+    return new ResolutionSelector.Builder().setResolutionStrategy(strategy).build();
   }
 
   public CameraSelector.Builder createCameraSelectorBuilder() {

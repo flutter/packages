@@ -46,7 +46,8 @@ public class PreviewHostApiImpl implements PreviewHostApi {
       previewBuilder.setTargetRotation(rotation.intValue());
     }
     if (targetResolution != null) {
-      previewBuilder.setTargetResolution(CameraXProxy.sizeFromResolution(targetResolution));
+      previewBuilder.setResolutionSelector(
+          CameraXProxy.resolutionSelectorFromResolution(targetResolution));
     }
     Preview preview = previewBuilder.build();
     instanceManager.addDartCreatedInstance(preview, identifier);
@@ -83,7 +84,9 @@ public class PreviewHostApiImpl implements PreviewHostApi {
             flutterSurface,
             Executors.newSingleThreadExecutor(),
             (result) -> {
-              // See https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result for documentation.
+              // See
+              // https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result
+              // for documentation.
               // Always attempt a release.
               flutterSurface.release();
               int resultCode = result.getResultCode();
@@ -104,7 +107,8 @@ public class PreviewHostApiImpl implements PreviewHostApi {
                   break;
               }
             });
-      };
+      }
+      ;
     };
   }
 
