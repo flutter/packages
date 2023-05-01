@@ -637,10 +637,7 @@ void main() {
     when(mockImageProxy.height).thenReturn(imageHeight);
     when(mockImageProxy.width).thenReturn(imageWidth);
 
-    final StreamSubscription<CameraImageData>
-        onStreamedFrameAvailableSubscription = camera
-            .onStreamedFrameAvailable(cameraId)
-            .listen(expectAsync1((CameraImageData imageData) {
+    void callback(CameraImageData imageData) {
       // Test Analyzer correctly process ImageProxy instances.
       expect(imageData.planes.length, equals(0));
       expect(imageData.planes[0].bytes, equals(buffer));
@@ -653,7 +650,11 @@ void main() {
       // Verify camera and cameraInfo were properly updated.
       expect(camera.camera, equals(mockCamera));
       expect(camera.cameraInfo, equals(mockCameraInfo));
-    }));
+    }
+
+    final StreamSubscription<CameraImageData>
+        onStreamedFrameAvailableSubscription =
+        camera.onStreamedFrameAvailable(cameraId).listen(callback);
 
     // Test ImageAnalysis use case is bound to ProcessCameraProvider.
     final Analyzer capturedAnalyzer =
@@ -662,6 +663,7 @@ void main() {
     verify(mockProcessCameraProvider.bindToLifecycle(
         mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
 
+    expectAsync1(callback);
     await capturedAnalyzer.analyze(mockImageProxy);
     onStreamedFrameAvailableSubscription.cancel();
   });

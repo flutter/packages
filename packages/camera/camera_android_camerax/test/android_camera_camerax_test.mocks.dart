@@ -82,8 +82,9 @@ class _FakeCameraImageFormat_3 extends _i1.SmartFake
         );
 }
 
-class _FakeExposureRange_4 extends _i1.SmartFake implements _i6.ExposureRange {
-  _FakeExposureRange_4(
+class _FakeExposureCompensationRange_4 extends _i1.SmartFake
+    implements _i6.ExposureCompensationRange {
+  _FakeExposureCompensationRange_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -307,17 +308,18 @@ class MockCameraSelector extends _i1.Mock implements _i12.CameraSelector {
 /// See the documentation for Mockito's code generation for more information.
 class MockExposureState extends _i1.Mock implements _i3.ExposureState {
   @override
-  _i6.ExposureRange get exposureCompensationRange => (super.noSuchMethod(
+  _i6.ExposureCompensationRange get exposureCompensationRange =>
+      (super.noSuchMethod(
         Invocation.getter(#exposureCompensationRange),
-        returnValue: _FakeExposureRange_4(
+        returnValue: _FakeExposureCompensationRange_4(
           this,
           Invocation.getter(#exposureCompensationRange),
         ),
-        returnValueForMissingStub: _FakeExposureRange_4(
+        returnValueForMissingStub: _FakeExposureCompensationRange_4(
           this,
           Invocation.getter(#exposureCompensationRange),
         ),
-      ) as _i6.ExposureRange);
+      ) as _i6.ExposureCompensationRange);
   @override
   double get exposureCompensationStep => (super.noSuchMethod(
         Invocation.getter(#exposureCompensationStep),
