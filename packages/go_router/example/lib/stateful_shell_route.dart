@@ -225,6 +225,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
+        /// Here, the items of BottomNavigationBar are hard coded. In a real
+        /// world scenario, the items would most likely be generated from the
+        /// branches of the shell route, which can be fetched using
+        /// `navigationShell.route.branches`.
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
           BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),

@@ -266,20 +266,6 @@ class RouteMatchList {
     }
     return null;
   }
-
-  /// Performs a deep comparison of two match lists by comparing the fields
-  /// of each object.
-  ///
-  /// Note that the == and hashCode functions are not overridden by
-  /// RouteMatchList because it is mutable.
-  static bool matchListEquals(RouteMatchList a, RouteMatchList b) {
-    if (identical(a, b)) {
-      return true;
-    }
-    return listEquals<RouteMatch>(a.matches, b.matches) &&
-        a.uri == b.uri &&
-        mapEquals<String, String>(a.pathParameters, b.pathParameters);
-  }
 }
 
 /// Handles encoding and decoding of [RouteMatchList] objects to a format

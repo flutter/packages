@@ -105,6 +105,6 @@ void main() {
     final RouteMatchList? decoded = codec.decodeMatchList(encoded);
 
     expect(decoded, isNotNull);
-    expect(RouteMatchList.matchListEquals(decoded!, list1), isTrue);
+    expect(decoded, equals(list1));
   });
 }

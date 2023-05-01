@@ -959,7 +959,7 @@ class StatefulNavigationShell extends StatefulWidget {
                 (shellRouteContext.route as StatefulShellRoute)._shellStateKey);
 
   /// The ShellRouteContext responsible for building the Navigator for the
-  /// current [StatefulShellBranch]
+  /// current [StatefulShellBranch].
   final ShellRouteContext shellRouteContext;
 
   /// The builder for a custom container for shell route Navigators.
@@ -971,6 +971,9 @@ class StatefulNavigationShell extends StatefulWidget {
   final int currentIndex;
 
   final GoRouter _router;
+
+  /// The associated [StatefulShellRoute].
+  StatefulShellRoute get route => shellRouteContext.route as StatefulShellRoute;
 
   /// Navigate to the last location of the [StatefulShellBranch] at the provided
   /// index in the associated [StatefulShellBranch].
@@ -1046,8 +1049,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     with RestorationMixin {
   final Map<Key, Widget> _branchNavigators = <Key, Widget>{};
 
-  StatefulShellRoute get _route =>
-      widget.shellRouteContext.route as StatefulShellRoute;
+  /// The associated [StatefulShellRoute].
+  StatefulShellRoute get route => widget.route;
 
   GoRouter get _router => widget._router;
   RouteMatcher get _matcher => _router.routeInformationParser.matcher;
@@ -1056,7 +1059,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
       <StatefulShellBranch, _RestorableRouteMatchList>{};
 
   @override
-  String? get restorationId => _route.restorationScopeId;
+  String? get restorationId => route.restorationScopeId;
 
   /// Generates a derived restoration ID for the branch location property,
   /// falling back to the identity hash code of the branch to ensure an ID is
@@ -1081,10 +1084,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   RouteMatchList? _matchListForBranch(int index) =>
-      _branchLocations[_route.branches[index]]?.value;
+      _branchLocations[route.branches[index]]?.value;
 
   void _updateCurrentBranchStateFromWidget() {
-    final StatefulShellBranch branch = _route.branches[widget.currentIndex];
+    final StatefulShellBranch branch = route.branches[widget.currentIndex];
     final ShellRouteContext shellRouteContext = widget.shellRouteContext;
 
     /// Create an clone of the current RouteMatchList, to prevent mutations from
@@ -1100,8 +1103,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         _branchNavigators[branch.navigatorKey] != null;
 
     /// Only update the Navigator of the route match list has changed
-    final bool locationChanged = !RouteMatchList.matchListEquals(
-        previousBranchLocation, currentBranchLocation);
+    final bool locationChanged =
+        previousBranchLocation != currentBranchLocation;
     if (locationChanged || !hasExistingNavigator) {
       _branchNavigators[branch.navigatorKey] = shellRouteContext
           .navigatorBuilder(branch.observers, branch.restorationScopeId);
@@ -1120,7 +1123,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   /// [StatefulShellRoute]. If the branch has not been visited before, this
   /// method will navigate to initial location of the branch (see
   void goBranch(int index) {
-    assert(index >= 0 && index < _route.branches.length);
+    assert(index >= 0 && index < route.branches.length);
     final RouteMatchList? matchlist = _matchListForBranch(index);
     if (matchlist != null && matchlist.isNotEmpty) {
       final RouteInformation preParsed =
@@ -1140,14 +1143,14 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   @override
   void dispose() {
     super.dispose();
-    for (final StatefulShellBranch branch in _route.branches) {
+    for (final StatefulShellBranch branch in route.branches) {
       _branchLocations[branch]?.dispose();
     }
   }
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    _route.branches.forEach(_branchLocation);
+    route.branches.forEach(_branchLocation);
   }
 
   @override
@@ -1158,7 +1161,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> children = _route.branches
+    final List<Widget> children = route.branches
         .map((StatefulShellBranch branch) => _BranchNavigatorProxy(
             key: ObjectKey(branch),
             branch: branch,

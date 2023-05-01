@@ -162,7 +162,7 @@ void main() {
 
       final RouteMatchList list2 = list.copy();
 
-      expect(RouteMatchList.matchListEquals(list, list2), true);
+      expect(list, equals(list2));
     });
   });
 }
