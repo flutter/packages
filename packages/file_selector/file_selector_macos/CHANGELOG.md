@@ -1,3 +1,7 @@
+## 0.9.0+9
+
+* Updates references to the deprecated `macUTIs`.
+
 ## 0.9.0+8
 
 * Updates pigeon for null value handling fixes.
