@@ -106,7 +106,7 @@ void main() {
       final VerificationResult result = verify(mockFileSelectorPlatform
           .openFile(acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups')));
       expect(capturedTypeGroups(result)[0].uniformTypeIdentifiers,
-          <String>['public.video']);
+          <String>['public.movie']);
     });
 
     test('getVideo passes the accepted type groups correctly', () async {
@@ -115,7 +115,7 @@ void main() {
       final VerificationResult result = verify(mockFileSelectorPlatform
           .openFile(acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups')));
       expect(capturedTypeGroups(result)[0].uniformTypeIdentifiers,
-          <String>['public.video']);
+          <String>['public.movie']);
     });
 
     test('getVideo calls delegate when source is camera', () async {

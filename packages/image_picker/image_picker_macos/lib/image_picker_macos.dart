@@ -125,7 +125,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
             maxDuration: maxDuration);
       case ImageSource.gallery:
         const XTypeGroup typeGroup = XTypeGroup(
-            label: 'videos', uniformTypeIdentifiers: <String>['public.video']);
+            label: 'videos', uniformTypeIdentifiers: <String>['public.movie']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
