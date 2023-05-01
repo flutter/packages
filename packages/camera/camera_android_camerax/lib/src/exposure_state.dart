@@ -25,7 +25,7 @@ class ExposureState extends JavaObject {
 
   /// Gets the maximum and minimum exposure compensation values for the camera
   /// represented by this instance.
-  final ExposureRange exposureCompensationRange;
+  final ExposureCompensationRange exposureCompensationRange;
 
   /// Gets the smallest step by which the exposure compensation can be changed for
   /// the camera represented by this instance.
@@ -35,6 +35,9 @@ class ExposureState extends JavaObject {
 /// Flutter API implementation of [ExposureState].
 class ExposureStateFlutterApiImpl implements ExposureStateFlutterApi {
   /// Constructs a [ExposureStateFlutterApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created.
   ExposureStateFlutterApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
@@ -50,7 +53,9 @@ class ExposureStateFlutterApiImpl implements ExposureStateFlutterApi {
   final InstanceManager instanceManager;
 
   @override
-  void create(int identifier, ExposureRange exposureCompensationRange,
+  void create(
+      int identifier,
+      ExposureCompensationRange exposureCompensationRange,
       double exposureCompensationStep) {
     instanceManager.addHostCreatedInstance(
       ExposureState.detached(

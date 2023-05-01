@@ -208,7 +208,7 @@ public class GeneratedCameraXLibrary {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class ExposureRange {
+  public static final class ExposureCompensationRange {
     private @NonNull Long minCompensation;
 
     public @NonNull Long getMinCompensation() {
@@ -236,7 +236,7 @@ public class GeneratedCameraXLibrary {
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
-    ExposureRange() {}
+    ExposureCompensationRange() {}
 
     public static final class Builder {
 
@@ -254,8 +254,8 @@ public class GeneratedCameraXLibrary {
         return this;
       }
 
-      public @NonNull ExposureRange build() {
-        ExposureRange pigeonReturn = new ExposureRange();
+      public @NonNull ExposureCompensationRange build() {
+        ExposureCompensationRange pigeonReturn = new ExposureCompensationRange();
         pigeonReturn.setMinCompensation(minCompensation);
         pigeonReturn.setMaxCompensation(maxCompensation);
         return pigeonReturn;
@@ -270,8 +270,8 @@ public class GeneratedCameraXLibrary {
       return toListResult;
     }
 
-    static @NonNull ExposureRange fromList(@NonNull ArrayList<Object> list) {
-      ExposureRange pigeonResult = new ExposureRange();
+    static @NonNull ExposureCompensationRange fromList(@NonNull ArrayList<Object> list) {
+      ExposureCompensationRange pigeonResult = new ExposureCompensationRange();
       Object minCompensation = list.get(0);
       pigeonResult.setMinCompensation(
           (minCompensation == null)
@@ -1404,7 +1404,7 @@ public class GeneratedCameraXLibrary {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return ExposureRange.fromList((ArrayList<Object>) readValue(buffer));
+          return ExposureCompensationRange.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -1412,9 +1412,9 @@ public class GeneratedCameraXLibrary {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof ExposureRange) {
+      if (value instanceof ExposureCompensationRange) {
         stream.write(128);
-        writeValue(stream, ((ExposureRange) value).toList());
+        writeValue(stream, ((ExposureCompensationRange) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -1441,7 +1441,7 @@ public class GeneratedCameraXLibrary {
 
     public void create(
         @NonNull Long identifierArg,
-        @NonNull ExposureRange exposureCompensationRangeArg,
+        @NonNull ExposureCompensationRange exposureCompensationRangeArg,
         @NonNull Double exposureCompensationStepArg,
         @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =

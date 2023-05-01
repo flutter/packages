@@ -65,7 +65,7 @@ void main() {
       const int cameraInfoIdentifier = 4;
       final ExposureState exposureState = ExposureState.detached(
         exposureCompensationRange:
-            ExposureRange(maxCompensation: 0, minCompensation: 1),
+            ExposureCompensationRange(maxCompensation: 0, minCompensation: 1),
         exposureCompensationStep: 4,
         instanceManager: instanceManager,
       );
@@ -80,8 +80,8 @@ void main() {
         exposureState,
         exposureStateIdentifier,
         onCopy: (_) => ExposureState.detached(
-            exposureCompensationRange:
-                ExposureRange(maxCompensation: 0, minCompensation: 1),
+            exposureCompensationRange: ExposureCompensationRange(
+                maxCompensation: 0, minCompensation: 1),
             exposureCompensationStep: 4),
       );
 

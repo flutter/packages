@@ -15,7 +15,7 @@ import android.util.Range;
 import android.util.Rational;
 import androidx.camera.core.ExposureState;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureRange;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureCompensationRange;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -63,8 +63,8 @@ public class ExposureStateTest {
     when(mockExposureState.getExposureCompensationRange()).thenReturn(testExposueCompensationRange);
     when(mockExposureState.getExposureCompensationStep()).thenReturn(textExposureCompensationStep);
 
-    final ArgumentCaptor<ExposureRange> exposureRangeCaptor =
-        ArgumentCaptor.forClass(ExposureRange.class);
+    final ArgumentCaptor<ExposureCompensationRange> exposureCompensationRangeCaptor =
+        ArgumentCaptor.forClass(ExposureCompensationRange.class);
 
     exposureStateFlutterApiImpl.create(mockExposureState, reply -> {});
 
@@ -72,10 +72,13 @@ public class ExposureStateTest {
         Objects.requireNonNull(
             testInstanceManager.getIdentifierForStrongReference(mockExposureState));
     verify(exposureStateFlutterApiImpl)
-        .create(eq(identifier), exposureRangeCaptor.capture(), eq(0.2), any());
+        .create(eq(identifier), exposureCompensationRangeCaptor.capture(), eq(0.2), any());
 
-    ExposureRange exposureRange = exposureRangeCaptor.getValue();
-    assertEquals(exposureRange.getMinCompensation().intValue(), minExposureCompensation);
-    assertEquals(exposureRange.getMaxCompensation().intValue(), maxExposureCompensation);
+    ExposureCompensationRange exposureCompensationRange =
+        exposureCompensationRangeCaptor.getValue();
+    assertEquals(
+        exposureCompensationRange.getMinCompensation().intValue(), minExposureCompensation);
+    assertEquals(
+        exposureCompensationRange.getMaxCompensation().intValue(), maxExposureCompensation);
   }
 }

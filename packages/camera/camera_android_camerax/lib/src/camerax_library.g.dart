@@ -63,8 +63,8 @@ class CameraPermissionsErrorData {
   }
 }
 
-class ExposureRange {
-  ExposureRange({
+class ExposureCompensationRange {
+  ExposureCompensationRange({
     required this.minCompensation,
     required this.maxCompensation,
   });
@@ -80,9 +80,9 @@ class ExposureRange {
     ];
   }
 
-  static ExposureRange decode(Object result) {
+  static ExposureCompensationRange decode(Object result) {
     result as List<Object?>;
-    return ExposureRange(
+    return ExposureCompensationRange(
       minCompensation: result[0]! as int,
       maxCompensation: result[1]! as int,
     );
@@ -1067,7 +1067,7 @@ class _ExposureStateFlutterApiCodec extends StandardMessageCodec {
   const _ExposureStateFlutterApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ExposureRange) {
+    if (value is ExposureCompensationRange) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
@@ -1079,7 +1079,7 @@ class _ExposureStateFlutterApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return ExposureRange.decode(readValue(buffer)!);
+        return ExposureCompensationRange.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1089,7 +1089,9 @@ class _ExposureStateFlutterApiCodec extends StandardMessageCodec {
 abstract class ExposureStateFlutterApi {
   static const MessageCodec<Object?> codec = _ExposureStateFlutterApiCodec();
 
-  void create(int identifier, ExposureRange exposureCompensationRange,
+  void create(
+      int identifier,
+      ExposureCompensationRange exposureCompensationRange,
       double exposureCompensationStep);
 
   static void setup(ExposureStateFlutterApi? api,
@@ -1108,10 +1110,10 @@ abstract class ExposureStateFlutterApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null int.');
-          final ExposureRange? arg_exposureCompensationRange =
-              (args[1] as ExposureRange?);
+          final ExposureCompensationRange? arg_exposureCompensationRange =
+              (args[1] as ExposureCompensationRange?);
           assert(arg_exposureCompensationRange != null,
-              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null ExposureRange.');
+              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null ExposureCompensationRange.');
           final double? arg_exposureCompensationStep = (args[2] as double?);
           assert(arg_exposureCompensationStep != null,
               'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null double.');

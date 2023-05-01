@@ -33,6 +33,9 @@ class ZoomState extends JavaObject {
 /// Flutter API implementation of [ZoomState].
 class ZoomStateFlutterApiImpl implements ZoomStateFlutterApi {
   /// Constructs a [ZoomStateFlutterApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created.
   ZoomStateFlutterApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,

@@ -76,12 +76,12 @@ public class CameraInfoTest {
     verify(mockCameraInfo).getExposureState();
   }
 
-  @SuppressWarnings("unchecked")
   @Test
+  @SuppressWarnings("unchecked")
   public void getZoomState_retrievesExpectedZoomState() {
     final CameraInfoHostApiImpl cameraInfoHostApiImpl =
         new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
-    final LiveData<ZoomState> mockLiveZoomState = mock(LiveData.class);
+    final LiveData<ZoomState> mockLiveZoomState = (LiveData<ZoomState>) mock(LiveData.class);
     final ZoomState mockZoomState = mock(ZoomState.class);
     final Long mockCameraInfoIdentifier = 20L;
     final Long mockZoomStateIdentifier = 74L;

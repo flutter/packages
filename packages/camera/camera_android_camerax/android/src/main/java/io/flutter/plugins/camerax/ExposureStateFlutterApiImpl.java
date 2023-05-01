@@ -8,7 +8,7 @@ import android.util.Range;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ExposureState;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureRange;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureCompensationRange;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ExposureStateFlutterApi;
 
 public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
@@ -30,18 +30,19 @@ public class ExposureStateFlutterApiImpl extends ExposureStateFlutterApi {
       return;
     }
 
-    final Range<Integer> exposureCompensationRange = exposureState.getExposureCompensationRange();
-    ExposureRange exposureCompensationRangeAsExposureRange =
-        new ExposureRange.Builder()
-            .setMinCompensation(exposureCompensationRange.getLower().longValue())
-            .setMaxCompensation(exposureCompensationRange.getUpper().longValue())
+    final Range<Integer> exposureCompensationRangeFromState =
+        exposureState.getExposureCompensationRange();
+    ExposureCompensationRange exposureCompensationRange =
+        new ExposureCompensationRange.Builder()
+            .setMinCompensation(exposureCompensationRangeFromState.getLower().longValue())
+            .setMaxCompensation(exposureCompensationRangeFromState.getUpper().longValue())
             .build();
     final Double exposureCompensationStep =
         exposureState.getExposureCompensationStep().doubleValue();
 
     create(
         instanceManager.addHostCreatedInstance(exposureState),
-        exposureCompensationRangeAsExposureRange,
+        exposureCompensationRange,
         exposureCompensationStep,
         reply);
   }

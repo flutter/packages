@@ -46,8 +46,8 @@ class CameraPermissionsErrorData {
   String description;
 }
 
-class ExposureRange {
-  ExposureRange({
+class ExposureCompensationRange {
+  ExposureCompensationRange({
     required this.minCompensation,
     required this.maxCompensation,
   });
@@ -173,7 +173,9 @@ abstract class ImageCaptureHostApi {
 
 @FlutterApi()
 abstract class ExposureStateFlutterApi {
-  void create(int identifier, ExposureRange exposureCompensationRange,
+  void create(
+      int identifier,
+      ExposureCompensationRange exposureCompensationRange,
       double exposureCompensationStep);
 }
 

@@ -494,7 +494,7 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final ExposureState exposureState = ExposureState.detached(
         exposureCompensationRange:
-            ExposureRange(minCompensation: 3, maxCompensation: 4),
+            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
         exposureCompensationStep: 0.2);
 
     camera.cameraInfo = mockCameraInfo;
@@ -514,7 +514,7 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final ExposureState exposureState = ExposureState.detached(
         exposureCompensationRange:
-            ExposureRange(minCompensation: 3, maxCompensation: 4),
+            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
         exposureCompensationStep: 0.2);
 
     camera.cameraInfo = mockCameraInfo;
@@ -531,7 +531,7 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final ExposureState exposureState = ExposureState.detached(
         exposureCompensationRange:
-            ExposureRange(minCompensation: 3, maxCompensation: 4),
+            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
         exposureCompensationStep: 0.2);
 
     camera.cameraInfo = mockCameraInfo;

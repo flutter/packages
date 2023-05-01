@@ -24,8 +24,8 @@ void main() {
         instanceManager: instanceManager,
       );
       const int exposureStateIdentifier = 68;
-      final ExposureRange exposureCompensationRange =
-          ExposureRange(minCompensation: 5, maxCompensation: 7);
+      final ExposureCompensationRange exposureCompensationRange =
+          ExposureCompensationRange(minCompensation: 5, maxCompensation: 7);
       const double exposureCompensationStep = 0.3;
 
       flutterApi.create(exposureStateIdentifier, exposureCompensationRange,
