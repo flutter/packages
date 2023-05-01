@@ -31,12 +31,10 @@ void main() {
 
       const int instanceIdentifier = 0;
       const int code = 23;
-      const String description = 'Test error description!';
 
       api.create(
         instanceIdentifier,
         code,
-        description,
       );
 
       // Test instance type.
@@ -50,7 +48,6 @@ void main() {
       // Test instance properties.
       final CameraStateError cameraStateError = instance! as CameraStateError;
       expect(cameraStateError.code, equals(code));
-      expect(cameraStateError.description, equals(description));
     });
   });
 }

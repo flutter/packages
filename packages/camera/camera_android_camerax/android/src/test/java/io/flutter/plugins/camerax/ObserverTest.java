@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 
 import androidx.camera.core.CameraState;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateFlutterApi.Reply;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateType;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ObserverFlutterApi;
 import java.util.Objects;
@@ -28,8 +27,7 @@ import org.mockito.junit.MockitoRule;
 public class ObserverTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-  @Mock
-  public ObserverHostApiImpl.ObserverImpl<CameraState> mockObserver;
+  @Mock public ObserverHostApiImpl.ObserverImpl<CameraState> mockObserver;
 
   @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public ObserverFlutterApi mockFlutterApi;
@@ -54,7 +52,8 @@ public class ObserverTest {
         new ObserverHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
     final long instanceIdentifier = 0;
 
-    when(mockProxy.<CameraState>create(mockBinaryMessenger, instanceManager)).thenReturn(mockObserver);
+    when(mockProxy.<CameraState>create(mockBinaryMessenger, instanceManager))
+        .thenReturn(mockObserver);
 
     hostApi.create(instanceIdentifier);
 
@@ -67,16 +66,19 @@ public class ObserverTest {
         new ObserverFlutterApiWrapper(mockBinaryMessenger, instanceManager);
     final ObserverHostApiImpl.ObserverImpl<CameraState> instance =
         new ObserverHostApiImpl.ObserverImpl<CameraState>(mockBinaryMessenger, instanceManager);
-    final CameraStateFlutterApiWrapper mockCameraStateFlutterApiWrapper = mock(CameraStateFlutterApiWrapper.class);
+    final CameraStateFlutterApiWrapper mockCameraStateFlutterApiWrapper =
+        mock(CameraStateFlutterApiWrapper.class);
     final long instanceIdentifier = 0;
-    final CameraState.StateError testCameraStateError = CameraState.StateError.create(CameraState.ERROR_CAMERA_IN_USE);
-    final CameraState testCameraState = CameraState.create(CameraState.Type.CLOSED, testCameraStateError);
+    final CameraState.StateError testCameraStateError =
+        CameraState.StateError.create(CameraState.ERROR_CAMERA_IN_USE);
+    final CameraState testCameraState =
+        CameraState.create(CameraState.Type.CLOSED, testCameraStateError);
     Long mockCameraStateIdentifier = instanceManager.addHostCreatedInstance(testCameraState);
 
     flutterApi.setApi(mockFlutterApi);
     instance.setApi(flutterApi);
     flutterApi.cameraStateFlutterApiWrapper = mockCameraStateFlutterApiWrapper;
-    
+
     instanceManager.addDartCreatedInstance(instance, instanceIdentifier);
 
     instance.onChanged(testCameraState);
@@ -84,6 +86,7 @@ public class ObserverTest {
     verify(mockFlutterApi)
         .onChanged(
             eq(instanceIdentifier), eq(Objects.requireNonNull(mockCameraStateIdentifier)), any());
-    verify(mockCameraStateFlutterApiWrapper).create(eq(testCameraState), eq(CameraStateType.CLOSED), eq(testCameraStateError), any());
+    verify(mockCameraStateFlutterApiWrapper)
+        .create(eq(testCameraState), eq(CameraStateType.CLOSED), eq(testCameraStateError), any());
   }
 }

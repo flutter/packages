@@ -52,10 +52,14 @@ public class ObserverFlutterApiWrapper {
       CameraState state = (CameraState) value;
 
       if (cameraStateFlutterApiWrapper == null) {
-        cameraStateFlutterApiWrapper = new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager);
+        cameraStateFlutterApiWrapper =
+            new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager);
       }
-      cameraStateFlutterApiWrapper
-          .create(state, CameraStateFlutterApiWrapper.getCameraStateType(state.getType()), state.getError(), reply -> {});
+      cameraStateFlutterApiWrapper.create(
+          state,
+          CameraStateFlutterApiWrapper.getCameraStateType(state.getType()),
+          state.getError(),
+          reply -> {});
     } else {
       throw new UnsupportedOperationException(
           "The type of value in observance is not wrapped by this plugin.");

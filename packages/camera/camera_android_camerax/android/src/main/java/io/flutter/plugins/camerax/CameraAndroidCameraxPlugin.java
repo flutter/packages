@@ -100,11 +100,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     Context applicationContext = activity.getApplicationContext();
 
     setUp(
-        pluginBinding.getBinaryMessenger(),
-        applicationContext,
-        pluginBinding.getTextureRegistry());
+        pluginBinding.getBinaryMessenger(), applicationContext, pluginBinding.getTextureRegistry());
     updateContext(applicationContext);
-
 
     if (activity instanceof LifecycleOwner) {
       processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);

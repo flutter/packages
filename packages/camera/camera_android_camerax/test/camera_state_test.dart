@@ -33,15 +33,13 @@ void main() {
 
       // Create CameraStateError for CameraState instance.
       const int code = 23;
-      const String description = 'test description';
       final CameraStateError cameraStateError = CameraStateError.detached(
         instanceManager: instanceManager,
         code: code,
-        description: description,
       );
       final int cameraStateErrorIdentifier =
           instanceManager.addDartCreatedInstance(cameraStateError, onCopy: (_) {
-        return CameraStateError.detached(code: code, description: description);
+        return CameraStateError.detached(code: code);
       });
 
       // Create CameraState.

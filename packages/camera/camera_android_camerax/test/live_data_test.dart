@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:camera_android_camerax/src/camera_state.dart';
+import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/live_data.dart';
 import 'package:camera_android_camerax/src/observer.dart';
@@ -96,38 +97,8 @@ void main() {
       ));
     });
 
-    test('cast makes call to create instance with expected type', () {
-      final MockTestLiveDataHostApi mockApi = MockTestLiveDataHostApi();
-      TestLiveDataHostApi.setup(mockApi);
-
-      final InstanceManager instanceManager = InstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
-      final LiveData<dynamic> instance = LiveData<dynamic>.detached(
-        instanceManager: instanceManager,
-      );
-      const int instanceIdentifier = 27;
-      instanceManager.addHostCreatedInstance(
-        instance,
-        instanceIdentifier,
-        onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
-          instanceManager: instanceManager,
-        ),
-      );
-
-      instance.cast<CameraState>();
-
-      final int? newInstanceIdentifier =
-          verify(mockApi.cast(instanceIdentifier, captureAny)).captured.single
-              as int?;
-      expect(
-          instanceManager.getInstanceWithWeakReference(newInstanceIdentifier!),
-          isA<LiveData<CameraState>>());
-    });
-
     test(
-        'FlutterAPI create makes call to create LiveData instance with expected identifier',
+        'FlutterAPI create makes call to create LiveData<CameraState> instance with expected identifier',
         () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
@@ -141,11 +112,12 @@ void main() {
 
       api.create(
         instanceIdentifier,
+        LiveDataSupportedTypeData(value: LiveDataSupportedType.cameraState),
       );
 
       expect(
         instanceManager.getInstanceWithWeakReference(instanceIdentifier),
-        isA<LiveData<dynamic>>(),
+        isA<LiveData<CameraState>>(),
       );
     });
   });

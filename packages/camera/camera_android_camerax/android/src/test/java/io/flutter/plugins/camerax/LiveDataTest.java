@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import androidx.camera.core.CameraState;
@@ -19,7 +18,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataFlutterApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedType;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedTypeData;
-
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -33,8 +31,7 @@ import org.mockito.junit.MockitoRule;
 public class LiveDataTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-  @Mock
-  public LiveData<CameraState> mockLiveData;
+  @Mock public LiveData<CameraState> mockLiveData;
 
   @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public LiveDataFlutterApi mockFlutterApi;
@@ -89,19 +86,19 @@ public class LiveDataTest {
   public void flutterApiCreate_makesCallToDartToCreateInstance() {
     final LiveDataFlutterApiWrapper flutterApi =
         new LiveDataFlutterApiWrapper(mockBinaryMessenger, instanceManager);
-    final LiveDataSupportedType liveDataType = LiveDataSupportedType.CAMERA_STATE; 
+    final LiveDataSupportedType liveDataType = LiveDataSupportedType.CAMERA_STATE;
 
     flutterApi.setApi(mockFlutterApi);
 
     final ArgumentCaptor<LiveDataSupportedTypeData> liveDataSupportedTypeDataCaptor =
-    ArgumentCaptor.forClass(LiveDataSupportedTypeData.class);
-
+        ArgumentCaptor.forClass(LiveDataSupportedTypeData.class);
 
     flutterApi.create(mockLiveData, liveDataType, reply -> {});
 
     final long instanceIdentifier =
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockLiveData));
-    verify(mockFlutterApi).create(eq(instanceIdentifier), liveDataSupportedTypeDataCaptor.capture(), any());
+    verify(mockFlutterApi)
+        .create(eq(instanceIdentifier), liveDataSupportedTypeDataCaptor.capture(), any());
     assertEquals(liveDataSupportedTypeDataCaptor.getValue().getValue(), liveDataType);
   }
 }

@@ -20,10 +20,12 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
 
   @VisibleForTesting public LiveDataFlutterApiWrapper liveDataFlutterApiWrapper;
 
-  public CameraInfoHostApiImpl(@NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
+  public CameraInfoHostApiImpl(
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    this.liveDataFlutterApiWrapper = new LiveDataFlutterApiWrapper(binaryMessenger, instanceManager);
+    this.liveDataFlutterApiWrapper =
+        new LiveDataFlutterApiWrapper(binaryMessenger, instanceManager);
   }
 
   /**
@@ -49,7 +51,8 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
     LiveData<CameraState> liveCameraState = cameraInfo.getCameraState();
-    liveDataFlutterApiWrapper.create(liveCameraState, LiveDataSupportedType.CAMERA_STATE, reply -> {});
+    liveDataFlutterApiWrapper.create(
+        liveCameraState, LiveDataSupportedType.CAMERA_STATE, reply -> {});
     return instanceManager.getIdentifierForStrongReference(liveCameraState);
   }
 }

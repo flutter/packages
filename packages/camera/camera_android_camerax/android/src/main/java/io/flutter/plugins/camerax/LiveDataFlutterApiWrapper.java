@@ -42,9 +42,14 @@ public class LiveDataFlutterApiWrapper {
    * this method does nothing.
    */
   public void create(
-      @NonNull LiveData<?> instance, @NonNull LiveDataSupportedType type, @NonNull LiveDataFlutterApi.Reply<Void> callback) {
+      @NonNull LiveData<?> instance,
+      @NonNull LiveDataSupportedType type,
+      @NonNull LiveDataFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      liveDataFlutterApi.create(instanceManager.addHostCreatedInstance(instance), new LiveDataSupportedTypeData.Builder().setValue(type).build(), callback);
+      liveDataFlutterApi.create(
+          instanceManager.addHostCreatedInstance(instance),
+          new LiveDataSupportedTypeData.Builder().setValue(type).build(),
+          callback);
     }
   }
 

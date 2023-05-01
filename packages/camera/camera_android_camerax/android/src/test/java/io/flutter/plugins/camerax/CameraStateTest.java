@@ -74,25 +74,29 @@ public class CameraStateTest {
   @Test
   public void getCameraStateType_returnsExpectedType() {
     for (CameraState.Type type : CameraState.Type.values()) {
-      switch(type) {
+      switch (type) {
         case CLOSED:
-        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.CLOSED);
-        break;
-      case CLOSING:
-        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.CLOSING);
-        break;
-      case OPEN:
-        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.OPEN);
-        break;
-      case OPENING:
-        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.OPENING);
-        break;
-      case PENDING_OPEN:
-        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.PENDING_OPEN);
-        break;
-      default:
-        // There is a CameraState.Type unhandled by this method.
-        fail();
+          assertEquals(
+              CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.CLOSED);
+          break;
+        case CLOSING:
+          assertEquals(
+              CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.CLOSING);
+          break;
+        case OPEN:
+          assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.OPEN);
+          break;
+        case OPENING:
+          assertEquals(
+              CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.OPENING);
+          break;
+        case PENDING_OPEN:
+          assertEquals(
+              CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.PENDING_OPEN);
+          break;
+        default:
+          // There is a CameraState.Type unhandled by this method.
+          fail();
       }
     }
   }

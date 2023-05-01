@@ -67,8 +67,6 @@ void main() {
       const int cameraIdentifier = 55;
       final MockLiveData<CameraState> mockLiveCameraState =
           MockLiveData<CameraState>();
-      final MockLiveData<CameraState> castedMockLiveCameraState =
-          MockLiveData<CameraState>();
       const int liveCameraStateIdentifier = 73;
       instanceManager.addHostCreatedInstance(
         cameraInfo,
@@ -83,11 +81,9 @@ void main() {
 
       when(mockApi.getLiveCameraState(cameraIdentifier))
           .thenReturn(liveCameraStateIdentifier);
-      when(mockLiveCameraState.cast<CameraState>())
-          .thenReturn(castedMockLiveCameraState);
 
-      expect(await cameraInfo.getLiveCameraState(),
-          equals(castedMockLiveCameraState));
+      expect(
+          await cameraInfo.getLiveCameraState(), equals(mockLiveCameraState));
       verify(mockApi.getLiveCameraState(cameraIdentifier));
     });
 

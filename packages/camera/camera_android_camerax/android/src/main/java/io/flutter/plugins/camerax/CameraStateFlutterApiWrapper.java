@@ -55,10 +55,7 @@ public class CameraStateFlutterApiWrapper {
       // We need to create a CameraStateError if there is a problem with the current camera
       // state to send to the Dart side.
       new CameraStateErrorFlutterApiWrapper(binaryMessenger, instanceManager)
-          .create(
-              error,
-              Long.valueOf(error.getCode()),
-              reply -> {});
+          .create(error, Long.valueOf(error.getCode()), reply -> {});
     }
 
     cameraStateFlutterApi.create(
@@ -68,9 +65,7 @@ public class CameraStateFlutterApiWrapper {
         callback);
   }
 
-  /**
-   * Convert CameraX CameraState.Type to CameraStateType that the Dart side understands.
-   */
+  /** Convert CameraX CameraState.Type to CameraStateType that the Dart side understands. */
   public static CameraStateType getCameraStateType(@NonNull CameraState.Type type) {
     CameraStateType cameraStateType = null;
     switch (type) {
@@ -92,14 +87,13 @@ public class CameraStateFlutterApiWrapper {
     }
 
     if (cameraStateType == null) {
-      throw new IllegalArgumentException("The CameraState.Type passed to this method was not recognized.");
+      throw new IllegalArgumentException(
+          "The CameraState.Type passed to this method was not recognized.");
     }
     return cameraStateType;
   }
 
-  /**
-   * Sets the Flutter API used to send messages to Dart.
-   */
+  /** Sets the Flutter API used to send messages to Dart. */
   @VisibleForTesting
   void setApi(@NonNull CameraStateFlutterApi api) {
     this.cameraStateFlutterApi = api;

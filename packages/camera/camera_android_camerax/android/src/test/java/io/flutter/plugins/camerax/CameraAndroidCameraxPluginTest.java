@@ -17,8 +17,6 @@ import android.app.Application;
 import androidx.lifecycle.LifecycleOwner;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugins.camerax.LiveDataHostApiImpl;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -39,7 +37,6 @@ public class CameraAndroidCameraxPluginTest {
     ProcessCameraProviderHostApiImpl mockProcessCameraProviderHostApiImpl =
         mock(ProcessCameraProviderHostApiImpl.class);
     LiveDataHostApiImpl mockLiveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
-
 
     doNothing().when(plugin).setUp(any(), any(), any());
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
@@ -77,7 +74,6 @@ public class CameraAndroidCameraxPluginTest {
 
     verify(mockProcessCameraProviderHostApiImpl)
         .setLifecycleOwner(any(ProxyLifecycleProvider.class));
-    verify(mockLiveDataHostApiImpl)
-        .setLifecycleOwner(any(ProxyLifecycleProvider.class));
+    verify(mockLiveDataHostApiImpl).setLifecycleOwner(any(ProxyLifecycleProvider.class));
   }
 }

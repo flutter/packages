@@ -49,9 +49,7 @@ public class CameraStateErrorFlutterApiWrapper {
     }
   }
 
-  /**
-   * Sets the Flutter API used to send messages to Dart.
-   */
+  /** Sets the Flutter API used to send messages to Dart. */
   @VisibleForTesting
   void setApi(@NonNull CameraStateErrorFlutterApi api) {
     this.cameraStateErrorFlutterApi = api;

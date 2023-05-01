@@ -56,7 +56,8 @@ void main() {
 
   Future<bool> testCameraClosingObserver(AndroidCameraCameraX camera,
       int cameraId, Observer<dynamic> observer) async {
-    const String testErrorDescription = 'Test error description';
+    final CameraStateError testCameraStateError =
+        CameraStateError.detached(code: 0);
     final Stream<CameraClosingEvent> cameraClosingEventStream =
         camera.onCameraClosing(cameraId);
     final StreamQueue<CameraClosingEvent> cameraClosingStreamQueue =
@@ -67,14 +68,12 @@ void main() {
         StreamQueue<CameraErrorEvent>(cameraErrorEventStream);
 
     observer.onChanged(CameraState.detached(
-        type: CameraStateType.closing,
-        error: CameraStateError.detached(
-            code: 0, description: testErrorDescription)));
+        type: CameraStateType.closing, error: testCameraStateError));
 
     final bool cameraClosingEventSent =
         await cameraClosingStreamQueue.next == CameraClosingEvent(cameraId);
     final bool cameraErrorSent = await cameraErrorStreamQueue.next ==
-        CameraErrorEvent(cameraId, testErrorDescription);
+        CameraErrorEvent(cameraId, testCameraStateError.getDescription());
 
     await cameraClosingStreamQueue.cancel();
     await cameraErrorStreamQueue.cancel();
@@ -197,13 +196,13 @@ void main() {
     verify(camera.preview!.setSurfaceProvider());
 
     // Verify the camera state observer is updated.
-    // expect(
-    //     await testCameraClosingObserver(
-    //         camera,
-    //         testSurfaceTextureId,
-    //         verify(mockLiveCameraState.observe(captureAny)).captured.single
-    //             as Observer),
-    //     isTrue);
+    expect(
+        await testCameraClosingObserver(
+            camera,
+            testSurfaceTextureId,
+            verify(mockLiveCameraState.observe(captureAny)).captured.single
+                as Observer<CameraState>),
+        isTrue);
   });
 
   test(
