@@ -721,7 +721,7 @@ void main() {
               'purchasesList': <dynamic>[
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
-                  'products': [productDetails.productId],
+                  'products': <String>[productDetails.productId],
                   'isAutoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
