@@ -83,6 +83,22 @@ class FileSelectorWindows extends FileSelectorPlatform {
         confirmButtonText);
     return paths.isEmpty ? null : paths.first!;
   }
+
+  @override
+  Future<List<String>> getDirectoryPaths({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    final List<String?> paths = await _hostApi.showOpenDialog(
+        SelectionOptions(
+          allowMultiple: true,
+          selectFolders: true,
+          allowedTypes: <TypeGroup>[],
+        ),
+        initialDirectory,
+        confirmButtonText);
+    return paths.isEmpty ? <String>[] : List<String>.from(paths);
+  }
 }
 
 List<TypeGroup> _typeGroupsFromXTypeGroups(List<XTypeGroup>? xtypes) {
