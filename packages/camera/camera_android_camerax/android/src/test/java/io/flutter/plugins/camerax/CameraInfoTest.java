@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.CameraInfo;
+import androidx.camera.core.CameraState;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LiveData;

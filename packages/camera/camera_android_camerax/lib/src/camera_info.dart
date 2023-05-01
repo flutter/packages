@@ -9,6 +9,7 @@ import 'camerax_library.g.dart';
 import 'exposure_state.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'live_data.dart';
 import 'zoom_state.dart';
 
 /// Represents the metadata of a camera.
@@ -31,6 +32,10 @@ class CameraInfo extends JavaObject {
   /// Gets sensor orientation degrees of the camera.
   Future<int> getSensorRotationDegrees() =>
       _api.getSensorRotationDegreesFromInstance(this);
+
+  /// Starts listening for the camera closing.
+  Future<LiveData<CameraState>> getLiveCameraState() =>
+      _api.getLiveCameraStateFromInstance(this);
 
   /// Gets the exposure state of the camera.
   Future<ExposureState> getExposureState() =>
@@ -58,6 +63,23 @@ class _CameraInfoHostApiImpl extends CameraInfoHostApi {
     final int sensorRotationDegrees = await getSensorRotationDegrees(
         instanceManager.getIdentifier(instance)!);
     return sensorRotationDegrees;
+  }
+
+  /// Gets the [ExposureState] of the specified [CameraInfo] instance.
+  Future<ExposureState> getExposureStateFromInstance(
+      CameraInfo instance) async {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    final int exposureStateIdentifier = await getExposureState(identifier!);
+    return instanceManager
+        .getInstanceWithWeakReference<ExposureState>(exposureStateIdentifier)!;
+  }
+
+  /// Gets the [ZoomState] of the specified [CameraInfo] instance.
+  Future<ZoomState> getZoomStateFromInstance(CameraInfo instance) async {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    final int zoomStateIdentifier = await getZoomState(identifier!);
+    return instanceManager
+        .getInstanceWithWeakReference<ZoomState>(zoomStateIdentifier)!;
   }
 
   /// Gets the [ExposureState] of the specified [CameraInfo] instance.

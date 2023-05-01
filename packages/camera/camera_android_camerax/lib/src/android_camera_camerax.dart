@@ -45,6 +45,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraInfo? cameraInfo;
 
+  /// The [LiveData] of the [CameraState] that represents the state of the
+  /// [camera] instance.
+  LiveData<CameraState>? liveCameraState;
+
   /// The [Preview] instance that can be configured to present a live camera preview.
   @visibleForTesting
   Preview? preview;
@@ -196,6 +200,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
+    await _updateLiveCameraState(flutterSurfaceTextureId);
     cameraInfo = await camera!.getCameraInfo();
     _previewIsPaused = false;
 
@@ -274,6 +279,55 @@ class AndroidCameraCameraX extends CameraPlatform {
         .map<CameraErrorEvent>((String errorDescription) {
       return CameraErrorEvent(cameraId, errorDescription);
     });
+  }
+
+  /// Gets the minimum supported exposure offset for the selected camera in EV units.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMinExposureOffset(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationRange.minCompensation *
+        exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the maximum supported exposure offset for the selected camera in EV units.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMaxExposureOffset(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationRange.maxCompensation *
+        exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the supported step size for exposure offset for the selected camera in EV units.
+  ///
+  /// Returns 0 when exposure compensation is not supported.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getExposureOffsetStepSize(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the maximum supported zoom level for the selected camera.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMaxZoomLevel(int cameraId) async {
+    final ZoomState exposureState = await cameraInfo!.getZoomState();
+    return exposureState.maxZoomRatio;
+  }
+
+  /// Gets the minimum supported zoom level for the selected camera.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMinZoomLevel(int cameraId) async {
+    final ZoomState exposureState = await cameraInfo!.getZoomState();
+    return exposureState.minZoomRatio;
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
@@ -413,6 +467,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
+    await _updateLiveCameraState(cameraId);
     cameraInfo = await camera!.getCameraInfo();
   }
 

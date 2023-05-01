@@ -203,6 +203,15 @@ class MockCameraInfo extends _i1.Mock implements _i2.CameraInfo {
         returnValueForMissingStub: _i11.Future<int>.value(0),
       ) as _i11.Future<int>);
   @override
+  _i11.Future<dynamic> getLiveCameraState() => (super.noSuchMethod(
+        Invocation.method(
+          #getLiveCameraState,
+          [],
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+        returnValueForMissingStub: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+  @override
   _i11.Future<_i3.ExposureState> getExposureState() => (super.noSuchMethod(
         Invocation.method(
           #getExposureState,

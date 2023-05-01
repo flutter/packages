@@ -19,33 +19,46 @@ import 'zoom_state.dart';
 class AndroidCameraXCameraFlutterApis {
   /// Creates a [AndroidCameraXCameraFlutterApis].
   AndroidCameraXCameraFlutterApis({
-    JavaObjectFlutterApiImpl? javaObjectFlutterApi,
-    CameraFlutterApiImpl? cameraFlutterApi,
-    CameraInfoFlutterApiImpl? cameraInfoFlutterApi,
-    CameraSelectorFlutterApiImpl? cameraSelectorFlutterApi,
-    ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApi,
-    SystemServicesFlutterApiImpl? systemServicesFlutterApi,
+    JavaObjectFlutterApiImpl? javaObjectFlutterApiImpl,
+    CameraFlutterApiImpl? cameraFlutterApiImpl,
+    CameraInfoFlutterApiImpl? cameraInfoFlutterApiImpl,
+    CameraSelectorFlutterApiImpl? cameraSelectorFlutterApiImpl,
+    ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApiImpl,
+    SystemServicesFlutterApiImpl? systemServicesFlutterApiImpl,
+    CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
+    CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
     ExposureStateFlutterApiImpl? exposureStateFlutterApiImpl,
     ZoomStateFlutterApiImpl? zoomStateFlutterApiImpl,
-    AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
+    LiveDataFlutterApiImpl? liveDataFlutterApiImpl,
+    ObserverFlutterApiImpl? observerFlutterApiImpl,
     ImageProxyFlutterApiImpl? imageProxyFlutterApiImpl,
     PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
+    AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
   }) {
-    this.javaObjectFlutterApi =
-        javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
-    this.cameraInfoFlutterApi =
-        cameraInfoFlutterApi ?? CameraInfoFlutterApiImpl();
-    this.cameraSelectorFlutterApi =
-        cameraSelectorFlutterApi ?? CameraSelectorFlutterApiImpl();
-    this.processCameraProviderFlutterApi = processCameraProviderFlutterApi ??
-        ProcessCameraProviderFlutterApiImpl();
-    this.cameraFlutterApi = cameraFlutterApi ?? CameraFlutterApiImpl();
-    this.systemServicesFlutterApi =
-        systemServicesFlutterApi ?? SystemServicesFlutterApiImpl();
+    this.javaObjectFlutterApiImpl =
+        javaObjectFlutterApiImpl ?? JavaObjectFlutterApiImpl();
+    this.cameraInfoFlutterApiImpl =
+        cameraInfoFlutterApiImpl ?? CameraInfoFlutterApiImpl();
+    this.cameraSelectorFlutterApiImpl =
+        cameraSelectorFlutterApiImpl ?? CameraSelectorFlutterApiImpl();
+    this.processCameraProviderFlutterApiImpl =
+        processCameraProviderFlutterApiImpl ??
+            ProcessCameraProviderFlutterApiImpl();
+    this.cameraFlutterApiImpl = cameraFlutterApiImpl ?? CameraFlutterApiImpl();
+    this.systemServicesFlutterApiImpl =
+        systemServicesFlutterApiImpl ?? SystemServicesFlutterApiImpl();
+    this.cameraStateErrorFlutterApiImpl =
+        cameraStateErrorFlutterApiImpl ?? CameraStateErrorFlutterApiImpl();
+    this.cameraStateFlutterApiImpl =
+        cameraStateFlutterApiImpl ?? CameraStateFlutterApiImpl();
     this.exposureStateFlutterApiImpl =
         exposureStateFlutterApiImpl ?? ExposureStateFlutterApiImpl();
     this.zoomStateFlutterApiImpl =
         zoomStateFlutterApiImpl ?? ZoomStateFlutterApiImpl();
+    this.liveDataFlutterApiImpl =
+        liveDataFlutterApiImpl ?? LiveDataFlutterApiImpl();
+    this.observerFlutterApiImpl =
+        observerFlutterApiImpl ?? ObserverFlutterApiImpl();
     this.analyzerFlutterApiImpl =
         analyzerFlutterApiImpl ?? AnalyzerFlutterApiImpl();
     this.imageProxyFlutterApiImpl =
@@ -87,6 +100,12 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api for [ZoomState].
   late final ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
 
+  /// Flutter Api for [ExposureState].
+  late final ExposureStateFlutterApiImpl exposureStateFlutterApiImpl;
+
+  /// Flutter Api for [ZoomState].
+  late final ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
+
   /// Flutter Api implementation for [Analyzer].
   late final AnalyzerFlutterApiImpl analyzerFlutterApiImpl;
 
@@ -99,12 +118,15 @@ class AndroidCameraXCameraFlutterApis {
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
-      JavaObjectFlutterApi.setup(javaObjectFlutterApi);
-      CameraInfoFlutterApi.setup(cameraInfoFlutterApi);
-      CameraSelectorFlutterApi.setup(cameraSelectorFlutterApi);
-      ProcessCameraProviderFlutterApi.setup(processCameraProviderFlutterApi);
-      CameraFlutterApi.setup(cameraFlutterApi);
-      SystemServicesFlutterApi.setup(systemServicesFlutterApi);
+      JavaObjectFlutterApi.setup(javaObjectFlutterApiImpl);
+      CameraInfoFlutterApi.setup(cameraInfoFlutterApiImpl);
+      CameraSelectorFlutterApi.setup(cameraSelectorFlutterApiImpl);
+      ProcessCameraProviderFlutterApi.setup(
+          processCameraProviderFlutterApiImpl);
+      CameraFlutterApi.setup(cameraFlutterApiImpl);
+      SystemServicesFlutterApi.setup(systemServicesFlutterApiImpl);
+      CameraStateErrorFlutterApi.setup(cameraStateErrorFlutterApiImpl);
+      CameraStateFlutterApi.setup(cameraStateFlutterApiImpl);
       ExposureStateFlutterApi.setup(exposureStateFlutterApiImpl);
       ZoomStateFlutterApi.setup(zoomStateFlutterApiImpl);
       AnalyzerFlutterApi.setup(analyzerFlutterApiImpl);
