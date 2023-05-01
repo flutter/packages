@@ -1,3 +1,7 @@
+## 0.9.0+9
+
+* Adds support for MIME types on macOS 11+.
+
 ## 0.9.0+8
 
 * Updates pigeon for null value handling fixes.
