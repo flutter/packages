@@ -1,3 +1,7 @@
+## 0.9.1+1
+
+* Updates references to the deprecated `macUTIs`.
+
 ## 0.9.1
 
 * Adds `getDirectoryPaths` implementation.
