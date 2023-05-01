@@ -14,7 +14,7 @@ part 'billing_response_wrapper.g.dart';
 
 /// The error message shown when the map represents billing result is invalid from method channel.
 ///
-/// This usually indicates a series underlining code issue in the plugin.
+/// This usually indicates a serious underlining code issue in the plugin.
 @visibleForTesting
 const String kInvalidBillingResultErrorMessage =
     'Invalid billing result map from method channel.';

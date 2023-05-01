@@ -220,17 +220,13 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
     final String errorMessage =
         errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
 
-    final List<PurchaseDetails> pastPurchases =
-        responses.expand((PurchasesResultWrapper response) {
-      return response.purchasesList;
-    }).map((PurchaseWrapper purchaseWrapper) {
-      final GooglePlayPurchaseDetails purchaseDetails =
-          GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper);
-
-      purchaseDetails.status = PurchaseStatus.restored;
-
-      return purchaseDetails;
-    }).toList();
+    final List<PurchaseDetails> pastPurchases = responses
+        .expand((PurchasesResultWrapper response) => response.purchasesList)
+        .expand((PurchaseWrapper purchaseWrapper) =>
+            GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper))
+        .map((GooglePlayPurchaseDetails details) =>
+            details..status = PurchaseStatus.restored)
+        .toList();
 
     if (errorMessage.isNotEmpty) {
       throw InAppPurchaseException(
@@ -280,14 +276,15 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
         details: resultWrapper.billingResult.debugMessage,
       );
     }
-    final List<Future<PurchaseDetails>> purchases =
-        resultWrapper.purchasesList.map((PurchaseWrapper purchase) {
-      final GooglePlayPurchaseDetails googlePlayPurchaseDetails =
-          GooglePlayPurchaseDetails.fromPurchase(purchase)..error = error;
+    final List<Future<PurchaseDetails>> purchases = resultWrapper.purchasesList
+        .expand((PurchaseWrapper purchase) =>
+            GooglePlayPurchaseDetails.fromPurchase(purchase))
+        .map((GooglePlayPurchaseDetails purchaseDetails) {
+      purchaseDetails.error = error;
       if (resultWrapper.responseCode == BillingResponse.userCanceled) {
-        googlePlayPurchaseDetails.status = PurchaseStatus.canceled;
+        purchaseDetails.status = PurchaseStatus.canceled;
       }
-      return _maybeAutoConsumePurchase(googlePlayPurchaseDetails);
+      return _maybeAutoConsumePurchase(purchaseDetails);
     }).toList();
     if (purchases.isNotEmpty) {
       return Future.wait(purchases);

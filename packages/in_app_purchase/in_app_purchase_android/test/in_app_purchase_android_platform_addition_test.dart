@@ -56,7 +56,7 @@ void main() {
       );
       final BillingResultWrapper billingResultWrapper =
           await iapAndroidPlatformAddition.consumePurchase(
-              GooglePlayPurchaseDetails.fromPurchase(dummyPurchase));
+              GooglePlayPurchaseDetails.fromPurchase(dummyPurchase).first);
 
       expect(billingResultWrapper, equals(expectedBillingResult));
     });

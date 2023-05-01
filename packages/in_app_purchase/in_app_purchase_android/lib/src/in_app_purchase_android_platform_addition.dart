@@ -120,12 +120,11 @@ class InAppPurchaseAndroidPlatformAddition
     final String errorMessage =
         errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
 
-    final List<GooglePlayPurchaseDetails> pastPurchases =
-        responses.expand((PurchasesResultWrapper response) {
-      return response.purchasesList;
-    }).map((PurchaseWrapper purchaseWrapper) {
-      return GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper);
-    }).toList();
+    final List<GooglePlayPurchaseDetails> pastPurchases = responses
+        .expand((PurchasesResultWrapper response) => response.purchasesList)
+        .expand((PurchaseWrapper purchaseWrapper) =>
+            GooglePlayPurchaseDetails.fromPurchase(purchaseWrapper))
+        .toList();
 
     IAPError? error;
     if (exception != null) {

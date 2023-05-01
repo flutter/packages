@@ -23,7 +23,7 @@ class GooglePlayProductDetails extends ProductDetails {
     this.subscriptionIndex,
   });
 
-  /// Generate a [GooglePlayProductDetails] object based on an Android
+  /// Generates a [GooglePlayProductDetails] object based on an Android
   /// [ProductDetailsWrapper] object for an in-app product.
   factory GooglePlayProductDetails._fromOneTimePurchaseProductDetails(
     ProductDetailsWrapper productDetails,
@@ -38,8 +38,7 @@ class GooglePlayProductDetails extends ProductDetails {
     final double rawPrice =
         oneTimePurchaseOfferDetails.priceAmountMicros / 1000000.0;
     final String currencyCode = oneTimePurchaseOfferDetails.priceCurrencyCode;
-    final String currencySymbol =
-        formattedPrice.isEmpty ? currencyCode : formattedPrice[0];
+    final String? currencySymbol = _extractCurrencySymbol(formattedPrice);
 
     return GooglePlayProductDetails._(
       id: productDetails.productId,
@@ -48,16 +47,13 @@ class GooglePlayProductDetails extends ProductDetails {
       price: formattedPrice,
       rawPrice: rawPrice,
       currencyCode: currencyCode,
-      currencySymbol: currencySymbol,
+      currencySymbol: currencySymbol ?? currencyCode,
       productDetails: productDetails,
     );
   }
 
-  /// Generate a [GooglePlayProductDetails] object based on an Android
+  /// Generates a [GooglePlayProductDetails] object based on an Android
   /// [ProductDetailsWrapper] object for a subscription product.
-  /// Subscriptions can consist of multiple base plans, and base plans in turn
-  /// can consist of multiple offers. This method generates a list where every
-  /// element corresponds to a base plan or its offer.
   ///
   /// Subscriptions can consist of multiple base plans, and base plans in turn
   /// can consist of multiple offers. [subscriptionIndex] points to the index of
@@ -77,10 +73,9 @@ class GooglePlayProductDetails extends ProductDetails {
     final PricingPhaseWrapper firstPricingPhase =
         subscriptionOfferDetails.pricingPhases.first;
     final String formattedPrice = firstPricingPhase.formattedPrice;
-    final double rawPrice = (firstPricingPhase.priceAmountMicros) / 1000000.0;
+    final double rawPrice = firstPricingPhase.priceAmountMicros / 1000000.0;
     final String currencyCode = firstPricingPhase.priceCurrencyCode;
-    final String currencySymbol =
-        formattedPrice.isEmpty ? currencyCode : formattedPrice[0];
+    final String? currencySymbol = _extractCurrencySymbol(formattedPrice);
 
     return GooglePlayProductDetails._(
       id: productDetails.productId,
@@ -89,13 +84,13 @@ class GooglePlayProductDetails extends ProductDetails {
       price: formattedPrice,
       rawPrice: rawPrice,
       currencyCode: currencyCode,
-      currencySymbol: currencySymbol,
+      currencySymbol: currencySymbol ?? currencyCode,
       productDetails: productDetails,
       subscriptionIndex: subscriptionIndex,
     );
   }
 
-  /// Generate a list of [GooglePlayProductDetails] based on an Android
+  /// Generates a list of [GooglePlayProductDetails] based on an Android
   /// [ProductDetailsWrapper] object.
   ///
   /// If [productDetails] is of type [ProductType.inapp], a single
@@ -127,12 +122,33 @@ class GooglePlayProductDetails extends ProductDetails {
     }
   }
 
+  /// Extracts the currency symbol from [formattedPrice].
+  ///
+  /// Note that a currency symbol might consist of more than a single character.
+  ///
+  /// Just in case, we assume currency symbols can appear at the start or the
+  /// end of [formattedPrice].
+  ///
+  /// The regex captures the characters from the start/end of the [String]
+  /// until the first/last digit or space.
+  static String? _extractCurrencySymbol(String formattedPrice) {
+    return RegExp(r'^[^\d ]*|[^\d ]*$').firstMatch(formattedPrice)?.group(0);
+  }
+
   /// Points back to the [ProductDetailsWrapper] object that was used to
   /// generate this [GooglePlayProductDetails] object.
   final ProductDetailsWrapper productDetails;
 
-  /// The index pointing to the subscription this [GooglePlayProductDetails]
-  /// object was contructed for, or `null` if it was not a subscription.
+  /// The index pointing to the [SubscriptionOfferDetailsWrapper] this
+  /// [GooglePlayProductDetails] object was contructed for, or `null` if it was
+  /// not a subscription.
+  ///
+  /// The original subscription can be accessed using this index:
+  ///
+  /// ```dart
+  /// SubscriptionOfferDetailWrapper subscription = productDetail
+  ///   .subscriptionOfferDetails[subscriptionIndex];
+  /// ```
   final int? subscriptionIndex;
 
   /// The offerToken of the subscription this [GooglePlayProductDetails]

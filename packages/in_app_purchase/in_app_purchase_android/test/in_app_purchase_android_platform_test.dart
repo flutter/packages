@@ -90,7 +90,8 @@ void main() {
             name: acknowledgePurchaseCall, value: okValue),
       );
       final PurchaseDetails purchase =
-          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase);
+          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
+              .first;
       final BillingResultWrapper result =
           await iapAndroidPlatform.completePurchase(purchase);
       expect(
@@ -720,7 +721,7 @@ void main() {
               'purchasesList': <dynamic>[
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
-                  'product': productDetails.productId,
+                  'products': [productDetails.productId],
                   'isAutoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
@@ -811,7 +812,8 @@ void main() {
           applicationUserName: accountId,
           changeSubscriptionParam: ChangeSubscriptionParam(
             oldPurchaseDetails: GooglePlayPurchaseDetails.fromPurchase(
-                dummyUnacknowledgedPurchase),
+                    dummyUnacknowledgedPurchase)
+                .first,
             prorationMode: ProrationMode.deferred,
           ));
       await iapAndroidPlatform.buyNonConsumable(purchaseParam: purchaseParam);
@@ -834,7 +836,8 @@ void main() {
         value: buildBillingResultMap(expectedBillingResult),
       );
       final PurchaseDetails purchaseDetails =
-          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase);
+          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
+              .first;
       final Completer<BillingResultWrapper> completer =
           Completer<BillingResultWrapper>();
       purchaseDetails.status = PurchaseStatus.purchased;
