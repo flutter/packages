@@ -21,10 +21,10 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private FlutterPluginBinding pluginBinding;
   private ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
   private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
-  private LiveDataHostApiImpl liveDataHostApiImpl;
   public SystemServicesHostApiImpl systemServicesHostApiImpl;
 
-  @VisibleForTesting ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
+  @VisibleForTesting public ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
+  @VisibleForTesting public LiveDataHostApiImpl liveDataHostApiImpl;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -113,7 +113,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     } else {
       ProxyLifecycleProvider proxyLifecycleProvider = new ProxyLifecycleProvider(activity);
       processCameraProviderHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
-      liveDataHostApiImpl.setLifecycleOwner(proxyLifecycleProvider); // TODO(camsim99): add test for this.
+      liveDataHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
     }
 
     systemServicesHostApiImpl.setActivity(activity);

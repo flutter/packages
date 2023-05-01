@@ -23,6 +23,8 @@ public class ObserverFlutterApiWrapper {
   private final InstanceManager instanceManager;
   private ObserverFlutterApi observerFlutterApi;
 
+  @VisibleForTesting public CameraStateFlutterApiWrapper cameraStateFlutterApiWrapper;
+
   /**
    * Constructs a {@link ObserverFlutterApiWrapper}.
    *
@@ -48,7 +50,11 @@ public class ObserverFlutterApiWrapper {
     // Cast value to type of data that is being observed if supported by this plugin.
     if (value instanceof CameraState) {
       CameraState state = (CameraState) value;
-      new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager)
+
+      if (cameraStateFlutterApiWrapper == null) {
+        cameraStateFlutterApiWrapper = new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager);
+      }
+      cameraStateFlutterApiWrapper
           .create(state, CameraStateFlutterApiWrapper.getCameraStateType(state.getType()), state.getError(), reply -> {});
     } else {
       throw new UnsupportedOperationException(

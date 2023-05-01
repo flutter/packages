@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -16,11 +17,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataFlutterApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedType;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedTypeData;
+
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -38,12 +43,12 @@ public class LiveDataTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
   }
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.clear();
   }
 
   @Test
@@ -81,31 +86,22 @@ public class LiveDataTest {
   }
 
   @Test
-  public void cast_addsOldInstanceWithNewIdentifier() {
-    final InstanceManager spyInstanceManager = spy(instanceManager);
-    final LiveDataHostApiImpl hostApi =
-        new LiveDataHostApiImpl(mockBinaryMessenger, spyInstanceManager);
-    final long instanceIdentifier = 56;
-    final long newIdentifier = 98;
-    final LifecycleOwner mockLifecycleOwner = mock(LifecycleOwner.class);
-
-    spyInstanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
-
-    hostApi.cast(instanceIdentifier, newIdentifier);
-
-    verify(spyInstanceManager).addDartCreatedInstance(mockLiveData, newIdentifier);
-  }
-
-  @Test
   public void flutterApiCreate_makesCallToDartToCreateInstance() {
     final LiveDataFlutterApiWrapper flutterApi =
         new LiveDataFlutterApiWrapper(mockBinaryMessenger, instanceManager);
+    final LiveDataSupportedType liveDataType = LiveDataSupportedType.CAMERA_STATE; 
 
     flutterApi.setApi(mockFlutterApi);
-    flutterApi.create(mockLiveData, reply -> {});
+
+    final ArgumentCaptor<LiveDataSupportedTypeData> liveDataSupportedTypeDataCaptor =
+    ArgumentCaptor.forClass(LiveDataSupportedTypeData.class);
+
+
+    flutterApi.create(mockLiveData, liveDataType, reply -> {});
 
     final long instanceIdentifier =
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockLiveData));
-    verify(mockFlutterApi).create(eq(instanceIdentifier), any());
+    verify(mockFlutterApi).create(eq(instanceIdentifier), liveDataSupportedTypeDataCaptor.capture(), any());
+    assertEquals(liveDataSupportedTypeDataCaptor.getValue().getValue(), liveDataType);
   }
 }

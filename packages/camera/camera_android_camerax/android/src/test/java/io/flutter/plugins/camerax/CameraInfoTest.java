@@ -16,6 +16,9 @@ import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraState;
 import androidx.lifecycle.LiveData;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataFlutterApi.Reply;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedType;
+
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -60,16 +63,19 @@ public class CameraInfoTest {
   public void getLiveCameraState_makesCallToRetrieveLiveCameraState() {
     final CameraInfoHostApiImpl cameraInfoHostApiImpl =
         new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final LiveDataFlutterApiWrapper mockLiveDataFlutterApiWrapper = mock(LiveDataFlutterApiWrapper.class);
     final Long mockCameraInfoIdentifier = 27L;
     @SuppressWarnings("unchecked")
-    final LiveData<CameraState> mockLiveCameraState = mock(LiveData.class);
+    final LiveData<CameraState> mockLiveCameraState = (LiveData<CameraState>) mock(LiveData.class);
 
     testInstanceManager.addDartCreatedInstance(mockCameraInfo, mockCameraInfoIdentifier);
-
+    cameraInfoHostApiImpl.liveDataFlutterApiWrapper = mockLiveDataFlutterApiWrapper;
     when(mockCameraInfo.getCameraState()).thenReturn(mockLiveCameraState);
 
     final Long liveCameraStateIdentifier =
         cameraInfoHostApiImpl.getLiveCameraState(mockCameraInfoIdentifier);
+
+    verify(mockLiveDataFlutterApiWrapper).create(eq(mockLiveCameraState), eq(LiveDataSupportedType.CAMERA_STATE), any());
     assertEquals(
         liveCameraStateIdentifier,
         testInstanceManager.getIdentifierForStrongReference(mockLiveCameraState));

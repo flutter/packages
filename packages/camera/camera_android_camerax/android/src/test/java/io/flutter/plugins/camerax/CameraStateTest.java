@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -36,12 +37,12 @@ public class CameraStateTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
   }
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.clear();
   }
 
   @Test
@@ -50,7 +51,7 @@ public class CameraStateTest {
         new CameraStateFlutterApiWrapper(mockBinaryMessenger, instanceManager);
     flutterApi.setApi(mockFlutterApi);
 
-    final CameraState.Type type = CameraState.Type.OPEN;
+    final CameraStateType type = CameraStateType.OPEN;
     final CameraState.StateError mockError = mock(CameraState.StateError.class);
 
     flutterApi.create(mockCameraState, type, mockError, reply -> {});
@@ -67,8 +68,32 @@ public class CameraStateTest {
             eq(Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockError))),
             any());
 
-    assertEquals(cameraStateTypeDataCaptor.getValue().getValue(), CameraStateType.OPEN);
+    assertEquals(cameraStateTypeDataCaptor.getValue().getValue(), type);
+  }
+
+  @Test
+  public void getCameraStateType_returnsExpectedType() {
+    for (CameraState.Type type : CameraState.Type.values()) {
+      switch(type) {
+        case CLOSED:
+        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.CLOSED);
+        break;
+      case CLOSING:
+        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.CLOSING);
+        break;
+      case OPEN:
+        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.OPEN);
+        break;
+      case OPENING:
+        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.OPENING);
+        break;
+      case PENDING_OPEN:
+        assertEquals(CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.PENDING_OPEN);
+        break;
+      default:
+        // There is a CameraState.Type unhandled by this method.
+        fail();
+      }
+    }
   }
 }
-
-// TODO(camsim99): Test static method I added.

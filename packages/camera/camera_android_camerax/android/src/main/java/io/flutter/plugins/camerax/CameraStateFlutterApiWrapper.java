@@ -92,7 +92,7 @@ public class CameraStateFlutterApiWrapper {
     }
 
     if (cameraStateType == null) {
-      throw new IllegalArgumentException("The CameraState.Type passed was not recognized");
+      throw new IllegalArgumentException("The CameraState.Type passed to this method was not recognized.");
     }
     return cameraStateType;
   }

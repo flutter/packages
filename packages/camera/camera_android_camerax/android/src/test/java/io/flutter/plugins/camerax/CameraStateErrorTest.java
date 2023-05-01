@@ -31,12 +31,12 @@ public class CameraStateErrorTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
   }
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.clear();
   }
 
   @Test
@@ -46,13 +46,12 @@ public class CameraStateErrorTest {
     flutterApi.setApi(mockFlutterApi);
 
     final Long code = 0L;
-    final String description = "testString";
 
-    flutterApi.create(mockCameraStateError, code, description, reply -> {});
+    flutterApi.create(mockCameraStateError, code, reply -> {});
 
     final long instanceIdentifier =
         Objects.requireNonNull(
             instanceManager.getIdentifierForStrongReference(mockCameraStateError));
-    verify(mockFlutterApi).create(eq(instanceIdentifier), eq(code), eq(description), any());
+    verify(mockFlutterApi).create(eq(instanceIdentifier), eq(code), any());
   }
 }
