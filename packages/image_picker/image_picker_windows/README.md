@@ -18,3 +18,5 @@ in addition to `image_picker`.
 
 Once you do, you can use the `image_picker` APIs as you normally would, other
 than the limitations noted above.
+
+[1]: https://pub.dev/packages/image_picker
