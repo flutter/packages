@@ -102,7 +102,7 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
       if #available(macOS 11, *), !forceLegacyTypes {
         var allowedTypes: [UTType] = []
         // The array values are non-null by convention even though Pigeon can't currently express
-        // that via the types; see messages.dart.
+        // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
         allowedTypes.append(contentsOf: acceptedTypes.utis.compactMap({ UTType($0!) }))
         allowedTypes.append(
           contentsOf: acceptedTypes.extensions.flatMap({
@@ -118,7 +118,7 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
       } else {
         var allowedTypes: [String] = []
         // The array values are non-null by convention even though Pigeon can't currently express
-        // that via the types; see messages.dart.
+        // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
         allowedTypes.append(contentsOf: acceptedTypes.extensions.map({ $0! }))
         allowedTypes.append(contentsOf: acceptedTypes.utis.map({ $0! }))
         if !allowedTypes.isEmpty {
