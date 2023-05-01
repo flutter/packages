@@ -9,6 +9,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LiveData;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataFlutterApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedType;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedTypeData;
 
 /**
  * Flutter API implementation for {@link LiveData}.
@@ -40,9 +42,9 @@ public class LiveDataFlutterApiWrapper {
    * this method does nothing.
    */
   public void create(
-      @NonNull LiveData<?> instance, @NonNull LiveDataFlutterApi.Reply<Void> callback) {
+      @NonNull LiveData<?> instance, @NonNull LiveDataSupportedType type, @NonNull LiveDataFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      liveDataFlutterApi.create(instanceManager.addHostCreatedInstance(instance), callback);
+      liveDataFlutterApi.create(instanceManager.addHostCreatedInstance(instance), new LiveDataSupportedTypeData.Builder().setValue(type).build(), callback);
     }
   }
 

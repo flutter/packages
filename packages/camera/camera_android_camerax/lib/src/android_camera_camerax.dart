@@ -497,7 +497,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
       if (state.error != null) {
         cameraEventStreamController
-            .add(CameraErrorEvent(cameraId, state.error!.description));
+            .add(CameraErrorEvent(cameraId, state.error!.getDescription()));
       }
     }
 

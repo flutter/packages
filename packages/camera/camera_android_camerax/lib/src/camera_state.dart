@@ -10,7 +10,7 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-/// The state of a camera.
+/// A snapshot of the camera state.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraState.
 class CameraState extends JavaObject {
@@ -31,43 +31,43 @@ class CameraState extends JavaObject {
   /// Error code indicating that the camera device is already in use.
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_CAMERA_IN_USE()
-  static int errorCameraInUse = 1;
+  static const int errorCameraInUse = 1;
 
   /// Error code indicating that the limit number of open cameras has been
   /// reached.
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_MAX_CAMERAS_IN_USE()
-  static int errorMaxCamerasInUse = 2;
+  static const int errorMaxCamerasInUse = 2;
 
   /// Error code indicating that the camera device has encountered a recoverable
   /// error.
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_OTHER_RECOVERABLE_ERROR()
-  static int errorOtherRecoverableError = 3;
+  static const int errorOtherRecoverableError = 3;
 
   /// Error code inidcating that configuring the camera has failed.
   ///
   /// https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_STREAM_CONFIG()
-  static int errorStreamConfig = 4;
+  static const int errorStreamConfig = 4;
 
   /// Error code indicating that the camera device could not be opened due to a
   /// device policy.
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_CAMERA_DISABLED()
-  static int errorCameraDisabled = 5;
+  static const int errorCameraDisabled = 5;
 
   /// Error code indicating that the camera device was closed due to a fatal
   /// error.
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_CAMERA_FATAL_ERROR()
-  static int errorCameraFatalError = 6;
+  static const int errorCameraFatalError = 6;
 
   /// Error code indicating that the camera could not be opened because
   /// "Do Not Disturb" mode is enabled on devices affected by a bug in Android 9
   /// (API level 28).
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_DO_NOT_DISTURB_MODE_ENABLED()
-  static int errorDoNotDisturbModeEnabled = 7;
+  static const int errorDoNotDisturbModeEnabled = 7;
 }
 
 /// Flutter API implementation for [CameraState].
@@ -78,19 +78,24 @@ class CameraState extends JavaObject {
 @protected
 class CameraStateFlutterApiImpl implements CameraStateFlutterApi {
   /// Constructs a [CameraStateFlutterApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   CameraStateFlutterApiImpl({
-    this.binaryMessenger,
+    BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  })  : _binaryMessenger = binaryMessenger,
+        _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager instanceManager;
+  final InstanceManager _instanceManager;
 
   @override
   void create(
@@ -98,23 +103,23 @@ class CameraStateFlutterApiImpl implements CameraStateFlutterApi {
     CameraStateTypeData type,
     int? errorIdentifier,
   ) {
-    instanceManager.addHostCreatedInstance(
+    _instanceManager.addHostCreatedInstance(
       CameraState.detached(
         type: type.value,
         error: errorIdentifier == null
             ? null
-            : instanceManager.getInstanceWithWeakReference(
+            : _instanceManager.getInstanceWithWeakReference(
                 errorIdentifier,
               ),
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
+        binaryMessenger: _binaryMessenger,
+        instanceManager: _instanceManager,
       ),
       identifier,
       onCopy: (CameraState original) => CameraState.detached(
         type: original.type,
         error: original.error,
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
+        binaryMessenger: _binaryMessenger,
+        instanceManager: _instanceManager,
       ),
     );
   }

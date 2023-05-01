@@ -5,6 +5,7 @@
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
+import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
@@ -41,20 +42,18 @@ class LiveData<T> extends JavaObject {
   Future<void> removeObservers() {
     return _api.removeObserversFromInstances(this);
   }
-
-  /// Creates a new instance of [LiveData] with a specified type [S] that will
-  /// act as the casted version of the generic typed instance created from the
-  /// Java side.
-  LiveData<S> cast<S>() {
-    final LiveData<S> newInstance = LiveData<S>.detached(
-        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.castFromInstances(this, newInstance);
-    return newInstance;
-  }
 }
 
 /// Host API implementation of [LiveData].
 class _LiveDataHostApiImpl extends LiveDataHostApi {
+  /// Constructs a [_LiveDataHostApiImpl].
+  ///
+  /// If [binaryMessenger] the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   _LiveDataHostApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
@@ -62,9 +61,6 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
         super(binaryMessenger: binaryMessenger);
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
   final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
@@ -90,20 +86,6 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
       instanceManager.getIdentifier(instance)!,
     );
   }
-
-  /// Creates a new instance of [LiveData] with a specified type [S] that will
-  /// act as the casted version of the typed [T] instance created from the
-  /// Java side.
-  Future<void> castFromInstances<T, S>(
-      LiveData<T> instance, LiveData<S> newInstance) {
-    return cast(
-        instanceManager.getIdentifier(instance)!,
-        instanceManager.addDartCreatedInstance(newInstance,
-            onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
-                  binaryMessenger: binaryMessenger,
-                  instanceManager: instanceManager,
-                )));
-  }
 }
 
 /// Flutter API implementation for [LiveData].
@@ -114,34 +96,44 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
 @protected
 class LiveDataFlutterApiImpl implements LiveDataFlutterApi {
   /// Constructs a [LiveDataFlutterApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   LiveDataFlutterApiImpl({
-    this.binaryMessenger,
+    BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  })  : _binaryMessenger = binaryMessenger,
+        _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager instanceManager;
+  final InstanceManager _instanceManager;
 
   @override
   void create(
     int identifier,
+    LiveDataSupportedTypeData typeData,
   ) {
-    instanceManager.addHostCreatedInstance(
-      LiveData<dynamic>.detached(
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
-      ),
-      identifier,
-      onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
-      ),
-    );
+    switch (typeData.value) {
+      case LiveDataSupportedType.cameraState:
+        _instanceManager.addHostCreatedInstance(
+          LiveData<CameraState>.detached(
+            binaryMessenger: _binaryMessenger,
+            instanceManager: _instanceManager,
+          ),
+          identifier,
+          onCopy: (LiveData<CameraState> original) =>
+              LiveData<CameraState>.detached(
+            binaryMessenger: _binaryMessenger,
+            instanceManager: _instanceManager,
+          ),
+        );
+    }
   }
 }

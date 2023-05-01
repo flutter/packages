@@ -42,18 +42,15 @@ public class CameraStateErrorFlutterApiWrapper {
   public void create(
       @NonNull CameraState.StateError instance,
       @NonNull Long code,
-      @NonNull String description,
       @NonNull CameraStateErrorFlutterApi.Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
       cameraStateErrorFlutterApi.create(
-          instanceManager.addHostCreatedInstance(instance), code, description, callback);
+          instanceManager.addHostCreatedInstance(instance), code, callback);
     }
   }
 
   /**
    * Sets the Flutter API used to send messages to Dart.
-   *
-   * <p>This is only visible for testing.
    */
   @VisibleForTesting
   void setApi(@NonNull CameraStateErrorFlutterApi api) {

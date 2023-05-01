@@ -22,6 +22,10 @@ enum CameraStateType {
   pendingOpen,
 }
 
+enum LiveDataSupportedType {
+  cameraState,
+}
+
 class ResolutionInfo {
   ResolutionInfo({
     required this.width,
@@ -91,6 +95,27 @@ class CameraStateTypeData {
     result as List<Object?>;
     return CameraStateTypeData(
       value: CameraStateType.values[result[0]! as int],
+    );
+  }
+}
+
+class LiveDataSupportedTypeData {
+  LiveDataSupportedTypeData({
+    required this.value,
+  });
+
+  LiveDataSupportedType value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static LiveDataSupportedTypeData decode(Object result) {
+    result as List<Object?>;
+    return LiveDataSupportedTypeData(
+      value: LiveDataSupportedType.values[result[0]! as int],
     );
   }
 }
@@ -1277,7 +1302,7 @@ abstract class ObserverFlutterApi {
 abstract class CameraStateErrorFlutterApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void create(int identifier, int code, String description);
+  void create(int identifier, int code);
 
   static void setup(CameraStateErrorFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -1297,10 +1322,7 @@ abstract class CameraStateErrorFlutterApi {
           final int? arg_code = (args[1] as int?);
           assert(arg_code != null,
               'Argument for dev.flutter.pigeon.CameraStateErrorFlutterApi.create was null, expected non-null int.');
-          final String? arg_description = (args[2] as String?);
-          assert(arg_description != null,
-              'Argument for dev.flutter.pigeon.CameraStateErrorFlutterApi.create was null, expected non-null String.');
-          api.create(arg_identifier!, arg_code!, arg_description!);
+          api.create(arg_identifier!, arg_code!);
           return;
         });
       }
@@ -1361,34 +1383,35 @@ class LiveDataHostApi {
       return;
     }
   }
+}
 
-  Future<void> cast(int arg_oldIdentifier, int arg_newIdentifier) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.LiveDataHostApi.cast', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_oldIdentifier, arg_newIdentifier]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
+class _LiveDataFlutterApiCodec extends StandardMessageCodec {
+  const _LiveDataFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
     } else {
-      return;
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
     }
   }
 }
 
 abstract class LiveDataFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _LiveDataFlutterApiCodec();
 
-  void create(int identifier);
+  void create(int identifier, LiveDataSupportedTypeData type);
 
   static void setup(LiveDataFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -1405,7 +1428,10 @@ abstract class LiveDataFlutterApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.LiveDataFlutterApi.create was null, expected non-null int.');
-          api.create(arg_identifier!);
+          final LiveDataSupportedTypeData? arg_type = (args[1] as LiveDataSupportedTypeData?);
+          assert(arg_type != null,
+              'Argument for dev.flutter.pigeon.LiveDataFlutterApi.create was null, expected non-null LiveDataSupportedTypeData.');
+          api.create(arg_identifier!, arg_type!);
           return;
         });
       }

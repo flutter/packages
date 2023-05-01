@@ -27,6 +27,7 @@ public class ObserverHostApiImpl implements ObserverHostApi {
   public static class ObserverProxy {
 
     /** Creates an instance of {@link Observer}. */
+    @NonNull
     public <T> ObserverImpl<T> create(
         @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
       return new ObserverImpl<T>(binaryMessenger, instanceManager);

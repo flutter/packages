@@ -21,6 +21,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private FlutterPluginBinding pluginBinding;
   private ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
   private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
+  private LiveDataHostApiImpl liveDataHostApiImpl;
   public SystemServicesHostApiImpl systemServicesHostApiImpl;
 
   @VisibleForTesting ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;

@@ -70,3 +70,5 @@ public class CameraStateTest {
     assertEquals(cameraStateTypeDataCaptor.getValue().getValue(), CameraStateType.OPEN);
   }
 }
+
+// TODO(camsim99): Test static method I added.

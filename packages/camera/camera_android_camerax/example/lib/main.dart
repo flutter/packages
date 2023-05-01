@@ -54,6 +54,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   VideoPlayerController? videoController;
   VoidCallback? videoPlayerListener;
   bool enableAudio = true;
+  double _minAvailableExposureOffset = 0.0;
+  double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
   late AnimationController _flashModeControlRowAnimationController;
   late Animation<double> _flashModeControlRowAnimation;
@@ -61,15 +63,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   late Animation<double> _exposureModeControlRowAnimation;
   late AnimationController _focusModeControlRowAnimationController;
   late Animation<double> _focusModeControlRowAnimation;
-
+  double _minAvailableZoom = 1.0;
+  double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
-
-  // TODO(camsim99): Make these configuration values variable.
-  final double _minAvailableZoom = 1.0;
-  final double _maxAvailableZoom = 1.0;
-  final double _minAvailableExposureOffset = 0.0;
-  final double _maxAvailableExposureOffset = 0.0;
 
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
@@ -424,7 +421,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   Text(_minAvailableExposureOffset.toString()),
                   Slider(
                     value: _currentExposureOffset,
-                    // TODO(camsim99): Specify minimum available exposure offset here.
+                    min: _minAvailableExposureOffset,
                     max: _maxAvailableExposureOffset,
                     label: _currentExposureOffset.toString(),
                     onChanged: _minAvailableExposureOffset ==
@@ -475,8 +472,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     style: styleAuto,
                     onPressed:
                         () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onLongPress: () {
+                      if (controller != null) {
+                        controller!.setFocusPoint(null);
+                      }
+                      showInSnackBar('Resetting focus point');
+                    },
                     child: const Text('AUTO'),
                   ),
                   TextButton(
@@ -592,8 +593,14 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    // TODO(camsim99): Add functionality back here for setting exposure and
-    // focus point.
+    final CameraController cameraController = controller!;
+
+    final Offset offset = Offset(
+      details.localPosition.dx / constraints.maxWidth,
+      details.localPosition.dy / constraints.maxHeight,
+    );
+    cameraController.setExposurePoint(offset);
+    cameraController.setFocusPoint(offset);
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
@@ -630,8 +637,24 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     try {
       await cameraController.initialize();
-      // TODO(camsim99): Add back functionality retrieving exposure offset
-      // and zoom level information.
+      await Future.wait(<Future<Object?>>[
+        // The exposure mode is currently not supported on the web.
+        ...!kIsWeb
+            ? <Future<Object?>>[
+                cameraController.getMinExposureOffset().then(
+                    (double value) => _minAvailableExposureOffset = value),
+                cameraController
+                    .getMaxExposureOffset()
+                    .then((double value) => _maxAvailableExposureOffset = value)
+              ]
+            : <Future<Object?>>[],
+        cameraController
+            .getMaxZoomLevel()
+            .then((double value) => _maxAvailableZoom = value),
+        cameraController
+            .getMinZoomLevel()
+            .then((double value) => _minAvailableZoom = value),
+      ]);
     } on CameraException catch (e) {
       switch (e.code) {
         case 'CameraAccessDenied':

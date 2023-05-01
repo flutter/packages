@@ -55,6 +55,14 @@ class Observer<T> extends JavaObject {
 }
 
 class _ObserverHostApiImpl extends ObserverHostApi {
+  /// Constructs an [_ObserverHostApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   _ObserverHostApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
@@ -90,20 +98,17 @@ class _ObserverHostApiImpl extends ObserverHostApi {
 /// overridden native class.
 @protected
 class ObserverFlutterApiImpl implements ObserverFlutterApi {
-  /// Constructs a [ObserverFlutterApiImpl].
-  ObserverFlutterApiImpl({
-    this.binaryMessenger,
-    InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Receives binary data across the Flutter platform barrier.
+  /// Constructs an [ObserverFlutterApiImpl].
   ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
+  ObserverFlutterApiImpl({
+    InstanceManager? instanceManager,
+  }) : _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager instanceManager;
+  final InstanceManager _instanceManager;
 
   @override
   void onChanged(
@@ -111,11 +116,11 @@ class ObserverFlutterApiImpl implements ObserverFlutterApi {
     int valueIdentifier,
   ) {
     final Observer<dynamic> instance =
-        instanceManager.getInstanceWithWeakReference(identifier)!;
+        _instanceManager.getInstanceWithWeakReference(identifier)!;
 
     // ignore: avoid_dynamic_calls, void_checks
     instance.onChanged(
-      instanceManager.getInstanceWithWeakReference<Object>(valueIdentifier)!,
+      _instanceManager.getInstanceWithWeakReference<Object>(valueIdentifier)!,
     );
   }
 }

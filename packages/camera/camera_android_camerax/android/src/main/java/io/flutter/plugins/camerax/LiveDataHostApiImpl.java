@@ -35,7 +35,7 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   }
 
   /** Sets {@link LifecycleOwner} used to observe the camera state if so requested. */
-  public void setLifecycleOwner(LifecycleOwner lifecycleOwner) {
+  public void setLifecycleOwner(@NonNull LifecycleOwner lifecycleOwner) {
     this.lifecycleOwner = lifecycleOwner;
   }
 
@@ -56,20 +56,6 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   @Override
   public void removeObservers(@NonNull Long identifier) {
     getLiveDataInstance(identifier).removeObservers(lifecycleOwner);
-  }
-
-  /**
-   * Re-creates an instance of {@link LiveData} that has been created on the Java side, stored in
-   * the Dart {@link InstanceManager} as a generic type, and casted to a specific type on the Dart
-   * side.
-   *
-   * <p>This method is necessary in order for the Dart wrapped version of this class to be generic
-   * since the type of {@link LiveData} created on the Java side is unknown to the Dart side.
-   */
-  @Override
-  public void cast(Long identifier, Long newInstanceIdentifier) {
-    instanceManager.addDartCreatedInstance(
-        instanceManager.getInstance(identifier), newInstanceIdentifier);
   }
 
   /** Retrieves the {@link LiveData} instance that has the specified identifier. */

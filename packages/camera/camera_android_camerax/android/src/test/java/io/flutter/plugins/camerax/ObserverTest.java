@@ -25,9 +25,8 @@ import org.mockito.junit.MockitoRule;
 public class ObserverTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-  @SuppressWarnings("rawtypes")
   @Mock
-  public ObserverHostApiImpl.ObserverImpl mockObserver;
+  public ObserverHostApiImpl.ObserverImpl<CameraState> mockObserver;
 
   @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public ObserverFlutterApi mockFlutterApi;

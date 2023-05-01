@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+import androidx.camera.core.CameraState;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -27,9 +28,8 @@ import org.mockito.junit.MockitoRule;
 public class LiveDataTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-  @SuppressWarnings("rawtypes")
   @Mock
-  public LiveData mockLiveData;
+  public LiveData<CameraState> mockLiveData;
 
   @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public LiveDataFlutterApi mockFlutterApi;

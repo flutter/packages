@@ -61,6 +61,14 @@ class CameraStateTypeData {
   late CameraStateType value;
 }
 
+enum LiveDataSupportedType {
+  cameraState,
+}
+
+class LiveDataSupportedTypeData {
+  late LiveDataSupportedType value;
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -205,7 +213,7 @@ abstract class ObserverFlutterApi {
 
 @FlutterApi()
 abstract class CameraStateErrorFlutterApi {
-  void create(int identifier, int code, String description);
+  void create(int identifier, int code);
 }
 
 @HostApi(dartHostTestHandler: 'TestLiveDataHostApi')
@@ -213,13 +221,11 @@ abstract class LiveDataHostApi {
   void observe(int identifier, int observerIdentifier);
 
   void removeObservers(int identifier);
-
-  void cast(int oldIdentifier, int newIdentifier);
 }
 
 @FlutterApi()
 abstract class LiveDataFlutterApi {
-  void create(int identifier);
+  void create(int identifier, LiveDataSupportedTypeData type);
 }
 
 @FlutterApi()

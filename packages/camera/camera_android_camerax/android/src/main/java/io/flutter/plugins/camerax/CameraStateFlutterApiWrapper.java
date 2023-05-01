@@ -44,12 +44,35 @@ public class CameraStateFlutterApiWrapper {
    */
   public void create(
       @NonNull CameraState instance,
-      @NonNull CameraState.Type type,
+      @NonNull CameraStateType type,
       @Nullable CameraState.StateError error,
       @NonNull CameraStateFlutterApi.Reply<Void> callback) {
+    if (instanceManager.containsInstance(instance)) {
+      return;
+    }
 
-    // Convert CameraX CameraState.Type to CameraStateType that the Dart side understands.
-    CameraStateType cameraStateType = CameraStateType.CLOSED;
+    if (error != null) {
+      // We need to create a CameraStateError if there is a problem with the current camera
+      // state to send to the Dart side.
+      new CameraStateErrorFlutterApiWrapper(binaryMessenger, instanceManager)
+          .create(
+              error,
+              Long.valueOf(error.getCode()),
+              reply -> {});
+    }
+
+    cameraStateFlutterApi.create(
+        instanceManager.addHostCreatedInstance(instance),
+        new CameraStateTypeData.Builder().setValue(type).build(),
+        instanceManager.getIdentifierForStrongReference(error),
+        callback);
+  }
+
+  /**
+   * Convert CameraX CameraState.Type to CameraStateType that the Dart side understands.
+   */
+  public static CameraStateType getCameraStateType(@NonNull CameraState.Type type) {
+    CameraStateType cameraStateType = null;
     switch (type) {
       case CLOSED:
         cameraStateType = CameraStateType.CLOSED;
@@ -68,65 +91,14 @@ public class CameraStateFlutterApiWrapper {
         break;
     }
 
-    if (error != null) {
-      // We need to create a CameraStateError if there is a problem with the current camera
-      // state to send to the Dart side.
-      new CameraStateErrorFlutterApiWrapper(binaryMessenger, instanceManager)
-          .create(
-              error,
-              Long.valueOf(error.getCode()),
-              getCameraStateErrorDescription(error),
-              reply -> {});
+    if (cameraStateType == null) {
+      throw new IllegalArgumentException("The CameraState.Type passed was not recognized");
     }
-
-    if (!instanceManager.containsInstance(instance)) {
-      cameraStateFlutterApi.create(
-          instanceManager.addHostCreatedInstance(instance),
-          new CameraStateTypeData.Builder().setValue(cameraStateType).build(),
-          instanceManager.getIdentifierForStrongReference(error),
-          callback);
-    }
-  }
-
-  /**
-   * Returns an error message corresponding to the specified {@link CameraState.StateError}.
-   *
-   * <p>See https://developer.android.com/reference/androidx/camera/core/CameraState#constants_1 for
-   * more information on the different {@link CameraState.StateError} types.
-   */
-  private String getCameraStateErrorDescription(@NonNull CameraState.StateError cameraStateError) {
-    final int cameraStateErrorCode = cameraStateError.getCode();
-    final String cameraStateErrorDescription = cameraStateErrorCode + ": ";
-    switch (cameraStateErrorCode) {
-      case CameraState.ERROR_CAMERA_IN_USE:
-        return cameraStateErrorDescription
-            + "The camera was already in use, possibly by a higher-priority camera client.";
-      case CameraState.ERROR_MAX_CAMERAS_IN_USE:
-        return cameraStateErrorDescription
-            + "The limit number of open cameras has been reached, and more cameras cannot be opened until other instances are closed.";
-      case CameraState.ERROR_OTHER_RECOVERABLE_ERROR:
-        return cameraStateErrorDescription
-            + "The camera device has encountered a recoverable error. CameraX will attempt to recover from the error.";
-      case CameraState.ERROR_STREAM_CONFIG:
-        return cameraStateErrorDescription + "Configuring the camera has failed.";
-      case CameraState.ERROR_CAMERA_DISABLED:
-        return cameraStateErrorDescription
-            + "The camera device could not be opened due to a device policy. Thia may be caused by a client from a background process attempting to open the camera.";
-      case CameraState.ERROR_CAMERA_FATAL_ERROR:
-        return cameraStateErrorDescription
-            + "The camera was closed due to a fatal error. This may require the Android device be shut down and restarted to restore camera function or may indicate a persistent camera hardware problem.";
-      case CameraState.ERROR_DO_NOT_DISTURB_MODE_ENABLED:
-        return cameraStateErrorDescription
-            + "The camera could not be opened because 'Do Not Disturb' mode is enabled. Please disable this mode, and try opening the camera again.";
-      default:
-        return cameraStateErrorDescription + "There was an unspecified issue with the current camera state.";
-    }
+    return cameraStateType;
   }
 
   /**
    * Sets the Flutter API used to send messages to Dart.
-   *
-   * <p>This is only visible for testing.
    */
   @VisibleForTesting
   void setApi(@NonNull CameraStateFlutterApi api) {
