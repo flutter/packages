@@ -1,6 +1,6 @@
 ## 5.6.2
 
-* Update functions without a prototype to avoid deprecation warning.
+* Updates functions without a prototype to avoid deprecation warning.
 
 ## 5.6.1
 

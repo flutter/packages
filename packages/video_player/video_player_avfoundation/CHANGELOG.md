@@ -1,6 +1,6 @@
 ## 2.4.5
 
-* Update functions without a prototype to avoid deprecation warning.
+* Updates functions without a prototype to avoid deprecation warning.
 
 ## 2.4.4
 
