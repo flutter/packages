@@ -20,3 +20,4 @@
 * Updates internal Java InstanceManager to only stop finalization callbacks when stopped.
 * Implements image streaming.
 * Provides LifecycleOwner implementation for Activities that use the plugin that do not implement it themselves.
+* Implements retrieval of camera information.
