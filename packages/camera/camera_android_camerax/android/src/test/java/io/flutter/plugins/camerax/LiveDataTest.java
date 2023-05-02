@@ -5,12 +5,15 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import androidx.camera.core.CameraState;
+import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -55,7 +58,7 @@ public class LiveDataTest {
         new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
     final Observer mockObserver = mock(Observer.class);
     final long observerIdentifier = 20;
-    final long instanceIdentifier = 0;
+    final long instanceIdentifier = 29;
     final LifecycleOwner mockLifecycleOwner = mock(LifecycleOwner.class);
 
     instanceManager.addDartCreatedInstance(mockObserver, observerIdentifier);
@@ -71,7 +74,7 @@ public class LiveDataTest {
   public void removeObservers_makesCallToRemoveObserversFromLiveDataInstance() {
     final LiveDataHostApiImpl hostApi =
         new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
-    final long instanceIdentifier = 0;
+    final long instanceIdentifier = 10;
     final LifecycleOwner mockLifecycleOwner = mock(LifecycleOwner.class);
 
     instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
@@ -83,8 +86,46 @@ public class LiveDataTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void getValue_returnsExpectedValue() {
-    
+    final LiveDataHostApiImpl hostApi =
+      new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
+
+    for (LiveDataSupportedType supportedType : LiveDataSupportedType.values()) {
+      LiveDataSupportedTypeData typeData = new LiveDataSupportedTypeData.Builder().setValue(supportedType).build();
+
+      switch(supportedType) {
+          case CAMERA_STATE:
+            CameraState mockCameraState = mock(CameraState.class);
+            final Long mockCameraStateIdentifier = 56L;
+            final long instanceIdentifier = 33;
+
+            instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
+            instanceManager.addDartCreatedInstance(mockCameraState, mockCameraStateIdentifier);
+
+            when(mockLiveData.getValue()).thenReturn(mockCameraState);
+            when(mockCameraState.getType()).thenReturn(CameraState.Type.CLOSED);
+            when(mockCameraState.getError()).thenReturn(null);
+
+            assertEquals(hostApi.getValue(instanceIdentifier, typeData), mockCameraStateIdentifier);
+            break;
+          case ZOOM_STATE:
+            final LiveData<ZoomState> mockLiveZoomState = (LiveData<ZoomState>) mock(LiveData.class);
+            ZoomState mockZoomState = mock(ZoomState.class);
+            final Long mockLiveZoomStateIdentifier = 22L;
+            final Long mockZoomStateIdentifier = 8L;
+
+            when(mockLiveZoomState.getValue()).thenReturn(mockZoomState);
+            instanceManager.addDartCreatedInstance(mockLiveZoomState, mockLiveZoomStateIdentifier);
+            instanceManager.addDartCreatedInstance(mockZoomState, mockZoomStateIdentifier);
+
+            assertEquals(hostApi.getValue(mockLiveZoomStateIdentifier, typeData), mockZoomStateIdentifier);
+            break;
+          default:
+            // There is a LiveDataSupportedType untested by this method.
+            fail();
+        }
+    }
   }
 
 

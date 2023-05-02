@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.CameraState;
+import androidx.camera.core.ZoomState;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraStateType;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ObserverFlutterApi;
@@ -61,19 +62,19 @@ public class ObserverTest {
   }
 
   @Test
-  public void onChanged_makesCallToDartCallbackForCameraState() {
+  public void onChanged_makesExpectedCallToDartCallbackForCameraState() {
     final ObserverFlutterApiWrapper flutterApi =
         new ObserverFlutterApiWrapper(mockBinaryMessenger, instanceManager);
     final ObserverHostApiImpl.ObserverImpl<CameraState> instance =
         new ObserverHostApiImpl.ObserverImpl<CameraState>(mockBinaryMessenger, instanceManager);
     final CameraStateFlutterApiWrapper mockCameraStateFlutterApiWrapper =
         mock(CameraStateFlutterApiWrapper.class);
-    final long instanceIdentifier = 0;
+    final long instanceIdentifier = 60;
     final CameraState.StateError testCameraStateError =
         CameraState.StateError.create(CameraState.ERROR_CAMERA_IN_USE);
     final CameraState testCameraState =
         CameraState.create(CameraState.Type.CLOSED, testCameraStateError);
-    Long mockCameraStateIdentifier = instanceManager.addHostCreatedInstance(testCameraState);
+    final Long mockCameraStateIdentifier = instanceManager.addHostCreatedInstance(testCameraState);
 
     flutterApi.setApi(mockFlutterApi);
     instance.setApi(flutterApi);
@@ -88,5 +89,28 @@ public class ObserverTest {
             eq(instanceIdentifier), eq(Objects.requireNonNull(mockCameraStateIdentifier)), any());
     verify(mockCameraStateFlutterApiWrapper)
         .create(eq(testCameraState), eq(CameraStateType.CLOSED), eq(testCameraStateError), any());
+  }
+
+  @Test
+  public void onChanged_makesExpectedCallToDartCallbackForZoomState() {
+    final ObserverFlutterApiWrapper flutterApi =
+        new ObserverFlutterApiWrapper(mockBinaryMessenger, instanceManager);
+    final ObserverHostApiImpl.ObserverImpl<ZoomState> instance =
+        new ObserverHostApiImpl.ObserverImpl<ZoomState>(mockBinaryMessenger, instanceManager);
+    final long instanceIdentifier = 2;
+    final ZoomStateFlutterApiImpl mockZoomStateFlutterApiImpl = mock(ZoomStateFlutterApiImpl.class);
+    final ZoomState mockZoomState = mock(ZoomState.class);
+    final Long mockZoomStateIdentifier = instanceManager.addHostCreatedInstance(mockZoomState);
+
+    flutterApi.setApi(mockFlutterApi);
+    instance.setApi(flutterApi);
+    flutterApi.zoomStateFlutterApiImpl = mockZoomStateFlutterApiImpl;
+
+    instanceManager.addDartCreatedInstance(instance, instanceIdentifier);
+
+    instance.onChanged(mockZoomState);
+
+    verify(mockFlutterApi).onChanged(eq(instanceIdentifier), eq(mockZoomStateIdentifier), any());
+    verify(mockZoomStateFlutterApiImpl).create(eq(mockZoomState), any());
   }
 }

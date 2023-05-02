@@ -3,13 +3,15 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i5;
 
-import 'package:camera_android_camerax/src/live_data.dart' as _i2;
-import 'package:camera_android_camerax/src/observer.dart' as _i4;
+import 'package:camera_android_camerax/src/camera_state.dart' as _i4;
+import 'package:camera_android_camerax/src/live_data.dart' as _i3;
+import 'package:camera_android_camerax/src/observer.dart' as _i6;
+import 'package:camera_android_camerax/src/zoom_state.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'test_camerax_library.g.dart' as _i5;
+import 'test_camerax_library.g.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -22,40 +24,11 @@ import 'test_camerax_library.g.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [LiveData].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockLiveData<T extends Object> extends _i1.Mock
-    implements _i2.LiveData<T> {
-  MockLiveData() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i3.Future<void> observe(_i4.Observer<T>? observer) => (super.noSuchMethod(
-        Invocation.method(
-          #observe,
-          [observer],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-  @override
-  _i3.Future<void> removeObservers() => (super.noSuchMethod(
-        Invocation.method(
-          #removeObservers,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-}
-
 /// A class which mocks [TestCameraInfoHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestCameraInfoHostApi extends _i1.Mock
-    implements _i5.TestCameraInfoHostApi {
+    implements _i2.TestCameraInfoHostApi {
   MockTestCameraInfoHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -98,7 +71,7 @@ class MockTestCameraInfoHostApi extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i5.TestInstanceManagerHostApi {
+    implements _i2.TestInstanceManagerHostApi {
   MockTestInstanceManagerHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -111,4 +84,64 @@ class MockTestInstanceManagerHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+}
+
+/// A class which mocks [LiveData].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLiveCameraState extends _i1.Mock
+    implements _i3.LiveData<_i4.CameraState> {
+  MockLiveCameraState() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<void> observe(_i6.Observer<_i4.CameraState>? observer) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #observe,
+          [observer],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> removeObservers() => (super.noSuchMethod(
+        Invocation.method(
+          #removeObservers,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+}
+
+/// A class which mocks [LiveData].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLiveZoomState extends _i1.Mock
+    implements _i3.LiveData<_i7.ZoomState> {
+  MockLiveZoomState() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<void> observe(_i6.Observer<_i7.ZoomState>? observer) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #observe,
+          [observer],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> removeObservers() => (super.noSuchMethod(
+        Invocation.method(
+          #removeObservers,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

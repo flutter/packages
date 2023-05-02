@@ -17,9 +17,11 @@ import 'camera_info_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
 @GenerateMocks(<Type>[
-  LiveData<CameraInfo>,
   TestCameraInfoHostApi,
   TestInstanceManagerHostApi
+], customMocks: <MockSpec<Object>>[
+  MockSpec<LiveData<CameraState>>(as: #MockLiveCameraState),
+  MockSpec<LiveData<ZoomState>>(as: #MockLiveZoomState),
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -67,8 +69,7 @@ void main() {
         instanceManager: instanceManager,
       );
       const int cameraIdentifier = 55;
-      final MockLiveData<CameraState> mockLiveCameraState =
-          MockLiveData<CameraState>();
+      final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
       const int liveCameraStateIdentifier = 73;
       instanceManager.addHostCreatedInstance(
         cameraInfo,
@@ -78,7 +79,7 @@ void main() {
       instanceManager.addHostCreatedInstance(
         mockLiveCameraState,
         liveCameraStateIdentifier,
-        onCopy: (_) => MockLiveData<CameraState>(),
+        onCopy: (_) => MockLiveCameraState(),
       );
 
       when(mockApi.getCameraState(cameraIdentifier))
@@ -141,21 +142,21 @@ void main() {
         instanceManager: instanceManager,
       );
       const int cameraInfoIdentifier = 2;
-      final ZoomState zoomState =
-          ZoomState.detached(minZoomRatio: 0, maxZoomRatio: 1);
-      const int zoomStateIdentifier = 55;
+      final MockLiveZoomState mockLiveZoomState = MockLiveZoomState();
+      const int mockLiveZoomStateIdentifier = 55;
 
       instanceManager.addHostCreatedInstance(
         cameraInfo,
         cameraInfoIdentifier,
         onCopy: (_) => CameraInfo.detached(),
       );
-      instanceManager.addHostCreatedInstance(zoomState, zoomStateIdentifier,
-          onCopy: (_) => ZoomState.detached(minZoomRatio: 0, maxZoomRatio: 1));
+      instanceManager.addHostCreatedInstance(
+          mockLiveZoomState, mockLiveZoomStateIdentifier,
+          onCopy: (_) => MockLiveZoomState());
 
       when(mockApi.getZoomState(cameraInfoIdentifier))
-          .thenReturn(zoomStateIdentifier);
-      expect(await cameraInfo.getZoomState(), equals(zoomState));
+          .thenReturn(mockLiveZoomStateIdentifier);
+      expect(await cameraInfo.getZoomState(), equals(mockLiveZoomState));
 
       verify(mockApi.getZoomState(cameraInfoIdentifier));
     });

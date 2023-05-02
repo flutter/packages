@@ -110,16 +110,15 @@ public class CameraInfoTest {
     final LiveData<ZoomState> mockLiveZoomState = (LiveData<ZoomState>) mock(LiveData.class);
     final ZoomState mockZoomState = mock(ZoomState.class);
     final Long mockCameraInfoIdentifier = 20L;
-    final Long mockZoomStateIdentifier = 74L;
+    final Long mockLiveZoomStateIdentifier = 74L;
 
     testInstanceManager.addDartCreatedInstance(mockCameraInfo, mockCameraInfoIdentifier);
-    testInstanceManager.addDartCreatedInstance(mockZoomState, mockZoomStateIdentifier);
+    testInstanceManager.addDartCreatedInstance(mockLiveZoomState, mockLiveZoomStateIdentifier);
 
     when(mockCameraInfo.getZoomState()).thenReturn(mockLiveZoomState);
-    when(mockLiveZoomState.getValue()).thenReturn(mockZoomState);
 
     assertEquals(
-        cameraInfoHostApiImpl.getZoomState(mockCameraInfoIdentifier), mockZoomStateIdentifier);
+        cameraInfoHostApiImpl.getZoomState(mockCameraInfoIdentifier), mockLiveZoomStateIdentifier);
     verify(mockCameraInfo).getZoomState();
   }
 

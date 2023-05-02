@@ -43,7 +43,6 @@ import 'test_camerax_library.g.dart';
   MockSpec<ExposureState>(),
   MockSpec<ImageAnalysis>(),
   MockSpec<ImageCapture>(),
-  MockSpec<LiveData<CameraState>>(),
   MockSpec<ImageProxy>(),
   MockSpec<PlaneProxy>(),
   MockSpec<Preview>(),
@@ -51,7 +50,12 @@ import 'test_camerax_library.g.dart';
   MockSpec<TestInstanceManagerHostApi>(),
   MockSpec<ZoomState>(),
 ])
-@GenerateMocks(<Type>[BuildContext])
+@GenerateMocks(<Type>[
+  BuildContext
+], customMocks: <MockSpec<Object>>[
+  MockSpec<LiveData<CameraState>>(as: #MockLiveCameraState),
+  MockSpec<LiveData<ZoomState>>(as: #MockLiveZoomState),
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -166,7 +170,7 @@ void main() {
     const int testSurfaceTextureId = 6;
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final MockLiveData mockLiveCameraState = MockLiveData();
+    final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
 
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => testSurfaceTextureId);
@@ -236,7 +240,7 @@ void main() {
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
-        .thenAnswer((_) async => MockLiveData());
+        .thenAnswer((_) async => MockLiveCameraState());
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.createDetachedObjectForTesting = true;
 
@@ -304,7 +308,7 @@ void main() {
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
-        .thenAnswer((_) async => MockLiveData());
+        .thenAnswer((_) async => MockLiveCameraState());
     when(camera.testPreview.getResolutionInfo())
         .thenAnswer((_) async => testResolutionInfo);
     camera.createDetachedObjectForTesting = true;
@@ -331,7 +335,7 @@ void main() {
 
     camera.preview = MockPreview();
     camera.processCameraProvider = MockProcessCameraProvider();
-    camera.liveCameraState = MockLiveData();
+    camera.liveCameraState = MockLiveCameraState();
 
     camera.dispose(3);
 
@@ -451,7 +455,7 @@ void main() {
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final MockLiveData mockLiveCameraState = MockLiveData();
+    final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
@@ -483,7 +487,7 @@ void main() {
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final MockLiveData mockLiveCameraState = MockLiveData();
+    final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
@@ -531,7 +535,7 @@ void main() {
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
-        .thenAnswer((_) async => MockLiveData());
+        .thenAnswer((_) async => MockLiveCameraState());
 
     final FutureBuilder<void> previewWidget =
         camera.buildPreview(textureId) as FutureBuilder<void>;
@@ -570,7 +574,7 @@ void main() {
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
-        .thenAnswer((_) async => MockLiveData());
+        .thenAnswer((_) async => MockLiveCameraState());
 
     final FutureBuilder<void> previewWidget =
         camera.buildPreview(textureId) as FutureBuilder<void>;
@@ -654,12 +658,15 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const double maxZoomRatio = 1;
+    final LiveData<ZoomState> mockLiveZoomState = MockLiveZoomState();
     final ZoomState zoomState =
         ZoomState.detached(maxZoomRatio: maxZoomRatio, minZoomRatio: 0);
 
     camera.cameraInfo = mockCameraInfo;
 
-    when(mockCameraInfo.getZoomState()).thenAnswer((_) async => zoomState);
+    when(mockCameraInfo.getZoomState())
+        .thenAnswer((_) async => mockLiveZoomState);
+    when(mockLiveZoomState.getValue()).thenAnswer((_) async => zoomState);
 
     expect(await camera.getMaxZoomLevel(55), maxZoomRatio);
   });
@@ -668,12 +675,15 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const double minZoomRatio = 0;
+    final LiveData<ZoomState> mockLiveZoomState = MockLiveZoomState();
     final ZoomState zoomState =
         ZoomState.detached(maxZoomRatio: 1, minZoomRatio: minZoomRatio);
 
     camera.cameraInfo = mockCameraInfo;
 
-    when(mockCameraInfo.getZoomState()).thenAnswer((_) async => zoomState);
+    when(mockCameraInfo.getZoomState())
+        .thenAnswer((_) async => mockLiveZoomState);
+    when(mockLiveZoomState.getValue()).thenAnswer((_) async => zoomState);
 
     expect(await camera.getMinZoomLevel(55), minZoomRatio);
   });

@@ -18,6 +18,9 @@ import 'test_camerax_library.g.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
   group('LiveData', () {
     tearDown(() {
       TestLiveDataHostApi.setup(null);
@@ -32,19 +35,19 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final LiveData<dynamic> instance = LiveData<dynamic>.detached(
+      final LiveData<Object> instance = LiveData<Object>.detached(
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
         instance,
         instanceIdentifier,
-        onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
+        onCopy: (LiveData<Object> original) => LiveData<Object>.detached(
           instanceManager: instanceManager,
         ),
       );
 
-      final Observer<dynamic> observer = Observer<dynamic>.detached(
+      final Observer<Object> observer = Observer<Object>.detached(
         instanceManager: instanceManager,
         onChanged: (Object value) {},
       );
@@ -52,7 +55,7 @@ void main() {
       instanceManager.addHostCreatedInstance(
         observer,
         observerIdentifier,
-        onCopy: (_) => Observer<dynamic>.detached(
+        onCopy: (_) => Observer<Object>.detached(
           instanceManager: instanceManager,
           onChanged: (Object value) {},
         ),
@@ -78,14 +81,14 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final LiveData<dynamic> instance = LiveData<dynamic>.detached(
+      final LiveData<Object> instance = LiveData<Object>.detached(
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
       instanceManager.addHostCreatedInstance(
         instance,
         instanceIdentifier,
-        onCopy: (LiveData<dynamic> original) => LiveData<dynamic>.detached(
+        onCopy: (LiveData<Object> original) => LiveData<Object>.detached(
           instanceManager: instanceManager,
         ),
       );
@@ -97,9 +100,46 @@ void main() {
       ));
     });
 
+    test('getValue returns expected value', () async {
+      final MockTestLiveDataHostApi mockApi = MockTestLiveDataHostApi();
+      TestLiveDataHostApi.setup(mockApi);
+      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final LiveData<CameraState> instance = LiveData<CameraState>.detached(
+        instanceManager: instanceManager,
+      );
+      final CameraState testCameraState =
+          CameraState.detached(type: CameraStateType.closed);
+      const int instanceIdentifier = 0;
+      const int testCameraStateIdentifier = 22;
+      instanceManager.addHostCreatedInstance(
+        instance,
+        instanceIdentifier,
+        onCopy: (LiveData<CameraState> original) =>
+            LiveData<CameraState>.detached(
+          instanceManager: instanceManager,
+        ),
+      );
+      instanceManager.addHostCreatedInstance(
+        testCameraState,
+        testCameraStateIdentifier,
+        onCopy: (CameraState original) => CameraState.detached(
+            type: original.type, instanceManager: instanceManager),
+      );
+
+      when(mockApi.getValue(instanceIdentifier, any))
+          .thenReturn(testCameraStateIdentifier);
+
+      expect(await instance.getValue(), equals(testCameraState));
+    });
+
     test(
         'FlutterAPI create makes call to create LiveData<CameraState> instance with expected identifier',
-        () {
+        () async {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );

@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraState;
+import androidx.camera.core.ZoomState;
 import androidx.lifecycle.Observer;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ObserverFlutterApi;
@@ -24,6 +25,7 @@ public class ObserverFlutterApiWrapper {
   private ObserverFlutterApi observerFlutterApi;
 
   @VisibleForTesting public CameraStateFlutterApiWrapper cameraStateFlutterApiWrapper;
+  @VisibleForTesting public ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
 
   /**
    * Constructs a {@link ObserverFlutterApiWrapper}.
@@ -60,7 +62,15 @@ public class ObserverFlutterApiWrapper {
           CameraStateFlutterApiWrapper.getCameraStateType(state.getType()),
           state.getError(),
           reply -> {});
-    } else {
+    } else if (value instanceof ZoomState) {
+      ZoomState state = (ZoomState) value;
+
+      if (zoomStateFlutterApiImpl == null) {
+        zoomStateFlutterApiImpl = new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager);
+      }
+      zoomStateFlutterApiImpl.create(state, reply -> {});
+    }
+    else {
       throw new UnsupportedOperationException(
           "The type of value in observance is not wrapped by this plugin.");
     }
