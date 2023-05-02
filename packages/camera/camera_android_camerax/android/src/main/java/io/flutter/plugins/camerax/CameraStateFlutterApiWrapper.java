@@ -66,6 +66,7 @@ public class CameraStateFlutterApiWrapper {
   }
 
   /** Converts CameraX CameraState.Type to CameraStateType that the Dart side understands. */
+  @NonNull
   public static CameraStateType getCameraStateType(@NonNull CameraState.Type type) {
     CameraStateType cameraStateType = null;
     switch (type) {

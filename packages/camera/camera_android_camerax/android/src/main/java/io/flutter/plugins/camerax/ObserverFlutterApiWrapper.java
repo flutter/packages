@@ -22,14 +22,14 @@ import java.util.Objects;
  */
 public class ObserverFlutterApiWrapper {
 
-  private static final String TAG = "ObserverFlutterApiWrapper";
+  private static final String TAG = "ObserverFlutterApi";
 
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
   private ObserverFlutterApi observerFlutterApi;
 
-  @VisibleForTesting public CameraStateFlutterApiWrapper cameraStateFlutterApiWrapper;
-  @VisibleForTesting public ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
+  @VisibleForTesting @Nullable public CameraStateFlutterApiWrapper cameraStateFlutterApiWrapper;
+  @VisibleForTesting @Nullable public ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
 
   /**
    * Constructs a {@link ObserverFlutterApiWrapper}.
