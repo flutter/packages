@@ -14,8 +14,8 @@ import 'package:path/path.dart' as p;
 import 'package:yaml_edit/yaml_edit.dart';
 
 Future<void> main(List<String> args) async {
-  if (!Platform.isMacOS && !Platform.isWindows) {
-    print('This test can only be run on macOS or windows.');
+  if (!Platform.isMacOS /* && !Platform.isWindows*/) {
+    print('This test can only be run on macOS' /*' or windows.'*/);
     exit(0);
   }
   final p.Context ctx = p.context;
@@ -23,13 +23,13 @@ Future<void> main(List<String> args) async {
       Directory(ctx.dirname(_ensureTrimLeadingSeparator(Platform.script.path)))
           .parent;
 
-  //copy from go_router/test_fixes to <parent of go_router>/go_router_test_fixes
-  final String testFixesTargetDir =
-      ctx.join(ctx.dirname(packageRoot.path), 'go_router_test_fixes');
+  //copy from go_router/test_fixes to temp directory
+  final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
+
   await _prepareTemplate(
     ctx: ctx,
     testFixesDir: ctx.join(packageRoot.path, 'test_fixes'),
-    testFixesTargetDir: testFixesTargetDir,
+    testFixesTargetDir: testFixesTargetDir.path,
     //Switching this to true, will depend on go_router v7.0.0, which will fail the golden test
     testBadVersion: false,
   );
@@ -39,7 +39,7 @@ Future<void> main(List<String> args) async {
       'pub',
       'upgrade',
     ],
-    workingDirectory: testFixesTargetDir,
+    workingDirectory: testFixesTargetDir.path,
   );
   if (pubGet != 0) {
     exit(pubGet);
@@ -50,7 +50,7 @@ Future<void> main(List<String> args) async {
       'fix',
       '--compare-to-golden',
     ],
-    workingDirectory: testFixesTargetDir,
+    workingDirectory: testFixesTargetDir.path,
   );
 
   exit(status);
@@ -66,15 +66,15 @@ Future<void> _prepareTemplate({
 
   final String pubspecYamlPath = ctx.join(testFixesTargetDir, 'pubspec.yaml');
   final File targetPubspecPath = File(pubspecYamlPath);
-  //write .gitignore to ignore the newly created folder
-  await File(ctx.join(testFixesTargetDir, '.gitignore')).writeAsString('*');
 
   final YamlEditor editor = YamlEditor(await targetPubspecPath.readAsString());
   if (testBadVersion) {
     editor.update(<String>['dependencies', 'go_router'], '7.0.0');
   } else {
-    editor
-        .update(<String>['dependencies', 'go_router', 'path'], '../go_router');
+    editor.update(
+      <String>['dependencies', 'go_router', 'path'],
+      ctx.dirname(testFixesDir),
+    );
   }
   final String newYaml = editor.toString();
   await targetPubspecPath.writeAsString(newYaml);
