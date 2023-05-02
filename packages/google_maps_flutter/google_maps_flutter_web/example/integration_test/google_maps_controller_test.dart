@@ -488,6 +488,7 @@ void main() {
         testWidgets('by default is disabled', (WidgetTester tester) async {
           controller = createController();
           controller.init();
+
           expect(controller.myLocationButton, isNull);
         });
 
@@ -526,6 +527,7 @@ void main() {
           });
 
           controller.init();
+          await tester.pumpAndSettle();
 
           final Set<Marker> capturedMarkers =
               verify(markers.addMarkers(captureAny)).captured[1] as Set<Marker>;
@@ -560,8 +562,7 @@ void main() {
 
           when(mockCoordinates.latitude).thenReturn(currentLocation.latitude);
 
-          when(mockGeolocation.getCurrentPosition(
-                  timeout: const Duration(seconds: 30)))
+          when(mockGeolocation.getCurrentPosition(timeout: anyNamed('timeout')))
               .thenAnswer((_) async => mockGeoposition);
 
           when(mockGeolocation.watchPosition()).thenAnswer((_) {
@@ -570,6 +571,8 @@ void main() {
           });
 
           controller.init();
+
+          await tester.pumpAndSettle();
 
           final Set<Marker> capturedMarkers =
               verify(markers.addMarkers(captureAny)).captured[1] as Set<Marker>;
@@ -609,11 +612,10 @@ void main() {
 
         controller.init();
 
-        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await tester.pumpAndSettle();
 
         final Set<Marker> capturedMarkers =
             verify(markers.addMarkers(captureAny)).captured[0] as Set<Marker>;
-
         expect(controller.myLocationButton, isNotNull);
         expect(controller.myLocationButton?.isDisabled(), true);
         expect(capturedMarkers.length, 0);
