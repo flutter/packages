@@ -91,6 +91,12 @@ enum NSKeyValueChangeKey {
   ///
   /// See https://developer.apple.com/documentation/foundation/nskeyvaluechangeoldkey?language=objc.
   oldValue,
+
+  /// An unknown change key.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
 }
 
 /// The supported keys in a cookie attributes dictionary.
