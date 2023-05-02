@@ -14,8 +14,8 @@ import 'package:path/path.dart' as p;
 import 'package:yaml_edit/yaml_edit.dart';
 
 Future<void> main(List<String> args) async {
-  if (!Platform.isMacOS /* && !Platform.isWindows*/) {
-    print('This test can only be run on macOS' /*' or windows.'*/);
+  if (!Platform.isMacOS && !Platform.isWindows) {
+    print('This test can only be run on macOS or windows.');
     exit(0);
   }
   final p.Context ctx = p.context;
