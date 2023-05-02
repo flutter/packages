@@ -209,6 +209,7 @@ class NSError {
     required this.code,
     required this.domain,
     required this.localizedDescription,
+    required this.description,
   });
 
   /// The error code.
@@ -221,6 +222,11 @@ class NSError {
 
   /// A string containing the localized description of the error.
   final String localizedDescription;
+
+  /// A string that represents the contents of the receiving class.
+  ///
+  /// *Note*: The Objective-C `NSError` inherits this property from `NSObject`.
+  final String description;
 }
 
 /// A representation of an HTTP cookie.

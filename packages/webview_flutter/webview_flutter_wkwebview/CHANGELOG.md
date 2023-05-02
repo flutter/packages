@@ -1,3 +1,7 @@
+## 3.4.1
+
+* Adds access for the full error description for web resource errors.
+
 ## 3.4.0
 
 * Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.

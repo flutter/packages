@@ -293,6 +293,7 @@ class NSErrorData {
   late int code;
   late String domain;
   late String localizedDescription;
+  late String description;
 }
 
 /// Mirror of WKScriptMessage.

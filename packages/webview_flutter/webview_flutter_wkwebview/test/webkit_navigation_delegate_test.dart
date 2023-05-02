@@ -90,10 +90,10 @@ void main() {
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
         WKWebView.detached(),
         const NSError(
-          code: WKErrorCode.webViewInvalidated,
-          domain: 'domain',
-          localizedDescription: 'my desc',
-        ),
+            code: WKErrorCode.webViewInvalidated,
+            domain: 'domain',
+            localizedDescription: 'my desc',
+            description: 'desc',),
       );
 
       expect(callbackError.description, 'my desc');
@@ -127,10 +127,12 @@ void main() {
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
           localizedDescription: 'my desc',
+          description: 'fullDescription',
         ),
       );
 
       expect(callbackError.description, 'my desc');
+      expect(callbackError.fullDescription, 'fullDescription');
       expect(callbackError.errorCode, WKErrorCode.webViewInvalidated);
       expect(callbackError.domain, 'domain');
       expect(callbackError.errorType, WebResourceErrorType.webViewInvalidated);

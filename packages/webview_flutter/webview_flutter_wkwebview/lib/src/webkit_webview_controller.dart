@@ -666,6 +666,12 @@ class WebKitWebResourceError extends WebResourceError {
   /// A string representing the domain of the error.
   String? get domain => _nsError.domain;
 
+  /// A full description of the error.
+  ///
+  /// This is the output used by the debugger to produce a textual description
+  /// of the error class object.
+  String get fullDescription => _nsError.description;
+
   final NSError _nsError;
 }
 
@@ -759,6 +765,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 // Value from https://developer.apple.com/documentation/webkit/wkerrordomain?language=objc.
                 domain: 'WKErrorDomain',
                 localizedDescription: '',
+                description: '',
               ),
               isForMainFrame: true,
             ),

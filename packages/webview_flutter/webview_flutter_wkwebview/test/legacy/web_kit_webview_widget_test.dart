@@ -778,6 +778,7 @@ void main() {
             code: WKErrorCode.javaScriptResultTypeIsUnsupported,
             domain: '',
             localizedDescription: '',
+            description: '',
           ),
         ));
         expect(
@@ -1050,6 +1051,7 @@ void main() {
             code: WKErrorCode.webViewInvalidated,
             domain: 'domain',
             localizedDescription: 'my desc',
+            description: 'desc',
           ),
         );
 
@@ -1087,6 +1089,7 @@ void main() {
             code: WKErrorCode.webContentProcessTerminated,
             domain: 'domain',
             localizedDescription: 'my desc',
+            description: '',
           ),
         );
 

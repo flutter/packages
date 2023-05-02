@@ -488,6 +488,7 @@ void main() {
           code: WKErrorCode.javaScriptResultTypeIsUnsupported,
           domain: '',
           localizedDescription: '',
+          description: '',
         ),
       ));
       expect(
