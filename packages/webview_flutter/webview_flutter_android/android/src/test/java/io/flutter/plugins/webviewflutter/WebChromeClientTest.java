@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -13,8 +14,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Message;
+import android.view.Window;
 import android.webkit.PermissionRequest;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -41,6 +45,12 @@ public class WebChromeClientTest {
 
   @Mock public WebViewClient mockWebViewClient;
 
+  @Mock public Context mockContext;
+
+  @Mock public Activity mockActivity;
+
+  @Mock public Window mockWindow;
+
   InstanceManager instanceManager;
   WebChromeClientHostApiImpl hostApiImpl;
   WebChromeClientImpl webChromeClient;
@@ -54,15 +64,20 @@ public class WebChromeClientTest {
           @Override
           @NonNull
           public WebChromeClientImpl createWebChromeClient(
-              @NonNull WebChromeClientFlutterApiImpl flutterApi) {
-            webChromeClient = super.createWebChromeClient(flutterApi);
+              @NonNull WebChromeClientFlutterApiImpl flutterApi, @NonNull Context context) {
+            webChromeClient = super.createWebChromeClient(flutterApi, context);
             return webChromeClient;
           }
         };
 
     hostApiImpl =
-        new WebChromeClientHostApiImpl(instanceManager, webChromeClientCreator, mockFlutterApi);
+        new WebChromeClientHostApiImpl(instanceManager, webChromeClientCreator, mockFlutterApi, mockContext);
+    hostApiImpl.setContext(mockActivity);
     hostApiImpl.create(2L);
+
+    when(mockActivity.getWindow()).thenReturn(mockWindow);
+    when(mockWebView.getParent()).thenReturn(mockWebView);
+    when(mockWindow.getDecorView()).thenReturn(mockWebView);
   }
 
   @After
@@ -124,5 +139,18 @@ public class WebChromeClientTest {
     webChromeClient.onPermissionRequest(mockRequest);
 
     verify(mockFlutterApi).onPermissionRequest(eq(webChromeClient), eq(mockRequest), any());
+  }  
+
+  @Test
+  public void onShowCustomView() {
+    webChromeClient.onShowCustomView(mockWebView, null);
+    assertNotNull(webChromeClient.getmFullscreenView());
+  }
+
+  @Test
+  public void onHideCustomView() {
+    webChromeClient.onShowCustomView(mockWebView, null);
+    webChromeClient.onHideCustomView();
+    assertNull(webChromeClient.getmFullscreenView());
   }
 }

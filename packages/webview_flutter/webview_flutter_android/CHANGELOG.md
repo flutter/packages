@@ -1,3 +1,7 @@
+## 3.7.0
+
+* Adds support for fullscreen video.
+
 ## 3.6.3
 
 * Updates gradle, AGP and fixes some lint errors.
