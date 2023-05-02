@@ -165,6 +165,12 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
       returnValueForOnShowFileChooser = value;
     }
 
+    /**
+     * Returns the fullscreen view
+     *
+     * @return View
+     */
+    @Nullable
     @VisibleForTesting
     public View getmFullscreenView() {
       return this.mFullscreenView;
@@ -298,7 +304,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
    *
    * @param context the new context
    */
-  public void setContext(Context context) {
+  public void setContext(@NonNull Context context) {
     this.context = context;
   }
 
