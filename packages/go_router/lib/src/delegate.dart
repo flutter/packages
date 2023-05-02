@@ -150,6 +150,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   bool _onPopPage(Route<Object?> route, Object? result) {
+    if (route.willHandlePopInternally) {
+      final bool popped = route.didPop(result);
+      assert(!popped);
+      return popped;
+    }
     final Page<Object?> page = route.settings as Page<Object?>;
     final RouteMatch? match = builder.getRouteMatchForPage(page);
     assert(match != null);
