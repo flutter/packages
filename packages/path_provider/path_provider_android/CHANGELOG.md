@@ -1,3 +1,11 @@
+## 2.0.27
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.0.26
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 2.0.25
 
 * Fixes Java warnings.
