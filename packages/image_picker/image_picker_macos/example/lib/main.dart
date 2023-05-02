@@ -255,18 +255,19 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Icon(Icons.photo_library),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: FloatingActionButton(
-              onPressed: () {
-                _isVideo = false;
-                _onImageButtonPressed(ImageSource.camera, context: context);
-              },
-              heroTag: 'image2',
-              tooltip: 'Take a Photo',
-              child: const Icon(Icons.camera_alt),
+          if (_picker.supportsImageSource(ImageSource.camera))
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: FloatingActionButton(
+                onPressed: () {
+                  _isVideo = false;
+                  _onImageButtonPressed(ImageSource.camera, context: context);
+                },
+                heroTag: 'image2',
+                tooltip: 'Take a Photo',
+                child: const Icon(Icons.camera_alt),
+              ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: FloatingActionButton(
@@ -280,19 +281,20 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Icon(Icons.video_library),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: FloatingActionButton(
-              backgroundColor: Colors.red,
-              onPressed: () {
-                _isVideo = true;
-                _onImageButtonPressed(ImageSource.camera, context: context);
-              },
-              heroTag: 'video1',
-              tooltip: 'Take a Video',
-              child: const Icon(Icons.videocam),
+          if (_picker.supportsImageSource(ImageSource.camera))
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: FloatingActionButton(
+                backgroundColor: Colors.red,
+                onPressed: () {
+                  _isVideo = true;
+                  _onImageButtonPressed(ImageSource.camera, context: context);
+                },
+                heroTag: 'video1',
+                tooltip: 'Take a Video',
+                child: const Icon(Icons.videocam),
+              ),
             ),
-          ),
         ],
       ),
     );
