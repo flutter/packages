@@ -6,9 +6,9 @@
 A Flutter plugin for iOS and Android for picking images from the image library,
 and taking new pictures with the camera.
 
-|             | Android | iOS     | Web                             |
-|-------------|---------|---------|---------------------------------|
-| **Support** | SDK 21+ | iOS 11+ | [See `image_picker_for_web`][1] |
+|             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
+|-------------|---------|---------|-------|--------|---------------------------------|-------------|
+| **Support** | SDK 21+ | iOS 11+ | Any   | 10.11+ | [See `image_picker_for_web`][1] | Windows 10+ |
 
 ## Installation
 
