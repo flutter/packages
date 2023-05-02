@@ -49,7 +49,7 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
    */
   @Override
   @NonNull
-  public Long getLiveCameraState(@NonNull Long identifier) {
+  public Long getCameraState(@NonNull Long identifier) {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
     LiveData<CameraState> liveCameraState = cameraInfo.getCameraState();
@@ -84,48 +84,10 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
   public Long getZoomState(@NonNull Long identifier) {
     CameraInfo cameraInfo =
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
-    // TODO(camsim99): Create/return LiveData<ZoomState> once https://github.com/flutter/packages/pull/3419 lands.
-    ZoomState zoomState = cameraInfo.getZoomState().getValue();
+    LiveData<ZoomState> zoomState = cameraInfo.getZoomState();
 
-    ZoomStateFlutterApiImpl zoomStateFlutterApiImpl =
-        new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager);
-    zoomStateFlutterApiImpl.create(zoomState, result -> {});
-
-    return instanceManager.getIdentifierForStrongReference(zoomState);
-  }
-
-  /**
-   * Retrieves the {@link ExposureState} of the {@link CameraInfo} with the specified identifier.
-   */
-  @Override
-  @NonNull
-  public Long getExposureState(@NonNull Long identifier) {
-    CameraInfo cameraInfo =
-        (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
-    ExposureState exposureState = cameraInfo.getExposureState();
-
-    ExposureStateFlutterApiImpl exposureStateFlutterApiImpl =
-        new ExposureStateFlutterApiImpl(binaryMessenger, instanceManager);
-    exposureStateFlutterApiImpl.create(exposureState, result -> {});
-
-    return instanceManager.getIdentifierForStrongReference(exposureState);
-  }
-
-  /**
-   * Retrieves the current {@link ZoomState} value of the {@link CameraInfo} with the specified
-   * identifier.
-   */
-  @NonNull
-  @Override
-  public Long getZoomState(@NonNull Long identifier) {
-    CameraInfo cameraInfo =
-        (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
-    // TODO(camsim99): Create/return LiveData<ZoomState> once https://github.com/flutter/packages/pull/3419 lands.
-    ZoomState zoomState = cameraInfo.getZoomState().getValue();
-
-    ZoomStateFlutterApiImpl zoomStateFlutterApiImpl =
-        new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager);
-    zoomStateFlutterApiImpl.create(zoomState, result -> {});
+    LiveDataFlutterApiWrapper liveDataFlutterApiWrapper = new LiveDataFlutterApiWrapper(binaryMessenger, instanceManager);
+    liveDataFlutterApiWrapper.create(zoomState, LiveDataSupportedType.ZOOM_STATE, reply -> {});
 
     return instanceManager.getIdentifierForStrongReference(zoomState);
   }

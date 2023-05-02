@@ -25,7 +25,8 @@ import 'test_camerax_library.g.dart' as _i5;
 /// A class which mocks [LiveData].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLiveData<T> extends _i1.Mock implements _i2.LiveData<T> {
+class MockLiveData<T extends Object> extends _i1.Mock
+    implements _i2.LiveData<T> {
   MockLiveData() {
     _i1.throwOnMissingStub(this);
   }
@@ -68,9 +69,9 @@ class MockTestCameraInfoHostApi extends _i1.Mock
         returnValue: 0,
       ) as int);
   @override
-  int getLiveCameraState(int? identifier) => (super.noSuchMethod(
+  int getCameraState(int? identifier) => (super.noSuchMethod(
         Invocation.method(
-          #getLiveCameraState,
+          #getCameraState,
           [identifier],
         ),
         returnValue: 0,

@@ -83,6 +83,12 @@ public class LiveDataTest {
   }
 
   @Test
+  public void getValue_returnsExpectedValue() {
+    
+  }
+
+
+  @Test
   public void flutterApiCreate_makesCallToDartToCreateInstance() {
     final LiveDataFlutterApiWrapper flutterApi =
         new LiveDataFlutterApiWrapper(mockBinaryMessenger, instanceManager);

@@ -37,15 +37,16 @@ class CameraInfo extends JavaObject {
       _api.getSensorRotationDegreesFromInstance(this);
 
   /// Starts listening for the camera closing.
-  Future<LiveData<CameraState>> getLiveCameraState() =>
-      _api.getLiveCameraStateFromInstance(this);
+  Future<LiveData<CameraState>> getCameraState() =>
+      _api.getCameraStateFromInstance(this);
 
   /// Gets the exposure state of the camera.
   Future<ExposureState> getExposureState() =>
       _api.getExposureStateFromInstance(this);
 
   /// Gets the zoom state of the camera.
-  Future<ZoomState> getZoomState() => _api.getZoomStateFromInstance(this);
+  Future<LiveData<ZoomState>> getZoomState() =>
+      _api.getZoomStateFromInstance(this);
 }
 
 /// Host API implementation of [CameraInfo].
@@ -70,13 +71,13 @@ class _CameraInfoHostApiImpl extends CameraInfoHostApi {
 
   /// Gets the [LiveData<CameraState>] that represents the state of the camera
   /// to which the CameraInfo [instance] pertains.
-  Future<LiveData<CameraState>> getLiveCameraStateFromInstance(
+  Future<LiveData<CameraState>> getCameraStateFromInstance(
       CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
     assert(identifier != null,
         'No CameraInfo has the identifer of that which was requested.');
 
-    final int liveCameraStateId = await getLiveCameraState(identifier!);
+    final int liveCameraStateId = await getCameraState(identifier!);
     final LiveData<CameraState> liveCameraState =
         instanceManager.getInstanceWithWeakReference<LiveData<CameraState>>(
             liveCameraStateId)!;
@@ -93,28 +94,12 @@ class _CameraInfoHostApiImpl extends CameraInfoHostApi {
   }
 
   /// Gets the [ZoomState] of the specified [CameraInfo] instance.
-  Future<ZoomState> getZoomStateFromInstance(CameraInfo instance) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
-    final int zoomStateIdentifier = await getZoomState(identifier!);
-    return instanceManager
-        .getInstanceWithWeakReference<ZoomState>(zoomStateIdentifier)!;
-  }
-
-  /// Gets the [ExposureState] of the specified [CameraInfo] instance.
-  Future<ExposureState> getExposureStateFromInstance(
+  Future<LiveData<ZoomState>> getZoomStateFromInstance(
       CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
-    final int exposureStateIdentifier = await getExposureState(identifier!);
-    return instanceManager
-        .getInstanceWithWeakReference<ExposureState>(exposureStateIdentifier)!;
-  }
-
-  /// Gets the [ZoomState] of the specified [CameraInfo] instance.
-  Future<ZoomState> getZoomStateFromInstance(CameraInfo instance) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
     final int zoomStateIdentifier = await getZoomState(identifier!);
-    return instanceManager
-        .getInstanceWithWeakReference<ZoomState>(zoomStateIdentifier)!;
+    return instanceManager.getInstanceWithWeakReference<LiveData<ZoomState>>(
+        zoomStateIdentifier)!;
   }
 }
 

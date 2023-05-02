@@ -75,7 +75,7 @@ abstract class TestCameraInfoHostApi {
 
   int getSensorRotationDegrees(int identifier);
 
-  int getLiveCameraState(int identifier);
+  int getCameraState(int identifier);
 
   int getExposureState(int identifier);
 
@@ -103,19 +103,19 @@ abstract class TestCameraInfoHostApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.CameraInfoHostApi.getLiveCameraState', codec,
+          'dev.flutter.pigeon.CameraInfoHostApi.getCameraState', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
         _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.CameraInfoHostApi.getLiveCameraState was null.');
+          'Argument for dev.flutter.pigeon.CameraInfoHostApi.getCameraState was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.CameraInfoHostApi.getLiveCameraState was null, expected non-null int.');
-          final int output = api.getLiveCameraState(arg_identifier!);
+              'Argument for dev.flutter.pigeon.CameraInfoHostApi.getCameraState was null, expected non-null int.');
+          final int output = api.getCameraState(arg_identifier!);
           return <Object?>[output];
         });
       }
@@ -849,13 +849,38 @@ abstract class TestObserverHostApi {
   }
 }
 
+class _TestLiveDataHostApiCodec extends StandardMessageCodec {
+  const _TestLiveDataHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 abstract class TestLiveDataHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _TestLiveDataHostApiCodec();
 
   void observe(int identifier, int observerIdentifier);
 
   void removeObservers(int identifier);
+
+  int? getValue(int identifier, LiveDataSupportedTypeData type);
 
   static void setup(TestLiveDataHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -896,6 +921,28 @@ abstract class TestLiveDataHostApi {
               'Argument for dev.flutter.pigeon.LiveDataHostApi.removeObservers was null, expected non-null int.');
           api.removeObservers(arg_identifier!);
           return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.LiveDataHostApi.getValue', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.LiveDataHostApi.getValue was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.LiveDataHostApi.getValue was null, expected non-null int.');
+          final LiveDataSupportedTypeData? arg_type = (args[1] as LiveDataSupportedTypeData?);
+          assert(arg_type != null,
+              'Argument for dev.flutter.pigeon.LiveDataHostApi.getValue was null, expected non-null LiveDataSupportedTypeData.');
+          final int? output = api.getValue(arg_identifier!, arg_type!);
+          return <Object?>[output];
         });
       }
     }

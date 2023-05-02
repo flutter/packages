@@ -24,6 +24,7 @@ enum CameraStateType {
 
 enum LiveDataSupportedType {
   cameraState,
+  zoomState,
 }
 
 class ResolutionInfo {
@@ -116,32 +117,6 @@ class LiveDataSupportedTypeData {
     result as List<Object?>;
     return LiveDataSupportedTypeData(
       value: LiveDataSupportedType.values[result[0]! as int],
-    );
-  }
-}
-
-class ExposureCompensationRange {
-  ExposureCompensationRange({
-    required this.minCompensation,
-    required this.maxCompensation,
-  });
-
-  int minCompensation;
-
-  int maxCompensation;
-
-  Object encode() {
-    return <Object?>[
-      minCompensation,
-      maxCompensation,
-    ];
-  }
-
-  static ExposureCompensationRange decode(Object result) {
-    result as List<Object?>;
-    return ExposureCompensationRange(
-      minCompensation: result[0]! as int,
-      maxCompensation: result[1]! as int,
     );
   }
 }
@@ -306,9 +281,9 @@ class CameraInfoHostApi {
     }
   }
 
-  Future<int> getLiveCameraState(int arg_identifier) async {
+  Future<int> getCameraState(int arg_identifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.CameraInfoHostApi.getLiveCameraState', codec,
+        'dev.flutter.pigeon.CameraInfoHostApi.getCameraState', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
@@ -1299,97 +1274,6 @@ abstract class ZoomStateFlutterApi {
   }
 }
 
-class _ExposureStateFlutterApiCodec extends StandardMessageCodec {
-  const _ExposureStateFlutterApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ExposureCompensationRange) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128: 
-        return ExposureCompensationRange.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
-abstract class ExposureStateFlutterApi {
-  static const MessageCodec<Object?> codec = _ExposureStateFlutterApiCodec();
-
-  void create(int identifier, ExposureCompensationRange exposureCompensationRange, double exposureCompensationStep);
-
-  static void setup(ExposureStateFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.ExposureStateFlutterApi.create', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_identifier = (args[0] as int?);
-          assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null int.');
-          final ExposureCompensationRange? arg_exposureCompensationRange = (args[1] as ExposureCompensationRange?);
-          assert(arg_exposureCompensationRange != null,
-              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null ExposureCompensationRange.');
-          final double? arg_exposureCompensationStep = (args[2] as double?);
-          assert(arg_exposureCompensationStep != null,
-              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null double.');
-          api.create(arg_identifier!, arg_exposureCompensationRange!, arg_exposureCompensationStep!);
-          return;
-        });
-      }
-    }
-  }
-}
-
-abstract class ZoomStateFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
-
-  void create(int identifier, double minZoomRatio, double maxZoomRatio);
-
-  static void setup(ZoomStateFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.ZoomStateFlutterApi.create', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.ZoomStateFlutterApi.create was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_identifier = (args[0] as int?);
-          assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.ZoomStateFlutterApi.create was null, expected non-null int.');
-          final double? arg_minZoomRatio = (args[1] as double?);
-          assert(arg_minZoomRatio != null,
-              'Argument for dev.flutter.pigeon.ZoomStateFlutterApi.create was null, expected non-null double.');
-          final double? arg_maxZoomRatio = (args[2] as double?);
-          assert(arg_maxZoomRatio != null,
-              'Argument for dev.flutter.pigeon.ZoomStateFlutterApi.create was null, expected non-null double.');
-          api.create(arg_identifier!, arg_minZoomRatio!, arg_maxZoomRatio!);
-          return;
-        });
-      }
-    }
-  }
-}
-
 class _ImageAnalysisHostApiCodec extends StandardMessageCodec {
   const _ImageAnalysisHostApiCodec();
   @override
@@ -1618,6 +1502,29 @@ abstract class CameraStateErrorFlutterApi {
   }
 }
 
+class _LiveDataHostApiCodec extends StandardMessageCodec {
+  const _LiveDataHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 class LiveDataHostApi {
   /// Constructor for [LiveDataHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -1626,7 +1533,7 @@ class LiveDataHostApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _LiveDataHostApiCodec();
 
   Future<void> observe(int arg_identifier, int arg_observerIdentifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -1669,6 +1576,28 @@ class LiveDataHostApi {
       );
     } else {
       return;
+    }
+  }
+
+  Future<int?> getValue(int arg_identifier, LiveDataSupportedTypeData arg_type) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.LiveDataHostApi.getValue', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier, arg_type]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?);
     }
   }
 }

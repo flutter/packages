@@ -116,12 +116,6 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api for [ZoomState].
   late final ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
 
-  /// Flutter Api for [ExposureState].
-  late final ExposureStateFlutterApiImpl exposureStateFlutterApiImpl;
-
-  /// Flutter Api for [ZoomState].
-  late final ZoomStateFlutterApiImpl zoomStateFlutterApiImpl;
-
   /// Flutter Api implementation for [Analyzer].
   late final AnalyzerFlutterApiImpl analyzerFlutterApiImpl;
 

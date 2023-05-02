@@ -10,6 +10,7 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 import 'observer.dart';
+import 'zoom_state.dart';
 
 /// A data holder class that can be observed.
 ///
@@ -17,7 +18,7 @@ import 'observer.dart';
 /// Android Activity to which this plugin is attached.
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
-class LiveData<T> extends JavaObject {
+class LiveData<T extends Object> extends JavaObject {
   /// Constructs a [LiveData] that is not automatically attached to a native object.
   LiveData.detached({this.binaryMessenger, this.instanceManager})
       : _api = _LiveDataHostApiImpl(
@@ -41,6 +42,11 @@ class LiveData<T> extends JavaObject {
   /// Removes all observers of this instance.
   Future<void> removeObservers() {
     return _api.removeObserversFromInstances(this);
+  }
+
+  /// Returns the current value.
+  Future<T?>? getValue() {
+    return _api.getValueFromInstances<T>(this);
   }
 }
 
@@ -85,6 +91,27 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
     return removeObservers(
       instanceManager.getIdentifier(instance)!,
     );
+  }
+
+  /// Gets current value of specified [LiveData] instance.
+  Future<T?>? getValueFromInstances<T extends Object>(
+      LiveData<T> instance) async {
+    LiveDataSupportedTypeData? typeData;
+    switch (T) {
+      case CameraState:
+        typeData =
+            LiveDataSupportedTypeData(value: LiveDataSupportedType.cameraState);
+        break;
+      case ZoomState:
+        typeData =
+            LiveDataSupportedTypeData(value: LiveDataSupportedType.zoomState);
+        break;
+    }
+    final int? valueIdentifier =
+        await getValue(instanceManager.getIdentifier(instance)!, typeData!);
+    return valueIdentifier == null
+        ? null
+        : instanceManager.getInstanceWithWeakReference<T>(valueIdentifier);
   }
 }
 
@@ -134,6 +161,21 @@ class LiveDataFlutterApiImpl implements LiveDataFlutterApi {
             instanceManager: _instanceManager,
           ),
         );
+        return;
+      case LiveDataSupportedType.zoomState:
+        _instanceManager.addHostCreatedInstance(
+          LiveData<ZoomState>.detached(
+            binaryMessenger: _binaryMessenger,
+            instanceManager: _instanceManager,
+          ),
+          identifier,
+          onCopy: (LiveData<ZoomState> original) =>
+              LiveData<ZoomState>.detached(
+            binaryMessenger: _binaryMessenger,
+            instanceManager: _instanceManager,
+          ),
+        );
+        return;
     }
   }
 }

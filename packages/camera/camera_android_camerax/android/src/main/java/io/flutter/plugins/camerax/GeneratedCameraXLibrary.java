@@ -80,7 +80,8 @@ public class GeneratedCameraXLibrary {
   }
 
   public enum LiveDataSupportedType {
-    CAMERA_STATE(0);
+    CAMERA_STATE(0),
+    ZOOM_STATE(1);
 
     final int index;
 
@@ -406,79 +407,6 @@ public class GeneratedCameraXLibrary {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class ExposureCompensationRange {
-    private @NonNull Long minCompensation;
-
-    public @NonNull Long getMinCompensation() {
-      return minCompensation;
-    }
-
-    public void setMinCompensation(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"minCompensation\" is null.");
-      }
-      this.minCompensation = setterArg;
-    }
-
-    private @NonNull Long maxCompensation;
-
-    public @NonNull Long getMaxCompensation() {
-      return maxCompensation;
-    }
-
-    public void setMaxCompensation(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"maxCompensation\" is null.");
-      }
-      this.maxCompensation = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    ExposureCompensationRange() {}
-
-    public static final class Builder {
-
-      private @Nullable Long minCompensation;
-
-      public @NonNull Builder setMinCompensation(@NonNull Long setterArg) {
-        this.minCompensation = setterArg;
-        return this;
-      }
-
-      private @Nullable Long maxCompensation;
-
-      public @NonNull Builder setMaxCompensation(@NonNull Long setterArg) {
-        this.maxCompensation = setterArg;
-        return this;
-      }
-
-      public @NonNull ExposureCompensationRange build() {
-        ExposureCompensationRange pigeonReturn = new ExposureCompensationRange();
-        pigeonReturn.setMinCompensation(minCompensation);
-        pigeonReturn.setMaxCompensation(maxCompensation);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(2);
-      toListResult.add(minCompensation);
-      toListResult.add(maxCompensation);
-      return toListResult;
-    }
-
-    static @NonNull ExposureCompensationRange fromList(@NonNull ArrayList<Object> list) {
-      ExposureCompensationRange pigeonResult = new ExposureCompensationRange();
-      Object minCompensation = list.get(0);
-      pigeonResult.setMinCompensation((minCompensation == null) ? null : ((minCompensation instanceof Integer) ? (Integer) minCompensation : (Long) minCompensation));
-      Object maxCompensation = list.get(1);
-      pigeonResult.setMaxCompensation((maxCompensation == null) ? null : ((maxCompensation instanceof Integer) ? (Integer) maxCompensation : (Long) maxCompensation));
-      return pigeonResult;
-    }
-  }
-
   public interface Result<T> {
     @SuppressWarnings("UnknownNullness")
     void success(T result);
@@ -594,7 +522,7 @@ public class GeneratedCameraXLibrary {
     Long getSensorRotationDegrees(@NonNull Long identifier);
 
     @NonNull 
-    Long getLiveCameraState(@NonNull Long identifier);
+    Long getCameraState(@NonNull Long identifier);
 
     @NonNull 
     Long getExposureState(@NonNull Long identifier);
@@ -635,7 +563,7 @@ public class GeneratedCameraXLibrary {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.CameraInfoHostApi.getLiveCameraState", getCodec());
+                binaryMessenger, "dev.flutter.pigeon.CameraInfoHostApi.getCameraState", getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -643,7 +571,7 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
                 try {
-                  Long output = api.getLiveCameraState((identifierArg == null) ? null : identifierArg.longValue());
+                  Long output = api.getCameraState((identifierArg == null) ? null : identifierArg.longValue());
                   wrapped.add(0, output);
                 }
  catch (Throwable exception) {
@@ -1651,85 +1579,6 @@ public class GeneratedCameraXLibrary {
     }
   }
 
-  private static class ExposureStateFlutterApiCodec extends StandardMessageCodec {
-    public static final ExposureStateFlutterApiCodec INSTANCE = new ExposureStateFlutterApiCodec();
-
-    private ExposureStateFlutterApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return ExposureCompensationRange.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof ExposureCompensationRange) {
-        stream.write(128);
-        writeValue(stream, ((ExposureCompensationRange) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
-  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
-  public static class ExposureStateFlutterApi {
-    private final @NonNull BinaryMessenger binaryMessenger;
-
-    public ExposureStateFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
-      this.binaryMessenger = argBinaryMessenger;
-    }
-
-    /** Public interface for sending reply. */ 
-    @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
-      void reply(T reply);
-    }
-    /** The codec used by ExposureStateFlutterApi. */
-    static @NonNull MessageCodec<Object> getCodec() {
-      return ExposureStateFlutterApiCodec.INSTANCE;
-    }
-    public void create(@NonNull Long identifierArg, @NonNull ExposureCompensationRange exposureCompensationRangeArg, @NonNull Double exposureCompensationStepArg, @NonNull Reply<Void> callback) {
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.ExposureStateFlutterApi.create", getCodec());
-      channel.send(
-          new ArrayList<Object>(Arrays.asList(identifierArg, exposureCompensationRangeArg, exposureCompensationStepArg)),
-          channelReply -> callback.reply(null));
-    }
-  }
-  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
-  public static class ZoomStateFlutterApi {
-    private final @NonNull BinaryMessenger binaryMessenger;
-
-    public ZoomStateFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
-      this.binaryMessenger = argBinaryMessenger;
-    }
-
-    /** Public interface for sending reply. */ 
-    @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
-      void reply(T reply);
-    }
-    /** The codec used by ZoomStateFlutterApi. */
-    static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
-    }
-    public void create(@NonNull Long identifierArg, @NonNull Double minZoomRatioArg, @NonNull Double maxZoomRatioArg, @NonNull Reply<Void> callback) {
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.ZoomStateFlutterApi.create", getCodec());
-      channel.send(
-          new ArrayList<Object>(Arrays.asList(identifierArg, minZoomRatioArg, maxZoomRatioArg)),
-          channelReply -> callback.reply(null));
-    }
-  }
-
   private static class ImageAnalysisHostApiCodec extends StandardMessageCodec {
     public static final ImageAnalysisHostApiCodec INSTANCE = new ImageAnalysisHostApiCodec();
 
@@ -1973,6 +1822,33 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
+  private static class LiveDataHostApiCodec extends StandardMessageCodec {
+    public static final LiveDataHostApiCodec INSTANCE = new LiveDataHostApiCodec();
+
+    private LiveDataHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return LiveDataSupportedTypeData.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof LiveDataSupportedTypeData) {
+        stream.write(128);
+        writeValue(stream, ((LiveDataSupportedTypeData) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface LiveDataHostApi {
 
@@ -1980,9 +1856,12 @@ public class GeneratedCameraXLibrary {
 
     void removeObservers(@NonNull Long identifier);
 
+    @Nullable 
+    Long getValue(@NonNull Long identifier, @NonNull LiveDataSupportedTypeData type);
+
     /** The codec used by LiveDataHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return LiveDataHostApiCodec.INSTANCE;
     }
     /**Sets up an instance of `LiveDataHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable LiveDataHostApi api) {
@@ -2024,6 +1903,31 @@ public class GeneratedCameraXLibrary {
                 try {
                   api.removeObservers((identifierArg == null) ? null : identifierArg.longValue());
                   wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.LiveDataHostApi.getValue", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                LiveDataSupportedTypeData typeArg = (LiveDataSupportedTypeData) args.get(1);
+                try {
+                  Long output = api.getValue((identifierArg == null) ? null : identifierArg.longValue(), typeArg);
+                  wrapped.add(0, output);
                 }
  catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

@@ -56,8 +56,7 @@ void main() {
       verify(mockApi.getSensorRotationDegrees(0));
     });
 
-    test('getLiveCameraState makes call to retrieve live camera state',
-        () async {
+    test('getCameraState makes call to retrieve live camera state', () async {
       final MockTestCameraInfoHostApi mockApi = MockTestCameraInfoHostApi();
       TestCameraInfoHostApi.setup(mockApi);
 
@@ -82,12 +81,11 @@ void main() {
         onCopy: (_) => MockLiveData<CameraState>(),
       );
 
-      when(mockApi.getLiveCameraState(cameraIdentifier))
+      when(mockApi.getCameraState(cameraIdentifier))
           .thenReturn(liveCameraStateIdentifier);
 
-      expect(
-          await cameraInfo.getLiveCameraState(), equals(mockLiveCameraState));
-      verify(mockApi.getLiveCameraState(cameraIdentifier));
+      expect(await cameraInfo.getCameraState(), equals(mockLiveCameraState));
+      verify(mockApi.getCameraState(cameraIdentifier));
     });
 
     test('getExposureState makes call to retrieve expected ExposureState',

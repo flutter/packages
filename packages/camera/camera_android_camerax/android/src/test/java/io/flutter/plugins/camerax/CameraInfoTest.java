@@ -60,7 +60,7 @@ public class CameraInfoTest {
   }
 
   @Test
-  public void getLiveCameraState_makesCallToRetrieveLiveCameraState() {
+  public void getCameraState_makesCallToRetrieveLiveCameraState() {
     final CameraInfoHostApiImpl cameraInfoHostApiImpl =
         new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
     final LiveDataFlutterApiWrapper mockLiveDataFlutterApiWrapper =
@@ -74,7 +74,7 @@ public class CameraInfoTest {
     when(mockCameraInfo.getCameraState()).thenReturn(mockLiveCameraState);
 
     final Long liveCameraStateIdentifier =
-        cameraInfoHostApiImpl.getLiveCameraState(mockCameraInfoIdentifier);
+        cameraInfoHostApiImpl.getCameraState(mockCameraInfoIdentifier);
 
     verify(mockLiveDataFlutterApiWrapper)
         .create(eq(mockLiveCameraState), eq(LiveDataSupportedType.CAMERA_STATE), any());

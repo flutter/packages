@@ -63,20 +63,11 @@ class CameraStateTypeData {
 
 enum LiveDataSupportedType {
   cameraState,
+  zoomState,
 }
 
 class LiveDataSupportedTypeData {
   late LiveDataSupportedType value;
-}
-
-class ExposureCompensationRange {
-  ExposureCompensationRange({
-    required this.minCompensation,
-    required this.maxCompensation,
-  });
-
-  int minCompensation;
-  int maxCompensation;
 }
 
 class ExposureCompensationRange {
@@ -111,7 +102,7 @@ abstract class JavaObjectFlutterApi {
 abstract class CameraInfoHostApi {
   int getSensorRotationDegrees(int identifier);
 
-  int getLiveCameraState(int identifier);
+  int getCameraState(int identifier);
 
   int getExposureState(int identifier);
 
@@ -224,19 +215,6 @@ abstract class ZoomStateFlutterApi {
   void create(int identifier, double minZoomRatio, double maxZoomRatio);
 }
 
-@FlutterApi()
-abstract class ExposureStateFlutterApi {
-  void create(
-      int identifier,
-      ExposureCompensationRange exposureCompensationRange,
-      double exposureCompensationStep);
-}
-
-@FlutterApi()
-abstract class ZoomStateFlutterApi {
-  void create(int identifier, double minZoomRatio, double maxZoomRatio);
-}
-
 @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
 abstract class ImageAnalysisHostApi {
   void create(int identifier, ResolutionInfo? targetResolutionIdentifier);
@@ -271,6 +249,8 @@ abstract class LiveDataHostApi {
   void observe(int identifier, int observerIdentifier);
 
   void removeObservers(int identifier);
+
+  int? getValue(int identifier, LiveDataSupportedTypeData type);
 }
 
 @FlutterApi()

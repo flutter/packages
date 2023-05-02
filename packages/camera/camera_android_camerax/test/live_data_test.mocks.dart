@@ -3,6 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
 import 'test_camerax_library.g.dart' as _i2;
@@ -50,6 +51,18 @@ class MockTestLiveDataHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  int? getValue(
+    int? identifier,
+    _i3.LiveDataSupportedTypeData? type,
+  ) =>
+      (super.noSuchMethod(Invocation.method(
+        #getValue,
+        [
+          identifier,
+          type,
+        ],
+      )) as int?);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
