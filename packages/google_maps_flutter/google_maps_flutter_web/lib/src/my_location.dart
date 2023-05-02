@@ -5,7 +5,7 @@
 part of google_maps_flutter_web;
 
 // Default values for when the get current location fails
-final LatLng _nullLatLng = LatLng(0, 0);
+const LatLng _nullLatLng = LatLng(0, 0);
 Geolocation _geolocation = window.navigator.geolocation;
 
 // Watch current location and update blue dot
@@ -34,7 +34,7 @@ Future<void> _displayAndWatchMyLocation(MarkersController controller) async {
 // Get current location
 Future<LatLng> _getCurrentLocation() async {
   final Geoposition location = await _geolocation.getCurrentPosition(
-    timeout: const Duration(seconds: 5),
+    timeout: const Duration(seconds: 30),
   );
   return LatLng(
     location.coords?.latitude?.toDouble() ?? _nullLatLng.latitude,
