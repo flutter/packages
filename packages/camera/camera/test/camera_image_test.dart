@@ -162,6 +162,31 @@ void main() {
       });
       expect(cameraImage.format.group, ImageFormatGroup.nv21);
     });
+
+    test('$CameraImage has ImageFormatGroup.bgra8888 for iOS', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      final CameraImage cameraImage =
+          CameraImage.fromPlatformData(<dynamic, dynamic>{
+        'format': 1111970369,
+        'height': 1,
+        'width': 4,
+        'lensAperture': 1.8,
+        'sensorExposureTime': 9991324,
+        'sensorSensitivity': 92.0,
+        'planes': <dynamic>[
+          <dynamic, dynamic>{
+            'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
+            'bytesPerPixel': 1,
+            'bytesPerRow': 4,
+            'height': 1,
+            'width': 4
+          }
+        ]
+      });
+      expect(cameraImage.format.group, ImageFormatGroup.bgra8888);
+    });
+
     test('$CameraImage has ImageFormatGroup.unknown', () {
       final CameraImage cameraImage =
           CameraImage.fromPlatformData(<dynamic, dynamic>{
