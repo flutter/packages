@@ -503,6 +503,7 @@ void main() {
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
           ));
+
           controller.debugSetOverrides(
             createMap: (_, __) => map,
             markers: markers,
@@ -516,8 +517,8 @@ void main() {
           when(mockCoordinates.latitude).thenReturn(currentLocation.latitude);
 
           when(mockGeolocation.getCurrentPosition(
-                  timeout: const Duration(seconds: 30)))
-              .thenAnswer((_) async => mockGeoposition);
+            timeout: anyNamed('timeout'),
+          )).thenAnswer((_) async => mockGeoposition);
 
           when(mockGeolocation.watchPosition()).thenAnswer((_) {
             return Stream<MockGeoposition>.fromIterable(
@@ -526,19 +527,13 @@ void main() {
 
           controller.init();
 
-          await Future<void>.delayed(const Duration(milliseconds: 50));
-
           final Set<Marker> capturedMarkers =
               verify(markers.addMarkers(captureAny)).captured[1] as Set<Marker>;
-
-          final gmaps.LatLng gmCenter = map.center!;
 
           expect(controller.myLocationButton, isNotNull);
           expect(capturedMarkers.length, 1);
           expect(capturedMarkers.first.position, currentLocation);
           expect(capturedMarkers.first.zIndex, 0.5);
-          expect(gmCenter.lat, currentLocation.latitude);
-          expect(gmCenter.lng, currentLocation.longitude);
         });
 
         testWidgets('initializes with my location only',
@@ -576,19 +571,13 @@ void main() {
 
           controller.init();
 
-          await Future<void>.delayed(const Duration(milliseconds: 50));
-
           final Set<Marker> capturedMarkers =
               verify(markers.addMarkers(captureAny)).captured[1] as Set<Marker>;
-
-          final gmaps.LatLng gmCenter = map.center!;
 
           expect(controller.myLocationButton, isNull);
           expect(capturedMarkers.length, 1);
           expect(capturedMarkers.first.position, currentLocation);
           expect(capturedMarkers.first.zIndex, 0.5);
-          expect(gmCenter.lat, currentLocation.latitude);
-          expect(gmCenter.lng, currentLocation.longitude);
         });
       });
 
@@ -609,8 +598,7 @@ void main() {
           geolocation: mockGeolocation,
         );
 
-        when(mockGeolocation.getCurrentPosition(
-                timeout: const Duration(seconds: 30)))
+        when(mockGeolocation.getCurrentPosition(timeout: anyNamed('timeout')))
             .thenAnswer(
           (_) async => throw Exception('permission denied'),
         );

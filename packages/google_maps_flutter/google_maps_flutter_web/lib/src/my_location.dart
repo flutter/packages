@@ -33,7 +33,9 @@ Future<void> _displayAndWatchMyLocation(MarkersController controller) async {
 
 // Get current location
 Future<LatLng> _getCurrentLocation() async {
-  final Geoposition location = await _geolocation.getCurrentPosition();
+  final Geoposition location = await _geolocation.getCurrentPosition(
+    timeout: const Duration(seconds: 5),
+  );
   return LatLng(
     location.coords?.latitude?.toDouble() ?? _nullLatLng.latitude,
     location.coords?.longitude?.toDouble() ?? _nullLatLng.longitude,
