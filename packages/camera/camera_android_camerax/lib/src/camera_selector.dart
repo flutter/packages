@@ -99,6 +99,9 @@ class CameraSelector extends JavaObject {
 /// Host API implementation of [CameraSelector].
 class CameraSelectorHostApiImpl extends CameraSelectorHostApi {
   /// Constructs a [CameraSelectorHostApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   CameraSelectorHostApiImpl(
       {this.binaryMessenger, InstanceManager? instanceManager})
       : super(binaryMessenger: binaryMessenger) {

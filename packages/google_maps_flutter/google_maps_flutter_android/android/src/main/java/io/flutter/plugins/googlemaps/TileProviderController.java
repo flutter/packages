@@ -84,9 +84,12 @@ class TileProviderController implements TileProvider {
     public void error(String errorCode, String errorMessage, Object data) {
       Log.e(
           TAG,
-          String.format(
-              "Can't get tile: errorCode = %s, errorMessage = %s, date = %s",
-              errorCode, errorCode, data));
+          "Can't get tile: errorCode = "
+              + errorCode
+              + ", errorMessage = "
+              + errorCode
+              + ", date = "
+              + data);
       result = null;
       countDownLatch.countDown();
     }

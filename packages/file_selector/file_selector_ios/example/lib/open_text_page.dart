@@ -15,7 +15,7 @@ class OpenTextPage extends StatelessWidget {
     const XTypeGroup typeGroup = XTypeGroup(
       label: 'text',
       extensions: <String>['txt', 'json'],
-      macUTIs: <String>['public.text'],
+      uniformTypeIdentifiers: <String>['public.text'],
     );
     final XFile? file = await FileSelectorPlatform.instance
         .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);

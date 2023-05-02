@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         applicationId "dev.flutter.packages.animations.example"
-        minSdkVersion 16
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 32
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
