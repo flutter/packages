@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraState;
@@ -74,14 +75,14 @@ public class ObserverFlutterApiWrapper {
       zoomStateFlutterApiImpl.create(state, reply -> {});
     } else {
       throw new UnsupportedOperationException(
-          "The type of value in observance is not wrapped by this plugin.");
+          "The type of value that was observed is not handled by this plugin.");
     }
 
     Long observerIdentifier = instanceManager.getIdentifierForStrongReference(instance);
     if (observerIdentifier == null) {
       Log.e(
           TAG,
-          "The Observer that just received a callback has been garbage collected. Please create a new instance to receive any further data changes");
+          "The Observer that received a callback has been garbage collected. Please create a new instance to receive any further data changes.");
       return;
     }
 
@@ -91,11 +92,7 @@ public class ObserverFlutterApiWrapper {
         callback);
   }
 
-  /**
-   * Sets the Flutter API used to send messages to Dart.
-   *
-   * <p>This is only visible for testing.
-   */
+  /** Sets the Flutter API used to send messages to Dart. */
   @VisibleForTesting
   void setApi(@NonNull ObserverFlutterApi api) {
     this.observerFlutterApi = api;

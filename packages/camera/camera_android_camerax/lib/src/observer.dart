@@ -118,6 +118,8 @@ class ObserverFlutterApiImpl implements ObserverFlutterApi {
     final Observer<dynamic> instance =
         _instanceManager.getInstanceWithWeakReference(identifier)!;
 
+    // This call is safe because the onChanged callback will check the type
+    // of the instance to ensure it is expected before proceeding.
     // ignore: avoid_dynamic_calls, void_checks
     instance.onChanged(
       _instanceManager.getInstanceWithWeakReference<Object>(valueIdentifier)!,

@@ -91,7 +91,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraEventStreamController.stream
           .where((CameraEvent event) => event.cameraId == cameraId);
 
-  /// Conditional used to create detached [Observer]s for testing their
+  /// Conditional used to create detached objects for testing their
   /// callback methods.
   @visibleForTesting
   bool createDetachedObjectForTesting = false;
@@ -338,7 +338,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (zoomState == null) {
       throw CameraException(
         'zoomStateNotSet',
-        'No explicit zoomState has been set on the LiveData instance for the camera in use.',
+        'No explicit ZoomState has been set on the LiveData instance for the camera in use.',
       );
     }
     return zoomState.maxZoomRatio;
@@ -355,7 +355,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (zoomState == null) {
       throw CameraException(
         'zoomStateNotSet',
-        'No explicit zoomState has been set on the LiveData instance for the camera in use.',
+        'No explicit ZoomState has been set on the LiveData instance for the camera in use.',
       );
     }
     return zoomState.minZoomRatio;

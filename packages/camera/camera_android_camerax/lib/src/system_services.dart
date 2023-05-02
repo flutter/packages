@@ -95,9 +95,6 @@ class SystemServicesHostApiImpl extends SystemServicesHostApi {
 /// Flutter API implementation of [SystemServices].
 class SystemServicesFlutterApiImpl implements SystemServicesFlutterApi {
   /// Constructs an [SystemServicesFlutterApiImpl].
-  ///
-  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
-  /// which routes to the host platform.
   SystemServicesFlutterApiImpl();
 
   /// Callback method for any changes in device orientation.

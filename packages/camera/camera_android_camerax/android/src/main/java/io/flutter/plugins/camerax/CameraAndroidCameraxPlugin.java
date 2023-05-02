@@ -108,7 +108,6 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     if (activity instanceof LifecycleOwner) {
       processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
       liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
-
     } else {
       ProxyLifecycleProvider proxyLifecycleProvider = new ProxyLifecycleProvider(activity);
       processCameraProviderHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);

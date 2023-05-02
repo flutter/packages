@@ -53,11 +53,7 @@ public class LiveDataFlutterApiWrapper {
     }
   }
 
-  /**
-   * Sets the Flutter API used to send messages to Dart.
-   *
-   * <p>This is only visible for testing.
-   */
+  /** Sets the Flutter API used to send messages to Dart. */
   @VisibleForTesting
   void setApi(@NonNull LiveDataFlutterApi api) {
     this.liveDataFlutterApi = api;

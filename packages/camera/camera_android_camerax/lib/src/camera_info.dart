@@ -44,7 +44,7 @@ class CameraInfo extends JavaObject {
   Future<ExposureState> getExposureState() =>
       _api.getExposureStateFromInstance(this);
 
-  /// Gets the zoom state of the camera.
+  /// Gets the live zoom state of the camera.
   Future<LiveData<ZoomState>> getZoomState() =>
       _api.getZoomStateFromInstance(this);
 }
@@ -93,7 +93,7 @@ class _CameraInfoHostApiImpl extends CameraInfoHostApi {
         .getInstanceWithWeakReference<ExposureState>(exposureStateIdentifier)!;
   }
 
-  /// Gets the [ZoomState] of the specified [CameraInfo] instance.
+  /// Gets the [LiveData<ZoomState>] of the specified [CameraInfo] instance.
   Future<LiveData<ZoomState>> getZoomStateFromInstance(
       CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);

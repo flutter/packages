@@ -52,8 +52,8 @@ public class CameraStateFlutterApiWrapper {
     }
 
     if (error != null) {
-      // We need to create a CameraStateError if there is a problem with the current camera
-      // state to send to the Dart side.
+      // if there is a problem with the current camera state, we need to create a CameraStateError
+      // to send to the Dart side.
       new CameraStateErrorFlutterApiWrapper(binaryMessenger, instanceManager)
           .create(error, Long.valueOf(error.getCode()), reply -> {});
     }
@@ -65,7 +65,7 @@ public class CameraStateFlutterApiWrapper {
         callback);
   }
 
-  /** Convert CameraX CameraState.Type to CameraStateType that the Dart side understands. */
+  /** Converts CameraX CameraState.Type to CameraStateType that the Dart side understands. */
   public static CameraStateType getCameraStateType(@NonNull CameraState.Type type) {
     CameraStateType cameraStateType = null;
     switch (type) {

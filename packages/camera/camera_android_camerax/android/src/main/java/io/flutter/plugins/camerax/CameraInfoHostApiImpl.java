@@ -76,8 +76,8 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
   }
 
   /**
-   * Retrieves the current {@link ZoomState} value of the {@link CameraInfo} with the specified
-   * identifier.
+   * Retrieves the {@link LiveData} of the {@link ZoomState} of the {@link CameraInfo} with the
+   * specified identifier.
    */
   @NonNull
   @Override

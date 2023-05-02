@@ -61,6 +61,22 @@ class CameraStateTypeData {
   late CameraStateType value;
 }
 
+/// The types (T) properly wrapped to be used as a LiveData<T>.
+///
+/// If you need to add another type to support a type S to use a LiveData<S> in
+/// this plugin, ensure the following is done on the Dart side:
+///
+///  * In `../lib/src/live_data.dart`, add new cases for S in
+///    `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of
+///    type S from a LiveData<S> instance and in `LiveDataFlutterApiImpl#create`
+///    to create the expected type of LiveData<S> when requested.
+///
+/// On the native side, ensure the following is done:
+///
+///  * Update `LiveDataHostApiImpl#getValue` is updated to properly return
+///    identifiers for instances of type S.
+///  * Update `ObserverFlutterApiWrapper#onChanged` to properly handle receiving
+///    calls with instances of type S if a LiveData<S> instance is observed.
 enum LiveDataSupportedType {
   cameraState,
   zoomState,
