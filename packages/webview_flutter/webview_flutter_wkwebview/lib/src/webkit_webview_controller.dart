@@ -239,8 +239,8 @@ class WebKitWebViewController extends PlatformWebViewController {
             final UrlChangeCallback? urlChangeCallback =
                 controller._currentNavigationDelegate?._onUrlChange;
             if (urlChangeCallback != null) {
-              final NSUrl url = change[NSKeyValueChangeKey.newValue]! as NSUrl;
-              urlChangeCallback(UrlChange(url: await url.getAbsoluteString()));
+              final NSUrl? url = change[NSKeyValueChangeKey.newValue] as NSUrl?;
+              urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
             }
             break;
         }

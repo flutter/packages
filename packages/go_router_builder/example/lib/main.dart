@@ -40,13 +40,13 @@ class App extends StatelessWidget {
     redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = loginInfo.loggedIn;
 
-      // check just the subloc in case there are query parameters
+      // check just the matchedLocation in case there are query parameters
       final String loginLoc = const LoginRoute().location;
-      final bool goingToLogin = state.subloc == loginLoc;
+      final bool goingToLogin = state.matchedLocation == loginLoc;
 
       // the user is not logged in and not headed to /login, they need to login
       if (!loggedIn && !goingToLogin) {
-        return LoginRoute(fromPage: state.subloc).location;
+        return LoginRoute(fromPage: state.matchedLocation).location;
       }
 
       // the user is logged in and headed to /login, no need to login again
