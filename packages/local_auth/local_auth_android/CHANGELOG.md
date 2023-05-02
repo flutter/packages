@@ -1,3 +1,7 @@
+## 1.0.28
+
+* Removes unused resources as indicated by Android lint warnings.
+
 ## 1.0.27
 
 * Fixes compatibility with AGP versions older than 4.2.

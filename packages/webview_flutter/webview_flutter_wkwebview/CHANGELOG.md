@@ -1,3 +1,8 @@
+## 3.4.1
+
+* Fixes internal type conversion error.
+* Adds internal unknown enum values to handle api updates.
+
 ## 3.4.0
 
 * Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
