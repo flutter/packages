@@ -1,3 +1,7 @@
+## 0.8.6+12
+
+* Fixes Java warnings.
+
 ## 0.8.6+11
 
 * Updates gradle to 7.6.1.

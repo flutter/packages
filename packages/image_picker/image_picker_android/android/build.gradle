@@ -36,7 +36,6 @@ android {
         checkAllWarnings true
         warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
-        baseline file("lint-baseline.xml")
     }
     dependencies {
         implementation 'androidx.core:core:1.9.0'
