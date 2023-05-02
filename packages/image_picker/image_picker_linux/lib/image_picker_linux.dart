@@ -93,7 +93,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
         const XTypeGroup typeGroup =
-            XTypeGroup(label: 'images', mimeTypes: <String>['image/*']);
+            XTypeGroup(label: 'Images', mimeTypes: <String>['image/*']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -123,7 +123,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
             maxDuration: maxDuration);
       case ImageSource.gallery:
         const XTypeGroup typeGroup =
-            XTypeGroup(label: 'videos', mimeTypes: <String>['video/*']);
+            XTypeGroup(label: 'Videos', mimeTypes: <String>['video/*']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -143,7 +143,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
     int? imageQuality,
   }) async {
     const XTypeGroup typeGroup =
-        XTypeGroup(label: 'images', mimeTypes: <String>['image/*']);
+        XTypeGroup(label: 'Images', mimeTypes: <String>['image/*']);
     final List<XFile> files = await fileSelector
         .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     return files;

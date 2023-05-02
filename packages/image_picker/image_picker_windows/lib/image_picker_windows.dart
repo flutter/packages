@@ -122,7 +122,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
         const XTypeGroup typeGroup =
-            XTypeGroup(label: 'images', extensions: imageFormats);
+            XTypeGroup(label: 'Images', extensions: imageFormats);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -152,7 +152,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
             maxDuration: maxDuration);
       case ImageSource.gallery:
         const XTypeGroup typeGroup =
-            XTypeGroup(label: 'videos', extensions: videoFormats);
+            XTypeGroup(label: 'Videos', extensions: videoFormats);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -172,7 +172,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     int? imageQuality,
   }) async {
     const XTypeGroup typeGroup =
-        XTypeGroup(label: 'images', extensions: imageFormats);
+        XTypeGroup(label: 'Images', extensions: imageFormats);
     final List<XFile> files = await fileSelector
         .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     return files;

@@ -94,8 +94,8 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
         // TODO(stuartmorgan): Add a native implementation that can use
         // PHPickerViewController on macOS 13+, with this as a fallback for
         // older OS versions: https://github.com/flutter/flutter/issues/125829.
-        const XTypeGroup typeGroup = XTypeGroup(
-            label: 'images', uniformTypeIdentifiers: <String>['public.image']);
+        const XTypeGroup typeGroup =
+            XTypeGroup(uniformTypeIdentifiers: <String>['public.image']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -124,8 +124,8 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
             preferredCameraDevice: preferredCameraDevice,
             maxDuration: maxDuration);
       case ImageSource.gallery:
-        const XTypeGroup typeGroup = XTypeGroup(
-            label: 'videos', uniformTypeIdentifiers: <String>['public.movie']);
+        const XTypeGroup typeGroup =
+            XTypeGroup(uniformTypeIdentifiers: <String>['public.movie']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -147,8 +147,8 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     // TODO(stuartmorgan): Add a native implementation that can use
     // PHPickerViewController on macOS 13+, with this as a fallback for
     // older OS versions: https://github.com/flutter/flutter/issues/125829.
-    const XTypeGroup typeGroup = XTypeGroup(
-        label: 'images', uniformTypeIdentifiers: <String>['public.image']);
+    const XTypeGroup typeGroup =
+        XTypeGroup(uniformTypeIdentifiers: <String>['public.image']);
     final List<XFile> files = await fileSelector
         .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     return files;
