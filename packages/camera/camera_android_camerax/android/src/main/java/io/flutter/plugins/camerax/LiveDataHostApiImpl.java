@@ -14,7 +14,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataHostApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedType;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.LiveDataSupportedTypeData;
-
 import java.util.Objects;
 
 /**
@@ -65,7 +64,7 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   }
 
   @Override
-  @Nullable 
+  @Nullable
   public Long getValue(@NonNull Long identifier, @NonNull LiveDataSupportedTypeData type) {
     Object value = getLiveDataInstance(identifier).getValue();
     if (value == null) {
@@ -73,17 +72,24 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
     }
 
     LiveDataSupportedType valueType = type.getValue();
-    switch(valueType) {
+    switch (valueType) {
       case CAMERA_STATE:
         CameraState cameraState = (CameraState) value;
-        new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager).create(cameraState, CameraStateFlutterApiWrapper.getCameraStateType(cameraState.getType()), cameraState.getError(), reply -> {});
+        new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager)
+            .create(
+                cameraState,
+                CameraStateFlutterApiWrapper.getCameraStateType(cameraState.getType()),
+                cameraState.getError(),
+                reply -> {});
         return instanceManager.getIdentifierForStrongReference(cameraState);
       case ZOOM_STATE:
         ZoomState zoomState = (ZoomState) value;
-        new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager).create(zoomState, reply -> {});
+        new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager)
+            .create(zoomState, reply -> {});
         return instanceManager.getIdentifierForStrongReference(zoomState);
       default:
-        throw new IllegalArgumentException("The type of LiveData whose value was requested is not supported.");
+        throw new IllegalArgumentException(
+            "The type of LiveData whose value was requested is not supported.");
     }
   }
 

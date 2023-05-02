@@ -86,7 +86,8 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
         (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
     LiveData<ZoomState> zoomState = cameraInfo.getZoomState();
 
-    LiveDataFlutterApiWrapper liveDataFlutterApiWrapper = new LiveDataFlutterApiWrapper(binaryMessenger, instanceManager);
+    LiveDataFlutterApiWrapper liveDataFlutterApiWrapper =
+        new LiveDataFlutterApiWrapper(binaryMessenger, instanceManager);
     liveDataFlutterApiWrapper.create(zoomState, LiveDataSupportedType.ZOOM_STATE, reply -> {});
 
     return instanceManager.getIdentifierForStrongReference(zoomState);

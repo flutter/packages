@@ -20,6 +20,9 @@ import java.util.Objects;
  * arguments of callbacks methods to a Dart instance.
  */
 public class ObserverFlutterApiWrapper {
+
+  private static final String TAG = "ObserverFlutterApiWrapper";
+
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
   private ObserverFlutterApi observerFlutterApi;
@@ -69,14 +72,21 @@ public class ObserverFlutterApiWrapper {
         zoomStateFlutterApiImpl = new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager);
       }
       zoomStateFlutterApiImpl.create(state, reply -> {});
-    }
-    else {
+    } else {
       throw new UnsupportedOperationException(
           "The type of value in observance is not wrapped by this plugin.");
     }
 
+    Long observerIdentifier = instanceManager.getIdentifierForStrongReference(instance);
+    if (observerIdentifier == null) {
+      Log.e(
+          TAG,
+          "The Observer that just received a callback has been garbage collected. Please create a new instance to receive any further data changes");
+      return;
+    }
+
     observerFlutterApi.onChanged(
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        Objects.requireNonNull(observerIdentifier),
         instanceManager.getIdentifierForStrongReference(value),
         callback);
   }

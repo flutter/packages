@@ -89,45 +89,46 @@ public class LiveDataTest {
   @SuppressWarnings("unchecked")
   public void getValue_returnsExpectedValue() {
     final LiveDataHostApiImpl hostApi =
-      new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
+        new LiveDataHostApiImpl(mockBinaryMessenger, instanceManager);
 
     for (LiveDataSupportedType supportedType : LiveDataSupportedType.values()) {
-      LiveDataSupportedTypeData typeData = new LiveDataSupportedTypeData.Builder().setValue(supportedType).build();
+      LiveDataSupportedTypeData typeData =
+          new LiveDataSupportedTypeData.Builder().setValue(supportedType).build();
 
-      switch(supportedType) {
-          case CAMERA_STATE:
-            CameraState mockCameraState = mock(CameraState.class);
-            final Long mockCameraStateIdentifier = 56L;
-            final long instanceIdentifier = 33;
+      switch (supportedType) {
+        case CAMERA_STATE:
+          CameraState mockCameraState = mock(CameraState.class);
+          final Long mockCameraStateIdentifier = 56L;
+          final long instanceIdentifier = 33;
 
-            instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
-            instanceManager.addDartCreatedInstance(mockCameraState, mockCameraStateIdentifier);
+          instanceManager.addDartCreatedInstance(mockLiveData, instanceIdentifier);
+          instanceManager.addDartCreatedInstance(mockCameraState, mockCameraStateIdentifier);
 
-            when(mockLiveData.getValue()).thenReturn(mockCameraState);
-            when(mockCameraState.getType()).thenReturn(CameraState.Type.CLOSED);
-            when(mockCameraState.getError()).thenReturn(null);
+          when(mockLiveData.getValue()).thenReturn(mockCameraState);
+          when(mockCameraState.getType()).thenReturn(CameraState.Type.CLOSED);
+          when(mockCameraState.getError()).thenReturn(null);
 
-            assertEquals(hostApi.getValue(instanceIdentifier, typeData), mockCameraStateIdentifier);
-            break;
-          case ZOOM_STATE:
-            final LiveData<ZoomState> mockLiveZoomState = (LiveData<ZoomState>) mock(LiveData.class);
-            ZoomState mockZoomState = mock(ZoomState.class);
-            final Long mockLiveZoomStateIdentifier = 22L;
-            final Long mockZoomStateIdentifier = 8L;
+          assertEquals(hostApi.getValue(instanceIdentifier, typeData), mockCameraStateIdentifier);
+          break;
+        case ZOOM_STATE:
+          final LiveData<ZoomState> mockLiveZoomState = (LiveData<ZoomState>) mock(LiveData.class);
+          ZoomState mockZoomState = mock(ZoomState.class);
+          final Long mockLiveZoomStateIdentifier = 22L;
+          final Long mockZoomStateIdentifier = 8L;
 
-            when(mockLiveZoomState.getValue()).thenReturn(mockZoomState);
-            instanceManager.addDartCreatedInstance(mockLiveZoomState, mockLiveZoomStateIdentifier);
-            instanceManager.addDartCreatedInstance(mockZoomState, mockZoomStateIdentifier);
+          when(mockLiveZoomState.getValue()).thenReturn(mockZoomState);
+          instanceManager.addDartCreatedInstance(mockLiveZoomState, mockLiveZoomStateIdentifier);
+          instanceManager.addDartCreatedInstance(mockZoomState, mockZoomStateIdentifier);
 
-            assertEquals(hostApi.getValue(mockLiveZoomStateIdentifier, typeData), mockZoomStateIdentifier);
-            break;
-          default:
-            // There is a LiveDataSupportedType untested by this method.
-            fail();
-        }
+          assertEquals(
+              hostApi.getValue(mockLiveZoomStateIdentifier, typeData), mockZoomStateIdentifier);
+          break;
+        default:
+          // There is a LiveDataSupportedType untested by this method.
+          fail();
+      }
     }
   }
-
 
   @Test
   public void flutterApiCreate_makesCallToDartToCreateInstance() {
