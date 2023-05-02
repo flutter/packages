@@ -98,11 +98,11 @@ String _stateValueAccess(ParameterElement element) {
   }
 
   if (element.isRequired) {
-    return 'params[${escapeDartString(element.name)}]!';
+    return 'pathParameters[${escapeDartString(element.name)}]!';
   }
 
   if (element.isOptional) {
-    return 'queryParams[${escapeDartString(element.name.kebab)}]';
+    return 'queryParameters[${escapeDartString(element.name.kebab)}]';
   }
 
   throw InvalidGenerationSourceError(
@@ -329,7 +329,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
     if (!parameterElement.isRequired) {
       return '$convertMapValueHelperName('
           '${escapeDartString(parameterElement.name.kebab)}, '
-          'state.queryParams, '
+          'state.queryParameters, '
           '${helperName(paramType)})';
     }
     return '${helperName(paramType)}'
