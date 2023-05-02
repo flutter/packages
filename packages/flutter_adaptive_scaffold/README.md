@@ -49,40 +49,60 @@ animation should use AdaptiveLayout.
         )
     ];
 
-    return BottomNavigationBarTheme(
-        data: const BottomNavigationBarThemeData(
-          unselectedItemColor: Colors.black,
-          selectedItemColor: Colors.black,
-          backgroundColor: Colors.white,
+    return AdaptiveScaffold(
+      // An option to override the default breakpoints used for small, medium,
+      // and large.
+      smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
+      mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
+      largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
+      useDrawer: false,
+      selectedIndex: _selectedTab,
+      onSelectedIndexChange: (int index) {
+        setState(() {
+          _selectedTab = index;
+        });
+      },
+      destinations: const <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.inbox_outlined),
+          selectedIcon: Icon(Icons.inbox),
+          label: 'Inbox',
         ),
-        child: AdaptiveScaffold(
-            // An option to override the default breakpoints used for small, medium,
-            // and large.
-            smallBreakpoint: const WidthPlatformBreakpoint(end: 700),
-            mediumBreakpoint:
-                const WidthPlatformBreakpoint(begin: 700, end: 1000),
-            largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
-            useDrawer: false,
-            destinations: const <NavigationDestination>[
-              NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
-              NavigationDestination(
-                  icon: Icon(Icons.article), label: 'Articles'),
-              NavigationDestination(icon: Icon(Icons.chat), label: 'Chat'),
-              NavigationDestination(
-                  icon: Icon(Icons.video_call), label: 'Video')
-            ],
-            body: (_) => GridView.count(crossAxisCount: 2, children: children),
-            smallBody: (_) => ListView.builder(
-                  itemCount: children.length,
-                  itemBuilder: (_, int idx) => children[idx],
-                ),
-            // Define a default secondaryBody.
-            secondaryBody: (_) =>
-                Container(color: const Color.fromARGB(255, 234, 158, 192)),
-            // Override the default secondaryBody during the smallBreakpoint to be
-            // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
-            // overridden.
-            smallSecondaryBody: AdaptiveScaffold.emptyBuilder));
+        NavigationDestination(
+          icon: Icon(Icons.article_outlined),
+          selectedIcon: Icon(Icons.article),
+          label: 'Articles',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.chat_outlined),
+          selectedIcon: Icon(Icons.chat),
+          label: 'Chat',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.video_call_outlined),
+          selectedIcon: Icon(Icons.video_call),
+          label: 'Video',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
+          label: 'Inbox',
+        ),
+      ],
+      body: (_) => GridView.count(crossAxisCount: 2, children: children),
+      smallBody: (_) => ListView.builder(
+        itemCount: children.length,
+        itemBuilder: (_, int idx) => children[idx],
+      ),
+      // Define a default secondaryBody.
+      secondaryBody: (_) => Container(
+        color: const Color.fromARGB(255, 234, 158, 192),
+      ),
+      // Override the default secondaryBody during the smallBreakpoint to be
+      // empty. Must use AdaptiveScaffold.emptyBuilder to ensure it is properly
+      // overridden.
+      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+    );
   }
 }
 ```
@@ -129,16 +149,33 @@ displayed and the entrance animation and exit animation.
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              selectedIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
+              },
               leading: const Icon(Icons.menu),
               destinations: destinations
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              selectedIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
+              },
               extended: true,
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -154,6 +191,11 @@ displayed and the entrance animation and exit animation.
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
               trailing: trailingNavRail,
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
         },
@@ -184,11 +226,14 @@ displayed and the entrance animation and exit animation.
             key: const Key('Bottom Navigation Small'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
-            builder: (_) => BottomNavigationBarTheme(
-              data: const BottomNavigationBarThemeData(
-                  selectedItemColor: Colors.black),
-              child: AdaptiveScaffold.standardBottomNavigationBar(
-                  destinations: destinations),
+            builder: (_) => AdaptiveScaffold.standardBottomNavigationBar(
+              destinations: destinations,
+              currentIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
+              },
             ),
           )
         },

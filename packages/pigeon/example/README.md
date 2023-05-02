@@ -28,8 +28,11 @@ abstract class BookApi {
 
 ### invocation
 
-This is the call to Pigeon that will ingest `message.dart` and generate the code
-for iOS and Android.
+This an example call to Pigeon that would ingest a defintion file
+`pigeons/message.dart` and generate corresponding output code for each
+supported language. (In actual use, you would not normally use both Objective-C
+and Swift, or both Java and Kotlin, but instead use just the languages matching
+your project.)
 
 ```sh
 flutter pub run pigeon \
@@ -37,9 +40,14 @@ flutter pub run pigeon \
   --dart_out lib/pigeon.dart \
   --objc_header_out ios/Runner/pigeon.h \
   --objc_source_out ios/Runner/pigeon.m \
-  --experimental_swift_out ios/Runner/Pigeon.swift \
-  --java_out ./android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
-  --java_package "dev.flutter.pigeon"
+  --swift_out ios/Runner/Pigeon.swift \
+  --kotlin_out android/app/src/main/kotlin/dev/flutter/pigeon/Pigeon.kt \
+  --kotlin_package "dev.flutter.pigeon" \
+  --java_out android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
+  --java_package "dev.flutter.pigeon" \
+  --cpp_header_out windows/runner/pigeon.h \
+  --cpp_source_out windows/runner/pigeon.cpp \
+  --cpp_namespace pigeon
 ```
 
 ### AppDelegate.m
@@ -66,7 +74,7 @@ from Flutter.
 @end
 
 @implementation AppDelegate
-- (BOOL)application:(UIApplication *)application 
+- (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions {
   MyApi *api = [[MyApi alloc] init];
   BookApiSetup(getFlutterEngine().binaryMessenger, api);
@@ -158,4 +166,4 @@ A full example of using Pigeon for add-to-app with Swift on iOS can be found at
 ## Video player plugin
 
 A full real-world example can also be found in the
-[video_player plugin](https://github.com/flutter/plugins/tree/main/packages/video_player).
+[video_player plugin](https://github.com/flutter/packages/tree/main/packages/video_player).

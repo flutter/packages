@@ -4,6 +4,8 @@
 .packages
 .pub/
 .dart_tool/
+.vscode/
+*.iml
 
 # Gradle?
 .uuid
@@ -12,6 +14,7 @@ pubspec.lock
 
 Podfile.lock
 Pods/
+.symlinks/
 
 *instrumentscli*.trace
 *.cipd
@@ -27,10 +30,27 @@ chrome-trace.json
 flutter_export_environment.sh
 .flutter-plugins*
 local.properties
+keystore.properties
 **/Flutter/Generated.xcconfig
+**/Flutter/App.framework/
+**/Flutter/ephemeral/
+**/Flutter/Flutter.podspec
+**/Flutter/Flutter.framework/
+**/Flutter/flutter_assets/
+
+ServiceDefinitions.json
+xcuserdata/
+**/DerivedData/
 
 generated_plugin_registrant.*
 GeneratedPluginRegistrant.*
 
-# Graddle wrapper
+# Gradle 
 **/gradle-wrapper.jar
+.gradle/
+gradlew
+gradlew.bat
+
+.project
+.classpath
+.settings

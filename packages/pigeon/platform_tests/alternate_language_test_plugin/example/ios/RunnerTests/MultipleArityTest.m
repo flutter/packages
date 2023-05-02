@@ -5,11 +5,7 @@
 @import Flutter;
 @import XCTest;
 
-#ifdef LEGACY_HARNESS
-#import "MultipleArity.gen.h"
-#else
 @import alternate_language_test_plugin;
-#endif
 
 #import "HandlerBinaryMessenger.h"
 
@@ -31,7 +27,7 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"subtraction"];
   [api subtractX:@(30)
                y:@(10)
-      completion:^(NSNumber *_Nonnull result, NSError *_Nullable error) {
+      completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable error) {
         XCTAssertNil(error);
         XCTAssertEqual(20, result.intValue);
         [expectation fulfill];

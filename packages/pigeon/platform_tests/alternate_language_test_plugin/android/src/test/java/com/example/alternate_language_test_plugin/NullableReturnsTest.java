@@ -39,7 +39,7 @@ public class NullableReturnsTest {
             (bytes) -> {
               bytes.rewind();
               @SuppressWarnings("unchecked")
-              ArrayList wrapped = (ArrayList) codec.decodeMessage(bytes);
+              ArrayList<Object> wrapped = (ArrayList<Object>) codec.decodeMessage(bytes);
               assertTrue(wrapped.size() == 1);
             });
   }
@@ -52,8 +52,9 @@ public class NullableReturnsTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
-              ArrayList args =
-                  (ArrayList)
+              @SuppressWarnings("unchecked")
+              ArrayList<Object> args =
+                  (ArrayList<Object>)
                       NullableReturns.NullableArgFlutterApi.getCodec().decodeMessage(message);
               assertNull(args.get(0));
               ByteBuffer replyData =

@@ -466,9 +466,9 @@ double _getScale(GlobalKey key, WidgetTester tester) {
 
 class _FlutterLogoModal extends StatefulWidget {
   const _FlutterLogoModal({
-    Key? key,
+    super.key,
     this.name,
-  }) : super(key: key);
+  });
 
   final String? name;
 

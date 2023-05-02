@@ -11,7 +11,7 @@ import '../widgets/book_list.dart';
 /// A screen that displays a list of books.
 class BooksScreen extends StatefulWidget {
   /// Creates a [BooksScreen].
-  const BooksScreen(this.kind, {Key? key}) : super(key: key);
+  const BooksScreen(this.kind, {super.key});
 
   /// Which tab to display.
   final String kind;

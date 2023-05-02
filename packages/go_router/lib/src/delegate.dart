@@ -50,7 +50,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///
   /// This is used to generate a unique key for each route.
   ///
-  /// For example, it would could be equal to:
+  /// For example, it could be equal to:
   /// ```dart
   /// {
   ///   'family': 1,
@@ -75,26 +75,47 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return false;
   }
 
-  /// Pushes the given location onto the page stack
-  void push(RouteMatchList matches) {
-    assert(matches.last.route is! ShellRoute);
-
+  ValueKey<String> _getNewKeyForPath(String path) {
     // Remap the pageKey to allow any number of the same page on the stack
-    final int count = (_pushCounts[matches.fullpath] ?? 0) + 1;
-    _pushCounts[matches.fullpath] = count;
-    final ValueKey<String> pageKey =
-        ValueKey<String>('${matches.fullpath}-p$count');
-    final ImperativeRouteMatch newPageKeyMatch = ImperativeRouteMatch(
+    final int count = (_pushCounts[path] ?? -1) + 1;
+    _pushCounts[path] = count;
+    return ValueKey<String>('$path-p$count');
+  }
+
+  Future<T?> _push<T extends Object?>(
+      RouteMatchList matches, ValueKey<String> pageKey) async {
+    final ImperativeRouteMatch<T> newPageKeyMatch = ImperativeRouteMatch<T>(
       route: matches.last.route,
-      subloc: matches.last.subloc,
+      matchedLocation: matches.last.matchedLocation,
       extra: matches.last.extra,
       error: matches.last.error,
       pageKey: pageKey,
       matches: matches,
     );
 
-    _matchList.push(newPageKeyMatch);
+    _matchList = _matchList.push(newPageKeyMatch);
+    return newPageKeyMatch.future;
+  }
+
+  void _remove(RouteMatch match) {
+    _matchList = _matchList.remove(match);
+  }
+
+  /// Pushes the given location onto the page stack.
+  ///
+  /// See also:
+  /// * [pushReplacement] which replaces the top-most page of the page stack and
+  ///   always use a new page key.
+  /// * [replace] which replaces the top-most page of the page stack but treats
+  ///   it as the same page. The page key will be reused. This will preserve the
+  ///   state and not run any page animation.
+  Future<T?> push<T extends Object?>(RouteMatchList matches) async {
+    assert(matches.last.route is! ShellRoute);
+
+    final ValueKey<String> pageKey = _getNewKeyForPath(matches.fullPath);
+    final Future<T?> future = _push(matches, pageKey);
     notifyListeners();
+    return future;
   }
 
   /// Returns `true` if the active Navigator can pop.
@@ -134,10 +155,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }
     final Page<Object?> page = route.settings as Page<Object?>;
     final RouteMatch? match = builder.getRouteMatchForPage(page);
-    if (match == null) {
-      return true;
+    assert(match != null);
+    if (match is ImperativeRouteMatch) {
+      match.complete(result);
     }
-    _matchList.remove(match);
+    _remove(match!);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
@@ -148,11 +170,36 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Replaces the top-most page of the page stack with the given one.
   ///
+  /// The page key of the new page will always be different from the old one.
+  ///
   /// See also:
   /// * [push] which pushes the given location onto the page stack.
+  /// * [replace] which replaces the top-most page of the page stack but treats
+  ///   it as the same page. The page key will be reused. This will preserve the
+  ///   state and not run any page animation.
   void pushReplacement(RouteMatchList matches) {
-    _matchList.remove(_matchList.last);
+    assert(matches.last.route is! ShellRoute);
+    _remove(_matchList.last);
     push(matches); // [push] will notify the listeners.
+  }
+
+  /// Replaces the top-most page of the page stack with the given one but treats
+  /// it as the same page.
+  ///
+  /// The page key will be reused. This will preserve the state and not run any
+  /// page animation.
+  ///
+  /// See also:
+  /// * [push] which pushes the given location onto the page stack.
+  /// * [pushReplacement] which replaces the top-most page of the page stack but
+  ///   always uses a new page key.
+  void replace(RouteMatchList matches) {
+    assert(matches.last.route is! ShellRoute);
+    final RouteMatch routeMatch = _matchList.last;
+    final ValueKey<String> pageKey = routeMatch.pageKey;
+    _remove(routeMatch);
+    _push(matches, pageKey);
+    notifyListeners();
   }
 
   /// For internal use; visible for testing only.
@@ -265,21 +312,4 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
     current = root;
     return true;
   }
-}
-
-/// The route match that represent route pushed through [GoRouter.push].
-// TODO(chunhtai): Removes this once imperative API no longer insert route match.
-class ImperativeRouteMatch extends RouteMatch {
-  /// Constructor for [ImperativeRouteMatch].
-  ImperativeRouteMatch({
-    required super.route,
-    required super.subloc,
-    required super.extra,
-    required super.error,
-    required super.pageKey,
-    required this.matches,
-  });
-
-  /// The matches that produces this route match.
-  final RouteMatchList matches;
 }

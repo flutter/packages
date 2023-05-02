@@ -31,7 +31,7 @@ GoRoute(
 To navigate to this route, use
 [go()](https://pub.dev/documentation/go_router/latest/go_router/GoRouter/go.html).
 To learn more about how navigation, visit the
-[Navigation](https://pub.dev/documentation/go_router/topics/Configuration-topic.html)
+[Navigation](https://pub.dev/documentation/go_router/latest/topics/Navigation-topic.html)
 topic.
 
 # Parameters
@@ -43,7 +43,7 @@ the builder callback:
 ```dart
 GoRoute(
   path: '/users/:userId',
-  builder: (context, state) => const UserScreen(id: state.params['userId']),
+  builder: (context, state) => const UserScreen(id: state.pathParameters['userId']),
 ),
 ```
 
@@ -55,7 +55,7 @@ after the `?`), use [GoRouterState][]. For example, a URL path such as
 ```dart
 GoRoute(
   path: '/users',
-  builder: (context, state) => const UsersScreen(filter: state.queryParams['filter']),
+  builder: (context, state) => const UsersScreen(filter: state.queryParameters['filter']),
 ),
 ```
 
@@ -90,9 +90,7 @@ Some apps display destinations in a subsection of the screen, for example, an
 app using a BottomNavigationBar that stays on-screen when navigating between
 destinations.
 
-To add an additional Navigator, use
-[ShellRoute](https://pub.dev/documentation/go_router/ShellRoute-class.html)
-and provide a builder that returns a widget:
+To add an additional Navigator, use [ShellRoute][] and provide a builder that returns a widget:
 
 ```dart
 ShellRoute(
@@ -153,3 +151,4 @@ final _router = GoRouter(
 [GoRouter]: https://pub.dev/documentation/go_router/latest/go_router/GoRouter-class.html
 [GoRoute]: https://pub.dev/documentation/go_router/latest/go_router/GoRoute-class.html
 [GoRouterState]: https://pub.dev/documentation/go_router/latest/go_router/GoRouterState-class.html
+[ShellRoute]: https://pub.dev/documentation/go_router/latest/go_router/ShellRoute-class.html

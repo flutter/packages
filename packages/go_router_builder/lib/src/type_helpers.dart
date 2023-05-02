@@ -38,6 +38,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperNum(),
   _TypeHelperString(),
   _TypeHelperUri(),
+  _TypeHelperIterable(),
 ];
 
 /// Returns the decoded [String] value for [element], if its type is supported.
@@ -51,7 +52,14 @@ String decodeParameter(ParameterElement element) {
   final DartType paramType = element.type;
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(paramType)) {
-      return helper._decode(element);
+      String decoded = helper._decode(element);
+      if (element.isOptional && element.hasDefaultValue) {
+        if (element.type.isNullableType) {
+          throw NullableDefaultValueError(element);
+        }
+        decoded += ' ?? ${element.defaultValueCode!}';
+      }
+      return decoded;
     }
   }
 
@@ -85,16 +93,16 @@ String encodeField(PropertyAccessorElement element) {
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
 String _stateValueAccess(ParameterElement element) {
-  if (element.isRequired) {
-    return 'params[${escapeDartString(element.name)}]!';
+  if (element.isExtraField) {
+    return 'extra as ${element.type.getDisplayString(withNullability: element.isOptional)}';
   }
 
-  if (element.isExtraField) {
-    return 'extra as ${element.type.getDisplayString(withNullability: true)}';
+  if (element.isRequired) {
+    return 'pathParameters[${escapeDartString(element.name)}]!';
   }
 
   if (element.isOptional) {
-    return 'queryParams[${escapeDartString(element.name.kebab)}]';
+    return 'queryParameters[${escapeDartString(element.name.kebab)}]';
   }
 
   throw InvalidGenerationSourceError(
@@ -106,8 +114,10 @@ String _stateValueAccess(ParameterElement element) {
 abstract class _TypeHelper {
   const _TypeHelper();
 
+  /// Decodes the value from its string representation in the URL.
   String _decode(ParameterElement parameterElement);
 
+  /// Encodes the value from its string representation in the URL.
   String _encode(String fieldName, DartType type);
 
   bool _matchesType(DartType type);
@@ -180,7 +190,7 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
 
   @override
   String _encode(String fieldName, DartType type) =>
-      '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]!';
+      '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]';
 
   @override
   bool _matchesType(DartType type) => type.isEnum;
@@ -222,8 +232,7 @@ class _TypeHelperString extends _TypeHelper {
       'state.${_stateValueAccess(parameterElement)}';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}';
+  String _encode(String fieldName, DartType type) => fieldName;
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreString;
@@ -244,6 +253,70 @@ class _TypeHelperUri extends _TypeHelperWithHelper {
       const TypeChecker.fromRuntime(Uri).isAssignableFromType(type);
 }
 
+class _TypeHelperIterable extends _TypeHelper {
+  const _TypeHelperIterable();
+
+  @override
+  String _decode(ParameterElement parameterElement) {
+    if (parameterElement.type is ParameterizedType) {
+      final DartType iterableType =
+          (parameterElement.type as ParameterizedType).typeArguments.first;
+
+      // get a type converter for values in iterable
+      String entriesTypeDecoder = '(e) => e';
+      for (final _TypeHelper helper in _helpers) {
+        if (helper._matchesType(iterableType) &&
+            helper is _TypeHelperWithHelper) {
+          entriesTypeDecoder = helper.helperName(iterableType);
+        }
+      }
+
+      // get correct type for iterable
+      String iterableCaster = '';
+      if (const TypeChecker.fromRuntime(List)
+          .isAssignableFromType(parameterElement.type)) {
+        iterableCaster = '.toList()';
+      } else if (const TypeChecker.fromRuntime(Set)
+          .isAssignableFromType(parameterElement.type)) {
+        iterableCaster = '.toSet()';
+      }
+
+      return '''
+state.queryParametersAll[
+        ${escapeDartString(parameterElement.name.kebab)}]
+        ?.map($entriesTypeDecoder)$iterableCaster''';
+    }
+    return '''
+state.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
+  }
+
+  @override
+  String _encode(String fieldName, DartType type) {
+    final String nullAwareAccess = type.isNullableType ? '?' : '';
+    if (type is ParameterizedType) {
+      final DartType iterableType = type.typeArguments.first;
+
+      // get a type encoder for values in iterable
+      String entriesTypeEncoder = '';
+      for (final _TypeHelper helper in _helpers) {
+        if (helper._matchesType(iterableType)) {
+          entriesTypeEncoder = '''
+$nullAwareAccess.map((e) => ${helper._encode('e', iterableType)}).toList()''';
+        }
+      }
+      return '''
+$fieldName$entriesTypeEncoder''';
+    }
+
+    return '''
+$fieldName$nullAwareAccess.map((e) => e.toString()).toList()''';
+  }
+
+  @override
+  bool _matchesType(DartType type) =>
+      const TypeChecker.fromRuntime(Iterable).isAssignableFromType(type);
+}
+
 abstract class _TypeHelperWithHelper extends _TypeHelper {
   const _TypeHelperWithHelper();
 
@@ -253,19 +326,20 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
   String _decode(ParameterElement parameterElement) {
     final DartType paramType = parameterElement.type;
 
-    if (paramType.isNullableType) {
+    if (!parameterElement.isRequired) {
       return '$convertMapValueHelperName('
           '${escapeDartString(parameterElement.name.kebab)}, '
-          'state.queryParams, '
+          'state.queryParameters, '
           '${helperName(paramType)})';
     }
-
     return '${helperName(paramType)}'
         '(state.${_stateValueAccess(parameterElement)})';
   }
 }
 
-extension on DartType {
+/// Extension helpers on [DartType].
+extension DartTypeExtension on DartType {
+  /// Convenient helper for nullability checks.
   String get ensureNotNull => isNullableType ? '!' : '';
 }
 
@@ -276,4 +350,16 @@ extension ParameterElementExtension on ParameterElement {
 
   /// Returns `true` if `this` has a name that matches [extraFieldName];
   bool get isExtraField => name == extraFieldName;
+}
+
+/// An error thrown when a default value is used with a nullable type.
+class NullableDefaultValueError extends InvalidGenerationSourceError {
+  /// An error thrown when a default value is used with a nullable type.
+  NullableDefaultValueError(
+    Element element,
+  ) : super(
+          'Default value used with a nullable type. Only non-nullable type can have a default value.',
+          todo: 'Remove the default value or make the type non-nullable.',
+          element: element,
+        );
 }

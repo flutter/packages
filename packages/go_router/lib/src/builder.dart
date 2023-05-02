@@ -6,7 +6,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
-import 'delegate.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
@@ -62,6 +61,10 @@ class RouteBuilder {
       _routeMatchLookUp[page];
 
   // final Map<>
+  /// Caches a HeroController for the nested Navigator, which solves cases where the
+  /// Hero Widget animation stops working when navigating.
+  final Map<GlobalKey<NavigatorState>, HeroController> _goHeroCache =
+      <GlobalKey<NavigatorState>, HeroController>{};
 
   /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
@@ -70,7 +73,6 @@ class RouteBuilder {
     PopPageCallback onPopPage,
     bool routerNeglect,
   ) {
-    _routeMatchLookUp.clear();
     if (matchList.isEmpty) {
       // The build method can be called before async redirect finishes. Build a
       // empty box until then.
@@ -132,10 +134,10 @@ class RouteBuilder {
       bool routerNeglect,
       GlobalKey<NavigatorState> navigatorKey,
       Map<Page<Object?>, GoRouterState> registry) {
+    final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
+        <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
     try {
-      assert(_routeMatchLookUp.isEmpty);
-      final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
-          <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
+      _routeMatchLookUp.clear();
       _buildRecursive(context, matchList, 0, onPopPage, routerNeglect,
           keyToPage, navigatorKey, registry);
 
@@ -147,6 +149,10 @@ class RouteBuilder {
       return <Page<Object?>>[
         _buildErrorPage(context, e, matchList.uri),
       ];
+    } finally {
+      /// Clean up previous cache to prevent memory leak.
+      _goHeroCache.removeWhere(
+          (GlobalKey<NavigatorState> key, _) => !keyToPage.keys.contains(key));
     }
   }
 
@@ -191,6 +197,10 @@ class RouteBuilder {
       // The key to provide to the ShellRoute's Navigator.
       final GlobalKey<NavigatorState> shellNavigatorKey = route.navigatorKey;
 
+      // The observers list for the ShellRoute's Navigator.
+      final List<NavigatorObserver> observers =
+          route.observers ?? <NavigatorObserver>[];
+
       // Add an entry for the parent navigator if none exists.
       keyToPages.putIfAbsent(parentNavigatorKey, () => <Page<Object?>>[]);
 
@@ -206,9 +216,15 @@ class RouteBuilder {
       _buildRecursive(context, matchList, startIndex + 1, onPopPage,
           routerNeglect, keyToPages, shellNavigatorKey, registry);
 
+      final HeroController heroController = _goHeroCache.putIfAbsent(
+          shellNavigatorKey, () => _getHeroController(context));
       // Build the Navigator
-      final Widget child = _buildNavigator(
-          onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey);
+      final Widget child = HeroControllerScope(
+        controller: heroController,
+        child: _buildNavigator(
+            onPopPage, keyToPages[shellNavigatorKey]!, shellNavigatorKey,
+            observers: observers),
+      );
 
       // Build the Page for this route
       final Page<Object?> page =
@@ -237,7 +253,7 @@ class RouteBuilder {
   }
 
   /// Helper method that builds a [GoRouterState] object for the given [match]
-  /// and [params].
+  /// and [pathParameters].
   @visibleForTesting
   GoRouterState buildState(RouteMatchList matchList, RouteMatch match) {
     final RouteBase route = match.route;
@@ -252,13 +268,14 @@ class RouteBuilder {
     return GoRouterState(
       configuration,
       location: effectiveMatchList.uri.toString(),
-      subloc: match.subloc,
+      matchedLocation: match.matchedLocation,
       name: name,
       path: path,
-      fullpath: effectiveMatchList.fullpath,
-      params: effectiveMatchList.pathParameters,
+      fullPath: effectiveMatchList.fullPath,
+      pathParameters:
+          Map<String, String>.from(effectiveMatchList.pathParameters),
       error: match.error,
-      queryParams: effectiveMatchList.uri.queryParameters,
+      queryParameters: effectiveMatchList.uri.queryParameters,
       queryParametersAll: effectiveMatchList.uri.queryParametersAll,
       extra: match.extra,
       pageKey: match.pageKey,
@@ -304,10 +321,6 @@ class RouteBuilder {
       BuildContext context, GoRouterState state, RouteMatch match,
       {Widget? childWidget}) {
     final RouteBase route = match.route;
-
-    if (route == null) {
-      throw _RouteBuilderError('No route found for match: $match');
-    }
 
     if (route is GoRoute) {
       final GoRouterWidgetBuilder? builder = route.builder;
@@ -384,7 +397,10 @@ class RouteBuilder {
     return _pageBuilderForAppType!(
       key: state.pageKey,
       name: state.name ?? state.path,
-      arguments: <String, String>{...state.params, ...state.queryParams},
+      arguments: <String, String>{
+        ...state.pathParameters,
+        ...state.queryParameters
+      },
       restorationId: state.pageKey.value,
       child: child,
     );
@@ -431,9 +447,9 @@ class RouteBuilder {
     final GoRouterState state = GoRouterState(
       configuration,
       location: uri.toString(),
-      subloc: uri.path,
+      matchedLocation: uri.path,
       name: null,
-      queryParams: uri.queryParameters,
+      queryParameters: uri.queryParameters,
       queryParametersAll: uri.queryParametersAll,
       error: Exception(error),
       pageKey: const ValueKey<String>('error'),
@@ -454,6 +470,18 @@ class RouteBuilder {
                 ? errorBuilder(context, state)
                 : _errorBuilderForAppType!(context, state),
           );
+  }
+
+  /// Return a HeroController based on the app type.
+  HeroController _getHeroController(BuildContext context) {
+    if (context is Element) {
+      if (isMaterialApp(context)) {
+        return createMaterialHeroController();
+      } else if (isCupertinoApp(context)) {
+        return createCupertinoHeroController();
+      }
+    }
+    return HeroController();
   }
 }
 

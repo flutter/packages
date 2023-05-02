@@ -17,7 +17,7 @@ import '../shared/markdown_demo_widget.dart';
 // ignore_for_file: public_member_api_docs
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({super.key});
 
   static const String routeName = '/homeScreen';
 

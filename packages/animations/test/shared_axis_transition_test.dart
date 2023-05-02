@@ -1931,7 +1931,7 @@ class _TestWidget extends StatelessWidget {
 }
 
 class _StatefulTestWidget extends StatefulWidget {
-  const _StatefulTestWidget({Key? key, required this.name}) : super(key: key);
+  const _StatefulTestWidget({super.key, required this.name});
 
   final String name;
 

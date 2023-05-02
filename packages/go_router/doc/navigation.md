@@ -68,4 +68,21 @@ Navigator.of(context).push(
 );
 ```
 
+## Returning values
+Waiting for a value to be returned:
+
+```dart
+onTap: () {
+  final bool? result = await context.push<bool>('/page2');
+  if(result ?? false)...
+}
+```
+
+Returning a value:
+
+```dart
+onTap: () => context.pop(true)
+```
+
+
 [Named routes]: https://pub.dev/documentation/go_router/latest/topics/Named%20routes-topic.html

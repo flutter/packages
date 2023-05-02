@@ -1,0 +1,23 @@
+# The list of external dependencies that are allowed as unpinned dependencies.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
+#
+# All entries here should have an explanation for why they are here.
+
+# TODO(stuartmorgan): Eliminate this in favor of standardizing on
+# mockito.
+- mocktail
+
+# Legacy allowances, for dependencies that predate the tooling.
+# TODO(stuartmorgan): Audit these. See
+# https://github.com/flutter/flutter/issues/122713
+- lcov_parser
+- adaptive_dialog
+- provider
+
+## Allowed by default
+
+# Dart-owned
+- mockito
+
+# Google-owned
+- file_testing

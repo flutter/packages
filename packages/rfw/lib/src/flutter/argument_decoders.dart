@@ -27,11 +27,11 @@ class AnimationDefaults extends InheritedWidget {
   /// The [duration] and [curve] are optional, and default to 200ms and
   /// [Curves.fastOutSlowIn] respectively.
   const AnimationDefaults({
-    Key? key,
+    super.key,
     this.duration,
     this.curve,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+  });
 
   /// The default duration that [ArgumentsDecoder.duration] should use.
   ///
@@ -223,7 +223,7 @@ class ArgumentDecoders {
 
   /// Returns a [Color] from the specified integer.
   ///
-  /// Returns null if it's not an integer; otherwise, passes it to the [new
+  /// Returns null if it's not an integer; otherwise, passes it to the [
   /// Color] constructor.
   static Color? color(DataSource source, List<Object> key) {
     final int? value = source.v<int>(key);
@@ -323,7 +323,7 @@ class ArgumentDecoders {
 
   /// Returns a [Color] from the specified integer.
   ///
-  /// Returns black if it's not an integer; otherwise, passes it to the [new
+  /// Returns black if it's not an integer; otherwise, passes it to the [
   /// Color] constructor.
   ///
   /// This is useful in situations where null is not acceptable, for example,
@@ -889,13 +889,13 @@ class ArgumentDecoders {
   ///
   /// If the string is null, returns null.
   ///
-  /// If there is no hyphen in the list, uses the one-argument form of [new
+  /// If there is no hyphen in the list, uses the one-argument form of [
   /// Locale], passing the whole string.
   ///
-  /// If there is one hyphen in the list, uses the two-argument form of [new
+  /// If there is one hyphen in the list, uses the two-argument form of [
   /// Locale], passing the parts before and after the hyphen respectively.
   ///
-  /// If there are two or more hyphens, uses the [new Locale.fromSubtags]
+  /// If there are two or more hyphens, uses the [Locale.fromSubtags]
   /// constructor.
   static Locale? locale(DataSource source, List<Object> key) {
     final String? value = source.v<String>(key);

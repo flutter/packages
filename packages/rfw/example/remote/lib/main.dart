@@ -18,7 +18,7 @@ void main() {
 }
 
 class Example extends StatefulWidget {
-  const Example({Key? key}) : super(key: key);
+  const Example({super.key});
 
   @override
   State<Example> createState() => _ExampleState();
@@ -87,10 +87,18 @@ class _ExampleState extends State<Example> {
         },
       );
     } else {
+      // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+      // ignore: prefer_const_constructors
       result = Material(
+        // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+        // ignore: prefer_const_constructors
         child: SafeArea(
+          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+          // ignore: prefer_const_constructors
           child: Padding(
             padding: const EdgeInsets.all(20.0),
+            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
+            // ignore: prefer_const_constructors
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: const <Widget>[

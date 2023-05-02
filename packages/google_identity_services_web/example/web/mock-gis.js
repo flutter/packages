@@ -33,6 +33,13 @@ class Id {
   initialize(config) {
     this.config = config;
   }
+  renderButton(target, config) {
+    // Simulate rendering a button.
+    target.replaceChildren();
+    target.dataset.buttonConfig = config;
+    let button = document.createElement('button');
+    target.append(button);
+  }
   prompt(momentListener) {
     callAsync(() => {
       if (this.mockCredentialResponse) {
@@ -94,17 +101,24 @@ class TokenClient {
     this.config = config;
   }
   requestAccessToken(overridableConfig) {
-    this.overridableConfig = overridableConfig;
-    let callback = this.overridableConfig.callback || this.config.callback;
+    this.config = {...this.config, ...overridableConfig};
+    let callback = this.config.callback;
     if (!callback) {
       return;
     }
     callAsync(() => {
-      callback(this.tokenResponse);
+      callback({
+        ...this.tokenResponse,
+        scope: this.config.scope,
+      });
     });
   }
-  setMockTokenResponse(tokenResponse) {
-    this.tokenResponse = tokenResponse;
+  setMockTokenResponse(access_token) {
+    this.tokenResponse = {
+      access_token: access_token,
+      token_type: access_token != null ? 'Bearer' : null,
+      error: access_token == null ? 'unauthorized' : null,
+    };
   }
 }
 
@@ -116,22 +130,24 @@ class Oauth2 {
     return new TokenClient(config);
   }
   hasGrantedAllScopes(tokenResponse, scope, ...scopes) {
-    return tokenResponse != null;
+    return tokenResponse != null && !scope.startsWith('not-granted-');
   }
   hasGrantedAnyScopes(tokenResponse, scope, ...scopes) {
-    return tokenResponse != null;
+    return false; // Unused in the lib
   }
   revoke(accessToken, done) {
     if (!done) {
       return;
     }
     callAsync(() => {
-      done();
+      done({
+        success: true,
+      });
     })
   }
 }
 
-function mockGis() {
+(function() {
   let goog = {
     accounts: {
       id: new Id(),
@@ -139,6 +155,4 @@ function mockGis() {
     }
   };
   globalThis['google'] = goog;
-}
-
-mockGis();
+}());

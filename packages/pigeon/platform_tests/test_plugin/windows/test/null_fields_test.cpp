@@ -39,12 +39,12 @@ class NullFieldsTest : public ::testing::Test {
  protected:
   // Wrapper for access to private NullFieldsSearchRequest list constructor.
   NullFieldsSearchRequest RequestFromList(const EncodableList& list) {
-    return NullFieldsSearchRequest(list);
+    return NullFieldsSearchRequest::FromEncodableList(list);
   }
 
   // Wrapper for access to private NullFieldsSearchRequest list constructor.
   NullFieldsSearchReply ReplyFromList(const EncodableList& list) {
-    return NullFieldsSearchReply(list);
+    return NullFieldsSearchReply::FromEncodableList(list);
   }
   // Wrapper for access to private NullFieldsSearchRequest::ToEncodableList.
   EncodableList ListFromRequest(const NullFieldsSearchRequest& request) {
@@ -57,7 +57,7 @@ class NullFieldsTest : public ::testing::Test {
 };
 
 TEST(NullFields, BuildWithValues) {
-  NullFieldsSearchRequest request;
+  NullFieldsSearchRequest request(0);
   request.set_query("hello");
 
   NullFieldsSearchReply reply;
@@ -75,7 +75,7 @@ TEST(NullFields, BuildWithValues) {
 }
 
 TEST(NullFields, BuildRequestWithNulls) {
-  NullFieldsSearchRequest request;
+  NullFieldsSearchRequest request(0);
 
   EXPECT_EQ(request.query(), nullptr);
 }
@@ -152,9 +152,8 @@ TEST_F(NullFieldsTest, ReplyFromListWithNulls) {
 }
 
 TEST_F(NullFieldsTest, RequestToListWithValues) {
-  NullFieldsSearchRequest request;
+  NullFieldsSearchRequest request(1);
   request.set_query("hello");
-  request.set_identifier(1);
 
   EncodableList list = ListFromRequest(request);
 
@@ -165,9 +164,7 @@ TEST_F(NullFieldsTest, RequestToListWithValues) {
 }
 
 TEST_F(NullFieldsTest, RequestToMapWithNulls) {
-  NullFieldsSearchRequest request;
-  // TODO(gaaclarke): This needs a way to be enforced.
-  request.set_identifier(1);
+  NullFieldsSearchRequest request(1);
 
   EncodableList list = ListFromRequest(request);
 
@@ -177,9 +174,8 @@ TEST_F(NullFieldsTest, RequestToMapWithNulls) {
 }
 
 TEST_F(NullFieldsTest, ReplyToMapWithValues) {
-  NullFieldsSearchRequest request;
+  NullFieldsSearchRequest request(1);
   request.set_query("hello");
-  request.set_identifier(1);
 
   NullFieldsSearchReply reply;
   reply.set_result("result");

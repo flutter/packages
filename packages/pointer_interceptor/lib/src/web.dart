@@ -40,8 +40,8 @@ class PointerInterceptor extends StatelessWidget {
     required this.child,
     this.intercepting = true,
     this.debug = false,
-    Key? key,
-  }) : super(key: key) {
+    super.key,
+  }) {
     if (!_registered) {
       _register();
     }

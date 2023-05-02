@@ -5,3 +5,5 @@ tasks:
     script: .ci/scripts/build_examples_win32.sh
   - name: native unit tests (Win32)
     script: .ci/scripts/native_test_win32.sh
+  - name: drive examples (Win32)
+    script: .ci/scripts/drive_examples_win32.sh

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class DropdownMenu<T> extends StatelessWidget {
   DropdownMenu({
-    Key? key,
+    super.key,
     required this.items,
     required this.initialValue,
     required this.label,
@@ -24,8 +24,7 @@ class DropdownMenu<T> extends StatelessWidget {
         padding =
             padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         menuItemBackground = menuItemBackground ?? Colors.white,
-        menuItemMargin = menuItemMargin ?? const EdgeInsets.only(left: 4),
-        super(key: key);
+        menuItemMargin = menuItemMargin ?? const EdgeInsets.only(left: 4);
 
   final Map<String, T> items;
 

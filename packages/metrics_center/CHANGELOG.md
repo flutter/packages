@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.3.
+
+## 1.0.7
+
+* Updates code to fix strict-cast violations.
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 1.0.6
 
 - Fixes lint warnings.

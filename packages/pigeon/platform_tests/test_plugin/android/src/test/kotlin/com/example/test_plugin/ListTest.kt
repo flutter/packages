@@ -16,13 +16,13 @@ class ListTest: TestCase() {
     @Test
     fun testListInList() {
         val binaryMessenger = mockk<BinaryMessenger>()
-        val api = EchoApi(binaryMessenger)
+        val api = FlutterSmallApi(binaryMessenger)
 
         val inside = TestMessage(listOf(1, 2, 3))
         val input = TestMessage(listOf(inside))
 
         every { binaryMessenger.send(any(), any(), any()) } answers {
-            val codec = EchoApi.codec
+            val codec = FlutterSmallApi.codec
             val message = arg<ByteBuffer>(1)
             val reply = arg<BinaryMessenger.BinaryReply>(2)
             message.position(0)
@@ -33,7 +33,7 @@ class ListTest: TestCase() {
         }
 
         var didCall = false
-        api.echo(input) {
+        api.echoWrappedList(input) {
             didCall = true
             assertEquals(input, it)
         }

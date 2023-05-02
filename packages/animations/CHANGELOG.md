@@ -1,3 +1,7 @@
+## NEXT
+
+* Aligns Dart and Flutter SDK constraints.
+
 ## 2.0.7
 * Updates screenshots to use webp compressed animations
 

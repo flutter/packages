@@ -1,3 +1,213 @@
+## 10.0.0
+
+* [swift] Avoids using `Any` to represent `Optional` in Swift.
+* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be 
+  translated into `[Any?]` (rather than `[Any]`) in Swift.
+* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be 
+  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`) in Swift. 
+* Adds an example application that uses Pigeon directly, rather than in a plugin.
+
+## 9.2.5
+
+* Reports an error when trying to use an enum directly in a `List` or `Map`
+  argument.
+
+## 9.2.4
+
+* [objc] Fixes a warning due to a C++-style function signature in the codec
+  getter's definition.
+
+## 9.2.3
+
+* [java] Fixes `UnknownNullability` and `SyntheticAccessor` warnings.
+
+## 9.2.2
+
+* [cpp] Minor changes to output style.
+
+## 9.2.1
+
+* [swift] Fixes NSNull casting crash.
+
+## 9.2.0
+
+* [cpp] Removes experimental tags.
+
+## 9.1.4
+
+* Migrates off deprecated `BinaryMessenger` API.
+
+## 9.1.3
+
+* [cpp] Requires passing any non-nullable fields of generated data classes as
+  constructor arguments, similar to what is done in other languages. This may
+  require updates to existing code that creates data class instances on the
+  native side.
+* [cpp] Adds a convenience constructor to generated data classes to set all
+  fields during construction.
+
+## 9.1.2
+
+* [cpp] Fixes class parameters to Flutter APIs.
+* Updates minimum Flutter version to 3.3.
+
+## 9.1.1
+
+* [swift] Removes experimental tags.
+* [kotin] Removes experimental tags.
+
+## 9.1.0
+
+* [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
+* [kotlin] Adds a `FlutterError` exception for passing custom error details (code, message, details).
+* [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
+* [java] Removes legacy try catch from async apis.
+* [java] Removes legacy null check on non-nullable method arguments.
+* [cpp] Fixes wrong order of items in `FlutterError`.
+* Adds `FlutterError` handling integration tests for all platforms.
+
+## 9.0.7
+
+* [swift] Changes all ints to int64.
+  May require code updates to existing code.
+* Adds integration tests for int64.
+
+## 9.0.6
+
+* [kotlin] Removes safe casting from decode process.
+* [swift] Removes safe casting from decode process.
+
+## 9.0.5
+
+* Removes the unnecessary Flutter constraint.
+* Removes an unnecessary null check.
+* Aligns Dart and Flutter SDK constraints.
+
+## 9.0.4
+
+* Adds parameter to generate Kotlin code in example README.
+
+## 9.0.3
+
+* [kotlin] Fixes compiler warnings in generated output.
+* [swift] Fixes compiler warnings in generated output.
+
+## 9.0.2
+
+* [swift] Removes safe casting from decode process.
+* [kotlin] Removes safe casting from decode process.
+
+## 9.0.1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
+## 9.0.0
+
+* **Breaking Change** Updates `DartOptions` to be immutable and adds const to the constructor.
+* [java] Reverts `final` changes to Flutter Api classes.
+
+## 8.0.0
+
+* [objc] **BREAKING CHANGE**: FlutterApi calls now return a `FlutterError`,
+  rather than an `NSError`, on failure.
+* [objc] Fixes an unused function warning when only generating FlutterApi.
+
+## 7.2.1
+
+* [kotlin] Fixes Flutter api int errors with updated casting.
+
+## 7.2.0
+
+* [swift] Changes async method completion types.
+  May require code updates to existing code.
+* [swift] Adds error handling to async methods.
+* [kotlin] Changes async method completion types.
+  May require code updates to existing code.
+* [kotlin] Adds error handling to async methods.
+* Adds async error handling integration tests for all platforms.
+
+## 7.1.5
+
+* Updates code to fix strict-cast violations.
+
+## 7.1.4
+
+* [java] Fixes raw types lint issues.
+
+## 7.1.3
+
+* [objc] Removes unused function.
+
+## 7.1.2
+
+* [swift] Adds error handling to sync host api methods.
+
+## 7.1.1
+
+* [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
+
+## 7.1.0
+
+* Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 7.0.5
+
+* Requires analyzer 5.0.0 and replaces use of deprecated APIs.
+
+## 7.0.4
+
+* [c++] Fixes minor output formatting issues.
+
+## 7.0.3
+
+* Updates scoped methods to prevent symbol-less use.
+
+## 7.0.2
+
+* [kotlin] Fixes a missed casting of not nullable Dart 'int' to Kotlin 64bit long.
+
+## 7.0.1
+
+* [generator_tools] adds `newln` method for adding empty lines and ending lines.
+* Updates generators to more closely match Flutter formatter tool output.
+
+## 7.0.0
+
+* [java] **BREAKING CHANGE**: Makes data classes final.
+  Updates generators for 1p linters.
+
+## 6.0.3
+
+* [docs] Updates README.md.
+
+## 6.0.2
+
+* [kotlin] Fixes a bug with a missed line break between generated statements in the `fromList` function of the companion object.
+
+## 6.0.1
+
+* [c++] Fixes most non-class arguments and return values in Flutter APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
+
+## 6.0.0
+
+* Creates StructuredGenerator class and implements it on all platforms.
+
+## 5.0.1
+
+* [c++] Fixes undefined behavior in `@async` methods.
+
+## 5.0.0
+
+* Creates new Generator classes for each language.
+
+## 4.2.16
+
+* [swift] Fixes warnings with `Object` parameters.
+* [dart] Fixes warnings with `Object` return values.
+* [c++] Generation of APIs that use `Object` no longer fails.
+
 ## 4.2.15
 
 * Relocates generator classes. (Reverted)
@@ -557,7 +767,7 @@ class Foo {
 
 ## 0.1.0-experimental.3
 
-* Added support for for Android Java.
+* Added support for Android Java.
 
 ## 0.1.0-experimental.2
 

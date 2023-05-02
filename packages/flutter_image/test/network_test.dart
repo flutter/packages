@@ -104,7 +104,7 @@ void main() {
             Timer.run(onAttempt);
             return fakeAsync.run((FakeAsync fakeAsync) {
               return NetworkImageWithRetry.defaultFetchStrategy(uri, failure);
-            });
+            }) as Future<FetchInstructions>;
           },
         );
 
@@ -126,7 +126,7 @@ void main() {
             Timer.run(onAttempt);
             return fakeAsync.run((FakeAsync fakeAsync) {
               return NetworkImageWithRetry.defaultFetchStrategy(uri, failure);
-            });
+            }) as Future<FetchInstructions>;
           },
         );
 

@@ -5,11 +5,7 @@
 @import Flutter;
 @import XCTest;
 
-#ifdef LEGACY_HARNESS
-#import "Primitive.gen.h"
-#else
 @import alternate_language_test_plugin;
-#endif
 
 #import "EchoMessenger.h"
 
@@ -26,7 +22,7 @@
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api anIntValue:@1
-       completion:^(NSNumber *_Nonnull result, NSError *_Nullable err) {
+       completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(@1, result);
          [expectation fulfill];
        }];
@@ -40,7 +36,7 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSNumber *arg = @YES;
   [api aBoolValue:arg
-       completion:^(NSNumber *_Nonnull result, NSError *_Nullable err) {
+       completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(arg, result);
          [expectation fulfill];
        }];
@@ -54,7 +50,7 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSNumber *arg = @(1.5);
   [api aBoolValue:arg
-       completion:^(NSNumber *_Nonnull result, NSError *_Nullable err) {
+       completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(arg, result);
          [expectation fulfill];
        }];
@@ -68,7 +64,7 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSString *arg = @"hello";
   [api aStringValue:arg
-         completion:^(NSString *_Nonnull result, NSError *_Nullable err) {
+         completion:^(NSString *_Nonnull result, FlutterError *_Nullable err) {
            XCTAssertEqualObjects(arg, result);
            [expectation fulfill];
          }];
@@ -82,7 +78,7 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSArray *arg = @[ @"hello" ];
   [api aListValue:arg
-       completion:^(NSArray *_Nonnull result, NSError *_Nullable err) {
+       completion:^(NSArray *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(arg, result);
          [expectation fulfill];
        }];
@@ -96,7 +92,7 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSDictionary *arg = @{@"hello" : @1};
   [api aMapValue:arg
-      completion:^(NSDictionary *_Nonnull result, NSError *_Nullable err) {
+      completion:^(NSDictionary *_Nonnull result, FlutterError *_Nullable err) {
         XCTAssertEqualObjects(arg, result);
         [expectation fulfill];
       }];
