@@ -25,7 +25,7 @@ Future<void> main(List<String> args) async {
 
   //copy from go_router/test_fixes to temp directory
   final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
-  
+
   await _prepareTemplate(
     ctx: ctx,
     testFixesDir: ctx.join(packageRoot.path, 'test_fixes'),
