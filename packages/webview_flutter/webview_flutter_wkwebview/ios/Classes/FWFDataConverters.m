@@ -210,6 +210,8 @@ FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyVal
         makeWithValue:FWFNSKeyValueChangeKeyEnumNotificationIsPrior];
   } else if ([key isEqualToString:NSKeyValueChangeOldKey]) {
     return [FWFNSKeyValueChangeKeyEnumData makeWithValue:FWFNSKeyValueChangeKeyEnumOldValue];
+  } else {
+    return [FWFNSKeyValueChangeKeyEnumData makeWithValue:FWFNSKeyValueChangeKeyEnumUnknown];
   }
 
   return nil;
@@ -234,6 +236,8 @@ FWFWKNavigationType FWFWKNavigationTypeFromNativeWKNavigationType(WKNavigationTy
     case WKNavigationTypeOther:
       return FWFWKNavigationTypeOther;
   }
+
+  return FWFWKNavigationTypeUnknown;
 }
 
 FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(
