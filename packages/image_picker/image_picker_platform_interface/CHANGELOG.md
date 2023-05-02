@@ -1,5 +1,10 @@
-## NEXT
+## 2.7.0
 
+* Adds `CameraDelegatingImagePickerPlatform` as a base class for platform
+  implementations that don't support `ImageSource.camera`, but allow for an-
+  implementation to be provided at the application level via implementation
+  of `CameraDelegatingImagePickerPlatform`.
+* Adds `supportsImageSource` to check source support at runtime.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.6.3
@@ -30,7 +35,7 @@
     * Adds `requestFullMetadata` option that allows disabling extra permission requests
       on certain platforms.
     * Moves optional image picking parameters to `ImagePickerOptions` class.
-* Minor fixes for new analysis options. 
+* Minor fixes for new analysis options.
 
 ## 2.4.4
 
