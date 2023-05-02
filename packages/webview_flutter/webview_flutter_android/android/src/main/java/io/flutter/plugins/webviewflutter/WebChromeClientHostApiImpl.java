@@ -270,7 +270,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
      */
     @NonNull
     public WebChromeClientImpl createWebChromeClient(
-        @NonNull WebChromeClientFlutterApiImpl flutterApi, Context context) {
+        @NonNull WebChromeClientFlutterApiImpl flutterApi, @NonNull Context context) {
       return new WebChromeClientImpl(flutterApi, context);
     }
   }

@@ -71,7 +71,8 @@ public class WebChromeClientTest {
         };
 
     hostApiImpl =
-        new WebChromeClientHostApiImpl(instanceManager, webChromeClientCreator, mockFlutterApi, mockContext);
+        new WebChromeClientHostApiImpl(
+            instanceManager, webChromeClientCreator, mockFlutterApi, mockContext);
     hostApiImpl.setContext(mockActivity);
     hostApiImpl.create(2L);
 
@@ -139,7 +140,7 @@ public class WebChromeClientTest {
     webChromeClient.onPermissionRequest(mockRequest);
 
     verify(mockFlutterApi).onPermissionRequest(eq(webChromeClient), eq(mockRequest), any());
-  }  
+  }
 
   @Test
   public void onShowCustomView() {
