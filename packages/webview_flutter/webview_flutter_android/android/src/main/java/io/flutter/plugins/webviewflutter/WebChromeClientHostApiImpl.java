@@ -55,7 +55,8 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
      * @param flutterApi handles sending messages to Dart
      * @param context the Activity or application context
      */
-    public WebChromeClientImpl(@NonNull WebChromeClientFlutterApiImpl flutterApi, Context context) {
+    public WebChromeClientImpl(
+        @NonNull WebChromeClientFlutterApiImpl flutterApi, @NonNull Context context) {
       this.flutterApi = flutterApi;
       this.context = context;
     }
