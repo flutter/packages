@@ -24,7 +24,7 @@ Future<void> main(List<String> args) async {
           .parent;
 
   // Copy test_fixes/ to be tested in a temp directory.
-  // This ensures the dart fix can be applied to project
+  // This ensures the dart fix can be applied to projects
   // outside of this package.
   final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
 
@@ -42,7 +42,7 @@ Future<void> main(List<String> args) async {
     workingDirectory: testFixesTargetDir.path,
   );
   if (pubGet != 0) {
-    exit(pubGet);
+    await cleanUpAndExit(statusCode: pubGet, toDelete: testFixesTargetDir);
   }
   final int status = await _runProcess(
     'dart',
@@ -53,11 +53,18 @@ Future<void> main(List<String> args) async {
     workingDirectory: testFixesTargetDir.path,
   );
   if (status != 0) {
-    exit(status);
+    await cleanUpAndExit(statusCode: status, toDelete: testFixesTargetDir);
   }
   //Cleanup temp folder
-  await testFixesTargetDir.delete(recursive: true);
-  exit(0);
+  await cleanUpAndExit(statusCode: 0, toDelete: testFixesTargetDir);
+}
+
+Future<Never> cleanUpAndExit({
+  required int statusCode,
+  required Directory toDelete,
+}) async {
+  await toDelete.delete(recursive: true);
+  exit(statusCode);
 }
 
 Future<void> _prepareTemplate({
