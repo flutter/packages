@@ -335,11 +335,6 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   }
 
   @override
-  bool get useHybridComposition => (super.noSuchMethod(
-        Invocation.getter(#useHybridComposition),
-        returnValue: false,
-      ) as bool);
-  @override
   _i2.WebSettings get settings => (super.noSuchMethod(
         Invocation.getter(#settings),
         returnValue: _FakeWebSettings_0(
@@ -941,19 +936,16 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
   }
 
   @override
-  _i2.WebView createWebView({required bool? useHybridComposition}) =>
-      (super.noSuchMethod(
+  _i2.WebView createWebView() => (super.noSuchMethod(
         Invocation.method(
           #createWebView,
           [],
-          {#useHybridComposition: useHybridComposition},
         ),
         returnValue: _FakeWebView_3(
           this,
           Invocation.method(
             #createWebView,
             [],
-            {#useHybridComposition: useHybridComposition},
           ),
         ),
       ) as _i2.WebView);

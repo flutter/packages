@@ -41,7 +41,9 @@ public class ImageStreamReader {
    */
   @VisibleForTesting
   public ImageStreamReader(
-      ImageReader imageReader, int dartImageFormat, ImageStreamReaderUtils imageStreamReaderUtils) {
+      @NonNull ImageReader imageReader,
+      int dartImageFormat,
+      @NonNull ImageStreamReaderUtils imageStreamReaderUtils) {
     this.imageReader = imageReader;
     this.dartImageFormat = dartImageFormat;
     this.imageStreamReaderUtils = imageStreamReaderUtils;
@@ -91,8 +93,8 @@ public class ImageStreamReader {
   @VisibleForTesting
   public void onImageAvailable(
       @NonNull Image image,
-      CameraCaptureProperties captureProps,
-      EventChannel.EventSink imageStreamSink) {
+      @NonNull CameraCaptureProperties captureProps,
+      @NonNull EventChannel.EventSink imageStreamSink) {
     try {
       Map<String, Object> imageBuffer = new HashMap<>();
 
@@ -138,6 +140,7 @@ public class ImageStreamReader {
    * @param image - the image to process.
    * @return parsed map describing the image planes to be sent to dart.
    */
+  @NonNull
   public List<Map<String, Object>> parsePlanesForYuvOrJpeg(@NonNull Image image) {
     List<Map<String, Object>> planes = new ArrayList<>();
 
@@ -164,6 +167,7 @@ public class ImageStreamReader {
    * @param image - the image to process.
    * @return parsed map describing the image planes to be sent to dart.
    */
+  @NonNull
   public List<Map<String, Object>> parsePlanesForNv21(@NonNull Image image) {
     List<Map<String, Object>> planes = new ArrayList<>();
 
@@ -181,6 +185,7 @@ public class ImageStreamReader {
   }
 
   /** Returns the image reader surface. */
+  @NonNull
   public Surface getSurface() {
     return imageReader.getSurface();
   }
@@ -194,9 +199,9 @@ public class ImageStreamReader {
    * @param handler is generally the background handler of the camera as {@link Handler}
    */
   public void subscribeListener(
-      CameraCaptureProperties captureProps,
-      EventChannel.EventSink imageStreamSink,
-      Handler handler) {
+      @NonNull CameraCaptureProperties captureProps,
+      @NonNull EventChannel.EventSink imageStreamSink,
+      @NonNull Handler handler) {
     imageReader.setOnImageAvailableListener(
         reader -> {
           Image image = reader.acquireNextImage();
@@ -212,7 +217,7 @@ public class ImageStreamReader {
    *
    * @param handler is generally the background handler of the camera
    */
-  public void removeListener(Handler handler) {
+  public void removeListener(@NonNull Handler handler) {
     imageReader.setOnImageAvailableListener(null, handler);
   }
 

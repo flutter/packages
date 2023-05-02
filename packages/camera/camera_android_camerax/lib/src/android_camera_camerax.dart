@@ -8,16 +8,22 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'analyzer.dart';
 import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camerax_library.g.dart';
+import 'exposure_state.dart';
+import 'image_analysis.dart';
 import 'image_capture.dart';
+import 'image_proxy.dart';
+import 'plane_proxy.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
 import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
+import 'zoom_state.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
@@ -35,6 +41,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Camera? camera;
 
+  /// The [CameraInfo] instance that corresponds to the [camera] instance.
+  @visibleForTesting
+  CameraInfo? cameraInfo;
+
   /// The [Preview] instance that can be configured to present a live camera preview.
   @visibleForTesting
   Preview? preview;
@@ -44,6 +54,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The [ImageCapture] instance that can be configured to capture a still image.
   @visibleForTesting
   ImageCapture? imageCapture;
+
+  /// The [ImageAnalysis] instance that can be configured to analyze individual
+  /// frames.
+  ImageAnalysis? imageAnalysis;
 
   /// The [CameraSelector] used to configure the [processCameraProvider] to use
   /// the desired camera.
@@ -68,6 +82,25 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<CameraEvent> _cameraEvents(int cameraId) =>
       cameraEventStreamController.stream
           .where((CameraEvent event) => event.cameraId == cameraId);
+
+  /// The controller we need to stream image data.
+  @visibleForTesting
+  StreamController<CameraImageData>? cameraImageDataStreamController;
+
+  /// Conditional used to create detached instances for testing their
+  /// callback methods.
+  @visibleForTesting
+  bool createDetachedCallbacks = false;
+
+  /// Constant representing the multi-plane Android YUV 420 image format.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/ImageFormat#YUV_420_888.
+  static const int imageFormatYuv420_888 = 35;
+
+  /// Constant representing the compressed JPEG image format.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/ImageFormat#JPEG.
+  static const int imageFormatJpeg = 256;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -163,6 +196,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instance as bound but not paused.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
+    cameraInfo = await camera!.getCameraInfo();
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -174,25 +208,26 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// the CameraX library, this method just retrieves information about the
   /// camera and sends a [CameraInitializedEvent].
   ///
-  /// [imageFormatGroup] is used to specify the image formatting used.
-  /// On Android this defaults to ImageFormat.YUV_420_888 and applies only to
-  /// the image stream.
+  /// [imageFormatGroup] is used to specify the image format used for image
+  /// streaming, but CameraX currently only supports YUV_420_888 (supported by
+  /// Flutter) and RGBA (not supported by Flutter). CameraX uses YUV_420_888
+  /// by default, so [imageFormatGroup] is not used.
   @override
   Future<void> initializeCamera(
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
-    // TODO(camsim99): Use imageFormatGroup to configure ImageAnalysis use case
-    // for image streaming.
-    // https://github.com/flutter/flutter/issues/120463
-
     // Configure CameraInitializedEvent to send as representation of a
     // configured camera:
     // Retrieve preview resolution.
-    assert(
-      preview != null,
-      'Preview instance not found. Please call the "createCamera" method before calling "initializeCamera"',
-    );
+    if (preview == null) {
+      // No camera has been created; createCamera must be called before initializeCamera.
+      throw CameraException(
+        'cameraNotFound',
+        "Camera not found. Please call the 'create' method before calling 'initialize'",
+      );
+    }
+
     final ResolutionInfo previewResolutionInfo =
         await preview!.getResolutionInfo();
 
@@ -241,6 +276,55 @@ class AndroidCameraCameraX extends CameraPlatform {
     });
   }
 
+  /// Gets the minimum supported exposure offset for the selected camera in EV units.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMinExposureOffset(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationRange.minCompensation *
+        exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the maximum supported exposure offset for the selected camera in EV units.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMaxExposureOffset(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationRange.maxCompensation *
+        exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the supported step size for exposure offset for the selected camera in EV units.
+  ///
+  /// Returns 0 when exposure compensation is not supported.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getExposureOffsetStepSize(int cameraId) async {
+    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    return exposureState.exposureCompensationStep;
+  }
+
+  /// Gets the maximum supported zoom level for the selected camera.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMaxZoomLevel(int cameraId) async {
+    final ZoomState exposureState = await cameraInfo!.getZoomState();
+    return exposureState.maxZoomRatio;
+  }
+
+  /// Gets the minimum supported zoom level for the selected camera.
+  ///
+  /// [cameraId] not used.
+  @override
+  Future<double> getMinZoomLevel(int cameraId) async {
+    final ZoomState exposureState = await cameraInfo!.getZoomState();
+    return exposureState.minZoomRatio;
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
@@ -252,7 +336,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> pausePreview(int cameraId) async {
-    _unbindPreviewFromLifecycle();
+    _unbindUseCaseFromLifecycle(preview!);
     _previewIsPaused = true;
   }
 
@@ -288,15 +372,31 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<XFile> takePicture(int cameraId) async {
-    assert(processCameraProvider != null);
-    assert(cameraSelector != null);
-    assert(imageCapture != null);
-
     // TODO(camsim99): Add support for flash mode configuration.
     // https://github.com/flutter/flutter/issues/120715
     final String picturePath = await imageCapture!.takePicture();
 
     return XFile(picturePath);
+  }
+
+  /// A new streamed frame is available.
+  ///
+  /// Listening to this stream will start streaming, and canceling will stop.
+  /// To temporarily stop receiving frames, cancel, then listen again later.
+  /// Pausing/resuming is not supported, as pausing the stream would cause
+  /// very high memory usage, and will throw an exception due to the
+  /// implementation using a broadcast [StreamController], which does not
+  /// support those operations.
+  ///
+  /// [cameraId] and [options] are not used.
+  @override
+  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
+      {CameraImageStreamOptions? options}) {
+    cameraImageDataStreamController = StreamController<CameraImageData>(
+      onListen: _onFrameStreamListen,
+      onCancel: _onFrameStreamCancel,
+    );
+    return cameraImageDataStreamController!.stream;
   }
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
@@ -305,10 +405,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Binds [preview] instance to the camera lifecycle controlled by the
   /// [processCameraProvider].
   Future<void> _bindPreviewToLifecycle() async {
-    assert(processCameraProvider != null);
-    assert(cameraSelector != null);
-    assert(preview != null);
-
     final bool previewIsBound = await processCameraProvider!.isBound(preview!);
     if (previewIsBound || _previewIsPaused) {
       // Only bind if preview is not already bound or intentionally paused.
@@ -317,19 +413,100 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
+    cameraInfo = await camera!.getCameraInfo();
   }
 
-  /// Unbinds [preview] instance to camera lifecycle controlled by the
-  /// [processCameraProvider].
-  Future<void> _unbindPreviewFromLifecycle() async {
-    final bool previewIsBound = await processCameraProvider!.isBound(preview!);
-    if (preview == null || !previewIsBound) {
+  /// Configures the [imageAnalysis] instance for image streaming and binds it
+  /// to camera lifecycle controlled by the [processCameraProvider].
+  Future<void> _configureAndBindImageAnalysisToLifecycle() async {
+    if (imageAnalysis != null &&
+        await processCameraProvider!.isBound(imageAnalysis!)) {
+      // imageAnalysis already configured and bound to lifecycle.
       return;
     }
 
-    assert(processCameraProvider != null);
+    // Create Analyzer that can read image data for image streaming.
+    Future<void> analyze(ImageProxy imageProxy) async {
+      final List<PlaneProxy> planes = await imageProxy.getPlanes();
+      final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
+      for (final PlaneProxy plane in planes) {
+        cameraImagePlanes.add(CameraImagePlane(
+            bytes: plane.buffer,
+            bytesPerRow: plane.rowStride,
+            bytesPerPixel: plane.pixelStride));
+      }
 
-    processCameraProvider!.unbind(<UseCase>[preview!]);
+      final int format = imageProxy.format;
+      final CameraImageFormat cameraImageFormat = CameraImageFormat(
+          _imageFormatGroupFromPlatformData(format),
+          raw: format);
+
+      final CameraImageData cameraImageData = CameraImageData(
+          format: cameraImageFormat,
+          planes: cameraImagePlanes,
+          height: imageProxy.height,
+          width: imageProxy.width);
+
+      cameraImageDataStreamController?.add(cameraImageData);
+      imageProxy.close();
+    }
+
+    final Analyzer analyzer = createDetachedCallbacks
+        ? Analyzer.detached(analyze: analyze)
+        : Analyzer(analyze: analyze);
+
+    // TODO(camsim99): Support resolution configuration.
+    // Defaults to YUV_420_888 image format.
+    imageAnalysis = createImageAnalysis(null);
+    imageAnalysis!.setAnalyzer(analyzer);
+
+    // TODO(camsim99): Reset live camera state observers here when
+    // https://github.com/flutter/packages/pull/3419 lands.
+    camera = await processCameraProvider!
+        .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+    cameraInfo = await camera!.getCameraInfo();
+  }
+
+  /// Unbinds [useCase] from camera lifecycle controlled by the
+  /// [processCameraProvider].
+  Future<void> _unbindUseCaseFromLifecycle(UseCase useCase) async {
+    final bool useCaseIsBound = await processCameraProvider!.isBound(useCase);
+    if (!useCaseIsBound) {
+      return;
+    }
+
+    processCameraProvider!.unbind(<UseCase>[useCase]);
+  }
+
+  // Methods for configuring image streaming:
+
+  /// The [onListen] callback for the stream controller used for image
+  /// streaming.
+  Future<void> _onFrameStreamListen() async {
+    _configureAndBindImageAnalysisToLifecycle();
+  }
+
+  /// The [onCancel] callback for the stream controller used for image
+  /// streaming.
+  ///
+  /// Removes the previously set analyzer on the [imageAnalysis] instance, since
+  /// image information should no longer be streamed.
+  FutureOr<void> _onFrameStreamCancel() async {
+    imageAnalysis!.clearAnalyzer();
+  }
+
+  /// Converts between Android ImageFormat constants and [ImageFormatGroup]s.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/ImageFormat.
+  ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
+    switch (data) {
+      case imageFormatYuv420_888: // android.graphics.ImageFormat.YUV_420_888
+        return ImageFormatGroup.yuv420;
+      case imageFormatJpeg: // android.graphics.ImageFormat.JPEG
+        return ImageFormatGroup.jpeg;
+    }
+
+    return ImageFormatGroup.unknown;
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:
@@ -426,5 +603,11 @@ class AndroidCameraCameraX extends CameraPlatform {
       int? flashMode, ResolutionInfo? targetResolution) {
     return ImageCapture(
         targetFlashMode: flashMode, targetResolution: targetResolution);
+  }
+
+  /// Returns an [ImageAnalysis] configured with specified target resolution.
+  @visibleForTesting
+  ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
+    return ImageAnalysis(targetResolution: targetResolution);
   }
 }

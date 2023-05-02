@@ -1,5 +1,9 @@
 ## NEXT
+* Updates metadata unit test to work on iOS 16.2.
 
+## 0.8.7+3
+
+* Updates pigeon to fix warnings with clang 15.
 * Updates minimum Flutter version to 3.3.
 
 ## 0.8.7+2

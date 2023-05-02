@@ -142,7 +142,7 @@ class WebView extends StatefulWidget {
   /// Which gestures should be consumed by the web view.
   ///
   /// It is possible for other gesture recognizers to be competing with the web view on pointer
-  /// events, e.g if the web view is inside a [ListView] the [ListView] will want to handle
+  /// events, e.g. if the web view is inside a [ListView] the [ListView] will want to handle
   /// vertical drags. The web view will claim gestures that are recognized by any of the
   /// recognizers on this list.
   ///
@@ -180,7 +180,7 @@ class WebView extends StatefulWidget {
   ///
   /// To asynchronously invoke the message handler which will print the message to standard output.
   ///
-  /// Adding a new JavaScript channel only takes affect after the next page is loaded.
+  /// Adding a new JavaScript channel only takes effect after the next page is loaded.
   ///
   /// Set values must not be null. A [JavascriptChannel.name] cannot be the same for multiple
   /// channels in the list.

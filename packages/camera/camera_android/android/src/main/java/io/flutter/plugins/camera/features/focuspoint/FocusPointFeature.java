@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.camera.features.focuspoint;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Size;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.CameraRegionUtils;
@@ -19,9 +21,9 @@ import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFea
 public class FocusPointFeature extends CameraFeature<Point> {
 
   private Size cameraBoundaries;
-  private Point focusPoint;
+  @Nullable private Point focusPoint;
   private MeteringRectangle focusRectangle;
-  private final SensorOrientationFeature sensorOrientationFeature;
+  @NonNull private final SensorOrientationFeature sensorOrientationFeature;
 
   /**
    * Creates a new instance of the {@link FocusPointFeature}.
@@ -29,7 +31,8 @@ public class FocusPointFeature extends CameraFeature<Point> {
    * @param cameraProperties Collection of the characteristics for the current camera device.
    */
   public FocusPointFeature(
-      CameraProperties cameraProperties, SensorOrientationFeature sensorOrientationFeature) {
+      @NonNull CameraProperties cameraProperties,
+      @NonNull SensorOrientationFeature sensorOrientationFeature) {
     super(cameraProperties);
     this.sensorOrientationFeature = sensorOrientationFeature;
   }
@@ -44,18 +47,21 @@ public class FocusPointFeature extends CameraFeature<Point> {
     this.buildFocusRectangle();
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "FocusPointFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @Nullable
   @Override
   public Point getValue() {
     return focusPoint;
   }
 
   @Override
-  public void setValue(Point value) {
+  public void setValue(@Nullable Point value) {
     this.focusPoint = value == null || value.x == null || value.y == null ? null : value;
     this.buildFocusRectangle();
   }
@@ -68,7 +74,7 @@ public class FocusPointFeature extends CameraFeature<Point> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     if (!checkIsSupported()) {
       return;
     }

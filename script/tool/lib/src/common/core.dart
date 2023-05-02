@@ -13,6 +13,9 @@ typedef Print = void Function(Object? object);
 /// Key for APK (Android) platform.
 const String platformAndroid = 'android';
 
+/// Alias for APK (Android) platform.
+const String platformAndroidAlias = 'apk';
+
 /// Key for IPA (iOS) platform.
 const String platformIOS = 'ios';
 

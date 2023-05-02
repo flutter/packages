@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -30,9 +31,6 @@ import java.util.WeakHashMap;
  */
 @SuppressWarnings("unchecked")
 public class InstanceManager {
-  /// Constant returned from #addHostCreatedInstance() if the manager is closed.
-  public static final int INSTANCE_CLOSED = -1;
-
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -40,7 +38,6 @@ public class InstanceManager {
   private static final long MIN_HOST_CREATED_IDENTIFIER = 65536;
   private static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 30000;
   private static final String TAG = "InstanceManager";
-  private static final String CLOSED_WARNING = "Method was called while the manager was closed.";
 
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
   public interface FinalizationListener {
@@ -59,17 +56,18 @@ public class InstanceManager {
   private final FinalizationListener finalizationListener;
 
   private long nextIdentifier = MIN_HOST_CREATED_IDENTIFIER;
-  private boolean isClosed = false;
+  private boolean hasFinalizationListenerStopped = false;
 
   /**
    * Instantiate a new manager.
    *
-   * <p>When the manager is no longer needed, {@link #close()} must be called.
+   * <p>When the manager is no longer needed, {@link #stopFinalizationListener()} must be called.
    *
    * @param finalizationListener the listener for garbage collected weak references.
    * @return a new `InstanceManager`.
    */
-  public static InstanceManager open(FinalizationListener finalizationListener) {
+  @NonNull
+  public static InstanceManager create(FinalizationListener finalizationListener) {
     return new InstanceManager(finalizationListener);
   }
 
@@ -85,15 +83,12 @@ public class InstanceManager {
    *
    * @param identifier the identifier paired to an instance.
    * @param <T> the expected return type.
-   * @return the removed instance if the manager contains the given identifier, otherwise null if
-   *     the manager doesn't contain the value or the manager is closed.
+   * @return the removed instance if the manager contains the given identifier, otherwise `null` if
+   *     the manager doesn't contain the value.
    */
   @Nullable
   public <T> T remove(long identifier) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
-      return null;
-    }
+    logWarningIfFinalizationListenerHasStopped();
     return (T) strongInstances.remove(identifier);
   }
 
@@ -111,14 +106,12 @@ public class InstanceManager {
    *
    * @param instance an instance that may be stored in the manager.
    * @return the identifier associated with `instance` if the manager contains the value, otherwise
-   *     null if the manager doesn't contain the value or the manager is closed.
+   *     `null` if the manager doesn't contain the value.
    */
   @Nullable
   public Long getIdentifierForStrongReference(Object instance) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
-      return null;
-    }
+    logWarningIfFinalizationListenerHasStopped();
+
     final Long identifier = identifiers.get(instance);
     if (identifier != null) {
       strongInstances.put(identifier, instance);
@@ -133,17 +126,12 @@ public class InstanceManager {
    * allows two objects that are equivalent (e.g. the `equals` method returns true and their
    * hashcodes are equal) to both be added.
    *
-   * <p>If the manager is closed, the addition is ignored and a warning is logged.
-   *
    * @param instance the instance to be stored.
    * @param identifier the identifier to be paired with instance. This value must be >= 0 and
    *     unique.
    */
   public void addDartCreatedInstance(Object instance, long identifier) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
-      return;
-    }
+    logWarningIfFinalizationListenerHasStopped();
     addInstance(instance, identifier);
   }
 
@@ -151,16 +139,14 @@ public class InstanceManager {
    * Adds a new instance that was instantiated from the host platform.
    *
    * @param instance the instance to be stored. This must be unique to all other added instances.
-   * @return the unique identifier (>= 0) stored with instance. If the manager is closed, returns
-   *     -1.
+   * @return the unique identifier (>= 0) stored with instance.
    */
   public long addHostCreatedInstance(Object instance) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
-      return INSTANCE_CLOSED;
-    } else if (containsInstance(instance)) {
+    logWarningIfFinalizationListenerHasStopped();
+
+    if (containsInstance(instance)) {
       throw new IllegalArgumentException(
-          String.format("Instance of `%s` has already been added.", instance.getClass()));
+          "Instance of " + instance.getClass() + " has already been added.");
     }
     final long identifier = nextIdentifier++;
     addInstance(instance, identifier);
@@ -173,14 +159,12 @@ public class InstanceManager {
    * @param identifier the identifier associated with an instance.
    * @param <T> the expected return type.
    * @return the instance associated with `identifier` if the manager contains the value, otherwise
-   *     null if the manager doesn't contain the value or the manager is closed.
+   *     `null` if the manager doesn't contain the value.
    */
   @Nullable
   public <T> T getInstance(long identifier) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
-      return null;
-    }
+    logWarningIfFinalizationListenerHasStopped();
+
     final WeakReference<T> instance = (WeakReference<T>) weakInstances.get(identifier);
     if (instance != null) {
       return instance.get();
@@ -192,26 +176,23 @@ public class InstanceManager {
    * Returns whether this manager contains the given `instance`.
    *
    * @param instance the instance whose presence in this manager is to be tested.
-   * @return whether this manager contains the given `instance`. If the manager is closed, returns
-   *     `false`.
+   * @return whether this manager contains the given `instance`.
    */
   public boolean containsInstance(Object instance) {
-    if (isClosed()) {
-      Log.w(TAG, CLOSED_WARNING);
-      return false;
-    }
+    logWarningIfFinalizationListenerHasStopped();
     return identifiers.containsKey(instance);
   }
 
   /**
-   * Closes the manager and releases resources.
+   * Stop the periodic run of the {@link FinalizationListener} for instances that have been garbage
+   * collected.
    *
-   * <p>Methods called after this one will be ignored and log a warning.
+   * <p>The InstanceManager can continue to be used, but the {@link FinalizationListener} will no
+   * longer be called and methods will log a warning.
    */
-  public void close() {
+  public void stopFinalizationListener() {
     handler.removeCallbacks(this::releaseAllFinalizedInstances);
-    isClosed = true;
-    clear();
+    hasFinalizationListenerStopped = true;
   }
 
   /**
@@ -227,15 +208,20 @@ public class InstanceManager {
   }
 
   /**
-   * Whether the manager has released resources and is no longer usable.
+   * Whether the {@link FinalizationListener} is still being called for instances that are garbage
+   * collected.
    *
-   * <p>See {@link #close()}.
+   * <p>See {@link #stopFinalizationListener()}.
    */
-  public boolean isClosed() {
-    return isClosed;
+  public boolean hasFinalizationListenerStopped() {
+    return hasFinalizationListenerStopped;
   }
 
   private void releaseAllFinalizedInstances() {
+    if (hasFinalizationListenerStopped()) {
+      return;
+    }
+
     WeakReference<Object> reference;
     while ((reference = (WeakReference<Object>) referenceQueue.poll()) != null) {
       final Long identifier = weakReferencesToIdentifiers.remove(reference);
@@ -262,5 +248,11 @@ public class InstanceManager {
     weakInstances.put(identifier, weakReference);
     weakReferencesToIdentifiers.put(weakReference, identifier);
     strongInstances.put(identifier, instance);
+  }
+
+  private void logWarningIfFinalizationListenerHasStopped() {
+    if (hasFinalizationListenerStopped()) {
+      Log.w(TAG, "The manager was used after calls to the FinalizationListener have been stopped.");
+    }
   }
 }

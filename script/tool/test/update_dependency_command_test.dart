@@ -14,19 +14,23 @@ import 'package:http/testing.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
 
+import 'mocks.dart';
 import 'util.dart';
 
 void main() {
   FileSystem fileSystem;
   late Directory packagesDir;
+  late RecordingProcessRunner processRunner;
   late CommandRunner<void> runner;
   Future<http.Response> Function(http.Request request)? mockHttpResponse;
 
   setUp(() {
     fileSystem = MemoryFileSystem();
+    processRunner = RecordingProcessRunner();
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     final UpdateDependencyCommand command = UpdateDependencyCommand(
       packagesDir,
+      processRunner: processRunner,
       httpClient:
           MockClient((http.Request request) => mockHttpResponse!(request)),
     );
@@ -338,6 +342,129 @@ dev_dependencies:
           package.parsePubspec().dependencies['target_package'];
       expect(dep, isA<HostedDependency>());
       expect((dep! as HostedDependency).version.toString(), '1.5.0');
+    });
+
+    test('regenerates all pigeon files when updating pigeon', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir, extraFiles: <String>[
+        'pigeons/foo.dart',
+        'pigeons/bar.dart',
+      ]);
+      addDependency(package, 'pigeon', version: '1.0.0');
+
+      await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--pub-package',
+        'pigeon',
+        '--version',
+        '1.5.0',
+      ]);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+            'dart',
+            const <String>['pub', 'get'],
+            package.path,
+          ),
+          ProcessCall(
+            'dart',
+            const <String>['run', 'pigeon', '--input', 'pigeons/foo.dart'],
+            package.path,
+          ),
+          ProcessCall(
+            'dart',
+            const <String>['run', 'pigeon', '--input', 'pigeons/bar.dart'],
+            package.path,
+          ),
+        ]),
+      );
+    });
+
+    test('warns when regenerating pigeon if there are no pigeon files',
+        () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      addDependency(package, 'pigeon', version: '1.0.0');
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--pub-package',
+        'pigeon',
+        '--version',
+        '1.5.0',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No pigeon input files found'),
+        ]),
+      );
+    });
+
+    test('updating pigeon fails if pub get fails', () async {
+      final RepositoryPackage package = createFakePackage(
+          'a_package', packagesDir,
+          extraFiles: <String>['pigeons/foo.dart']);
+      addDependency(package, 'pigeon', version: '1.0.0');
+
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--pub-package',
+        'pigeon',
+        '--version',
+        '1.5.0',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('dart pub get failed'),
+          contains('Failed to update pigeon files'),
+        ]),
+      );
+    });
+
+    test('updating pigeon fails if running pigeon fails', () async {
+      final RepositoryPackage package = createFakePackage(
+          'a_package', packagesDir,
+          extraFiles: <String>['pigeons/foo.dart']);
+      addDependency(package, 'pigeon', version: '1.0.0');
+
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'pigeon']),
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--pub-package',
+        'pigeon',
+        '--version',
+        '1.5.0',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('dart run pigeon failed'),
+          contains('Failed to update pigeon files'),
+        ]),
+      );
     });
   });
 }

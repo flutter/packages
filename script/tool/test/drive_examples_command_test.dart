@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
@@ -65,7 +64,9 @@ void main() {
           MockProcess(stdout: output, stdoutEncoding: utf8);
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[mockDevicesProcess];
+          <FakeProcessInfo>[
+        FakeProcessInfo(mockDevicesProcess, <String>['devices'])
+      ];
     }
 
     test('fails if no platforms are provided', () async {
@@ -152,7 +153,9 @@ void main() {
       // Simulate failure from `flutter devices`.
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[MockProcess(exitCode: 1)];
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['devices'])
+      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -805,6 +808,56 @@ void main() {
           ]));
     });
 
+    test('driving on an Android plugin with alias', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/test_driver/plugin_test.dart',
+          'example/test_driver/plugin.dart',
+          'example/android/android.java',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformAndroid: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      setMockFlutterDevicesOutput();
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'drive-examples',
+        '--apk',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform),
+                const <String>['devices', '--machine'], null),
+            ProcessCall(
+                getFlutterCommand(mockPlatform),
+                const <String>[
+                  'drive',
+                  '-d',
+                  _fakeAndroidDevice,
+                  '--driver',
+                  'test_driver/plugin_test.dart',
+                  '--target',
+                  'test_driver/plugin.dart'
+                ],
+                pluginExampleDirectory.path),
+          ]));
+    });
+
     test('driving when plugin does not support Android is no-op', () async {
       createFakePlugin(
         'plugin',
@@ -1055,10 +1108,12 @@ void main() {
       // Simulate failure from `flutter drive`.
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[
+          <FakeProcessInfo>[
         // No mock for 'devices', since it's running for macOS.
-        MockProcess(exitCode: 1), // 'drive' #1
-        MockProcess(exitCode: 1), // 'drive' #2
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['drive']), // 'drive' #1
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['drive']), // 'drive' #2
       ];
 
       Error? commandError;

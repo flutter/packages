@@ -7,19 +7,29 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_android/src/android_webview.dart'
     as android_webview;
+import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
+import 'package:webview_flutter_android/src/instance_manager.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
-import 'package:webview_flutter_platform_interface/src/webview_platform.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview_cookie_manager_test.mocks.dart';
+import 'test_android_webview.g.dart';
 
-@GenerateMocks(<Type>[android_webview.CookieManager])
+@GenerateMocks(<Type>[
+  android_webview.CookieManager,
+  AndroidWebViewController,
+  TestInstanceManagerHostApi,
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   test('clearCookies should call android_webview.clearCookies', () async {
     final android_webview.CookieManager mockCookieManager = MockCookieManager();
 
-    when(mockCookieManager.clearCookies())
+    when(mockCookieManager.removeAllCookies())
         .thenAnswer((_) => Future<bool>.value(true));
 
     final AndroidWebViewCookieManagerCreationParams params =
@@ -32,7 +42,7 @@ void main() {
         .clearCookies();
 
     expect(hasClearedCookies, true);
-    verify(mockCookieManager.clearCookies());
+    verify(mockCookieManager.removeAllCookies());
   });
 
   test('setCookie should throw ArgumentError for cookie with invalid path', () {
@@ -56,7 +66,7 @@ void main() {
   });
 
   test(
-      'setCookie should call android_webview.csetCookie with properly formatted cookie value',
+      'setCookie should call android_webview.setCookie with properly formatted cookie value',
       () {
     final android_webview.CookieManager mockCookieManager = MockCookieManager();
     final AndroidWebViewCookieManagerCreationParams params =
@@ -75,5 +85,40 @@ void main() {
       'flutter.dev',
       'foo%26=bar%40; path=/',
     ));
+  });
+
+  test('setAcceptThirdPartyCookies', () async {
+    final MockAndroidWebViewController mockController =
+        MockAndroidWebViewController();
+
+    final InstanceManager instanceManager =
+        InstanceManager(onWeakReferenceRemoved: (_) {});
+    android_webview.WebView.api = WebViewHostApiImpl(
+      instanceManager: instanceManager,
+    );
+    final android_webview.WebView webView = android_webview.WebView.detached(
+      instanceManager: instanceManager,
+    );
+
+    const int webViewIdentifier = 4;
+    instanceManager.addHostCreatedInstance(webView, webViewIdentifier);
+
+    when(mockController.webViewIdentifier).thenReturn(webViewIdentifier);
+
+    final AndroidWebViewCookieManagerCreationParams params =
+        AndroidWebViewCookieManagerCreationParams
+            .fromPlatformWebViewCookieManagerCreationParams(
+                const PlatformWebViewCookieManagerCreationParams());
+
+    final android_webview.CookieManager mockCookieManager = MockCookieManager();
+
+    await AndroidWebViewCookieManager(
+      params,
+      cookieManager: mockCookieManager,
+    ).setAcceptThirdPartyCookies(mockController, false);
+
+    verify(mockCookieManager.setAcceptThirdPartyCookies(webView, false));
+
+    android_webview.WebView.api = WebViewHostApiImpl();
   });
 }

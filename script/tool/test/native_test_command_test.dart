@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
@@ -94,15 +93,16 @@ void main() {
       runner.addCommand(command);
     });
 
-    // Returns a MockProcess to provide for "xcrun xcodebuild -list" for a
+    // Returns a FakeProcessInfo to provide for "xcrun xcodebuild -list" for a
     // project that contains [targets].
-    MockProcess getMockXcodebuildListProcess(List<String> targets) {
+    FakeProcessInfo getMockXcodebuildListProcess(List<String> targets) {
       final Map<String, dynamic> projects = <String, dynamic>{
         'project': <String, dynamic>{
           'targets': targets,
         }
       };
-      return MockProcess(stdout: jsonEncode(projects));
+      return FakeProcessInfo(MockProcess(stdout: jsonEncode(projects)),
+          <String>['xcodebuild', '-list']);
     }
 
     // Returns the ProcessCall to expect for checking the targets present in
@@ -212,10 +212,11 @@ void main() {
 
       final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-      processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
         getMockXcodebuildListProcess(<String>['RunnerTests', 'RunnerUITests']),
         // Exit code 66 from testing indicates no tests.
-        MockProcess(exitCode: 66),
+        FakeProcessInfo(
+            MockProcess(exitCode: 66), <String>['xcodebuild', 'test']),
       ];
       final List<String> output = await runCapturingPrint(
           runner, <String>['native-test', '--macos', '--no-unit']);
@@ -279,7 +280,7 @@ void main() {
 
         final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']),
         ];
@@ -315,8 +316,9 @@ void main() {
             });
         final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-          MockProcess(stdout: jsonEncode(_kDeviceListMap)), // simctl
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: jsonEncode(_kDeviceListMap)),
+              <String>['simctl', 'list']),
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']),
         ];
@@ -386,7 +388,7 @@ void main() {
 
         final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']),
         ];
@@ -807,9 +809,8 @@ public class FlutterActivityTest {
             .platformDirectory(FlutterPlatform.android)
             .childFile('gradlew')
             .path;
-        processRunner.mockProcessesForExecutable[gradlewPath] = <io.Process>[
-          MockProcess(exitCode: 1)
-        ];
+        processRunner.mockProcessesForExecutable[gradlewPath] =
+            <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -850,9 +851,12 @@ public class FlutterActivityTest {
             .platformDirectory(FlutterPlatform.android)
             .childFile('gradlew')
             .path;
-        processRunner.mockProcessesForExecutable[gradlewPath] = <io.Process>[
-          MockProcess(), // unit passes
-          MockProcess(exitCode: 1), // integration fails
+        processRunner.mockProcessesForExecutable[gradlewPath] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(
+              MockProcess(), <String>['testDebugUnitTest']), // unit passes
+          FakeProcessInfo(MockProcess(exitCode: 1),
+              <String>['app:connectedAndroidTest']), // integration fails
         ];
 
         Error? commandError;
@@ -1099,7 +1103,9 @@ public class FlutterActivityTest {
             <String>['example', ...testBinaryRelativePath.split('/')]);
 
         processRunner.mockProcessesForExecutable[testBinary.path] =
-            <io.Process>[MockProcess(exitCode: 1)];
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1)),
+        ];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(runner, <String>[
@@ -1135,8 +1141,8 @@ public class FlutterActivityTest {
               platformMacOS: const PlatformDetails(PlatformSupport.inline),
             });
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-          MockProcess(exitCode: 1)
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1))
         ];
 
         Error? commandError;
@@ -1164,7 +1170,7 @@ public class FlutterActivityTest {
 
         final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']),
         ];
@@ -1199,7 +1205,7 @@ public class FlutterActivityTest {
 
         final Directory pluginExampleDirectory = getExampleDir(plugin1);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']),
         ];
@@ -1235,7 +1241,7 @@ public class FlutterActivityTest {
         final Directory pluginExampleDirectory = getExampleDir(plugin1);
 
         // Simulate a project with unit tests but no integration tests...
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(<String>['RunnerTests']),
         ];
 
@@ -1269,7 +1275,7 @@ public class FlutterActivityTest {
 
         final Directory pluginExampleDirectory = getExampleDir(plugin1);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(<String>['RunnerUITests']),
         ];
 
@@ -1308,8 +1314,9 @@ public class FlutterActivityTest {
 
         final Directory pluginExampleDirectory = getExampleDir(plugin1);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-          MockProcess(exitCode: 1), // xcodebuild -list
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+              MockProcess(exitCode: 1), <String>['xcodebuild', '-list']),
         ];
 
         Error? commandError;
@@ -1357,13 +1364,15 @@ public class FlutterActivityTest {
         final Directory androidFolder =
             pluginExampleDirectory.childDirectory('android');
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']), // iOS list
-          MockProcess(), // iOS run
+          FakeProcessInfo(
+              MockProcess(), <String>['xcodebuild', 'test']), // iOS run
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']), // macOS list
-          MockProcess(), // macOS run
+          FakeProcessInfo(
+              MockProcess(), <String>['xcodebuild', 'test']), // macOS run
         ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
@@ -1404,7 +1413,7 @@ public class FlutterActivityTest {
 
         final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']),
         ];
@@ -1440,7 +1449,7 @@ public class FlutterActivityTest {
 
         final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']),
         ];
@@ -1539,7 +1548,7 @@ public class FlutterActivityTest {
           ],
         );
 
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']),
         ];
@@ -1551,9 +1560,8 @@ public class FlutterActivityTest {
             .platformDirectory(FlutterPlatform.android)
             .childFile('gradlew')
             .path;
-        processRunner.mockProcessesForExecutable[gradlewPath] = <io.Process>[
-          MockProcess(exitCode: 1)
-        ];
+        processRunner.mockProcessesForExecutable[gradlewPath] =
+            <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(runner, <String>[
@@ -1603,12 +1611,11 @@ public class FlutterActivityTest {
             .platformDirectory(FlutterPlatform.android)
             .childFile('gradlew')
             .path;
-        processRunner.mockProcessesForExecutable[gradlewPath] = <io.Process>[
-          MockProcess(exitCode: 1)
-        ];
-        // Simulate failing Android.
-        processRunner.mockProcessesForExecutable['xcrun'] = <io.Process>[
-          MockProcess(exitCode: 1)
+        processRunner.mockProcessesForExecutable[gradlewPath] =
+            <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
+        // Simulate failing iOS.
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1))
         ];
 
         Error? commandError;
@@ -1828,7 +1835,9 @@ public class FlutterActivityTest {
             <String>['example', ...testBinaryRelativePath.split('/')]);
 
         processRunner.mockProcessesForExecutable[testBinary.path] =
-            <io.Process>[MockProcess(exitCode: 1)];
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1)),
+        ];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(runner, <String>[

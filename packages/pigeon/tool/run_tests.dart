@@ -111,6 +111,7 @@ Future<void> main(List<String> args) async {
     mockHandlerTests,
     commandLineTests,
     androidJavaUnitTests,
+    androidJavaLint,
     androidKotlinUnitTests,
     // TODO(stuartmorgan): Include these once CI supports running simulator
     // tests. Currently these tests aren't run in CI.
