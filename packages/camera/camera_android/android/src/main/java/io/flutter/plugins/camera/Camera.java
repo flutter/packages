@@ -130,7 +130,7 @@ class Camera
   CameraDeviceWrapper cameraDevice;
   CameraCaptureSession captureSession;
   private ImageReader pictureImageReader;
-  private ImageStreamReader imageStreamReader;
+  ImageStreamReader imageStreamReader;
   /** {@link CaptureRequest.Builder} for the camera preview */
   CaptureRequest.Builder previewRequestBuilder;
 
@@ -1199,7 +1199,7 @@ class Camera
         });
   }
 
-  private void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
+  void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
     if (imageStreamReader == null) {
       return;
     }
