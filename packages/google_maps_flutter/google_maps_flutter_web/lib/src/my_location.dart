@@ -5,30 +5,37 @@
 part of google_maps_flutter_web;
 
 Geolocation _geolocation = window.navigator.geolocation;
+LatLng? _lastLocationKnown;
 
 // Watch current location and update blue dot
 Future<void> _displayAndWatchMyLocation(MarkersController controller) async {
   final Marker marker = await _createBlueDotMarker();
   _geolocation.watchPosition().listen((Geoposition location) async {
+    _lastLocationKnown = LatLng(
+      location.coords!.latitude!.toDouble(),
+      location.coords!.longitude!.toDouble(),
+    );
     // TODO(nploi): https://github.com/flutter/plugins/pull/6868#discussion_r1057898052
     // We're discarding a lot of information from coords, like its accuracy, heading and speed. Those can be used to:
     // - Render a bigger "blue halo" around the current position marker when the accuracy is low.
     // - Render the direction in which we're looking at with a small "cone" using the heading information.
     // - Render the current position marker as an arrow when the current position is "moving" (speed > certain threshold), and the direction in which the arrow should point (again, with the heading information).
-    controller.addMarkers(<Marker>{
-      marker.copyWith(
-          positionParam: LatLng(
-        location.coords!.latitude!.toDouble(),
-        location.coords!.longitude!.toDouble(),
-      ))
-    });
+
+    final Marker markerUpdate =
+        marker.copyWith(positionParam: _lastLocationKnown);
+    if (controller.markers.containsKey(marker.markerId)) {
+      controller._changeMarker(markerUpdate);
+    } else {
+      controller.addMarkers(<Marker>{markerUpdate});
+    }
   });
 }
 
 // Get current location
 Future<LatLng> _getCurrentLocation() async {
   final Geoposition location = await _geolocation.getCurrentPosition(
-      timeout: const Duration(seconds: 30));
+    timeout: const Duration(seconds: 30),
+  );
   return LatLng(
     location.coords!.latitude!.toDouble(),
     location.coords!.longitude!.toDouble(),
@@ -40,10 +47,13 @@ Future<void> _centerMyCurrentLocation(
   GoogleMapController controller,
 ) async {
   try {
-    final LatLng location = await _getCurrentLocation();
-    await controller.moveCamera(
-      CameraUpdate.newLatLng(location),
-    );
+    _lastLocationKnown ??= await _getCurrentLocation();
+    if (_lastLocationKnown != null) {
+      await controller.moveCamera(
+        CameraUpdate.newLatLng(_lastLocationKnown!),
+      );
+    }
+
     controller._myLocationButton?.doneAnimation();
   } catch (e) {
     controller._myLocationButton?.disableBtn();
@@ -62,7 +72,9 @@ void _addMyLocationButton(gmaps.GMap map, GoogleMapController controller) {
   map.addListener('dragend', () {
     controller._myLocationButton?.resetAnimation();
   });
-
+  map.addListener('center_changed', () {
+    controller._myLocationButton?.resetAnimation();
+  });
   map.controls![gmaps.ControlPosition.RIGHT_BOTTOM as int]
       ?.push(controller._myLocationButton?.getButton);
 }
@@ -78,6 +90,7 @@ Future<Marker> _createBlueDotMarker() async {
     markerId: const MarkerId('my_location_blue_dot'),
     icon: icon,
     zIndex: 0.5,
+    onTap: () {},
   );
 }
 
