@@ -57,6 +57,8 @@
 - vm_service
 - wasm
 - yaml
+- io
+- yaml_edit
 # Google-owned packages
 - adaptive_navigation
 - file
