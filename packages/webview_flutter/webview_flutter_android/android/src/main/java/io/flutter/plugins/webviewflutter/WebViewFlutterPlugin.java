@@ -107,7 +107,6 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             new WebChromeClientHostApiImpl.WebChromeClientCreator(),
             new WebChromeClientFlutterApiImpl(binaryMessenger, instanceManager),
             context);
-    
 
     JavaObjectHostApi.setup(binaryMessenger, new JavaObjectHostApiImpl(instanceManager));
     WebViewHostApi.setup(binaryMessenger, webViewHostApi);
@@ -118,9 +117,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             instanceManager,
             new WebViewClientHostApiImpl.WebViewClientCreator(),
             new WebViewClientFlutterApiImpl(binaryMessenger, instanceManager)));
-    WebChromeClientHostApi.setup(
-        binaryMessenger,
-        webChromeClientHostApi);
+    WebChromeClientHostApi.setup(binaryMessenger, webChromeClientHostApi);
     DownloadListenerHostApi.setup(
         binaryMessenger,
         new DownloadListenerHostApiImpl(

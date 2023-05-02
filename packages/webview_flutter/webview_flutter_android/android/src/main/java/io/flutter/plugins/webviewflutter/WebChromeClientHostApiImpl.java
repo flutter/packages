@@ -72,25 +72,28 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
         ((ViewGroup) mFullscreenView.getParent()).removeView(mFullscreenView);
       }
       if (context instanceof Activity) {
-        Window window = ((Activity)context).getWindow();
+        Window window = ((Activity) context).getWindow();
         mFullscreenView = view;
         setFullscreenStatus(true, window);
-        window.addContentView(mFullscreenView,
-            new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+        window.addContentView(
+            mFullscreenView,
+            new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER));
       }
     }
 
     @Override
     public void onHideCustomView() {
-        if (mFullscreenView == null) {
-          return;
-        }
-        if (context instanceof Activity) {
-          setFullscreenStatus(false, ((Activity)context).getWindow());
-          ((ViewGroup) mFullscreenView.getParent()).removeView(mFullscreenView);
-          mFullscreenView = null;
-        }
+      if (mFullscreenView == null) {
+        return;
+      }
+      if (context instanceof Activity) {
+        setFullscreenStatus(false, ((Activity) context).getWindow());
+        ((ViewGroup) mFullscreenView.getParent()).removeView(mFullscreenView);
+        mFullscreenView = null;
+      }
     }
 
     @SuppressWarnings("deprecation")
@@ -99,13 +102,11 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
       if (fullscreen) {
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
 
-        window.addFlags(
-          WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
       } else {
         decorView.setSystemUiVisibility(View.STATUS_BAR_VISIBLE);
 
-        window.clearFlags(
-          WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
       }
     }
 
@@ -294,6 +295,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
 
   /**
    * Sets the context to construct {@link WebChromeClientImpl}s.
+   *
    * @param context the new context
    */
   public void setContext(Context context) {
