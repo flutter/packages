@@ -195,7 +195,7 @@ FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
   return [FWFNSErrorData makeWithCode:@(error.code)
                                domain:error.domain
                  localizedDescription:error.localizedDescription
-                          description:error.description];
+                    objectDescription:error.description];
 }
 
 FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(

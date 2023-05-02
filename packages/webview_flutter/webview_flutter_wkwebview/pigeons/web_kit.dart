@@ -293,7 +293,12 @@ class NSErrorData {
   late int code;
   late String domain;
   late String localizedDescription;
-  late String description;
+
+  /// The value of the inherited property `NSObject.description`.
+  ///
+  /// The name `description` cannot be used because it is an inherited property
+  /// that is `readonly` and can't be set.
+  late String objectDescription;
 }
 
 /// Mirror of WKScriptMessage.

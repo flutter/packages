@@ -605,8 +605,8 @@ void main() {
           NSErrorData(
             code: 23,
             domain: 'Hello',
-            localizedDescription: 'localiziedDescription',
-            description: 'description',
+            localizedDescription: 'localizedDescription',
+            objectDescription: 'description',
           ),
         );
 
@@ -639,7 +639,7 @@ void main() {
             code: 23,
             domain: 'Hello',
             localizedDescription: 'localiziedDescription',
-            description: 'description',
+            objectDescription: 'description',
           ),
         );
 
@@ -845,7 +845,7 @@ void main() {
               code: 0,
               domain: 'domain',
               localizedDescription: 'desc',
-              description: 'description',
+              objectDescription: 'description',
             ),
           ),
         );

@@ -90,10 +90,11 @@ void main() {
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
         WKWebView.detached(),
         const NSError(
-            code: WKErrorCode.webViewInvalidated,
-            domain: 'domain',
-            localizedDescription: 'my desc',
-            description: 'desc',),
+          code: WKErrorCode.webViewInvalidated,
+          domain: 'domain',
+          localizedDescription: 'my desc',
+          description: 'desc',
+        ),
       );
 
       expect(callbackError.description, 'my desc');

@@ -106,6 +106,7 @@
   XCTAssertEqualObjects(data.code, @23);
   XCTAssertEqualObjects(data.domain, @"domain");
   XCTAssertEqualObjects(data.localizedDescription, @"description");
+  XCTAssertNotNil(data.objectDescription);
 }
 
 - (void)testFWFWKScriptMessageDataFromWKScriptMessage {
