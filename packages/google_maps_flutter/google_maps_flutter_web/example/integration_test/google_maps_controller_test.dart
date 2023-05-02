@@ -607,7 +607,7 @@ void main() {
         );
 
         when(mockGeolocation.watchPosition()).thenAnswer((_) {
-          return Stream<MockGeoposition>.fromIterable(<MockGeoposition>[]);
+          throw Exception('permission denied');
         });
 
         controller.init();
