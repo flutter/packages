@@ -38,4 +38,3 @@ dev_dependencies:
   mockito: 5.4.0
   plugin_platform_interface: ^2.0.0
   video_player: ^2.0.0
-  
