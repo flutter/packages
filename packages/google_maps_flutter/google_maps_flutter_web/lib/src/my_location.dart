@@ -7,12 +7,13 @@ part of google_maps_flutter_web;
 // Default values for when the get current location fails
 const LatLng _nullLatLng = LatLng(0, 0);
 Geolocation _geolocation = window.navigator.geolocation;
+LatLng _lastKnownLocation = _nullLatLng;
 
 // Watch current location and update blue dot
 Future<void> _displayAndWatchMyLocation(MarkersController controller) async {
   final Marker marker = await _createBlueDotMarker();
   _geolocation.watchPosition().listen((Geoposition location) async {
-    final LatLng latLng = LatLng(
+    _lastKnownLocation = LatLng(
       location.coords!.latitude!.toDouble(),
       location.coords!.longitude!.toDouble(),
     );
@@ -22,7 +23,8 @@ Future<void> _displayAndWatchMyLocation(MarkersController controller) async {
     // - Render the direction in which we're looking at with a small "cone" using the heading information.
     // - Render the current position marker as an arrow when the current position is "moving" (speed > certain threshold), and the direction in which the arrow should point (again, with the heading information).
 
-    final Marker markerUpdate = marker.copyWith(positionParam: latLng);
+    final Marker markerUpdate =
+        marker.copyWith(positionParam: _lastKnownLocation);
     if (controller.markers.containsKey(marker.markerId)) {
       controller._changeMarker(markerUpdate);
     } else {
@@ -33,13 +35,17 @@ Future<void> _displayAndWatchMyLocation(MarkersController controller) async {
 
 // Get current location
 Future<LatLng> _getCurrentLocation() async {
+  if (_lastKnownLocation != _nullLatLng) {
+    return _lastKnownLocation;
+  }
   final Geoposition location = await _geolocation.getCurrentPosition(
     timeout: const Duration(seconds: 30),
   );
-  return LatLng(
+  _lastKnownLocation = LatLng(
     location.coords?.latitude?.toDouble() ?? _nullLatLng.latitude,
     location.coords?.longitude?.toDouble() ?? _nullLatLng.longitude,
   );
+  return _lastKnownLocation;
 }
 
 // Find and move to current location
