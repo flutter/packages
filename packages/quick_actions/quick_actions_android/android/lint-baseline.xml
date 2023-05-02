@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 7.0.1" type="baseline" client="gradle" name="AGP (7.0.1)" variant="all" version="7.0.1">
+<issues format="6" by="lint 7.4.2" type="baseline" client="gradle" dependencies="false" name="AGP (7.4.2)" variant="all" version="7.4.2">
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="    final int resourceId = res.getIdentifier(icon, &quot;drawable&quot;, packageName);"
+        errorLine2="                               ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/quickactions/MethodCallHandlerImpl.java"
+            line="149"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="      return res.getIdentifier(icon, &quot;mipmap&quot;, packageName);"
+        errorLine2="                 ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/io/flutter/plugins/quickactions/MethodCallHandlerImpl.java"
+            line="152"
+            column="18"/>
+    </issue>
 
     <issue
         id="SyntheticAccessor"
@@ -14,7 +36,7 @@
 
     <issue
         id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {"
         errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -25,7 +47,7 @@
 
     <issue
         id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="  public void onAttachedToEngine(FlutterPluginBinding binding) {"
         errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -36,7 +58,7 @@
 
     <issue
         id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="  public void onDetachedFromEngine(FlutterPluginBinding binding) {"
         errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -47,7 +69,7 @@
 
     <issue
         id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="  public void onAttachedToActivity(ActivityPluginBinding binding) {"
         errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -58,7 +80,7 @@
 
     <issue
         id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="  public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {"
         errorLine2="                                                     ~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -69,7 +91,7 @@
 
     <issue
         id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://android.github.io/kotlin-guides/interop.html#nullability-annotations"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="  public boolean onNewIntent(Intent intent) {"
         errorLine2="                             ~~~~~~">
         <location

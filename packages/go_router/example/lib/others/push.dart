@@ -32,7 +32,7 @@ class App extends StatelessWidget {
         path: '/page2',
         builder: (BuildContext context, GoRouterState state) =>
             Page2ScreenWithPush(
-          int.parse(state.queryParams['push-count']!),
+          int.parse(state.queryParameters['push-count']!),
         ),
       ),
     ],

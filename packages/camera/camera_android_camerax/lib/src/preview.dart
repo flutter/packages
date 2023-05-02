@@ -71,6 +71,9 @@ class Preview extends UseCase {
 /// Host API implementation of [Preview].
 class PreviewHostApiImpl extends PreviewHostApi {
   /// Constructs a [PreviewHostApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   PreviewHostApiImpl({this.binaryMessenger, InstanceManager? instanceManager}) {
     this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
   }
