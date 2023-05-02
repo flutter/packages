@@ -25,42 +25,45 @@ Future<void> main(List<String> args) async {
 
   //copy from go_router/test_fixes to temp directory
   final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
-
-  await _prepareTemplate(
-    ctx: ctx,
-    testFixesDir: ctx.join(packageRoot.path, 'test_fixes'),
-    testFixesTargetDir: testFixesTargetDir.path,
-    //Switching this to true, will depend on go_router v7.0.0, which will fail the golden test
-    testBadVersion: false,
-  );
-  final int pubGet = await _runProcess(
-    'dart',
-    <String>[
-      'pub',
-      'upgrade',
-    ],
-    workingDirectory: testFixesTargetDir.path,
-  );
-  if (pubGet != 0) {
-    exit(pubGet);
+  for (final bool testPubVersion in <bool>[true, false]) {
+    //testPubVersion=true will lead to failiure on go_router v7.0.0
+    await _prepareTemplate(
+      ctx: ctx,
+      testFixesDir: ctx.join(packageRoot.path, 'test_fixes'),
+      testFixesTargetDir: testFixesTargetDir.path,
+      testPubVersion: testPubVersion,
+    );
+    final int pubGet = await _runProcess(
+      'dart',
+      <String>[
+        'pub',
+        'upgrade',
+      ],
+      workingDirectory: testFixesTargetDir.path,
+    );
+    if (pubGet != 0) {
+      exit(pubGet);
+    }
+    final int status = await _runProcess(
+      'dart',
+      <String>[
+        'fix',
+        '--compare-to-golden',
+      ],
+      workingDirectory: testFixesTargetDir.path,
+    );
+    if (status != 0) {
+      exit(status);
+    }
   }
-  final int status = await _runProcess(
-    'dart',
-    <String>[
-      'fix',
-      '--compare-to-golden',
-    ],
-    workingDirectory: testFixesTargetDir.path,
-  );
-
-  exit(status);
+  exit(0);
 }
 
 Future<void> _prepareTemplate({
   required String testFixesDir,
   required String testFixesTargetDir,
   required p.Context ctx,
-  required bool testBadVersion,
+  required bool testPubVersion,
 }) async {
   await io.copyPath(testFixesDir, testFixesTargetDir);
 
@@ -68,8 +71,8 @@ Future<void> _prepareTemplate({
   final File targetPubspecPath = File(pubspecYamlPath);
 
   final YamlEditor editor = YamlEditor(await targetPubspecPath.readAsString());
-  if (testBadVersion) {
-    editor.update(<String>['dependencies', 'go_router'], '7.0.0');
+  if (testPubVersion) {
+    editor.update(<String>['dependencies', 'go_router'], 'any');
   } else {
     editor.update(
       <String>['dependencies', 'go_router', 'path'],
