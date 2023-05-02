@@ -21,6 +21,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       method: 'replaceNamed'
       inClass: 'GoRouter'
@@ -35,6 +36,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       method: 'pushReplacementNamed'
       inClass: 'GoRouter'
@@ -50,6 +52,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       method: 'pushNamed'
       inClass: 'GoRouter'
@@ -65,6 +68,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       method: 'goNamed'
       inClass: 'GoRouter'
@@ -80,6 +84,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       method: 'namedLocation'
       inClass: 'GoRouter'
@@ -95,6 +100,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       method: 'namedLocation'
       inClass: 'GoRouterState'
@@ -110,6 +116,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       field: 'queryParams'
       inClass: 'GoRouterState'
@@ -121,6 +128,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       field: 'fullpath'
       inClass: 'GoRouterState'
@@ -132,6 +140,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       field: 'params'
       inClass: 'GoRouterState'
@@ -143,6 +152,7 @@ transforms:
     date: 2023-04-24
     bulkApply: true
     element:
+      # todo: Workaround for https://github.com/dart-lang/sdk/issues/52233
       uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
       field: 'subloc'
       inClass: 'GoRouterState'

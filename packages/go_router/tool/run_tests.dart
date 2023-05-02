@@ -23,7 +23,9 @@ Future<void> main(List<String> args) async {
       Directory(ctx.dirname(_ensureTrimLeadingSeparator(Platform.script.path)))
           .parent;
 
-  //copy from go_router/test_fixes to temp directory
+  // Copy test_fixes/ to be tested in a temp directory.
+  // This ensures the dart fix can be applied to project
+  // outside of this package.
   final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
 
   await _prepareTemplate(
@@ -50,8 +52,12 @@ Future<void> main(List<String> args) async {
     ],
     workingDirectory: testFixesTargetDir.path,
   );
-
-  exit(status);
+  if (status != 0) {
+    exit(status);
+  }
+  //Cleanup temp folder
+  await testFixesTargetDir.delete(recursive: true);
+  exit(0);
 }
 
 Future<void> _prepareTemplate({
@@ -63,8 +69,22 @@ Future<void> _prepareTemplate({
 
   final String pubspecYamlPath = ctx.join(testFixesTargetDir, 'pubspec.yaml');
   final File targetPubspecPath = File(pubspecYamlPath);
+  const String initialYaml = '''
+name: test_fixes
+publish_to: "none"
+version: 1.0.0+1
 
-  final YamlEditor editor = YamlEditor(await targetPubspecPath.readAsString());
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router:
+    path:
+''';
+  final YamlEditor editor = YamlEditor(initialYaml);
   editor.update(
     <String>['dependencies', 'go_router', 'path'],
     ctx.dirname(testFixesDir),
