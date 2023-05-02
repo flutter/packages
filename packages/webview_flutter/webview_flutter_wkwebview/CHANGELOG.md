@@ -1,6 +1,11 @@
-## 3.4.1
+## 3.4.2
 
 * Adds access for the full error description for web resource errors.
+
+## 3.4.1
+
+* Fixes internal type conversion error.
+* Adds internal unknown enum values to handle api updates.
 
 ## 3.4.0
 

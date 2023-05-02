@@ -156,4 +156,14 @@
           .value,
       FWFWKMediaCaptureTypeCameraAndMicrophone);
 }
+
+- (void)testNSKeyValueChangeKeyConversionReturnsUnknownIfUnrecognized {
+  XCTAssertEqual(
+      FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(@"SomeUnknownValue").value,
+      FWFNSKeyValueChangeKeyEnumUnknown);
+}
+
+- (void)testWKNavigationTypeConversionReturnsUnknownIfUnrecognized {
+  XCTAssertEqual(FWFWKNavigationTypeFromNativeWKNavigationType(-15), FWFWKNavigationTypeUnknown);
+}
 @end

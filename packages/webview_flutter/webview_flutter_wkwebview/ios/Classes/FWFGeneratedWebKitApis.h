@@ -43,6 +43,7 @@ typedef NS_ENUM(NSUInteger, FWFNSKeyValueChangeKeyEnum) {
   FWFNSKeyValueChangeKeyEnumNewValue = 2,
   FWFNSKeyValueChangeKeyEnumNotificationIsPrior = 3,
   FWFNSKeyValueChangeKeyEnumOldValue = 4,
+  FWFNSKeyValueChangeKeyEnumUnknown = 5,
 };
 
 /// Mirror of WKUserScriptInjectionTime.
@@ -143,6 +144,11 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
   /// See
   /// https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
   FWFWKNavigationTypeOther = 5,
+  /// An unknown navigation type.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  FWFWKNavigationTypeUnknown = 6,
 };
 
 /// Possible permission decisions for device resource access.
@@ -188,7 +194,7 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
   /// An unknown media device.
   ///
   /// This does not represent an actual value provided by the platform and only
-  /// indicates a value was provided that we don't currently support.
+  /// indicates a value was provided that isn't currently supported.
   FWFWKMediaCaptureTypeUnknown = 3,
 };
 
@@ -342,6 +348,9 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
 @property(nonatomic, copy) NSString *domain;
 @property(nonatomic, copy) NSString *localizedDescription;
 /// The value of the inherited property `NSObject.description`.
+///
+/// The name `description` cannot be used because it is an inherited property
+/// that is `readonly` and can't be set.
 @property(nonatomic, copy) NSString *objectDescription;
 @end
 
