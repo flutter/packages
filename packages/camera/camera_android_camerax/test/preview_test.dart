@@ -92,7 +92,7 @@ void main() {
     });
 
     test(
-        'releaseFlutterSurfaceTexture makes call to relase flutter surface texture entry',
+        'releaseFlutterSurfaceTexture makes call to release flutter surface texture entry',
         () async {
       final MockTestPreviewHostApi mockApi = MockTestPreviewHostApi();
       TestPreviewHostApi.setup(mockApi);

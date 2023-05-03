@@ -61,6 +61,17 @@ class SystemServices {
 
     api.stopListeningForDeviceOrientationChange();
   }
+
+  /// Gets a file path to use to create a temp file at. It is created by calling
+  /// File.createTempFile(prefix, suffix, cacheDir), on the native side, where
+  /// where cacheDir is the cache directory identified by the current application
+  /// context using context.getCacheDir().
+  static Future<String> getTempFilePath(String prefix, String suffix,
+      {BinaryMessenger? binaryMessenger}) {
+    final SystemServicesHostApi api =
+        SystemServicesHostApi(binaryMessenger: binaryMessenger);
+    return api.getTempFilePath(prefix, suffix);
+  }
 }
 
 /// Host API implementation of [SystemServices].
