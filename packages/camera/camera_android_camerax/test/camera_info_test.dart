@@ -6,7 +6,6 @@ import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
-import 'package:camera_android_camerax/src/live_data.dart';
 import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
