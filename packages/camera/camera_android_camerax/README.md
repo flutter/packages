@@ -22,17 +22,16 @@ dependencies:
 ## How this plugin accesses Android libraries
 
 The `camera` implementation is located at `./lib/src/android_camera_camerax.dart`, and
-it is implemented using Dart classes that are wrapped versions of the Android
-classes that the implementation needs access to.
+it is implemented using Dart classes that are wrapped versions of Android classes.
 
-In `lib/src/` you will find all of the Dart-wrapped native classes that the plugin
+In `lib/src/`, you will find all of the Dart-wrapped native classes that the plugin
 currently uses to implement `camera`. Each of these classes uses an `InstanceManager`
-(implementation in `instance_manager.dart`) to manage objects of these Dart-wrapped
-classes that are created by the plugin implementation on the Dart side that map
-to objects of the same type created on the native side. This plugin uses [`pigeon`][12]
-to communicate with native code, so each of these Dart-wrapped classes have Host API
-and Flutter API implementations, as needed. For more information on how these APIs are
-used by `pigeon`, please see its [documentation][14].
+(implementation in `instance_manager.dart`) to manage objects that are created by
+the plugin implementation that map to objects of the same type created on the native
+side. This plugin uses [`pigeon`][12] to communicate with native code, so each of
+these Dart-wrapped classes also have Host API and Flutter API implementations, as needed.
+For more information on how these APIs are used by `pigeon`, please see its
+[documentation][14].
 
 Similarly, on the native side in `android/src/main/java/io/flutter/plugins/camerax/`,
 you'll find the Host API and Flutter API implementations of the same classes wrapped
@@ -41,10 +40,10 @@ wrapped in the CameraX library or other Android libraries. The objects created i
 native code map to objects created on the Dart side, and thus, are also managed by an
 `InstanceManager` (implementation in `InstanceManager.java`).
 
-Therefore, if you need to access any Android classes, you should search in `lib/src/`
-for any Dart-wrapped classes you may need. If any classes that you need are not wrapped
-or you need to access any methods not wrapped in a class, you will need to take the
-additional steps to wrap them to maintain the structure of this plugin.
+If you need to access any Android classes to contribute to this plugin, you should
+search in `lib/src/` for any Dart-wrapped classes you may need. If any classes that
+you need are not wrapped or you need to access any methods not wrapped in a class,
+you must take the additional steps to wrap them to maintain the structure of this plugin.
 
 For more information on the approach of wrapping native libraries For plugins, please
 see the [design document][13].
