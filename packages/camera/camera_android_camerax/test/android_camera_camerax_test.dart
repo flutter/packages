@@ -484,81 +484,83 @@ void main() {
     expect(previewTexture.textureId, equals(textureId));
   });
 
-  test(
-      'startVideoRecording binds video capture use case and starts the recording',
-      () async {
-    //Set up mocks and constants.
-    final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
-    camera.processCameraProvider = MockProcessCameraProvider();
-    camera.cameraSelector = MockCameraSelector();
-    camera.recorder = camera.testRecorder;
-    camera.videoCapture = camera.testVideoCapture;
-    camera.camera = MockCamera();
-    final MockPendingRecording mockPendingRecording = MockPendingRecording();
-    final MockRecording mockRecording = MockRecording();
-    final TestSystemServicesHostApi mockSystemServicesApi =
-        MockTestSystemServicesHostApi();
-    TestSystemServicesHostApi.setup(mockSystemServicesApi);
+  group('video recording', () {
+    test(
+        'startVideoRecording binds video capture use case and starts the recording',
+        () async {
+      //Set up mocks and constants.
+      final MockAndroidCameraCameraX camera = MockAndroidCameraCameraX();
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.cameraSelector = MockCameraSelector();
+      camera.recorder = camera.testRecorder;
+      camera.videoCapture = camera.testVideoCapture;
+      camera.camera = MockCamera();
+      final MockPendingRecording mockPendingRecording = MockPendingRecording();
+      final MockRecording mockRecording = MockRecording();
+      final TestSystemServicesHostApi mockSystemServicesApi =
+          MockTestSystemServicesHostApi();
+      TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
-    const int cameraId = 17;
-    const String outputPath = '/temp/MOV123.temp';
+      const int cameraId = 17;
+      const String outputPath = '/temp/MOV123.temp';
 
-    // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
-        .thenReturn(outputPath);
-    when(camera.testRecorder.prepareRecording(outputPath))
-        .thenAnswer((_) async => mockPendingRecording);
-    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
-    when(camera.processCameraProvider!.isBound(camera.videoCapture!))
-        .thenAnswer((_) async => false);
-    when(camera.processCameraProvider!.bindToLifecycle(
-            camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
-        .thenAnswer((_) async => camera.camera!);
+      // Mock method calls.
+      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+          .thenReturn(outputPath);
+      when(camera.testRecorder.prepareRecording(outputPath))
+          .thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+      when(camera.processCameraProvider!.isBound(camera.videoCapture!))
+          .thenAnswer((_) async => false);
+      when(camera.processCameraProvider!.bindToLifecycle(
+              camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
+          .thenAnswer((_) async => camera.camera!);
 
-    await camera.startVideoRecording(cameraId);
+      await camera.startVideoRecording(cameraId);
 
-    verify(camera.processCameraProvider!.bindToLifecycle(
-        camera.cameraSelector!, <UseCase>[camera.videoCapture!]));
-    expect(camera.pendingRecording, equals(mockPendingRecording));
-    expect(camera.recording, mockRecording);
-  });
+      verify(camera.processCameraProvider!.bindToLifecycle(
+          camera.cameraSelector!, <UseCase>[camera.videoCapture!]));
+      expect(camera.pendingRecording, equals(mockPendingRecording));
+      expect(camera.recording, mockRecording);
+    });
 
-  test('pauseVideoRecording pauses the recording', () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    final MockRecording recording = MockRecording();
-    camera.recording = recording;
-    camera.pauseVideoRecording(0);
-    verify(recording.pause());
-    verifyNoMoreInteractions(recording);
-  });
+    test('pauseVideoRecording pauses the recording', () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockRecording recording = MockRecording();
+      camera.recording = recording;
+      camera.pauseVideoRecording(0);
+      verify(recording.pause());
+      verifyNoMoreInteractions(recording);
+    });
 
-  test('resumeVideoRecording resumes the recording', () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    final MockRecording recording = MockRecording();
-    camera.recording = recording;
-    camera.resumeVideoRecording(0);
-    verify(recording.resume());
-    verifyNoMoreInteractions(recording);
-  });
+    test('resumeVideoRecording resumes the recording', () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockRecording recording = MockRecording();
+      camera.recording = recording;
+      camera.resumeVideoRecording(0);
+      verify(recording.resume());
+      verifyNoMoreInteractions(recording);
+    });
 
-  test('stopVideoRecording stops the recording', () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    final MockRecording recording = MockRecording();
-    final MockProcessCameraProvider processCameraProvider =
-        MockProcessCameraProvider();
-    final MockVideoCapture videoCapture = MockVideoCapture();
-    const String videoOutputPath = '/test/output/path';
+    test('stopVideoRecording stops the recording', () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockRecording recording = MockRecording();
+      final MockProcessCameraProvider processCameraProvider =
+          MockProcessCameraProvider();
+      final MockVideoCapture videoCapture = MockVideoCapture();
+      const String videoOutputPath = '/test/output/path';
 
-    camera.processCameraProvider = processCameraProvider;
-    camera.recording = recording;
-    camera.videoCapture = videoCapture;
-    camera.videoOutputPath = videoOutputPath;
+      camera.processCameraProvider = processCameraProvider;
+      camera.recording = recording;
+      camera.videoCapture = videoCapture;
+      camera.videoOutputPath = videoOutputPath;
 
-    final XFile file = await camera.stopVideoRecording(0);
-    assert(file.path == videoOutputPath);
+      final XFile file = await camera.stopVideoRecording(0);
+      assert(file.path == videoOutputPath);
 
-    verify(recording.close());
-    verifyNoMoreInteractions(recording);
+      verify(recording.close());
+      verifyNoMoreInteractions(recording);
+    });
   });
 
   test(

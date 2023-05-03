@@ -178,7 +178,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// In the CameraX library, cameras are accessed by combining [UseCase]s
   /// to an instance of a [ProcessCameraProvider]. Thus, to create an
-  /// unitialized camera instance, this method retrieves a
+  /// uninitialized camera instance, this method retrieves a
   /// [ProcessCameraProvider] instance.
   ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
