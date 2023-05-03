@@ -62,8 +62,10 @@ class SystemServices {
     api.stopListeningForDeviceOrientationChange();
   }
 
-  /// Gets a file path to use to create a temp file at. It is created by calling
-  /// File.createTempFile(prefix, suffix, cacheDir), on the native side, where
+  /// Returns a file path which was used to create a temporary file.
+  ///
+  /// The file and path constraints are determined by the implementation of
+  /// File.createTempFile(prefix, suffix, cacheDir), on the android side, where
   /// where cacheDir is the cache directory identified by the current application
   /// context using context.getCacheDir().
   static Future<String> getTempFilePath(String prefix, String suffix,
