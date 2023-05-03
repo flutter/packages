@@ -606,7 +606,7 @@ void main() {
             code: 23,
             domain: 'Hello',
             localizedDescription: 'localizedDescription',
-            objectDescription: 'description',
+            userInfo: <String, Object?>{},
           ),
         );
 
@@ -639,7 +639,6 @@ void main() {
             code: 23,
             domain: 'Hello',
             localizedDescription: 'localiziedDescription',
-            objectDescription: 'description',
           ),
         );
 
@@ -845,7 +844,6 @@ void main() {
               code: 0,
               domain: 'domain',
               localizedDescription: 'desc',
-              objectDescription: 'description',
             ),
           ),
         );

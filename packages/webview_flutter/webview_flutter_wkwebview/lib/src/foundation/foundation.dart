@@ -205,6 +205,17 @@ class NSUrlRequest {
   final Map<String, String> allHttpHeaderFields;
 }
 
+/// Keys that may exist in the user info map of `NSError`.
+class NSErrorUserInfoKey {
+  NSErrorUserInfoKey._();
+
+  /// The URL which caused a load to fail.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlstringerrorkey?language=objc.
+  static const String NSURLErrorFailingURLStringErrorKey =
+      'NSErrorFailingURLStringKey';
+}
+
 /// Information about an error condition.
 ///
 /// Wraps [NSError](https://developer.apple.com/documentation/foundation/nserror?language=objc).
@@ -215,7 +226,7 @@ class NSError {
     required this.code,
     required this.domain,
     required this.localizedDescription,
-    required this.description,
+    this.userInfo,
   });
 
   /// The error code.
@@ -229,10 +240,10 @@ class NSError {
   /// A string containing the localized description of the error.
   final String localizedDescription;
 
-  /// A string that represents the contents of the receiving class.
+  /// Map of arbitrary data.
   ///
-  /// *Note*: The Objective-C `NSError` inherits this property from `NSObject`.
-  final String description;
+  /// This only supports keys in [NSErrorUserInfoKey].
+  final Map<String, Object?>? userInfo;
 }
 
 /// A representation of an HTTP cookie.

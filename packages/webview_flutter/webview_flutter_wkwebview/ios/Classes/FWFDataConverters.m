@@ -192,6 +192,7 @@ WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
 }
 
 FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
+  NSLog(@"value: %@", error.userInfo);
   return [FWFNSErrorData makeWithCode:@(error.code)
                                domain:error.domain
                  localizedDescription:error.localizedDescription

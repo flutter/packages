@@ -638,8 +638,11 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
 
 /// An implementation of [WebResourceError] with the WebKit API.
 class WebKitWebResourceError extends WebResourceError {
-  WebKitWebResourceError._(this._nsError, {required bool isForMainFrame})
-      : super(
+  WebKitWebResourceError._(
+    this._nsError, {
+    required bool isForMainFrame,
+    required super.failingUrl,
+  }) : super(
           errorCode: _nsError.code,
           description: _nsError.localizedDescription,
           errorType: _toWebResourceErrorType(_nsError.code),
@@ -665,12 +668,6 @@ class WebKitWebResourceError extends WebResourceError {
 
   /// A string representing the domain of the error.
   String? get domain => _nsError.domain;
-
-  /// A full description of the error.
-  ///
-  /// This is the output used by the debugger to produce a textual description
-  /// of the error class object.
-  String get fullDescription => _nsError.description;
 
   final NSError _nsError;
 }
@@ -745,14 +742,24 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       didFailNavigation: (WKWebView webView, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(error, isForMainFrame: true),
+            WebKitWebResourceError._(
+              error,
+              isForMainFrame: true,
+              failingUrl: error.userInfo?[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringErrorKey] as String?,
+            ),
           );
         }
       },
       didFailProvisionalNavigation: (WKWebView webView, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(error, isForMainFrame: true),
+            WebKitWebResourceError._(
+              error,
+              isForMainFrame: true,
+              failingUrl: error.userInfo?[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringErrorKey] as String?,
+            ),
           );
         }
       },
@@ -765,9 +772,9 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 // Value from https://developer.apple.com/documentation/webkit/wkerrordomain?language=objc.
                 domain: 'WKErrorDomain',
                 localizedDescription: '',
-                description: '',
               ),
               isForMainFrame: true,
+              failingUrl: null,
             ),
           );
         }

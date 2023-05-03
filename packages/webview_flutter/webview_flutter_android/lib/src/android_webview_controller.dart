@@ -738,6 +738,10 @@ class AndroidWebResourceError extends WebResourceError {
         );
 
   /// Gets the URL for which the failing resource request was made.
+  @override
+  // Temporarily ignored as this will be added to the parent platform interface
+  // class.
+  // ignore: overridden_fields
   final String? failingUrl;
 
   static WebResourceErrorType? _errorCodeToErrorType(int errorCode) {
