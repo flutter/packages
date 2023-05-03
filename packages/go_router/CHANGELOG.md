@@ -1,3 +1,19 @@
+## 7.0.0
+
+- **BREAKING CHANGE**:
+  - For the below changes, run `dart fix --apply` to automatically migrate your code.
+    - `GoRouteState.subloc` has been renamed to `GoRouteState.matchedLocation`.
+    - `GoRouteState.params` has been renamed to `GoRouteState.pathParameters`.
+    - `GoRouteState.fullpath` has been renamed to `GoRouteState.fullPath`.
+    - `GoRouteState.queryParams` has been renamed to `GoRouteState.queryParameters`.
+    - `params` and `queryParams` in `GoRouteState.namedLocation` have been renamed to `pathParameters` and `queryParameters`.
+    - `params` and `queryParams` in `GoRouter`'s `namedLocation`, `pushNamed`, `pushReplacementNamed`
+      `replaceNamed` have been renamed to `pathParameters` and `queryParameters`.
+  - For the below changes, please follow the [migration guide](https://docs.google.com/document/d/10Xbpifbs4E-zh6YE5akIO8raJq_m3FIXs6nUGdOspOg).
+    - `params` and `queryParams` in `BuildContext`'s `namedLocation`, `pushNamed`, `pushReplacementNamed`
+      `replaceNamed` have been renamed to `pathParameters` and `queryParameters`.
+- Cleans up API and makes RouteMatchList immutable.
+
 ## 6.5.9
 
 - Removes navigator keys from `GoRouteData` and `ShellRouteData`.
