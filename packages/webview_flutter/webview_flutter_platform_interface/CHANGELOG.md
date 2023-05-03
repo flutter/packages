@@ -1,3 +1,8 @@
+## 2.4.0
+
+* Adds support to retrieve the url with a web resource loading error. See
+  `WebResourceError.failingUrl`.
+
 ## 2.3.0
 
 * Adds support to receive permission requests. See

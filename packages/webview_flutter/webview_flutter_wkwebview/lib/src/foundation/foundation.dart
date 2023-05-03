@@ -212,12 +212,13 @@ class NSErrorUserInfoKey {
   /// The URL which caused a load to fail.
   ///
   /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlstringerrorkey?language=objc.
-  static const String NSURLErrorFailingURLStringErrorKey =
-      'NSErrorFailingURLStringKey';
+  static const String NSURLErrorFailingURLString = 'NSErrorFailingURLStringKey';
 
   /// The corresponding value is a localized string representation of the error
   /// that, if present, will be returned by [NSError.localizedDescription].
-  static const String NSLocalizedDescriptionKey = 'NSLocalizedDescriptionKey';
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nslocalizeddescriptionkey.
+  static const String NSLocalizedDescription = 'NSLocalizedDescriptionKey';
 }
 
 /// Information about an error condition.
@@ -242,7 +243,7 @@ class NSError {
 
   /// A string containing the localized description of the error.
   String? get localizedDescription =>
-      userInfo[NSErrorUserInfoKey.NSLocalizedDescriptionKey] as String?;
+      userInfo[NSErrorUserInfoKey.NSLocalizedDescription] as String?;
 
   /// Map of arbitrary data.
   ///

@@ -606,7 +606,7 @@ void main() {
             code: 23,
             domain: 'Hello',
             userInfo: <String, Object?>{
-              NSErrorUserInfoKey.NSLocalizedDescriptionKey: 'my desc',
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
             },
           ),
         );
@@ -640,7 +640,7 @@ void main() {
             code: 23,
             domain: 'Hello',
             userInfo: <String, Object?>{
-              NSErrorUserInfoKey.NSLocalizedDescriptionKey: 'my desc',
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
             },
           ),
         );
@@ -847,7 +847,7 @@ void main() {
               code: 0,
               domain: 'domain',
               userInfo: <String, Object?>{
-                NSErrorUserInfoKey.NSLocalizedDescriptionKey: 'desc',
+                NSErrorUserInfoKey.NSLocalizedDescription: 'desc',
               },
             ),
           ),

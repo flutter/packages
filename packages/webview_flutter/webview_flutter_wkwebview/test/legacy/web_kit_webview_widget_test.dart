@@ -1049,7 +1049,7 @@ void main() {
             code: WKErrorCode.webViewInvalidated,
             domain: 'domain',
             userInfo: <String, Object?>{
-              NSErrorUserInfoKey.NSLocalizedDescriptionKey: 'my desc',
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
             },
           ),
         );
@@ -1088,7 +1088,7 @@ void main() {
             code: WKErrorCode.webContentProcessTerminated,
             domain: 'domain',
             userInfo: <String, Object?>{
-              NSErrorUserInfoKey.NSLocalizedDescriptionKey: 'my desc',
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
             },
           ),
         );

@@ -4,7 +4,7 @@
 
 ## 3.4.2
 
-* Adds access for the full error description for web resource errors.
+* Fixes an exception caused by the `onUrlChange` callback passing a null `NSUrl`
 
 ## 3.4.1
 
