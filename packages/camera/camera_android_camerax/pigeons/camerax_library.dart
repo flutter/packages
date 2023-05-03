@@ -56,16 +56,6 @@ class ExposureCompensationRange {
   int maxCompensation;
 }
 
-class ExposureCompensationRange {
-  ExposureCompensationRange({
-    required this.minCompensation,
-    required this.maxCompensation,
-  });
-
-  int minCompensation;
-  int maxCompensation;
-}
-
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -87,8 +77,6 @@ abstract class JavaObjectFlutterApi {
 @HostApi(dartHostTestHandler: 'TestCameraInfoHostApi')
 abstract class CameraInfoHostApi {
   int getSensorRotationDegrees(int identifier);
-
-  int getLiveCameraState(int identifier);
 
   int getExposureState(int identifier);
 
@@ -181,19 +169,6 @@ abstract class ImageCaptureHostApi {
 
   @async
   String takePicture(int identifier);
-}
-
-@FlutterApi()
-abstract class ExposureStateFlutterApi {
-  void create(
-      int identifier,
-      ExposureCompensationRange exposureCompensationRange,
-      double exposureCompensationStep);
-}
-
-@FlutterApi()
-abstract class ZoomStateFlutterApi {
-  void create(int identifier, double minZoomRatio, double maxZoomRatio);
 }
 
 @FlutterApi()
