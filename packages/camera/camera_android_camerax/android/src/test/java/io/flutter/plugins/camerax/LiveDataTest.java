@@ -124,8 +124,10 @@ public class LiveDataTest {
               hostApi.getValue(mockLiveZoomStateIdentifier, typeData), mockZoomStateIdentifier);
           break;
         default:
-          // There is a LiveDataSupportedType untested by this method.
-          fail();
+          fail(
+              "The LiveDataSupportedType "
+                  + supportedType.toString()
+                  + "is unhandled by this test.");
       }
     }
   }

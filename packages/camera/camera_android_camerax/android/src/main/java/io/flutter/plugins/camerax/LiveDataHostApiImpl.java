@@ -74,23 +74,30 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
     LiveDataSupportedType valueType = type.getValue();
     switch (valueType) {
       case CAMERA_STATE:
-        CameraState cameraState = (CameraState) value;
-        new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager)
-            .create(
-                cameraState,
-                CameraStateFlutterApiWrapper.getCameraStateType(cameraState.getType()),
-                cameraState.getError(),
-                reply -> {});
-        return instanceManager.getIdentifierForStrongReference(cameraState);
+        return createCameraState((CameraState) value);
       case ZOOM_STATE:
-        ZoomState zoomState = (ZoomState) value;
-        new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager)
-            .create(zoomState, reply -> {});
-        return instanceManager.getIdentifierForStrongReference(zoomState);
+        return createZoomState((ZoomState) value);
       default:
         throw new IllegalArgumentException(
             "The type of LiveData whose value was requested is not supported.");
     }
+  }
+
+  /** Creates a {@link CameraState} on the Dart side and returns its identifier. */
+  private Long createCameraState(CameraState cameraState) {
+    new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager)
+        .create(
+            cameraState,
+            CameraStateFlutterApiWrapper.getCameraStateType(cameraState.getType()),
+            cameraState.getError(),
+            reply -> {});
+    return instanceManager.getIdentifierForStrongReference(cameraState);
+  }
+
+  /** Creates a {@link ZoomState} on the Dart side and returns its identifiers. */
+  private Long createZoomState(ZoomState zoomState) {
+    new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager).create(zoomState, reply -> {});
+    return instanceManager.getIdentifierForStrongReference(zoomState);
   }
 
   /** Retrieves the {@link LiveData} instance that has the specified identifier. */

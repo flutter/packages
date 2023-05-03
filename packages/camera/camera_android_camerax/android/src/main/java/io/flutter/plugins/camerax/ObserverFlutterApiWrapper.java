@@ -49,31 +49,21 @@ public class ObserverFlutterApiWrapper {
    * Sends a message to Dart to call {@link Observer.onChanged} on the Dart object representing
    * {@code instance}.
    */
-  public void onChanged(
-      @NonNull Observer<?> instance,
-      @NonNull Object value,
+  public <T> void onChanged(
+      @NonNull Observer<T> instance,
+      @NonNull T value,
       @NonNull ObserverFlutterApi.Reply<Void> callback) {
 
-    // Cast value to type of data that is being observed if supported by this plugin.
+    // Cast value to type of data that is being observed and create it on the Dart side
+    // if supported by this plugin.
+    //
+    // The supported types can be found in GeneratedCameraXLibrary.java as the
+    // LiveDataSupportedType enum. To add a new type, please follow the instructions
+    // found in pigeons/camerax_library.dart in the documentation for LiveDataSupportedType.
     if (value instanceof CameraState) {
-      CameraState state = (CameraState) value;
-
-      if (cameraStateFlutterApiWrapper == null) {
-        cameraStateFlutterApiWrapper =
-            new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager);
-      }
-      cameraStateFlutterApiWrapper.create(
-          state,
-          CameraStateFlutterApiWrapper.getCameraStateType(state.getType()),
-          state.getError(),
-          reply -> {});
+      createCameraState((CameraState) value);
     } else if (value instanceof ZoomState) {
-      ZoomState state = (ZoomState) value;
-
-      if (zoomStateFlutterApiImpl == null) {
-        zoomStateFlutterApiImpl = new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager);
-      }
-      zoomStateFlutterApiImpl.create(state, reply -> {});
+      createZoomState((ZoomState) value);
     } else {
       throw new UnsupportedOperationException(
           "The type of value that was observed is not handled by this plugin.");
@@ -91,6 +81,27 @@ public class ObserverFlutterApiWrapper {
         Objects.requireNonNull(observerIdentifier),
         instanceManager.getIdentifierForStrongReference(value),
         callback);
+  }
+
+  /** Creates a {@link CameraState} on the Dart side. */
+  private void createCameraState(CameraState cameraState) {
+    if (cameraStateFlutterApiWrapper == null) {
+      cameraStateFlutterApiWrapper =
+          new CameraStateFlutterApiWrapper(binaryMessenger, instanceManager);
+    }
+    cameraStateFlutterApiWrapper.create(
+        cameraState,
+        CameraStateFlutterApiWrapper.getCameraStateType(cameraState.getType()),
+        cameraState.getError(),
+        reply -> {});
+  }
+
+  /** Creates a {@link ZoomState} on the Dart side. */
+  private void createZoomState(ZoomState zoomState) {
+    if (zoomStateFlutterApiImpl == null) {
+      zoomStateFlutterApiImpl = new ZoomStateFlutterApiImpl(binaryMessenger, instanceManager);
+    }
+    zoomStateFlutterApiImpl.create(zoomState, reply -> {});
   }
 
   /** Sets the Flutter API used to send messages to Dart. */
