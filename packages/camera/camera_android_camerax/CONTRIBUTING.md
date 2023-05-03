@@ -29,7 +29,7 @@ search in `lib/src/` for any Dart-wrapped classes you may need. If any classes t
 you need are not wrapped or you need to access any methods not wrapped in a class,
 you must take the additional steps to wrap them to maintain the structure of this plugin.
 
-For more information on the approach of wrapping native libraries For plugins, please
+For more information on the approach of wrapping native libraries for plugins, please
 see the [design document][2]. For more information on contributing packages in general,
 check out our [contribution guide][3].
 
