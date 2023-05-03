@@ -403,13 +403,51 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
   final List<gmaps.LatLng> paths =
       polyline.points.map(_latLngToGmLatLng).toList();
 
+  final bool hasPattern = polyline.patterns.isNotEmpty;
+
+  final List<gmaps.IconSequence> iconSequences = <gmaps.IconSequence>[];
+
+  if (hasPattern) {
+    List<Object>? getPattern(List<List<Object>> input, String patternName) {
+      final List<Object> found = input.firstWhere(
+        (List<Object> innerList) =>
+            innerList.isNotEmpty &&
+            innerList[0] is String &&
+            innerList[0] == patternName,
+        orElse: () => <Object>[],
+      );
+      return found.isEmpty ? null : found;
+    }
+
+    final List<List<Object>> patternJson = polyline.patterns
+        .map((PatternItem element) => element.toJson() as List<Object>)
+        .toList();
+
+    final List<Object>? dotPattern = getPattern(patternJson, 'dot');
+    final List<Object>? gapPattern = getPattern(patternJson, 'gap');
+
+    final gmaps.GSymbol icon = gmaps.GSymbol()
+      ..path = dotPattern != null ? gmaps.SymbolPath.CIRCLE : 'M 0,-1 0,1'
+      ..strokeOpacity = _getCssOpacity(polyline.color)
+      ..strokeColor = _getCssColor(polyline.color)
+      ..scale = 4;
+
+    iconSequences.add(gmaps.IconSequence()
+      ..icon = icon
+      ..offset = '0'
+      ..repeat = gapPattern != null ? '${gapPattern[1]}px' : '20px');
+  }
+
   return gmaps.PolylineOptions()
     ..path = paths
     ..strokeWeight = polyline.width
     ..strokeColor = _getCssColor(polyline.color)
-    ..strokeOpacity = _getCssOpacity(polyline.color)
+    ..strokeOpacity = polyline.patterns.isNotEmpty
+        ? _getCssOpacity(Colors.transparent)
+        : _getCssOpacity(polyline.color)
     ..visible = polyline.visible
     ..zIndex = polyline.zIndex
+    ..icons = iconSequences
     ..geodesic = polyline.geodesic;
 //  this.endCap = Cap.buttCap,
 //  this.jointType = JointType.mitered,

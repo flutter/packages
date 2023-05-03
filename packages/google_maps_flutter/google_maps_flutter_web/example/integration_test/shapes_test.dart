@@ -367,5 +367,86 @@ void main() {
       expect(line.get('strokeColor'), '#fabada');
       expect(line.get('strokeOpacity'), closeTo(0.5, _acceptableDelta));
     });
+
+    testWidgets('Makes polyline invisible when PatternItems are specified',
+        (WidgetTester tester) async {
+      final Set<Polyline> lines = <Polyline>{
+        Polyline(
+          polylineId: const PolylineId('1'),
+          color: const Color(0x7FFABADA),
+          patterns: <PatternItem>[PatternItem.dash(10)],
+        ),
+      };
+
+      controller.addPolylines(lines);
+
+      final gmaps.Polyline line = controller.lines.values.first.line!;
+
+      expect(line.get('strokeOpacity'), closeTo(0.0, _acceptableDelta));
+    });
+
+    testWidgets(
+        'Creates vector based symbols for lines when PatternItems are specified',
+        (WidgetTester tester) async {
+      final Set<Polyline> lines = <Polyline>{
+        Polyline(
+          polylineId: const PolylineId('1'),
+          color: const Color(0x7FFABADA),
+          patterns: <PatternItem>[PatternItem.dash(10)],
+        ),
+      };
+
+      controller.addPolylines(lines);
+
+      final gmaps.Polyline line = controller.lines.values.first.line!;
+
+      expect(line.get('icons'), isNot(null));
+
+      final gmaps.IconSequence iconSequence =
+          (line.get('icons')! as List<gmaps.IconSequence>).first;
+
+      expect(iconSequence.icon?.strokeColor, '#fabada');
+      expect(iconSequence.icon?.strokeOpacity, closeTo(0.5, _acceptableDelta));
+      expect(iconSequence.offset, '0');
+      expect(iconSequence.repeat, '20px');
+    });
+
+    testWidgets(
+        'Creates a repeat at the correct value for lines when PatternItem Gap is specified',
+        (WidgetTester tester) async {
+      final Set<Polyline> lines = <Polyline>{
+        Polyline(
+          polylineId: const PolylineId('1'),
+          patterns: <PatternItem>[PatternItem.dash(10), PatternItem.gap(40)],
+        ),
+      };
+
+      controller.addPolylines(lines);
+
+      final gmaps.Polyline line = controller.lines.values.first.line!;
+
+      final gmaps.IconSequence iconSequence =
+          (line.get('icons')! as List<gmaps.IconSequence>).first;
+      expect(iconSequence.repeat, '40px');
+    });
+
+    testWidgets(
+        'Creates a dot pattern  for lines when PatternItem Dot is specified',
+        (WidgetTester tester) async {
+      final Set<Polyline> lines = <Polyline>{
+        const Polyline(
+          polylineId: PolylineId('1'),
+          patterns: <PatternItem>[PatternItem.dot],
+        ),
+      };
+
+      controller.addPolylines(lines);
+
+      final gmaps.Polyline line = controller.lines.values.first.line!;
+
+      final gmaps.IconSequence iconSequence =
+          (line.get('icons')! as List<gmaps.IconSequence>).first;
+      expect(iconSequence.icon?.path, gmaps.SymbolPath.CIRCLE);
+    });
   });
 }

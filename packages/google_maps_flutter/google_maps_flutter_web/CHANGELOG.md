@@ -1,3 +1,7 @@
+## 0.4.0+9
+
+* Allows for PatternItems to be used with Flutter Web. Issue [#73779](https://github.com/flutter/flutter/issues/73779).
+
 ## 0.4.0+8
 
 * Updates minimum Flutter version to 3.3.
