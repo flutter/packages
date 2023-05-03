@@ -3,30 +3,32 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i9;
-import 'dart:typed_data' as _i16;
+import 'dart:async' as _i11;
+import 'dart:typed_data' as _i18;
 
-import 'package:camera_android_camerax/src/analyzer.dart' as _i12;
-import 'package:camera_android_camerax/src/camera.dart' as _i4;
-import 'package:camera_android_camerax/src/camera_info.dart' as _i8;
-import 'package:camera_android_camerax/src/camera_selector.dart' as _i10;
-import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i3;
-import 'package:camera_android_camerax/src/image_analysis.dart' as _i11;
-import 'package:camera_android_camerax/src/image_capture.dart' as _i13;
-import 'package:camera_android_camerax/src/image_proxy.dart' as _i14;
-import 'package:camera_android_camerax/src/plane_proxy.dart' as _i15;
-import 'package:camera_android_camerax/src/preview.dart' as _i17;
+import 'package:camera_android_camerax/src/analyzer.dart' as _i14;
+import 'package:camera_android_camerax/src/camera.dart' as _i7;
+import 'package:camera_android_camerax/src/camera_info.dart' as _i2;
+import 'package:camera_android_camerax/src/camera_selector.dart' as _i12;
+import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i6;
+import 'package:camera_android_camerax/src/exposure_state.dart' as _i3;
+import 'package:camera_android_camerax/src/image_analysis.dart' as _i13;
+import 'package:camera_android_camerax/src/image_capture.dart' as _i15;
+import 'package:camera_android_camerax/src/image_proxy.dart' as _i16;
+import 'package:camera_android_camerax/src/plane_proxy.dart' as _i17;
+import 'package:camera_android_camerax/src/preview.dart' as _i19;
 import 'package:camera_android_camerax/src/process_camera_provider.dart'
-    as _i18;
-import 'package:camera_android_camerax/src/use_case.dart' as _i19;
+    as _i20;
+import 'package:camera_android_camerax/src/use_case.dart' as _i21;
+import 'package:camera_android_camerax/src/zoom_state.dart' as _i4;
 import 'package:camera_platform_interface/camera_platform_interface.dart'
-    as _i2;
-import 'package:flutter/foundation.dart' as _i7;
-import 'package:flutter/services.dart' as _i6;
-import 'package:flutter/widgets.dart' as _i5;
+    as _i5;
+import 'package:flutter/foundation.dart' as _i10;
+import 'package:flutter/services.dart' as _i9;
+import 'package:flutter/widgets.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'test_camerax_library.g.dart' as _i20;
+import 'test_camerax_library.g.dart' as _i22;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -39,9 +41,8 @@ import 'test_camerax_library.g.dart' as _i20;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeCameraImageFormat_0 extends _i1.SmartFake
-    implements _i2.CameraImageFormat {
-  _FakeCameraImageFormat_0(
+class _FakeCameraInfo_0 extends _i1.SmartFake implements _i2.CameraInfo {
+  _FakeCameraInfo_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -50,9 +51,8 @@ class _FakeCameraImageFormat_0 extends _i1.SmartFake
         );
 }
 
-class _FakeResolutionInfo_1 extends _i1.SmartFake
-    implements _i3.ResolutionInfo {
-  _FakeResolutionInfo_1(
+class _FakeExposureState_1 extends _i1.SmartFake implements _i3.ExposureState {
+  _FakeExposureState_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -61,8 +61,8 @@ class _FakeResolutionInfo_1 extends _i1.SmartFake
         );
 }
 
-class _FakeCamera_2 extends _i1.SmartFake implements _i4.Camera {
-  _FakeCamera_2(
+class _FakeZoomState_2 extends _i1.SmartFake implements _i4.ZoomState {
+  _FakeZoomState_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -71,8 +71,51 @@ class _FakeCamera_2 extends _i1.SmartFake implements _i4.Camera {
         );
 }
 
-class _FakeWidget_3 extends _i1.SmartFake implements _i5.Widget {
-  _FakeWidget_3(
+class _FakeCameraImageFormat_3 extends _i1.SmartFake
+    implements _i5.CameraImageFormat {
+  _FakeCameraImageFormat_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeExposureCompensationRange_4 extends _i1.SmartFake
+    implements _i6.ExposureCompensationRange {
+  _FakeExposureCompensationRange_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeResolutionInfo_5 extends _i1.SmartFake
+    implements _i6.ResolutionInfo {
+  _FakeResolutionInfo_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeCamera_6 extends _i1.SmartFake implements _i7.Camera {
+  _FakeCamera_6(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWidget_7 extends _i1.SmartFake implements _i8.Widget {
+  _FakeWidget_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -81,13 +124,13 @@ class _FakeWidget_3 extends _i1.SmartFake implements _i5.Widget {
         );
 
   @override
-  String toString({_i6.DiagnosticLevel? minLevel = _i6.DiagnosticLevel.info}) =>
+  String toString({_i9.DiagnosticLevel? minLevel = _i9.DiagnosticLevel.info}) =>
       super.toString();
 }
 
-class _FakeInheritedWidget_4 extends _i1.SmartFake
-    implements _i5.InheritedWidget {
-  _FakeInheritedWidget_4(
+class _FakeInheritedWidget_8 extends _i1.SmartFake
+    implements _i8.InheritedWidget {
+  _FakeInheritedWidget_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -96,13 +139,13 @@ class _FakeInheritedWidget_4 extends _i1.SmartFake
         );
 
   @override
-  String toString({_i6.DiagnosticLevel? minLevel = _i6.DiagnosticLevel.info}) =>
+  String toString({_i9.DiagnosticLevel? minLevel = _i9.DiagnosticLevel.info}) =>
       super.toString();
 }
 
-class _FakeDiagnosticsNode_5 extends _i1.SmartFake
-    implements _i7.DiagnosticsNode {
-  _FakeDiagnosticsNode_5(
+class _FakeDiagnosticsNode_9 extends _i1.SmartFake
+    implements _i10.DiagnosticsNode {
+  _FakeDiagnosticsNode_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -112,8 +155,8 @@ class _FakeDiagnosticsNode_5 extends _i1.SmartFake
 
   @override
   String toString({
-    _i7.TextTreeConfiguration? parentConfiguration,
-    _i6.DiagnosticLevel? minLevel = _i6.DiagnosticLevel.info,
+    _i10.TextTreeConfiguration? parentConfiguration,
+    _i9.DiagnosticLevel? minLevel = _i9.DiagnosticLevel.info,
   }) =>
       super.toString();
 }
@@ -121,40 +164,107 @@ class _FakeDiagnosticsNode_5 extends _i1.SmartFake
 /// A class which mocks [Camera].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCamera extends _i1.Mock implements _i4.Camera {}
+class MockCamera extends _i1.Mock implements _i7.Camera {
+  @override
+  _i11.Future<_i2.CameraInfo> getCameraInfo() => (super.noSuchMethod(
+        Invocation.method(
+          #getCameraInfo,
+          [],
+        ),
+        returnValue: _i11.Future<_i2.CameraInfo>.value(_FakeCameraInfo_0(
+          this,
+          Invocation.method(
+            #getCameraInfo,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i11.Future<_i2.CameraInfo>.value(_FakeCameraInfo_0(
+          this,
+          Invocation.method(
+            #getCameraInfo,
+            [],
+          ),
+        )),
+      ) as _i11.Future<_i2.CameraInfo>);
+}
 
 /// A class which mocks [CameraInfo].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCameraInfo extends _i1.Mock implements _i8.CameraInfo {
+class MockCameraInfo extends _i1.Mock implements _i2.CameraInfo {
   @override
-  _i9.Future<int> getSensorRotationDegrees() => (super.noSuchMethod(
+  _i11.Future<int> getSensorRotationDegrees() => (super.noSuchMethod(
         Invocation.method(
           #getSensorRotationDegrees,
           [],
         ),
-        returnValue: _i9.Future<int>.value(0),
-        returnValueForMissingStub: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
+        returnValue: _i11.Future<int>.value(0),
+        returnValueForMissingStub: _i11.Future<int>.value(0),
+      ) as _i11.Future<int>);
+  @override
+  _i11.Future<_i3.ExposureState> getExposureState() => (super.noSuchMethod(
+        Invocation.method(
+          #getExposureState,
+          [],
+        ),
+        returnValue: _i11.Future<_i3.ExposureState>.value(_FakeExposureState_1(
+          this,
+          Invocation.method(
+            #getExposureState,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i11.Future<_i3.ExposureState>.value(_FakeExposureState_1(
+          this,
+          Invocation.method(
+            #getExposureState,
+            [],
+          ),
+        )),
+      ) as _i11.Future<_i3.ExposureState>);
+  @override
+  _i11.Future<_i4.ZoomState> getZoomState() => (super.noSuchMethod(
+        Invocation.method(
+          #getZoomState,
+          [],
+        ),
+        returnValue: _i11.Future<_i4.ZoomState>.value(_FakeZoomState_2(
+          this,
+          Invocation.method(
+            #getZoomState,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i11.Future<_i4.ZoomState>.value(_FakeZoomState_2(
+          this,
+          Invocation.method(
+            #getZoomState,
+            [],
+          ),
+        )),
+      ) as _i11.Future<_i4.ZoomState>);
 }
 
 /// A class which mocks [CameraImageData].
 ///
 /// See the documentation for Mockito's code generation for more information.
 // ignore: must_be_immutable
-class MockCameraImageData extends _i1.Mock implements _i2.CameraImageData {
+class MockCameraImageData extends _i1.Mock implements _i5.CameraImageData {
   @override
-  _i2.CameraImageFormat get format => (super.noSuchMethod(
+  _i5.CameraImageFormat get format => (super.noSuchMethod(
         Invocation.getter(#format),
-        returnValue: _FakeCameraImageFormat_0(
+        returnValue: _FakeCameraImageFormat_3(
           this,
           Invocation.getter(#format),
         ),
-        returnValueForMissingStub: _FakeCameraImageFormat_0(
+        returnValueForMissingStub: _FakeCameraImageFormat_3(
           this,
           Invocation.getter(#format),
         ),
-      ) as _i2.CameraImageFormat);
+      ) as _i5.CameraImageFormat);
   @override
   int get height => (super.noSuchMethod(
         Invocation.getter(#height),
@@ -168,82 +278,108 @@ class MockCameraImageData extends _i1.Mock implements _i2.CameraImageData {
         returnValueForMissingStub: 0,
       ) as int);
   @override
-  List<_i2.CameraImagePlane> get planes => (super.noSuchMethod(
+  List<_i5.CameraImagePlane> get planes => (super.noSuchMethod(
         Invocation.getter(#planes),
-        returnValue: <_i2.CameraImagePlane>[],
-        returnValueForMissingStub: <_i2.CameraImagePlane>[],
-      ) as List<_i2.CameraImagePlane>);
+        returnValue: <_i5.CameraImagePlane>[],
+        returnValueForMissingStub: <_i5.CameraImagePlane>[],
+      ) as List<_i5.CameraImagePlane>);
 }
 
 /// A class which mocks [CameraSelector].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCameraSelector extends _i1.Mock implements _i10.CameraSelector {
+class MockCameraSelector extends _i1.Mock implements _i12.CameraSelector {
   @override
-  _i9.Future<List<_i8.CameraInfo>> filter(List<_i8.CameraInfo>? cameraInfos) =>
+  _i11.Future<List<_i2.CameraInfo>> filter(List<_i2.CameraInfo>? cameraInfos) =>
       (super.noSuchMethod(
         Invocation.method(
           #filter,
           [cameraInfos],
         ),
-        returnValue: _i9.Future<List<_i8.CameraInfo>>.value(<_i8.CameraInfo>[]),
+        returnValue:
+            _i11.Future<List<_i2.CameraInfo>>.value(<_i2.CameraInfo>[]),
         returnValueForMissingStub:
-            _i9.Future<List<_i8.CameraInfo>>.value(<_i8.CameraInfo>[]),
-      ) as _i9.Future<List<_i8.CameraInfo>>);
+            _i11.Future<List<_i2.CameraInfo>>.value(<_i2.CameraInfo>[]),
+      ) as _i11.Future<List<_i2.CameraInfo>>);
+}
+
+/// A class which mocks [ExposureState].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockExposureState extends _i1.Mock implements _i3.ExposureState {
+  @override
+  _i6.ExposureCompensationRange get exposureCompensationRange =>
+      (super.noSuchMethod(
+        Invocation.getter(#exposureCompensationRange),
+        returnValue: _FakeExposureCompensationRange_4(
+          this,
+          Invocation.getter(#exposureCompensationRange),
+        ),
+        returnValueForMissingStub: _FakeExposureCompensationRange_4(
+          this,
+          Invocation.getter(#exposureCompensationRange),
+        ),
+      ) as _i6.ExposureCompensationRange);
+  @override
+  double get exposureCompensationStep => (super.noSuchMethod(
+        Invocation.getter(#exposureCompensationStep),
+        returnValue: 0.0,
+        returnValueForMissingStub: 0.0,
+      ) as double);
 }
 
 /// A class which mocks [ImageAnalysis].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImageAnalysis extends _i1.Mock implements _i11.ImageAnalysis {
+class MockImageAnalysis extends _i1.Mock implements _i13.ImageAnalysis {
   @override
-  _i9.Future<void> setAnalyzer(_i12.Analyzer? analyzer) => (super.noSuchMethod(
+  _i11.Future<void> setAnalyzer(_i14.Analyzer? analyzer) => (super.noSuchMethod(
         Invocation.method(
           #setAnalyzer,
           [analyzer],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
   @override
-  _i9.Future<void> clearAnalyzer() => (super.noSuchMethod(
+  _i11.Future<void> clearAnalyzer() => (super.noSuchMethod(
         Invocation.method(
           #clearAnalyzer,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
 }
 
 /// A class which mocks [ImageCapture].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImageCapture extends _i1.Mock implements _i13.ImageCapture {
+class MockImageCapture extends _i1.Mock implements _i15.ImageCapture {
   @override
-  _i9.Future<void> setFlashMode(int? newFlashMode) => (super.noSuchMethod(
+  _i11.Future<void> setFlashMode(int? newFlashMode) => (super.noSuchMethod(
         Invocation.method(
           #setFlashMode,
           [newFlashMode],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
   @override
-  _i9.Future<String> takePicture() => (super.noSuchMethod(
+  _i11.Future<String> takePicture() => (super.noSuchMethod(
         Invocation.method(
           #takePicture,
           [],
         ),
-        returnValue: _i9.Future<String>.value(''),
-        returnValueForMissingStub: _i9.Future<String>.value(''),
-      ) as _i9.Future<String>);
+        returnValue: _i11.Future<String>.value(''),
+        returnValueForMissingStub: _i11.Future<String>.value(''),
+      ) as _i11.Future<String>);
 }
 
 /// A class which mocks [ImageProxy].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImageProxy extends _i1.Mock implements _i14.ImageProxy {
+class MockImageProxy extends _i1.Mock implements _i16.ImageProxy {
   @override
   int get format => (super.noSuchMethod(
         Invocation.getter(#format),
@@ -263,37 +399,37 @@ class MockImageProxy extends _i1.Mock implements _i14.ImageProxy {
         returnValueForMissingStub: 0,
       ) as int);
   @override
-  _i9.Future<List<_i15.PlaneProxy>> getPlanes() => (super.noSuchMethod(
+  _i11.Future<List<_i17.PlaneProxy>> getPlanes() => (super.noSuchMethod(
         Invocation.method(
           #getPlanes,
           [],
         ),
         returnValue:
-            _i9.Future<List<_i15.PlaneProxy>>.value(<_i15.PlaneProxy>[]),
+            _i11.Future<List<_i17.PlaneProxy>>.value(<_i17.PlaneProxy>[]),
         returnValueForMissingStub:
-            _i9.Future<List<_i15.PlaneProxy>>.value(<_i15.PlaneProxy>[]),
-      ) as _i9.Future<List<_i15.PlaneProxy>>);
+            _i11.Future<List<_i17.PlaneProxy>>.value(<_i17.PlaneProxy>[]),
+      ) as _i11.Future<List<_i17.PlaneProxy>>);
   @override
-  _i9.Future<void> close() => (super.noSuchMethod(
+  _i11.Future<void> close() => (super.noSuchMethod(
         Invocation.method(
           #close,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
 }
 
 /// A class which mocks [PlaneProxy].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlaneProxy extends _i1.Mock implements _i15.PlaneProxy {
+class MockPlaneProxy extends _i1.Mock implements _i17.PlaneProxy {
   @override
-  _i16.Uint8List get buffer => (super.noSuchMethod(
+  _i18.Uint8List get buffer => (super.noSuchMethod(
         Invocation.getter(#buffer),
-        returnValue: _i16.Uint8List(0),
-        returnValueForMissingStub: _i16.Uint8List(0),
-      ) as _i16.Uint8List);
+        returnValue: _i18.Uint8List(0),
+        returnValueForMissingStub: _i18.Uint8List(0),
+      ) as _i18.Uint8List);
   @override
   int get pixelStride => (super.noSuchMethod(
         Invocation.getter(#pixelStride),
@@ -311,16 +447,16 @@ class MockPlaneProxy extends _i1.Mock implements _i15.PlaneProxy {
 /// A class which mocks [Preview].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPreview extends _i1.Mock implements _i17.Preview {
+class MockPreview extends _i1.Mock implements _i19.Preview {
   @override
-  _i9.Future<int> setSurfaceProvider() => (super.noSuchMethod(
+  _i11.Future<int> setSurfaceProvider() => (super.noSuchMethod(
         Invocation.method(
           #setSurfaceProvider,
           [],
         ),
-        returnValue: _i9.Future<int>.value(0),
-        returnValueForMissingStub: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
+        returnValue: _i11.Future<int>.value(0),
+        returnValueForMissingStub: _i11.Future<int>.value(0),
+      ) as _i11.Future<int>);
   @override
   void releaseFlutterSurfaceTexture() => super.noSuchMethod(
         Invocation.method(
@@ -330,12 +466,13 @@ class MockPreview extends _i1.Mock implements _i17.Preview {
         returnValueForMissingStub: null,
       );
   @override
-  _i9.Future<_i3.ResolutionInfo> getResolutionInfo() => (super.noSuchMethod(
+  _i11.Future<_i6.ResolutionInfo> getResolutionInfo() => (super.noSuchMethod(
         Invocation.method(
           #getResolutionInfo,
           [],
         ),
-        returnValue: _i9.Future<_i3.ResolutionInfo>.value(_FakeResolutionInfo_1(
+        returnValue:
+            _i11.Future<_i6.ResolutionInfo>.value(_FakeResolutionInfo_5(
           this,
           Invocation.method(
             #getResolutionInfo,
@@ -343,36 +480,37 @@ class MockPreview extends _i1.Mock implements _i17.Preview {
           ),
         )),
         returnValueForMissingStub:
-            _i9.Future<_i3.ResolutionInfo>.value(_FakeResolutionInfo_1(
+            _i11.Future<_i6.ResolutionInfo>.value(_FakeResolutionInfo_5(
           this,
           Invocation.method(
             #getResolutionInfo,
             [],
           ),
         )),
-      ) as _i9.Future<_i3.ResolutionInfo>);
+      ) as _i11.Future<_i6.ResolutionInfo>);
 }
 
 /// A class which mocks [ProcessCameraProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockProcessCameraProvider extends _i1.Mock
-    implements _i18.ProcessCameraProvider {
+    implements _i20.ProcessCameraProvider {
   @override
-  _i9.Future<List<_i8.CameraInfo>> getAvailableCameraInfos() =>
+  _i11.Future<List<_i2.CameraInfo>> getAvailableCameraInfos() =>
       (super.noSuchMethod(
         Invocation.method(
           #getAvailableCameraInfos,
           [],
         ),
-        returnValue: _i9.Future<List<_i8.CameraInfo>>.value(<_i8.CameraInfo>[]),
+        returnValue:
+            _i11.Future<List<_i2.CameraInfo>>.value(<_i2.CameraInfo>[]),
         returnValueForMissingStub:
-            _i9.Future<List<_i8.CameraInfo>>.value(<_i8.CameraInfo>[]),
-      ) as _i9.Future<List<_i8.CameraInfo>>);
+            _i11.Future<List<_i2.CameraInfo>>.value(<_i2.CameraInfo>[]),
+      ) as _i11.Future<List<_i2.CameraInfo>>);
   @override
-  _i9.Future<_i4.Camera> bindToLifecycle(
-    _i10.CameraSelector? cameraSelector,
-    List<_i19.UseCase>? useCases,
+  _i11.Future<_i7.Camera> bindToLifecycle(
+    _i12.CameraSelector? cameraSelector,
+    List<_i21.UseCase>? useCases,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -382,7 +520,7 @@ class MockProcessCameraProvider extends _i1.Mock
             useCases,
           ],
         ),
-        returnValue: _i9.Future<_i4.Camera>.value(_FakeCamera_2(
+        returnValue: _i11.Future<_i7.Camera>.value(_FakeCamera_6(
           this,
           Invocation.method(
             #bindToLifecycle,
@@ -392,7 +530,7 @@ class MockProcessCameraProvider extends _i1.Mock
             ],
           ),
         )),
-        returnValueForMissingStub: _i9.Future<_i4.Camera>.value(_FakeCamera_2(
+        returnValueForMissingStub: _i11.Future<_i7.Camera>.value(_FakeCamera_6(
           this,
           Invocation.method(
             #bindToLifecycle,
@@ -402,18 +540,18 @@ class MockProcessCameraProvider extends _i1.Mock
             ],
           ),
         )),
-      ) as _i9.Future<_i4.Camera>);
+      ) as _i11.Future<_i7.Camera>);
   @override
-  _i9.Future<bool> isBound(_i19.UseCase? useCase) => (super.noSuchMethod(
+  _i11.Future<bool> isBound(_i21.UseCase? useCase) => (super.noSuchMethod(
         Invocation.method(
           #isBound,
           [useCase],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-        returnValueForMissingStub: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i11.Future<bool>.value(false),
+        returnValueForMissingStub: _i11.Future<bool>.value(false),
+      ) as _i11.Future<bool>);
   @override
-  void unbind(List<_i19.UseCase>? useCases) => super.noSuchMethod(
+  void unbind(List<_i21.UseCase>? useCases) => super.noSuchMethod(
         Invocation.method(
           #unbind,
           [useCases],
@@ -434,7 +572,7 @@ class MockProcessCameraProvider extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i20.TestInstanceManagerHostApi {
+    implements _i22.TestInstanceManagerHostApi {
   @override
   void clear() => super.noSuchMethod(
         Invocation.method(
@@ -445,22 +583,40 @@ class MockTestInstanceManagerHostApi extends _i1.Mock
       );
 }
 
+/// A class which mocks [ZoomState].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockZoomState extends _i1.Mock implements _i4.ZoomState {
+  @override
+  double get minZoomRatio => (super.noSuchMethod(
+        Invocation.getter(#minZoomRatio),
+        returnValue: 0.0,
+        returnValueForMissingStub: 0.0,
+      ) as double);
+  @override
+  double get maxZoomRatio => (super.noSuchMethod(
+        Invocation.getter(#maxZoomRatio),
+        returnValue: 0.0,
+        returnValueForMissingStub: 0.0,
+      ) as double);
+}
+
 /// A class which mocks [BuildContext].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
+class MockBuildContext extends _i1.Mock implements _i8.BuildContext {
   MockBuildContext() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Widget get widget => (super.noSuchMethod(
+  _i8.Widget get widget => (super.noSuchMethod(
         Invocation.getter(#widget),
-        returnValue: _FakeWidget_3(
+        returnValue: _FakeWidget_7(
           this,
           Invocation.getter(#widget),
         ),
-      ) as _i5.Widget);
+      ) as _i8.Widget);
   @override
   bool get mounted => (super.noSuchMethod(
         Invocation.getter(#mounted),
@@ -472,8 +628,8 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
         returnValue: false,
       ) as bool);
   @override
-  _i5.InheritedWidget dependOnInheritedElement(
-    _i5.InheritedElement? ancestor, {
+  _i8.InheritedWidget dependOnInheritedElement(
+    _i8.InheritedElement? ancestor, {
     Object? aspect,
   }) =>
       (super.noSuchMethod(
@@ -482,7 +638,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
           [ancestor],
           {#aspect: aspect},
         ),
-        returnValue: _FakeInheritedWidget_4(
+        returnValue: _FakeInheritedWidget_8(
           this,
           Invocation.method(
             #dependOnInheritedElement,
@@ -490,9 +646,9 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
             {#aspect: aspect},
           ),
         ),
-      ) as _i5.InheritedWidget);
+      ) as _i8.InheritedWidget);
   @override
-  void visitAncestorElements(bool Function(_i5.Element)? visitor) =>
+  void visitAncestorElements(bool Function(_i8.Element)? visitor) =>
       super.noSuchMethod(
         Invocation.method(
           #visitAncestorElements,
@@ -501,7 +657,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
         returnValueForMissingStub: null,
       );
   @override
-  void visitChildElements(_i5.ElementVisitor? visitor) => super.noSuchMethod(
+  void visitChildElements(_i8.ElementVisitor? visitor) => super.noSuchMethod(
         Invocation.method(
           #visitChildElements,
           [visitor],
@@ -509,7 +665,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
         returnValueForMissingStub: null,
       );
   @override
-  void dispatchNotification(_i5.Notification? notification) =>
+  void dispatchNotification(_i8.Notification? notification) =>
       super.noSuchMethod(
         Invocation.method(
           #dispatchNotification,
@@ -518,9 +674,9 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
         returnValueForMissingStub: null,
       );
   @override
-  _i7.DiagnosticsNode describeElement(
+  _i10.DiagnosticsNode describeElement(
     String? name, {
-    _i7.DiagnosticsTreeStyle? style = _i7.DiagnosticsTreeStyle.errorProperty,
+    _i10.DiagnosticsTreeStyle? style = _i10.DiagnosticsTreeStyle.errorProperty,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -528,7 +684,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
           [name],
           {#style: style},
         ),
-        returnValue: _FakeDiagnosticsNode_5(
+        returnValue: _FakeDiagnosticsNode_9(
           this,
           Invocation.method(
             #describeElement,
@@ -536,11 +692,11 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
             {#style: style},
           ),
         ),
-      ) as _i7.DiagnosticsNode);
+      ) as _i10.DiagnosticsNode);
   @override
-  _i7.DiagnosticsNode describeWidget(
+  _i10.DiagnosticsNode describeWidget(
     String? name, {
-    _i7.DiagnosticsTreeStyle? style = _i7.DiagnosticsTreeStyle.errorProperty,
+    _i10.DiagnosticsTreeStyle? style = _i10.DiagnosticsTreeStyle.errorProperty,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -548,7 +704,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
           [name],
           {#style: style},
         ),
-        returnValue: _FakeDiagnosticsNode_5(
+        returnValue: _FakeDiagnosticsNode_9(
           this,
           Invocation.method(
             #describeWidget,
@@ -556,9 +712,9 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
             {#style: style},
           ),
         ),
-      ) as _i7.DiagnosticsNode);
+      ) as _i10.DiagnosticsNode);
   @override
-  List<_i7.DiagnosticsNode> describeMissingAncestor(
+  List<_i10.DiagnosticsNode> describeMissingAncestor(
           {required Type? expectedAncestorType}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -566,21 +722,21 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
           [],
           {#expectedAncestorType: expectedAncestorType},
         ),
-        returnValue: <_i7.DiagnosticsNode>[],
-      ) as List<_i7.DiagnosticsNode>);
+        returnValue: <_i10.DiagnosticsNode>[],
+      ) as List<_i10.DiagnosticsNode>);
   @override
-  _i7.DiagnosticsNode describeOwnershipChain(String? name) =>
+  _i10.DiagnosticsNode describeOwnershipChain(String? name) =>
       (super.noSuchMethod(
         Invocation.method(
           #describeOwnershipChain,
           [name],
         ),
-        returnValue: _FakeDiagnosticsNode_5(
+        returnValue: _FakeDiagnosticsNode_9(
           this,
           Invocation.method(
             #describeOwnershipChain,
             [name],
           ),
         ),
-      ) as _i7.DiagnosticsNode);
+      ) as _i10.DiagnosticsNode);
 }
