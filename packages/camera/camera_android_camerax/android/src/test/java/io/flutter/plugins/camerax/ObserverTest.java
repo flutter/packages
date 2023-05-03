@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -47,7 +48,6 @@ public class ObserverTest {
   }
 
   @Test
-  @SuppressWarnings({"rawtypes", "unchecked"})
   public void create_createsObserverInstance() {
     final ObserverHostApiImpl hostApi =
         new ObserverHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
@@ -112,5 +112,21 @@ public class ObserverTest {
 
     verify(mockFlutterApi).onChanged(eq(instanceIdentifier), eq(mockZoomStateIdentifier), any());
     verify(mockZoomStateFlutterApiImpl).create(eq(mockZoomState), any());
+  }
+
+  @Test
+  public void onChanged_throwsExceptionForUnsupportedLiveDataType() {
+    final ObserverFlutterApiWrapper flutterApi =
+        new ObserverFlutterApiWrapper(mockBinaryMessenger, instanceManager);
+    final ObserverHostApiImpl.ObserverImpl<Object> instance =
+        new ObserverHostApiImpl.ObserverImpl<Object>(mockBinaryMessenger, instanceManager);
+    final long instanceIdentifier = 2;
+
+    flutterApi.setApi(mockFlutterApi);
+    instance.setApi(flutterApi);
+
+    instanceManager.addDartCreatedInstance(instance, instanceIdentifier);
+
+    assertThrows(UnsupportedOperationException.class, () -> instance.onChanged(mock(Object.class)));
   }
 }

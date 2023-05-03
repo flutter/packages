@@ -95,8 +95,7 @@ public class CameraStateTest {
               CameraStateFlutterApiWrapper.getCameraStateType(type), CameraStateType.PENDING_OPEN);
           break;
         default:
-          // There is a CameraState.Type unhandled by this test.
-          fail();
+          fail("The CameraState.Type " + type.toString() + " is unhandled by this test.");
       }
     }
   }
