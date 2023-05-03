@@ -111,6 +111,7 @@ public class ExposurePointFeature extends CameraFeature<Point> {
 
   public boolean shouldReset(@NonNull CaptureRequest.Builder requestBuilder) {
     MeteringRectangle[] currentRectangles = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
-    return currentRectangles == null || currentRectangles.length == 0;
+
+    return requestBuilder == null || currentRectangles == null || currentRectangles.length == 0;
   }
 }

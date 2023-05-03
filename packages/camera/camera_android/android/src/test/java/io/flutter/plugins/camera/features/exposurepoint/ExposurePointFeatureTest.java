@@ -315,12 +315,19 @@ public class ExposurePointFeatureTest {
 
   @Test
   public void testShouldResetReturnsTrue() {
+    CameraProperties mockCameraProperties = mock(CameraProperties.class);
+    when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(null);
     CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
-    when(mockCaptureRequestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS)).thenReturn(null);
+    ExposurePointFeature exposurePointFeature =
+        new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
+    exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
 
-    ExposurePointFeature exposurePointFeature = mock(ExposurePointFeature.class);
-    exposurePointFeature.setCameraBoundaries(mock(CameraBoundaries.class));
-    exposurePointFeature.setValue(new Point(0.5, 0.5));
+    exposurePointFeature.setValue(null);
+    exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
+    exposurePointFeature.setValue(new Point(0d, null));
+    exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
+    exposurePointFeature.setValue(new Point(null, 0d));
+    exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
 
     assertTrue(exposurePointFeature.shouldReset(mockCaptureRequestBuilder));
   }
