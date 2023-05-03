@@ -299,7 +299,7 @@ class WKFrameInfoData {
 class NSErrorData {
   late int code;
   late String domain;
-  late Map<String?, Object?> userInfo;
+  late Map<String?, Object?>? userInfo;
 }
 
 /// Mirror of WKScriptMessage.

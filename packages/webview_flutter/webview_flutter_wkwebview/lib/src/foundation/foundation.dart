@@ -246,7 +246,9 @@ class NSError {
 
   /// Map of arbitrary data.
   ///
-  /// This only supports keys in [NSErrorUserInfoKey].
+  /// See [NSErrorUserInfoKey] for possible keys (non-exhaustive).
+  ///
+  /// This currently only supports values that are a String.
   final Map<String, Object?> userInfo;
 }
 

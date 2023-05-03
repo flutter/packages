@@ -98,15 +98,12 @@
 }
 
 - (void)testFWFNSErrorDataFromNSError {
-  NSError *error = [NSError errorWithDomain:@"domain"
-                                       code:23
-                                   userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+  NSError *error = [NSError errorWithDomain:@"domain" code:23 userInfo:@{@"a" : @"b"}];
 
   FWFNSErrorData *data = FWFNSErrorDataFromNativeNSError(error);
   XCTAssertEqualObjects(data.code, @23);
   XCTAssertEqualObjects(data.domain, @"domain");
-  XCTAssertEqualObjects(data.localizedDescription, @"description");
-  XCTAssertNotNil(data.objectDescription);
+  XCTAssertEqualObjects(data.userInfo, @{@"a" : @"b"});
 }
 
 - (void)testFWFWKScriptMessageDataFromWKScriptMessage {

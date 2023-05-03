@@ -199,7 +199,7 @@ extension _WKNSErrorDataConverter on NSErrorData {
     return NSError(
       domain: domain,
       code: code,
-      userInfo: userInfo.cast<String, Object?>(),
+      userInfo: userInfo?.cast<String, Object?>() ?? <String, Object?>{},
     );
   }
 }

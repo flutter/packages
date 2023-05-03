@@ -192,18 +192,16 @@ WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
 }
 
 FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
-  NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+  NSMutableDictionary *userInfo;
   if (error.userInfo) {
+    userInfo = [NSMutableDictionary dictionary];
     for (NSErrorUserInfoKey key in error.userInfo.allKeys) {
-      if ([key isEqualToString:NSURLErrorFailingURLStringErrorKey]) {
+      if ([error.userInfo[key] isKindOfClass:[NSString class]]) {
         userInfo[key] = error.userInfo[key];
       }
     }
   }
-  return [FWFNSErrorData makeWithCode:@(error.code)
-                               domain:error.domain
-                 localizedDescription:error.localizedDescription
-                             userInfo:userInfo];
+  return [FWFNSErrorData makeWithCode:@(error.code) domain:error.domain userInfo:userInfo];
 }
 
 FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(
