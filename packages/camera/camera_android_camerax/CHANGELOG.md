@@ -1,4 +1,4 @@
-## NEXT
+## 0.5.0
 
 * Updates minimum Flutter version to 3.3.
 * Creates camera_android_camerax plugin for development.
@@ -22,3 +22,4 @@
 * Provides LifecycleOwner implementation for Activities that use the plugin that do not implement it themselves.
 * Implements retrieval of camera information.
 * Implements onCameraClosing callback method for indicating the camera is closing and bumps CameraX version to 1.3.0-alpha05.
+* Initial release of this `camera` implementation.
