@@ -5,6 +5,7 @@
 # An example use case for this list would be to temporarily add packages while
 # updating multiple packages for a breaking change in a common dependency in
 # cases where using a relaxed version constraint isn't possible.
+- camera_android_camerax
 
 # This is a permament entry, as it should never be a direct app dependency.
 - plugin_platform_interface
