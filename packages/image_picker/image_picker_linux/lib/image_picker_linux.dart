@@ -78,10 +78,10 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
             preferredCameraDevice: preferredCameraDevice));
   }
 
-  // [ImagePickerOptions] options are not currently supported on Linux. If any
+  // [ImagePickerOptions] options are not currently supported. If any
   // of its fields are set, they will be silently ignored.
   //
-  // If source is `ImageSource.camera`, an `StateError` will be thrown
+  // If source is `ImageSource.camera`, a `StateError` will be thrown
   // unless a [cameraDelegate] is set.
   @override
   Future<XFile?> getImageFromSource({
@@ -104,10 +104,10 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   }
 
   // `preferredCameraDevice` and `maxDuration` arguments are not currently
-  // supported on Linux. If any of these arguments is supplied, they will be
-  // silently ignored.
+  // supported. If any of these arguments is supplied, they will be silently
+  // ignored.
   //
-  // If source is `ImageSource.camera`, an `StateError` will be thrown
+  // If source is `ImageSource.camera`, a `StateError` will be thrown
   // unless a [cameraDelegate] is set.
   @override
   Future<XFile?> getVideo({
@@ -134,8 +134,8 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   }
 
   // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not currently
-  // supported on Linux. If any of these arguments is supplied, they will be
-  // silently ignored.
+  // supported. If any of these arguments is supplied, they will be silently
+  // ignored.
   @override
   Future<List<XFile>> getMultiImage({
     double? maxWidth,

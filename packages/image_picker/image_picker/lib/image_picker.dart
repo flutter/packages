@@ -354,7 +354,7 @@ class ImagePicker {
 
   /// Returns true if the current platform implementation supports [source].
   ///
-  /// Calling a `pick*` or `get*` method with a source for which this method
+  /// Calling a `pick*` method with a source for which this method
   /// returns `false` will throw an error.
   bool supportsImageSource(ImageSource source) {
     return platform.supportsImageSource(source);

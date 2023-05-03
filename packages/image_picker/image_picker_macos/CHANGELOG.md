@@ -1,3 +1,3 @@
 ## 0.2.0
 
-* Initial macOS support.
+* Implements initial macOS support.

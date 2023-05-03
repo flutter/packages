@@ -107,10 +107,10 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
             preferredCameraDevice: preferredCameraDevice));
   }
 
-  // [ImagePickerOptions] options are not currently supported on macOS. If any
+  // [ImagePickerOptions] options are not currently supported. If any
   // of its fields are set, they will be silently ignored.
   //
-  // If source is `ImageSource.camera`, an `StateError` will be thrown
+  // If source is `ImageSource.camera`, a `StateError` will be thrown
   // unless a [cameraDelegate] is set.
   @override
   Future<XFile?> getImageFromSource({
@@ -133,10 +133,10 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
   }
 
   // `preferredCameraDevice` and `maxDuration` arguments are not currently
-  // supported on macOS. If any of these arguments is supplied, they will be
-  // silently ignored.
+  // supported. If any of these arguments is supplied, they will be silently
+  // ignored.
   //
-  // If source is `ImageSource.camera`, an `StateError` will be thrown
+  // If source is `ImageSource.camera`, a `StateError` will be thrown
   // unless a [cameraDelegate] is set.
   @override
   Future<XFile?> getVideo({
@@ -162,9 +162,9 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     throw UnimplementedError('Unknown ImageSource: $source');
   }
 
-  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not
-  // supported on Windows. If any of these arguments is supplied,
-  // it'll be silently ignored by the Windows version of the plugin.
+  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not currently
+  // supported. If any of these arguments is supplied, they will be silently
+  // ignored.
   @override
   Future<List<XFile>> getMultiImage({
     double? maxWidth,

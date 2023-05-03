@@ -10,7 +10,7 @@ A Windows implementation of [`image_picker`][1].
 The arguments `maxWidth`, `maxHeight`, and `imageQuality` are not currently supported.
 
 ### pickVideo()
-The arguments `maxDuration` are not currently supported.
+The argument `maxDuration` is not currently supported.
 
 ## Usage
 
