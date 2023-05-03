@@ -1,3 +1,11 @@
+## 1.0.4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 1.0.3
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 1.0.2
 
 * Clarifies explanation of endorsement in README.

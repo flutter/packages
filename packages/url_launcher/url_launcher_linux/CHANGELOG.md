@@ -1,3 +1,7 @@
+## 3.0.5
+
+* Sets a cmake_policy compatibility version to fix build warnings.
+
 ## 3.0.4
 
 * Clarifies explanation of endorsement in README.

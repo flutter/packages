@@ -79,7 +79,7 @@ void main() {
         onCopy: (_) => ImageCapture.detached(instanceManager: instanceManager),
       );
 
-      imageCapture.setFlashMode(flashMode);
+      await imageCapture.setFlashMode(flashMode);
 
       verify(mockApi.setFlashMode(
           instanceManager.getIdentifier(imageCapture), flashMode));

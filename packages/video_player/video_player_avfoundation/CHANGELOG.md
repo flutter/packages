@@ -1,6 +1,10 @@
-## 2.4.5
+## 2.4.6
 
 * Fixes playback speed doesn't get persisted after reinitializing with new VideoPlayerController.
+
+## 2.4.5
+
+* Updates functions without a prototype to avoid deprecation warning.
 
 ## 2.4.4
 
