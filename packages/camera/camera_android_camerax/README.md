@@ -19,59 +19,30 @@ dependencies:
   camera_android_camerax: ^0.5.0
 ```
 
-## How this plugin accesses Android libraries
-
-The `camera` implementation is located at `./lib/src/android_camera_camerax.dart`, and
-it is implemented using Dart classes that are wrapped versions of Android classes.
-
-In `lib/src/`, you will find all of the Dart-wrapped native classes that the plugin
-currently uses to implement `camera`. Each of these classes uses an `InstanceManager`
-(implementation in `instance_manager.dart`) to manage objects that are created by
-the plugin implementation that map to objects of the same type created on the native
-side. This plugin uses [`pigeon`][12] to communicate with native code, so each of
-these Dart-wrapped classes also have Host API and Flutter API implementations, as needed.
-For more information on how these APIs are used by `pigeon`, please see its
-[documentation][14].
-
-Similarly, on the native side in `android/src/main/java/io/flutter/plugins/camerax/`,
-you'll find the Host API and Flutter API implementations of the same classes wrapped
-with Dart in `lib/src/`. These implementations call directly to the classes that are
-wrapped in the CameraX library or other Android libraries. The objects created in the
-native code map to objects created on the Dart side, and thus, are also managed by an
-`InstanceManager` (implementation in `InstanceManager.java`).
-
-If you need to access any Android classes to contribute to this plugin, you should
-search in `lib/src/` for any Dart-wrapped classes you may need. If any classes that
-you need are not wrapped or you need to access any methods not wrapped in a class,
-you must take the additional steps to wrap them to maintain the structure of this plugin.
-
-For more information on the approach of wrapping native libraries For plugins, please
-see the [design document][13].
-
 ## Missing features and limitations
 
-### Resolution configuration \[[Issue #120462][5]\]
+### Resolution configuration \[[Issue #120462][120462]\]
 
 Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 `onCameraResolutionChanged` is unimplemented.
 
-### Locking/Unlocking capture orientation \[[Issue #125915][6]\]
+### Locking/Unlocking capture orientation \[[Issue #125915][125915]\]
 
 `lockCaptureOrientation` & `unLockCaptureOrientation` are unimplemented.
 
-### Flash mode configuration \[[Issue #120715][7]\]
+### Flash mode configuration \[[Issue #120715][120715]\]
 
 `setFlashMode` is unimplemented.
 
-### Exposure mode, point, & offset configuration \[[Issue #120468][8]\]
+### Exposure mode, point, & offset configuration \[[Issue #120468][120468]\]
 
 `setExposureMode`, `setExposurePoint`, & `setExposureOffset` are unimplemented.
 
-### Focus mode & point configuration \[[Issue #120467][9]\]
+### Focus mode & point configuration \[[Issue #120467][120467]\]
 
 `setFocusMode` & `setFocusPoint` are unimplemented.
 
-### Zoom configuration \[[Issue #125371][9]\]
+### Zoom configuration \[[Issue #125371][125371]\]
 
 `setZoomLevel` is unimplemented.
 
@@ -81,13 +52,9 @@ Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 [2]: https://developer.android.com/training/camerax
 [3]: https://docs.flutter.dev/packages-and-plugins/developing-packages#non-endorsed-federated-plugin
 [4]: https://pub.dev/packages/camera_android
-[5]: https://github.com/flutter/flutter/issues/120462
-[6]: https://github.com/flutter/flutter/issues/125915
-[7]: https://github.com/flutter/flutter/issues/120715
-[8]: https://github.com/flutter/flutter/issues/120468
-[9]: https://github.com/flutter/flutter/issues/120467
-[10]: https://github.com/flutter/flutter/issues/125371
-[11]: https://developer.android.com/reference/androidx/camera/core/Camera
-[12]: https://pub.dev/packages/pigeon
-[13]: https://docs.google.com/document/d/1wXB1zNzYhd2SxCu1_BK3qmNWRhonTB6qdv4erdtBQqo/edit?usp=sharing&resourcekey=0-WOBqqOKiO9SARnziBg28pg
-[14]: https://pub.dev/documentation/pigeon/latest/
+[120462]: https://github.com/flutter/flutter/issues/120462
+[125915]: https://github.com/flutter/flutter/issues/125915
+[120715]: https://github.com/flutter/flutter/issues/120715
+[120468]: https://github.com/flutter/flutter/issues/120468
+[120467]: https://github.com/flutter/flutter/issues/120467
+[125371]: https://github.com/flutter/flutter/issues/125371
