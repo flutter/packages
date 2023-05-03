@@ -1,3 +1,7 @@
+## 3.4.3
+
+* Adds access for the full error description for web resource errors.
+
 ## 3.4.2
 
 * Adds access for the full error description for web resource errors.
