@@ -605,8 +605,9 @@ void main() {
           NSErrorData(
             code: 23,
             domain: 'Hello',
-            localizedDescription: 'localizedDescription',
-            userInfo: <String, Object?>{},
+            userInfo: <String, Object?>{
+              NSErrorUserInfoKey.NSLocalizedDescriptionKey: 'my desc',
+            },
           ),
         );
 
@@ -638,7 +639,9 @@ void main() {
           NSErrorData(
             code: 23,
             domain: 'Hello',
-            localizedDescription: 'localiziedDescription',
+            userInfo: <String, Object?>{
+              NSErrorUserInfoKey.NSLocalizedDescriptionKey: 'my desc',
+            },
           ),
         );
 
@@ -843,7 +846,9 @@ void main() {
             details: NSErrorData(
               code: 0,
               domain: 'domain',
-              localizedDescription: 'desc',
+              userInfo: <String, Object?>{
+                NSErrorUserInfoKey.NSLocalizedDescriptionKey: 'desc',
+              },
             ),
           ),
         );

@@ -214,6 +214,10 @@ class NSErrorUserInfoKey {
   /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlstringerrorkey?language=objc.
   static const String NSURLErrorFailingURLStringErrorKey =
       'NSErrorFailingURLStringKey';
+
+  /// The corresponding value is a localized string representation of the error
+  /// that, if present, will be returned by [NSError.localizedDescription].
+  static const String NSLocalizedDescriptionKey = 'NSLocalizedDescriptionKey';
 }
 
 /// Information about an error condition.
@@ -225,8 +229,7 @@ class NSError {
   const NSError({
     required this.code,
     required this.domain,
-    required this.localizedDescription,
-    this.userInfo,
+    this.userInfo = const <String, Object?>{},
   });
 
   /// The error code.
@@ -238,12 +241,13 @@ class NSError {
   final String domain;
 
   /// A string containing the localized description of the error.
-  final String localizedDescription;
+  String? get localizedDescription =>
+      userInfo[NSErrorUserInfoKey.NSLocalizedDescriptionKey] as String?;
 
   /// Map of arbitrary data.
   ///
   /// This only supports keys in [NSErrorUserInfoKey].
-  final Map<String, Object?>? userInfo;
+  final Map<String, Object?> userInfo;
 }
 
 /// A representation of an HTTP cookie.

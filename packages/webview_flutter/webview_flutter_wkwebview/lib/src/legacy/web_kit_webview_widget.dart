@@ -595,7 +595,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     return WebResourceError(
       errorCode: error.code,
       domain: error.domain,
-      description: error.localizedDescription,
+      description: error.localizedDescription!,
       errorType: errorType,
     );
   }

@@ -326,12 +326,10 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithCode:(NSNumber *)code
     domain:(NSString *)domain
-    localizedDescription:(NSString *)localizedDescription
-    userInfo:(nullable NSDictionary<NSString *, id> *)userInfo;
+    userInfo:(NSDictionary<NSString *, id> *)userInfo;
 @property(nonatomic, strong) NSNumber * code;
 @property(nonatomic, copy) NSString * domain;
-@property(nonatomic, copy) NSString * localizedDescription;
-@property(nonatomic, strong, nullable) NSDictionary<NSString *, id> * userInfo;
+@property(nonatomic, strong) NSDictionary<NSString *, id> * userInfo;
 @end
 
 /// Mirror of WKScriptMessage.

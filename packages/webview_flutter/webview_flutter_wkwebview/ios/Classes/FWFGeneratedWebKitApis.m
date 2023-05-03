@@ -443,12 +443,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation FWFNSErrorData
 + (instancetype)makeWithCode:(NSNumber *)code
     domain:(NSString *)domain
-    localizedDescription:(NSString *)localizedDescription
-    userInfo:(nullable NSDictionary<NSString *, id> *)userInfo {
+    userInfo:(NSDictionary<NSString *, id> *)userInfo {
   FWFNSErrorData* pigeonResult = [[FWFNSErrorData alloc] init];
   pigeonResult.code = code;
   pigeonResult.domain = domain;
-  pigeonResult.localizedDescription = localizedDescription;
   pigeonResult.userInfo = userInfo;
   return pigeonResult;
 }
@@ -458,9 +456,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   NSAssert(pigeonResult.code != nil, @"");
   pigeonResult.domain = GetNullableObjectAtIndex(list, 1);
   NSAssert(pigeonResult.domain != nil, @"");
-  pigeonResult.localizedDescription = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.localizedDescription != nil, @"");
-  pigeonResult.userInfo = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.userInfo = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.userInfo != nil, @"");
   return pigeonResult;
 }
 + (nullable FWFNSErrorData *)nullableFromList:(NSArray *)list {
@@ -470,7 +467,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     (self.code ?: [NSNull null]),
     (self.domain ?: [NSNull null]),
-    (self.localizedDescription ?: [NSNull null]),
     (self.userInfo ?: [NSNull null]),
   ];
 }

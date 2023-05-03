@@ -644,7 +644,7 @@ class WebKitWebResourceError extends WebResourceError {
     required super.failingUrl,
   }) : super(
           errorCode: _nsError.code,
-          description: _nsError.localizedDescription,
+          description: _nsError.localizedDescription ?? '',
           errorType: _toWebResourceErrorType(_nsError.code),
           isForMainFrame: isForMainFrame,
         );
@@ -745,7 +745,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
             WebKitWebResourceError._(
               error,
               isForMainFrame: true,
-              failingUrl: error.userInfo?[NSErrorUserInfoKey
+              failingUrl: error.userInfo[NSErrorUserInfoKey
                   .NSURLErrorFailingURLStringErrorKey] as String?,
             ),
           );
@@ -757,7 +757,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
             WebKitWebResourceError._(
               error,
               isForMainFrame: true,
-              failingUrl: error.userInfo?[NSErrorUserInfoKey
+              failingUrl: error.userInfo[NSErrorUserInfoKey
                   .NSURLErrorFailingURLStringErrorKey] as String?,
             ),
           );
@@ -771,7 +771,6 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 code: WKErrorCode.webContentProcessTerminated,
                 // Value from https://developer.apple.com/documentation/webkit/wkerrordomain?language=objc.
                 domain: 'WKErrorDomain',
-                localizedDescription: '',
               ),
               isForMainFrame: true,
               failingUrl: null,

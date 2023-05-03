@@ -115,7 +115,7 @@ Page resource error:
   description: ${error.description}
   errorType: ${error.errorType}
   isForMainFrame: ${error.isForMainFrame}
-  fullDescription: ${(error as WebKitWebResourceError).fullDescription}
+  failingUrl: ${error.failingUrl}
           ''');
           })
           ..setOnNavigationRequest((NavigationRequest request) {
@@ -147,7 +147,7 @@ Page resource error:
         },
       )
       ..loadRequest(LoadRequestParams(
-        uri: Uri.parse('https://flutter..dev'),
+        uri: Uri.parse('https://flutter.dev'),
       ));
   }
 
