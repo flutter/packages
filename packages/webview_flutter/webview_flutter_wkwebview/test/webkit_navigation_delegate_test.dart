@@ -93,7 +93,8 @@ void main() {
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
           userInfo: <String, Object?>{
-            NSErrorUserInfoKey.NSURLErrorFailingURLString: 'www.flutter.dev',
+            NSErrorUserInfoKey.NSURLErrorFailingURLStringError:
+                'www.flutter.dev',
             NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
           },
         ),
@@ -131,7 +132,8 @@ void main() {
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
           userInfo: <String, Object?>{
-            NSErrorUserInfoKey.NSURLErrorFailingURLString: 'www.flutter.dev',
+            NSErrorUserInfoKey.NSURLErrorFailingURLStringError:
+                'www.flutter.dev',
             NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
           },
         ),

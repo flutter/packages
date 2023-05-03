@@ -209,16 +209,17 @@ class NSUrlRequest {
 class NSErrorUserInfoKey {
   NSErrorUserInfoKey._();
 
-  /// The URL which caused a load to fail.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlstringerrorkey?language=objc.
-  static const String NSURLErrorFailingURLString = 'NSErrorFailingURLStringKey';
-
   /// The corresponding value is a localized string representation of the error
   /// that, if present, will be returned by [NSError.localizedDescription].
   ///
   /// See https://developer.apple.com/documentation/foundation/nslocalizeddescriptionkey.
-  static const String NSLocalizedDescription = 'NSLocalizedDescriptionKey';
+  static const String NSLocalizedDescription = 'NSLocalizedDescription';
+
+  /// The URL which caused a load to fail.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlstringerrorkey?language=objc.
+  static const String NSURLErrorFailingURLStringError =
+      'NSErrorFailingURLStringKey';
 }
 
 /// Information about an error condition.

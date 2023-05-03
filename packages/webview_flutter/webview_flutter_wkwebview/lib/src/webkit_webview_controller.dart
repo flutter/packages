@@ -745,9 +745,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
             WebKitWebResourceError._(
               error,
               isForMainFrame: true,
-              failingUrl:
-                  error.userInfo[NSErrorUserInfoKey.NSURLErrorFailingURLString]
-                      as String?,
+              failingUrl: error.userInfo[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringError] as String?,
             ),
           );
         }
@@ -758,9 +757,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
             WebKitWebResourceError._(
               error,
               isForMainFrame: true,
-              failingUrl:
-                  error.userInfo[NSErrorUserInfoKey.NSURLErrorFailingURLString]
-                      as String?,
+              failingUrl: error.userInfo[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringError] as String?,
             ),
           );
         }
