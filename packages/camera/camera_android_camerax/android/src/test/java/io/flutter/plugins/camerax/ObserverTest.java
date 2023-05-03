@@ -44,7 +44,7 @@ public class ObserverTest {
 
   @After
   public void tearDown() {
-    instanceManager.clear();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test

@@ -464,6 +464,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Create Analyzer that can read image data for image streaming.
     Future<void> analyze(ImageProxy imageProxy) async {
+      final WeakReference<AndroidCameraCameraX> weakThis =
+          WeakReference<AndroidCameraCameraX>(this);
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
       for (final PlaneProxy plane in planes) {
@@ -484,7 +486,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           height: imageProxy.height,
           width: imageProxy.width);
 
-      cameraImageDataStreamController?.add(cameraImageData);
+      weakThis.target!.cameraImageDataStreamController?.add(cameraImageData);
       imageProxy.close();
     }
 
@@ -566,12 +568,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   Observer<CameraState> _createCameraClosingObserver(int cameraId) {
     // Callback method used to implement the behavior described above:
     void onChanged(Object stateAsObject) {
+      final WeakReference<AndroidCameraCameraX> weakThis =
+          WeakReference<AndroidCameraCameraX>(this);
       final CameraState state = stateAsObject as CameraState;
       if (state.type == CameraStateType.closing) {
-        cameraEventStreamController.add(CameraClosingEvent(cameraId));
+        weakThis.target!.cameraEventStreamController
+            .add(CameraClosingEvent(cameraId));
       }
       if (state.error != null) {
-        cameraEventStreamController
+        weakThis.target!.cameraEventStreamController
             .add(CameraErrorEvent(cameraId, state.error!.getDescription()));
       }
     }

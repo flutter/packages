@@ -36,7 +36,7 @@ public class CameraStateErrorTest {
 
   @After
   public void tearDown() {
-    instanceManager.clear();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test

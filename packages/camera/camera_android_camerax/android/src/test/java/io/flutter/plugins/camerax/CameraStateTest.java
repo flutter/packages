@@ -42,7 +42,7 @@ public class CameraStateTest {
 
   @After
   public void tearDown() {
-    instanceManager.clear();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
