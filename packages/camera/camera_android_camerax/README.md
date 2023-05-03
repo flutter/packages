@@ -3,7 +3,7 @@
 An Android implementation of [`camera`][1] that uses the [CameraX library][2].
 
 *Note*: This package is under development.
-See [missing implementations and limitations](#missing-features-and-limitations).
+See [missing features and limitations](#missing-features-and-limitations).
 
 ## Usage
 
@@ -24,42 +24,33 @@ The `camera` implementation is located at `./lib/src/android_camera_camerax.dart
 it is implemented using Dart classes that act as wrapped versions of the Android
 classes that the implementation needs access to.
 
-To understand how this works, consider the example of [`Camera`][11], the interface
-provided by CameraX used to control the flow of data to use cases, control the camera,
-and publish the state of the camera via CameraInfo. The Dart-wrapped version of this
-class is located at `./lib/src/camera.dart`. You'll notice its implementation as
-`Camera`, but also two additional classes: `CameraHostApiImpl`, an extension
-of the Host API used by [`pigeon`][12] to communicate with native code, and
-`CameraFlutterApiImpl`, the implementation of the Flutter API used by `pigeon` to
-communicate with native code. The file that `pigeon` uses to generate the Host
-and Flutter APIs used by these classes is located at `pigeons/camerax_library.dart`.
+In `lib/src/` you will find all of the Dart-wrapped native classes that the plugin
+currently uses to implement `camera`. Each of these classes uses an `InstanceManager`
+(implementation in `instance_manager.dart`) to manage the creation/garbage collection
+of objects created by the plugin on the Dart side and their corresponding Java object
+on the native side. This plugin uses [`pigeon`][12] to communicate with native code,
+so each of these Dart-wrapped classes have Host API and Flutter API implementations,
+as needed.
 
-Both `CameraHostApiImpl` and `CameraFlutterApiImpl` utilize `BinaryMessenger`
-instances to communicate with native code using `pigeon`; for more information on
-`pigeon`, see its [documentation][12]. Both of these classes additionally utilize
-an `InstanceManager` instance that is used to manage Dart objects that represent
-their Android counterparts. For example, the `InstanceManager` instance is used
-to manage any instances of `Camera` we create in Dart and in native, and any other
-instances that `Camera` methods may create.
-
-On the native side, you'll find two Java classes that mirror these two Dart classes
-discussed: in `./android/src/main/java/io/flutter/plugins/camerax/`. you will find
-`CameraHostApiImpl.java` and `CameraFlutterApiImpl.java`, which implement the Host
-API and extend the Flutter API used by `pigeon`, respectfully.
-
-WHAT IF INSTEAD I JUST DID A MAP OF THE STRUCTURE VERSUS A LENGTHY EXAMPLE.
-
+Similarly, on the native side in `android/src/main/java/io/flutter/plugins/camerax/`,
+you'll find the Host API and Flutter API implementations of the same classes wrapped
+with Dart in `lib/src/`. These implementations call directly to the classes that are
+wrapped in the CameraX library or otherwise. The objects created in this native code
+are also managed by an `InstanceManager` (implementation in `InstanceManager.java`).
 
 Thus, if you want to implement any new functionality in the implementation or fix any
 bugs, you will want to search in `./lib/src/` for any wrapped classes you may need. If
 any classes you need are not wrapped or you need to implement any additional methods,
 you will need to take additional steps to wrap them.
 
+For more information on the approach of wrapping native libraries For plugins, please
+see the [design document][13].
+
 ## Missing features and limitations
 
 ### Resolution configuration \[[Issue #120462][5]\]
 
-Any specified `ResolutionPreset` is unused in favor of CameraX defaults and
+Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 `onCameraResolutionChanged` is unimplemented.
 
 ### Locking/Unlocking capture orientation \[[Issue #125915][6]\]
@@ -95,4 +86,5 @@ Any specified `ResolutionPreset` is unused in favor of CameraX defaults and
 [9]: https://github.com/flutter/flutter/issues/120467
 [10]: https://github.com/flutter/flutter/issues/125371
 [11]: https://developer.android.com/reference/androidx/camera/core/Camera
-[12]: 
+[12]: https://pub.dev/packages/pigeon
+[13]: https://docs.google.com/document/d/1wXB1zNzYhd2SxCu1_BK3qmNWRhonTB6qdv4erdtBQqo/edit?usp=sharing&resourcekey=0-WOBqqOKiO9SARnziBg28pg
