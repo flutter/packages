@@ -821,6 +821,7 @@ Future<void> main() async {
 
       final WebResourceError error = await errorCompleter.future;
       expect(error, isNotNull);
+      expect(error.failingUrl, 'https://www.notawebsite..com');
 
       expect((error as WebKitWebResourceError).domain, isNotNull);
     });
