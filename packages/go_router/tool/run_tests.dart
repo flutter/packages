@@ -55,7 +55,6 @@ Future<void> main(List<String> args) async {
   if (status != 0) {
     await cleanUpAndExit(statusCode: status, toDelete: testFixesTargetDir);
   }
-  //Cleanup temp folder
   await cleanUpAndExit(statusCode: 0, toDelete: testFixesTargetDir);
 }
 
