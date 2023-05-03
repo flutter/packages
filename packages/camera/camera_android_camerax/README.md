@@ -7,9 +7,10 @@ See [missing features and limitations](#missing-features-and-limitations).
 
 ## Usage
 
-This package is [unendorsed][3]; the endorsed Android implementation of `camera`
-is [`camera_android`][4]. To use this implementation of the plugin, you will need
-to specify it in your `pubsepc.yaml` file as a dependency in addition to `camera`:
+This package is [non-endorsed][3]; the endorsed Android implementation of `camera`
+is [`camera_android`][4]. To use this implementation of the plugin instead of
+`camera_android`, you will need to specify it in your `pubsepc.yaml` file as a
+dependency in addition to `camera`:
 
 ```yaml
 dependencies:
@@ -18,30 +19,32 @@ dependencies:
   camera_android_camerax: ^0.5.0
 ```
 
-## Contributing
+## How this plugin accesses Android libraries
 
 The `camera` implementation is located at `./lib/src/android_camera_camerax.dart`, and
-it is implemented using Dart classes that act as wrapped versions of the Android
+it is implemented using Dart classes that are wrapped versions of the Android
 classes that the implementation needs access to.
 
 In `lib/src/` you will find all of the Dart-wrapped native classes that the plugin
 currently uses to implement `camera`. Each of these classes uses an `InstanceManager`
-(implementation in `instance_manager.dart`) to manage the creation/garbage collection
-of objects created by the plugin on the Dart side and their corresponding Java object
-on the native side. This plugin uses [`pigeon`][12] to communicate with native code,
-so each of these Dart-wrapped classes have Host API and Flutter API implementations,
-as needed.
+(implementation in `instance_manager.dart`) to manage objects of these Dart-wrapped
+classes that are created by the plugin implementation on the Dart side that map
+to objects of the same type created on the native side. This plugin uses [`pigeon`][12]
+to communicate with native code, so each of these Dart-wrapped classes have Host API
+and Flutter API implementations, as needed. For more information on how these APIs are
+used by `pigeon`, please see its [documentation][14].
 
 Similarly, on the native side in `android/src/main/java/io/flutter/plugins/camerax/`,
 you'll find the Host API and Flutter API implementations of the same classes wrapped
 with Dart in `lib/src/`. These implementations call directly to the classes that are
-wrapped in the CameraX library or otherwise. The objects created in this native code
-are also managed by an `InstanceManager` (implementation in `InstanceManager.java`).
+wrapped in the CameraX library or other Android libraries. The objects created in the
+native code map to objects created on the Dart side, and thus, are also managed by an
+`InstanceManager` (implementation in `InstanceManager.java`).
 
-Thus, if you want to implement any new functionality in the implementation or fix any
-bugs, you will want to search in `./lib/src/` for any wrapped classes you may need. If
-any classes you need are not wrapped or you need to implement any additional methods,
-you will need to take additional steps to wrap them.
+Therefore, if you need to access any Android classes, you should search in `lib/src/`
+for any Dart-wrapped classes you may need. If any classes that you need are not wrapped
+or you need to access any methods not wrapped in a class, you will need to take the
+additional steps to wrap them to maintain the structure of this plugin.
 
 For more information on the approach of wrapping native libraries For plugins, please
 see the [design document][13].
@@ -88,3 +91,4 @@ Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 [11]: https://developer.android.com/reference/androidx/camera/core/Camera
 [12]: https://pub.dev/packages/pigeon
 [13]: https://docs.google.com/document/d/1wXB1zNzYhd2SxCu1_BK3qmNWRhonTB6qdv4erdtBQqo/edit?usp=sharing&resourcekey=0-WOBqqOKiO9SARnziBg28pg
+[14]: https://pub.dev/documentation/pigeon/latest/
