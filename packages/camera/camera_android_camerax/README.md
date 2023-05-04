@@ -46,6 +46,10 @@ Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 
 `setZoomLevel` is unimplemented.
 
+## Contributing
+
+For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 <!-- Links -->
 
 [1]: https://pub.dev/packages/camera

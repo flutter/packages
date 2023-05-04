@@ -1,6 +1,6 @@
 # Contributing to camera\_android\_camerax
 
-## Note on the plugin structure
+## Plugin structure
 
 The `camera_platform_interface` implementation is located at
 `lib/src/android_camera_camerax.dart`, and it is implemented using Dart classes that
@@ -33,7 +33,7 @@ For more information on the approach of wrapping native libraries for plugins, p
 see the [design document][2]. For more information on contributing packages in general,
 check out our [contribution guide][3].
 
-## Note on testing
+## Testing
 
 Besides [`pigeon`][1], this plugin also uses [`mockito`][4] to generate mock objects for
 testing purposes. To generate the mock objects, run
