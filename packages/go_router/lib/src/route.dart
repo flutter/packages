@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import '../go_router.dart';
+import 'match.dart';
 import 'matching.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
@@ -351,6 +352,18 @@ abstract class ShellRouteBase extends RouteBase {
   /// Returns the key for the [Navigator] that is to be used for the specified
   /// immediate sub-route of this shell route.
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute);
+
+  /// Returns the keys for the [Navigator]s associated with this shell route.
+  Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
+      <GlobalKey<NavigatorState>>[];
+
+  /// Returns all the Navigator keys of this shell route as well as those of any
+  /// descendant shell routes.
+  Iterable<GlobalKey<NavigatorState>> _navigatorKeysRecursively() {
+    return RouteBase.routesRecursively(<ShellRouteBase>[this])
+        .whereType<ShellRouteBase>()
+        .expand((ShellRouteBase e) => e._navigatorKeys);
+  }
 }
 
 /// Context object used when building the shell and Navigator for a shell route.
@@ -358,7 +371,6 @@ class ShellRouteContext {
   /// Constructs a [ShellRouteContext].
   ShellRouteContext({
     required this.route,
-    required this.subRoute,
     required this.routerState,
     required this.navigatorKey,
     required this.routeMatchList,
@@ -368,9 +380,6 @@ class ShellRouteContext {
   /// The associated shell route.
   final ShellRouteBase route;
 
-  /// The matched immediate sub-route of the associated shell route.
-  final RouteBase subRoute;
-
   /// The current route state associated with [route].
   final GoRouterState routerState;
 
@@ -378,7 +387,8 @@ class ShellRouteContext {
   /// [route].
   final GlobalKey<NavigatorState> navigatorKey;
 
-  /// The route match list for the current location.
+  /// The route match list representing the current location within the
+  /// associated shell route.
   final RouteMatchList routeMatchList;
 
   /// Function used to build the [Navigator] for the current route.
@@ -558,6 +568,10 @@ class ShellRoute extends ShellRouteBase {
     assert(routes.contains(subRoute));
     return navigatorKey;
   }
+
+  @override
+  Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
+      <GlobalKey<NavigatorState>>[navigatorKey];
 }
 
 /// A route that displays a UI shell with separate [Navigator]s for its
@@ -784,6 +798,10 @@ class StatefulShellRoute extends ShellRouteBase {
     assert(branch != null);
     return branch!.navigatorKey;
   }
+
+  @override
+  Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
+      branches.map((StatefulShellBranch b) => b.navigatorKey);
 
   StatefulNavigationShell _createShell(
           BuildContext context, ShellRouteContext shellRouteContext) =>
@@ -1086,11 +1104,37 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   RouteMatchList? _matchListForBranch(int index) =>
       _branchLocations[route.branches[index]]?.value;
 
+  /// Creates a new RouteMatchList that is scoped to the Navigators of the
+  /// current shell route or it's descendants. This involves removing all the
+  /// trailing imperative matches from the RouterMatchList that are targeted at
+  /// any other (often top-level) Navigator.
+  RouteMatchList _scopedMatchList(RouteMatchList matchList) {
+    final Iterable<GlobalKey<NavigatorState>> validKeys =
+        route._navigatorKeysRecursively();
+    final int index = matchList.matches.indexWhere((RouteMatch e) {
+      final RouteBase route = e.route;
+      if (e is ImperativeRouteMatch && route is GoRoute) {
+        return route.parentNavigatorKey != null &&
+            !validKeys.contains(route.parentNavigatorKey);
+      }
+      return false;
+    });
+    if (index > 0) {
+      final List<RouteMatch> matches = matchList.matches.sublist(0, index);
+      return RouteMatchList(
+        matches: matches,
+        uri: Uri.parse(matches.last.matchedLocation),
+        pathParameters: matchList.pathParameters,
+      );
+    }
+    return matchList;
+  }
+
   void _updateCurrentBranchStateFromWidget() {
     final StatefulShellBranch branch = route.branches[widget.currentIndex];
     final ShellRouteContext shellRouteContext = widget.shellRouteContext;
     final RouteMatchList currentBranchLocation =
-        shellRouteContext.routeMatchList;
+        _scopedMatchList(shellRouteContext.routeMatchList);
 
     final _RestorableRouteMatchList branchLocation =
         _branchLocation(branch, false);

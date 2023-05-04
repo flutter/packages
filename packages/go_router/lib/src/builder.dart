@@ -153,21 +153,20 @@ class RouteBuilder {
     } finally {
       /// Clean up previous cache to prevent memory leak, making sure any nested
       /// stateful shell routes for the current match list are kept.
-      final Iterable<StatefulShellRoute> matchListShellRoutes = matchList
-          .matches
-          .map((RouteMatch e) => e.route)
-          .whereType<StatefulShellRoute>();
-
       final Set<Key> activeKeys = keyToPage.keys.toSet()
-        ..addAll(_nestedStatefulNavigatorKeys(matchListShellRoutes));
+        ..addAll(_nestedStatefulNavigatorKeys(matchList));
       _goHeroCache.removeWhere(
           (GlobalKey<NavigatorState> key, _) => !activeKeys.contains(key));
     }
   }
 
-  Set<GlobalKey<NavigatorState>> _nestedStatefulNavigatorKeys(
-      Iterable<StatefulShellRoute> routes) {
-    return RouteBase.routesRecursively(routes)
+  static Set<GlobalKey<NavigatorState>> _nestedStatefulNavigatorKeys(
+      RouteMatchList matchList) {
+    final Iterable<RouteBase> routes =
+        matchList.matches.map((RouteMatch e) => e.route);
+    final Iterable<StatefulShellRoute> matchListShellRoutes =
+        routes.whereType<StatefulShellRoute>();
+    return RouteBase.routesRecursively(matchListShellRoutes)
         .whereType<StatefulShellRoute>()
         .expand((StatefulShellRoute e) =>
             e.branches.map((StatefulShellBranch b) => b.navigatorKey))
@@ -256,7 +255,6 @@ class RouteBuilder {
       // Call the ShellRouteBase to create/update the shell route state
       final ShellRouteContext shellRouteContext = ShellRouteContext(
         route: route,
-        subRoute: subRoute,
         routerState: state,
         navigatorKey: shellNavigatorKey,
         routeMatchList: matchList,

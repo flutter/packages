@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
 
 void main() {
   group('RouteMatch', () {
@@ -135,34 +134,6 @@ void main() {
       );
 
       expect(match1!.pageKey, match2!.pageKey);
-    });
-  });
-
-  group('RouteMatchList', () {
-    test(
-        'UnmodifiableRouteMatchList lists based on the same RouteMatchList are '
-        'equal', () {
-      final GoRoute route = GoRoute(
-        path: '/a',
-        builder: _builder,
-      );
-      final RouteMatch match1 = RouteMatch(
-        route: route,
-        matchedLocation: '/a',
-        extra: null,
-        error: null,
-        pageKey: const ValueKey<String>('/a'),
-      );
-
-      final RouteMatchList list = RouteMatchList(
-        matches: <RouteMatch>[match1],
-        uri: Uri.parse('/'),
-        pathParameters: const <String, String>{},
-      );
-
-      final RouteMatchList list2 = list.copy();
-
-      expect(list, equals(list2));
     });
   });
 }

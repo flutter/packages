@@ -3722,6 +3722,118 @@ void main() {
       expect(find.text('Screen B Detail2'), findsOneWidget);
       expect(find.text('Screen C2'), findsNothing);
     });
+
+    testWidgets(
+        'Pushed top-level route is correctly handled by StackedShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> nestedNavigatorKey =
+          GlobalKey<NavigatorState>();
+      StatefulNavigationShell? routeState;
+
+      final List<RouteBase> routes = <RouteBase>[
+        // First level shell
+        StackedShellRoute(
+          builder: (BuildContext context, GoRouterState state,
+              StatefulNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <GoRoute>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Text('Screen A'),
+              ),
+            ]),
+            StatefulShellBranch(routes: <RouteBase>[
+              // Second level / nested shell
+              StackedShellRoute(
+                builder: (BuildContext context, GoRouterState state,
+                        StatefulNavigationShell navigationShell) =>
+                    navigationShell,
+                branches: <StatefulShellBranch>[
+                  StatefulShellBranch(routes: <GoRoute>[
+                    GoRoute(
+                      path: '/b1',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const Text('Screen B1'),
+                    ),
+                  ]),
+                  StatefulShellBranch(
+                      navigatorKey: nestedNavigatorKey,
+                      routes: <GoRoute>[
+                        GoRoute(
+                          path: '/b2',
+                          builder:
+                              (BuildContext context, GoRouterState state) =>
+                                  const Text('Screen B2'),
+                        ),
+                        GoRoute(
+                          path: '/b2-modal',
+                          // We pass an explicit parentNavigatorKey here, to
+                          // properly test the logic in RouteBuilder, i.e.
+                          // routes with parentNavigatorKeys under the shell
+                          // should not be stripped.
+                          parentNavigatorKey: nestedNavigatorKey,
+                          builder:
+                              (BuildContext context, GoRouterState state) =>
+                                  const Text('Nested Modal'),
+                        ),
+                      ]),
+                ],
+              ),
+            ]),
+          ],
+        ),
+        GoRoute(
+          path: '/top-modal',
+          parentNavigatorKey: rootNavigatorKey,
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('Top Modal'),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      expect(find.text('Screen A'), findsOneWidget);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B1'), findsOneWidget);
+
+      // Navigate nested (second level) shell to second branch
+      router.go('/b2');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B2'), findsOneWidget);
+
+      // Push route over second branch of nested (second level) shell
+      router.push('/b2-modal');
+      await tester.pumpAndSettle();
+      expect(find.text('Nested Modal'), findsOneWidget);
+
+      // Push top-level route while on second branch
+      router.push('/top-modal');
+      await tester.pumpAndSettle();
+      expect(find.text('Top Modal'), findsOneWidget);
+
+      // Return to shell and first branch
+      router.go('/a');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+
+      // Switch to second branch, which should only contain 'Nested Modal'
+      // (in the nested shell)
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsNothing);
+      expect(find.text('Screen B1'), findsNothing);
+      expect(find.text('Screen B2'), findsNothing);
+      expect(find.text('Top Modal'), findsNothing);
+      expect(find.text('Nested Modal'), findsOneWidget);
+    });
   });
 
   group('Imperative navigation', () {
