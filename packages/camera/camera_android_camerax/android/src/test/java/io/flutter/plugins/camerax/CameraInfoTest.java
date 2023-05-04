@@ -7,11 +7,15 @@ package io.flutter.plugins.camerax;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.CameraInfo;
+import androidx.camera.core.ExposureState;
+import androidx.camera.core.ZoomState;
+import androidx.lifecycle.LiveData;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
 import org.junit.After;
@@ -41,8 +45,9 @@ public class CameraInfoTest {
   }
 
   @Test
-  public void getSensorRotationDegreesTest() {
-    final CameraInfoHostApiImpl cameraInfoHostApi = new CameraInfoHostApiImpl(testInstanceManager);
+  public void getSensorRotationDegrees_retrievesExpectedSensorRotation() {
+    final CameraInfoHostApiImpl cameraInfoHostApi =
+        new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
 
     testInstanceManager.addDartCreatedInstance(mockCameraInfo, 1);
 
@@ -53,7 +58,47 @@ public class CameraInfoTest {
   }
 
   @Test
-  public void flutterApiCreateTest() {
+  public void getExposureState_retrievesExpectedExposureState() {
+    final CameraInfoHostApiImpl cameraInfoHostApiImpl =
+        new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final ExposureState mockExposureState = mock(ExposureState.class);
+    final Long mockCameraInfoIdentifier = 27L;
+    final Long mockExposureStateIdentifier = 47L;
+
+    testInstanceManager.addDartCreatedInstance(mockCameraInfo, mockCameraInfoIdentifier);
+    testInstanceManager.addDartCreatedInstance(mockExposureState, mockExposureStateIdentifier);
+
+    when(mockCameraInfo.getExposureState()).thenReturn(mockExposureState);
+
+    assertEquals(
+        cameraInfoHostApiImpl.getExposureState(mockCameraInfoIdentifier),
+        mockExposureStateIdentifier);
+    verify(mockCameraInfo).getExposureState();
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void getZoomState_retrievesExpectedZoomState() {
+    final CameraInfoHostApiImpl cameraInfoHostApiImpl =
+        new CameraInfoHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final LiveData<ZoomState> mockLiveZoomState = (LiveData<ZoomState>) mock(LiveData.class);
+    final ZoomState mockZoomState = mock(ZoomState.class);
+    final Long mockCameraInfoIdentifier = 20L;
+    final Long mockZoomStateIdentifier = 74L;
+
+    testInstanceManager.addDartCreatedInstance(mockCameraInfo, mockCameraInfoIdentifier);
+    testInstanceManager.addDartCreatedInstance(mockZoomState, mockZoomStateIdentifier);
+
+    when(mockCameraInfo.getZoomState()).thenReturn(mockLiveZoomState);
+    when(mockLiveZoomState.getValue()).thenReturn(mockZoomState);
+
+    assertEquals(
+        cameraInfoHostApiImpl.getZoomState(mockCameraInfoIdentifier), mockZoomStateIdentifier);
+    verify(mockCameraInfo).getZoomState();
+  }
+
+  @Test
+  public void flutterApiCreate_makesCallToCreateInstanceOnDartSide() {
     final CameraInfoFlutterApiImpl spyFlutterApi =
         spy(new CameraInfoFlutterApiImpl(mockBinaryMessenger, testInstanceManager));
 
