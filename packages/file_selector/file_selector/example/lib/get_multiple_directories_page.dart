@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// Screen that allows the user to select one or more directories using `getDirectoryPaths`,
 /// then displays the selected directories in a dialog.
 class GetMultipleDirectoriesPage extends StatelessWidget {
-  /// Default Constructor
+  /// Returns a new instance of the page.
   const GetMultipleDirectoriesPage({super.key});
 
   Future<void> _getDirectoryPaths(BuildContext context) async {
