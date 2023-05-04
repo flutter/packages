@@ -1089,11 +1089,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   void _updateCurrentBranchStateFromWidget() {
     final StatefulShellBranch branch = route.branches[widget.currentIndex];
     final ShellRouteContext shellRouteContext = widget.shellRouteContext;
-
-    /// Create an clone of the current RouteMatchList, to prevent mutations from
-    /// affecting the copy saved as the current state for this branch.
     final RouteMatchList currentBranchLocation =
-        shellRouteContext.routeMatchList.copy();
+        shellRouteContext.routeMatchList;
 
     final _RestorableRouteMatchList branchLocation =
         _branchLocation(branch, false);

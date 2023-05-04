@@ -60,16 +60,6 @@ class RouteMatchList {
     required this.pathParameters,
   }) : fullPath = _generateFullPath(matches);
 
-  const RouteMatchList._(
-      this.matches, this.uri, this.pathParameters, this.fullPath);
-
-  /// Creates a copy of this RouteMatchList that can be modified without
-  /// affecting the original.
-  RouteMatchList copy() {
-    return RouteMatchList._(List<RouteMatch>.from(matches), uri,
-        Map<String, String>.from(pathParameters), fullPath);
-  }
-
   /// Constructs an empty matches object.
   static RouteMatchList empty = RouteMatchList(
       matches: const <RouteMatch>[],
