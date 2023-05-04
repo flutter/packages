@@ -1,5 +1,6 @@
-## NEXT
+## 2.5.0
 
+* Deprecates `macUTIs` in favor of `uniformTypeIdentifiers`.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.4.1
