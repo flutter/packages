@@ -108,8 +108,8 @@ class Page1Screen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => context.goNamed(
                   'page2',
-                  params: <String, String>{'p1': 'pv1'},
-                  queryParams: <String, String>{'q1': 'qv1'},
+                  pathParameters: <String, String>{'p1': 'pv1'},
+                  queryParameters: <String, String>{'q1': 'qv1'},
                 ),
                 child: const Text('Go to page 2'),
               ),
@@ -134,7 +134,7 @@ class Page2Screen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => context.goNamed(
                   'page3',
-                  params: <String, String>{'p1': 'pv2'},
+                  pathParameters: <String, String>{'p1': 'pv2'},
                 ),
                 child: const Text('Go to page 3'),
               ),

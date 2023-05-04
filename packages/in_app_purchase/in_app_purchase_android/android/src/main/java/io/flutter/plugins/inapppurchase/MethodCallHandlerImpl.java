@@ -232,9 +232,10 @@ class MethodCallHandlerImpl
     if (skuDetails == null) {
       result.error(
           "NOT_FOUND",
-          String.format(
-              "Details for sku %s are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: %s",
-              sku, LOAD_SKU_DOC_URL),
+          "Details for sku "
+              + sku
+              + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
+              + LOAD_SKU_DOC_URL,
           null);
       return;
     }
@@ -249,9 +250,10 @@ class MethodCallHandlerImpl
     } else if (oldSku != null && !cachedSkus.containsKey(oldSku)) {
       result.error(
           "IN_APP_PURCHASE_INVALID_OLD_SKU",
-          String.format(
-              "Details for sku %s are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: %s",
-              oldSku, LOAD_SKU_DOC_URL),
+          "Details for sku "
+              + oldSku
+              + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
+              + LOAD_SKU_DOC_URL,
           null);
       return;
     }
@@ -447,9 +449,10 @@ class MethodCallHandlerImpl
     if (skuDetails == null) {
       result.error(
           "NOT_FOUND",
-          String.format(
-              "Details for sku %s are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: %s",
-              sku, LOAD_SKU_DOC_URL),
+          "Details for sku "
+              + sku
+              + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
+              + LOAD_SKU_DOC_URL,
           null);
       return;
     }

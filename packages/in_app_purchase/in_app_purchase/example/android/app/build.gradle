@@ -66,13 +66,10 @@ android {
 
     compileSdkVersion flutter.compileSdkVersion
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId project.APP_ID
-        minSdkVersion 16
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 28
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
@@ -99,6 +96,9 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    lint {
+        disable 'InvalidPackage'
     }
 }
 
