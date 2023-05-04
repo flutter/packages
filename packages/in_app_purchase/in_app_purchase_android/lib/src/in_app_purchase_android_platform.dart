@@ -81,7 +81,7 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
             (BillingClient client) => client.queryProductDetails(
               productList: identifiers
                   .map((String productId) => ProductWrapper(
-                      productId: productId, productType: ProductType.subs))
+                      productId: productId, productType: ProductType.inapp))
                   .toList(),
             ),
           ),
@@ -89,7 +89,7 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
             (BillingClient client) => client.queryProductDetails(
               productList: identifiers
                   .map((String productId) => ProductWrapper(
-                      productId: productId, productType: ProductType.inapp))
+                      productId: productId, productType: ProductType.subs))
                   .toList(),
             ),
           ),
