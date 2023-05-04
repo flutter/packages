@@ -73,7 +73,7 @@ Future<void> _prepareTemplate({
   // The src test_fixes directory
   final Directory testFixesSrcDir =
       Directory(p.join(packageRoot.path, 'test_fixes'));
-      
+
   //Copy from src `test_fixes/` to the temp directory
   await io.copyPath(testFixesSrcDir.path, testFixesTargetDir);
 
