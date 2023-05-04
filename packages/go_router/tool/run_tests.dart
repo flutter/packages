@@ -11,40 +11,53 @@
 import 'dart:io';
 import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as p;
-import 'package:yaml_edit/yaml_edit.dart';
 
+/// This test runner simulates a consumption of go_router that checks if
+/// the breaking changes introduced in `V7.0.0` are applied correctly.
+/// This is done by copying the `test_fixes/` directory to a temp directory
+/// that references `go_router`, and running `dart fix --compare-to-golden`
+/// on the temp directory
 Future<void> main(List<String> args) async {
-  if (!Platform.isMacOS && !Platform.isWindows) {
-    print('This test can only be run on macOS or windows.');
-    exit(0);
-  }
-  final p.Context ctx = p.context;
-  final Directory packageRoot =
-      Directory(ctx.dirname(_ensureTrimLeadingSeparator(Platform.script.path)))
-          .parent;
+  /// The go_router directory
+  final Directory packageRoot = File.fromUri(Platform.script).parent.parent;
 
-  // Copy test_fixes/ to be tested in a temp directory.
-  // This ensures the dart fix can be applied to projects
-  // outside of this package.
+  // The src test_fixes directory
+  final Directory testFixesSrcDir =
+      Directory(p.join(packageRoot.path, 'test_fixes'));
+  // The target temp directory.
   final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
 
+  // Cleans up the temp directory and exits
+  // with a given statusCode
+  Future<Never> cleanUpAndExit(int statusCode) async {
+    await testFixesTargetDir.delete(recursive: true);
+    exit(statusCode);
+  }
+
+  // Copies the test_fixes folder to the temporary testFixesTargetDir
+  // This also creates the proper pubspec.yaml in the temp directory
   await _prepareTemplate(
-    ctx: ctx,
-    testFixesDir: ctx.join(packageRoot.path, 'test_fixes'),
+    testFixesDir: testFixesSrcDir.path,
     testFixesTargetDir: testFixesTargetDir.path,
   );
-  final int pubGet = await _runProcess(
+
+  //Run dart pub get in the temp directory to set it up
+  final int pubGetStatusCode = await _runProcess(
     'dart',
     <String>[
       'pub',
-      'upgrade',
+      'get',
     ],
     workingDirectory: testFixesTargetDir.path,
   );
-  if (pubGet != 0) {
-    await cleanUpAndExit(statusCode: pubGet, toDelete: testFixesTargetDir);
+
+  if (pubGetStatusCode != 0) {
+    await cleanUpAndExit(pubGetStatusCode);
   }
-  final int status = await _runProcess(
+
+  // This is the actual test that runs dart fix --compare-to-golden
+  // in the temp directory (the actual test)
+  final int dartFixStatusCode = await _runProcess(
     'dart',
     <String>[
       'fix',
@@ -52,30 +65,22 @@ Future<void> main(List<String> args) async {
     ],
     workingDirectory: testFixesTargetDir.path,
   );
-  if (status != 0) {
-    await cleanUpAndExit(statusCode: status, toDelete: testFixesTargetDir);
-  }
-  await cleanUpAndExit(statusCode: 0, toDelete: testFixesTargetDir);
-}
 
-Future<Never> cleanUpAndExit({
-  required int statusCode,
-  required Directory toDelete,
-}) async {
-  await toDelete.delete(recursive: true);
-  exit(statusCode);
+  await cleanUpAndExit(dartFixStatusCode);
 }
 
 Future<void> _prepareTemplate({
   required String testFixesDir,
   required String testFixesTargetDir,
-  required p.Context ctx,
 }) async {
+  //Copy from src `test_fixes/` to the temp directory
   await io.copyPath(testFixesDir, testFixesTargetDir);
 
-  final String pubspecYamlPath = ctx.join(testFixesTargetDir, 'pubspec.yaml');
-  final File targetPubspecPath = File(pubspecYamlPath);
-  const String initialYaml = '''
+  //The pubspec.yaml file to create
+  final File targetPubspecFile =
+      File(p.join(testFixesTargetDir, 'pubspec.yaml'));
+
+  final String targetYaml = '''
 name: test_fixes
 publish_to: "none"
 version: 1.0.0+1
@@ -88,24 +93,10 @@ dependencies:
   flutter:
     sdk: flutter
   go_router:
-    path:
+    path: ${p.dirname(testFixesDir)}
 ''';
-  final YamlEditor editor = YamlEditor(initialYaml);
-  editor.update(
-    <String>['dependencies', 'go_router', 'path'],
-    ctx.dirname(testFixesDir),
-  );
-  final String newYaml = editor.toString();
-  await targetPubspecPath.writeAsString(newYaml);
-}
 
-String _ensureTrimLeadingSeparator(String path) {
-  if (Platform.isWindows) {
-    if (path.startsWith('/')) {
-      return path.substring(1);
-    }
-  }
-  return path;
+  await targetPubspecFile.writeAsString(targetYaml);
 }
 
 Future<Process> _streamOutput(Future<Process> processFuture) async {

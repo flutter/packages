@@ -23,4 +23,3 @@ dev_dependencies:
     sdk: flutter
   io: ^1.0.4
   path: ^1.8.2
-  yaml_edit: ^2.1.0
