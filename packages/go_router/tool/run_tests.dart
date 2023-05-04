@@ -21,9 +21,6 @@ Future<void> main(List<String> args) async {
   /// The go_router directory
   final Directory packageRoot = File.fromUri(Platform.script).parent.parent;
 
-  // The src test_fixes directory
-  final Directory testFixesSrcDir =
-      Directory(p.join(packageRoot.path, 'test_fixes'));
   // The target temp directory.
   final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
 
@@ -37,7 +34,7 @@ Future<void> main(List<String> args) async {
   // Copies the test_fixes folder to the temporary testFixesTargetDir
   // This also creates the proper pubspec.yaml in the temp directory
   await _prepareTemplate(
-    testFixesDir: testFixesSrcDir.path,
+    packageRoot: packageRoot,
     testFixesTargetDir: testFixesTargetDir.path,
   );
 
@@ -70,11 +67,15 @@ Future<void> main(List<String> args) async {
 }
 
 Future<void> _prepareTemplate({
-  required String testFixesDir,
+  required Directory packageRoot,
   required String testFixesTargetDir,
 }) async {
+  // The src test_fixes directory
+  final Directory testFixesSrcDir =
+      Directory(p.join(packageRoot.path, 'test_fixes'));
+      
   //Copy from src `test_fixes/` to the temp directory
-  await io.copyPath(testFixesDir, testFixesTargetDir);
+  await io.copyPath(testFixesSrcDir.path, testFixesTargetDir);
 
   //The pubspec.yaml file to create
   final File targetPubspecFile =
@@ -93,7 +94,7 @@ dependencies:
   flutter:
     sdk: flutter
   go_router:
-    path: ${p.dirname(testFixesDir)}
+    path: ${packageRoot.path}
 ''';
 
   await targetPubspecFile.writeAsString(targetYaml);
