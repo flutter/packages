@@ -25,10 +25,13 @@ class Observer<T> extends JavaObject {
         super.detached() {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
     this.onChanged = (Object value) {
-      assert(value is T);
+      if (value is! T) {
+        throw ArgumentError(
+            'The type of value observed does not match the type of Observer constructed.');
+      }
       onChanged(value);
     };
-    _api.createFromInstances(this);
+    _api.createFromInstance(this);
   }
 
   /// Constructs a [Observer] that is not automatically attached to a native object.
@@ -75,7 +78,7 @@ class _ObserverHostApiImpl extends ObserverHostApi {
 
   /// Adds specified [Observer] instance to instance manager and makes call
   /// to native side to create the instance.
-  Future<void> createFromInstances<T>(
+  Future<void> createFromInstance<T>(
     Observer<T> instance,
   ) {
     return create(

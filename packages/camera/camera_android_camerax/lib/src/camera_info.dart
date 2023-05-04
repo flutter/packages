@@ -74,9 +74,6 @@ class _CameraInfoHostApiImpl extends CameraInfoHostApi {
   Future<LiveData<CameraState>> getCameraStateFromInstance(
       CameraInfo instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No CameraInfo has the identifer of that which was requested.');
-
     final int liveCameraStateId = await getCameraState(identifier!);
     final LiveData<CameraState> liveCameraState =
         instanceManager.getInstanceWithWeakReference<LiveData<CameraState>>(

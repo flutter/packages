@@ -34,6 +34,11 @@ class LiveData<T extends Object> extends JavaObject {
   /// Maintains instances stored to communicate with native language objects.
   final InstanceManager? instanceManager;
 
+  /// Error message indicating a [LiveData] instance was constructed with a type
+  /// currently unsupported by the wrapping of this class.
+  static const String unsupportedLiveDataTypeErrorMessage =
+      'The type of LiveData passed to this method is current unspported; please see LiveDataSupportedTypeData in pigeons/camerax_library.dart if you wish to support a new type.';
+
   /// Adds specified [Observer] to the list of observers of this instance.
   Future<void> observe(Observer<T> observer) {
     return _api.observeFromInstances(this, observer);
@@ -106,9 +111,11 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
         typeData =
             LiveDataSupportedTypeData(value: LiveDataSupportedType.zoomState);
         break;
+      default:
+        throw ArgumentError(LiveData.unsupportedLiveDataTypeErrorMessage);
     }
     final int? valueIdentifier =
-        await getValue(instanceManager.getIdentifier(instance)!, typeData!);
+        await getValue(instanceManager.getIdentifier(instance)!, typeData);
     return valueIdentifier == null
         ? null
         : instanceManager.getInstanceWithWeakReference<T>(valueIdentifier);
@@ -176,6 +183,12 @@ class LiveDataFlutterApiImpl implements LiveDataFlutterApi {
           ),
         );
         return;
+      // This ignore statement is safe beause this error will be useful when
+      // a new LiveDataSupportedType is being added, but the logic in this method
+      // has not yet been updated.
+      // ignore: no_default_cases
+      default:
+        throw ArgumentError(LiveData.unsupportedLiveDataTypeErrorMessage);
     }
   }
 }
