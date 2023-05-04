@@ -169,7 +169,7 @@ import FlutterMacOS
     Set<String> customEnumNames,
   ) {
     final String className = klass.name;
-    indent.write('static func fromList(_ list: [Any]) -> $className? ');
+    indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
     indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(klass),
@@ -431,7 +431,7 @@ import FlutterMacOS
             indent.addScoped('{ $messageVarName, reply in', '}', () {
               final List<String> methodArgument = <String>[];
               if (components.arguments.isNotEmpty) {
-                indent.writeln('let args = message as! [Any]');
+                indent.writeln('let args = message as! [Any?]');
                 enumerate(components.arguments,
                     (int index, _SwiftFunctionArgument arg) {
                   final String argName =
@@ -524,7 +524,7 @@ import FlutterMacOS
               indent.writeln('case ${customClass.enumeration}:');
               indent.nest(1, () {
                 indent.writeln(
-                    'return ${customClass.name}.fromList(self.readValue() as! [Any])');
+                    'return ${customClass.name}.fromList(self.readValue() as! [Any?])');
               });
             }
             indent.writeln('default:');
@@ -605,8 +605,7 @@ import FlutterMacOS
             'nullable enums require special code that this helper does not supply');
         return '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
       } else if (type.baseName == 'Object') {
-        // Special-cased to avoid warnings about using 'as' with Any.
-        return value;
+        return value + (type.isNullable ? '' : '!');
       } else if (type.baseName == 'int') {
         if (type.isNullable) {
           // Nullable ints need to check for NSNull, and Int32 before casting can be done safely.
@@ -628,7 +627,7 @@ import FlutterMacOS
       if (listEncodedClassNames != null &&
           listEncodedClassNames.contains(type.baseName)) {
         indent.writeln('var $variableName: $fieldType? = nil');
-        indent.write('if let ${variableName}List = $value as! [Any]? ');
+        indent.write('if let ${variableName}List = $value as! [Any?]? ');
         indent.addScoped('{', '}', () {
           indent.writeln(
               '$variableName = $fieldType.fromList(${variableName}List)');
@@ -652,7 +651,7 @@ import FlutterMacOS
       if (listEncodedClassNames != null &&
           listEncodedClassNames.contains(type.baseName)) {
         indent.writeln(
-            'let $variableName = $fieldType.fromList($value as! [Any])!');
+            'let $variableName = $fieldType.fromList($value as! [Any?])!');
       } else {
         indent.writeln(
             'let $variableName = ${castForceUnwrap(value, type, root)}');
@@ -695,7 +694,7 @@ import FlutterMacOS
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
-  return (value as Any) as! T?
+  return value as! T?
 }''');
   }
 
@@ -739,9 +738,9 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
   if (type.typeArguments.isEmpty) {
     if (type.baseName == 'List') {
-      return '[Any]';
+      return '[Any?]';
     } else if (type.baseName == 'Map') {
-      return '[AnyHashable: Any]';
+      return '[AnyHashable: Any?]';
     } else {
       return 'Any';
     }

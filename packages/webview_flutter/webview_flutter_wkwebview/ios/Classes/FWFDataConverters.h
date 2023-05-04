@@ -137,7 +137,7 @@ extern FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error);
  *
  * @param key The data object containing information to create a FWFNSKeyValueChangeKeyEnumData.
  *
- * @return A FWFNSKeyValueChangeKeyEnumData or nil if data could not be converted.
+ * @return A FWFNSKeyValueChangeKeyEnumData.
  */
 extern FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(
     NSKeyValueChangeKey key);

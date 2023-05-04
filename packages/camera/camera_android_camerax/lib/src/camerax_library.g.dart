@@ -63,6 +63,32 @@ class CameraPermissionsErrorData {
   }
 }
 
+class ExposureCompensationRange {
+  ExposureCompensationRange({
+    required this.minCompensation,
+    required this.maxCompensation,
+  });
+
+  int minCompensation;
+
+  int maxCompensation;
+
+  Object encode() {
+    return <Object?>[
+      minCompensation,
+      maxCompensation,
+    ];
+  }
+
+  static ExposureCompensationRange decode(Object result) {
+    result as List<Object?>;
+    return ExposureCompensationRange(
+      minCompensation: result[0]! as int,
+      maxCompensation: result[1]! as int,
+    );
+  }
+}
+
 class InstanceManagerHostApi {
   /// Constructor for [InstanceManagerHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -173,6 +199,60 @@ class CameraInfoHostApi {
   Future<int> getSensorRotationDegrees(int arg_identifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CameraInfoHostApi.getSensorRotationDegrees', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<int> getExposureState(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CameraInfoHostApi.getExposureState', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<int> getZoomState(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CameraInfoHostApi.getZoomState', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
@@ -512,6 +592,44 @@ abstract class ProcessCameraProviderFlutterApi {
           return;
         });
       }
+    }
+  }
+}
+
+class CameraHostApi {
+  /// Constructor for [CameraHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  CameraHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<int> getCameraInfo(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CameraHostApi.getCameraInfo', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
     }
   }
 }
@@ -941,6 +1059,104 @@ class ImageCaptureHostApi {
       );
     } else {
       return (replyList[0] as String?)!;
+    }
+  }
+}
+
+class _ExposureStateFlutterApiCodec extends StandardMessageCodec {
+  const _ExposureStateFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ExposureCompensationRange) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return ExposureCompensationRange.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class ExposureStateFlutterApi {
+  static const MessageCodec<Object?> codec = _ExposureStateFlutterApiCodec();
+
+  void create(
+      int identifier,
+      ExposureCompensationRange exposureCompensationRange,
+      double exposureCompensationStep);
+
+  static void setup(ExposureStateFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ExposureStateFlutterApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null int.');
+          final ExposureCompensationRange? arg_exposureCompensationRange =
+              (args[1] as ExposureCompensationRange?);
+          assert(arg_exposureCompensationRange != null,
+              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null ExposureCompensationRange.');
+          final double? arg_exposureCompensationStep = (args[2] as double?);
+          assert(arg_exposureCompensationStep != null,
+              'Argument for dev.flutter.pigeon.ExposureStateFlutterApi.create was null, expected non-null double.');
+          api.create(arg_identifier!, arg_exposureCompensationRange!,
+              arg_exposureCompensationStep!);
+          return;
+        });
+      }
+    }
+  }
+}
+
+abstract class ZoomStateFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier, double minZoomRatio, double maxZoomRatio);
+
+  static void setup(ZoomStateFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ZoomStateFlutterApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ZoomStateFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ZoomStateFlutterApi.create was null, expected non-null int.');
+          final double? arg_minZoomRatio = (args[1] as double?);
+          assert(arg_minZoomRatio != null,
+              'Argument for dev.flutter.pigeon.ZoomStateFlutterApi.create was null, expected non-null double.');
+          final double? arg_maxZoomRatio = (args[2] as double?);
+          assert(arg_maxZoomRatio != null,
+              'Argument for dev.flutter.pigeon.ZoomStateFlutterApi.create was null, expected non-null double.');
+          api.create(arg_identifier!, arg_minZoomRatio!, arg_maxZoomRatio!);
+          return;
+        });
+      }
     }
   }
 }

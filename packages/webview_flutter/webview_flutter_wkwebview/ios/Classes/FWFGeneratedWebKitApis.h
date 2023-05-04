@@ -43,6 +43,7 @@ typedef NS_ENUM(NSUInteger, FWFNSKeyValueChangeKeyEnum) {
   FWFNSKeyValueChangeKeyEnumNewValue = 2,
   FWFNSKeyValueChangeKeyEnumNotificationIsPrior = 3,
   FWFNSKeyValueChangeKeyEnumOldValue = 4,
+  FWFNSKeyValueChangeKeyEnumUnknown = 5,
 };
 
 /// Mirror of WKUserScriptInjectionTime.
@@ -143,6 +144,11 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationType) {
   /// See
   /// https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
   FWFWKNavigationTypeOther = 5,
+  /// An unknown navigation type.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  FWFWKNavigationTypeUnknown = 6,
 };
 
 /// Possible permission decisions for device resource access.
@@ -186,6 +192,9 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
   /// https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
   FWFWKMediaCaptureTypeMicrophone = 2,
   /// An unknown media device.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
   FWFWKMediaCaptureTypeUnknown = 3,
 };
 
