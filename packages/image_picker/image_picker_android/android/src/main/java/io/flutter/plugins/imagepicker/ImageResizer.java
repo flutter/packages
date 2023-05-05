@@ -7,6 +7,7 @@ package io.flutter.plugins.imagepicker;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.SizeFCompat;
 import java.io.ByteArrayOutputStream;
@@ -51,11 +52,15 @@ class ImageResizer {
       BitmapFactory.Options options = new BitmapFactory.Options();
       options.inSampleSize =
           calculateSampleSize(options, (int) targetSize.getWidth(), (int) targetSize.getHeight());
+      Bitmap bmp = decodeFile(imagePath, options);
+      if (bmp == null) {
+        return imagePath;
+      }
       File file =
           resizedImage(
-              decodeFile(imagePath, options),
-              (int) targetSize.getWidth(),
-              (int) targetSize.getHeight(),
+              bmp,
+              (double) targetSize.getWidth(),
+              (double) targetSize.getHeight(),
               imageQuality,
               imageName);
       copyExif(imagePath, file.getPath());
@@ -66,16 +71,19 @@ class ImageResizer {
   }
 
   private File resizedImage(
-      Bitmap bmp, int width, int height, int imageQuality, String outputImageName)
+      Bitmap bmp, Double width, Double height, int imageQuality, String outputImageName)
       throws IOException {
-    Bitmap scaledBmp = createScaledBitmap(bmp, width, height, false);
+    Bitmap scaledBmp = createScaledBitmap(bmp, width.intValue(), height.intValue(), false);
     File file =
         createImageOnExternalDirectory("/scaled_" + outputImageName, scaledBmp, imageQuality);
     return file;
   }
 
   private SizeFCompat calculateTargetSize(
-      Double originalWidth, Double originalHeight, Double maxWidth, Double maxHeight) {
+      @NonNull Double originalWidth,
+      @NonNull Double originalHeight,
+      @Nullable Double maxWidth,
+      @Nullable Double maxHeight) {
 
     boolean hasMaxWidth = maxWidth != null;
     boolean hasMaxHeight = maxHeight != null;
@@ -152,6 +160,10 @@ class ImageResizer {
    *
    * <p>This value is necessary to tell the Bitmap decoder to subsample the original image,
    * returning a smaller image to save memory.
+   *
+   * @see <a
+   *     href="https://developer.android.com/topic/performance/graphics/load-bitmap#load-bitmap">
+   *     Loading Large Bitmaps Efficiently</a>
    */
   private int calculateSampleSize(
       BitmapFactory.Options options, int targetWidth, int targetHeight) {
