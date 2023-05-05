@@ -341,7 +341,7 @@ class FancyRoute extends GoRouteData {
 
 ## TypedShellRoute and navigator keys
 
-There may be situations were a child route of a shell needs to be displayed on a
+There may be situations where a child route of a shell needs to be displayed on a
 different navigator. This kind of scenarios can be achieved by declaring a
 **static** navigator key named:
 
