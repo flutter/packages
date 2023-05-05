@@ -64,7 +64,7 @@
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(id<AVPlayerFactoryProtocol> *)playerFactory;
+              playerFactory:(id<AVPlayerFactoryProtocol>)playerFactory;
 @end
 
 static void *timeRangeContext = &timeRangeContext;
@@ -79,7 +79,7 @@ static void *rateContext = &rateContext;
 @implementation FLTVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FLTFrameUpdater *)frameUpdater
-                playerFactory:(id<AVPlayerFactoryProtocol> *)playerFactory {
+                playerFactory:(id<AVPlayerFactoryProtocol>)playerFactory {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
   return [self initWithURL:[NSURL fileURLWithPath:path]
               frameUpdater:frameUpdater
@@ -221,7 +221,7 @@ NS_INLINE UIViewController *rootViewController() {
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(id<AVPlayerFactoryProtocol> *)playerFactory {
+              playerFactory:(id<AVPlayerFactoryProtocol>)playerFactory {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
@@ -233,7 +233,7 @@ NS_INLINE UIViewController *rootViewController() {
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FLTFrameUpdater *)frameUpdater
-                     playerFactory:(id<AVPlayerFactoryProtocol> *)playerFactory {
+                     playerFactory:(id<AVPlayerFactoryProtocol>)playerFactory {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
@@ -548,7 +548,7 @@ NS_INLINE UIViewController *rootViewController() {
 @property(readonly, strong, nonatomic)
     NSMutableDictionary<NSNumber *, FLTVideoPlayer *> *playersByTextureId;
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
-@property(nonatomic, strong) AVPlayerFactory *playerFactory;
+@property(nonatomic, strong) id<AVPlayerFactoryProtocol> playerFactory;
 @end
 
 @implementation FLTVideoPlayerPlugin
@@ -561,11 +561,11 @@ NS_INLINE UIViewController *rootViewController() {
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  AVPlayerFactory *playerFactory = [[AVPlayerFactory alloc] init];
+  id<AVPlayerFactoryProtocol> playerFactory = [[AVPlayerFactory alloc] init];
   return [self initWithAVPlayerFactory:playerFactory registrar:registrar];
 }
 
-- (instancetype)initWithAVPlayerFactory:(AVPlayerFactory *)playerFactory
+- (instancetype)initWithAVPlayerFactory:(id<AVPlayerFactoryProtocol>)playerFactory
                               registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
