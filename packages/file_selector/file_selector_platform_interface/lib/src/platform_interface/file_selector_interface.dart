@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import '../../file_selector_platform_interface.dart';
@@ -55,7 +53,9 @@ abstract class FileSelectorPlatform extends PlatformInterface {
     throw UnimplementedError('openFiles() has not been implemented.');
   }
 
-  /// Opens a file dialog for saving files and returns a file path at which to save.
+  /// Opens a file dialog for saving files and returns a file path at which to
+  /// save.
+  ///
   /// Returns `null` if user cancels the operation.
   Future<String?> getSavePath({
     List<XTypeGroup>? acceptedTypeGroups,
@@ -66,7 +66,25 @@ abstract class FileSelectorPlatform extends PlatformInterface {
     throw UnimplementedError('getSavePath() has not been implemented.');
   }
 
+  /// Opens a file dialog for saving files and returns a file location at which
+  /// to save.
+  ///
+  /// Returns `null` if user cancels the operation.
+  Future<FileSaveLocationResult?> getSaveLocation({
+    List<XTypeGroup>? acceptedTypeGroups,
+    FileDialogOptions options = const FileDialogOptions(),
+  }) async {
+    final String? path = await getSavePath(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: options.initialDirectory,
+      suggestedName: options.suggestedName,
+      confirmButtonText: options.confirmButtonText,
+    );
+    return path == null ? null : FileSaveLocationResult(path);
+  }
+
   /// Opens a file dialog for loading directories and returns a directory path.
+  ///
   /// Returns `null` if user cancels the operation.
   Future<String?> getDirectoryPath({
     String? initialDirectory,
@@ -75,7 +93,8 @@ abstract class FileSelectorPlatform extends PlatformInterface {
     throw UnimplementedError('getDirectoryPath() has not been implemented.');
   }
 
-  /// Opens a file dialog for loading directories and returns multiple directory paths.
+  /// Opens a file dialog for loading directories and returns multiple directory
+  /// paths.
   Future<List<String>> getDirectoryPaths({
     String? initialDirectory,
     String? confirmButtonText,
