@@ -451,8 +451,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Binds [preview] instance to the camera lifecycle controlled by the
   /// [processCameraProvider].
   ///
-  /// [cameraId] used to properly update the live camera state for the camera
-  /// in used.
+  /// [cameraId] used to build [CameraEvent]s should you wish to filter
+  /// these based on a reference to a cameraId received from calling
+  /// `createCamera(...)`.
   Future<void> _bindPreviewToLifecycle(int cameraId) async {
     final bool previewIsBound = await processCameraProvider!.isBound(preview!);
     if (previewIsBound || _previewIsPaused) {
@@ -590,6 +591,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Callback method used to implement the behavior described above:
     void onChanged(Object stateAsObject) {
+      // This cast is safe because the Observer implemntation ensures
+      // the type of stateAsObject is the same as the observer this callback
+      // is attached to.
       final CameraState state = stateAsObject as CameraState;
       if (state.type == CameraStateType.closing) {
         weakThis.target!.cameraEventStreamController
