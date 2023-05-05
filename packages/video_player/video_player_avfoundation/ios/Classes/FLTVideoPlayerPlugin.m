@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #import "FLTVideoPlayerPlugin.h"
-#import "FLTVideoPlayerPlugin_test.h"
+#import "FLTVideoPlayerPlugin_Test.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
@@ -34,6 +34,16 @@
 }
 @end
 
+@interface AVPlayerFactory : NSObject <AVPlayerFactoryProtocol>
+@end
+
+@implementation AVPlayerFactory
+- (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
+  return [AVPlayer playerWithPlayerItem:playerItem];
+}
+
+@end
+
 @interface FLTVideoPlayer : NSObject <FlutterTexture, FlutterStreamHandler>
 @property(readonly, nonatomic) AVPlayer *player;
 @property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
@@ -54,7 +64,7 @@
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(AVPlayerFactory *)playerFactory;
+              playerFactory:(id<AVPlayerFactoryProtocol> *)playerFactory;
 @end
 
 static void *timeRangeContext = &timeRangeContext;
@@ -69,7 +79,7 @@ static void *rateContext = &rateContext;
 @implementation FLTVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FLTFrameUpdater *)frameUpdater
-                playerFactory:(AVPlayerFactory *)playerFactory {
+                playerFactory:(id<AVPlayerFactoryProtocol> *)playerFactory {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
   return [self initWithURL:[NSURL fileURLWithPath:path]
               frameUpdater:frameUpdater
@@ -211,7 +221,7 @@ NS_INLINE UIViewController *rootViewController() {
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(AVPlayerFactory *)playerFactory {
+              playerFactory:(id<AVPlayerFactoryProtocol> *)playerFactory {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
@@ -223,7 +233,7 @@ NS_INLINE UIViewController *rootViewController() {
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FLTFrameUpdater *)frameUpdater
-                     playerFactory:(AVPlayerFactory *)playerFactory {
+                     playerFactory:(id<AVPlayerFactoryProtocol> *)playerFactory {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
@@ -704,13 +714,6 @@ NS_INLINE UIViewController *rootViewController() {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
-}
-
-@end
-
-@implementation AVPlayerFactory
-- (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
-  return [AVPlayer playerWithPlayerItem:playerItem];
 }
 
 @end

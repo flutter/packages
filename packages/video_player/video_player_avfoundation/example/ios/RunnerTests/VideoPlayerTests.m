@@ -8,7 +8,7 @@
 
 #import <OCMock/OCMock.h>
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
-#import <video_player_avfoundation/FLTVideoPlayerPlugin_test.h>
+#import <video_player_avfoundation/FLTVideoPlayerPlugin_Test.h>
 
 @interface FLTVideoPlayer : NSObject <FlutterStreamHandler>
 @property(readonly, nonatomic) AVPlayer *player;
@@ -78,7 +78,12 @@
 
 @end
 
-@implementation AVPlayerFactory
+
+@interface AVPlayerFactoryFake : NSObject <AVPlayerFactoryProtocol>
+
+@end
+
+@implementation AVPlayerFactoryFake
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
   return [AVPlayerMock playerWithPlayerItem:playerItem];
 }
@@ -254,7 +259,7 @@
   NSObject<FlutterPluginRegistry> *registry =
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestSeekTolerance"];
-    FLTVideoPlayerPlugin *pluginWithMockAVPlayer = [[FLTVideoPlayerPlugin alloc] initWithAVPlayerFactory:[[AVPlayerFactory alloc] init] registrar: registrar];
+    FLTVideoPlayerPlugin *pluginWithMockAVPlayer = [[FLTVideoPlayerPlugin alloc] initWithAVPlayerFactory:[[AVPlayerFactoryFake alloc] init] registrar: registrar];
 
     FlutterError *error;
   [pluginWithMockAVPlayer initialize:&error];

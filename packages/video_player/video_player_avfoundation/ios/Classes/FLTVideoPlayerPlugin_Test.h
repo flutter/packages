@@ -10,11 +10,8 @@
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem;
 @end
 
-@interface AVPlayerFactory : NSObject <AVPlayerFactoryProtocol>
-@end
-
 @interface FLTVideoPlayerPlugin ()
 
-- (instancetype)initWithAVPlayerFactory:(AVPlayerFactory *)playerFactory
+- (instancetype)initWithAVPlayerFactory:(id<AVPlayerFactoryProtocol>)playerFactory
                               registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
