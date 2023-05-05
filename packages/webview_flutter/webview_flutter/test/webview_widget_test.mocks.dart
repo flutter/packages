@@ -15,8 +15,7 @@ import 'package:webview_flutter_platform_interface/src/platform_webview_controll
     as _i6;
 import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart'
     as _i9;
-import 'package:webview_flutter_platform_interface/src/webview_platform.dart'
-    as _i2;
+import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -356,6 +355,18 @@ class MockPlatformWebViewController extends _i1.Mock
         Invocation.method(
           #setUserAgent,
           [userAgent],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+  @override
+  _i7.Future<void> setOnPlatformPermissionRequest(
+          void Function(_i2.PlatformWebViewPermissionRequest)?
+              onPermissionRequest) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnPlatformPermissionRequest,
+          [onPermissionRequest],
         ),
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),

@@ -35,14 +35,14 @@ void main() {
           label: 'text',
           extensions: <String>['txt'],
           mimeTypes: <String>['text/plain'],
-          macUTIs: <String>['public.text'],
+          uniformTypeIdentifiers: <String>['public.text'],
         );
 
         const XTypeGroup groupTwo = XTypeGroup(
             label: 'image',
             extensions: <String>['jpg'],
             mimeTypes: <String>['image/jpg'],
-            macUTIs: <String>['public.image'],
+            uniformTypeIdentifiers: <String>['public.image'],
             webWildCards: <String>['image/*']);
 
         await plugin
@@ -97,14 +97,14 @@ void main() {
           label: 'text',
           extensions: <String>['txt'],
           mimeTypes: <String>['text/plain'],
-          macUTIs: <String>['public.text'],
+          uniformTypeIdentifiers: <String>['public.text'],
         );
 
         const XTypeGroup groupTwo = XTypeGroup(
             label: 'image',
             extensions: <String>['jpg'],
             mimeTypes: <String>['image/jpg'],
-            macUTIs: <String>['public.image'],
+            uniformTypeIdentifiers: <String>['public.image'],
             webWildCards: <String>['image/*']);
 
         await plugin
@@ -160,14 +160,14 @@ void main() {
           label: 'text',
           extensions: <String>['txt'],
           mimeTypes: <String>['text/plain'],
-          macUTIs: <String>['public.text'],
+          uniformTypeIdentifiers: <String>['public.text'],
         );
 
         const XTypeGroup groupTwo = XTypeGroup(
             label: 'image',
             extensions: <String>['jpg'],
             mimeTypes: <String>['image/jpg'],
-            macUTIs: <String>['public.image'],
+            uniformTypeIdentifiers: <String>['public.image'],
             webWildCards: <String>['image/*']);
 
         await plugin

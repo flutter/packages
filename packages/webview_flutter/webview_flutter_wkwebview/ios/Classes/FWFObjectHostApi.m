@@ -39,7 +39,7 @@
   NSMutableArray<id> *changeValues = [NSMutableArray array];
 
   [change enumerateKeysAndObjectsUsingBlock:^(NSKeyValueChangeKey key, id value, BOOL *stop) {
-    [changeKeys addObject:FWFNSKeyValueChangeKeyEnumDataFromNSKeyValueChangeKey(key)];
+    [changeKeys addObject:FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(key)];
     BOOL isIdentifier = NO;
     if ([self.instanceManager containsInstance:value]) {
       isIdentifier = YES;
@@ -124,7 +124,7 @@
                                      error:(FlutterError *_Nullable *_Nonnull)error {
   NSKeyValueObservingOptions optionsInt = 0;
   for (FWFNSKeyValueObservingOptionsEnumData *data in options) {
-    optionsInt |= FWFNSKeyValueObservingOptionsFromEnumData(data);
+    optionsInt |= FWFNativeNSKeyValueObservingOptionsFromEnumData(data);
   }
   [[self objectForIdentifier:identifier] addObserver:[self objectForIdentifier:observer]
                                           forKeyPath:keyPath

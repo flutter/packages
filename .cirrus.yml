@@ -27,7 +27,7 @@ macos_template: &MACOS_TEMPLATE
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   macos_instance:
-    image: ghcr.io/cirruslabs/macos-ventura-xcode:14
+    image: ghcr.io/cirruslabs/macos-ventura-xcode:14.3
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -106,6 +106,7 @@ task:
           # run with --require-excerpts and no exclusions.
           - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
         dependabot_script: $PLUGIN_TOOL_COMMAND dependabot-check
+        gradle_script: $PLUGIN_TOOL_COMMAND gradle-check
         version_script:
           # For pre-submit, pass the PR labels to the script to allow for
           # check overrides.
@@ -349,7 +350,7 @@ task:
       # currently have a hard-coded device.
       create_simulator_script:
         - xcrun simctl list
-        - xcrun simctl create "iPhone 13" com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0
+        - xcrun simctl create "iPhone 13" com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-4
       local_tests_script:
         # script/configs/linux_only_custom_test.yaml
         #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)

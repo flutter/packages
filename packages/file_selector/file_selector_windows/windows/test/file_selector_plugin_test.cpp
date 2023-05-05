@@ -420,6 +420,55 @@ TEST(FileSelectorPlugin, TestGetDirectorySimple) {
   EXPECT_EQ(std::get<std::string>(paths[0]), "C:\\Program Files");
 }
 
+TEST(FileSelectorPlugin, TestGetDirectoryMultiple) {
+  const HWND fake_window = reinterpret_cast<HWND>(1337);
+  // These are actual files, but since the plugin implementation doesn't
+  // validate the types of items returned from the system dialog, they are fine
+  // to use for unit tests.
+  ScopedTestFileIdList fake_selected_dir_1;
+  ScopedTestFileIdList fake_selected_dir_2;
+  LPCITEMIDLIST fake_selected_dirs[] = {
+      fake_selected_dir_1.file(),
+      fake_selected_dir_2.file(),
+  };
+  IShellItemArrayPtr fake_result_array;
+  ::SHCreateShellItemArrayFromIDLists(2, fake_selected_dirs,
+                                      &fake_result_array);
+
+  bool shown = false;
+  MockShow show_validator = [&shown, fake_result_array, fake_window](
+                                const TestFileDialogController& dialog,
+                                HWND parent) {
+    shown = true;
+    EXPECT_EQ(parent, fake_window);
+
+    // Validate options.
+    FILEOPENDIALOGOPTIONS options;
+    dialog.GetOptions(&options);
+    EXPECT_NE(options & FOS_ALLOWMULTISELECT, 0U);
+    EXPECT_NE(options & FOS_PICKFOLDERS, 0U);
+
+    return MockShowResult(fake_result_array);
+  };
+
+  FileSelectorPlugin plugin(
+      [fake_window] { return fake_window; },
+      std::make_unique<TestFileDialogControllerFactory>(show_validator));
+  ErrorOr<EncodableList> result = plugin.ShowOpenDialog(
+      CreateOptions(AllowMultipleArg(true), SelectFoldersArg(true),
+                    EncodableList()),
+      nullptr, nullptr);
+
+  EXPECT_TRUE(shown);
+  ASSERT_FALSE(result.has_error());
+  const EncodableList& paths = result.value();
+  EXPECT_EQ(paths.size(), 2);
+  EXPECT_EQ(std::get<std::string>(paths[0]),
+            Utf8FromUtf16(fake_selected_dir_1.path()));
+  EXPECT_EQ(std::get<std::string>(paths[1]),
+            Utf8FromUtf16(fake_selected_dir_2.path()));
+}
+
 TEST(FileSelectorPlugin, TestGetDirectoryCancel) {
   const HWND fake_window = reinterpret_cast<HWND>(1337);
 
