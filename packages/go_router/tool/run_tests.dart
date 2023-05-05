@@ -16,29 +16,28 @@ import 'package:path/path.dart' as p;
 /// the breaking changes introduced in `V7.0.0` are applied correctly.
 /// This is done by copying the `test_fixes/` directory to a temp directory
 /// that references `go_router`, and running `dart fix --compare-to-golden`
-/// on the temp directory
+/// on the temp directory.
 Future<void> main(List<String> args) async {
-  /// The go_router directory
+  /// The go_router directory.
   final Directory packageRoot = File.fromUri(Platform.script).parent.parent;
 
   // The target temp directory.
   final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
 
-  // Cleans up the temp directory and exits
-  // with a given statusCode
+  // Cleans up the temp directory and exits with a given statusCode.
   Future<Never> cleanUpAndExit(int statusCode) async {
     await testFixesTargetDir.delete(recursive: true);
     exit(statusCode);
   }
 
   // Copies the test_fixes folder to the temporary testFixesTargetDir
-  // This also creates the proper pubspec.yaml in the temp directory
+  // This also creates the proper pubspec.yaml in the temp directory.
   await _prepareTemplate(
     packageRoot: packageRoot,
-    testFixesTargetDir: testFixesTargetDir.path,
+    testFixesTargetDir: testFixesTargetDir,
   );
 
-  //Run dart pub get in the temp directory to set it up
+  // Run dart pub get in the temp directory to set it up.
   final int pubGetStatusCode = await _runProcess(
     'dart',
     <String>[
@@ -53,7 +52,7 @@ Future<void> main(List<String> args) async {
   }
 
   // This is the actual test that runs dart fix --compare-to-golden
-  // in the temp directory (the actual test)
+  // in the temp directory (the actual test).
   final int dartFixStatusCode = await _runProcess(
     'dart',
     <String>[
@@ -68,23 +67,23 @@ Future<void> main(List<String> args) async {
 
 Future<void> _prepareTemplate({
   required Directory packageRoot,
-  required String testFixesTargetDir,
+  required Directory testFixesTargetDir,
 }) async {
-  // The src test_fixes directory
+  // The src test_fixes directory.
   final Directory testFixesSrcDir =
       Directory(p.join(packageRoot.path, 'test_fixes'));
 
-  //Copy from src `test_fixes/` to the temp directory
-  await io.copyPath(testFixesSrcDir.path, testFixesTargetDir);
+  // Copy from src `test_fixes/` to the temp directory.
+  await io.copyPath(testFixesSrcDir.path, testFixesTargetDir.path);
 
-  //The pubspec.yaml file to create
+  // The pubspec.yaml file to create.
   final File targetPubspecFile =
-      File(p.join(testFixesTargetDir, 'pubspec.yaml'));
+      File(p.join(testFixesTargetDir.path, 'pubspec.yaml'));
 
   final String targetYaml = '''
 name: test_fixes
 publish_to: "none"
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
