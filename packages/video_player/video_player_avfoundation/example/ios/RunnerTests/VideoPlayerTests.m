@@ -8,6 +8,7 @@
 
 #import <OCMock/OCMock.h>
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
+#import <video_player_avfoundation/FLTVideoPlayerPlugin_test.h>
 
 @interface FLTVideoPlayer : NSObject <FlutterStreamHandler>
 @property(readonly, nonatomic) AVPlayer *player;
@@ -59,6 +60,29 @@
 @end
 
 @interface VideoPlayerTests : XCTestCase
+@end
+
+@interface AVPlayerMock : AVPlayer
+
+@end
+
+@implementation AVPlayerMock
+
+- (void)seekToTime:(CMTime)time 
+   toleranceBefore:(CMTime)toleranceBefore 
+    toleranceAfter:(CMTime)toleranceAfter 
+ completionHandler:(void (^)(BOOL finished))completionHandler {
+  // something needs to happen to validate tolerances
+    completionHandler(YES);
+ }
+
+@end
+
+@implementation AVPlayerFactory
+- (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
+  return [AVPlayerMock playerWithPlayerItem:playerItem];
+}
+
 @end
 
 @implementation VideoPlayerTests
@@ -225,6 +249,39 @@
   [self validateTransformFixForOrientation:UIImageOrientationLeftMirrored];
   [self validateTransformFixForOrientation:UIImageOrientationRightMirrored];
 }
+
+- (void)testSeekToleranceWhenSeekingToEndFix {
+  NSObject<FlutterPluginRegistry> *registry =
+      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestSeekTolerance"];
+    FLTVideoPlayerPlugin *pluginWithMockAVPlayer = [[FLTVideoPlayerPlugin alloc] initWithAVPlayerFactory:[[AVPlayerFactory alloc] init] registrar: registrar];
+
+    FlutterError *error;
+  [pluginWithMockAVPlayer initialize:&error];
+  XCTAssertNil(error);
+
+    FLTCreateMessage *create = [FLTCreateMessage
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+        packageName:nil
+         formatHint:nil
+        httpHeaders:@{}];
+  FLTTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
+  NSNumber *textureId = textureMessage.textureId;
+
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo has correct tolerance"];
+  FLTPositionMessage *message = [FLTPositionMessage makeWithTextureId:textureId position:@1234];
+  [pluginWithMockAVPlayer seekTo:message
+                 completion:^(FlutterError *_Nullable error) {
+                   // validate tolerance somehow
+                   XCTAssert(YES);
+                   [initializedExpectation fulfill];
+                 }];
+    [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+}
+
 
 - (NSDictionary<NSString *, id> *)testPlugin:(FLTVideoPlayerPlugin *)videoPlayerPlugin
                                          uri:(NSString *)uri {
