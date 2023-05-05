@@ -16,9 +16,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.when;
 
 public class FlutterLifecycleAdapterTest {
   @Mock Lifecycle lifecycle;
+  @Mock ActivityPluginBinding mockActivityPluginBinding;
 
   AutoCloseable mockCloseable;
 
@@ -34,72 +36,14 @@ public class FlutterLifecycleAdapterTest {
 
   @Test
   public void getActivityLifecycle() {
-    TestActivityPluginBinding binding = new TestActivityPluginBinding(lifecycle);
+    when(mockActivityPluginBinding.getLifecycle())
+        .thenReturn(new HiddenLifecycleReference(lifecycle));
 
-    Lifecycle parsedLifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding);
+    when(mockActivityPluginBinding.getActivity())
+        .thenReturn(null);
+
+    Lifecycle parsedLifecycle = FlutterLifecycleAdapter.getActivityLifecycle(mockActivityPluginBinding);
 
     assertEquals(lifecycle, parsedLifecycle);
-  }
-
-  private static final class TestActivityPluginBinding implements ActivityPluginBinding {
-    private final Lifecycle lifecycle;
-
-    TestActivityPluginBinding(Lifecycle lifecycle) {
-      this.lifecycle = lifecycle;
-    }
-
-    @NonNull
-    public Object getLifecycle() {
-      return new HiddenLifecycleReference(lifecycle);
-    }
-
-    @Override
-    public Activity getActivity() {
-      return null;
-    }
-
-    @Override
-    public void addRequestPermissionsResultListener(
-        @NonNull PluginRegistry.RequestPermissionsResultListener listener) {}
-
-    @Override
-    public void removeRequestPermissionsResultListener(
-        @NonNull PluginRegistry.RequestPermissionsResultListener listener) {}
-
-    @Override
-    public void addActivityResultListener(
-        @NonNull PluginRegistry.ActivityResultListener listener) {}
-
-    @Override
-    public void removeActivityResultListener(
-        @NonNull PluginRegistry.ActivityResultListener listener) {}
-
-    @Override
-    public void addOnNewIntentListener(@NonNull PluginRegistry.NewIntentListener listener) {}
-
-    @Override
-    public void removeOnNewIntentListener(@NonNull PluginRegistry.NewIntentListener listener) {}
-
-    @Override
-    public void addOnUserLeaveHintListener(
-        @NonNull PluginRegistry.UserLeaveHintListener listener) {}
-
-    @Override
-    public void removeOnUserLeaveHintListener(
-        @NonNull PluginRegistry.UserLeaveHintListener listener) {}
-
-    @Override
-    public void addOnSaveStateListener(
-        @NonNull ActivityPluginBinding.OnSaveInstanceStateListener listener) {}
-
-    @Override
-    public void removeOnSaveStateListener(
-        @NonNull ActivityPluginBinding.OnSaveInstanceStateListener listener) {}
-
-    public void addOnWindowFocusChangedListener(
-        @NonNull PluginRegistry.WindowFocusChangedListener listener) {}
-
-    public void removeOnWindowFocusChangedListener(
-        @NonNull PluginRegistry.WindowFocusChangedListener listener) {}
   }
 }
