@@ -649,6 +649,15 @@ class CameraController extends ValueNotifier<CameraValue> {
       throw CameraException(e.code, e.message);
     }
   }
+  
+   Future<void> getZoom() {
+    _throwIfNotInitialized('getZoom');
+    try {
+      return CameraPlatform.instance.getMinZoomLevel(_cameraId);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
 
   /// Sets the flash mode for taking pictures.
   Future<void> setFlashMode(FlashMode mode) async {
