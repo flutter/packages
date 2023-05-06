@@ -75,6 +75,9 @@ class ProcessCameraProvider extends JavaObject {
 /// Host API implementation of [ProcessCameraProvider].
 class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
   /// Creates a [ProcessCameraProviderHostApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   ProcessCameraProviderHostApiImpl(
       {this.binaryMessenger, InstanceManager? instanceManager})
       : super(binaryMessenger: binaryMessenger) {
