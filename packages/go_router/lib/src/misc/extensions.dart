@@ -131,7 +131,7 @@ extension GoRouterHelper on BuildContext {
     Object? extra,
   }) =>
       GoRouter.of(this).replaceNamed(name,
-                pathParameters: pathParameters,
-                queryParameters: queryParameters,
-                extra: extra);
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          extra: extra);
 }
