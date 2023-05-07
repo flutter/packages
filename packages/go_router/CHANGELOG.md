@@ -1,3 +1,5 @@
+## 7.0.1
+  - Bug fix `BuildContext` extension method `replaceNamed` to pass `pathParameters` and `queryParameters`.
 ## 7.0.0
 
 - **BREAKING CHANGE**:
