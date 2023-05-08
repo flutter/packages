@@ -1,6 +1,10 @@
-## 1.2.3
+## 2.0.1
 
 * Supports name parameter for `TypedGoRoute`.
+## 2.0.0
+
+* Updates the documentation to go_router v7.0.0.
+* Bumps go_router version in example folder to v7.0.0.
 
 ## 1.2.2
 
