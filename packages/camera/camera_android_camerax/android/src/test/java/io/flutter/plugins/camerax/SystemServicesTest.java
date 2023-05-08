@@ -179,7 +179,7 @@ public class SystemServicesTest {
         .when(() -> File.createTempFile(prefix, suffix, mockOutputDir))
         .thenThrow(IOException.class);
     assertThrows(
-        RuntimeException.class, () -> systemServicesHostApi.getTempFilePath(prefix, suffix));
+        GeneratedCameraXLibrary.FlutterError.class, () -> systemServicesHostApi.getTempFilePath(prefix, suffix));
 
     mockedStaticFile.close();
   }
