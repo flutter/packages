@@ -26,7 +26,7 @@ class VideoCapture extends UseCase {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  /// Creates a VideoCapture associated with the given [Recorder].
+  /// Creates a [VideoCapture] associated with the given [Recorder].
   static Future<VideoCapture> withOutput(Recorder recorder,
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager}) {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
