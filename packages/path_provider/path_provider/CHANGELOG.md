@@ -1,4 +1,4 @@
-## 4.0.6
+## 2.0.15
 
 * Updates iOS minimum version in README.
 
