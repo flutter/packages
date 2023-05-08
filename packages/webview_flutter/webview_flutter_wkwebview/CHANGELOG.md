@@ -1,4 +1,4 @@
-## NEXT
+## 3.4.3
 
 * Replace `describeEnum` with the `name` getter.
 
