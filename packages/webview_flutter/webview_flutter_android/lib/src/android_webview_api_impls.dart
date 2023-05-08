@@ -8,8 +8,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
-    hide WebResourceError;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -355,6 +353,13 @@ class WebViewHostApiImpl extends WebViewHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> setBackgroundColorFromInstance(WebView instance, int color) {
     return setBackgroundColor(instanceManager.getIdentifier(instance)!, color);
+  }
+
+  /// Helper method to set auth credentials for basic auth
+  Future<void> setHttpAuthCredentialsInstance(WebView instance, String host,
+      String realm, String username, String password) {
+    return setAuthCredentials(instanceManager.getIdentifier(instance)!, host,
+        realm, username, password);
   }
 }
 

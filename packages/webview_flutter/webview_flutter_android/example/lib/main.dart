@@ -194,6 +194,9 @@ Page resource error:
       );
   }
 
+  // https://authenticationtest.com/simpleFormAuth/
+  // https://www.httpwatch.com/httpgallery/authentication/#showExample10
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

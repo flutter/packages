@@ -10,9 +10,12 @@ import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewParent;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebViewDatabase;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -20,6 +23,8 @@ import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewHostApi;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -275,6 +280,57 @@ public class WebViewHostApiImpl implements WebViewHostApi {
   public void goForward(@NonNull Long instanceId) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
     webView.goForward();
+  }
+
+  @Override
+  public void setAuthCredentials(@NonNull Long instanceId, @NonNull String host, @NonNull String realm, @NonNull String username, @NonNull String password, @NonNull GeneratedAndroidWebView.Result<Void> callBack) {
+    WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
+    WebViewDatabase webViewDatabase = WebViewDatabase.getInstance(webView.getContext());
+
+
+    System.out.println("PROCEED WITH AUTH");
+    WebViewClientFlutterApiImpl.publicHttpHandler.proceed(username, password);
+
+
+//    try{
+//      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//
+//        webViewDatabase.setHttpAuthUsernamePassword(host, realm, username, password);
+//
+//        System.out.println("It Freaking Works!!!!");
+//        System.out.println("SUCCESS " + username + " " + password);
+//        callBack.success(null);
+//      }
+//    } catch (Exception e){
+//      System.out.println("FAILURE");
+//      System.out.println("FAILURE" + " " + username + " " +password);
+//      callBack.error(new Throwable(e));
+//    }
+
+//    HttpAuthHandler handler = httpAuthHandlerMap.get(instanceId);
+//    try {
+//
+//      handler.proceed(username, password);
+//      callBack.success(null);
+//      System.out.println("SUCCESS");
+//    } catch (Exception e){
+//      System.out.println("FAILURE");
+//      System.out.println("FAILURE" + " " + username + " " +password);
+//      callBack.error(new Throwable(e));
+//    }
+
+//    try {
+//      final HttpAuthHandler handler = Objects.requireNonNull(instanceManager.getInstance(instanceId));
+//      handler.proceed(username,password);
+//      System.out.println("SUCCESS");
+//      callBack.success(null);
+//    } catch (Exception e) {
+//      System.out.println("FAILURE");
+//      callBack.error(new Throwable(e));
+//    }
+
+//final HttpAuthHandler handler = Objects.requireNonNull(instanceManager.getInstance(instanceId));
+//handler.proceed(username,password);
   }
 
   @Override

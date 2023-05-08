@@ -15,4 +15,5 @@ export 'platform_webview_permission_request.dart';
 export 'platform_webview_widget_creation_params.dart';
 export 'url_change.dart';
 export 'web_resource_error.dart';
+export 'webview_auth_info.dart';
 export 'webview_cookie.dart';

@@ -11,6 +11,8 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebViewDatabase;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
@@ -31,6 +33,8 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
 
   private final InstanceManager instanceManager;
   private final WebViewFlutterApiImpl webViewFlutterApi;
+
+  public static HttpAuthHandler publicHttpHandler;
 
   @RequiresApi(api = Build.VERSION_CODES.M)
   static GeneratedAndroidWebView.WebResourceErrorData createWebResourceErrorData(
