@@ -1,3 +1,7 @@
+## 4.0.6
+
+* Updates iOS minimum version in README.
+
 ## 2.0.14
 
 * Updates README to use code excerpts.
