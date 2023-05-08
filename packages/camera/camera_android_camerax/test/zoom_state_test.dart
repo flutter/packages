@@ -5,11 +5,17 @@
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 
 import 'test_camerax_library.g.dart';
+import 'zoom_state_test.mocks.dart';
 
+@GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ZoomState', () {
     tearDown(() => TestCameraInfoHostApi.setup(null));
