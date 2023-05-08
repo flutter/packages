@@ -352,3 +352,29 @@ extension $NamedRouteExtension on NamedRoute {
 ''')
 @TypedGoRoute<NamedRoute>(path: '/named-route', name: 'namedRoute')
 class NamedRoute extends GoRouteData {}
+
+@ShouldGenerate(r'''
+RouteBase get $namedEscapedRoute => GoRouteData.$route(
+      path: '/named-route',
+      name: r'named$Route',
+      factory: $NamedEscapedRouteExtension._fromState,
+    );
+
+extension $NamedEscapedRouteExtension on NamedEscapedRoute {
+  static NamedEscapedRoute _fromState(GoRouterState state) =>
+      NamedEscapedRoute();
+
+  String get location => GoRouteData.$location(
+        '/named-route',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+''')
+@TypedGoRoute<NamedEscapedRoute>(path: '/named-route', name: 'named\$Route')
+class NamedEscapedRoute extends GoRouteData {}
