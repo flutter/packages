@@ -84,10 +84,50 @@ class WebViewExample extends StatefulWidget {
 
 class _WebViewExampleState extends State<WebViewExample> {
   late final PlatformWebViewController _controller;
+  late TextEditingController usernameTextController;
+  late TextEditingController passwordTextController;
+
+  Future<dynamic> openDialog(String host, String realm) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text('Auth'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextField(
+                    decoration: const InputDecoration(labelText: 'Username'),
+                    autofocus: true,
+                    controller: usernameTextController,
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    autofocus: true,
+                    controller: passwordTextController,
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      _controller.setHttpAuthCredentials(
+                          host,
+                          realm,
+                          usernameTextController.text,
+                          passwordTextController.text);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Login')),
+              ],
+            ));
+  }
 
   @override
   void initState() {
     super.initState();
+
+    usernameTextController = TextEditingController();
+    passwordTextController = TextEditingController();
 
     _controller = PlatformWebViewController(
       AndroidWebViewControllerCreationParams(),
@@ -115,6 +155,9 @@ Page resource error:
   errorType: ${error.errorType}
   isForMainFrame: ${error.isForMainFrame}
           ''');
+          })
+          ..setOnReceiveHttpAuthRequest((String host, String realm) async {
+            await openDialog(host, realm);
           })
           ..setOnNavigationRequest((NavigationRequest request) {
             if (request.url.startsWith('https://www.youtube.com/')) {
@@ -145,9 +188,13 @@ Page resource error:
         },
       )
       ..loadRequest(LoadRequestParams(
-        uri: Uri.parse('https://flutter.dev'),
+        uri: Uri.parse(
+            'https://www.httpwatch.com/httpgallery/authentication/#showExample10'),
       ));
   }
+
+  // https://authenticationtest.com/simpleFormAuth/
+  // https://www.httpwatch.com/httpgallery/authentication/#showExample10
 
   @override
   Widget build(BuildContext context) {

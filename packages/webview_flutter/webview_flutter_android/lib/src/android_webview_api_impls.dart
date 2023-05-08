@@ -8,6 +8,8 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
+    hide WebResourceError;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -353,6 +355,13 @@ class WebViewHostApiImpl extends WebViewHostApi {
   /// Helper method to convert instances ids to objects.
   Future<void> setBackgroundColorFromInstance(WebView instance, int color) {
     return setBackgroundColor(instanceManager.getIdentifier(instance)!, color);
+  }
+
+  /// Helper method to set auth credentials for basic auth
+  Future<void> setHttpAuthCredentialsInstance(WebView instance, String host,
+      String realm, String username, String password) {
+    return setAuthCredentials(instanceManager.getIdentifier(instance)!, host,
+        realm, username, password);
   }
 }
 
@@ -775,16 +784,63 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
-      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
     );
     assert(
       webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
     if (instance!.doUpdateVisitedHistory != null) {
       instance.doUpdateVisitedHistory!(webViewInstance!, url, isReload);
     }
   }
+
+  @override
+  void onReceivedHttpAuthRequest(
+      int instanceId, int webViewInstanceId, String host, String realm) {
+    final WebViewClient? instance = instanceManager
+        .getInstanceWithWeakReference(instanceId) as WebViewClient?;
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      instance != null,
+      'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
+    );
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
+    );
+    if (instance!.onReceivedHttpAuthRequest != null) {
+      return instance.onReceivedHttpAuthRequest!(webViewInstance!, host, realm);
+    } else {
+      throw Exception('onReceivedHttpAuthRequest');
+    }
+  }
+
+  //   @override
+  // Future<WebViewAuthInfo> onReceivedHttpAuthRequest(
+  //     int instanceId, int webViewInstanceId, String host, String realm) async {
+  //   final WebViewClient? instance = instanceManager
+  //       .getInstanceWithWeakReference(instanceId) as WebViewClient?;
+  //   final WebView? webViewInstance = instanceManager
+  //       .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+  //   print('Hello from android webview api impls');
+  //   assert(
+  //     instance != null,
+  //     'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
+  //   );
+  //   assert(
+  //     webViewInstance != null,
+  //     'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
+  //   );
+  //   if (instance!.onReceivedHttpAuthRequest != null) {
+  //     return instance.onReceivedHttpAuthRequest!(webViewInstance!, host, realm);
+  //   } else {
+  //     // Return a default WebViewAuthInfo or throw an exception based on your requirements.
+  //     // For example:
+  //     throw Exception('onReceivedHttpAuthRequest callback is not set.');
+  //   }
+  // }
 }
 
 /// Host api implementation for [DownloadListener].

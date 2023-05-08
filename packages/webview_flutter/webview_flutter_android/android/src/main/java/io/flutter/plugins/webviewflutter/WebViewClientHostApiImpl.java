@@ -9,10 +9,13 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.view.KeyEvent;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebViewDatabase;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
@@ -96,6 +99,25 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    public void onReceivedHttpAuthRequest( @NonNull WebView view,  HttpAuthHandler handler,  String host,  String realm){
+      System.out.println("Hey 1");
+
+      // WebViewDatabase webViewDatabase = WebViewDatabase.getInstance(view.getContext());
+      // if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      //   String[] credentials = webViewDatabase.getHttpAuthUsernamePassword(host, realm);
+      //   System.out.println(credentials);
+      //   if (credentials != null && credentials.length == 2) {
+      //     // If credentials exist, proceed with them
+      //     System.out.println("PROCEED WITH AUTH");
+      //     handler.proceed(credentials[0], credentials[1]);
+      //   } else {
+      //     System.out.println("NOT PROCEEDING WITH AUTH");
+      //   }
+      // }
+      flutterApi.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> {});
+    }
+
+    @Override
     public void onUnhandledKeyEvent(@NonNull WebView view, @NonNull KeyEvent event) {
       // Deliberately empty. Occasionally the webview will mark events as having failed to be
       // handled even though they were handled. We don't want to propagate those as they're not
@@ -174,6 +196,13 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public void doUpdateVisitedHistory(
         @NonNull WebView view, @NonNull String url, boolean isReload) {
       flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
+    }
+
+
+    @Override
+    public void onReceivedHttpAuthRequest(@NonNull WebView view, HttpAuthHandler handler,  String host, String realm){
+      System.out.println("Hey 2");
+      flutterApi.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> {});
     }
 
     @Override

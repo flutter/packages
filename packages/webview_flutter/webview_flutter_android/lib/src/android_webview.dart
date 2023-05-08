@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -396,6 +397,10 @@ class WebView extends JavaObject {
   Future<void> setBackgroundColor(Color color) {
     return api.setBackgroundColorFromInstance(this, color.value);
   }
+  /// Sets the authentication credentials for the basic auth request.
+  Future<void> setHttpAuthCredentials(String host, String realm, String username, String password) {
+    return api.setHttpAuthCredentialsInstance(this, host, realm, username, password);
+  }
 
   @override
   WebView copy() {
@@ -716,6 +721,7 @@ class WebViewClient extends JavaObject {
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
+    this.onReceivedHttpAuthRequest,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -736,6 +742,7 @@ class WebViewClient extends JavaObject {
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
+    this.onReceivedHttpAuthRequest,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -884,6 +891,10 @@ class WebViewClient extends JavaObject {
   final void Function(WebView webView, String url, bool isReload)?
       doUpdateVisitedHistory;
 
+  /// This callback is only called for requests that require HTTP authentication.
+  final void Function(WebView webView, String host, String realm)?
+      onReceivedHttpAuthRequest;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebViewClient.shouldOverrideUrlLoading(...)`.
   ///
@@ -912,6 +923,7 @@ class WebViewClient extends JavaObject {
       requestLoading: requestLoading,
       urlLoading: urlLoading,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
+      onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );

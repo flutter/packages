@@ -43,7 +43,8 @@ class _WebViewExampleState extends State<WebViewExample> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://flutter.dev'));
+      ..loadRequest(Uri.parse(
+          'https://www.httpwatch.com/httpgallery/authentication/#showExample10'));
     // #enddocregion webview_controller
   }
 

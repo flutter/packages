@@ -904,6 +904,14 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidUrlChange(url: url, isReload: isReload));
         }
       },
+      onReceivedHttpAuthRequest:
+          (android_webview.WebView webView, String host, String realm) {
+        final HttpAuthRequestCallback? callBack =
+            weakThis.target?._onReceiveHttpAuthRequest;
+        if (callBack != null) {
+          return callBack(host, realm);
+        }
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -960,6 +968,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
+  HttpAuthRequestCallback? _onReceiveHttpAuthRequest;
 
   void _handleNavigation(
     String url, {
@@ -1044,5 +1053,11 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
     _onUrlChange = onUrlChange;
+  }
+
+  @override
+  Future<void> setOnReceiveHttpAuthRequest(
+      HttpAuthRequestCallback onHttpAuthRequest) async {
+    _onReceiveHttpAuthRequest = onHttpAuthRequest;
   }
 }
