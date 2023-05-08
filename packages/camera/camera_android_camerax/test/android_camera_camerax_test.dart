@@ -654,7 +654,7 @@ void main() {
       camera.videoOutputPath = videoOutputPath;
 
       final XFile file = await camera.stopVideoRecording(0);
-      assert(file.path == videoOutputPath);
+      expect(file.path, videoOutputPath);
 
       expect(
           () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
