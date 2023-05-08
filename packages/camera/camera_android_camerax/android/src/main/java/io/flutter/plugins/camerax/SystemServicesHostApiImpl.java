@@ -130,11 +130,9 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
       return path.toString();
     } catch (IOException | SecurityException e) {
       throw new GeneratedCameraXLibrary.FlutterError(
-              "getTempFilePath_failure",
-              "SystemServicesHostApiImpl.getTempFilePath encountered an exception: "
-                      + e.toString(),
-              null
-      );
+          "getTempFilePath_failure",
+          "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e.toString(),
+          null);
     }
   }
 }
