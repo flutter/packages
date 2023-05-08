@@ -32,10 +32,16 @@ import 'zoom_state.dart';
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
   /// Constructs an [AndroidCameraCameraX].
-  ///
-  /// [shouldCreateDetachedObjectForTesting] is for testing only and thus,
-  /// is set to `false` by default.
-  AndroidCameraCameraX({this.shouldCreateDetachedObjectForTesting = false});
+  AndroidCameraCameraX() : _shouldCreateDetachedObjectForTesting = false;
+
+  /// Constructs an [AndroidCameraCameraX] that is able to set
+  /// [_shouldCreateDetachedObjectForTesting] to create detached objects
+  /// for testing purposes only.
+  @visibleForTesting
+  AndroidCameraCameraX.forTesting(
+      {bool shouldCreateDetachedObjectForTesting = false})
+      : _shouldCreateDetachedObjectForTesting =
+            shouldCreateDetachedObjectForTesting;
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
@@ -99,8 +105,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Conditional used to create detached objects for testing their
   /// callback methods.
-  @visibleForTesting
-  final bool shouldCreateDetachedObjectForTesting;
+  final bool _shouldCreateDetachedObjectForTesting;
 
   /// The controller we need to stream image data.
   @visibleForTesting
@@ -279,6 +284,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     preview?.releaseFlutterSurfaceTexture();
     liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
+    imageAnalysis?.clearAnalyzer();
   }
 
   /// The camera has been initialized.
@@ -507,7 +513,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // shouldCreateDetachedObjectForTesting is used to create an Analyzer
     // detached from the native sideonly to test the logic of the Analyzer
     // instance that will be used for image streaming.
-    final Analyzer analyzer = shouldCreateDetachedObjectForTesting
+    final Analyzer analyzer = _shouldCreateDetachedObjectForTesting
         ? Analyzer.detached(analyze: analyze)
         : Analyzer(analyze: analyze);
 
@@ -608,7 +614,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // shouldCreateDetachedObjectForTesting is used to create an Observer
     // detached from the native side only to test the logic of the Analyzer
     // instance that will be used for image streaming.
-    return shouldCreateDetachedObjectForTesting
+    return _shouldCreateDetachedObjectForTesting
         ? Observer<CameraState>.detached(onChanged: onChanged)
         : Observer<CameraState>(onChanged: onChanged);
   }
