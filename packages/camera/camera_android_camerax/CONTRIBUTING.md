@@ -9,18 +9,19 @@ that are wrapped versions of native Android Java classes.
 In this approach, each native Android library used in the plugin implementation
 is represented by an equivalent Dart class. Instances of these classes are
 considered paired and represent each other in Java and Dart, respectively. An
-`InstanceManager`, which is essentially map between `long` identifiers and
-objects, provides notifications when an object has become unreachable my memory.
-There is both a Dart and Java `InstanceManager` implementation, so when a Dart
-instance is created that represens an Android native instance, both are stored
-in the `InstanceManager` of their respective language with a shared `long`
-identifier. These `InstanceManager`s take callbacks that run when objects become
-unrechable or removed, allowing the Dart library to easily handle removing
-references to native resources automatically. To ensure all created instances
-are properly managed and to more easily allow for testing, each wrapped Android
-native class in Dart takes an `InstanceManager` and has a detached constructor,
-one that allows for the creation of instances not attached to the `InstanceManager`
-and unlinked to a paired Android native instance.
+`InstanceManager`, which is essentially a map between `long` identifiers and
+objects that also provides notifications when an object has become unreachable
+by memory. There is both a Dart and Java `InstanceManager` implementation, so
+when a Dart instance is created that represens an Android native instance,
+both are stored in the `InstanceManager` of their respective language with a
+shared `long` identifier. These `InstanceManager`s take callbacks that run
+when objects become unrechable or removed, allowing the Dart library to easily
+handle removing references to native resources automatically. To ensure all
+created instances are properly managed and to more easily allow for testing,
+each wrapped Android native class in Dart takes an `InstanceManager` and has
+a detached constructor, a constructor that allows for the creation of instances
+not attached to the `InstanceManager` and unlinked to a paired Android native
+instance.
 
 In `lib/src/`, you will find all of the Dart-wrapped native Android classes that
 the plugin currently uses in its implementation. As aforementioned, each of
@@ -59,7 +60,7 @@ general, check out our [contribution guide][3].
 While none of the generated `pigeon` files are tested, all plugin impelementation and
 wrapped native Android classes (Java & Dart) are tested. You can find the Java tests under
 `android/src/test/java/io/flutter/plugins/camerax/` and the Dart tests under `test/`. To
-run these tests, please see the instructions on [running plugin tests][5].
+run these tests, please see the instructions in the [running plugin tests guide][5].
 
 Besides [`pigeon`][1], this plugin also uses [`mockito`][4] to generate mock objects for
 testing purposes. To generate the mock objects, run
