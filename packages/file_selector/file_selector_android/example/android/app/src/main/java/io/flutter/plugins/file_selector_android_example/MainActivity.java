@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package io.flutter.plugins.file_selector_android_example;
+package dev.flutter.packages.file_selector_android_example;
 
 import io.flutter.embedding.android.FlutterActivity;
 

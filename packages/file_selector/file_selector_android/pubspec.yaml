@@ -12,7 +12,7 @@ flutter:
     implements: file_selector
     platforms:
       android:
-        package: io.flutter.plugins.file_selector_android
+        package: dev.flutter.packages.file_selector_android
         pluginClass: FileSelectorAndroidPlugin
 
 dependencies:

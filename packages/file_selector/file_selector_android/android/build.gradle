@@ -1,4 +1,4 @@
-group 'io.flutter.plugins.file_selector_android'
+group 'dev.flutter.packages.file_selector_android'
 version '1.0'
 
 buildscript {
@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.file_selector_android'
+    namespace 'dev.flutter.packages.file_selector_android'
     compileSdkVersion 33
 
     compileOptions {
