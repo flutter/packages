@@ -562,7 +562,8 @@ void main() {
       verifyNoMoreInteractions(recording);
     });
 
-    test('stopVideoRecording throws a camera exception if '
+    test(
+        'stopVideoRecording throws a camera exception if '
         'no recording is in progress', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const String videoOutputPath = '/test/output/path';
@@ -570,10 +571,12 @@ void main() {
       camera.recording = null;
       camera.videoOutputPath = videoOutputPath;
 
-      expect(() => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
+      expect(
+          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
     });
 
-    test('stopVideoRecording throws a camera exception if '
+    test(
+        'stopVideoRecording throws a camera exception if '
         'videoOutputPath is null', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
@@ -581,15 +584,17 @@ void main() {
       camera.recording = recording;
       camera.videoOutputPath = null;
 
-      expect(() => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
+      expect(
+          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
     });
 
-    test('calling stopVideoRecording twice stops the recording '
+    test(
+        'calling stopVideoRecording twice stops the recording '
         'and then throws a CameraException', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       final MockProcessCameraProvider processCameraProvider =
-      MockProcessCameraProvider();
+          MockProcessCameraProvider();
       final MockVideoCapture videoCapture = MockVideoCapture();
       const String videoOutputPath = '/test/output/path';
 
@@ -601,7 +606,8 @@ void main() {
       final XFile file = await camera.stopVideoRecording(0);
       assert(file.path == videoOutputPath);
 
-      expect(() => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
+      expect(
+          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
     });
   });
 
