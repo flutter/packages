@@ -376,5 +376,5 @@ extension $NamedEscapedRouteExtension on NamedEscapedRoute {
       context.pushReplacement(location);
 }
 ''')
-@TypedGoRoute<NamedEscapedRoute>(path: '/named-route', name: 'named\$Route')
+@TypedGoRoute<NamedEscapedRoute>(path: '/named-route', name: r'named$Route')
 class NamedEscapedRoute extends GoRouteData {}
