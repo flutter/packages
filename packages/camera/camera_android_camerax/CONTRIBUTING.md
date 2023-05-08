@@ -50,10 +50,10 @@ If CameraX or other Android classes that you need to access do not have a
 duplicately named implementation in `lib/src/`, then follow the same structure
 described above to add them.
 
-For more information on the approach of wrapping native libraries for plugins,
-please see the [design document][2] or contact [@bparrishmines][6] on any
-questions you may have. For more information on contributing packages in
-general, check out our [contribution guide][3].
+For more information, please see the [design document][2] or feel free
+to ask any questions on the #hackers-ecosystem channel on [Discord][6]. For
+more information on contributing packages in general, check out our
+[contribution guide][3].
 
 ## Testing
 
@@ -72,4 +72,4 @@ testing purposes. To generate the mock objects, run
 [3]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
 [4]: https://pub.dev/packages/mockito
 [5]: https://github.com/flutter/flutter/wiki/Plugin-Tests#running-tests
-[6]: https://github.com/bparrishMines
+[6]: https://github.com/flutter/flutter/wiki/Chat
