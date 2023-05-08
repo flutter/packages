@@ -19,6 +19,8 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ExposureState', () {
+    tearDown(() => TestCameraInfoHostApi.setup(null));
+
     test('flutterApi create makes call to create expected ExposureState', () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},

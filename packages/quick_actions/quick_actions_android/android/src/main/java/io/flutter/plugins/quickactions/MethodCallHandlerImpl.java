@@ -15,11 +15,13 @@ import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import androidx.annotation.NonNull;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -27,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
   protected static final String EXTRA_ACTION = "some unique action key";
-  private static final String CHANNEL_ID = "plugins.flutter.io/quick_actions_android";
 
   private final Context context;
   private Activity activity;
@@ -42,7 +43,7 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
   }
 
   @Override
-  public void onMethodCall(MethodCall call, MethodChannel.Result result) {
+  public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) {
       // We already know that this functionality does not work for anything
       // lower than API 25 so we chose not to return error. Instead we do nothing.
@@ -54,13 +55,12 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     switch (call.method) {
       case "setShortcutItems":
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
-          List<Map<String, String>> serializedShortcuts = call.arguments();
+          List<Map<String, String>> serializedShortcuts = Objects.requireNonNull(call.arguments());
           List<ShortcutInfo> shortcuts = deserializeShortcuts(serializedShortcuts);
 
           Executor uiThreadExecutor = new UiThreadExecutor();
           ThreadPoolExecutor executor =
-              new ThreadPoolExecutor(
-                  0, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+              new ThreadPoolExecutor(0, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
           executor.execute(
               () -> {
@@ -140,6 +140,8 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     return shortcutInfos;
   }
 
+  // This method requires doing dynamic resource lookup, which is a discouraged API.
+  @SuppressWarnings("DiscouragedApi")
   private int loadResourceId(Context context, String icon) {
     if (icon == null) {
       return 0;
@@ -167,7 +169,7 @@ class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
   }
 
-  private static class UiThreadExecutor implements Executor {
+  static class UiThreadExecutor implements Executor {
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
