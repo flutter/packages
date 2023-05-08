@@ -70,7 +70,7 @@ RouteBase get $enumParam => GoRouteData.$route(
 
 extension $EnumParamExtension on EnumParam {
   static EnumParam _fromState(GoRouterState state) => EnumParam(
-        y: _$EnumTestEnumMap._$fromName(state.params['y']!),
+        y: _$EnumTestEnumMap._$fromName(state.pathParameters['y']!),
       );
 
   String get location => GoRouteData.$location(
@@ -119,7 +119,8 @@ RouteBase get $defaultValueRoute => GoRouteData.$route(
 
 extension $DefaultValueRouteExtension on DefaultValueRoute {
   static DefaultValueRoute _fromState(GoRouterState state) => DefaultValueRoute(
-        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+        param:
+            _$convertMapValue('param', state.queryParameters, int.parse) ?? 0,
       );
 
   String get location => GoRouteData.$location(
@@ -160,7 +161,8 @@ RouteBase get $extraValueRoute => GoRouteData.$route(
 
 extension $ExtraValueRouteExtension on ExtraValueRoute {
   static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
-        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+        param:
+            _$convertMapValue('param', state.queryParameters, int.parse) ?? 0,
         $extra: state.extra as int?,
       );
 

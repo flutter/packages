@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview.dart';
+import 'android_webview_controller.dart';
 
 /// Object specifying creation parameters for creating a [AndroidWebViewCookieManager].
 ///
@@ -47,7 +48,7 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
 
   @override
   Future<bool> clearCookies() {
-    return _cookieManager.clearCookies();
+    return _cookieManager.removeAllCookies();
   }
 
   @override
@@ -70,5 +71,20 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
       }
     }
     return true;
+  }
+
+  /// Sets whether the WebView should allow third party cookies to be set.
+  ///
+  /// Apps that target `Build.VERSION_CODES.KITKAT` or below default to allowing
+  /// third party cookies. Apps targeting `Build.VERSION_CODES.LOLLIPOP` or
+  /// later default to disallowing third party cookies.
+  Future<void> setAcceptThirdPartyCookies(
+    AndroidWebViewController controller,
+    bool accept,
+  ) {
+    // ignore: invalid_use_of_visible_for_testing_member
+    final WebView webView = WebView.api.instanceManager
+        .getInstanceWithWeakReference(controller.webViewIdentifier)!;
+    return _cookieManager.setAcceptThirdPartyCookies(webView, accept);
   }
 }

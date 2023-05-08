@@ -1,3 +1,11 @@
+## 0.3.0+4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.3.0+3
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
 ## 0.3.0+2
 
 * Adds a namespace for compatibility with AGP 8.0.
