@@ -21,7 +21,7 @@ void main() {
   // Mocks the call to clear the native InstanceManager.
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
-  test('start calls the Java side and returns correct recording', () async {
+  test('start calls start on the Java side', () async {
     final MockTestPendingRecordingHostApi mockApi =
         MockTestPendingRecordingHostApi();
     TestPendingRecordingHostApi.setup(mockApi);
