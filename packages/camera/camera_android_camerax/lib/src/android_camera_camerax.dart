@@ -421,6 +421,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     assert(cameraSelector != null);
     assert(processCameraProvider != null);
 
+    if (recording != null) {
+      // There is currently an active recording, so do not start a new one.
+      return;
+    }
+
     if (!(await processCameraProvider!.isBound(videoCapture!))) {
       camera = await processCameraProvider!
           .bindToLifecycle(cameraSelector!, <UseCase>[videoCapture!]);
@@ -444,6 +449,11 @@ class AndroidCameraCameraX extends CameraPlatform {
               'video recording while no recording is in progress.');
     }
     if (videoOutputPath == null) {
+      // Stop the current active recording as we will be unable to complete it
+      // in this error case.
+      recording!.close();
+      recording = null;
+      pendingRecording = null;
       throw CameraException(
           'INVALID_PATH',
           'The platform did not return a path '
