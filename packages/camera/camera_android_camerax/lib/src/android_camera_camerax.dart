@@ -597,7 +597,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Callback method used to implement the behavior described above:
     void onChanged(Object stateAsObject) {
-      // This cast is safe because the Observer implemntation ensures
+      // This cast is safe because the Observer implementation ensures
       // the type of stateAsObject is the same as the observer this callback
       // is attached to.
       final CameraState state = stateAsObject as CameraState;
