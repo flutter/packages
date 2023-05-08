@@ -414,7 +414,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     return XFile(picturePath);
   }
 
-  /// Configures and starts a video recording.
+  /// Configures and starts a video recording. If there is already an active
+  /// recording we return without doing anything.
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
@@ -440,6 +441,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Stops the video recording and returns the file where it was saved.
   /// Throws a CameraException if the recording is currently null, or if the
   /// videoOutputPath is null.
+  ///
+  /// If the videoOutputPath is null we also clean up the recording objects,
+  /// so starting a new recording is possible.
   @override
   Future<XFile> stopVideoRecording(int cameraId) async {
     if (recording == null) {
