@@ -32,8 +32,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-# FOR TESTING ONLY. DO NOT MERGE.
-dependency_overrides:
-  camera_android:
-    path: ../../../camera/camera_android

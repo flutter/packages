@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Updates iOS minimum version in README.
+
 ## 2.1.0
 
 * Adds `setPrefix` method.
