@@ -284,14 +284,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
-  /// Constructs a [VideoPlayerController] playing a video from obtained from
+  /// Constructs a [VideoPlayerController] playing a network video obtained from
   /// the network.
   ///
   /// The URI for the video is given by the [dataSource] argument and must not be
   /// null.
+  ///
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
-  /// [httpHeaders] option allows to specify HTTP headers.
+  ///
+  /// [httpHeaders] option allows to specify HTTP headers
   /// for the request to the [dataSource].
   VideoPlayerController.networkUrl(
     Uri url, {
