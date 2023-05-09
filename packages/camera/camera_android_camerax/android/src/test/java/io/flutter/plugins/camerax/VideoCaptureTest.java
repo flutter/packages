@@ -7,8 +7,6 @@ package io.flutter.plugins.camerax;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -72,14 +70,6 @@ public class VideoCaptureTest {
     VideoCaptureHostApiImpl videoCaptureHostApi =
         new VideoCaptureHostApiImpl(mockBinaryMessenger, testInstanceManager);
     VideoCaptureHostApiImpl spyVideoCaptureApi = spy(videoCaptureHostApi);
-    doReturn(mockVideoCaptureFlutterApi)
-        .when(spyVideoCaptureApi)
-        .getVideoCaptureFlutterApiImpl(mockBinaryMessenger, testInstanceManager);
-    doNothing()
-        .when(mockVideoCaptureFlutterApi)
-        .create(
-            any(VideoCapture.class),
-            any(GeneratedCameraXLibrary.VideoCaptureFlutterApi.Reply.class));
     final Long videoCaptureId = videoCaptureHostApi.withOutput(recorderId);
     VideoCapture<Recorder> videoCapture = testInstanceManager.getInstance(videoCaptureId);
     assertEquals(videoCapture.getOutput(), mockRecorder);

@@ -126,7 +126,6 @@ public class RecorderTest {
     testInstanceManager.addDartCreatedInstance(mockRecorder, Long.valueOf(recorderId));
     when(mockRecorder.prepareRecording(any(Context.class), any(FileOutputOptions.class)))
         .thenReturn(mockPendingRecording);
-    when(mockPendingRecording.withAudioEnabled()).thenReturn(mockPendingRecording);
     doNothing().when(mockPendingRecordingFlutterApi).create(any(PendingRecording.class), any());
     Long mockPendingRecordingId = testInstanceManager.addHostCreatedInstance(mockPendingRecording);
 
