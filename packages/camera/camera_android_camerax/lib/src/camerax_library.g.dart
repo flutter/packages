@@ -11,6 +11,22 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+/// The states the camera can be in.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraState.Type.
+enum CameraStateType {
+  closed,
+  closing,
+  open,
+  opening,
+  pendingOpen,
+}
+
+enum LiveDataSupportedType {
+  cameraState,
+  zoomState,
+}
+
 class ResolutionInfo {
   ResolutionInfo({
     required this.width,
@@ -59,6 +75,48 @@ class CameraPermissionsErrorData {
     return CameraPermissionsErrorData(
       errorCode: result[0]! as String,
       description: result[1]! as String,
+    );
+  }
+}
+
+class CameraStateTypeData {
+  CameraStateTypeData({
+    required this.value,
+  });
+
+  CameraStateType value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static CameraStateTypeData decode(Object result) {
+    result as List<Object?>;
+    return CameraStateTypeData(
+      value: CameraStateType.values[result[0]! as int],
+    );
+  }
+}
+
+class LiveDataSupportedTypeData {
+  LiveDataSupportedTypeData({
+    required this.value,
+  });
+
+  LiveDataSupportedType value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static LiveDataSupportedTypeData decode(Object result) {
+    result as List<Object?>;
+    return LiveDataSupportedTypeData(
+      value: LiveDataSupportedType.values[result[0]! as int],
     );
   }
 }
@@ -199,6 +257,33 @@ class CameraInfoHostApi {
   Future<int> getSensorRotationDegrees(int arg_identifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CameraInfoHostApi.getSensorRotationDegrees', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<int> getCameraState(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CameraInfoHostApi.getCameraState', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
@@ -1527,6 +1612,63 @@ class ImageCaptureHostApi {
   }
 }
 
+class _CameraStateFlutterApiCodec extends StandardMessageCodec {
+  const _CameraStateFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is CameraStateTypeData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return CameraStateTypeData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class CameraStateFlutterApi {
+  static const MessageCodec<Object?> codec = _CameraStateFlutterApiCodec();
+
+  void create(int identifier, CameraStateTypeData type, int? errorIdentifier);
+
+  static void setup(CameraStateFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraStateFlutterApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraStateFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraStateFlutterApi.create was null, expected non-null int.');
+          final CameraStateTypeData? arg_type =
+              (args[1] as CameraStateTypeData?);
+          assert(arg_type != null,
+              'Argument for dev.flutter.pigeon.CameraStateFlutterApi.create was null, expected non-null CameraStateTypeData.');
+          final int? arg_errorIdentifier = (args[2] as int?);
+          api.create(arg_identifier!, arg_type!, arg_errorIdentifier);
+          return;
+        });
+      }
+    }
+  }
+}
+
 class _ExposureStateFlutterApiCodec extends StandardMessageCodec {
   const _ExposureStateFlutterApiCodec();
   @override
@@ -1758,6 +1900,261 @@ class AnalyzerHostApi {
       );
     } else {
       return;
+    }
+  }
+}
+
+class ObserverHostApi {
+  /// Constructor for [ObserverHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  ObserverHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<void> create(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ObserverHostApi.create', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+abstract class ObserverFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void onChanged(int identifier, int valueIdentifier);
+
+  static void setup(ObserverFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ObserverFlutterApi.onChanged', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ObserverFlutterApi.onChanged was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ObserverFlutterApi.onChanged was null, expected non-null int.');
+          final int? arg_valueIdentifier = (args[1] as int?);
+          assert(arg_valueIdentifier != null,
+              'Argument for dev.flutter.pigeon.ObserverFlutterApi.onChanged was null, expected non-null int.');
+          api.onChanged(arg_identifier!, arg_valueIdentifier!);
+          return;
+        });
+      }
+    }
+  }
+}
+
+abstract class CameraStateErrorFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier, int code);
+
+  static void setup(CameraStateErrorFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraStateErrorFlutterApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraStateErrorFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraStateErrorFlutterApi.create was null, expected non-null int.');
+          final int? arg_code = (args[1] as int?);
+          assert(arg_code != null,
+              'Argument for dev.flutter.pigeon.CameraStateErrorFlutterApi.create was null, expected non-null int.');
+          api.create(arg_identifier!, arg_code!);
+          return;
+        });
+      }
+    }
+  }
+}
+
+class _LiveDataHostApiCodec extends StandardMessageCodec {
+  const _LiveDataHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+class LiveDataHostApi {
+  /// Constructor for [LiveDataHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  LiveDataHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = _LiveDataHostApiCodec();
+
+  Future<void> observe(int arg_identifier, int arg_observerIdentifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.LiveDataHostApi.observe', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier, arg_observerIdentifier])
+            as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> removeObservers(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.LiveDataHostApi.removeObservers', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<int?> getValue(
+      int arg_identifier, LiveDataSupportedTypeData arg_type) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.LiveDataHostApi.getValue', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_type]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?);
+    }
+  }
+}
+
+class _LiveDataFlutterApiCodec extends StandardMessageCodec {
+  const _LiveDataFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is LiveDataSupportedTypeData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class LiveDataFlutterApi {
+  static const MessageCodec<Object?> codec = _LiveDataFlutterApiCodec();
+
+  void create(int identifier, LiveDataSupportedTypeData type);
+
+  static void setup(LiveDataFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.LiveDataFlutterApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.LiveDataFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.LiveDataFlutterApi.create was null, expected non-null int.');
+          final LiveDataSupportedTypeData? arg_type =
+              (args[1] as LiveDataSupportedTypeData?);
+          assert(arg_type != null,
+              'Argument for dev.flutter.pigeon.LiveDataFlutterApi.create was null, expected non-null LiveDataSupportedTypeData.');
+          api.create(arg_identifier!, arg_type!);
+          return;
+        });
+      }
     }
   }
 }

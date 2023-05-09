@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -12,11 +13,14 @@ import 'analyzer.dart';
 import 'camera.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
+import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'exposure_state.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
+import 'live_data.dart';
+import 'observer.dart';
 import 'pending_recording.dart';
 import 'plane_proxy.dart';
 import 'preview.dart';
@@ -31,6 +35,18 @@ import 'zoom_state.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
+  /// Constructs an [AndroidCameraCameraX].
+  AndroidCameraCameraX() : _shouldCreateDetachedObjectForTesting = false;
+
+  /// Constructs an [AndroidCameraCameraX] that is able to set
+  /// [_shouldCreateDetachedObjectForTesting] to create detached objects
+  /// for testing purposes only.
+  @visibleForTesting
+  AndroidCameraCameraX.forTesting(
+      {bool shouldCreateDetachedObjectForTesting = false})
+      : _shouldCreateDetachedObjectForTesting =
+            shouldCreateDetachedObjectForTesting;
+
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AndroidCameraCameraX();
@@ -48,6 +64,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The [CameraInfo] instance that corresponds to the [camera] instance.
   @visibleForTesting
   CameraInfo? cameraInfo;
+
+  /// The [LiveData] of the [CameraState] that represents the state of the
+  /// [camera] instance.
+  LiveData<CameraState>? liveCameraState;
 
   /// The [Preview] instance that can be configured to present a live camera preview.
   @visibleForTesting
@@ -112,14 +132,13 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraEventStreamController.stream
           .where((CameraEvent event) => event.cameraId == cameraId);
 
+  /// Conditional used to create detached objects for testing their
+  /// callback methods.
+  final bool _shouldCreateDetachedObjectForTesting;
+
   /// The controller we need to stream image data.
   @visibleForTesting
   StreamController<CameraImageData>? cameraImageDataStreamController;
-
-  /// Conditional used to create detached instances for testing their
-  /// callback methods.
-  @visibleForTesting
-  bool createDetachedCallbacks = false;
 
   /// Constant representing the multi-plane Android YUV 420 image format.
   ///
@@ -130,6 +149,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// See https://developer.android.com/reference/android/graphics/ImageFormat#JPEG.
   static const int imageFormatJpeg = 256;
+
+  /// Error code indicating a [ZoomState] was requested, but one has not been
+  /// set for the camera in use.
+  static const String zoomStateNotSetErrorCode = 'zoomStateNotSet';
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -231,6 +254,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instead of here.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
+    await _updateLiveCameraState(flutterSurfaceTextureId);
     cameraInfo = await camera!.getCameraInfo();
     _previewIsPaused = false;
 
@@ -293,7 +317,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> dispose(int cameraId) async {
     preview?.releaseFlutterSurfaceTexture();
+    liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
+    imageAnalysis?.clearAnalyzer();
   }
 
   /// The camera has been initialized.
@@ -302,13 +328,23 @@ class AndroidCameraCameraX extends CameraPlatform {
     return _cameraEvents(cameraId).whereType<CameraInitializedEvent>();
   }
 
+  /// The camera started to close.
+  @override
+  Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
+    return _cameraEvents(cameraId).whereType<CameraClosingEvent>();
+  }
+
   /// The camera experienced an error.
   @override
   Stream<CameraErrorEvent> onCameraError(int cameraId) {
-    return SystemServices.cameraErrorStreamController.stream
-        .map<CameraErrorEvent>((String errorDescription) {
-      return CameraErrorEvent(cameraId, errorDescription);
-    });
+    return StreamGroup.mergeBroadcast<
+        CameraErrorEvent>(<Stream<CameraErrorEvent>>[
+      SystemServices.cameraErrorStreamController.stream
+          .map<CameraErrorEvent>((String errorDescription) {
+        return CameraErrorEvent(cameraId, errorDescription);
+      }),
+      _cameraEvents(cameraId).whereType<CameraErrorEvent>()
+    ]);
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
@@ -347,8 +383,16 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<double> getMaxZoomLevel(int cameraId) async {
-    final ZoomState exposureState = await cameraInfo!.getZoomState();
-    return exposureState.maxZoomRatio;
+    final LiveData<ZoomState> liveZoomState = await cameraInfo!.getZoomState();
+    final ZoomState? zoomState = await liveZoomState.getValue();
+
+    if (zoomState == null) {
+      throw CameraException(
+        zoomStateNotSetErrorCode,
+        'No explicit ZoomState has been set on the LiveData instance for the camera in use.',
+      );
+    }
+    return zoomState.maxZoomRatio;
   }
 
   /// Gets the minimum supported zoom level for the selected camera.
@@ -356,8 +400,16 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<double> getMinZoomLevel(int cameraId) async {
-    final ZoomState exposureState = await cameraInfo!.getZoomState();
-    return exposureState.minZoomRatio;
+    final LiveData<ZoomState> liveZoomState = await cameraInfo!.getZoomState();
+    final ZoomState? zoomState = await liveZoomState.getValue();
+
+    if (zoomState == null) {
+      throw CameraException(
+        zoomStateNotSetErrorCode,
+        'No explicit ZoomState has been set on the LiveData instance for the camera in use.',
+      );
+    }
+    return zoomState.minZoomRatio;
   }
 
   /// The ui orientation changed.
@@ -380,7 +432,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> resumePreview(int cameraId) async {
-    await _bindPreviewToLifecycle();
+    await _bindPreviewToLifecycle(cameraId);
     _previewIsPaused = false;
   }
 
@@ -388,7 +440,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Widget buildPreview(int cameraId) {
     return FutureBuilder<void>(
-        future: _bindPreviewToLifecycle(),
+        future: _bindPreviewToLifecycle(cameraId),
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -511,7 +563,11 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Binds [preview] instance to the camera lifecycle controlled by the
   /// [processCameraProvider].
-  Future<void> _bindPreviewToLifecycle() async {
+  ///
+  /// [cameraId] used to build [CameraEvent]s should you wish to filter
+  /// these based on a reference to a cameraId received from calling
+  /// `createCamera(...)`.
+  Future<void> _bindPreviewToLifecycle(int cameraId) async {
     final bool previewIsBound = await processCameraProvider!.isBound(preview!);
     if (previewIsBound || _previewIsPaused) {
       // Only bind if preview is not already bound or intentionally paused.
@@ -520,6 +576,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
+    await _updateLiveCameraState(cameraId);
     cameraInfo = await camera!.getCameraInfo();
   }
 
@@ -533,6 +590,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     // Create Analyzer that can read image data for image streaming.
+    final WeakReference<AndroidCameraCameraX> weakThis =
+        WeakReference<AndroidCameraCameraX>(this);
     Future<void> analyze(ImageProxy imageProxy) async {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
@@ -554,11 +613,14 @@ class AndroidCameraCameraX extends CameraPlatform {
           height: imageProxy.height,
           width: imageProxy.width);
 
-      cameraImageDataStreamController?.add(cameraImageData);
+      weakThis.target!.cameraImageDataStreamController!.add(cameraImageData);
       imageProxy.close();
     }
 
-    final Analyzer analyzer = createDetachedCallbacks
+    // shouldCreateDetachedObjectForTesting is used to create an Analyzer
+    // detached from the native sideonly to test the logic of the Analyzer
+    // instance that will be used for image streaming.
+    final Analyzer analyzer = _shouldCreateDetachedObjectForTesting
         ? Analyzer.detached(analyze: analyze)
         : Analyzer(analyze: analyze);
 
@@ -614,6 +676,54 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     return ImageFormatGroup.unknown;
+  }
+
+  // Methods concerning camera state:
+
+  /// Adds observers to the [LiveData] of the [CameraState] of the current
+  /// [camera], saved as [liveCameraState].
+  ///
+  /// If a previous [liveCameraState] was stored, existing observers are
+  /// removed, as well.
+  Future<void> _updateLiveCameraState(int cameraId) async {
+    final CameraInfo cameraInfo = await camera!.getCameraInfo();
+    liveCameraState?.removeObservers();
+    liveCameraState = await cameraInfo.getCameraState();
+    await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
+  }
+
+  /// Creates [Observer] of the [CameraState] that will:
+  ///
+  ///  * Send a [CameraClosingEvent] if the [CameraState] indicates that the
+  ///    camera has begun to close.
+  ///  * Send a [CameraErrorEvent] if the [CameraState] indicates that the
+  ///    camera is in error state.
+  Observer<CameraState> _createCameraClosingObserver(int cameraId) {
+    final WeakReference<AndroidCameraCameraX> weakThis =
+        WeakReference<AndroidCameraCameraX>(this);
+
+    // Callback method used to implement the behavior described above:
+    void onChanged(Object stateAsObject) {
+      // This cast is safe because the Observer implementation ensures
+      // the type of stateAsObject is the same as the observer this callback
+      // is attached to.
+      final CameraState state = stateAsObject as CameraState;
+      if (state.type == CameraStateType.closing) {
+        weakThis.target!.cameraEventStreamController
+            .add(CameraClosingEvent(cameraId));
+      }
+      if (state.error != null) {
+        weakThis.target!.cameraEventStreamController
+            .add(CameraErrorEvent(cameraId, state.error!.getDescription()));
+      }
+    }
+
+    // shouldCreateDetachedObjectForTesting is used to create an Observer
+    // detached from the native side only to test the logic of the Analyzer
+    // instance that will be used for image streaming.
+    return _shouldCreateDetachedObjectForTesting
+        ? Observer<CameraState>.detached(onChanged: onChanged)
+        : Observer<CameraState>(onChanged: onChanged);
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:

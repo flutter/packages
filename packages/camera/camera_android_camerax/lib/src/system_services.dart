@@ -84,14 +84,14 @@ class SystemServices {
 
 /// Host API implementation of [SystemServices].
 class SystemServicesHostApiImpl extends SystemServicesHostApi {
-  /// Creates a [SystemServicesHostApiImpl].
+  /// Constructs an [SystemServicesHostApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
   SystemServicesHostApiImpl({this.binaryMessenger})
       : super(binaryMessenger: binaryMessenger);
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
   final BinaryMessenger? binaryMessenger;
 
   /// Requests permission to access the camera and audio if specified.
@@ -113,16 +113,8 @@ class SystemServicesHostApiImpl extends SystemServicesHostApi {
 
 /// Flutter API implementation of [SystemServices].
 class SystemServicesFlutterApiImpl implements SystemServicesFlutterApi {
-  /// Constructs a [SystemServicesFlutterApiImpl].
-  SystemServicesFlutterApiImpl({
-    this.binaryMessenger,
-  });
-
-  /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  /// Constructs an [SystemServicesFlutterApiImpl].
+  SystemServicesFlutterApiImpl();
 
   /// Callback method for any changes in device orientation.
   ///
