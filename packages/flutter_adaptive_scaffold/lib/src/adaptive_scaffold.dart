@@ -316,7 +316,7 @@ class AdaptiveScaffold extends StatefulWidget {
     ValueChanged<int>? onDestinationSelected,
   }) {
     return Builder(
-      builder: (context) {
+      builder: (BuildContext context) {
         final NavigationBarThemeData currentNavBarTheme =
             NavigationBarTheme.of(context);
         return NavigationBarTheme(
