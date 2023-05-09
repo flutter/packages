@@ -23,7 +23,16 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final String? filePath = await _api.openFile(initialDirectory, null);
+    final String? filePath = await _api.openFile(
+      initialDirectory,
+      acceptedTypeGroups?.fold<Set<String>>(
+        <String>{},
+        (Set<String> previousValue, XTypeGroup element) {
+          previousValue.addAll(element.mimeTypes ?? <String>[]);
+          return previousValue;
+        },
+      ).toList(),
+    );
     return filePath != null ? XFile(filePath) : null;
   }
 

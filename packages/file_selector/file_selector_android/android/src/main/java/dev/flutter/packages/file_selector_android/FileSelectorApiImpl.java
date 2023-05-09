@@ -32,7 +32,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
 
   @Override
   public void openFile(@Nullable String initialDirectory, @Nullable List<String> mimeTypes, @NonNull GeneratedFileSelectorApi.Result<String> result) {
-    final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+    final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
     trySetMimeTypes(intent, mimeTypes);
@@ -67,6 +67,10 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   @Override
   public void getDirectoryPaths(@Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<List<String>> result) {
 
+  }
+
+  public void setActivityPluginBinding(@Nullable ActivityPluginBinding activityPluginBinding) {
+    this.activityPluginBinding = activityPluginBinding;
   }
 
   private void trySetMimeTypes(@NonNull Intent intent, @Nullable List<String> mimeTypes) {
@@ -113,9 +117,5 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       });
       activityPluginBinding.getActivity().startActivityForResult(intent, newRequestCode);
     }
-  }
-
-  public void setActivityPluginBinding(@Nullable ActivityPluginBinding activityPluginBinding) {
-    this.activityPluginBinding = activityPluginBinding;
   }
 }
