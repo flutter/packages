@@ -141,6 +141,17 @@ void main() {
       expect(log, tests.values);
     });
 
+    test('canAccessScopes is unimplemented', () async {
+      expect(() async {
+        await googleSignIn
+            .canAccessScopes(<String>['someScope'], accessToken: 'token');
+      }, throwsUnimplementedError);
+    });
+
+    test('userDataEvents returns null', () async {
+      expect(googleSignIn.userDataEvents, isNull);
+    });
+
     test('initWithParams passes through arguments to the channel', () async {
       await googleSignIn.initWithParams(const SignInInitParameters(
           hostedDomain: 'example.com',

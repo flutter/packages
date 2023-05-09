@@ -60,27 +60,27 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public Long echoInt(@NonNull Long anInt) {
+  public @NonNull Long echoInt(@NonNull Long anInt) {
     return anInt;
   }
 
   @Override
-  public Double echoDouble(@NonNull Double aDouble) {
+  public @NonNull Double echoDouble(@NonNull Double aDouble) {
     return aDouble;
   }
 
   @Override
-  public Boolean echoBool(@NonNull Boolean aBool) {
+  public @NonNull Boolean echoBool(@NonNull Boolean aBool) {
     return aBool;
   }
 
   @Override
-  public String echoString(@NonNull String aString) {
+  public @NonNull String echoString(@NonNull String aString) {
     return aString;
   }
 
   @Override
-  public byte[] echoUint8List(@NonNull byte[] aUint8List) {
+  public @NonNull byte[] echoUint8List(@NonNull byte[] aUint8List) {
     return aUint8List;
   }
 
@@ -90,12 +90,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public List<Object> echoList(@NonNull List<Object> aList) {
+  public @NonNull List<Object> echoList(@NonNull List<Object> aList) {
     return aList;
   }
 
   @Override
-  public Map<String, Object> echoMap(@NonNull Map<String, Object> aMap) {
+  public @NonNull Map<String, Object> echoMap(@NonNull Map<String, Object> aMap) {
     return aMap;
   }
 
@@ -157,129 +157,132 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public List<Object> echoNullableList(@Nullable List<Object> aNullableList) {
+  public @Nullable List<Object> echoNullableList(@Nullable List<Object> aNullableList) {
     return aNullableList;
   }
 
   @Override
-  public Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap) {
+  public @Nullable Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap) {
     return aNullableMap;
   }
 
   @Override
-  public void noopAsync(Result<Void> result) {
+  public void noopAsync(@NonNull Result<Void> result) {
     result.success(null);
   }
 
   @Override
-  public void throwAsyncError(Result<Object> result) {
+  public void throwAsyncError(@NonNull Result<Object> result) {
     result.error(new RuntimeException("An error"));
   }
 
   @Override
-  public void throwAsyncErrorFromVoid(Result<Void> result) {
+  public void throwAsyncErrorFromVoid(@NonNull Result<Void> result) {
     result.error(new RuntimeException("An error"));
   }
 
   @Override
-  public void throwAsyncFlutterError(Result<Object> result) {
+  public void throwAsyncFlutterError(@NonNull Result<Object> result) {
     result.error(new CoreTests.FlutterError("code", "message", "details"));
   }
 
   @Override
-  public void echoAsyncAllTypes(@NonNull AllTypes everything, Result<AllTypes> result) {
+  public void echoAsyncAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
     result.success(everything);
   }
 
   @Override
   public void echoAsyncNullableAllNullableTypes(
-      @Nullable AllNullableTypes everything, Result<AllNullableTypes> result) {
+      @Nullable AllNullableTypes everything, @NonNull Result<AllNullableTypes> result) {
     result.success(everything);
   }
 
   @Override
-  public void echoAsyncInt(@NonNull Long anInt, Result<Long> result) {
+  public void echoAsyncInt(@NonNull Long anInt, @NonNull Result<Long> result) {
     result.success(anInt);
   }
 
   @Override
-  public void echoAsyncDouble(@NonNull Double aDouble, Result<Double> result) {
+  public void echoAsyncDouble(@NonNull Double aDouble, @NonNull Result<Double> result) {
     result.success(aDouble);
   }
 
   @Override
-  public void echoAsyncBool(@NonNull Boolean aBool, Result<Boolean> result) {
+  public void echoAsyncBool(@NonNull Boolean aBool, @NonNull Result<Boolean> result) {
     result.success(aBool);
   }
 
   @Override
-  public void echoAsyncString(@NonNull String aString, Result<String> result) {
+  public void echoAsyncString(@NonNull String aString, @NonNull Result<String> result) {
     result.success(aString);
   }
 
   @Override
-  public void echoAsyncUint8List(@NonNull byte[] aUint8List, Result<byte[]> result) {
+  public void echoAsyncUint8List(@NonNull byte[] aUint8List, @NonNull Result<byte[]> result) {
     result.success(aUint8List);
   }
 
   @Override
-  public void echoAsyncObject(@NonNull Object anObject, Result<Object> result) {
+  public void echoAsyncObject(@NonNull Object anObject, @NonNull Result<Object> result) {
     result.success(anObject);
   }
 
   @Override
-  public void echoAsyncList(@NonNull List<Object> aList, Result<List<Object>> result) {
+  public void echoAsyncList(@NonNull List<Object> aList, @NonNull Result<List<Object>> result) {
     result.success(aList);
   }
 
   @Override
-  public void echoAsyncMap(@NonNull Map<String, Object> aMap, Result<Map<String, Object>> result) {
+  public void echoAsyncMap(
+      @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
     result.success(aMap);
   }
 
   @Override
-  public void echoAsyncNullableInt(@Nullable Long anInt, Result<Long> result) {
+  public void echoAsyncNullableInt(@Nullable Long anInt, @NonNull Result<Long> result) {
     result.success(anInt);
   }
 
   @Override
-  public void echoAsyncNullableDouble(@Nullable Double aDouble, Result<Double> result) {
+  public void echoAsyncNullableDouble(@Nullable Double aDouble, @NonNull Result<Double> result) {
     result.success(aDouble);
   }
 
   @Override
-  public void echoAsyncNullableBool(@Nullable Boolean aBool, Result<Boolean> result) {
+  public void echoAsyncNullableBool(@Nullable Boolean aBool, @NonNull Result<Boolean> result) {
     result.success(aBool);
   }
 
   @Override
-  public void echoAsyncNullableString(@Nullable String aString, Result<String> result) {
+  public void echoAsyncNullableString(@Nullable String aString, @NonNull Result<String> result) {
     result.success(aString);
   }
 
   @Override
-  public void echoAsyncNullableUint8List(@Nullable byte[] aUint8List, Result<byte[]> result) {
+  public void echoAsyncNullableUint8List(
+      @Nullable byte[] aUint8List, @NonNull Result<byte[]> result) {
     result.success(aUint8List);
   }
 
   @Override
-  public void echoAsyncNullableObject(@Nullable Object anObject, Result<Object> result) {
+  public void echoAsyncNullableObject(@Nullable Object anObject, @NonNull Result<Object> result) {
     result.success(anObject);
   }
 
   @Override
-  public void echoAsyncNullableList(@Nullable List<Object> aList, Result<List<Object>> result) {
+  public void echoAsyncNullableList(
+      @Nullable List<Object> aList, @NonNull Result<List<Object>> result) {
     result.success(aList);
   }
 
   @Override
   public void echoAsyncNullableMap(
-      @Nullable Map<String, Object> aMap, Result<Map<String, Object>> result) {
+      @Nullable Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
     result.success(aMap);
   }
 
   @Override
-  public void callFlutterNoop(Result<Void> result) {
+  public void callFlutterNoop(@NonNull Result<Void> result) {
     flutterApi.noop(
         new FlutterIntegrationCoreApi.Reply<Void>() {
           public void reply(Void value) {
@@ -289,7 +292,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterThrowError(Result<Object> result) {
+  public void callFlutterThrowError(@NonNull Result<Object> result) {
     flutterApi.throwError(
         new FlutterIntegrationCoreApi.Reply<Object>() {
           public void reply(Object value) {
@@ -301,7 +304,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterThrowErrorFromVoid(Result<Void> result) {
+  public void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result) {
     flutterApi.throwErrorFromVoid(
         new FlutterIntegrationCoreApi.Reply<Void>() {
           public void reply(Void value) {
@@ -313,7 +316,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoAllTypes(@NonNull AllTypes everything, Result<AllTypes> result) {
+  public void callFlutterEchoAllTypes(
+      @NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
     flutterApi.echoAllTypes(
         everything,
         new FlutterIntegrationCoreApi.Reply<AllTypes>() {
@@ -328,7 +332,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable Boolean aNullableBool,
       @Nullable Long aNullableInt,
       @Nullable String aNullableString,
-      Result<AllNullableTypes> result) {
+      @NonNull Result<AllNullableTypes> result) {
     flutterApi.sendMultipleNullableTypes(
         aNullableBool,
         aNullableInt,
@@ -341,7 +345,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoBool(@NonNull Boolean aBool, Result<Boolean> result) {
+  public void callFlutterEchoBool(@NonNull Boolean aBool, @NonNull Result<Boolean> result) {
     flutterApi.echoBool(
         aBool,
         new FlutterIntegrationCoreApi.Reply<Boolean>() {
@@ -352,7 +356,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoInt(@NonNull Long anInt, Result<Long> result) {
+  public void callFlutterEchoInt(@NonNull Long anInt, @NonNull Result<Long> result) {
     flutterApi.echoInt(
         anInt,
         new FlutterIntegrationCoreApi.Reply<Long>() {
@@ -363,7 +367,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoDouble(@NonNull Double aDouble, Result<Double> result) {
+  public void callFlutterEchoDouble(@NonNull Double aDouble, @NonNull Result<Double> result) {
     flutterApi.echoDouble(
         aDouble,
         new FlutterIntegrationCoreApi.Reply<Double>() {
@@ -374,7 +378,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoString(@NonNull String aString, Result<String> result) {
+  public void callFlutterEchoString(@NonNull String aString, @NonNull Result<String> result) {
     flutterApi.echoString(
         aString,
         new FlutterIntegrationCoreApi.Reply<String>() {
@@ -385,7 +389,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoUint8List(@NonNull byte[] aList, Result<byte[]> result) {
+  public void callFlutterEchoUint8List(@NonNull byte[] aList, @NonNull Result<byte[]> result) {
     flutterApi.echoUint8List(
         aList,
         new FlutterIntegrationCoreApi.Reply<byte[]>() {
@@ -396,7 +400,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoList(@NonNull List<Object> aList, Result<List<Object>> result) {
+  public void callFlutterEchoList(
+      @NonNull List<Object> aList, @NonNull Result<List<Object>> result) {
     flutterApi.echoList(
         aList,
         new FlutterIntegrationCoreApi.Reply<List<Object>>() {
@@ -408,7 +413,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void callFlutterEchoMap(
-      @NonNull Map<String, Object> aMap, Result<Map<String, Object>> result) {
+      @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
     flutterApi.echoMap(
         aMap,
         new FlutterIntegrationCoreApi.Reply<Map<String, Object>>() {
@@ -419,7 +424,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoNullableBool(@Nullable Boolean aBool, Result<Boolean> result) {
+  public void callFlutterEchoNullableBool(
+      @Nullable Boolean aBool, @NonNull Result<Boolean> result) {
     flutterApi.echoNullableBool(
         aBool,
         new FlutterIntegrationCoreApi.Reply<Boolean>() {
@@ -430,7 +436,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoNullableInt(@Nullable Long anInt, Result<Long> result) {
+  public void callFlutterEchoNullableInt(@Nullable Long anInt, @NonNull Result<Long> result) {
     flutterApi.echoNullableInt(
         anInt,
         new FlutterIntegrationCoreApi.Reply<Long>() {
@@ -441,7 +447,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoNullableDouble(@Nullable Double aDouble, Result<Double> result) {
+  public void callFlutterEchoNullableDouble(
+      @Nullable Double aDouble, @NonNull Result<Double> result) {
     flutterApi.echoNullableDouble(
         aDouble,
         new FlutterIntegrationCoreApi.Reply<Double>() {
@@ -452,7 +459,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoNullableString(@Nullable String aString, Result<String> result) {
+  public void callFlutterEchoNullableString(
+      @Nullable String aString, @NonNull Result<String> result) {
     flutterApi.echoNullableString(
         aString,
         new FlutterIntegrationCoreApi.Reply<String>() {
@@ -463,7 +471,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoNullableUint8List(@Nullable byte[] aList, Result<byte[]> result) {
+  public void callFlutterEchoNullableUint8List(
+      @Nullable byte[] aList, @NonNull Result<byte[]> result) {
     flutterApi.echoNullableUint8List(
         aList,
         new FlutterIntegrationCoreApi.Reply<byte[]>() {
@@ -475,7 +484,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void callFlutterEchoNullableList(
-      @Nullable List<Object> aList, Result<List<Object>> result) {
+      @Nullable List<Object> aList, @NonNull Result<List<Object>> result) {
     flutterApi.echoNullableList(
         aList,
         new FlutterIntegrationCoreApi.Reply<List<Object>>() {
@@ -487,7 +496,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void callFlutterEchoNullableMap(
-      @Nullable Map<String, Object> aMap, Result<Map<String, Object>> result) {
+      @Nullable Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
     flutterApi.echoNullableMap(
         aMap,
         new FlutterIntegrationCoreApi.Reply<Map<String, Object>>() {

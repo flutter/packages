@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.1+6
 
+* Sets a cmake_policy compatibility version to fix build warnings.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.2.1+5

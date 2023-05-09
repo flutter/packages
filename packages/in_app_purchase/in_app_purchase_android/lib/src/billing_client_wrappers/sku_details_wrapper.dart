@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'billing_client_manager.dart';
 import 'billing_client_wrapper.dart';
 
 // WARNING: Changes to `@JsonSerializable` classes need to be reflected in the
@@ -182,7 +183,7 @@ class SkuDetailsWrapper {
 /// Returned by [BillingClient.querySkuDetails].
 @JsonSerializable()
 @immutable
-class SkuDetailsResponseWrapper {
+class SkuDetailsResponseWrapper implements HasBillingResponse {
   /// Creates a [SkuDetailsResponseWrapper] with the given purchase details.
   @visibleForTesting
   const SkuDetailsResponseWrapper(
@@ -203,6 +204,9 @@ class SkuDetailsResponseWrapper {
   final List<SkuDetailsWrapper> skuDetailsList;
 
   @override
+  BillingResponse get responseCode => billingResult.responseCode;
+
+  @override
   bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) {
       return false;
@@ -221,7 +225,7 @@ class SkuDetailsResponseWrapper {
 @JsonSerializable()
 @BillingResponseConverter()
 @immutable
-class BillingResultWrapper {
+class BillingResultWrapper implements HasBillingResponse {
   /// Constructs the object with [responseCode] and [debugMessage].
   const BillingResultWrapper({required this.responseCode, this.debugMessage});
 
@@ -239,6 +243,7 @@ class BillingResultWrapper {
   }
 
   /// Response code returned in the Play Billing API calls.
+  @override
   final BillingResponse responseCode;
 
   /// Debug message returned in the Play Billing API calls.

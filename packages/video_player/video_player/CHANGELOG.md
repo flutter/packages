@@ -1,6 +1,13 @@
-## 2.6.1
+## 2.7.1
+
+* Remove lint ignore.
+
+## 2.7.0
 
 * New video player network constructor.
+## 2.6.1
+
+* Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
 
 ## 2.6.0
 

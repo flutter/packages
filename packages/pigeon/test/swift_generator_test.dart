@@ -31,7 +31,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: Int64? = nil'));
-    expect(code, contains('static func fromList(_ list: [Any]) -> Foobar?'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Foobar?'));
     expect(code, contains('func toList() -> [Any?]'));
   });
 
@@ -392,7 +392,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [Any]? = nil'));
+    expect(code, contains('var field1: [Any?]? = nil'));
   });
 
   test('gen map', () {
@@ -412,7 +412,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [AnyHashable: Any]? = nil'));
+    expect(code, contains('var field1: [AnyHashable: Any?]? = nil'));
   });
 
   test('gen nested', () {
@@ -451,8 +451,8 @@ void main() {
     expect(code, contains('struct Outer'));
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
-    expect(code, contains('static func fromList(_ list: [Any]) -> Outer?'));
-    expect(code, contains('nested = Nested.fromList(nestedList as [Any])'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Outer?'));
+    expect(code, contains('nested = Nested.fromList(nestedList)'));
     expect(code, contains('func toList() -> [Any?]'));
   });
 
@@ -796,15 +796,15 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func add(x: Int64, y: Int64) throws -> Int64'));
-    expect(code, contains('let args = message as! [Any]'));
+    expect(code, contains('let args = message as! [Any?]'));
     expect(
         code,
         contains(
-            'let xArg = (args[0] is Int) ? Int64(args[0] as! Int) : args[0] as! Int64'));
+            'let xArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)'));
     expect(
         code,
         contains(
-            'let yArg = (args[1] is Int) ? Int64(args[1] as! Int) : args[1] as! Int64'));
+            'let yArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)'));
     expect(code, contains('let result = try api.add(x: xArg, y: yArg)'));
     expect(code, contains('reply(wrapResult(result))'));
   });
@@ -837,7 +837,7 @@ void main() {
     expect(
         code,
         contains(
-            'let result = (response is Int) ? Int64(response as! Int) : response as! Int64'));
+            'let result = response is Int64 ? response as! Int64 : Int64(response as! Int32)'));
     expect(code, contains('completion(result)'));
     expect(
         code,
@@ -927,7 +927,7 @@ void main() {
     expect(
         code,
         contains(
-            'let fooArg = (args[0] is Int) ? Int64(args[0] as! Int) : args[0] as! Int64?'));
+            'let fooArg: Int64? = args[0] is NSNull ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))'));
   });
 
   test('nullable argument flutter', () {

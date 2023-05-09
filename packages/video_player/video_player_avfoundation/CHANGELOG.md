@@ -1,3 +1,15 @@
+## 2.4.5
+
+* Updates functions without a prototype to avoid deprecation warning.
+
+## 2.4.4
+
+* Updates pigeon to fix warnings with clang 15.
+
+## 2.4.3
+
+* Synchronizes `VideoPlayerValue.isPlaying` with `AVPlayer`.
+
 ## 2.4.2
 
 * Makes seekTo async and only complete when AVPlayer.seekTo completes.

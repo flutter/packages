@@ -35,10 +35,10 @@
                            webView:(WKWebView *)webView
                      configuration:(WKWebViewConfiguration *)configuration
                   navigationAction:(WKNavigationAction *)navigationAction
-                        completion:(void (^)(NSError *_Nullable))completion {
+                        completion:(void (^)(FlutterError *_Nullable))completion {
   if (![self.instanceManager containsInstance:configuration]) {
     [self.webViewConfigurationFlutterApi createWithConfiguration:configuration
-                                                      completion:^(NSError *error) {
+                                                      completion:^(FlutterError *error) {
                                                         NSAssert(!error, @"%@", error);
                                                       }];
   }
@@ -46,7 +46,7 @@
   NSNumber *configurationIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:configuration]);
   FWFWKNavigationActionData *navigationActionData =
-      FWFWKNavigationActionDataFromNavigationAction(navigationAction);
+      FWFWKNavigationActionDataFromNativeWKNavigationAction(navigationAction);
 
   [self onCreateWebViewForDelegateWithIdentifier:@([self identifierForDelegate:instance])
                                webViewIdentifier:
@@ -55,6 +55,40 @@
                          configurationIdentifier:configurationIdentifier
                                 navigationAction:navigationActionData
                                       completion:completion];
+}
+
+- (void)requestMediaCapturePermissionForDelegateWithIdentifier:(FWFUIDelegate *)instance
+                                                       webView:(WKWebView *)webView
+                                                        origin:(WKSecurityOrigin *)origin
+                                                         frame:(WKFrameInfo *)frame
+                                                          type:(WKMediaCaptureType)type
+                                                    completion:
+                                                        (void (^)(WKPermissionDecision))completion
+    API_AVAILABLE(ios(15.0)) {
+  [self
+      requestMediaCapturePermissionForDelegateWithIdentifier:@([self
+                                                                 identifierForDelegate:instance])
+                                           webViewIdentifier:
+                                               @([self.instanceManager
+                                                   identifierWithStrongReferenceForInstance:
+                                                       webView])
+                                                      origin:
+                                                          FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(
+                                                              origin)
+                                                       frame:
+                                                           FWFWKFrameInfoDataFromNativeWKFrameInfo(
+                                                               frame)
+                                                        type:
+                                                            FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType(
+                                                                type)
+                                                  completion:^(
+                                                      FWFWKPermissionDecisionData *decision,
+                                                      FlutterError *error) {
+                                                    NSAssert(!error, @"%@", error);
+                                                    completion(
+                                                        FWFNativeWKPermissionDecisionFromData(
+                                                            decision));
+                                                  }];
 }
 @end
 
@@ -77,10 +111,27 @@
                                          webView:webView
                                    configuration:configuration
                                 navigationAction:navigationAction
-                                      completion:^(NSError *error) {
+                                      completion:^(FlutterError *error) {
                                         NSAssert(!error, @"%@", error);
                                       }];
   return nil;
+}
+
+- (void)webView:(WKWebView *)webView
+    requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin
+                          initiatedByFrame:(WKFrameInfo *)frame
+                                      type:(WKMediaCaptureType)type
+                           decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
+    API_AVAILABLE(ios(15.0)) {
+  [self.UIDelegateAPI
+      requestMediaCapturePermissionForDelegateWithIdentifier:self
+                                                     webView:webView
+                                                      origin:origin
+                                                       frame:frame
+                                                        type:type
+                                                  completion:^(WKPermissionDecision decision) {
+                                                    decisionHandler(decision);
+                                                  }];
 }
 @end
 

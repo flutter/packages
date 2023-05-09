@@ -32,7 +32,7 @@ class ImageResizer {
       String imagePath, @Nullable Double maxWidth, @Nullable Double maxHeight, int imageQuality) {
     Bitmap bmp = decodeFile(imagePath);
     if (bmp == null) {
-      return null;
+      return imagePath;
     }
     boolean shouldScale = maxWidth != null || maxHeight != null || imageQuality < 100;
     if (!shouldScale) {

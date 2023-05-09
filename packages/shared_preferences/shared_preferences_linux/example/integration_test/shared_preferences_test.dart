@@ -38,34 +38,36 @@ void main() {
 
     testWidgets('reading', (WidgetTester _) async {
       final Map<String, Object> all = await preferences.getAll();
-      expect(all['String'], isNull);
-      expect(all['bool'], isNull);
-      expect(all['int'], isNull);
-      expect(all['double'], isNull);
-      expect(all['List'], isNull);
+      expect(all['flutter.String'], isNull);
+      expect(all['flutter.bool'], isNull);
+      expect(all['flutter.int'], isNull);
+      expect(all['flutter.double'], isNull);
+      expect(all['flutter.List'], isNull);
     });
 
     testWidgets('writing', (WidgetTester _) async {
       await Future.wait(<Future<bool>>[
         preferences.setValue(
-            'String', 'String', kTestValues2['flutter.String']!),
-        preferences.setValue('Bool', 'bool', kTestValues2['flutter.bool']!),
-        preferences.setValue('Int', 'int', kTestValues2['flutter.int']!),
+            'String', 'flutter.String', kTestValues2['flutter.String']!),
         preferences.setValue(
-            'Double', 'double', kTestValues2['flutter.double']!),
+            'Bool', 'flutter.bool', kTestValues2['flutter.bool']!),
         preferences.setValue(
-            'StringList', 'List', kTestValues2['flutter.List']!)
+            'Int', 'flutter.int', kTestValues2['flutter.int']!),
+        preferences.setValue(
+            'Double', 'flutter.double', kTestValues2['flutter.double']!),
+        preferences.setValue(
+            'StringList', 'flutter.List', kTestValues2['flutter.List']!)
       ]);
       final Map<String, Object> all = await preferences.getAll();
-      expect(all['String'], kTestValues2['flutter.String']);
-      expect(all['bool'], kTestValues2['flutter.bool']);
-      expect(all['int'], kTestValues2['flutter.int']);
-      expect(all['double'], kTestValues2['flutter.double']);
-      expect(all['List'], kTestValues2['flutter.List']);
+      expect(all['flutter.String'], kTestValues2['flutter.String']);
+      expect(all['flutter.bool'], kTestValues2['flutter.bool']);
+      expect(all['flutter.int'], kTestValues2['flutter.int']);
+      expect(all['flutter.double'], kTestValues2['flutter.double']);
+      expect(all['flutter.List'], kTestValues2['flutter.List']);
     });
 
     testWidgets('removing', (WidgetTester _) async {
-      const String key = 'testKey';
+      const String key = 'flutter.testKey';
 
       await Future.wait(<Future<bool>>[
         preferences.setValue('String', key, kTestValues['flutter.String']!),
@@ -76,26 +78,28 @@ void main() {
       ]);
       await preferences.remove(key);
       final Map<String, Object> all = await preferences.getAll();
-      expect(all['testKey'], isNull);
+      expect(all[key], isNull);
     });
 
     testWidgets('clearing', (WidgetTester _) async {
       await Future.wait(<Future<bool>>[
         preferences.setValue(
-            'String', 'String', kTestValues['flutter.String']!),
-        preferences.setValue('Bool', 'bool', kTestValues['flutter.bool']!),
-        preferences.setValue('Int', 'int', kTestValues['flutter.int']!),
+            'String', 'flutter.String', kTestValues['flutter.String']!),
         preferences.setValue(
-            'Double', 'double', kTestValues['flutter.double']!),
-        preferences.setValue('StringList', 'List', kTestValues['flutter.List']!)
+            'Bool', 'flutter.bool', kTestValues['flutter.bool']!),
+        preferences.setValue('Int', 'flutter.int', kTestValues['flutter.int']!),
+        preferences.setValue(
+            'Double', 'flutter.double', kTestValues['flutter.double']!),
+        preferences.setValue(
+            'StringList', 'flutter.List', kTestValues['flutter.List']!)
       ]);
       await preferences.clear();
       final Map<String, Object> all = await preferences.getAll();
-      expect(all['String'], null);
-      expect(all['bool'], null);
-      expect(all['int'], null);
-      expect(all['double'], null);
-      expect(all['List'], null);
+      expect(all['flutter.String'], null);
+      expect(all['flutter.bool'], null);
+      expect(all['flutter.int'], null);
+      expect(all['flutter.double'], null);
+      expect(all['flutter.List'], null);
     });
   });
 }

@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -62,8 +60,8 @@ void main() {
 
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[
-        MockProcess(exitCode: 1) // flutter pub get
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['build'])
       ];
 
       Error? commandError;
@@ -91,8 +89,8 @@ void main() {
 
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-          <io.Process>[
-        MockProcess(exitCode: 1) // flutter pub get
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
       ];
 
       Error? commandError;
@@ -391,6 +389,34 @@ void main() {
       final List<String> output = await runCapturingPrint(runner, <String>[
         'build-examples',
         '--apk',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          '\nBUILDING plugin/example for Android (apk)',
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform),
+                const <String>['build', 'apk'], pluginExampleDirectory.path),
+          ]));
+    });
+
+    test('building for Android with alias', () async {
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformAndroid: const PlatformDetails(PlatformSupport.inline),
+          });
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'build-examples',
+        '--android',
       ]);
 
       expect(

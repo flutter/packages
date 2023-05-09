@@ -126,9 +126,8 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     final StringBuffer newGradle = StringBuffer();
     for (final String line in gradleFile.readAsLinesSync()) {
       if (line.contains('minSdkVersion')) {
-        // minSdkVersion 20 is required by Google maps.
-        // minSdkVersion 19 is required by WebView.
-        newGradle.writeln('minSdkVersion 20');
+        // minSdkVersion 21 is required by camera_android.
+        newGradle.writeln('minSdkVersion 21');
       } else if (line.contains('compileSdkVersion')) {
         // compileSdkVersion 33 is required by local_auth.
         newGradle.writeln('compileSdkVersion 33');

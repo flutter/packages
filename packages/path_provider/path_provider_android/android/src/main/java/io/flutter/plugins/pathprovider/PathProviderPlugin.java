@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.BinaryMessenger.TaskQueue;
 import io.flutter.plugins.pathprovider.Messages.PathProviderApi;
 import io.flutter.util.PathUtils;
 import java.io.File;
@@ -26,8 +25,6 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
   public PathProviderPlugin() {}
 
   private void setup(BinaryMessenger messenger, Context context) {
-    TaskQueue taskQueue = messenger.makeBackgroundTaskQueue();
-
     try {
       PathProviderApi.setup(messenger, this);
     } catch (Exception ex) {
@@ -38,7 +35,8 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
   }
 
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     PathProviderPlugin instance = new PathProviderPlugin();
     instance.setup(registrar.messenger(), registrar.context());
   }
@@ -105,7 +103,7 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
   }
 
   private List<String> getPathProviderExternalCacheDirectories() {
-    final List<String> paths = new ArrayList<String>();
+    final List<String> paths = new ArrayList<>();
 
     if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
       for (File dir : context.getExternalCacheDirs()) {
@@ -125,27 +123,27 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
 
   private String getStorageDirectoryString(@NonNull Messages.StorageDirectory directory) {
     switch (directory) {
-      case root:
+      case ROOT:
         return null;
-      case music:
+      case MUSIC:
         return "music";
-      case podcasts:
+      case PODCASTS:
         return "podcasts";
-      case ringtones:
+      case RINGTONES:
         return "ringtones";
-      case alarms:
+      case ALARMS:
         return "alarms";
-      case notifications:
+      case NOTIFICATIONS:
         return "notifications";
-      case pictures:
+      case PICTURES:
         return "pictures";
-      case movies:
+      case MOVIES:
         return "movies";
-      case downloads:
+      case DOWNLOADS:
         return "downloads";
-      case dcim:
+      case DCIM:
         return "dcim";
-      case documents:
+      case DOCUMENTS:
         return "documents";
       default:
         throw new RuntimeException("Unrecognized directory: " + directory);
@@ -154,7 +152,7 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
 
   private List<String> getPathProviderExternalStorageDirectories(
       @NonNull Messages.StorageDirectory directory) {
-    final List<String> paths = new ArrayList<String>();
+    final List<String> paths = new ArrayList<>();
 
     if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
       for (File dir : context.getExternalFilesDirs(getStorageDirectoryString(directory))) {

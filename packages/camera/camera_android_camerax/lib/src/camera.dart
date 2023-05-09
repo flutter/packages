@@ -5,6 +5,7 @@
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
+import 'camera_info.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
@@ -15,15 +16,61 @@ import 'java_object.dart';
 /// See https://developer.android.com/reference/androidx/camera/core/Camera.
 class Camera extends JavaObject {
   /// Constructs a [Camera] that is not automatically attached to a native object.
-  Camera.detached({super.binaryMessenger, super.instanceManager})
-      : super.detached() {
+  Camera.detached(
+      {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
+      : super.detached(
+            binaryMessenger: binaryMessenger,
+            instanceManager: instanceManager) {
+    _api = CameraHostApiImpl(
+        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
+  }
+
+  late final CameraHostApiImpl _api;
+
+  /// Retrieve the [CameraInfo] instance that contains information about this
+  /// instance.
+  Future<CameraInfo> getCameraInfo() async {
+    return _api.getCameraInfoFromInstance(this);
+  }
+}
+
+/// Host API implementation of [Camera].
+class CameraHostApiImpl extends CameraHostApi {
+  /// Constructs a [CameraHostApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created.
+  CameraHostApiImpl({this.binaryMessenger, InstanceManager? instanceManager})
+      : super(binaryMessenger: binaryMessenger) {
+    this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  }
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  late final InstanceManager instanceManager;
+
+  /// Gets the [CameraInfo] associated with the specified instance of [Camera].
+  Future<CameraInfo> getCameraInfoFromInstance(Camera instance) async {
+    final int identifier = instanceManager.getIdentifier(instance)!;
+    final int cameraInfoId = await getCameraInfo(identifier);
+
+    return instanceManager
+        .getInstanceWithWeakReference<CameraInfo>(cameraInfoId)!;
   }
 }
 
 /// Flutter API implementation of [Camera].
 class CameraFlutterApiImpl implements CameraFlutterApi {
-  /// Constructs a [CameraSelectorFlutterApiImpl].
+  /// Constructs a [CameraFlutterApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created.
   CameraFlutterApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,

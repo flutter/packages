@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -145,9 +143,9 @@ void main() {
         'run_tests.sh',
       ]);
 
-      processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-        MockProcess(), // pub get
-        MockProcess(exitCode: 1), // test script
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['test']),
       ];
 
       Error? commandError;
@@ -171,8 +169,8 @@ void main() {
         'run_tests.sh',
       ]);
 
-      processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get']),
       ];
 
       Error? commandError;
@@ -199,8 +197,8 @@ void main() {
       ]);
 
       processRunner.mockProcessesForExecutable[
-          package.directory.childFile('run_tests.sh').path] = <io.Process>[
-        MockProcess(exitCode: 1),
+          package.directory.childFile('run_tests.sh').path] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;
@@ -305,9 +303,9 @@ void main() {
         'run_tests.sh',
       ]);
 
-      processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-        MockProcess(), // pub get
-        MockProcess(exitCode: 1), // test script
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['test']),
       ];
 
       Error? commandError;

@@ -5,7 +5,6 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
-import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -62,9 +61,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
       imageCaptureBuilder.setFlashMode(flashMode.intValue());
     }
     if (targetResolution != null) {
-      imageCaptureBuilder.setTargetResolution(
-          new Size(
-              targetResolution.getWidth().intValue(), targetResolution.getHeight().intValue()));
+      imageCaptureBuilder.setTargetResolution(CameraXProxy.sizeFromResolution(targetResolution));
     }
     ImageCapture imageCapture = imageCaptureBuilder.build();
     instanceManager.addDartCreatedInstance(imageCapture, identifier);

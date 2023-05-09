@@ -1,6 +1,10 @@
-## 0.10.3+3
+## 0.10.5
 
-* Add lint ignore.
+* Adds NV21 as an image streaming option for Android.
+
+## 0.10.4
+
+* Allows camera to be switched while video recording.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 

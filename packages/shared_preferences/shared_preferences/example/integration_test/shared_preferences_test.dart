@@ -9,29 +9,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$SharedPreferences', () {
-    const String testString = 'hello world';
-    const bool testBool = true;
-    const int testInt = 42;
-    const double testDouble = 3.14159;
-    const List<String> testList = <String>['foo', 'bar'];
+  const String testString = 'hello world';
+  const bool testBool = true;
+  const int testInt = 42;
+  const double testDouble = 3.14159;
+  const List<String> testList = <String>['foo', 'bar'];
 
-    const String testString2 = 'goodbye world';
-    const bool testBool2 = false;
-    const int testInt2 = 1337;
-    const double testDouble2 = 2.71828;
-    const List<String> testList2 = <String>['baz', 'quox'];
+  const String testString2 = 'goodbye world';
+  const bool testBool2 = false;
+  const int testInt2 = 1337;
+  const double testDouble2 = 2.71828;
+  const List<String> testList2 = <String>['baz', 'quox'];
 
-    late SharedPreferences preferences;
+  late SharedPreferences preferences;
 
-    setUp(() async {
-      preferences = await SharedPreferences.getInstance();
-    });
-
-    tearDown(() {
-      preferences.clear();
-    });
-
+  void runAllTests() {
     testWidgets('reading', (WidgetTester _) async {
       expect(preferences.get('String'), isNull);
       expect(preferences.get('bool'), isNull);
@@ -97,5 +89,48 @@ void main() {
       // The last write should win.
       expect(preferences.getInt('int'), writeCount);
     });
+  }
+
+  group('SharedPreferences', () {
+    setUp(() async {
+      preferences = await SharedPreferences.getInstance();
+    });
+
+    tearDown(() {
+      preferences.clear();
+      SharedPreferences.resetStatic();
+    });
+
+    runAllTests();
+  });
+
+  group('setPrefix', () {
+    setUp(() async {
+      SharedPreferences.resetStatic();
+      SharedPreferences.setPrefix('prefix.');
+      preferences = await SharedPreferences.getInstance();
+    });
+
+    tearDown(() {
+      preferences.clear();
+      SharedPreferences.resetStatic();
+    });
+
+    runAllTests();
+  });
+
+  group('setNoPrefix', () {
+    setUp(() async {
+      SharedPreferences.resetStatic();
+      SharedPreferences.setPrefix('');
+      preferences = await SharedPreferences.getInstance();
+    });
+
+    tearDown(() {
+      preferences.clear();
+      SharedPreferences.resetStatic();
+    });
+
+    runAllTests();
   });
 }

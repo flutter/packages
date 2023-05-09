@@ -5,8 +5,8 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
-import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -20,6 +20,7 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.FlutterAssetMan
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.InstanceManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaObjectHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaScriptChannelHostApi;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.PermissionRequestHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebChromeClientHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebSettingsHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebStorageHostApi;
@@ -62,13 +63,13 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
    * won't react to changes in activity or context, unlike {@link WebViewFlutterPlugin}.
    */
   @SuppressWarnings({"unused", "deprecation"})
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     new WebViewFlutterPlugin()
         .setUp(
             registrar.messenger(),
             registrar.platformViewRegistry(),
             registrar.activity(),
-            registrar.view(),
             new FlutterAssetManager.RegistrarFlutterAssetManager(
                 registrar.context().getAssets(), registrar));
   }
@@ -77,10 +78,9 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
       BinaryMessenger binaryMessenger,
       PlatformViewRegistry viewRegistry,
       Context context,
-      View containerView,
       FlutterAssetManager flutterAssetManager) {
     instanceManager =
-        InstanceManager.open(
+        InstanceManager.create(
             identifier ->
                 new GeneratedAndroidWebView.JavaObjectFlutterApi(binaryMessenger)
                     .dispose(identifier, reply -> {}));
@@ -92,11 +92,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     webViewHostApi =
         new WebViewHostApiImpl(
-            instanceManager,
-            binaryMessenger,
-            new WebViewHostApiImpl.WebViewProxy(),
-            context,
-            containerView);
+            instanceManager, binaryMessenger, new WebViewHostApiImpl.WebViewProxy(), context);
     javaScriptChannelHostApi =
         new JavaScriptChannelHostApiImpl(
             instanceManager,
@@ -131,10 +127,16 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             instanceManager, new WebSettingsHostApiImpl.WebSettingsCreator()));
     FlutterAssetManagerHostApi.setup(
         binaryMessenger, new FlutterAssetManagerHostApiImpl(flutterAssetManager));
-    CookieManagerHostApi.setup(binaryMessenger, new CookieManagerHostApiImpl());
+    CookieManagerHostApi.setup(
+        binaryMessenger, new CookieManagerHostApiImpl(binaryMessenger, instanceManager));
     WebStorageHostApi.setup(
         binaryMessenger,
         new WebStorageHostApiImpl(instanceManager, new WebStorageHostApiImpl.WebStorageCreator()));
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      PermissionRequestHostApi.setup(
+          binaryMessenger, new PermissionRequestHostApiImpl(binaryMessenger, instanceManager));
+    }
   }
 
   @Override
@@ -144,7 +146,6 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
         binding.getBinaryMessenger(),
         binding.getPlatformViewRegistry(),
         binding.getApplicationContext(),
-        null,
         new FlutterAssetManager.PluginBindingFlutterAssetManager(
             binding.getApplicationContext().getAssets(), binding.getFlutterAssets()));
   }
@@ -152,7 +153,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     if (instanceManager != null) {
-      instanceManager.close();
+      instanceManager.stopFinalizationListener();
       instanceManager = null;
     }
   }

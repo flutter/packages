@@ -61,28 +61,59 @@ void main() {
 
     final Finder homeScreenFinder = find.byType(HomeScreen);
 
+    expect(homeScreenFinder, findsNothing);
+
     showHomeValueNotifier.value = true;
+
     await tester.pump();
-    final Offset homeScreenPositionInTheMiddleOfAddition =
-        tester.getTopLeft(homeScreenFinder);
+
+    expect(homeScreenFinder, findsOneWidget);
+
     await tester.pumpAndSettle();
-    final Offset homeScreenPositionAfterAddition =
-        tester.getTopLeft(homeScreenFinder);
 
     showHomeValueNotifier.value = false;
-    await tester.pump();
-    final Offset homeScreenPositionInTheMiddleOfRemoval =
-        tester.getTopLeft(homeScreenFinder);
-    await tester.pumpAndSettle();
 
-    expect(
-      homeScreenPositionInTheMiddleOfAddition,
-      homeScreenPositionAfterAddition,
+    await tester.pump();
+
+    expect(homeScreenFinder, findsNothing);
+
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('NoTransitionPage does not apply any reverse transition',
+      (WidgetTester tester) async {
+    final ValueNotifier<bool> showHomeValueNotifier = ValueNotifier<bool>(true);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ValueListenableBuilder<bool>(
+          valueListenable: showHomeValueNotifier,
+          builder: (_, bool showHome, __) {
+            return Navigator(
+              pages: <Page<void>>[
+                const NoTransitionPage<void>(
+                  child: LoginScreen(),
+                ),
+                if (showHome)
+                  const NoTransitionPage<void>(
+                    child: HomeScreen(),
+                  ),
+              ],
+              onPopPage: (Route<dynamic> route, dynamic result) {
+                return route.didPop(result);
+              },
+            );
+          },
+        ),
+      ),
     );
-    expect(
-      homeScreenPositionAfterAddition,
-      homeScreenPositionInTheMiddleOfRemoval,
-    );
+
+    final Finder homeScreenFinder = find.byType(HomeScreen);
+
+    showHomeValueNotifier.value = false;
+
+    await tester.pump();
+
+    expect(homeScreenFinder, findsNothing);
   });
 
   testWidgets('Dismiss a screen by tapping a modal barrier',
