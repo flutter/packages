@@ -303,7 +303,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         dataSource = url.toString(),
         dataSourceType = DataSourceType.network,
         package = null,
-        super(VideoPlayerValue(duration: Duration.zero));
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
