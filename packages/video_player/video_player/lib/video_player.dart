@@ -287,8 +287,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Constructs a [VideoPlayerController] playing a network video obtained from
   /// the network.
   ///
-  /// The URI for the video is given by the [dataSource] argument and must not be
-  /// null.
+  /// The URI for the video is given by the [dataSource] argument.
   ///
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
