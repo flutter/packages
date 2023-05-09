@@ -5,37 +5,52 @@
 package dev.flutter.packages.file_selector_android;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 
 /** FileSelectorAndroidPlugin */
-public class FileSelectorAndroidPlugin implements FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private MethodChannel channel;
+public class FileSelectorAndroidPlugin implements FlutterPlugin, ActivityAware {
+  @Nullable
+  private FileSelectorApiImpl fileSelectorApi;
 
   @Override
-  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "file_selector_android");
-    channel.setMethodCallHandler(this);
-  }
+  public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
 
-  @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    if (call.method.equals("getPlatformVersion")) {
-      result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else {
-      result.notImplemented();
-    }
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    channel.setMethodCallHandler(null);
+
+  }
+
+  @Override
+  public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+    fileSelectorApi = new FileSelectorApiImpl(binding);
+  }
+
+  @Override
+  public void onDetachedFromActivityForConfigChanges() {
+    if (fileSelectorApi != null) {
+      fileSelectorApi.setActivityPluginBinding(null);
+    }
+  }
+
+  @Override
+  public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+    if (fileSelectorApi != null) {
+      fileSelectorApi.setActivityPluginBinding(binding);
+    } else {
+      fileSelectorApi = new FileSelectorApiImpl(binding);
+    }
+  }
+
+  @Override
+  public void onDetachedFromActivity() {
+    if (fileSelectorApi != null) {
+      fileSelectorApi.setActivityPluginBinding(null);
+    }
   }
 }
