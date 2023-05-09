@@ -1,7 +1,3 @@
-## 0.8.6+12
-
-* Remove lint ignore.
-
 ## 0.8.6+11
 
 * Updates gradle to 7.6.1.

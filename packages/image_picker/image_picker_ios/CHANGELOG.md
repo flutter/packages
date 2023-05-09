@@ -1,11 +1,3 @@
-## 0.8.7+5
-
-* Remove lint ignore.
-
-## 0.8.7+4
-
-* Remove lint ignore.
-
 ## NEXT
 * Updates metadata unit test to work on iOS 16.2.
 

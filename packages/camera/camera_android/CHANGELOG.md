@@ -1,7 +1,3 @@
-## 0.10.8+1
-
-* Remove lint ignore.
-
 ## 0.10.8
 
 * Updates gradle, AGP and fixes some lint errors.
