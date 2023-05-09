@@ -2,6 +2,7 @@ package dev.flutter.packages.file_selector_android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 
@@ -92,7 +93,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   private void trySetInitialDirectory(@NonNull Intent intent, @Nullable String initialDirectory) throws Exception {
     if (initialDirectory != null) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, initialDirectory);
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialDirectory));
       } else {
         throw new Exception("Setting an initial directory requires Android version Build.VERSION_CODES.O or greater.");
       }

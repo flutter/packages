@@ -10,15 +10,17 @@ import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.plugin.common.BinaryMessenger;
 
 /** FileSelectorAndroidPlugin */
 public class FileSelectorAndroidPlugin implements FlutterPlugin, ActivityAware {
   @Nullable
   private FileSelectorApiImpl fileSelectorApi;
+  private BinaryMessenger binaryMessenger;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-
+    binaryMessenger = binding.getBinaryMessenger();
   }
 
   @Override
@@ -29,6 +31,7 @@ public class FileSelectorAndroidPlugin implements FlutterPlugin, ActivityAware {
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
     fileSelectorApi = new FileSelectorApiImpl(binding);
+    GeneratedFileSelectorApi.FileSelectorApi.setup(binaryMessenger, fileSelectorApi);
   }
 
   @Override
