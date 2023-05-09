@@ -20,6 +20,8 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('Camera', () {
+    tearDown(() => TestCameraHostApi.setup(null));
+
     test('getCameraInfo makes call to retrieve expected CameraInfo', () async {
       final MockTestCameraHostApi mockApi = MockTestCameraHostApi();
       TestCameraHostApi.setup(mockApi);
@@ -52,7 +54,7 @@ void main() {
       verify(mockApi.getCameraInfo(cameraIdentifier));
     });
 
-    test('flutterApiCreateTest', () {
+    test('flutterApiCreate makes call to add instance to instance manager', () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
