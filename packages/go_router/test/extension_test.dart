@@ -37,7 +37,7 @@ void main() {
       final GoRouter router = await createGoRouter(tester);
       await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
-      expect(router.location, '/page-0/settings');
+      expect(router.location, '/page-0/settings?search=notification');
     });
   });
 }
@@ -49,7 +49,8 @@ class _MyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         onPressed: () => context.replaceNamed('page-0',
-            pathParameters: <String, String>{'tab': 'settings'}),
+            pathParameters: <String, String>{'tab': 'settings'},
+            queryParameters: <String, String>{'search': 'notification'}),
         child: const Text('Settings'));
   }
 }
