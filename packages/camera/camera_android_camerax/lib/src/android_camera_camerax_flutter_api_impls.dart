@@ -14,9 +14,13 @@ import 'image_proxy.dart';
 import 'java_object.dart';
 import 'live_data.dart';
 import 'observer.dart';
+import 'pending_recording.dart';
 import 'plane_proxy.dart';
 import 'process_camera_provider.dart';
+import 'recorder.dart';
+import 'recording.dart';
 import 'system_services.dart';
+import 'video_capture.dart';
 import 'zoom_state.dart';
 
 /// Handles initialization of Flutter APIs for the Android CameraX library.
@@ -31,6 +35,10 @@ class AndroidCameraXCameraFlutterApis {
     SystemServicesFlutterApiImpl? systemServicesFlutterApiImpl,
     CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
     CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
+    PendingRecordingFlutterApiImpl? pendingRecordingFlutterApiImpl,
+    RecordingFlutterApiImpl? recordingFlutterApiImpl,
+    RecorderFlutterApiImpl? recorderFlutterApiImpl,
+    VideoCaptureFlutterApiImpl? videoCaptureFlutterApiImpl,
     ExposureStateFlutterApiImpl? exposureStateFlutterApiImpl,
     ZoomStateFlutterApiImpl? zoomStateFlutterApiImpl,
     LiveDataFlutterApiImpl? liveDataFlutterApiImpl,
@@ -55,6 +63,14 @@ class AndroidCameraXCameraFlutterApis {
         cameraStateErrorFlutterApiImpl ?? CameraStateErrorFlutterApiImpl();
     this.cameraStateFlutterApiImpl =
         cameraStateFlutterApiImpl ?? CameraStateFlutterApiImpl();
+    this.pendingRecordingFlutterApiImpl =
+        pendingRecordingFlutterApiImpl ?? PendingRecordingFlutterApiImpl();
+    this.recordingFlutterApiImpl =
+        recordingFlutterApiImpl ?? RecordingFlutterApiImpl();
+    this.recorderFlutterApiImpl =
+        recorderFlutterApiImpl ?? RecorderFlutterApiImpl();
+    this.videoCaptureFlutterApiImpl =
+        videoCaptureFlutterApiImpl ?? VideoCaptureFlutterApiImpl();
     this.exposureStateFlutterApiImpl =
         exposureStateFlutterApiImpl ?? ExposureStateFlutterApiImpl();
     this.zoomStateFlutterApiImpl =
@@ -110,6 +126,18 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api implementation for [Observer].
   late final ObserverFlutterApiImpl? observerFlutterApiImpl;
 
+  /// Flutter Api for [PendingRecording].
+  late final PendingRecordingFlutterApiImpl pendingRecordingFlutterApiImpl;
+
+  /// Flutter Api for [Recording].
+  late final RecordingFlutterApiImpl recordingFlutterApiImpl;
+
+  /// Flutter Api for [Recorder].
+  late final RecorderFlutterApiImpl recorderFlutterApiImpl;
+
+  /// Flutter Api for [VideoCapture].
+  late final VideoCaptureFlutterApiImpl videoCaptureFlutterApiImpl;
+
   /// Flutter Api for [ExposureState].
   late final ExposureStateFlutterApiImpl exposureStateFlutterApiImpl;
 
@@ -137,6 +165,10 @@ class AndroidCameraXCameraFlutterApis {
       SystemServicesFlutterApi.setup(systemServicesFlutterApiImpl);
       CameraStateErrorFlutterApi.setup(cameraStateErrorFlutterApiImpl);
       CameraStateFlutterApi.setup(cameraStateFlutterApiImpl);
+      PendingRecordingFlutterApi.setup(pendingRecordingFlutterApiImpl);
+      RecordingFlutterApi.setup(recordingFlutterApiImpl);
+      RecorderFlutterApi.setup(recorderFlutterApiImpl);
+      VideoCaptureFlutterApi.setup(videoCaptureFlutterApiImpl);
       ExposureStateFlutterApi.setup(exposureStateFlutterApiImpl);
       ZoomStateFlutterApi.setup(zoomStateFlutterApiImpl);
       AnalyzerFlutterApi.setup(analyzerFlutterApiImpl);

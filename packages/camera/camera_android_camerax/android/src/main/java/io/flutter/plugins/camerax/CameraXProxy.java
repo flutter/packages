@@ -13,6 +13,7 @@ import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.Preview;
+import androidx.camera.video.Recorder;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.io.File;
@@ -66,7 +67,14 @@ public class CameraXProxy {
     return new SystemServicesFlutterApiImpl(binaryMessenger);
   }
 
+  /** Creates an instance of {@link Recorder.Builder}. */
+  @NonNull
+  public Recorder.Builder createRecorderBuilder() {
+    return new Recorder.Builder();
+  }
+
   /** Creates a builder for an instance of the {@link ImageCapture} use case. */
+  @NonNull
   public ImageCapture.Builder createImageCaptureBuilder() {
     return new ImageCapture.Builder();
   }

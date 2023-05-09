@@ -61,6 +61,25 @@ class SystemServices {
 
     api.stopListeningForDeviceOrientationChange();
   }
+
+  /// Returns a file path which was used to create a temporary file.
+  /// Prefix is a part of the file name, and suffix is the file extension.
+  ///
+  /// The file and path constraints are determined by the implementation of
+  /// File.createTempFile(prefix, suffix, cacheDir), on the android side, where
+  /// where cacheDir is the cache directory identified by the current application
+  /// context using context.getCacheDir().
+  ///
+  /// Ex: getTempFilePath('prefix', 'suffix') would return a string of the form
+  ///     '<cachePath>/prefix3213453.suffix', where the numbers after prefix and
+  ///     before suffix are determined by the call to File.createTempFile and
+  ///     therefore random.
+  static Future<String> getTempFilePath(String prefix, String suffix,
+      {BinaryMessenger? binaryMessenger}) {
+    final SystemServicesHostApi api =
+        SystemServicesHostApi(binaryMessenger: binaryMessenger);
+    return api.getTempFilePath(prefix, suffix);
+  }
 }
 
 /// Host API implementation of [SystemServices].
