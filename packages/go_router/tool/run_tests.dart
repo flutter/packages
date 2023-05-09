@@ -12,14 +12,15 @@ import 'dart:io';
 import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as p;
 
-/// This test runner simulates a consumption of go_router that checks if
-/// the breaking changes introduced in `V7.0.0` are applied correctly.
-/// This is done by copying the `test_fixes/` directory to a temp directory
-/// that references `go_router`, and running `dart fix --compare-to-golden`
-/// on the temp directory.
+// This test runner simulates a consumption of go_router that checks if
+// the dart fixes are applied correctly.
+// This is done by copying the `test_fixes/` directory to a temp directory
+// that references `go_router`, and running `dart fix --compare-to-golden`
+// on the temp directory.
 Future<void> main(List<String> args) async {
   /// The go_router directory.
-  final Directory packageRoot = File.fromUri(Platform.script).parent.parent;
+  final Directory goRouterPackageRoot =
+      File.fromUri(Platform.script).parent.parent;
 
   // The target temp directory.
   final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
@@ -30,10 +31,11 @@ Future<void> main(List<String> args) async {
     exit(statusCode);
   }
 
-  // Copies the test_fixes folder to the temporary testFixesTargetDir
+  // Copy the test_fixes folder to the temporary testFixesTargetDir.
+  //
   // This also creates the proper pubspec.yaml in the temp directory.
   await _prepareTemplate(
-    packageRoot: packageRoot,
+    packageRoot: goRouterPackageRoot,
     testFixesTargetDir: testFixesTargetDir,
   );
 
@@ -51,8 +53,7 @@ Future<void> main(List<String> args) async {
     await cleanUpAndExit(pubGetStatusCode);
   }
 
-  // This is the actual test that runs dart fix --compare-to-golden
-  // in the temp directory (the actual test).
+  // Run dart fix --compare-to-golden in the temp directory.
   final int dartFixStatusCode = await _runProcess(
     'dart',
     <String>[
