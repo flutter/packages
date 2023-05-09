@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:file_selector_android/file_selector_android.dart';
+import 'package:file_selector_android/src/file_selector_android.dart';
 import 'package:file_selector_android/file_selector_android_method_channel.dart';
 import 'package:file_selector_android/file_selector_android_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';

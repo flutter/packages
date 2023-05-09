@@ -14,11 +14,6 @@ import 'package:pigeon/pigeon.dart';
     javaOptions: JavaOptions(
       package: 'dev.flutter.packages.file_selector_android',
       className: 'GeneratedFileSelectorApi',
-      // copyrightHeader: <String>[
-      //   'Copyright 2013 The Flutter Authors. All rights reserved.',
-      //   'Use of this source code is governed by a BSD-style license that can be',
-      //   'found in the LICENSE file.',
-      // ],
     ),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
@@ -32,8 +27,8 @@ abstract class FileSelectorApi {
   List<String?> openFiles(String? initialDirectory, List<String?>? mimeTypes);
 
   @async
-  Future<String?> getDirectoryPath(String? initialDirectory);
+  String? getDirectoryPath(String? initialDirectory);
 
   @async
-  Future<List<String>> getDirectoryPaths(String? initialDirectory);
+  List<String?> getDirectoryPaths(String? initialDirectory);
 }
