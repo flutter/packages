@@ -148,10 +148,12 @@ public class PreviewTest {
     verify(mockSurfaceRequest)
         .provideSurface(surfaceCaptor.capture(), any(Executor.class), consumerCaptor.capture());
 
-    // Test that the surface derived from the surface texture entry will be provided to the surface request.
+    // Test that the surface derived from the surface texture entry will be provided to the surface
+    // request.
     assertEquals(surfaceCaptor.getValue(), mockSurface);
 
-    // Test that the Consumer used to handle surface request result releases Flutter surface texture appropriately
+    // Test that the Consumer used to handle surface request result releases Flutter surface texture
+    // appropriately
     // and sends camera errors appropriately.
     Consumer<SurfaceRequest.Result> capturedConsumer = consumerCaptor.getValue();
 

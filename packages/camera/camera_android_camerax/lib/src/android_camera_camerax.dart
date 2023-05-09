@@ -17,12 +17,16 @@ import 'exposure_state.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
+import 'pending_recording.dart';
 import 'plane_proxy.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
+import 'recorder.dart';
+import 'recording.dart';
 import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
+import 'video_capture.dart';
 import 'zoom_state.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
@@ -49,7 +53,32 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Preview? preview;
 
+  /// The [VideoCapture] instance that can be instantiated and configured to
+  /// handle video recording
+  @visibleForTesting
+  VideoCapture? videoCapture;
+
+  /// The [Recorder] instance handling the current creating a new [PendingRecording].
+  @visibleForTesting
+  Recorder? recorder;
+
+  /// The [PendingRecording] instance used to create an active [Recording].
+  @visibleForTesting
+  PendingRecording? pendingRecording;
+
+  /// The [Recording] instance representing the current recording.
+  @visibleForTesting
+  Recording? recording;
+
+  /// The path at which the video file will be saved for the current [Recording].
+  @visibleForTesting
+  String? videoOutputPath;
+
   bool _previewIsPaused = false;
+
+  /// The prefix used to create the filename for video recording files.
+  @visibleForTesting
+  final String videoPrefix = 'MOV';
 
   /// The [ImageCapture] instance that can be configured to capture a still image.
   @visibleForTesting
@@ -149,7 +178,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// In the CameraX library, cameras are accessed by combining [UseCase]s
   /// to an instance of a [ProcessCameraProvider]. Thus, to create an
-  /// unitialized camera instance, this method retrieves a
+  /// uninitialized camera instance, this method retrieves a
   /// [ProcessCameraProvider] instance.
   ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
@@ -192,8 +221,14 @@ class AndroidCameraCameraX extends CameraPlatform {
         _getTargetResolutionForImageCapture(_resolutionPreset);
     imageCapture = createImageCapture(null, imageCaptureTargetResolution);
 
+    // Configure VideoCapture and Recorder instances.
+    // TODO(gmackall): Enable video capture resolution configuration in createRecorder().
+    recorder = createRecorder();
+    videoCapture = await createVideoCapture(recorder!);
+
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
-    // instance as bound but not paused.
+    // instance as bound but not paused. Video capture is bound at first use
+    // instead of here.
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
     cameraInfo = await camera!.getCameraInfo();
@@ -377,6 +412,78 @@ class AndroidCameraCameraX extends CameraPlatform {
     final String picturePath = await imageCapture!.takePicture();
 
     return XFile(picturePath);
+  }
+
+  /// Configures and starts a video recording. Returns silently without doing
+  /// anything if there is currently an active recording.
+  @override
+  Future<void> startVideoRecording(int cameraId,
+      {Duration? maxVideoDuration}) async {
+    assert(cameraSelector != null);
+    assert(processCameraProvider != null);
+
+    if (recording != null) {
+      // There is currently an active recording, so do not start a new one.
+      return;
+    }
+
+    if (!(await processCameraProvider!.isBound(videoCapture!))) {
+      camera = await processCameraProvider!
+          .bindToLifecycle(cameraSelector!, <UseCase>[videoCapture!]);
+    }
+
+    videoOutputPath =
+        await SystemServices.getTempFilePath(videoPrefix, '.temp');
+    pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
+    recording = await pendingRecording!.start();
+  }
+
+  /// Stops the video recording and returns the file where it was saved.
+  /// Throws a CameraException if the recording is currently null, or if the
+  /// videoOutputPath is null.
+  ///
+  /// If the videoOutputPath is null the recording objects are cleaned up
+  /// so starting a new recording is possible.
+  @override
+  Future<XFile> stopVideoRecording(int cameraId) async {
+    if (recording == null) {
+      throw CameraException(
+          'videoRecordingFailed',
+          'Attempting to stop a '
+              'video recording while no recording is in progress.');
+    }
+    if (videoOutputPath == null) {
+      // Stop the current active recording as we will be unable to complete it
+      // in this error case.
+      recording!.close();
+      recording = null;
+      pendingRecording = null;
+      throw CameraException(
+          'INVALID_PATH',
+          'The platform did not return a path '
+              'while reporting success. The platform should always '
+              'return a valid path or report an error.');
+    }
+    recording!.close();
+    recording = null;
+    pendingRecording = null;
+    return XFile(videoOutputPath!);
+  }
+
+  /// Pause the current video recording if it is not null.
+  @override
+  Future<void> pauseVideoRecording(int cameraId) async {
+    if (recording != null) {
+      recording!.pause();
+    }
+  }
+
+  /// Resume the current video recording if it is not null.
+  @override
+  Future<void> resumeVideoRecording(int cameraId) async {
+    if (recording != null) {
+      recording!.resume();
+    }
   }
 
   /// A new streamed frame is available.
@@ -603,6 +710,18 @@ class AndroidCameraCameraX extends CameraPlatform {
       int? flashMode, ResolutionInfo? targetResolution) {
     return ImageCapture(
         targetFlashMode: flashMode, targetResolution: targetResolution);
+  }
+
+  /// Returns a [Recorder] for use in video capture.
+  @visibleForTesting
+  Recorder createRecorder() {
+    return Recorder();
+  }
+
+  /// Returns a [VideoCapture] associated with the provided [Recorder].
+  @visibleForTesting
+  Future<VideoCapture> createVideoCapture(Recorder recorder) async {
+    return VideoCapture.withOutput(recorder);
   }
 
   /// Returns an [ImageAnalysis] configured with specified target resolution.
