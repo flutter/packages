@@ -18,16 +18,14 @@ import 'package:path/path.dart' as p;
 // that references `go_router`, and running `dart fix --compare-to-golden`
 // on the temp directory.
 Future<void> main(List<String> args) async {
-  /// The go_router directory.
   final Directory goRouterPackageRoot =
       File.fromUri(Platform.script).parent.parent;
 
-  // The target temp directory.
-  final Directory testFixesTargetDir = await Directory.systemTemp.createTemp();
+  final Directory testTempDir = await Directory.systemTemp.createTemp();
 
   // Cleans up the temp directory and exits with a given statusCode.
   Future<Never> cleanUpAndExit(int statusCode) async {
-    await testFixesTargetDir.delete(recursive: true);
+    await testTempDir.delete(recursive: true);
     exit(statusCode);
   }
 
@@ -36,7 +34,7 @@ Future<void> main(List<String> args) async {
   // This also creates the proper pubspec.yaml in the temp directory.
   await _prepareTemplate(
     packageRoot: goRouterPackageRoot,
-    testFixesTargetDir: testFixesTargetDir,
+    testTempDir: testTempDir,
   );
 
   // Run dart pub get in the temp directory to set it up.
@@ -46,7 +44,7 @@ Future<void> main(List<String> args) async {
       'pub',
       'get',
     ],
-    workingDirectory: testFixesTargetDir.path,
+    workingDirectory: testTempDir.path,
   );
 
   if (pubGetStatusCode != 0) {
@@ -60,7 +58,7 @@ Future<void> main(List<String> args) async {
       'fix',
       '--compare-to-golden',
     ],
-    workingDirectory: testFixesTargetDir.path,
+    workingDirectory: testTempDir.path,
   );
 
   await cleanUpAndExit(dartFixStatusCode);
@@ -68,18 +66,18 @@ Future<void> main(List<String> args) async {
 
 Future<void> _prepareTemplate({
   required Directory packageRoot,
-  required Directory testFixesTargetDir,
+  required Directory testTempDir,
 }) async {
   // The src test_fixes directory.
   final Directory testFixesSrcDir =
       Directory(p.join(packageRoot.path, 'test_fixes'));
 
   // Copy from src `test_fixes/` to the temp directory.
-  await io.copyPath(testFixesSrcDir.path, testFixesTargetDir.path);
+  await io.copyPath(testFixesSrcDir.path, testTempDir.path);
 
   // The pubspec.yaml file to create.
   final File targetPubspecFile =
-      File(p.join(testFixesTargetDir.path, 'pubspec.yaml'));
+      File(p.join(testTempDir.path, 'pubspec.yaml'));
 
   final String targetYaml = '''
 name: test_fixes
