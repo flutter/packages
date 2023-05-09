@@ -70,7 +70,7 @@ RouteBase get $enumParam => GoRouteData.$route(
 
 extension $EnumParamExtension on EnumParam {
   static EnumParam _fromState(GoRouterState state) => EnumParam(
-        y: _$EnumTestEnumMap._$fromName(state.params['y']!),
+        y: _$EnumTestEnumMap._$fromName(state.pathParameters['y']!),
       );
 
   String get location => GoRouteData.$location(
@@ -79,7 +79,7 @@ extension $EnumParamExtension on EnumParam {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -119,7 +119,8 @@ RouteBase get $defaultValueRoute => GoRouteData.$route(
 
 extension $DefaultValueRouteExtension on DefaultValueRoute {
   static DefaultValueRoute _fromState(GoRouterState state) => DefaultValueRoute(
-        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+        param:
+            _$convertMapValue('param', state.queryParameters, int.parse) ?? 0,
       );
 
   String get location => GoRouteData.$location(
@@ -131,7 +132,7 @@ extension $DefaultValueRouteExtension on DefaultValueRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -160,7 +161,8 @@ RouteBase get $extraValueRoute => GoRouteData.$route(
 
 extension $ExtraValueRouteExtension on ExtraValueRoute {
   static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
-        param: _$convertMapValue('param', state.queryParams, int.parse) ?? 0,
+        param:
+            _$convertMapValue('param', state.queryParameters, int.parse) ?? 0,
         $extra: state.extra as int?,
       );
 
@@ -173,7 +175,8 @@ extension $ExtraValueRouteExtension on ExtraValueRoute {
 
   void go(BuildContext context) => context.go(location, extra: $extra);
 
-  void push(BuildContext context) => context.push(location, extra: $extra);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
@@ -213,7 +216,8 @@ extension $RequiredExtraValueRouteExtension on RequiredExtraValueRoute {
 
   void go(BuildContext context) => context.go(location, extra: $extra);
 
-  void push(BuildContext context) => context.push(location, extra: $extra);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
@@ -259,7 +263,7 @@ extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -312,7 +316,7 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);

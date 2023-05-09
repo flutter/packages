@@ -1,5 +1,10 @@
-## NEXT
+## 0.9.3
 
+* Adds `getDirectoryPaths` for selecting multiple directories.
+
+## 0.9.2+5
+
+* Updates references to the deprecated `macUTIs`.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.9.2+4

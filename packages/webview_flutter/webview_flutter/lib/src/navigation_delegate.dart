@@ -37,7 +37,7 @@ import 'webview_controller.dart';
 class NavigationDelegate {
   /// Constructs a [NavigationDelegate].
   ///
-  /// {@template webview_fluttter.navigation_delegate.constructor}
+  /// {@template webview_fluttter.NavigationDelegate.constructor}
   /// `onUrlChange`: invoked when the underlying web view changes to a new url.
   /// {@endtemplate}
   NavigationDelegate({
@@ -60,6 +60,8 @@ class NavigationDelegate {
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
   /// platform.
+  ///
+  /// {@macro webview_fluttter.NavigationDelegate.constructor}
   ///
   /// {@template webview_flutter.NavigationDelegate.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
@@ -87,8 +89,6 @@ class NavigationDelegate {
   /// );
   /// ```
   /// {@endtemplate}
-  ///
-  /// {@macro webview_fluttter.navigation_delegate.constructor}
   NavigationDelegate.fromPlatformCreationParams(
     PlatformNavigationDelegateCreationParams params, {
     FutureOr<NavigationDecision> Function(NavigationRequest request)?
@@ -110,7 +110,7 @@ class NavigationDelegate {
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
   ///
-  /// {@macro webview_fluttter.navigation_delegate.constructor}
+  /// {@macro webview_fluttter.NavigationDelegate.constructor}
   NavigationDelegate.fromPlatform(
     this.platform, {
     this.onNavigationRequest,

@@ -1,3 +1,24 @@
+## 3.7.0
+
+* Adds support to accept third party cookies. See
+  `AndroidWebViewCookieManager.setAcceptThirdPartyCookies`.
+
+## 3.6.3
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 3.6.2
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 3.6.1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 3.6.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
 ## 3.5.3
 
 * Bumps gradle from 7.2.2 to 8.0.0.

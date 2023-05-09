@@ -35,6 +35,22 @@ class MockTestCameraInfoHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+  @override
+  int getExposureState(int? identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #getExposureState,
+          [identifier],
+        ),
+        returnValue: 0,
+      ) as int);
+  @override
+  int getZoomState(int? identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #getZoomState,
+          [identifier],
+        ),
+        returnValue: 0,
+      ) as int);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
