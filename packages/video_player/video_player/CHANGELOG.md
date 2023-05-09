@@ -1,7 +1,3 @@
-## 2.7.1
-
-* Remove lint ignore.
-
 ## 2.7.0
 
 * New video player network constructor.
