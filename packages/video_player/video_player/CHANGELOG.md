@@ -1,6 +1,7 @@
-## 2.7.0
+## 2.8.0
 
 * New video player network constructor.
+
 ## 2.6.1
 
 * Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
