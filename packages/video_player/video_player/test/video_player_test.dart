@@ -243,6 +243,69 @@ void main() {
   });
 
   group('VideoPlayerController', () {
+    group('legacy initialize', () {
+      test('network', () async {
+        final VideoPlayerController controller = VideoPlayerController.network(
+          'https://127.0.0.1',
+        );
+        await controller.initialize();
+
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].uri,
+          'https://127.0.0.1',
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].formatHint,
+          null,
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
+          <String, String>{},
+        );
+      });
+
+      test('network with hint', () async {
+        final VideoPlayerController controller = VideoPlayerController.network(
+          'https://127.0.0.1',
+          formatHint: VideoFormat.dash,
+        );
+        await controller.initialize();
+
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].uri,
+          'https://127.0.0.1',
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].formatHint,
+          VideoFormat.dash,
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
+          <String, String>{},
+        );
+      });
+
+      test('network with some headers', () async {
+        final VideoPlayerController controller = VideoPlayerController.network(
+          'https://127.0.0.1',
+          httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+        );
+        await controller.initialize();
+
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].uri,
+          'https://127.0.0.1',
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].formatHint,
+          null,
+        );
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'},
+        );
+      });
+    });
     group('initialize', () {
       test('started app lifecycle observing', () async {
         final VideoPlayerController controller =
@@ -265,26 +328,6 @@ void main() {
         expect(fakeVideoPlayerPlatform.dataSources[0].package, null);
       });
 
-      test('legacy network', () async {
-        final VideoPlayerController controller = VideoPlayerController.network(
-          'https://127.0.0.1',
-        );
-        await controller.initialize();
-
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].uri,
-          'https://127.0.0.1',
-        );
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].formatHint,
-          null,
-        );
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
-          <String, String>{},
-        );
-      });
-
       test('network url', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(Uri.parse('https://127.0.0.1'));
@@ -297,27 +340,6 @@ void main() {
         expect(
           fakeVideoPlayerPlatform.dataSources[0].formatHint,
           null,
-        );
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
-          <String, String>{},
-        );
-      });
-
-      test('legacy network with hint', () async {
-        final VideoPlayerController controller = VideoPlayerController.network(
-          'https://127.0.0.1',
-          formatHint: VideoFormat.dash,
-        );
-        await controller.initialize();
-
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].uri,
-          'https://127.0.0.1',
-        );
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].formatHint,
-          VideoFormat.dash,
         );
         expect(
           fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
@@ -347,27 +369,6 @@ void main() {
         );
       });
 
-      test('legacy network with some headers', () async {
-        final VideoPlayerController controller = VideoPlayerController.network(
-          'https://127.0.0.1',
-          httpHeaders: <String, String>{'Authorization': 'Bearer token'},
-        );
-        await controller.initialize();
-
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].uri,
-          'https://127.0.0.1',
-        );
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].formatHint,
-          null,
-        );
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
-          <String, String>{'Authorization': 'Bearer token'},
-        );
-      });
-
       test('network url with some headers', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
@@ -390,22 +391,11 @@ void main() {
         );
       });
 
-      test('init errors', () async {
-        final VideoPlayerController controller = VideoPlayerController.network(
-          'http://testing.com/invalid_url',
-        );
-
-        late Object error;
-        fakeVideoPlayerPlatform.forceInitError = true;
-        await controller.initialize().catchError((Object e) => error = e);
-        final PlatformException platformEx = error as PlatformException;
-        expect(platformEx.code, equals('VideoError'));
-      });
-
       test(
           'when controller is initialized with invalid url it should throw VideoError',
           () async {
         final Uri invalidUrl = Uri.parse('http://testing.com/invalid_url');
+
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(invalidUrl);
 
