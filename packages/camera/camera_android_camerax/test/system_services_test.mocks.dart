@@ -82,4 +82,19 @@ class MockTestSystemServicesHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  String getTempFilePath(
+    String? prefix,
+    String? suffix,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getTempFilePath,
+          [
+            prefix,
+            suffix,
+          ],
+        ),
+        returnValue: '',
+      ) as String);
 }

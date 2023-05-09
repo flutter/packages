@@ -96,8 +96,12 @@ class ImageCapture extends UseCase {
 class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
   /// Constructs a [ImageCaptureHostApiImpl].
   ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
   /// An [instanceManager] is typically passed when a copy of an instance
-  /// contained by an `InstanceManager` is being created.
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   ImageCaptureHostApiImpl(
       {this.binaryMessenger, InstanceManager? instanceManager}) {
     this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
