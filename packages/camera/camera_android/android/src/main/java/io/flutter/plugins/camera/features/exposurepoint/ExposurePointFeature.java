@@ -109,9 +109,28 @@ public class ExposurePointFeature extends CameraFeature<Point> {
     }
   }
 
+  /**
+   * Determines whether the exposure rectangle should be reset based on the current state of the
+   * {@link CaptureRequest.Builder} and the previously set exposure rectangle.
+   *
+   * @param requestBuilder the current {@link CaptureRequest.Builder}
+   * @return true if the exposure rectangle should be reset, false otherwise
+   */
   public boolean shouldReset(@NonNull CaptureRequest.Builder requestBuilder) {
     MeteringRectangle[] currentRectangles = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
 
-    return requestBuilder == null || currentRectangles == null || currentRectangles.length == 0;
+    if (currentRectangles == null || currentRectangles.length == 0) {
+      return true;
+    }
+
+    if (exposureRectangle != null) {
+      for (MeteringRectangle rect : currentRectangles) {
+        if (rect.equals(exposureRectangle)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 }
