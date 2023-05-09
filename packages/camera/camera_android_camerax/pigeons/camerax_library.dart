@@ -141,6 +141,8 @@ abstract class SystemServicesHostApi {
       bool isFrontFacing, int sensorOrientation);
 
   void stopListeningForDeviceOrientationChange();
+
+  String getTempFilePath(String prefix, String suffix);
 }
 
 @FlutterApi()
@@ -159,6 +161,60 @@ abstract class PreviewHostApi {
   void releaseFlutterSurfaceTexture();
 
   ResolutionInfo getResolutionInfo(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestVideoCaptureHostApi')
+abstract class VideoCaptureHostApi {
+  int withOutput(int videoOutputId);
+
+  int getOutput(int identifier);
+}
+
+@FlutterApi()
+abstract class VideoCaptureFlutterApi {
+  void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestRecorderHostApi')
+abstract class RecorderHostApi {
+  void create(int identifier, int? aspectRatio, int? bitRate);
+
+  int getAspectRatio(int identifier);
+
+  int getTargetVideoEncodingBitRate(int identifier);
+
+  int prepareRecording(int identifier, String path);
+}
+
+@FlutterApi()
+abstract class RecorderFlutterApi {
+  void create(int identifier, int? aspectRatio, int? bitRate);
+}
+
+@HostApi(dartHostTestHandler: 'TestPendingRecordingHostApi')
+abstract class PendingRecordingHostApi {
+  int start(int identifier);
+}
+
+@FlutterApi()
+abstract class PendingRecordingFlutterApi {
+  void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestRecordingHostApi')
+abstract class RecordingHostApi {
+  void close(int identifier);
+
+  void pause(int identifier);
+
+  void resume(int identifier);
+
+  void stop(int identifier);
+}
+
+@FlutterApi()
+abstract class RecordingFlutterApi {
+  void create(int identifier);
 }
 
 @HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')

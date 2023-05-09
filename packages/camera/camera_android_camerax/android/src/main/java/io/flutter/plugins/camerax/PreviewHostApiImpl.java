@@ -83,7 +83,9 @@ public class PreviewHostApiImpl implements PreviewHostApi {
             flutterSurface,
             Executors.newSingleThreadExecutor(),
             (result) -> {
-              // See https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result for documentation.
+              // See
+              // https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result
+              // for documentation.
               // Always attempt a release.
               flutterSurface.release();
               int resultCode = result.getResultCode();
