@@ -305,7 +305,7 @@
 
   FLTCreateMessage *create = [FLTCreateMessage
       makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
         httpHeaders:@{}];
@@ -320,6 +320,17 @@
                         XCTAssertEqual(0, [[beforeToleranceArray objectAtIndex:0] intValue]);
                         XCTAssertEqual(0, [[afterToleranceArray objectAtIndex:0] intValue]);
                         [initializedExpectation fulfill];
+                      }];
+
+  XCTestExpectation *initializedExpectationEnd =
+      [self expectationWithDescription:@"seekTo has non-zero tolerance when seeking to end"];
+  // The duration of this video is "0" due to the non standard initiliatazion process.
+  FLTPositionMessage *messageEnd = [FLTPositionMessage makeWithTextureId:textureId position:@0];
+  [pluginWithMockAVPlayer seekTo:messageEnd
+                      completion:^(FlutterError *_Nullable error) {
+                        XCTAssertGreaterThan([[beforeToleranceArray objectAtIndex:1] intValue], 0);
+                        XCTAssertGreaterThan([[afterToleranceArray objectAtIndex:1] intValue], 0);
+                        [initializedExpectationEnd fulfill];
                       }];
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
 }
