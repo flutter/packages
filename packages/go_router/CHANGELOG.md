@@ -1,3 +1,7 @@
+## 7.0.1
+
+* Fixed context.replaceNamed to accept pathParameters and queryParameters.
+
 ## 7.0.0
 
 - **BREAKING CHANGE**:
