@@ -21,3 +21,4 @@
 * Implements image streaming.
 * Provides LifecycleOwner implementation for Activities that use the plugin that do not implement it themselves.
 * Implements retrieval of camera information.
+* Updates README.md with plugin overview and adds contribution guide to CONTRIBUTING.md.
