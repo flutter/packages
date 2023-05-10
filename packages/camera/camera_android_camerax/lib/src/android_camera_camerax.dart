@@ -412,55 +412,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     return zoomState.minZoomRatio;
   }
 
-  /// Gets the minimum supported exposure offset for the selected camera in EV units.
-  ///
-  /// [cameraId] not used.
-  @override
-  Future<double> getMinExposureOffset(int cameraId) async {
-    final ExposureState exposureState = await cameraInfo!.getExposureState();
-    return exposureState.exposureCompensationRange.minCompensation *
-        exposureState.exposureCompensationStep;
-  }
-
-  /// Gets the maximum supported exposure offset for the selected camera in EV units.
-  ///
-  /// [cameraId] not used.
-  @override
-  Future<double> getMaxExposureOffset(int cameraId) async {
-    final ExposureState exposureState = await cameraInfo!.getExposureState();
-    return exposureState.exposureCompensationRange.maxCompensation *
-        exposureState.exposureCompensationStep;
-  }
-
-  /// Gets the supported step size for exposure offset for the selected camera in EV units.
-  ///
-  /// Returns 0 when exposure compensation is not supported.
-  ///
-  /// [cameraId] not used.
-  @override
-  Future<double> getExposureOffsetStepSize(int cameraId) async {
-    final ExposureState exposureState = await cameraInfo!.getExposureState();
-    return exposureState.exposureCompensationStep;
-  }
-
-  /// Gets the maximum supported zoom level for the selected camera.
-  ///
-  /// [cameraId] not used.
-  @override
-  Future<double> getMaxZoomLevel(int cameraId) async {
-    final ZoomState exposureState = await cameraInfo!.getZoomState();
-    return exposureState.maxZoomRatio;
-  }
-
-  /// Gets the minimum supported zoom level for the selected camera.
-  ///
-  /// [cameraId] not used.
-  @override
-  Future<double> getMinZoomLevel(int cameraId) async {
-    final ZoomState exposureState = await cameraInfo!.getZoomState();
-    return exposureState.minZoomRatio;
-  }
-
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {

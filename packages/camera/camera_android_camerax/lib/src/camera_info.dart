@@ -98,23 +98,6 @@ class _CameraInfoHostApiImpl extends CameraInfoHostApi {
     return instanceManager.getInstanceWithWeakReference<LiveData<ZoomState>>(
         zoomStateIdentifier)!;
   }
-
-  /// Gets the [ExposureState] of the specified [CameraInfo] instance.
-  Future<ExposureState> getExposureStateFromInstance(
-      CameraInfo instance) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
-    final int exposureStateIdentifier = await getExposureState(identifier!);
-    return instanceManager
-        .getInstanceWithWeakReference<ExposureState>(exposureStateIdentifier)!;
-  }
-
-  /// Gets the [ZoomState] of the specified [CameraInfo] instance.
-  Future<ZoomState> getZoomStateFromInstance(CameraInfo instance) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
-    final int zoomStateIdentifier = await getZoomState(identifier!);
-    return instanceManager
-        .getInstanceWithWeakReference<ZoomState>(zoomStateIdentifier)!;
-  }
 }
 
 /// Flutter API implementation of [CameraInfo].
