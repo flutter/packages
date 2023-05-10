@@ -193,7 +193,7 @@ class RouteMatchList {
   RouteMatch get last => matches.last;
 
   /// Returns true if the current match intends to display an error screen.
-  bool get isError => matches.length == 1 && matches.first.error != null;
+  bool get isError => error != null
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.firstOrNull?.error;

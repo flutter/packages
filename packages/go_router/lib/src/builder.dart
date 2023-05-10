@@ -16,10 +16,14 @@ import 'pages/material.dart';
 import 'route_data.dart';
 import 'typedefs.dart';
 
-/// On pop page callback that includes the associated [RouteMatch].
+/// Signature for a function that takes in a `route` to be popped with
+/// the `result` and returns a boolean decision on whether the pop
+/// is successful.
 ///
-/// This is a specialized version of [Navigator.onPopPage], used when creating
-/// Navigators in [RouteBuilder].
+/// The `match` is the corresponding [RouteMatch] the `route`
+/// associates with.
+/// 
+/// Used by of [RouteBuilder.onPopPageWithRouteMatch].
 typedef PopPageWithRouteMatchCallback = bool Function(
     Route<dynamic> route, dynamic result, RouteMatch? match);
 
@@ -56,8 +60,12 @@ class RouteBuilder {
   /// changes.
   final List<NavigatorObserver> observers;
 
-  /// Function used as [Navigator.onPopPage] callback, that additionally
-  /// provides the [RouteMatch] associated with the popped Page.
+  /// A callback called when a `route` produced by `match` is about to be popped
+  /// with the `result`.
+  ///
+  /// If this method returns true, this builder pops the `route` and `match`.
+  ///
+  /// If this method returns false, this builder aborts the pop.
   final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
 
   final GoRouterStateRegistry _registry = GoRouterStateRegistry();
@@ -111,6 +119,8 @@ class RouteBuilder {
     GlobalKey<NavigatorState> navigatorKey,
     Map<Page<Object?>, GoRouterState> registry,
   ) {
+    // TODO(chunhtai): move the state from local scope to a central place.
+    // https://github.com/flutter/flutter/issues/126365
     final _PagePopContext pagePopContext =
         _PagePopContext._(onPopPageWithRouteMatch);
     return builderWithNav(

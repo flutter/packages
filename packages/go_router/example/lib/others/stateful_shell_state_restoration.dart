@@ -27,14 +27,14 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
       StackedShellRoute(
         restorationScopeId: 'shell1',
         branches: <StatefulShellBranch>[
-          /// The route branch for the first tab of the bottom navigation bar.
+          // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
             navigatorKey: _tabANavigatorKey,
             restorationScopeId: 'branchA',
             routes: <RouteBase>[
               GoRoute(
-                /// The screen to display as the root in the first tab of the
-                /// bottom navigation bar.
+                // The screen to display as the root in the first tab of the
+                // bottom navigation bar.
                 path: '/a',
                 pageBuilder: (BuildContext context, GoRouterState state) =>
                     const MaterialPage<void>(
@@ -42,9 +42,9 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
                         child:
                             RootScreen(label: 'A', detailsPath: '/a/details')),
                 routes: <RouteBase>[
-                  /// The details screen to display stacked on navigator of the
-                  /// first tab. This will cover screen A but not the application
-                  /// shell (bottom navigation bar).
+                  // The details screen to display stacked on navigator of the
+                  // first tab. This will cover screen A but not the application
+                  // shell (bottom navigation bar).
                   GoRoute(
                     path: 'details',
                     pageBuilder: (BuildContext context, GoRouterState state) =>
@@ -58,15 +58,15 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
             ],
           ),
 
-          /// The route branch for the third tab of the bottom navigation bar.
+          // The route branch for the third tab of the bottom navigation bar.
           StatefulShellBranch(
             restorationScopeId: 'branchB',
             routes: <RouteBase>[
               StatefulShellRoute(
                 restorationScopeId: 'shell2',
 
-                /// This bottom tab uses a nested shell, wrapping sub routes in a
-                /// top TabBar.
+                // This bottom tab uses a nested shell, wrapping sub routes in a
+                // top TabBar.
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(
                       restorationScopeId: 'branchB1',
@@ -134,11 +134,11 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
                         StatefulNavigationShell navigationShell,
                         List<Widget> children) =>
 
-                    /// Returning a customized container for the branch
-                    /// Navigators (i.e. the `List<Widget> children` argument).
-                    ///
-                    /// See TabbedRootScreen for more details on how the children
-                    /// are used in the TabBarView.
+                    // Returning a customized container for the branch
+                    // Navigators (i.e. the `List<Widget> children` argument).
+                    //
+                    // See TabbedRootScreen for more details on how the children
+                    // are used in the TabBarView.
                     TabbedRootScreen(
                         navigationShell: navigationShell, children: children),
               ),
