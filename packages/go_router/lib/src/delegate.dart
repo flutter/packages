@@ -160,7 +160,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     assert(match != null);
     if (match!.route.onExit != null) {
       // The `onExit` may perform updates to the navigator, such as popping up a
-      // dialog. Using a microtask to ensure the navigator finishes the current
+      // dialog. Use a microtask to ensure the navigator finishes the current
       // update before calling the `onExit`.
       scheduleMicrotask(() async {
         final FutureOr<bool> onExitResult =
