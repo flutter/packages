@@ -76,8 +76,7 @@ Future<void> _prepareTemplate({
   await io.copyPath(testFixesSrcDir.path, testTempDir.path);
 
   // The pubspec.yaml file to create.
-  final File targetPubspecFile =
-      File(p.join(testTempDir.path, 'pubspec.yaml'));
+  final File targetPubspecFile = File(p.join(testTempDir.path, 'pubspec.yaml'));
 
   final String targetYaml = '''
 name: test_fixes
