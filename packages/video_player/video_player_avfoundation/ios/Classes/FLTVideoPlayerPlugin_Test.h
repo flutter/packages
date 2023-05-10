@@ -14,5 +14,5 @@
 @interface FLTVideoPlayerPlugin ()
 
 - (instancetype)initWithFVPAVPlayerFactory:(id<FVPAVPlayerFactoryProtocol>)playerFactory
-                              registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                                 registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end

@@ -286,7 +286,7 @@
       [[StubFVPAVPlayerFactory alloc] initWithPlayer:stubAVPlayer];
   FLTVideoPlayerPlugin *pluginWithMockAVPlayer =
       [[FLTVideoPlayerPlugin alloc] initWithFVPAVPlayerFactory:stubFVPAVPlayerFactory
-                                                  registrar:registrar];
+                                                     registrar:registrar];
 
   FlutterError *error;
   [pluginWithMockAVPlayer initialize:&error];

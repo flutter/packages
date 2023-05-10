@@ -559,11 +559,12 @@ NS_INLINE UIViewController *rootViewController(void) {
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithFVPAVPlayerFactory:[[FVPDefaultAVPlayerFactory alloc] init] registrar:registrar];
+  return [self initWithFVPAVPlayerFactory:[[FVPDefaultAVPlayerFactory alloc] init]
+                                registrar:registrar];
 }
 
 - (instancetype)initWithFVPAVPlayerFactory:(id<FVPAVPlayerFactoryProtocol>)playerFactory
-                              registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                                 registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = [registrar textures];
