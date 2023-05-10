@@ -2087,48 +2087,76 @@ void main() {
     });
   });
 
-  testWidgets('onExit should be executed if provided',
-      (WidgetTester tester) async {
-    int nbOfOnExitCalls = 0;
-    Completer<bool> completer = Completer<bool>();
-    final List<GoRoute> routes = <GoRoute>[
-      GoRoute(
-        path: '/1',
-        builder: (BuildContext context, GoRouterState state) =>
-            const Page1Screen(),
-      ),
-      GoRoute(
-        path: '/2',
-        onExit: (BuildContext context) {
-          nbOfOnExitCalls++;
-          return completer.future;
-        },
-        builder: (BuildContext context, GoRouterState state) =>
-            const Page2Screen(),
-      ),
-    ];
+  group('onExit', () {
+    testWidgets('should be executed when going to another route',
+        (WidgetTester tester) async {
+      int nbOfOnExitPage1Calls = 0;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/1',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Page1Screen(),
+            onExit: (BuildContext context) {
+              nbOfOnExitPage1Calls++;
+              return true;
+            }),
+        GoRoute(
+          path: '/2',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Page2Screen(),
+        ),
+      ];
 
-    final GoRouter router =
-        await createRouter(routes, tester, initialLocation: '/1');
-    router.push('/2');
-    await tester.pumpAndSettle();
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/1');
+      router.go('/2');
+      await tester.pumpAndSettle();
+      expect(nbOfOnExitPage1Calls, 1);
+      expect(router.location, '/2');
+    });
+    testWidgets('should be executed when popping a route',
+        (WidgetTester tester) async {
+      int nbOfOnExitCalls = 0;
+      Completer<bool> completer = Completer<bool>();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/1',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Page1Screen(),
+        ),
+        GoRoute(
+          path: '/2',
+          onExit: (BuildContext context) {
+            nbOfOnExitCalls++;
+            return completer.future;
+          },
+          builder: (BuildContext context, GoRouterState state) =>
+              const Page2Screen(),
+        ),
+      ];
 
-    // Pop a first time and pretend onExit returned false.
-    router.pop();
-    await tester.pump();
-    expect(nbOfOnExitCalls, 1);
-    completer.complete(false);
-    await tester.pump();
-    expect(router.location, '/2');
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/1');
+      router.push('/2');
+      await tester.pumpAndSettle();
 
-    // Pop a second time and pretend onExit returned true.
-    completer = Completer<bool>();
-    router.pop();
-    await tester.pump();
-    expect(nbOfOnExitCalls, 2);
-    completer.complete(true);
-    await tester.pumpAndSettle();
-    expect(router.location, '/1');
+      // Pop a first time and pretend onExit returned false.
+      router.pop();
+      await tester.pump();
+      expect(nbOfOnExitCalls, 1);
+      completer.complete(false);
+      await tester.pump();
+      expect(router.location, '/2');
+
+      // Pop a second time and pretend onExit returned true.
+      completer = Completer<bool>();
+      router.pop();
+      await tester.pump();
+      expect(nbOfOnExitCalls, 2);
+      completer.complete(true);
+      await tester.pumpAndSettle();
+      expect(router.location, '/1');
+    });
   });
   group('initial location', () {
     testWidgets('initial location', (WidgetTester tester) async {

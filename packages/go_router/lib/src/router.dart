@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -192,6 +194,32 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
   void go(String location, {Object? extra}) {
+    final FutureOr<bool> Function(BuildContext context)? onExit =
+        routerDelegate.currentConfiguration.isNotEmpty
+            ? routerDelegate.currentConfiguration.last.route.onExit
+            : null;
+    if (onExit != null) {
+      // TODO(chunhtai): avoid accessing the context directly through global key.
+      // https://github.com/flutter/flutter/issues/99112
+      final FutureOr<bool> result =
+          onExit(_routerDelegate.navigatorKey.currentContext!);
+      if (result is bool) {
+        if (!result) {
+          return;
+        }
+      } else {
+        result.then((bool result) {
+          if (result) {
+            _goToLocation(location, extra);
+          }
+        });
+        return;
+      }
+    }
+    _goToLocation(location, extra);
+  }
+
+  void _goToLocation(String location, [Object? extra]) {
     assert(() {
       log.info('going to $location');
       return true;
