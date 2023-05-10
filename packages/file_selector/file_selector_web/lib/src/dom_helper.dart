@@ -28,7 +28,6 @@ class DomHelper {
     final Completer<List<XFile>> completer = Completer<List<XFile>>();
     final FileUploadInputElement inputElement =
         input ?? FileUploadInputElement();
-    bool changeEventTriggered = false;
 
     _container.children.add(
       inputElement
@@ -40,7 +39,6 @@ class DomHelper {
       final List<XFile> files =
           inputElement.files!.map(_convertFileToXFile).toList();
       inputElement.remove();
-      changeEventTriggered = true;
       completer.complete(files);
     });
 
@@ -54,18 +52,11 @@ class DomHelper {
       completer.completeError(platformException);
     });
 
-    void cancelledEventListener(Event e) {
-      window.removeEventListener('focus', cancelledEventListener);
-      Future<dynamic>.delayed(const Duration(milliseconds: 500)).then((_) {
-        if (!changeEventTriggered && multiple) {
-          inputElement.remove();
-          changeEventTriggered = true;
-          completer.complete(<XFile>[]);
-        }
-      });
-    }
-
-    window.addEventListener('focus', cancelledEventListener);
+    inputElement.addEventListener('cancel', (_){
+      print('cancel click');
+      inputElement.remove();
+      completer.complete(<XFile>[]);
+    });
 
     inputElement.click();
 
