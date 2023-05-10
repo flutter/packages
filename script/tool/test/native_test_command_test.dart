@@ -438,7 +438,10 @@ void main() {
           orderedEquals(<ProcessCall>[
             ProcessCall(
               androidFolder.childFile('gradlew').path,
-              const <String>['testDebugUnitTest'],
+              const <String>[
+                'app:testDebugUnitTest',
+                'plugin:testDebugUnitTest',
+              ],
               androidFolder.path,
             ),
           ]),
@@ -470,8 +473,57 @@ void main() {
           orderedEquals(<ProcessCall>[
             ProcessCall(
               androidFolder.childFile('gradlew').path,
-              const <String>['testDebugUnitTest'],
+              const <String>[
+                'app:testDebugUnitTest',
+                'plugin:testDebugUnitTest',
+              ],
               androidFolder.path,
+            ),
+          ]),
+        );
+      });
+
+      test('only runs plugin-level unit tests once', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformAndroid: const PlatformDetails(PlatformSupport.inline)
+          },
+          examples: <String>['example1', 'example2'],
+          extraFiles: <String>[
+            'example/example1/android/gradlew',
+            'example/example1/android/app/src/test/example_test.java',
+            'example/example2/android/gradlew',
+            'example/example2/android/app/src/test/example_test.java',
+          ],
+        );
+
+        await runCapturingPrint(runner, <String>['native-test', '--android']);
+
+        final List<RepositoryPackage> examples = plugin.getExamples().toList();
+        final Directory androidFolder1 =
+            examples[0].platformDirectory(FlutterPlatform.android);
+        final Directory androidFolder2 =
+            examples[1].platformDirectory(FlutterPlatform.android);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              androidFolder1.childFile('gradlew').path,
+              const <String>[
+                'app:testDebugUnitTest',
+                'plugin:testDebugUnitTest',
+              ],
+              androidFolder1.path,
+            ),
+            ProcessCall(
+              androidFolder2.childFile('gradlew').path,
+              const <String>[
+                'app:testDebugUnitTest',
+              ],
+              androidFolder2.path,
             ),
           ]),
         );
@@ -629,7 +681,10 @@ public class FlutterActivityTest {
           orderedEquals(<ProcessCall>[
             ProcessCall(
               androidFolder.childFile('gradlew').path,
-              const <String>['testDebugUnitTest'],
+              const <String>[
+                'app:testDebugUnitTest',
+                'plugin:testDebugUnitTest',
+              ],
               androidFolder.path,
             ),
             ProcessCall(
@@ -708,7 +763,10 @@ public class FlutterActivityTest {
           orderedEquals(<ProcessCall>[
             ProcessCall(
               androidFolder.childFile('gradlew').path,
-              const <String>['testDebugUnitTest'],
+              const <String>[
+                'app:testDebugUnitTest',
+                'plugin:testDebugUnitTest',
+              ],
               androidFolder.path,
             ),
           ]),
@@ -854,7 +912,7 @@ public class FlutterActivityTest {
         processRunner.mockProcessesForExecutable[gradlewPath] =
             <FakeProcessInfo>[
           FakeProcessInfo(
-              MockProcess(), <String>['testDebugUnitTest']), // unit passes
+              MockProcess(), <String>['app:testDebugUnitTest']), // unit passes
           FakeProcessInfo(MockProcess(exitCode: 1),
               <String>['app:connectedAndroidTest']), // integration fails
         ];
@@ -1395,8 +1453,13 @@ public class FlutterActivityTest {
         expect(
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
-              ProcessCall(androidFolder.childFile('gradlew').path,
-                  const <String>['testDebugUnitTest'], androidFolder.path),
+              ProcessCall(
+                  androidFolder.childFile('gradlew').path,
+                  const <String>[
+                    'app:testDebugUnitTest',
+                    'plugin:testDebugUnitTest',
+                  ],
+                  androidFolder.path),
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'foo_destination'),
