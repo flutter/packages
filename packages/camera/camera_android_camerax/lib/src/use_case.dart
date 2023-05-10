@@ -4,7 +4,7 @@
 
 import 'java_object.dart';
 
-/// An object representing the different functionalitites of the camera.
+/// An object representing the different functionalities of the camera.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/UseCase.
 class UseCase extends JavaObject {
