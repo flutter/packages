@@ -83,7 +83,7 @@ void main() {
     });
 
     test(
-        'throws when StackedShellRoute sub-route uses incorrect parentNavigatorKey',
+        'throws when StatefulShellRoute sub-route uses incorrect parentNavigatorKey',
         () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -125,7 +125,7 @@ void main() {
     });
 
     test(
-        'does not throw when StackedShellRoute sub-route uses correct parentNavigatorKeys',
+        'does not throw when StatefulShellRoute sub-route uses correct parentNavigatorKeys',
         () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -160,7 +160,7 @@ void main() {
     });
 
     test(
-        'throws when a sub-route of StackedShellRoute has a parentNavigatorKey',
+        'throws when a sub-route of StatefulShellRoute has a parentNavigatorKey',
         () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -205,7 +205,7 @@ void main() {
       );
     });
 
-    test('throws when StackedShellRoute has duplicate navigator keys', () {
+    test('throws when StatefulShellRoute has duplicate navigator keys', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
       final GlobalKey<NavigatorState> keyA =
@@ -236,7 +236,7 @@ void main() {
     });
 
     test(
-        'throws when a child of StackedShellRoute has an incorrect '
+        'throws when a child of StatefulShellRoute has an incorrect '
         'parentNavigatorKey', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -277,7 +277,7 @@ void main() {
     });
 
     test(
-        'throws when a branch of a StackedShellRoute has an incorrect '
+        'throws when a branch of a StatefulShellRoute has an incorrect '
         'initialLocation', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -323,7 +323,7 @@ void main() {
     });
 
     test(
-        'throws when a branch of a StackedShellRoute has a initialLocation '
+        'throws when a branch of a StatefulShellRoute has a initialLocation '
         'that is not a descendant of the same branch', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -378,7 +378,7 @@ void main() {
     });
 
     test(
-        'does not throw when a branch of a StackedShellRoute has correctly '
+        'does not throw when a branch of a StatefulShellRoute has correctly '
         'configured initialLocations', () {
       final GlobalKey<NavigatorState> root =
           GlobalKey<NavigatorState>(debugLabel: 'root');

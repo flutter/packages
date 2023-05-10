@@ -619,7 +619,7 @@ class ShellRoute extends ShellRouteBase {
 /// when switching active branch.
 ///
 /// For a default implementation of [navigatorContainerBuilder], consider using
-/// [StackedShellRoute].
+/// [StatefulShellRoute].
 ///
 /// Below is a simple example of how a router configuration with
 /// StatefulShellRoute could be achieved. In this example, a
@@ -692,7 +692,7 @@ class ShellRoute extends ShellRouteBase {
 /// ```
 ///
 /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
-/// for a complete runnable example using StatefulShellRoute and StackedShellRoute.
+/// for a complete runnable example using StatefulShellRoute and StatefulShellRoute.
 class StatefulShellRoute extends ShellRouteBase {
   /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch]es,
   /// each representing a separate nested navigation tree (branch).

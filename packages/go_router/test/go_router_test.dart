@@ -2504,7 +2504,7 @@ void main() {
       expect(imperativeRouteMatch.matches.pathParameters['pid'], pid);
     });
 
-    testWidgets('StackedShellRoute supports nested routes with params',
+    testWidgets('StatefulShellRoute supports nested routes with params',
         (WidgetTester tester) async {
       StatefulNavigationShell? routeState;
       final List<RouteBase> routes = <RouteBase>[
@@ -3075,7 +3075,7 @@ void main() {
       expect(find.text('Screen C'), findsNothing);
     });
 
-    testWidgets('Builds StackedShellRoute', (WidgetTester tester) async {
+    testWidgets('Builds StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
 
@@ -3114,7 +3114,7 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
     });
 
-    testWidgets('Builds StackedShellRoute as a sub-route',
+    testWidgets('Builds StatefulShellRoute as a sub-route',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -3162,7 +3162,7 @@ void main() {
     });
 
     testWidgets(
-        'Navigation with goBranch is correctly handled in StackedShellRoute',
+        'Navigation with goBranch is correctly handled in StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -3254,7 +3254,7 @@ void main() {
     });
 
     testWidgets(
-        'Navigates to correct nested navigation tree in StackedShellRoute '
+        'Navigates to correct nested navigation tree in StatefulShellRoute '
         'and maintains state', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -3324,7 +3324,7 @@ void main() {
       expect(statefulWidgetKey.currentState?.counter, equals(0));
     });
 
-    testWidgets('Maintains state for nested StackedShellRoute',
+    testWidgets('Maintains state for nested StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -3421,7 +3421,7 @@ void main() {
     });
 
     testWidgets(
-        'Pops from the correct Navigator in a StackedShellRoute when the '
+        'Pops from the correct Navigator in a StatefulShellRoute when the '
         'Android back button is pressed', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -3511,7 +3511,7 @@ void main() {
 
     testWidgets(
         'Maintains extra navigation information when navigating '
-        'between branches in StackedShellRoute', (WidgetTester tester) async {
+        'between branches in StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
       StatefulNavigationShell? routeState;
@@ -3564,7 +3564,7 @@ void main() {
 
     testWidgets(
         'Pushed non-descendant routes are correctly restored when '
-        'navigating between branches in StackedShellRoute',
+        'navigating between branches in StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -3629,7 +3629,7 @@ void main() {
 
     testWidgets(
         'Redirects are correctly handled when switching branch in a '
-        'StackedShellRoute', (WidgetTester tester) async {
+        'StatefulShellRoute', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
       StatefulNavigationShell? routeState;
@@ -3724,7 +3724,7 @@ void main() {
     });
 
     testWidgets(
-        'Pushed top-level route is correctly handled by StackedShellRoute',
+        'Pushed top-level route is correctly handled by StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -3954,7 +3954,7 @@ void main() {
       );
 
       testWidgets(
-        'It checks if StackedShellRoute navigators can pop',
+        'It checks if StatefulShellRoute navigators can pop',
         (WidgetTester tester) async {
           final GlobalKey<NavigatorState> rootNavigatorKey =
               GlobalKey<NavigatorState>();
@@ -4015,7 +4015,7 @@ void main() {
           expect(find.text('Screen B detail', skipOffstage: false),
               findsOneWidget);
           expect(router.canPop(), true);
-          // Verify that it is actually the StackedShellRoute that reports
+          // Verify that it is actually the StatefulShellRoute that reports
           // canPop = true
           expect(rootNavigatorKey.currentState?.canPop(), false);
         },
@@ -4370,7 +4370,7 @@ void main() {
       expect(statefulWidgetKeyA.currentState?.counter, equals(1));
     });
 
-    testWidgets('Restores state of branches in StackedShellRoute correctly',
+    testWidgets('Restores state of branches in StatefulShellRoute correctly',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -4503,7 +4503,7 @@ void main() {
     });
 
     testWidgets(
-        'Restores state of imperative routes in StackedShellRoute correctly',
+        'Restores state of imperative routes in StatefulShellRoute correctly',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();

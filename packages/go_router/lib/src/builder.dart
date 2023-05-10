@@ -60,6 +60,8 @@ class RouteBuilder {
   /// changes.
   final List<NavigatorObserver> observers;
 
+  final GoRouterStateRegistry _registry = GoRouterStateRegistry();
+
   /// A callback called when a `route` produced by `match` is about to be popped
   /// with the `result`.
   ///
@@ -67,8 +69,6 @@ class RouteBuilder {
   ///
   /// If this method returns false, this builder aborts the pop.
   final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
-
-  final GoRouterStateRegistry _registry = GoRouterStateRegistry();
 
   /// Caches a HeroController for the nested Navigator, which solves cases where the
   /// Hero Widget animation stops working when navigating.
