@@ -14,6 +14,7 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
+      name: 'Home',
       factory: $HomeRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
