@@ -454,7 +454,8 @@ class MarkdownBuilder implements md.NodeVisitor {
         final Widget? child =
             builders[tag]!.visitElementAfter(element, styleSheet.styles[tag]);
         if (child != null) {
-          current.children[0] = child;
+          current.children.clear();
+          current.children.add(child);
         }
       } else if (tag == 'img') {
         // create an image widget for this image
