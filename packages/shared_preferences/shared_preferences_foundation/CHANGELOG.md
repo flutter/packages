@@ -1,3 +1,7 @@
+## 2.2.2
+
+* Updates minimum iOS version to 11.
+
 ## 2.2.1
 
 * Updates pigeon for null value handling fixes.
