@@ -193,10 +193,13 @@ class RouteMatchList {
   RouteMatch get last => matches.last;
 
   /// Returns true if the current match intends to display an error screen.
-  bool get isError => error != null
+  bool get isError => error != null;
 
   /// Returns the error that this match intends to display.
   Exception? get error => matches.firstOrNull?.error;
+
+  /// The routes for each of the matches.
+  List<RouteBase> get routes => matches.map((RouteMatch e) => e.route).toList();
 
   RouteMatchList _copyWith({
     List<RouteMatch>? matches,
@@ -241,6 +244,9 @@ class RouteMatchList {
   /// Returns a pre-parsed [RouteInformation], containing a reference to this
   /// match list.
   RouteInformation toPreParsedRouteInformation() {
+    // TODO(tolo): remove this ignore and migrate the code
+    // https://github.com/flutter/flutter/issues/124045.
+    // ignore: deprecated_member_use
     return RouteInformation(
       location: uri.toString(),
       state: this,

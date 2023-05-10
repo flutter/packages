@@ -13,7 +13,6 @@ export 'src/configuration.dart'
         RouteBase,
         ShellRoute,
         ShellNavigationContainerBuilder,
-        StackedShellRoute,
         StatefulNavigationShell,
         StatefulNavigationShellState,
         StatefulShellBranch,

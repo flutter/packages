@@ -716,6 +716,29 @@ class StatefulShellRoute extends ShellRouteBase {
         assert(_debugValidateRestorationScopeIds(restorationScopeId, branches)),
         super._(routes: _routes(branches));
 
+  /// Constructs a StatefulShellRoute that uses an [IndexedStack] for its
+  /// nested [Navigator]s.
+  ///
+  /// This constructor provides an IndexedStack based implementation for the
+  /// container ([navigatorContainerBuilder]) used to manage the Widgets
+  /// representing the branch Navigators. A part from that, this constructor
+  /// works the same way as the default constructor.
+  ///
+  /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
+  /// for a complete runnable example using StatefulShellRoute.indexedStack.
+  StatefulShellRoute.indexedStack({
+    required List<StatefulShellBranch> branches,
+    StatefulShellRouteBuilder? builder,
+    StatefulShellRoutePageBuilder? pageBuilder,
+    String? restorationScopeId,
+  }) : this(
+          branches: branches,
+          builder: builder,
+          pageBuilder: pageBuilder,
+          restorationScopeId: restorationScopeId,
+          navigatorContainerBuilder: _indexedStackContainerBuilder,
+        );
+
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
@@ -810,6 +833,12 @@ class StatefulShellRoute extends ShellRouteBase {
           router: GoRouter.of(context),
           containerBuilder: navigatorContainerBuilder);
 
+  static Widget _indexedStackContainerBuilder(BuildContext context,
+      StatefulNavigationShell navigationShell, List<Widget> children) {
+    return _IndexedStackedRouteBranchContainer(
+        currentIndex: navigationShell.currentIndex, children: children);
+  }
+
   static List<RouteBase> _routes(List<StatefulShellBranch> branches) =>
       branches.expand((StatefulShellBranch e) => e.routes).toList();
 
@@ -844,34 +873,6 @@ class StatefulShellRoute extends ShellRouteBase {
           'of the branches');
     }
     return true;
-  }
-}
-
-/// A stateful shell route implementation that uses an [IndexedStack] for its
-/// nested [Navigator]s.
-///
-/// StackedShellRoute provides an IndexedStack based implementation for the
-/// container ([navigatorContainerBuilder]) used to managing the Widgets
-/// representing the branch Navigators. StackedShellRoute is created in the same
-/// way as [StatefulShellRoute], but without the need to provide a
-/// navigatorContainerBuilder parameter.
-///
-/// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
-/// for a complete runnable example using StatefulShellRoute and StackedShellRoute.
-class StackedShellRoute extends StatefulShellRoute {
-  /// Constructs a [StackedShellRoute] from a list of [StatefulShellBranch]es,
-  /// each representing a separate nested navigation tree (branch).
-  StackedShellRoute({
-    required super.branches,
-    super.builder,
-    super.pageBuilder,
-    super.restorationScopeId,
-  }) : super(navigatorContainerBuilder: _navigatorContainerBuilder);
-
-  static Widget _navigatorContainerBuilder(BuildContext context,
-      StatefulNavigationShell navigationShell, List<Widget> children) {
-    return _IndexedStackedRouteBranchContainer(
-        currentIndex: navigationShell.currentIndex, children: children);
   }
 }
 
@@ -1169,6 +1170,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     if (matchlist != null && matchlist.isNotEmpty) {
       final RouteInformation preParsed =
           matchlist.toPreParsedRouteInformation();
+      // TODO(tolo): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use, unnecessary_non_null_assertion
       _router.go(preParsed.location!, extra: preParsed.state);
     } else {
       _router.go(widget.effectiveInitialBranchLocation(index));

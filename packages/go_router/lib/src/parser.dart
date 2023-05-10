@@ -31,8 +31,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// The route matcher.
   final RouteMatcher matcher;
 
-  late final RouteMatchListCodec _matchListCodec = RouteMatchListCodec(matcher);
-
   /// The route redirector.
   final RouteRedirector redirector;
 
@@ -59,19 +57,16 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   ) {
     late final RouteMatchList initialMatches;
     try {
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use, unnecessary_non_null_assertion
       final RouteMatchList? preParsedMatchList =
           RouteMatchList.fromPreParsedRouteInformation(routeInformation);
       if (preParsedMatchList != null) {
         initialMatches = preParsedMatchList;
       } else {
-        final RouteMatchList? decodedMatchList =
-            _matchListCodec.decodeMatchList(routeInformation.state);
-        initialMatches = decodedMatchList ??
-            matcher.findMatch(routeInformation.location!,
-                extra: routeInformation.state);
+        // TODO(chunhtai): remove this ignore and migrate the code
+        // https://github.com/flutter/flutter/issues/124045.
+        // ignore: deprecated_member_use, unnecessary_non_null_assertion
+        initialMatches = matcher.findMatch(routeInformation.location!,
+            extra: routeInformation.state);
       }
     } on MatcherError {
       // TODO(chunhtai): remove this ignore and migrate the code
@@ -90,18 +85,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         pathParameters: const <String, String>{},
       );
     }
-    return processRedirection(initialMatches, context,
-        topRouteInformation: routeInformation);
-  }
-
-  /// Processes any redirections for the provided RouteMatchList.
-  Future<RouteMatchList> processRedirection(
-      RouteMatchList routeMatchList, BuildContext context,
-      {RouteInformation? topRouteInformation}) {
-    final RouteInformation routeInformation = topRouteInformation ??
-        RouteInformation(
-            location: routeMatchList.uri.toString(),
-            state: routeMatchList.extra);
     Future<RouteMatchList> processRedirectorResult(RouteMatchList matches) {
       if (matches.isEmpty) {
         return SynchronousFuture<RouteMatchList>(errorScreen(
@@ -120,7 +103,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
     final FutureOr<RouteMatchList> redirectorResult = redirector(
       context,
-      SynchronousFuture<RouteMatchList>(routeMatchList),
+      SynchronousFuture<RouteMatchList>(initialMatches),
       configuration,
       matcher,
       extra: routeInformation.state,
@@ -145,8 +128,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     if (configuration.isEmpty) {
       return null;
     }
-    final Object? encodedMatchList =
-        _matchListCodec.encodeMatchList(configuration);
     if (configuration.matches.last is ImperativeRouteMatch) {
       configuration =
           (configuration.matches.last as ImperativeRouteMatch<Object?>).matches;
@@ -156,7 +137,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
       location: configuration.uri.toString(),
-      state: encodedMatchList,
+      state: configuration.extra,
     );
   }
 }

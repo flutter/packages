@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -146,16 +145,23 @@ class RouteConfiguration {
                   route != null ? locationForRoute(route) : null;
               assert(
                   initialLocation != null,
-                  'The initial location of a StatefulShellBranch must be '
+                  'The default location of a StatefulShellBranch must be '
                   'derivable from GoRoute descendant');
-            } else {
-              final RouteBase initialLocationRoute =
-                  matcher.findMatch(branch.initialLocation!).last.route;
-              final RouteBase? match = branch.routes.firstWhereOrNull(
-                  (RouteBase e) => _debugIsDescendantOrSame(
-                      ancestor: e, route: initialLocationRoute));
               assert(
-                  match != null,
+                  route!.pathParameters.isEmpty,
+                  'The default location of a StatefulShellBranch cannot be '
+                  'a parameterized route');
+            } else {
+              final List<RouteBase> matchRoutes =
+                  matcher.findMatch(branch.initialLocation!).routes;
+              final int shellIndex = matchRoutes.indexOf(route);
+              bool matchFound = false;
+              if (shellIndex >= 0 && (shellIndex + 1) < matchRoutes.length) {
+                final RouteBase branchRoot = matchRoutes[shellIndex + 1];
+                matchFound = branch.routes.contains(branchRoot);
+              }
+              assert(
+                  matchFound,
                   'The initialLocation (${branch.initialLocation}) of '
                   'StatefulShellBranch must match a descendant route of the '
                   'branch');
@@ -172,12 +178,6 @@ class RouteConfiguration {
     }
     return true;
   }
-
-  /// Tests if a route is a descendant of, or same as, an ancestor route.
-  bool _debugIsDescendantOrSame(
-          {required RouteBase ancestor, required RouteBase route}) =>
-      ancestor == route ||
-      RouteBase.routesRecursively(ancestor.routes).contains(route);
 
   /// The list of top level routes used by [GoRouterDelegate].
   final List<RouteBase> routes;

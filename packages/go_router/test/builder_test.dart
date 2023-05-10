@@ -336,7 +336,7 @@ void main() {
         initialLocation: '/a',
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
-          StackedShellRoute(
+          StatefulShellRoute.indexedStack(
             restorationScopeId: 'shell',
             builder: (BuildContext context, GoRouterState state,
                     StatefulNavigationShell navigationShell) =>

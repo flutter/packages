@@ -2508,7 +2508,7 @@ void main() {
         (WidgetTester tester) async {
       StatefulNavigationShell? routeState;
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
@@ -3080,7 +3080,7 @@ void main() {
           GlobalKey<NavigatorState>();
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
                   StatefulNavigationShell navigationShell) =>
               navigationShell,
@@ -3125,7 +3125,7 @@ void main() {
           builder: (BuildContext context, GoRouterState state) =>
               const Text('Root'),
           routes: <RouteBase>[
-            StackedShellRoute(
+            StatefulShellRoute.indexedStack(
               builder: (BuildContext context, GoRouterState state,
                       StatefulNavigationShell navigationShell) =>
                   navigationShell,
@@ -3171,7 +3171,7 @@ void main() {
       StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
@@ -3263,7 +3263,7 @@ void main() {
       StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
@@ -3334,7 +3334,7 @@ void main() {
       StatefulNavigationShell? routeState2;
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState1 = navigationShell;
@@ -3342,7 +3342,7 @@ void main() {
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(routes: <RouteBase>[
-              StackedShellRoute(
+              StatefulShellRoute.indexedStack(
                   builder: (BuildContext context, GoRouterState state,
                       StatefulNavigationShell navigationShell) {
                     routeState2 = navigationShell;
@@ -3432,7 +3432,7 @@ void main() {
       StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
@@ -3517,7 +3517,7 @@ void main() {
       StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
@@ -3576,7 +3576,7 @@ void main() {
           builder: (BuildContext context, GoRouterState state) =>
               Text('Common - ${state.extra}'),
         ),
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
@@ -3635,7 +3635,7 @@ void main() {
       StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
@@ -3734,7 +3734,7 @@ void main() {
 
       final List<RouteBase> routes = <RouteBase>[
         // First level shell
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             routeState = navigationShell;
@@ -3750,7 +3750,7 @@ void main() {
             ]),
             StatefulShellBranch(routes: <RouteBase>[
               // Second level / nested shell
-              StackedShellRoute(
+              StatefulShellRoute.indexedStack(
                 builder: (BuildContext context, GoRouterState state,
                         StatefulNavigationShell navigationShell) =>
                     navigationShell,
@@ -3962,7 +3962,7 @@ void main() {
             navigatorKey: rootNavigatorKey,
             initialLocation: '/a',
             routes: <RouteBase>[
-              StackedShellRoute(
+              StatefulShellRoute.indexedStack(
                 builder: mockStackedShellBuilder,
                 branches: <StatefulShellBranch>[
                   StatefulShellBranch(routes: <GoRoute>[
@@ -4383,7 +4383,7 @@ void main() {
       StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           restorationScopeId: 'shell',
           pageBuilder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
@@ -4515,7 +4515,7 @@ void main() {
       StatefulNavigationShell? routeStateNested;
 
       final List<RouteBase> routes = <RouteBase>[
-        StackedShellRoute(
+        StatefulShellRoute.indexedStack(
           restorationScopeId: 'shell',
           pageBuilder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
@@ -4550,7 +4550,7 @@ void main() {
             StatefulShellBranch(
                 restorationScopeId: 'branchB',
                 routes: <RouteBase>[
-                  StackedShellRoute(
+                  StatefulShellRoute.indexedStack(
                       restorationScopeId: 'branchB-nested-shell',
                       pageBuilder: (BuildContext context, GoRouterState state,
                           StatefulNavigationShell navigationShell) {

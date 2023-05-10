@@ -97,7 +97,7 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StackedShellRoute(branches: <StatefulShellBranch>[
+              StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
                 StatefulShellBranch(
                   navigatorKey: keyA,
                   routes: <RouteBase>[
@@ -135,7 +135,7 @@ void main() {
       RouteConfiguration(
         navigatorKey: root,
         routes: <RouteBase>[
-          StackedShellRoute(branches: <StatefulShellBranch>[
+          StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
             StatefulShellBranch(
               navigatorKey: keyA,
               routes: <RouteBase>[
@@ -171,7 +171,7 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StackedShellRoute(branches: <StatefulShellBranch>[
+              StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
                 StatefulShellBranch(
                   routes: <RouteBase>[
                     GoRoute(
@@ -221,7 +221,7 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StackedShellRoute(branches: <StatefulShellBranch>[
+              StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
                 StatefulShellBranch(routes: shellRouteChildren)
               ], builder: mockStackedShellBuilder),
             ],
@@ -257,7 +257,7 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StackedShellRoute(branches: <StatefulShellBranch>[
+              StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
                 StatefulShellBranch(
                     routes: <RouteBase>[routeA],
                     navigatorKey: sectionANavigatorKey),
@@ -290,7 +290,7 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StackedShellRoute(branches: <StatefulShellBranch>[
+              StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
                 StatefulShellBranch(
                   initialLocation: '/x',
                   navigatorKey: sectionANavigatorKey,
@@ -336,7 +336,7 @@ void main() {
           RouteConfiguration(
             navigatorKey: root,
             routes: <RouteBase>[
-              StackedShellRoute(branches: <StatefulShellBranch>[
+              StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
                 StatefulShellBranch(
                   initialLocation: '/b',
                   navigatorKey: sectionANavigatorKey,
@@ -351,16 +351,18 @@ void main() {
                   initialLocation: '/b',
                   navigatorKey: sectionBNavigatorKey,
                   routes: <RouteBase>[
-                    StackedShellRoute(branches: <StatefulShellBranch>[
-                      StatefulShellBranch(
-                        routes: <RouteBase>[
-                          GoRoute(
-                            path: '/b',
-                            builder: _mockScreenBuilder,
+                    StatefulShellRoute.indexedStack(
+                        branches: <StatefulShellBranch>[
+                          StatefulShellBranch(
+                            routes: <RouteBase>[
+                              GoRoute(
+                                path: '/b',
+                                builder: _mockScreenBuilder,
+                              ),
+                            ],
                           ),
                         ],
-                      ),
-                    ], builder: mockStackedShellBuilder),
+                        builder: mockStackedShellBuilder),
                   ],
                 ),
               ], builder: mockStackedShellBuilder),
@@ -384,7 +386,7 @@ void main() {
       RouteConfiguration(
         navigatorKey: root,
         routes: <RouteBase>[
-          StackedShellRoute(branches: <StatefulShellBranch>[
+          StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
@@ -415,7 +417,7 @@ void main() {
             StatefulShellBranch(
               initialLocation: '/c/detail',
               routes: <RouteBase>[
-                StackedShellRoute(branches: <StatefulShellBranch>[
+                StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
                   StatefulShellBranch(
                     routes: <RouteBase>[
                       GoRoute(
@@ -481,7 +483,7 @@ void main() {
         final RouteConfiguration config = RouteConfiguration(
           navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'root'),
           routes: <RouteBase>[
-            StackedShellRoute(
+            StatefulShellRoute.indexedStack(
               builder: mockStackedShellBuilder,
               branches: <StatefulShellBranch>[
                 branchA = StatefulShellBranch(routes: <RouteBase>[
@@ -493,7 +495,7 @@ void main() {
                         path: 'x',
                         builder: _mockScreenBuilder,
                         routes: <RouteBase>[
-                          StackedShellRoute(
+                          StatefulShellRoute.indexedStack(
                               builder: mockStackedShellBuilder,
                               branches: <StatefulShellBranch>[
                                 branchY =

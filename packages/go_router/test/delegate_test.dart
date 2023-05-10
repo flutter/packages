@@ -39,7 +39,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
     routes: <RouteBase>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
       GoRoute(path: '/a', builder: (_, __) => const DummyStatefulWidget()),
-      StackedShellRoute(branches: <StatefulShellBranch>[
+      StatefulShellRoute.indexedStack(branches: <StatefulShellBranch>[
         StatefulShellBranch(routes: <RouteBase>[
           GoRoute(
               path: '/c',
