@@ -18,7 +18,7 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ZoomState', () {
-    tearDown(() => TestCameraInfoHostApi.setup(null));
+    tearDown(() => TestInstanceManagerHostApi.setup(null));
 
     test('flutterApi create makes call to create expected ZoomState', () {
       final InstanceManager instanceManager = InstanceManager(

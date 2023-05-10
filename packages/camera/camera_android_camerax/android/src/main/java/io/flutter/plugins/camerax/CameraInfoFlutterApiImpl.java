@@ -17,6 +17,9 @@ public class CameraInfoFlutterApiImpl extends CameraInfoFlutterApi {
     this.instanceManager = instanceManager;
   }
 
+  /**
+   * Creates a {@link CameraInfo} instance in Dart. {@code reply} is not used so it can be empty.
+   */
   void create(CameraInfo cameraInfo, Reply<Void> reply) {
     if (!instanceManager.containsInstance(cameraInfo)) {
       create(instanceManager.addHostCreatedInstance(cameraInfo), reply);
