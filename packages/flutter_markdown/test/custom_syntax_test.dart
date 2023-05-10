@@ -133,7 +133,7 @@ void defineTests() {
       final Finder textFinder = find.byType(Text);
       expect(textFinder, findsOneWidget);
       final Text textWidget = tester.widget(find.byType(Text));
-      expect(textWidget.data, "foo");
+      expect(textWidget.data, 'foo');
     },
   );
 }
@@ -253,6 +253,6 @@ class ContainerBuilder2 extends MarkdownElementBuilder {
 class ImgBuilder extends MarkdownElementBuilder {
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    return Text("foo", style: preferredStyle);
+    return Text('foo', style: preferredStyle);
   }
 }
