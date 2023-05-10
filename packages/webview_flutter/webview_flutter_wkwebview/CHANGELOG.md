@@ -1,3 +1,20 @@
+## 3.4.3
+
+* Replace `describeEnum` with the `name` getter.
+
+## 3.4.2
+
+* Fixes an exception caused by the `onUrlChange` callback passing a null `NSUrl`.
+
+## 3.4.1
+
+* Fixes internal type conversion error.
+* Adds internal unknown enum values to handle api updates.
+
+## 3.4.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
 ## 3.3.0
 
 * Adds support for `PlatformNavigationDelegate.onUrlChange`.

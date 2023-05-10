@@ -70,15 +70,19 @@ class Preview extends UseCase {
 
 /// Host API implementation of [Preview].
 class PreviewHostApiImpl extends PreviewHostApi {
-  /// Constructs a [PreviewHostApiImpl].
+  /// Constructs an [PreviewHostApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   PreviewHostApiImpl({this.binaryMessenger, InstanceManager? instanceManager}) {
     this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
   }
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
   final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
@@ -103,10 +107,8 @@ class PreviewHostApiImpl extends PreviewHostApi {
   /// the ID corresponding to the surface it will provide.
   Future<int> setSurfaceProviderFromInstance(Preview instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No Preview has the identifer of that requested to set the surface provider on.');
-
     final int surfaceTextureEntryId = await setSurfaceProvider(identifier!);
+
     return surfaceTextureEntryId;
   }
 
@@ -119,10 +121,8 @@ class PreviewHostApiImpl extends PreviewHostApi {
   /// Gets the resolution information of the specified [Preview] instance.
   Future<ResolutionInfo> getResolutionInfoFromInstance(Preview instance) async {
     final int? identifier = instanceManager.getIdentifier(instance);
-    assert(identifier != null,
-        'No Preview has the identifer of that requested to get the resolution information for.');
-
     final ResolutionInfo resolutionInfo = await getResolutionInfo(identifier!);
+
     return resolutionInfo;
   }
 }

@@ -6,7 +6,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
-import 'delegate.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
@@ -74,7 +73,6 @@ class RouteBuilder {
     PopPageCallback onPopPage,
     bool routerNeglect,
   ) {
-    _routeMatchLookUp.clear();
     if (matchList.isEmpty) {
       // The build method can be called before async redirect finishes. Build a
       // empty box until then.
@@ -139,7 +137,7 @@ class RouteBuilder {
     final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage =
         <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
     try {
-      assert(_routeMatchLookUp.isEmpty);
+      _routeMatchLookUp.clear();
       _buildRecursive(context, matchList, 0, onPopPage, routerNeglect,
           keyToPage, navigatorKey, registry);
 
@@ -255,7 +253,7 @@ class RouteBuilder {
   }
 
   /// Helper method that builds a [GoRouterState] object for the given [match]
-  /// and [params].
+  /// and [pathParameters].
   @visibleForTesting
   GoRouterState buildState(RouteMatchList matchList, RouteMatch match) {
     final RouteBase route = match.route;
@@ -270,13 +268,14 @@ class RouteBuilder {
     return GoRouterState(
       configuration,
       location: effectiveMatchList.uri.toString(),
-      subloc: match.subloc,
+      matchedLocation: match.matchedLocation,
       name: name,
       path: path,
-      fullpath: effectiveMatchList.fullpath,
-      params: Map<String, String>.from(effectiveMatchList.pathParameters),
+      fullPath: effectiveMatchList.fullPath,
+      pathParameters:
+          Map<String, String>.from(effectiveMatchList.pathParameters),
       error: match.error,
-      queryParams: effectiveMatchList.uri.queryParameters,
+      queryParameters: effectiveMatchList.uri.queryParameters,
       queryParametersAll: effectiveMatchList.uri.queryParametersAll,
       extra: match.extra,
       pageKey: match.pageKey,
@@ -398,7 +397,10 @@ class RouteBuilder {
     return _pageBuilderForAppType!(
       key: state.pageKey,
       name: state.name ?? state.path,
-      arguments: <String, String>{...state.params, ...state.queryParams},
+      arguments: <String, String>{
+        ...state.pathParameters,
+        ...state.queryParameters
+      },
       restorationId: state.pageKey.value,
       child: child,
     );
@@ -445,9 +447,9 @@ class RouteBuilder {
     final GoRouterState state = GoRouterState(
       configuration,
       location: uri.toString(),
-      subloc: uri.path,
+      matchedLocation: uri.path,
       name: null,
-      queryParams: uri.queryParameters,
+      queryParameters: uri.queryParameters,
       queryParametersAll: uri.queryParametersAll,
       error: Exception(error),
       pageKey: const ValueKey<String>('error'),

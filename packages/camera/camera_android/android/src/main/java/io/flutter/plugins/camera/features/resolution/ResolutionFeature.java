@@ -4,12 +4,15 @@
 
 package io.flutter.plugins.camera.features.resolution;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.hardware.camera2.CaptureRequest;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.os.Build;
 import android.util.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
@@ -23,11 +26,11 @@ import java.util.List;
  * required to configure the resolution using the {@link android.hardware.camera2} API.
  */
 public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
-  private Size captureSize;
-  private Size previewSize;
+  @Nullable private Size captureSize;
+  @Nullable private Size previewSize;
   private CamcorderProfile recordingProfileLegacy;
   private EncoderProfiles recordingProfile;
-  private ResolutionPreset currentSetting;
+  @NonNull private ResolutionPreset currentSetting;
   private int cameraId;
 
   /**
@@ -38,7 +41,9 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    * @param cameraName Camera identifier of the camera for which to configure the resolution.
    */
   public ResolutionFeature(
-      CameraProperties cameraProperties, ResolutionPreset resolutionPreset, String cameraName) {
+      @NonNull CameraProperties cameraProperties,
+      @NonNull ResolutionPreset resolutionPreset,
+      @NonNull String cameraName) {
     super(cameraProperties);
     this.currentSetting = resolutionPreset;
     try {
@@ -56,10 +61,12 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    *
    * @return Resolution information to configure the {@link android.hardware.camera2} API.
    */
+  @Nullable
   public CamcorderProfile getRecordingProfileLegacy() {
     return this.recordingProfileLegacy;
   }
 
+  @Nullable
   public EncoderProfiles getRecordingProfile() {
     return this.recordingProfile;
   }
@@ -69,6 +76,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    *
    * @return The optimal preview size.
    */
+  @Nullable
   public Size getPreviewSize() {
     return this.previewSize;
   }
@@ -78,22 +86,26 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    *
    * @return The optimal capture size.
    */
+  @Nullable
   public Size getCaptureSize() {
     return this.captureSize;
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "ResolutionFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @NonNull
   @Override
   public ResolutionPreset getValue() {
     return currentSetting;
   }
 
   @Override
-  public void setValue(ResolutionPreset value) {
+  public void setValue(@NonNull ResolutionPreset value) {
     this.currentSetting = value;
     configureResolution(currentSetting, cameraId);
   }
@@ -104,7 +116,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     // No-op: when setting a resolution there is no need to update the request builder.
   }
 
@@ -146,8 +158,9 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   @TargetApi(Build.VERSION_CODES.R)
   // All of these cases deliberately fall through to get the best available profile.
   @SuppressWarnings({"fallthrough", "deprecation"})
+  @NonNull
   public static CamcorderProfile getBestAvailableCamcorderProfileForResolutionPresetLegacy(
-      int cameraId, ResolutionPreset preset) {
+      int cameraId, @NonNull ResolutionPreset preset) {
     if (cameraId < 0) {
       throw new AssertionError(
           "getBestAvailableCamcorderProfileForResolutionPreset can only be used with valid (>=0) camera identifiers.");
@@ -197,8 +210,9 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   @TargetApi(Build.VERSION_CODES.S)
   // All of these cases deliberately fall through to get the best available profile.
   @SuppressWarnings("fallthrough")
+  @NonNull
   public static EncoderProfiles getBestAvailableCamcorderProfileForResolutionPreset(
-      int cameraId, ResolutionPreset preset) {
+      int cameraId, @NonNull ResolutionPreset preset) {
     if (cameraId < 0) {
       throw new AssertionError(
           "getBestAvailableCamcorderProfileForResolutionPreset can only be used with valid (>=0) camera identifiers.");

@@ -1,3 +1,7 @@
+## 1.0.5
+
+* Updates minimum iOS version to 11 and Flutter version to 3.3.
+
 ## 1.0.4
 
 * Clarifies explanation of endorsement in README.
@@ -15,7 +19,7 @@
 
 ## 1.0.1
 
-* Removes custom modulemap file with "Test" submodule and private headers for Swift migration. 
+* Removes custom modulemap file with "Test" submodule and private headers for Swift migration.
 * Migrates `FLTQuickActionsPlugin` class to Swift.
 
 ## 1.0.0

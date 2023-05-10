@@ -109,5 +109,20 @@ void main() {
       });
       SystemServicesFlutterApiImpl().onCameraError(testErrorDescription);
     });
+
+    test('getTempFilePath completes normally', () async {
+      final MockTestSystemServicesHostApi mockApi =
+          MockTestSystemServicesHostApi();
+      TestSystemServicesHostApi.setup(mockApi);
+      const String testPath = '/test/path/';
+      const String testPrefix = 'MOV';
+      const String testSuffix = '.mp4';
+
+      when(mockApi.getTempFilePath(testPrefix, testSuffix))
+          .thenReturn(testPath + testPrefix + testSuffix);
+      expect(await SystemServices.getTempFilePath(testPrefix, testSuffix),
+          testPath + testPrefix + testSuffix);
+      verify(mockApi.getTempFilePath(testPrefix, testSuffix));
+    });
   });
 }
