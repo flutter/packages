@@ -49,7 +49,7 @@ Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 
 `setZoomLevel` is unimplemented.
 
-## Known Issue
+## Known Issues
 
 ### Receiving `Duplicate class kotlin.*` error
 
