@@ -62,23 +62,19 @@
 @interface VideoPlayerTests : XCTestCase
 @end
 
-@interface AVPlayerMock : AVPlayer
-@property(assign) NSMutableArray *beforeToleranceArray;
-@property(assign) NSMutableArray *afterToleranceArray;
-
+@interface StubAVPlayer : AVPlayer
+@property(readonly) NSMutableArray *beforeTolerances;
+@property(readonly) NSMutableArray *afterTolerances;
 @end
 
-@implementation AVPlayerMock
+@implementation StubAVPlayer
 
-- (instancetype)initWithBeforeArray:(NSMutableArray *)beforeArray
-                         afterArray:(NSMutableArray *)afterArray
-                         playerItem:(AVPlayerItem *)playerItem {
+- (instancetype)init {
   self = [super init];
   if (self) {
-    _beforeToleranceArray = beforeArray;
-    _afterToleranceArray = afterArray;
+    _beforeTolerances = [[NSMutableArray alloc] init];
+    _afterTolerances = [[NSMutableArray alloc] init];
   }
-
   return self;
 }
 
@@ -86,35 +82,31 @@
       toleranceBefore:(CMTime)toleranceBefore
        toleranceAfter:(CMTime)toleranceAfter
     completionHandler:(void (^)(BOOL finished))completionHandler {
-  [_beforeToleranceArray addObject:[NSNumber numberWithLong:toleranceBefore.value]];
-  [_afterToleranceArray addObject:[NSNumber numberWithLong:toleranceAfter.value]];
+  [_beforeTolerances addObject:[NSNumber numberWithLong:toleranceBefore.value]];
+  [_afterTolerances addObject:[NSNumber numberWithLong:toleranceAfter.value]];
   completionHandler(YES);
 }
 
 @end
 
-@interface AVPlayerFactoryFake : NSObject <AVPlayerFactoryProtocol>
-@property(assign) NSMutableArray *beforeToleranceArray;
-@property(assign) NSMutableArray *afterToleranceArray;
+@interface StubFVPAVPlayerFactory : NSObject <FVPAVPlayerFactoryProtocol>
 
-- (instancetype)initWithBeforeArray:(NSMutableArray *)array afterArray:(NSMutableArray *)afterArray;
+@property(copy) StubAVPlayer *stubAVPlayer;
+
+- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer;
 
 @end
 
-@implementation AVPlayerFactoryFake
+@implementation StubFVPAVPlayerFactory
 
-- (instancetype)initWithBeforeArray:(NSMutableArray *)beforeArray
-                         afterArray:(NSMutableArray *)afterArray {
+- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer {
   self = [super init];
-  _beforeToleranceArray = beforeArray;
-  _afterToleranceArray = afterArray;
+  _stubAVPlayer = stubAVPlayer;
   return self;
 }
 
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
-  return [[AVPlayerMock alloc] initWithBeforeArray:_beforeToleranceArray
-                                        afterArray:_afterToleranceArray
-                                        playerItem:playerItem];
+  return _stubAVPlayer;
 }
 
 @end
@@ -289,14 +281,11 @@
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestSeekTolerance"];
 
-  NSMutableArray *beforeToleranceArray = [[NSMutableArray alloc] init];
-  NSMutableArray *afterToleranceArray = [[NSMutableArray alloc] init];
-
-  AVPlayerFactoryFake *avPlayerFactoryFake =
-      [[AVPlayerFactoryFake alloc] initWithBeforeArray:beforeToleranceArray
-                                            afterArray:afterToleranceArray];
+  StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
+  StubFVPAVPlayerFactory *stubFVPAVPlayerFactory =
+      [[StubFVPAVPlayerFactory alloc] initWithPlayer:stubAVPlayer];
   FLTVideoPlayerPlugin *pluginWithMockAVPlayer =
-      [[FLTVideoPlayerPlugin alloc] initWithAVPlayerFactory:avPlayerFactoryFake
+      [[FLTVideoPlayerPlugin alloc] initWithFVPAVPlayerFactory:stubFVPAVPlayerFactory
                                                   registrar:registrar];
 
   FlutterError *error;
@@ -317,8 +306,6 @@
   FLTPositionMessage *message = [FLTPositionMessage makeWithTextureId:textureId position:@1234];
   [pluginWithMockAVPlayer seekTo:message
                       completion:^(FlutterError *_Nullable error) {
-                        XCTAssertEqual(0, [[beforeToleranceArray objectAtIndex:0] intValue]);
-                        XCTAssertEqual(0, [[afterToleranceArray objectAtIndex:0] intValue]);
                         [initializedExpectation fulfill];
                       }];
 
@@ -328,11 +315,13 @@
   FLTPositionMessage *messageEnd = [FLTPositionMessage makeWithTextureId:textureId position:@0];
   [pluginWithMockAVPlayer seekTo:messageEnd
                       completion:^(FlutterError *_Nullable error) {
-                        XCTAssertGreaterThan([[beforeToleranceArray objectAtIndex:1] intValue], 0);
-                        XCTAssertGreaterThan([[afterToleranceArray objectAtIndex:1] intValue], 0);
                         [initializedExpectationEnd fulfill];
                       }];
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
+  XCTAssertEqual([[stubAVPlayer.beforeTolerances objectAtIndex:0] intValue], 0);
+  XCTAssertEqual([[stubAVPlayer.afterTolerances objectAtIndex:0] intValue], 0);
+  XCTAssertGreaterThan([[stubAVPlayer.beforeTolerances objectAtIndex:1] intValue], 0);
+  XCTAssertGreaterThan([[stubAVPlayer.afterTolerances objectAtIndex:1] intValue], 0);
 }
 
 - (NSDictionary<NSString *, id> *)testPlugin:(FLTVideoPlayerPlugin *)videoPlayerPlugin
