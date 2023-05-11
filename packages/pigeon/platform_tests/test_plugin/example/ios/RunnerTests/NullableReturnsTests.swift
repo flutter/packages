@@ -40,7 +40,7 @@ class NullableReturnsTests: XCTestCase {
     NullableArgHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: api)
     XCTAssertNotNil(binaryMessenger.handlers[channel])
 
-    let inputEncoded = binaryMessenger.codec.encode([nil])
+    let inputEncoded = binaryMessenger.codec.encode([nil] as [Any?])
 
     let expectation = XCTestExpectation(description: "callback")
     binaryMessenger.handlers[channel]?(inputEncoded) { _ in

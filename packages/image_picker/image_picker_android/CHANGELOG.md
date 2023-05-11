@@ -1,6 +1,10 @@
-## 0.8.6+12
+## 0.8.6+13
 
 * Fixes Java warnings.
+
+## 0.8.6+12
+
+* Improves image resizing performance by decoding Bitmap only when needed.
 
 ## 0.8.6+11
 

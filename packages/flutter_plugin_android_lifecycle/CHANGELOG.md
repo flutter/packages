@@ -1,3 +1,7 @@
+## 2.0.14
+
+* Fixes compatibility with ActivityPluginBinding.
+
 ## 2.0.13
 
 * Fixes compatibility with AGP versions older than 4.2.

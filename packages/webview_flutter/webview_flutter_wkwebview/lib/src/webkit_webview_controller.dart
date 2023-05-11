@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -239,8 +238,8 @@ class WebKitWebViewController extends PlatformWebViewController {
             final UrlChangeCallback? urlChangeCallback =
                 controller._currentNavigationDelegate?._onUrlChange;
             if (urlChangeCallback != null) {
-              final NSUrl url = change[NSKeyValueChangeKey.newValue]! as NSUrl;
-              urlChangeCallback(UrlChange(url: await url.getAbsoluteString()));
+              final NSUrl? url = change[NSKeyValueChangeKey.newValue] as NSUrl?;
+              urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
             }
             break;
         }
@@ -302,7 +301,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     return _webView.loadRequest(NSUrlRequest(
       url: params.uri.toString(),
       allHttpHeaderFields: params.headers,
-      httpMethod: describeEnum(params.method),
+      httpMethod: params.method.name,
       httpBody: params.body,
     ));
   }

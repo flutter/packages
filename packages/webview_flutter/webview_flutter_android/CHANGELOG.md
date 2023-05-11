@@ -1,3 +1,8 @@
+## 3.7.0
+
+* Adds support to accept third party cookies. See
+  `AndroidWebViewCookieManager.setAcceptThirdPartyCookies`.
+
 ## 3.6.3
 
 * Updates gradle, AGP and fixes some lint errors.

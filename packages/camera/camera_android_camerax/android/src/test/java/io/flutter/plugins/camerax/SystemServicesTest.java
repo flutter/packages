@@ -5,14 +5,17 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
+import android.content.Context;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
@@ -21,11 +24,14 @@ import io.flutter.plugins.camerax.DeviceOrientationManager.DeviceOrientationChan
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraPermissionsErrorData;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Result;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesFlutterApi.Reply;
+import java.io.File;
+import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
@@ -34,11 +40,12 @@ public class SystemServicesTest {
 
   @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public InstanceManager mockInstanceManager;
+  @Mock public Context mockContext;
 
   @Test
   public void requestCameraPermissionsTest() {
     final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager);
+        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
     final CameraPermissionsManager mockCameraPermissionsManager =
         mock(CameraPermissionsManager.class);
@@ -92,7 +99,7 @@ public class SystemServicesTest {
   @Test
   public void deviceOrientationChangeTest() {
     final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager);
+        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
     final Activity mockActivity = mock(Activity.class);
     final DeviceOrientationManager mockDeviceOrientationManager =
@@ -136,5 +143,45 @@ public class SystemServicesTest {
 
     // Test that the DeviceOrientationManager starts listening for device orientation changes.
     verify(mockDeviceOrientationManager).start();
+  }
+
+  @Test
+  public void getTempFilePath_returnsCorrectPath() {
+    final SystemServicesHostApiImpl systemServicesHostApi =
+        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
+
+    final String prefix = "prefix";
+    final String suffix = ".suffix";
+    final MockedStatic<File> mockedStaticFile = mockStatic(File.class);
+    final File mockOutputDir = mock(File.class);
+    final File mockFile = mock(File.class);
+    when(mockContext.getCacheDir()).thenReturn(mockOutputDir);
+    mockedStaticFile
+        .when(() -> File.createTempFile(prefix, suffix, mockOutputDir))
+        .thenReturn(mockFile);
+    when(mockFile.toString()).thenReturn(prefix + suffix);
+    assertEquals(systemServicesHostApi.getTempFilePath(prefix, suffix), prefix + suffix);
+
+    mockedStaticFile.close();
+  }
+
+  @Test
+  public void getTempFilePath_throwsRuntimeExceptionOnIOException() {
+    final SystemServicesHostApiImpl systemServicesHostApi =
+        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
+
+    final String prefix = "prefix";
+    final String suffix = ".suffix";
+    final MockedStatic<File> mockedStaticFile = mockStatic(File.class);
+    final File mockOutputDir = mock(File.class);
+    when(mockContext.getCacheDir()).thenReturn(mockOutputDir);
+    mockedStaticFile
+        .when(() -> File.createTempFile(prefix, suffix, mockOutputDir))
+        .thenThrow(IOException.class);
+    assertThrows(
+        GeneratedCameraXLibrary.FlutterError.class,
+        () -> systemServicesHostApi.getTempFilePath(prefix, suffix));
+
+    mockedStaticFile.close();
   }
 }
