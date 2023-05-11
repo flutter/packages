@@ -7,12 +7,12 @@
 #import <AVFoundation/AVFoundation.h>
 
 // Protocol for an AVPlayer instance factory. Used for injecting players in tests.
-@protocol FVPAVPlayerFactoryProtocol
+@protocol FVPPlayerFactory
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem;
 @end
 
 @interface FLTVideoPlayerPlugin ()
 
-- (instancetype)initWithFVPAVPlayerFactory:(id<FVPAVPlayerFactoryProtocol>)playerFactory
-                                 registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithPlayerFactory:(id<FVPPlayerFactory>)playerFactory
+                            registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end

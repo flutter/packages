@@ -63,41 +63,32 @@
 @end
 
 @interface StubAVPlayer : AVPlayer
-@property(readonly) NSMutableArray *beforeTolerances;
-@property(readonly) NSMutableArray *afterTolerances;
+@property(readonly, nonatomic) NSNumber *beforeTolerance;
+@property(readonly, nonatomic) NSNumber *afterTolerance;
 @end
 
 @implementation StubAVPlayer
-
-- (instancetype)init {
-  self = [super init];
-  if (self) {
-    _beforeTolerances = [[NSMutableArray alloc] init];
-    _afterTolerances = [[NSMutableArray alloc] init];
-  }
-  return self;
-}
 
 - (void)seekToTime:(CMTime)time
       toleranceBefore:(CMTime)toleranceBefore
        toleranceAfter:(CMTime)toleranceAfter
     completionHandler:(void (^)(BOOL finished))completionHandler {
-  [_beforeTolerances addObject:[NSNumber numberWithLong:toleranceBefore.value]];
-  [_afterTolerances addObject:[NSNumber numberWithLong:toleranceAfter.value]];
+  _beforeTolerance = [NSNumber numberWithLong:toleranceBefore.value];
+  _afterTolerance = [NSNumber numberWithLong:toleranceAfter.value];
   completionHandler(YES);
 }
 
 @end
 
-@interface StubFVPAVPlayerFactory : NSObject <FVPAVPlayerFactoryProtocol>
+@interface StubFVPPlayerFactory : NSObject <FVPPlayerFactory>
 
-@property(copy) StubAVPlayer *stubAVPlayer;
+@property(nonatomic, strong) StubAVPlayer *stubAVPlayer;
 
 - (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer;
 
 @end
 
-@implementation StubFVPAVPlayerFactory
+@implementation StubFVPPlayerFactory
 
 - (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer {
   self = [super init];
@@ -276,17 +267,16 @@
   [self validateTransformFixForOrientation:UIImageOrientationRightMirrored];
 }
 
-- (void)testSeekToleranceWhenSeekingToEndFix {
+- (void)testSeekToleranceWhenNotSeekingToEnd {
   NSObject<FlutterPluginRegistry> *registry =
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestSeekTolerance"];
 
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
-  StubFVPAVPlayerFactory *stubFVPAVPlayerFactory =
-      [[StubFVPAVPlayerFactory alloc] initWithPlayer:stubAVPlayer];
+  StubFVPPlayerFactory *stubFVPPlayerFactory =
+      [[StubFVPPlayerFactory alloc] initWithPlayer:stubAVPlayer];
   FLTVideoPlayerPlugin *pluginWithMockAVPlayer =
-      [[FLTVideoPlayerPlugin alloc] initWithFVPAVPlayerFactory:stubFVPAVPlayerFactory
-                                                     registrar:registrar];
+      [[FLTVideoPlayerPlugin alloc] initWithPlayerFactory:stubFVPPlayerFactory registrar:registrar];
 
   FlutterError *error;
   [pluginWithMockAVPlayer initialize:&error];
@@ -309,19 +299,46 @@
                         [initializedExpectation fulfill];
                       }];
 
-  XCTestExpectation *initializedExpectationEnd =
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+  XCTAssertEqual([stubAVPlayer.beforeTolerance intValue], 0);
+  XCTAssertEqual([stubAVPlayer.afterTolerance intValue], 0);
+}
+
+- (void)testSeekToleranceWhenSeekingToEnd {
+  NSObject<FlutterPluginRegistry> *registry =
+      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestSeekTolerance"];
+
+  StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
+  StubFVPPlayerFactory *stubFVPPlayerFactory =
+      [[StubFVPPlayerFactory alloc] initWithPlayer:stubAVPlayer];
+  FLTVideoPlayerPlugin *pluginWithMockAVPlayer =
+      [[FLTVideoPlayerPlugin alloc] initWithPlayerFactory:stubFVPPlayerFactory registrar:registrar];
+
+  FlutterError *error;
+  [pluginWithMockAVPlayer initialize:&error];
+  XCTAssertNil(error);
+
+  FLTCreateMessage *create = [FLTCreateMessage
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+        packageName:nil
+         formatHint:nil
+        httpHeaders:@{}];
+  FLTTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
+  NSNumber *textureId = textureMessage.textureId;
+
+  XCTestExpectation *initializedExpectation =
       [self expectationWithDescription:@"seekTo has non-zero tolerance when seeking to end"];
   // The duration of this video is "0" due to the non standard initiliatazion process.
-  FLTPositionMessage *messageEnd = [FLTPositionMessage makeWithTextureId:textureId position:@0];
-  [pluginWithMockAVPlayer seekTo:messageEnd
+  FLTPositionMessage *message = [FLTPositionMessage makeWithTextureId:textureId position:@0];
+  [pluginWithMockAVPlayer seekTo:message
                       completion:^(FlutterError *_Nullable error) {
-                        [initializedExpectationEnd fulfill];
+                        [initializedExpectation fulfill];
                       }];
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
-  XCTAssertEqual([[stubAVPlayer.beforeTolerances objectAtIndex:0] intValue], 0);
-  XCTAssertEqual([[stubAVPlayer.afterTolerances objectAtIndex:0] intValue], 0);
-  XCTAssertGreaterThan([[stubAVPlayer.beforeTolerances objectAtIndex:1] intValue], 0);
-  XCTAssertGreaterThan([[stubAVPlayer.afterTolerances objectAtIndex:1] intValue], 0);
+  XCTAssertGreaterThan([stubAVPlayer.beforeTolerance intValue], 0);
+  XCTAssertGreaterThan([stubAVPlayer.afterTolerance intValue], 0);
 }
 
 - (NSDictionary<NSString *, id> *)testPlugin:(FLTVideoPlayerPlugin *)videoPlayerPlugin
