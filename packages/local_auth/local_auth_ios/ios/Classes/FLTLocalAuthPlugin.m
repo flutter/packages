@@ -91,13 +91,11 @@
         actionWithTitle:secondButton
                   style:UIAlertActionStyleDefault
                 handler:^(UIAlertAction *action) {
-                  if (UIApplicationOpenSettingsURLString != NULL) {
-                    NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                    [[UIApplication sharedApplication] openURL:url
-                                                       options:@{}
-                                             completionHandler:NULL];
-                    result(@NO);
-                  }
+                  NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                  [[UIApplication sharedApplication] openURL:url
+                                                     options:@{}
+                                           completionHandler:NULL];
+                  result(@NO);
                 }];
     [alert addAction:additionalAction];
   }
