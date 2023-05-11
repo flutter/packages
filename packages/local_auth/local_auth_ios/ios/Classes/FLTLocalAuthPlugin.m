@@ -62,6 +62,8 @@
   } else if ([@"deviceSupportsBiometrics" isEqualToString:call.method]) {
     [self deviceSupportsBiometrics:result];
   } else if ([@"isDeviceSupported" isEqualToString:call.method]) {
+    // TODO(stuartmorgan): Fix this to check for biometrics or passcode; see
+    // https://github.com/flutter/flutter/issues/116179
     result(@YES);
   } else {
     result(FlutterMethodNotImplemented);
