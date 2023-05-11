@@ -262,8 +262,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         httpHeaders = const <String, String>{},
         super(const VideoPlayerValue(duration: Duration.zero));
 
-  /// Constructs a [VideoPlayerController] playing a network video obtained from
-  /// the network.
+  /// Constructs a [VideoPlayerController] playing a network video.
   ///
   /// The URI for the video is given by the [dataSource] argument.
   ///
@@ -284,8 +283,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
-  /// Constructs a [VideoPlayerController] playing a network video obtained from
-  /// the network.
+  /// Constructs a [VideoPlayerController] playing a network video.
   ///
   /// The URI for the video is given by the [dataSource] argument.
   ///

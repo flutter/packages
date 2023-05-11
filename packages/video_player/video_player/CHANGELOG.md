@@ -1,6 +1,8 @@
 ## 2.7.0
 
-* New video player network constructor.
+* Adds an `Uri` typed factory method `VideoPlayerController.networkUrl` to avoid common mistakes with `String` URIs. The method
+receives an`Uri` instead of a `String` url.
+* Deprecates `VideoPlayerController.network` factory method.
 
 ## 2.6.1
 
