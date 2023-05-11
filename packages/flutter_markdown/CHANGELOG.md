@@ -1,8 +1,9 @@
-## NEXT
+## 0.6.15
 
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 * Replace `describeEnum` with the `name` getter.
+* Support custom rendering of those tags without children.
 
 ## 0.6.14
 
