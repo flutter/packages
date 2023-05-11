@@ -415,6 +415,7 @@ If running this command on CI, you can set the pub credential content in the $_p
 ''');
       throw ToolExit(1);
     }
+    credentialFile.createSync(recursive: true);
     credentialFile.openSync(mode: FileMode.writeOnlyAppend)
       ..writeStringSync(credential)
       ..closeSync();
