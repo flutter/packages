@@ -508,9 +508,8 @@ void main() {
     });
 
     test('play', () async {
-      final Uri dummyUri = Uri.parse('https://127.0.0.1');
       final VideoPlayerController controller =
-          VideoPlayerController.networkUrl(dummyUri);
+          VideoPlayerController.networkUrl(Uri.parse('https://127.0.0.1'));
 
       await controller.initialize();
       expect(controller.value.isPlaying, isFalse);
