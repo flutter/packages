@@ -53,7 +53,6 @@ class DomHelper {
     });
 
     inputElement.addEventListener('cancel', (_){
-      print('cancel click');
       inputElement.remove();
       completer.complete(<XFile>[]);
     });
