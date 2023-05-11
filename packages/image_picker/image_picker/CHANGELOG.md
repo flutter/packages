@@ -1,3 +1,7 @@
+## 0.8.7+5
+
+* Fixes `BuildContext` handling in example.
+
 ## 0.8.7+4
 
 * Updates README to mention usage of `launchMode: singleInstance` for Android.
