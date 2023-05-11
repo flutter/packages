@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -23,15 +24,17 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   private final InstanceManager instanceManager;
   private Context context;
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public DeviceOrientationManager deviceOrientationManager;
-  @VisibleForTesting public SystemServicesFlutterApiImpl systemServicesFlutterApi;
+  @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public @Nullable DeviceOrientationManager deviceOrientationManager;
+  @VisibleForTesting public @NonNull SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
   private Activity activity;
   private PermissionsRegistry permissionsRegistry;
 
   public SystemServicesHostApiImpl(
-      BinaryMessenger binaryMessenger, InstanceManager instanceManager, Context context) {
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull InstanceManager instanceManager,
+      @NonNull Context context) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.context = context;
@@ -39,15 +42,15 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   }
 
   /** Sets the context, which is used to get the cache directory. */
-  public void setContext(Context context) {
+  public void setContext(@NonNull Context context) {
     this.context = context;
   }
 
-  public void setActivity(Activity activity) {
+  public void setActivity(@NonNull Activity activity) {
     this.activity = activity;
   }
 
-  public void setPermissionsRegistry(PermissionsRegistry permissionsRegistry) {
+  public void setPermissionsRegistry(@NonNull PermissionsRegistry permissionsRegistry) {
     this.permissionsRegistry = permissionsRegistry;
   }
 
@@ -59,7 +62,7 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
    */
   @Override
   public void requestCameraPermissions(
-      Boolean enableAudio, Result<CameraPermissionsErrorData> result) {
+      @NonNull Boolean enableAudio, @NonNull Result<CameraPermissionsErrorData> result) {
     CameraPermissionsManager cameraPermissionsManager =
         cameraXProxy.createCameraPermissionsManager();
     cameraPermissionsManager.requestPermissions(
