@@ -163,10 +163,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       // dialog. Use a microtask to ensure the navigator finishes the current
       // update before calling the `onExit`.
       scheduleMicrotask(() async {
-        final FutureOr<bool> onExitResult =
-            match.route.onExit!(navigatorKey.currentContext!);
-        if ((onExitResult is bool && route.didPop(result)) ||
-            await onExitResult) {
+        final bool onExitResult =
+            await match.route.onExit!(navigatorKey.currentContext!);
+        if (onExitResult) {
           _removeMatchFromList(match, result);
         }
       });
