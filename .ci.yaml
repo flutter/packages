@@ -44,7 +44,18 @@ platform_properties:
       xcode: 14e222b
 
 targets:
-  ### iOS+macOS tasks ***
+  ### Linux tasks ###
+  - name: Linux repo_tools_tests
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: repo_tools_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+
+  ### iOS+macOS tasks ###
   # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
   # support. `pod lint` makes a synthetic target that doesn't respect the
   # pod's arch exclusions, so fails to build.
