@@ -37,6 +37,7 @@ class InfoIterable extends IterableBase<String> {
 class RouteConfig {
   RouteConfig._(
     this._path,
+    this._name,
     this._routeDataClass,
     this._parent,
     this._key,
@@ -75,6 +76,7 @@ class RouteConfig {
     final bool isShellRoute = type.element.name == 'TypedShellRoute';
 
     String? path;
+    String? name;
 
     if (!isShellRoute) {
       final ConstantReader pathValue = reader.read('path');
@@ -85,6 +87,9 @@ class RouteConfig {
         );
       }
       path = pathValue.stringValue;
+
+      final ConstantReader nameValue = reader.read('name');
+      name = nameValue.isNull ? null : nameValue.stringValue;
     }
 
     final DartType typeParamType = type.typeArguments.single;
@@ -104,6 +109,7 @@ class RouteConfig {
 
     final RouteConfig value = RouteConfig._(
       path ?? '',
+      name,
       classElement,
       parent,
       _generateNavigatorKeyGetterCode(
@@ -121,6 +127,7 @@ class RouteConfig {
 
   final List<RouteConfig> _children = <RouteConfig>[];
   final String _path;
+  final String? _name;
   final InterfaceElement _routeDataClass;
   final RouteConfig? _parent;
   final String? _key;
@@ -352,6 +359,7 @@ routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}]
     return '''
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
+      ${_name != null ? 'name: ${escapeDartString(_name!)},' : ''}
       factory: $_extensionName._fromState,
       $navigatorKey
       $routesBit
