@@ -537,7 +537,6 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 
 /// A response used by the host application to set the Geolocation permission state for an origin.
 class GeolocationPermissionsResponse {
-
   /// [isAllow]: Whether or not the origin should be allowed to use the Geolocation API.
   ///
   /// [isRetain]: Whether the permission should be retained beyond the lifetime of
