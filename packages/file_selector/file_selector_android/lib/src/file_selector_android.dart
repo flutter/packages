@@ -23,17 +23,12 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final String? filePath = await _api.openFile(
+    // TODO: Should support passing extensions also.
+    final FileResponse? file = await _api.openFile(
       initialDirectory,
-      acceptedTypeGroups?.fold<Set<String>>(
-        <String>{},
-        (Set<String> previousValue, XTypeGroup element) {
-          previousValue.addAll(element.mimeTypes ?? <String>[]);
-          return previousValue;
-        },
-      ).toList(),
+      acceptedTypeGroups == null ? null : _combineMimeTypes(acceptedTypeGroups),
     );
-    return filePath != null ? XFile(filePath) : null;
+    return file == null ? null : _xFileFromFileResponse(file);
   }
 
   @override
@@ -42,10 +37,13 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> filePaths =
-        await _api.openFiles(initialDirectory, null);
-    return filePaths
-        .map<XFile>((String? filePath) => XFile(filePath!))
+    final List<FileResponse?> files = await _api.openFiles(
+      initialDirectory,
+      null,
+    );
+    return files
+        .cast<FileResponse>()
+        .map<XFile>(_xFileFromFileResponse)
         .toList();
   }
 
@@ -64,5 +62,24 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   }) async {
     final List<String?> dirs = await _api.getDirectoryPaths(initialDirectory);
     return dirs.cast<String>();
+  }
+
+  XFile _xFileFromFileResponse(FileResponse file) {
+    return XFile(
+      file.path,
+      name: file.name,
+      mimeType: file.mimeType,
+      bytes: file.bytes,
+    );
+  }
+
+  List<String> _combineMimeTypes(List<XTypeGroup> groups) {
+    return groups.fold<Set<String>>(
+      <String>{},
+      (Set<String> previousValue, XTypeGroup element) {
+        previousValue.addAll(element.mimeTypes ?? <String>[]);
+        return previousValue;
+      },
+    ).toList();
   }
 }

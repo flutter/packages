@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -18,13 +22,23 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
+class FileResponse {
+  late final String path;
+  late final String? mimeType;
+  late final String name;
+  late final Uint8List bytes;
+}
+
 @HostApi(dartHostTestHandler: 'TestFileSelectorApi')
 abstract class FileSelectorApi {
   @async
-  String? openFile(String? initialDirectory, List<String?>? mimeTypes);
+  FileResponse? openFile(String? initialDirectory, List<String?>? mimeTypes);
 
   @async
-  List<String?> openFiles(String? initialDirectory, List<String?>? mimeTypes);
+  List<FileResponse?> openFiles(
+    String? initialDirectory,
+    List<String?>? mimeTypes,
+  );
 
   @async
   String? getDirectoryPath(String? initialDirectory);
