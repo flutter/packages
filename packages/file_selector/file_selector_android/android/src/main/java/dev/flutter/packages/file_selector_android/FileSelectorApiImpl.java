@@ -1,15 +1,25 @@
 package dev.flutter.packages.file_selector_android;
 
 import android.app.Activity;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -32,7 +42,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Override
-  public void openFile(@Nullable String initialDirectory, @Nullable List<String> mimeTypes, @NonNull GeneratedFileSelectorApi.Result<String> result) {
+  public void openFile(@Nullable String initialDirectory, @Nullable List<String> mimeTypes, @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
     final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -44,7 +54,23 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
         @Override
         public void onResult(int resultCode, @Nullable Intent data) {
           if (resultCode == Activity.RESULT_OK && data != null) {
-            result.success(data.getData().toString());
+            String path = "";
+            final Uri uri = data.getData();
+            Log.d("APPLE", "" + uri.toString());
+            Cursor cursor = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+              cursor = activityPluginBinding.getActivity().getContentResolver().query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null);
+              try {
+                if (cursor != null && cursor.moveToFirst()) {
+                  //MediaStore.Images.Media.DATA;
+                  path = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
+                }
+              } finally {
+                cursor.close();
+              }
+            }
+            Log.d("APPLE", "" + path);
+            result.success("document/Image_created_with_a_mobile_phone.png");
           } else {
             result.success(null);
           }
@@ -56,7 +82,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Override
-  public void openFiles(@Nullable String initialDirectory, @Nullable List<String> mimeTypes, @NonNull GeneratedFileSelectorApi.Result<List<String>> result) {
+  public void openFiles(@Nullable String initialDirectory, @Nullable List<String> mimeTypes, @NonNull GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
 
   }
 
@@ -118,5 +144,28 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       });
       activityPluginBinding.getActivity().startActivityForResult(intent, newRequestCode);
     }
+  }
+
+  public static String getDataColumn(Context context, Uri uri, String selection,
+                                     String[] selectionArgs) {
+    Cursor cursor = null;
+    String result = null;
+    final String column = "_data";
+    final String[] projection = { OpenableColumns.DISPLAY_NAME };
+    try {
+      cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+          null);
+      if (cursor != null && cursor.moveToFirst()) {
+        final int index = cursor.getColumnIndexOrThrow(column);
+        result = cursor.getString(index);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      return null;
+    } finally {
+      if (cursor != null)
+        cursor.close();
+    }
+    return result;
   }
 }
