@@ -23,5 +23,7 @@ dependencies:
   local_auth_platform_interface: ^1.0.1
 
 dev_dependencies:
+  build_runner: ^2.3.3
   flutter_test:
     sdk: flutter
+  pigeon: ^9.2.4
