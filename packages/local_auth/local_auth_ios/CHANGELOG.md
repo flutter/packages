@@ -1,3 +1,7 @@
+## 1.1.2
+
+* Internal refactoring for maintainability.
+
 ## 1.1.1
 
 * Clarifies explanation of endorsement in README.
