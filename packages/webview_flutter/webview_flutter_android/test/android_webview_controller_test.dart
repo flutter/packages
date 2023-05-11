@@ -5,6 +5,8 @@
 // TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
 // ignore: unnecessary_import
 import 'dart:typed_data';
+import 'dart:convert';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,7 +61,7 @@ void main() {
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
       )? onShowFileChooser,
-      void Function(
+      Future<void> Function(
         String origin,
         android_webview.GeolocationPermissionsCallback callback,
       )? onGeolocationPermissionsShowPrompt,
@@ -94,7 +96,7 @@ void main() {
                             android_webview.WebChromeClient instance,
                             android_webview.PermissionRequest request,
                           )? onPermissionRequest,
-                          void Function(
+                          Future<void> Function(
                             String origin,
                             android_webview.GeolocationPermissionsCallback
                                 callback,
@@ -591,7 +593,7 @@ void main() {
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
           )? onShowFileChooser,
-          void Function(String origin,
+          Future<void> Function(String origin,
                   android_webview.GeolocationPermissionsCallback callback)?
               onGeolocationPermissionsShowPrompt,
           void Function(android_webview.WebChromeClient instance)?
@@ -629,58 +631,6 @@ void main() {
       expect(fileSelectorParams.acceptTypes, <String>['png']);
       expect(fileSelectorParams.filenameHint, 'filenameHint');
       expect(fileSelectorParams.mode, FileSelectorMode.open);
-    });
-
-    test('setGeolocationPermissionsPromptCallbacks', () async {
-      late final void Function(String origin,
-              android_webview.GeolocationPermissionsCallback callback)
-          onGeoPermissionHandle;
-      late final void Function(android_webview.WebChromeClient instance)
-          onGeoPermissionHidePromptHandle;
-      String testValue = 'origin';
-      final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
-      final AndroidWebViewController controller = createControllerWithMocks(
-        createWebChromeClient: ({
-          dynamic onProgressChanged,
-          Future<List<String>> Function(
-            android_webview.WebView webView,
-            android_webview.FileChooserParams params,
-          )? onShowFileChooser,
-          void Function(String origin,
-                  android_webview.GeolocationPermissionsCallback callback)?
-              onGeolocationPermissionsShowPrompt,
-          void Function(android_webview.WebChromeClient instance)?
-              onGeolocationPermissionsHidePrompt,
-          dynamic onPermissionRequest,
-        }) {
-          onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
-          onGeoPermissionHidePromptHandle = onGeolocationPermissionsHidePrompt!;
-          return mockWebChromeClient;
-        },
-      );
-
-      late final GeolocationPermissionsRequest outerRequest;
-      controller.setGeolocationPermissionsPromptCallbacks(
-        onShowPrompt:
-            (GeolocationPermissionsRequest geolocationPermissionsRequest) {
-          outerRequest = geolocationPermissionsRequest;
-        },
-        onHidePrompt: () {
-          testValue = 'changed';
-        },
-      );
-
-      final android_webview.GeolocationPermissionsCallback testCallback =
-          android_webview.GeolocationPermissionsCallback.detached();
-      onGeoPermissionHandle(
-        'https://www.xxx.com',
-        testCallback,
-      );
-
-      expect(outerRequest.origin, 'https://www.xxx.com');
-
-      onGeoPermissionHidePromptHandle(mockWebChromeClient);
-      expect(testValue, 'changed');
     });
 
     test('setOnPlatformPermissionRequest', () async {

@@ -895,7 +895,7 @@ void main() {
         final int paramsId = instanceManager.addDartCreatedInstance(callback);
         late final GeolocationPermissionsCallback outerCallback;
         when(mockWebChromeClient.onGeolocationPermissionsShowPrompt).thenReturn(
-          (String origin, GeolocationPermissionsCallback callback) {
+          (String origin, GeolocationPermissionsCallback callback) async {
             outerCallback = callback;
           },
         );

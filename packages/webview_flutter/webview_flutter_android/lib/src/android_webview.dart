@@ -1080,7 +1080,7 @@ class WebChromeClient extends JavaObject {
   )? onPermissionRequest;
 
   /// Indicates the client should handle geolocation permissions.
-  final void Function(String origin, GeolocationPermissionsCallback callback)?
+  final Future<void> Function(String origin, GeolocationPermissionsCallback callback)?
       onGeolocationPermissionsShowPrompt;
 
   /// Notify the host application that a request for Geolocation permissions,
