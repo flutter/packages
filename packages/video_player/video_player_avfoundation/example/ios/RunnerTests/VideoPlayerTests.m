@@ -307,7 +307,8 @@
 - (void)testSeekToleranceWhenSeekingToEnd {
   NSObject<FlutterPluginRegistry> *registry =
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestSeekToEndTolerance"];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [registry registrarForPlugin:@"TestSeekToEndTolerance"];
 
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPPlayerFactory *stubFVPPlayerFactory =
