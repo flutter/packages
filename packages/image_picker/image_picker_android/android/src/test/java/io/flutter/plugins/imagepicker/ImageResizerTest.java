@@ -6,17 +6,24 @@ package io.flutter.plugins.imagepicker;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -100,6 +107,34 @@ public class ImageResizerTest {
 
       assertNotNull(resizedImagePath);
       assertThat(resizedImagePath, equalTo(nonBitmapImagePath));
+    }
+  }
+
+  @Test
+  public void onResizeImageIfNeeded_whenResizeIsNotNecessary_shouldOnlyQueryBitmapDimensions() {
+    try (MockedStatic<BitmapFactory> mockBitmapFactory =
+        mockStatic(BitmapFactory.class, Mockito.CALLS_REAL_METHODS)) {
+      String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, 100);
+      ArgumentCaptor<BitmapFactory.Options> argument =
+          ArgumentCaptor.forClass(BitmapFactory.Options.class);
+      mockBitmapFactory.verify(() -> BitmapFactory.decodeFile(anyString(), argument.capture()));
+      BitmapFactory.Options capturedOptions = argument.getValue();
+      assertTrue(capturedOptions.inJustDecodeBounds);
+    }
+  }
+
+  @Test
+  public void onResizeImageIfNeeded_whenResizeIsNecessary_shouldDecodeBitmapPixels() {
+    try (MockedStatic<BitmapFactory> mockBitmapFactory =
+        mockStatic(BitmapFactory.class, Mockito.CALLS_REAL_METHODS)) {
+      String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), 50.0, 50.0, 100);
+      ArgumentCaptor<BitmapFactory.Options> argument =
+          ArgumentCaptor.forClass(BitmapFactory.Options.class);
+      mockBitmapFactory.verify(
+          () -> BitmapFactory.decodeFile(anyString(), argument.capture()), times(2));
+      List<BitmapFactory.Options> capturedOptions = argument.getAllValues();
+      assertTrue(capturedOptions.get(0).inJustDecodeBounds);
+      assertFalse(capturedOptions.get(1).inJustDecodeBounds);
     }
   }
 }
