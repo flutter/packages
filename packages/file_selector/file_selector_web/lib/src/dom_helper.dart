@@ -52,7 +52,7 @@ class DomHelper {
       completer.completeError(platformException);
     });
 
-    inputElement.addEventListener('cancel', (_){
+    inputElement.addEventListener('cancel', (Event event) {
       inputElement.remove();
       completer.complete(<XFile>[]);
     });
