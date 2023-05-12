@@ -114,7 +114,7 @@ void defineTests() {
   );
 
   testWidgets(
-    'Custom rendering of those tags without children',
+    'Custom rendering of tags without children',
     (WidgetTester tester) async {
       const String data = '![alt](/assets/images/logo.png)';
       await tester.pumpWidget(
