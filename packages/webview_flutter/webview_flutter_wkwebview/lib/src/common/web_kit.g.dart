@@ -573,7 +573,7 @@ class WKScriptMessageData {
     result as List<Object?>;
     return WKScriptMessageData(
       name: result[0]! as String,
-      body: result[1] as Object?,
+      body: result[1],
     );
   }
 }
