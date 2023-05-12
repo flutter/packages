@@ -1,4 +1,7 @@
 buildscript {
+    // This version should intentionally be a 1.7.* verson and lower than the 
+    // version defined in packages/camera/camera_android_camerax/android/build.gradle.
+    // This tests that the kotlin version resolution continues to work. 
     ext.kotlin_version = '1.7.10'
     repositories {
         google()
