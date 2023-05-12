@@ -33,7 +33,7 @@ class AuthStrings {
   final String goToSettingsButton;
   final String goToSettingsDescription;
   final String cancelButton;
-  final String localizedFallbackTitle;
+  final String? localizedFallbackTitle;
 }
 
 /// Possible outcomes of an authentication attempt.
@@ -64,21 +64,32 @@ class AuthOptions {
   final bool useErrorDialgs;
 }
 
-// TODO(stuartmorgan): Remove this when
-// https://github.com/flutter/flutter/issues/87307 is implemented.
-class AuthResultWrapper {
-  AuthResultWrapper({required this.value});
+class AuthResultDetails {
+  AuthResultDetails(
+      {required this.value, this.errorMessage, this.errorDetails});
+
+  /// The result of authenticating.
   final AuthResult value;
+
+  /// A system-provided error message, if any.
+  final String? errorMessage;
+
+  /// System-provided error details, if any.
+  // TODO(stuartmorgan): Remove this when standardizing errors plugin-wide in
+  // a breaking change. This is here only to preserve the existing error format
+  // exactly for compatibility, in case clients were checking PlatformException
+  // details.
+  final String? errorDetails;
 }
 
 /// Pigeon equivalent of the subset of BiometricType used by iOS.
-enum AuthBiometrics { weak, strong }
+enum AuthBiometric { face, fingerprint }
 
 // TODO(stuartmorgan): Remove this when
 // https://github.com/flutter/flutter/issues/87307 is implemented.
-class AuthClassificationWrapper {
-  AuthClassificationWrapper({required this.value});
-  final AuthBiometrics value;
+class AuthBiometricWrapper {
+  AuthBiometricWrapper({required this.value});
+  final AuthBiometric value;
 }
 
 @HostApi()
@@ -92,10 +103,11 @@ abstract class LocalAuthApi {
 
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
-  List<AuthClassificationWrapper> getEnrolledBiometrics();
+  List<AuthBiometricWrapper> getEnrolledBiometrics();
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
   @async
-  AuthResultWrapper authenticate(AuthOptions options, AuthStrings strings);
+  @ObjCSelector('authenticateWithOptions:strings:')
+  AuthResultDetails authenticate(AuthOptions options, AuthStrings strings);
 }
