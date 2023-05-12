@@ -24,9 +24,11 @@ import 'util.dart';
 void main() {
   final String flutterCommand = getFlutterCommand(const LocalPlatform());
 
+  late MockPlatform platform;
   late Directory packagesDir;
   late MockGitDir gitDir;
   late TestProcessRunner processRunner;
+  late PublishCommand command;
   late CommandRunner<void> commandRunner;
   late MockStdin mockStdin;
   late FileSystem fileSystem;
@@ -34,13 +36,14 @@ void main() {
   late Map<String, Map<String, dynamic>> mockHttpResponses;
 
   void createMockCredentialFile() {
-    final String credentialPath = PublishCommand.getCredentialPath();
-    fileSystem.file(credentialPath)
+    fileSystem.file(command.credentialsPath)
       ..createSync(recursive: true)
       ..writeAsStringSync('some credential');
   }
 
   setUp(() async {
+    platform = MockPlatform(isLinux: true);
+    platform.environment['HOME'] = '/home';
     fileSystem = MemoryFileSystem();
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     processRunner = TestProcessRunner();
@@ -71,14 +74,15 @@ void main() {
     });
 
     mockStdin = MockStdin();
-    commandRunner = CommandRunner<void>('tester', '')
-      ..addCommand(PublishCommand(
-        packagesDir,
-        processRunner: processRunner,
-        stdinput: mockStdin,
-        gitDir: gitDir,
-        httpClient: mockClient,
-      ));
+    command = PublishCommand(
+      packagesDir,
+      platform: platform,
+      processRunner: processRunner,
+      stdinput: mockStdin,
+      gitDir: gitDir,
+      httpClient: mockClient,
+    );
+    commandRunner = CommandRunner<void>('tester', '')..addCommand(command);
   });
 
   group('Initial validation', () {
@@ -257,6 +261,25 @@ void main() {
                 const <String>['pub', 'publish', '--server=bar', '--force'],
                 plugin2.path),
           ]));
+    });
+
+    test('creates credential file from envirnoment variable if necessary',
+        () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+      const String credentials = 'some credential';
+      platform.environment['PUB_CREDENTIALS'] = credentials;
+
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+        '--skip-confirmation',
+        '--pub-publish-flags',
+        '--server=bar'
+      ]);
+
+      final File credentialFile = fileSystem.file(command.credentialsPath);
+      expect(credentialFile.existsSync(), true);
+      expect(credentialFile.readAsStringSync(), credentials);
     });
 
     test('throws if pub publish fails', () async {
@@ -878,6 +901,44 @@ void main() {
           processRunner.recordedCalls
               .map((ProcessCall call) => call.executable),
           isNot(contains('git-push')));
+    });
+  });
+
+  group('credential location', () {
+    test('Linux with XDG', () async {
+      platform = MockPlatform(isLinux: true);
+      platform.environment['XDG_CONFIG_HOME'] = '/xdghome/config';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(
+          command.credentialsPath, '/xdghome/config/dart/pub-credentials.json');
+    });
+
+    test('Linux without XDG', () async {
+      platform = MockPlatform(isLinux: true);
+      platform.environment['HOME'] = '/home';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(
+          command.credentialsPath, '/home/.config/dart/pub-credentials.json');
+    });
+
+    test('macOS', () async {
+      platform = MockPlatform(isMacOS: true);
+      platform.environment['HOME'] = '/Users/someuser';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(command.credentialsPath,
+          '/Users/someuser/Library/Application Support/dart/pub-credentials.json');
+    });
+
+    test('Windows', () async {
+      platform = MockPlatform(isWindows: true);
+      platform.environment['APPDATA'] = r'C:\Users\SomeUser\AppData';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(command.credentialsPath,
+          r'C:\Users\SomeUser\AppData\dart\pub-credentials.json');
     });
   });
 }
