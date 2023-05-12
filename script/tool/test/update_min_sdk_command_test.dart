@@ -91,6 +91,27 @@ void main() {
     expect(flutterVersion, '>=3.3.0');
   });
 
+  test('handles Flutter 3.10.0', () async {
+    final RepositoryPackage package = createFakePackage(
+        'a_package', packagesDir,
+        isFlutter: true,
+        dartConstraint: '>=2.12.0 <4.0.0',
+        flutterConstraint: '>=2.10.0');
+
+    await runCapturingPrint(runner, <String>[
+      'update-min-sdk',
+      '--flutter-min',
+      '3.10.0', // Corresponds to Dart 3.0.0
+    ]);
+
+    final String dartVersion =
+        package.parsePubspec().environment?['sdk'].toString() ?? '';
+    final String flutterVersion =
+        package.parsePubspec().environment?['flutter'].toString() ?? '';
+    expect(dartVersion, '>=3.0.0 <4.0.0');
+    expect(flutterVersion, '>=3.10.0');
+  });
+
   test('does not update Flutter if it is already higher', () async {
     final RepositoryPackage package = createFakePackage(
         'a_package', packagesDir,
