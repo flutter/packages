@@ -26,6 +26,7 @@ import androidx.annotation.VisibleForTesting;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import androidx.core.content.ContextCompat;
 
 /*  Launches WebView activity */
 public class WebViewActivity extends Activity {
@@ -144,6 +145,11 @@ public class WebViewActivity extends Activity {
 
     // Register receiver that may finish this Activity.
     registerReceiver(broadcastReceiver, closeIntentFilter);
+    ContextCompat.registerReceiver(
+        this.getApplication(),
+        broadcastReceiver,
+        closeIntentFilter,
+        ContextCompat.RECEIVER_EXPORTED);
   }
 
   @VisibleForTesting
