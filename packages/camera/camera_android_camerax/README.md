@@ -49,15 +49,6 @@ Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 
 `setZoomLevel` is unimplemented.
 
-## Known Issues
-
-### Receiving `Duplicate class kotlin.*` error
-
-If you receive a `Duplicate class kotlin.*` error when using this plugin
-implementation, you may need to update your app's Kotlin version. You can do
-this by finding your app's `android/build.gradle` file and updating the
-`org.jetbrains.kotlin:kotlin-stdlib-jdk7` dependency to at least version 1.18.10.
-
 ## Contributing
 
 For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
