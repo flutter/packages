@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 0.9.3
 
 * Adds `getDirectoryPaths` for selecting multiple directories.
