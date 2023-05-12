@@ -1,3 +1,8 @@
+## 0.5.0+2
+
+* Adds a dependency on kotlin-bom to align versions of Kotlin transitive dependencies.
+* Removes note in `README.md` regarding duplicate Kotlin classes issue.
+
 ## 0.5.0+1
 
 * Update `README.md` to include known duplicate Kotlin classes issue.
