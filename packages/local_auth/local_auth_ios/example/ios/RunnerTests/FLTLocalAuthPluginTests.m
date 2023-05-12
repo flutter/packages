@@ -4,22 +4,41 @@
 
 @import LocalAuthentication;
 @import XCTest;
+@import local_auth_ios;
 
 #import <OCMock/OCMock.h>
 
-#if __has_include(<local_auth/FLTLocalAuthPlugin.h>)
-#import <local_auth/FLTLocalAuthPlugin.h>
-#else
-@import local_auth_ios;
-#endif
-
-// Private API needed for tests.
-@interface FLTLocalAuthPlugin (Test)
-- (void)setAuthContextOverrides:(NSArray<LAContext *> *)authContexts;
-@end
-
 // Set a long timeout to avoid flake due to slow CI.
 static const NSTimeInterval kTimeout = 30.0;
+
+/**
+ * A context factory that returns preset contexts.
+ */
+@interface StubAuthContextFactory : NSObject <FLAAuthContextFactory>
+@property(copy, nonatomic) NSMutableArray *contexts;
+- (instancetype)initWithContexts:(NSArray *)contexts;
+@end
+
+@implementation StubAuthContextFactory
+
+- (instancetype)initWithContexts:(NSArray *)contexts {
+  self = [super init];
+  if (self) {
+    _contexts = [contexts mutableCopy];
+  }
+  return self;
+}
+
+- (LAContext *)createAuthContext {
+  NSAssert(self.contexts.count > 0, @"Insufficient test contexts provided");
+  LAContext *context = [self.contexts firstObject];
+  [self.contexts removeObjectAtIndex:0];
+  return context;
+}
+
+@end
+
+#pragma mark -
 
 @interface FLTLocalAuthPluginTests : XCTestCase
 @end
@@ -31,9 +50,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testSuccessfullAuthWithBiometrics {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   NSString *reason = @"a reason";
@@ -70,9 +90,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testSuccessfullAuthWithoutBiometrics {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   NSString *reason = @"a reason";
@@ -109,9 +130,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testFailedAuthWithBiometrics {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   NSString *reason = @"a reason";
@@ -147,9 +169,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testFailedWithUnknownErrorCode {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   NSString *reason = @"a reason";
@@ -185,9 +208,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testSystemCancelledWithoutStickyAuth {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   NSString *reason = @"a reason";
@@ -225,9 +249,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testFailedAuthWithoutBiometrics {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   NSString *reason = @"a reason";
@@ -263,9 +288,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testLocalizedFallbackTitle {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   NSString *reason = @"a reason";
@@ -303,9 +329,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testSkippedLocalizedFallbackTitle {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   NSString *reason = @"a reason";
@@ -340,9 +367,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testDeviceSupportsBiometrics_withEnrolledHardware {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -362,9 +390,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testDeviceSupportsBiometrics_withNonEnrolledHardware {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -396,9 +425,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testDeviceSupportsBiometrics_withNoBiometricHardware {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -430,9 +460,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testGetEnrolledBiometrics_withFaceID {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -454,9 +485,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testGetEnrolledBiometrics_withTouchID {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -478,9 +510,10 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testGetEnrolledBiometrics_withoutEnrolledHardware {
-  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc] init];
   id mockAuthContext = OCMClassMock([LAContext class]);
-  plugin.authContextOverrides = @[ mockAuthContext ];
+  FLTLocalAuthPlugin *plugin = [[FLTLocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {

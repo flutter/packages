@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.4.14
 
 * Updates gradle, AGP and fixes some lint errors.
