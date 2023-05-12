@@ -23,10 +23,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.content.ContextCompat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import androidx.core.content.ContextCompat;
 
 /*  Launches WebView activity */
 public class WebViewActivity extends Activity {
