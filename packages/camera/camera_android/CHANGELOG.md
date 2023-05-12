@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Deletes deprecated `lintOptions` Gradle configuration block.
 
 ## 0.10.8
 
