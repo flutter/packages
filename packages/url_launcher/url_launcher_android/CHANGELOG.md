@@ -1,6 +1,6 @@
 ## 6.0.33
 
-* Explicitly set if reciever for close should be exported.
+* Explicitly sets if reciever for close should be exported.
 
 ## 6.0.32
 
