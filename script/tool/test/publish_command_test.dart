@@ -263,6 +263,25 @@ void main() {
           ]));
     });
 
+    test('creates credential file from envirnoment variable if necessary',
+        () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+      const String credentials = 'some credential';
+      platform.environment['PUB_CREDENTIALS'] = credentials;
+
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+        '--skip-confirmation',
+        '--pub-publish-flags',
+        '--server=bar'
+      ]);
+
+      final File credentialFile = fileSystem.file(command.credentialsPath);
+      expect(credentialFile.existsSync(), true);
+      expect(credentialFile.readAsStringSync(), credentials);
+    });
+
     test('throws if pub publish fails', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 

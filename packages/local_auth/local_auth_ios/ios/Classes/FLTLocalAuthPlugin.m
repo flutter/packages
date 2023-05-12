@@ -1,22 +1,32 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+#import "FLTLocalAuthPlugin.h"
+#import "FLTLocalAuthPlugin_Test.h"
+
 #import <LocalAuthentication/LocalAuthentication.h>
 
-#import "FLTLocalAuthPlugin.h"
+/**
+ * A default context factory that wraps standard LAContext allocation.
+ */
+@interface FLADefaultAuthContextFactory : NSObject <FLAAuthContextFactory>
+@end
+
+@implementation FLADefaultAuthContextFactory
+- (LAContext *)createAuthContext {
+  return [[LAContext alloc] init];
+}
+@end
+
+#pragma mark -
 
 @interface FLTLocalAuthPlugin ()
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, NSNumber *> *lastCallArgs;
 @property(nonatomic, nullable) FlutterResult lastResult;
-// For unit tests to inject dummy LAContext instances that will be used when a new context would
-// normally be created. Each call to createAuthContext will remove the current first element from
-// the array.
-- (void)setAuthContextOverrides:(NSArray<LAContext *> *)authContexts;
+@property(nonatomic, strong) NSObject<FLAAuthContextFactory> *authContextFactory;
 @end
 
-@implementation FLTLocalAuthPlugin {
-  NSMutableArray<LAContext *> *_authContextOverrides;
-}
+@implementation FLTLocalAuthPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FlutterMethodChannel *channel =
@@ -25,6 +35,18 @@
   FLTLocalAuthPlugin *instance = [[FLTLocalAuthPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
   [registrar addApplicationDelegate:instance];
+}
+
+- (instancetype)init {
+  return [self initWithContextFactory:[[FLADefaultAuthContextFactory alloc] init]];
+}
+
+- (instancetype)initWithContextFactory:(NSObject<FLAAuthContextFactory> *)factory {
+  self = [super init];
+  if (self) {
+    _authContextFactory = factory;
+  }
+  return self;
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -47,19 +69,6 @@
 }
 
 #pragma mark Private Methods
-
-- (void)setAuthContextOverrides:(NSArray<LAContext *> *)authContexts {
-  _authContextOverrides = [authContexts mutableCopy];
-}
-
-- (LAContext *)createAuthContext {
-  if ([_authContextOverrides count] > 0) {
-    LAContext *context = [_authContextOverrides firstObject];
-    [_authContextOverrides removeObjectAtIndex:0];
-    return context;
-  }
-  return [[LAContext alloc] init];
-}
 
 - (void)alertMessage:(NSString *)message
          firstButton:(NSString *)firstButton
@@ -98,7 +107,7 @@
 }
 
 - (void)deviceSupportsBiometrics:(FlutterResult)result {
-  LAContext *context = self.createAuthContext;
+  LAContext *context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   // Check if authentication with biometrics is possible.
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
@@ -120,7 +129,7 @@
 }
 
 - (void)getEnrolledBiometrics:(FlutterResult)result {
-  LAContext *context = self.createAuthContext;
+  LAContext *context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
@@ -138,7 +147,7 @@
 
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
                  withFlutterResult:(FlutterResult)result {
-  LAContext *context = self.createAuthContext;
+  LAContext *context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   self.lastCallArgs = nil;
   self.lastResult = nil;
@@ -164,7 +173,7 @@
 }
 
 - (void)authenticate:(NSDictionary *)arguments withFlutterResult:(FlutterResult)result {
-  LAContext *context = self.createAuthContext;
+  LAContext *context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   _lastCallArgs = nil;
   _lastResult = nil;
