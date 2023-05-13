@@ -3,9 +3,6 @@
 * Adds an `Uri` typed factory method `VideoPlayerController.networkUrl` to avoid common mistakes with `String` URIs. The method
 receives an`Uri` instead of a `String` url.
 * Deprecates `VideoPlayerController.network` factory method.
-
-## NEXT
-
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 2.6.1
