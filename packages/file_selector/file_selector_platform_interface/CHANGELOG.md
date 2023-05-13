@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.5.0
 
 * Deprecates `macUTIs` in favor of `uniformTypeIdentifiers`.
