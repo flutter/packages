@@ -3,11 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
+
+/// The lowest `ext.kotlin_version` that example apps are allowed to use.
+final Version _minKotlinVersion = Version(1, 7, 10);
 
 /// A command to enforce gradle file conventions and best practices.
 class GradleCheckCommand extends PackageLoopingCommand {
@@ -123,6 +127,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
     // failures are reported at once, not just the first one.
     bool succeeded = true;
     if (!_validateJavacLintConfig(package, lines)) {
+      succeeded = false;
+    }
+    if (!_validateKotlinVersion(package, lines)) {
       succeeded = false;
     }
     return succeeded;
@@ -344,6 +351,30 @@ gradle.projectsEvaluated {
 }
 ''');
       return false;
+    }
+    return true;
+  }
+
+  /// Validates whether the given [example] has its Kotlin version set to at
+  /// least a minimum value, if it is set at all.
+  bool _validateKotlinVersion(
+      RepositoryPackage example, List<String> gradleLines) {
+    final RepositoryPackage enclosingPackage = example.getEnclosingPackage()!;
+
+    final RegExp kotlinVersionRegex =
+        RegExp(r"ext\.kotlin_version\s*=\s*'([\d.]+)'");
+    RegExpMatch? match;
+    if (gradleLines.any((String line) {
+      match = kotlinVersionRegex.firstMatch(line);
+      return match != null;
+    })) {
+      final Version version = Version.parse(match!.group(1)!);
+      if (version < _minKotlinVersion) {
+        printError('build.gradle sets "ext.kotlin_version" to "$version". The '
+            'minimum Kotlin version that can be specified is '
+            '$_minKotlinVersion, for compatibility with modern dependencies.');
+        return false;
+      }
     }
     return true;
   }
