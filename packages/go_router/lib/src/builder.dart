@@ -91,6 +91,9 @@ class RouteBuilder {
             return GoRouterStateRegistryScope(
                 registry: _registry, child: result);
           } on _RouteBuilderError catch (e) {
+            return _buildErrorNavigator(context, Exception(e), matchList.uri,
+                onPopPage, configuration.navigatorKey);
+          } on RouteBuilderException catch (e) {
             return _buildErrorNavigator(context, e, matchList.uri, onPopPage,
                 configuration.navigatorKey);
           }
@@ -146,6 +149,10 @@ class RouteBuilder {
           .every((Page<Object?> page) => _routeMatchLookUp.containsKey(page)));
       return keyToPage[navigatorKey]!;
     } on _RouteBuilderError catch (e) {
+      return <Page<Object?>>[
+        _buildErrorPage(context, Exception(e), matchList.uri),
+      ];
+    } on RouteBuilderException catch (e) {
       return <Page<Object?>>[
         _buildErrorPage(context, e, matchList.uri),
       ];
@@ -332,7 +339,7 @@ class RouteBuilder {
       return builder(context, state);
     } else if (route is ShellRoute) {
       if (childWidget == null) {
-        throw _RouteBuilderException(
+        throw _RouteBuilderError(
             'Attempt to build ShellRoute without a child widget');
       }
 
@@ -345,7 +352,7 @@ class RouteBuilder {
       return builder(context, state, childWidget);
     }
 
-    throw _RouteBuilderException('Unsupported route type $route');
+    throw _RouteBuilderError('Unsupported route type $route');
   }
 
   _PageBuilderForAppType? _pageBuilderForAppType;
@@ -423,12 +430,8 @@ class RouteBuilder {
       );
 
   /// Builds a Navigator containing an error page.
-  Widget _buildErrorNavigator(
-      BuildContext context,
-      _RouteBuilderError e,
-      Uri uri,
-      PopPageCallback onPopPage,
-      GlobalKey<NavigatorState> navigatorKey) {
+  Widget _buildErrorNavigator(BuildContext context, Exception e, Uri uri,
+      PopPageCallback onPopPage, GlobalKey<NavigatorState> navigatorKey) {
     return _buildNavigator(
       onPopPage,
       <Page<Object?>>[
@@ -441,7 +444,7 @@ class RouteBuilder {
   /// Builds a an error page.
   Page<void> _buildErrorPage(
     BuildContext context,
-    _RouteBuilderError error,
+    Exception e,
     Uri uri,
   ) {
     final GoRouterState state = GoRouterState(
@@ -451,7 +454,7 @@ class RouteBuilder {
       name: null,
       queryParameters: uri.queryParameters,
       queryParametersAll: uri.queryParametersAll,
-      error: Exception(error),
+      error: e,
       pageKey: const ValueKey<String>('error'),
     );
 
@@ -513,10 +516,10 @@ class _RouteBuilderError extends Error {
 
 /// An error that occurred while building the app's UI based on the route
 /// matches.
-class _RouteBuilderException implements Exception {
-  /// Constructs a [_RouteBuilderException].
+class RouteBuilderException implements Exception {
+  /// Constructs a [RouteBuilderException].
   //ignore: unused_element
-  _RouteBuilderException(this.message, {this.exception});
+  RouteBuilderException(this.message, {this.exception});
 
   /// The error message.
   final String message;
