@@ -494,8 +494,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsHidePrompt()
   Future<void> setGeolocationPermissionsPromptCallbacks({
     Future<GeolocationPermissionsResponse> Function(
-        GeolocationPermissionsRequestParams requestParams)?
-    onShowPrompt,
+            GeolocationPermissionsRequestParams requestParams)?
+        onShowPrompt,
     void Function()? onHidePrompt,
   }) async {
     _onGeolocationPermissionsShowPrompt = onShowPrompt;
@@ -541,7 +541,6 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 
 /// A request params used by the host application to set the Geolocation permission state for an origin.
 class GeolocationPermissionsRequestParams {
-
   /// [origin]: The origin for which permissions are set.
   const GeolocationPermissionsRequestParams({
     required this.origin,
