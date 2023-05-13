@@ -359,8 +359,6 @@ gradle.projectsEvaluated {
   /// least a minimum value, if it is set at all.
   bool _validateKotlinVersion(
       RepositoryPackage example, List<String> gradleLines) {
-    final RepositoryPackage enclosingPackage = example.getEnclosingPackage()!;
-
     final RegExp kotlinVersionRegex =
         RegExp(r"ext\.kotlin_version\s*=\s*'([\d.]+)'");
     RegExpMatch? match;
