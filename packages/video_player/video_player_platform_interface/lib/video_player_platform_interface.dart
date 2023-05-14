@@ -293,12 +293,10 @@ enum VideoEventType {
   /// phone calls, or other app media such as music players.
   isPlayingStateUpdate,
 
-
   /// the video duration changed due to playing a live stream.
-  /// 
+  ///
   /// This event is fired when the video duration changes due to playing a live stream.
   durationUpdated,
-
 
   /// An unknown event has been received.
   unknown,
