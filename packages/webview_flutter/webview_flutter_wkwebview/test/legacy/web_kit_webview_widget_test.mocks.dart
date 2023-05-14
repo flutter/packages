@@ -641,6 +641,15 @@ class MockWKWebView extends _i1.Mock implements _i4.WKWebView {
         returnValue: _i5.Future<Object?>.value(),
       ) as _i5.Future<Object?>);
   @override
+  _i5.Future<void> setInspectable(bool? inspectable) => (super.noSuchMethod(
+        Invocation.method(
+          #setInspectable,
+          [inspectable],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
   _i4.WKWebView copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,

@@ -1093,6 +1093,23 @@ class WKWebView extends UIView {
     );
   }
 
+  /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.
+  ///
+  /// This flag can be enabled in order to facilitate debugging of web layouts
+  /// and JavaScript code running inside WebViews. Please refer to [WKWebView]
+  /// documentation for the debugging guide.
+  ///
+  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
+  /// the default value is set to false.
+  ///
+  /// Defaults to true in previous versions.
+  Future<void> setInspectable(bool inspectable) {
+    return _webViewApi.setInspectableForInstances(
+      this,
+      inspectable,
+    );
+  }
+
   @override
   WKWebView copy() {
     return WKWebView.detached(

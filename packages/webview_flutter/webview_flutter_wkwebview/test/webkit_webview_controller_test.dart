@@ -1138,6 +1138,17 @@ void main() {
       ]);
       expect(decision, WKPermissionDecision.grant);
     });
+
+    test('inspectable', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.setInspectable(true);
+      verify(mockWebView.setInspectable(true));
+    });
   });
 
   group('WebKitJavaScriptChannelParams', () {
@@ -1189,6 +1200,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
+
   static CapturingNavigationDelegate lastCreatedDelegate =
       CapturingNavigationDelegate();
 }
@@ -1202,5 +1214,6 @@ class CapturingUIDelegate extends WKUIDelegate {
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
+
   static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();
 }
