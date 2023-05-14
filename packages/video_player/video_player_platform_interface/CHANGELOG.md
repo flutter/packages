@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Adds the `VideoEventType.durationUpdated` event to track changes in video durations example(live stream).
 
 ## 6.1.0
 
