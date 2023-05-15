@@ -1,6 +1,6 @@
 ## 7.0.2
 
-- Fix link to example for `pathParameters` and `queryParameters` in `path`
+- Fixes a link for an example in `path` documentation.
   documentation.
 
 ## 7.0.1
