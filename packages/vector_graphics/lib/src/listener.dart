@@ -205,7 +205,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     TextDirection? textDirection,
     bool clipViewbox = true,
     @visibleForTesting
-        PictureFactory pictureFactory = const _DefaultPictureFactory(),
+    PictureFactory pictureFactory = const _DefaultPictureFactory(),
     VectorGraphicsErrorListener? onError,
   }) {
     final PictureRecorder recorder = pictureFactory.createPictureRecorder();

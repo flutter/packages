@@ -938,6 +938,15 @@ const String simpleUseCirclesOoO = '''
 </svg>
 ''';
 
+const String simpleUseCirclesWithoutHref = '''
+<svg viewBox="0 0 30 10"
+    xmlns="http://www.w3.org/2000/svg">
+    <circle id="myCircle" cx="5" cy="5" r="4"/>
+    <use x="10" fill="blue"/>
+    <use x="20" fill="white" stroke="blue"/>
+</svg>
+''';
+
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text
 const String basicText = '''
 <svg viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">

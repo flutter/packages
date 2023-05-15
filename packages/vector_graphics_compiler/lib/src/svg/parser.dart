@@ -193,8 +193,8 @@ class _Elements {
 
   static void use(SvgParser parserState, bool warningsAsErrors) {
     final ParentNode? parent = parserState.currentGroup;
-    final String xlinkHref = parserState._currentAttributes.href!;
-    if (xlinkHref.isEmpty) {
+    final String? xlinkHref = parserState._currentAttributes.href;
+    if (xlinkHref == null || xlinkHref.isEmpty) {
       return;
     }
 

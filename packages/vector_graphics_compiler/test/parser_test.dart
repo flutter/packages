@@ -1262,6 +1262,44 @@ void main() {
     );
   });
 
+  test('Use circles test without href', () {
+    final VectorInstructions instructions = parseWithoutOptimizers(
+      simpleUseCirclesWithoutHref,
+      key: 'useCirclesWithoutHref',
+      warningsAsErrors: true,
+    );
+
+    expect(instructions.paints, const <Paint>[
+      Paint(
+        fill: Fill(color: Color(0xff000000)),
+      ),
+    ]);
+
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(5.0, 1.0),
+          CubicToCommand(
+              7.2076600979759995, 1.0, 9.0, 2.792339902024, 9.0, 5.0),
+          CubicToCommand(
+              9.0, 7.2076600979759995, 7.2076600979759995, 9.0, 5.0, 9.0),
+          CubicToCommand(
+              2.792339902024, 9.0, 1.0, 7.2076600979759995, 1.0, 5.0),
+          CubicToCommand(1.0, 2.792339902024, 2.792339902024, 1.0, 5.0, 1.0),
+          CloseCommand()
+        ],
+      ),
+    ]);
+
+    expect(
+      instructions.commands,
+      const <DrawCommand>[
+        DrawCommand(DrawCommandType.path,
+            objectId: 0, paintId: 0, debugString: 'myCircle'),
+      ],
+    );
+  });
+
   test('Parses pattern used as fill and stroke', () {
     final VectorInstructions instructions = parseWithoutOptimizers(
       starPatternCircles,
