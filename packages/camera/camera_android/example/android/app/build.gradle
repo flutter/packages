@@ -25,11 +25,9 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace 'io.flutter.plugins.cameraexample'
     compileSdkVersion flutter.compileSdkVersion
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId "io.flutter.plugins.cameraexample"
@@ -49,6 +47,9 @@ android {
         profile {
             matchingFallbacks = ['debug', 'release']
         }
+    }
+    lint {
+        disable 'InvalidPackage'
     }
 }
 

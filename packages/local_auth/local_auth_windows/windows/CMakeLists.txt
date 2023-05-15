@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 set(PROJECT_NAME "local_auth_windows")
+cmake_policy(VERSION 3.15...3.24)
 set(WIL_VERSION "1.0.220201.1")
 set(CPPWINRT_VERSION "2.0.220418.1")
 project(${PROJECT_NAME} LANGUAGES CXX)

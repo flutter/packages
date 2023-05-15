@@ -151,4 +151,19 @@ class RepositoryPackage {
         .map((FileSystemEntity entity) =>
             RepositoryPackage(entity as Directory));
   }
+
+  /// Returns the package that this package is a part of, if any.
+  ///
+  /// Currently this is limited to checking up two directories, since that
+  /// covers all the example structures currently used.
+  RepositoryPackage? getEnclosingPackage() {
+    final Directory parent = directory.parent;
+    if (isPackage(parent)) {
+      return RepositoryPackage(parent);
+    }
+    if (isPackage(parent.parent)) {
+      return RepositoryPackage(parent.parent);
+    }
+    return null;
+  }
 }

@@ -1,3 +1,32 @@
+## 0.8.6+14
+
+* Fixes Java warnings.
+
+## 0.8.6+13
+
+* Fixes `BuildContext` handling in example.
+
+## 0.8.6+12
+
+* Improves image resizing performance by decoding Bitmap only when needed.
+
+## 0.8.6+11
+
+* Updates gradle to 7.6.1.
+* Updates gradle, AGP and fixes some lint errors.
+
+## 0.8.6+10
+
+* Offloads picker result handling to separate thread.
+
+## 0.8.6+9
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.8.6+8
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 0.8.6+7
 
 * Fixes handling of non-bitmap image types.

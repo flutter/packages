@@ -17,13 +17,13 @@ void main() {
             path: '/',
             builder: (BuildContext context, _) {
               final GoRouterState state = GoRouterState.of(context);
-              return Text('/ ${state.queryParams['p']}');
+              return Text('/ ${state.queryParameters['p']}');
             }),
         GoRoute(
             path: '/a',
             builder: (BuildContext context, _) {
               final GoRouterState state = GoRouterState.of(context);
-              return Text('/a ${state.queryParams['p']}');
+              return Text('/a ${state.queryParameters['p']}');
             }),
       ];
       final GoRouter router = await createRouter(routes, tester);
@@ -83,7 +83,7 @@ void main() {
                   builder: (_, __) {
                     return Builder(builder: (BuildContext context) {
                       return Text(
-                          '2 ${GoRouterState.of(context).params['id']}');
+                          '2 ${GoRouterState.of(context).pathParameters['id']}');
                     });
                   }),
             ]),

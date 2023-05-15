@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.1.1
+
+* Updates iOS minimum version in README.
+
 ## 2.1.0
 
 * Adds `setPrefix` method.

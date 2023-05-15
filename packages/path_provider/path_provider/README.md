@@ -7,9 +7,9 @@ A Flutter plugin for finding commonly used locations on the filesystem.
 Supports Android, iOS, Linux, macOS and Windows.
 Not all methods are supported on all platforms.
 
-|             | Android | iOS  | Linux | macOS  | Windows     |
-|-------------|---------|------|-------|--------|-------------|
-| **Support** | SDK 16+ | 9.0+ | Any   | 10.11+ | Windows 10+ |
+|             | Android | iOS   | Linux | macOS  | Windows     |
+|-------------|---------|-------|-------|--------|-------------|
+| **Support** | SDK 16+ | 11.0+ | Any   | 10.11+ | Windows 10+ |
 
 ## Usage
 

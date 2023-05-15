@@ -46,9 +46,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
       previewBuilder.setTargetRotation(rotation.intValue());
     }
     if (targetResolution != null) {
-      previewBuilder.setTargetResolution(
-          new Size(
-              targetResolution.getWidth().intValue(), targetResolution.getHeight().intValue()));
+      previewBuilder.setTargetResolution(CameraXProxy.sizeFromResolution(targetResolution));
     }
     Preview preview = previewBuilder.build();
     instanceManager.addDartCreatedInstance(preview, identifier);
@@ -85,7 +83,9 @@ public class PreviewHostApiImpl implements PreviewHostApi {
             flutterSurface,
             Executors.newSingleThreadExecutor(),
             (result) -> {
-              // See https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result for documentation.
+              // See
+              // https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result
+              // for documentation.
               // Always attempt a release.
               flutterSurface.release();
               int resultCode = result.getResultCode();
@@ -114,7 +114,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    * Returns an error description for each {@link SurfaceRequest.Result} that represents an error
    * with providing a surface.
    */
-  private String getProvideSurfaceErrorDescription(@Nullable int resultCode) {
+  private String getProvideSurfaceErrorDescription(int resultCode) {
     switch (resultCode) {
       case SurfaceRequest.Result.RESULT_INVALID_SURFACE:
         return resultCode + ": Provided surface could not be used by the camera.";

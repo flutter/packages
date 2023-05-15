@@ -74,7 +74,14 @@ class ProcessCameraProvider extends JavaObject {
 
 /// Host API implementation of [ProcessCameraProvider].
 class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
-  /// Creates a [ProcessCameraProviderHostApiImpl].
+  /// Constructs an [ProcessCameraProviderHostApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   ProcessCameraProviderHostApiImpl(
       {this.binaryMessenger, InstanceManager? instanceManager})
       : super(binaryMessenger: binaryMessenger) {
@@ -82,9 +89,6 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
   }
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
   final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
@@ -101,9 +105,6 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
   /// the [ProcessCameraProvider] instance.
   int getProcessCameraProviderIdentifier(ProcessCameraProvider instance) {
     final int? identifier = instanceManager.getIdentifier(instance);
-
-    assert(identifier != null,
-        'No ProcessCameraProvider has the identifer of that which was requested.');
     return identifier!;
   }
 
@@ -183,30 +184,36 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
 /// Flutter API Implementation of [ProcessCameraProvider].
 class ProcessCameraProviderFlutterApiImpl
     implements ProcessCameraProviderFlutterApi {
-  /// Constructs a [ProcessCameraProviderFlutterApiImpl].
+  /// Constructs an [ProcessCameraProviderFlutterApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   ProcessCameraProviderFlutterApiImpl({
-    this.binaryMessenger,
+    BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  })  : _binaryMessenger = binaryMessenger,
+        _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager instanceManager;
+  final InstanceManager _instanceManager;
 
   @override
   void create(int identifier) {
-    instanceManager.addHostCreatedInstance(
+    _instanceManager.addHostCreatedInstance(
       ProcessCameraProvider.detached(
-          binaryMessenger: binaryMessenger, instanceManager: instanceManager),
+          binaryMessenger: _binaryMessenger, instanceManager: _instanceManager),
       identifier,
       onCopy: (ProcessCameraProvider original) {
         return ProcessCameraProvider.detached(
-            binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+            binaryMessenger: _binaryMessenger,
+            instanceManager: _instanceManager);
       },
     );
   }

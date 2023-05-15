@@ -1,5 +1,6 @@
-## NEXT
+## 6.1.11
 
+* Fixes some url_launcher docs that were missing the null operator (?).
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 

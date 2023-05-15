@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.0.15
+
+* Updates iOS minimum version in README.
+
 ## 2.0.14
 
 * Updates README to use code excerpts.
