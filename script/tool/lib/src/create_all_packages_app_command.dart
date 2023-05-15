@@ -22,6 +22,7 @@ const String _projectName = 'all_packages';
 const int _exitUpdateMacosPodfileFailed = 3;
 const int _exitUpdateMacosPbxprojFailed = 4;
 const int _exitGenNativeBuildFilesFailed = 5;
+const int _exitMissingBuildFile = 6;
 
 /// A command to create an application that builds all in a single application.
 class CreateAllPackagesAppCommand extends PackageCommand {
@@ -88,6 +89,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     }
 
     await Future.wait(<Future<void>>[
+      _updateTopLevelGradle(),
       _updateAppGradle(),
       _updateManifest(),
       _updateMacosPbxproj(),
@@ -114,17 +116,52 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     return result.exitCode;
   }
 
+  /// Rewrites [file], replacing any lines contain a key in [replacements] with
+  /// the lines in the corresponding value, and adding any lines in [additions]'
+  /// values after lines containing the key.
+  void _adjustFile(
+    File file, {
+    Map<String, List<String>> replacements = const <String, List<String>>{},
+    Map<String, List<String>> additions = const <String, List<String>>{},
+  }) {
+    if (replacements.isEmpty && additions.isEmpty) {
+      return;
+    }
+    // XXX TODO
+  }
+
+  Future<void> _updateTopLevelGradle({String? agpVersion}) async {
+    final File gradleFile = app
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle');
+    if (!gradleFile.existsSync()) {
+      throw ToolExit(_exitMissingBuildFile);
+    }
+
+    final StringBuffer newGradle = StringBuffer();
+    for (final String line in gradleFile.readAsLinesSync()) {
+      if (agpVersion != null && line.contains('com.android.tools.build:')) {
+        newGradle.writeln(
+            "        classpath 'com.android.tools.build:gradle:$agpVersion'");
+      } else {
+        newGradle.writeln(line);
+      }
+    }
+    gradleFile.writeAsStringSync(newGradle.toString());
+  }
+
   Future<void> _updateAppGradle() async {
     final File gradleFile = app
         .platformDirectory(FlutterPlatform.android)
         .childDirectory('app')
         .childFile('build.gradle');
     if (!gradleFile.existsSync()) {
-      throw ToolExit(64);
+      throw ToolExit(_exitMissingBuildFile);
     }
 
     final StringBuffer newGradle = StringBuffer();
     for (final String line in gradleFile.readAsLinesSync()) {
+      // Replacements.
       if (line.contains('minSdkVersion')) {
         // minSdkVersion 21 is required by camera_android.
         newGradle.writeln('minSdkVersion 21');
@@ -134,6 +171,8 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       } else {
         newGradle.writeln(line);
       }
+
+      // Additions.
       if (line.contains('defaultConfig {')) {
         newGradle.writeln('        multiDexEnabled true');
       } else if (line.contains('dependencies {')) {
@@ -154,7 +193,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         .childDirectory('main')
         .childFile('AndroidManifest.xml');
     if (!manifestFile.existsSync()) {
-      throw ToolExit(64);
+      throw ToolExit(_exitMissingBuildFile);
     }
 
     final StringBuffer newManifest = StringBuffer();
