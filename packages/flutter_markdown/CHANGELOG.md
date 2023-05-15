@@ -1,6 +1,6 @@
 ## 0.6.15
 
-* Add tableVerticalAlignment property to allow aligning table cells vertically.
+* Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 

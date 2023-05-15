@@ -701,7 +701,6 @@ class MarkdownStyleSheet {
         other.tableCellsPadding == tableCellsPadding &&
         other.tableCellsDecoration == tableCellsDecoration &&
         other.tableVerticalAlignment == tableVerticalAlignment &&
-        other.tableVerticalAlignment == tableVerticalAlignment &&
         other.blockquotePadding == blockquotePadding &&
         other.blockquoteDecoration == blockquoteDecoration &&
         other.codeblockPadding == codeblockPadding &&
