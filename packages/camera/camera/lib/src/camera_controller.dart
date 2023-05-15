@@ -294,11 +294,17 @@ class CameraController extends ValueNotifier<CameraValue> {
         'initialize was called on a disposed CameraController',
       );
     }
+
+    // dispose resources from previous camera description
+    if (await _initCalled ?? false) {
+      _unawaited(CameraPlatform.instance.dispose(_cameraId));
+    }
+
     try {
       final Completer<CameraInitializedEvent> initializeCompleter =
           Completer<CameraInitializedEvent>();
 
-      _deviceOrientationSubscription = CameraPlatform.instance
+      _deviceOrientationSubscription ??= CameraPlatform.instance
           .onDeviceOrientationChanged()
           .listen((DeviceOrientationChangedEvent event) {
         value = value.copyWith(
