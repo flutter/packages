@@ -181,6 +181,10 @@ class Page1Screen extends DummyScreen {
   const Page1Screen({super.key});
 }
 
+class Page1$1Screen extends DummyScreen {
+  const Page1$1Screen({super.key});
+}
+
 class Page2Screen extends DummyScreen {
   const Page2Screen({super.key});
 }

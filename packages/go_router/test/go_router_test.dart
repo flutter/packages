@@ -2091,15 +2091,28 @@ void main() {
     testWidgets('should be executed when going to another route',
         (WidgetTester tester) async {
       int nbOfOnExitPage1Calls = 0;
+      int nbOfOnExitPage1$1Calls = 0;
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
-            path: '/1',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Page1Screen(),
-            onExit: (BuildContext context) {
-              nbOfOnExitPage1Calls++;
-              return true;
-            }),
+          path: '/1',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Page1Screen(),
+          onExit: (BuildContext context) {
+            nbOfOnExitPage1Calls++;
+            return true;
+          },
+          routes: <GoRoute>[
+            GoRoute(
+              path: '1',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const Page1$1Screen(),
+              onExit: (BuildContext context) {
+                nbOfOnExitPage1$1Calls++;
+                return true;
+              },
+            )
+          ],
+        ),
         GoRoute(
           path: '/2',
           builder: (BuildContext context, GoRouterState state) =>
@@ -2108,10 +2121,11 @@ void main() {
       ];
 
       final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/1');
+          await createRouter(routes, tester, initialLocation: '/1/1');
       router.go('/2');
       await tester.pumpAndSettle();
       expect(nbOfOnExitPage1Calls, 1);
+      expect(nbOfOnExitPage1$1Calls, 1);
       expect(router.location, '/2');
     });
     testWidgets('should be executed when popping a route',
