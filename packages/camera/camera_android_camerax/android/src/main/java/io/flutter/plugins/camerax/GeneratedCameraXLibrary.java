@@ -255,79 +255,6 @@ public class GeneratedCameraXLibrary {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class CameraSize {
-    private @NonNull Long width;
-
-    public @NonNull Long getWidth() {
-      return width;
-    }
-
-    public void setWidth(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"width\" is null.");
-      }
-      this.width = setterArg;
-    }
-
-    private @NonNull Long height;
-
-    public @NonNull Long getHeight() {
-      return height;
-    }
-
-    public void setHeight(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"height\" is null.");
-      }
-      this.height = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    CameraSize() {}
-
-    public static final class Builder {
-
-      private @Nullable Long width;
-
-      public @NonNull Builder setWidth(@NonNull Long setterArg) {
-        this.width = setterArg;
-        return this;
-      }
-
-      private @Nullable Long height;
-
-      public @NonNull Builder setHeight(@NonNull Long setterArg) {
-        this.height = setterArg;
-        return this;
-      }
-
-      public @NonNull CameraSize build() {
-        CameraSize pigeonReturn = new CameraSize();
-        pigeonReturn.setWidth(width);
-        pigeonReturn.setHeight(height);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(2);
-      toListResult.add(width);
-      toListResult.add(height);
-      return toListResult;
-    }
-
-    static @NonNull CameraSize fromList(@NonNull ArrayList<Object> list) {
-      CameraSize pigeonResult = new CameraSize();
-      Object width = list.get(0);
-      pigeonResult.setWidth((width == null) ? null : ((width instanceof Integer) ? (Integer) width : (Long) width));
-      Object height = list.get(1);
-      pigeonResult.setHeight((height == null) ? null : ((height instanceof Integer) ? (Integer) height : (Long) height));
-      return pigeonResult;
-    }
-  }
-
-  /** Generated class from Pigeon that represents data sent in messages. */
   public static final class CameraStateTypeData {
     private @NonNull CameraStateType value;
 
@@ -1303,8 +1230,6 @@ public class GeneratedCameraXLibrary {
       switch (type) {
         case (byte) 128:
           return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
-          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -1315,9 +1240,6 @@ public class GeneratedCameraXLibrary {
       if (value instanceof ResolutionInfo) {
         stream.write(128);
         writeValue(stream, ((ResolutionInfo) value).toList());
-      } else if (value instanceof ResolutionInfo) {
-        stream.write(129);
-        writeValue(stream, ((ResolutionInfo) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -1327,7 +1249,7 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface PreviewHostApi {
 
-    void create(@NonNull Long identifier, @Nullable Long rotation, @Nullable ResolutionInfo targetResolution);
+    void create(@NonNull Long identifier, @Nullable Long rotation, @Nullable Long resolutionSelectorId);
 
     @NonNull 
     Long setSurfaceProvider(@NonNull Long identifier);
@@ -1354,9 +1276,9 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
                 Number rotationArg = (Number) args.get(1);
-                ResolutionInfo targetResolutionArg = (ResolutionInfo) args.get(2);
+                Number resolutionSelectorIdArg = (Number) args.get(2);
                 try {
-                  api.create((identifierArg == null) ? null : identifierArg.longValue(), (rotationArg == null) ? null : rotationArg.longValue(), targetResolutionArg);
+                  api.create((identifierArg == null) ? null : identifierArg.longValue(), (rotationArg == null) ? null : rotationArg.longValue(), (resolutionSelectorIdArg == null) ? null : resolutionSelectorIdArg.longValue());
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
@@ -1884,37 +1806,10 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
-
-  private static class ImageCaptureHostApiCodec extends StandardMessageCodec {
-    public static final ImageCaptureHostApiCodec INSTANCE = new ImageCaptureHostApiCodec();
-
-    private ImageCaptureHostApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof ResolutionInfo) {
-        stream.write(128);
-        writeValue(stream, ((ResolutionInfo) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageCaptureHostApi {
 
-    void create(@NonNull Long identifier, @Nullable Long flashMode, @Nullable ResolutionInfo targetResolution);
+    void create(@NonNull Long identifier, @Nullable Long flashMode, @Nullable Long resolutionSelectorId);
 
     void setFlashMode(@NonNull Long identifier, @NonNull Long flashMode);
 
@@ -1922,7 +1817,7 @@ public class GeneratedCameraXLibrary {
 
     /** The codec used by ImageCaptureHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return ImageCaptureHostApiCodec.INSTANCE;
+      return new StandardMessageCodec();
     }
     /**Sets up an instance of `ImageCaptureHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ImageCaptureHostApi api) {
@@ -1937,9 +1832,9 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
                 Number flashModeArg = (Number) args.get(1);
-                ResolutionInfo targetResolutionArg = (ResolutionInfo) args.get(2);
+                Number resolutionSelectorIdArg = (Number) args.get(2);
                 try {
-                  api.create((identifierArg == null) ? null : identifierArg.longValue(), (flashModeArg == null) ? null : flashModeArg.longValue(), targetResolutionArg);
+                  api.create((identifierArg == null) ? null : identifierArg.longValue(), (flashModeArg == null) ? null : flashModeArg.longValue(), (resolutionSelectorIdArg == null) ? null : resolutionSelectorIdArg.longValue());
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
@@ -2018,7 +1913,7 @@ public class GeneratedCameraXLibrary {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return CameraSize.fromList((ArrayList<Object>) readValue(buffer));
+          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -2026,9 +1921,9 @@ public class GeneratedCameraXLibrary {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof CameraSize) {
+      if (value instanceof ResolutionInfo) {
         stream.write(128);
-        writeValue(stream, ((CameraSize) value).toList());
+        writeValue(stream, ((ResolutionInfo) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -2046,7 +1941,7 @@ public class GeneratedCameraXLibrary {
    */
   public interface ResolutionStrategyHostApi {
     /** Create a new native instance and add it to the `InstanceManager`. */
-    void create(@NonNull Long identifier, @NonNull CameraSize boundSize, @NonNull Long fallbackRule);
+    void create(@NonNull Long identifier, @Nullable ResolutionInfo boundSize, @Nullable Long fallbackRule);
 
     /** The codec used by ResolutionStrategyHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -2064,7 +1959,7 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                CameraSize boundSizeArg = (CameraSize) args.get(1);
+                ResolutionInfo boundSizeArg = (ResolutionInfo) args.get(1);
                 Number fallbackRuleArg = (Number) args.get(2);
                 try {
                   api.create((identifierArg == null) ? null : identifierArg.longValue(), boundSizeArg, (fallbackRuleArg == null) ? null : fallbackRuleArg.longValue());
@@ -2308,37 +2203,10 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
-
-  private static class ImageAnalysisHostApiCodec extends StandardMessageCodec {
-    public static final ImageAnalysisHostApiCodec INSTANCE = new ImageAnalysisHostApiCodec();
-
-    private ImageAnalysisHostApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof ResolutionInfo) {
-        stream.write(128);
-        writeValue(stream, ((ResolutionInfo) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageAnalysisHostApi {
 
-    void create(@NonNull Long identifier, @Nullable ResolutionInfo targetResolutionIdentifier);
+    void create(@NonNull Long identifier, @Nullable Long resolutionSelectorId);
 
     void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier);
 
@@ -2346,7 +2214,7 @@ public class GeneratedCameraXLibrary {
 
     /** The codec used by ImageAnalysisHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return ImageAnalysisHostApiCodec.INSTANCE;
+      return new StandardMessageCodec();
     }
     /**Sets up an instance of `ImageAnalysisHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ImageAnalysisHostApi api) {
@@ -2360,9 +2228,9 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                ResolutionInfo targetResolutionIdentifierArg = (ResolutionInfo) args.get(1);
+                Number resolutionSelectorIdArg = (Number) args.get(1);
                 try {
-                  api.create((identifierArg == null) ? null : identifierArg.longValue(), targetResolutionIdentifierArg);
+                  api.create((identifierArg == null) ? null : identifierArg.longValue(), (resolutionSelectorIdArg == null) ? null : resolutionSelectorIdArg.longValue());
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

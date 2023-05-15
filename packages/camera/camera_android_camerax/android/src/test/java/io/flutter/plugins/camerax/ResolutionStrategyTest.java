@@ -40,8 +40,8 @@ public class ResolutionStrategyTest {
 
   @Test
   public void hostApiCreate() {
-    final GeneratedCameraXLibrary.CameraSize boundSize =
-        new GeneratedCameraXLibrary.CameraSize.Builder().setWidth(50L).setHeight(30L).build();
+    final GeneratedCameraXLibrary.ResolutionInfo boundSize =
+        new GeneratedCameraXLibrary.ResolutionInfo().Builder().setWidth(50L).setHeight(30L).build();
 
     final Long fallbackRule = 0L;
 

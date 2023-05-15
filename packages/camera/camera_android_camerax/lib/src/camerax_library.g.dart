@@ -95,32 +95,6 @@ class CameraPermissionsErrorData {
   }
 }
 
-class CameraSize {
-  CameraSize({
-    required this.width,
-    required this.height,
-  });
-
-  int width;
-
-  int height;
-
-  Object encode() {
-    return <Object?>[
-      width,
-      height,
-    ];
-  }
-
-  static CameraSize decode(Object result) {
-    result as List<Object?>;
-    return CameraSize(
-      width: result[0]! as int,
-      height: result[1]! as int,
-    );
-  }
-}
-
 class CameraStateTypeData {
   CameraStateTypeData({
     required this.value,
@@ -962,9 +936,6 @@ class _PreviewHostApiCodec extends StandardMessageCodec {
     if (value is ResolutionInfo) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is ResolutionInfo) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -974,8 +945,6 @@ class _PreviewHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return ResolutionInfo.decode(readValue(buffer)!);
-      case 129: 
         return ResolutionInfo.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -993,12 +962,12 @@ class PreviewHostApi {
 
   static const MessageCodec<Object?> codec = _PreviewHostApiCodec();
 
-  Future<void> create(int arg_identifier, int? arg_rotation, ResolutionInfo? arg_targetResolution) async {
+  Future<void> create(int arg_identifier, int? arg_rotation, int? arg_resolutionSelectorId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PreviewHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_rotation, arg_targetResolution]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_rotation, arg_resolutionSelectorId]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1522,29 +1491,6 @@ abstract class RecordingFlutterApi {
   }
 }
 
-class _ImageCaptureHostApiCodec extends StandardMessageCodec {
-  const _ImageCaptureHostApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ResolutionInfo) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128: 
-        return ResolutionInfo.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 class ImageCaptureHostApi {
   /// Constructor for [ImageCaptureHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -1553,14 +1499,14 @@ class ImageCaptureHostApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _ImageCaptureHostApiCodec();
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, int? arg_flashMode, ResolutionInfo? arg_targetResolution) async {
+  Future<void> create(int arg_identifier, int? arg_flashMode, int? arg_resolutionSelectorId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImageCaptureHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_flashMode, arg_targetResolution]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_flashMode, arg_resolutionSelectorId]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1631,7 +1577,7 @@ class _ResolutionStrategyHostApiCodec extends StandardMessageCodec {
   const _ResolutionStrategyHostApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is CameraSize) {
+    if (value is ResolutionInfo) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
@@ -1643,7 +1589,7 @@ class _ResolutionStrategyHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return CameraSize.decode(readValue(buffer)!);
+        return ResolutionInfo.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1666,7 +1612,7 @@ class ResolutionStrategyHostApi {
   static const MessageCodec<Object?> codec = _ResolutionStrategyHostApiCodec();
 
   /// Create a new native instance and add it to the `InstanceManager`.
-  Future<void> create(int arg_identifier, CameraSize arg_boundSize, int arg_fallbackRule) async {
+  Future<void> create(int arg_identifier, ResolutionInfo? arg_boundSize, int? arg_fallbackRule) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ResolutionStrategyHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
@@ -1913,29 +1859,6 @@ abstract class ZoomStateFlutterApi {
   }
 }
 
-class _ImageAnalysisHostApiCodec extends StandardMessageCodec {
-  const _ImageAnalysisHostApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ResolutionInfo) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128: 
-        return ResolutionInfo.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 class ImageAnalysisHostApi {
   /// Constructor for [ImageAnalysisHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -1944,14 +1867,14 @@ class ImageAnalysisHostApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _ImageAnalysisHostApiCodec();
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, ResolutionInfo? arg_targetResolutionIdentifier) async {
+  Future<void> create(int arg_identifier, int? arg_resolutionSelectorId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImageAnalysisHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_targetResolutionIdentifier]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_resolutionSelectorId]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

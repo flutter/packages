@@ -1,3 +1,7 @@
+## 0.5.0+3
+
+* Implements resolution configuration for live camera preview, image capture, and image analysis use cases.
+
 ## 0.5.0+2
 
 * Adds a dependency on kotlin-bom to align versions of Kotlin transitive dependencies.

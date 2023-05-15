@@ -7,6 +7,7 @@ import 'package:flutter/services.dart' show BinaryMessenger;
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'resolution_selector.dart';
 import 'use_case.dart';
 
 /// Use case for picture taking.
@@ -18,14 +19,14 @@ class ImageCapture extends UseCase {
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
     this.targetFlashMode,
-    this.targetResolution,
+    this.resolutionSelector,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
         ) {
     _api = ImageCaptureHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, targetFlashMode, targetResolution);
+    _api.createFromInstance(this, targetFlashMode, resolutionSelector);
   }
 
   /// Constructs a [ImageCapture] that is not automatically attached to a native object.
@@ -33,7 +34,7 @@ class ImageCapture extends UseCase {
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
     this.targetFlashMode,
-    this.targetResolution,
+    this.resolutionSelector,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -48,7 +49,7 @@ class ImageCapture extends UseCase {
   final int? targetFlashMode;
 
   /// Target resolution of the image output from taking a picture.
-  final ResolutionInfo? targetResolution;
+  final ResolutionSelector? resolutionSelector;
 
   /// Constant for automatic flash mode.
   ///
@@ -119,16 +120,21 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
   /// Creates an [ImageCapture] instance with the flash mode and target resolution
   /// if specified.
   void createFromInstance(ImageCapture instance, int? targetFlashMode,
-      ResolutionInfo? targetResolution) {
+      ResolutionSelector? resolutionSelector) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (ImageCapture original) {
       return ImageCapture.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
           targetFlashMode: original.targetFlashMode,
-          targetResolution: original.targetResolution);
+          resolutionSelector: original.resolutionSelector);
     });
-    create(identifier, targetFlashMode, targetResolution);
+    create(
+        identifier,
+        targetFlashMode,
+        resolutionSelector == null
+            ? null
+            : instanceManager.getIdentifier(resolutionSelector));
   }
 
   /// Sets the flash mode for the specified [ImageCapture] instance to take

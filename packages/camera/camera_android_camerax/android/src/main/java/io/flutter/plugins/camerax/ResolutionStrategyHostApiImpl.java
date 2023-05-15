@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import android.util.Size;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -67,12 +68,19 @@ public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi 
   @Override
   public void create(
       @NonNull Long identifier,
-      @NonNull GeneratedCameraXLibrary.CameraSize boundSize,
-      @NonNull Long fallbackRule) {
+      @Nullable GeneratedCameraXLibrary.ResolutionInfo boundSize,
+      @Nullable Long fallbackRule) {
+    ResolutionStrategy resolutionStrategy;
+    if (boundSize == null) {
+      resolutionStrategy = ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY;
+    }
+    else {
+      resolutionStrategy = proxy.create(
+        new Size(boundSize.getWidth().intValue(), boundSize.getHeight().intValue()),
+        fallbackRule);
+    }
     instanceManager.addDartCreatedInstance(
-        proxy.create(
-            new Size(boundSize.getWidth().intValue(), boundSize.getHeight().intValue()),
-            fallbackRule),
+      resolutionStrategy,
         identifier);
   }
 }

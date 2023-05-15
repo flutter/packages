@@ -15,8 +15,8 @@ import 'java_object.dart';
 class ResolutionStrategy extends JavaObject {
   /// Construct a [ResolutionStrategy].
   ResolutionStrategy({
-    required this.boundSize,
-    required this.fallbackRule,
+    this.boundSize,
+    this.fallbackRule,
     super.binaryMessenger,
     super.instanceManager,
   })  : _api = _ResolutionStrategyHostApiImpl(
@@ -83,14 +83,22 @@ class ResolutionStrategy extends JavaObject {
   /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy#FALLBACK_RULE_CLOSEST_LOWER()
   static const int fallbackRuleClosestLower = 4;
 
+  static ResolutionStrategy getHighestAvailableStrategy({
+    BinaryMessenger? binaryMessenger,
+    InstanceManager? instanceManager,
+  }) {
+    return ResolutionStrategy(
+        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+  }
+
   final _ResolutionStrategyHostApiImpl _api;
 
   /// The specified bound size for the desired resolution of the camera.
-  final Size boundSize;
+  final Size? boundSize;
 
   /// The fallback rule for choosing an alternate size when the specified bound
   /// size is unavailable.
-  final int fallbackRule;
+  final int? fallbackRule;
 }
 
 class _ResolutionStrategyHostApiImpl extends ResolutionStrategyHostApi {
@@ -106,8 +114,8 @@ class _ResolutionStrategyHostApiImpl extends ResolutionStrategyHostApi {
 
   Future<void> createFromInstances(
     ResolutionStrategy instance,
-    Size boundSize,
-    int fallbackRule,
+    Size? boundSize,
+    int? fallbackRule,
   ) {
     return create(
       instanceManager.addDartCreatedInstance(
@@ -119,10 +127,12 @@ class _ResolutionStrategyHostApiImpl extends ResolutionStrategyHostApi {
           instanceManager: instanceManager,
         ),
       ),
-      CameraSize(
-        width: boundSize.width.toInt(),
-        height: boundSize.height.toInt(),
-      ),
+      boundSize == null
+          ? null
+          : ResolutionInfo(
+              width: boundSize.width.toInt(),
+              height: boundSize.height.toInt(),
+            ),
       fallbackRule,
     );
   }

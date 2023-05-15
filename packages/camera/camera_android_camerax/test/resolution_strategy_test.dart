@@ -49,9 +49,9 @@ void main() {
 
       verify(mockApi.create(
         instanceManager.getIdentifier(instance),
-        argThat(isA<CameraSize>()
-            .having((CameraSize size) => size.width, 'width', 50)
-            .having((CameraSize size) => size.height, 'height', 30)),
+        argThat(isA<ResolutionInfo>()
+            .having((ResolutionInfo size) => size.width, 'width', 50)
+            .having((ResolutionInfo size) => size.height, 'height', 30)),
         fallbackRule,
       ));
     });

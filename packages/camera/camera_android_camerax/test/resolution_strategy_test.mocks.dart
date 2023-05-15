@@ -31,7 +31,7 @@ class MockTestResolutionStrategyHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
-    _i3.CameraSize? boundSize,
+    _i3.ResolutionInfo? boundSize,
     int? fallbackRule,
   ) =>
       super.noSuchMethod(

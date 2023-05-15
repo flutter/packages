@@ -27,6 +27,8 @@ import 'preview.dart';
 import 'process_camera_provider.dart';
 import 'recorder.dart';
 import 'recording.dart';
+import 'resolution_selector.dart';
+import 'resolution_strategy.dart';
 import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
@@ -113,9 +115,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraSelector? cameraSelector;
 
-  /// The resolution preset used to create a camera that should be used for
-  /// capturing still images and recording video.
-  ResolutionPreset? _resolutionPreset;
+  /// The [ResolutionSelector] that represents resolution preset used to create
+  /// a camera that should be used for capturing still images, recording video,
+  /// and image analysis.
+  ResolutionSelector? _presetResolutionSelector;
 
   /// The controller we need to broadcast the different camera events.
   ///
@@ -225,24 +228,22 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Start listening for device orientation changes preceding camera creation.
     startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, cameraDescription.sensorOrientation);
+    // Determine ResolutionSelector based on preset for camera UseCases.
+    _presetResolutionSelector =
+        await _getResolutionSelectorFromPreset(resolutionPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
     processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
-    _resolutionPreset = resolutionPreset;
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
-    final ResolutionInfo? previewTargetResolution =
-        _getResolutionInfoFromPreset(resolutionPreset);
-    preview = createPreview(targetRotation, previewTargetResolution);
+    preview = createPreview(targetRotation, _presetResolutionSelector);
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.
-    final ResolutionInfo? imageCaptureTargetResolution =
-        _getResolutionInfoFromPreset(_resolutionPreset);
-    imageCapture = createImageCapture(null, imageCaptureTargetResolution);
+    imageCapture = createImageCapture(null, _presetResolutionSelector);
 
     // Configure VideoCapture and Recorder instances.
     // TODO(gmackall): Enable video capture resolution configuration in createRecorder().
@@ -632,7 +633,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = createImageAnalysis(null);
+    imageAnalysis = createImageAnalysis(_presetResolutionSelector);
     imageAnalysis!.setAnalyzer(analyzer);
 
     // TODO(camsim99): Reset live camera state observers here when
@@ -765,27 +766,44 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
-  /// Returns [ResolutionInfo] that maps to the specified resolution preset for
-  ResolutionInfo? _getResolutionInfoFromPreset(ResolutionPreset? preset) {
-    // TODO(camsim99): File issue for adding warnings about CameraX limits on resolution configuration, and for allowing further configuration.
-    // TODO(camsim99): max is different for ImageAnalysis, so add further functionality once its PR is merged.
+  Future<ResolutionSelector?> _getResolutionSelectorFromPreset(
+      ResolutionPreset? preset) async {
+    ResolutionStrategy? resolutionStrategy;
+    const int generalFallbackRule =
+        ResolutionStrategy.fallbackRuleClosestHigher;
     switch (preset) {
       case ResolutionPreset.low:
-        return ResolutionInfo(width: 320, height: 240);
+        resolutionStrategy = ResolutionStrategy(
+            boundSize: const Size(320, 240), fallbackRule: generalFallbackRule);
+        break;
       case ResolutionPreset.medium:
-        return ResolutionInfo(width: 720, height: 480);
+        resolutionStrategy = ResolutionStrategy(
+            boundSize: const Size(720, 480), fallbackRule: generalFallbackRule);
+        break;
       case ResolutionPreset.high:
-        return ResolutionInfo(width: 1280, height: 720);
+        resolutionStrategy = ResolutionStrategy(
+            boundSize: const Size(1280, 720),
+            fallbackRule: generalFallbackRule);
+        break;
       case ResolutionPreset.veryHigh:
-        return ResolutionInfo(width: 1920, height: 1080);
+        resolutionStrategy = ResolutionStrategy(
+            boundSize: const Size(1920, 1080),
+            fallbackRule: generalFallbackRule);
+        break;
       case ResolutionPreset.ultraHigh:
-        return ResolutionInfo(width: 3840, height: 2160);
+        resolutionStrategy = ResolutionStrategy(
+            boundSize: const Size(3840, 2160),
+            fallbackRule: generalFallbackRule);
+        break;
       case ResolutionPreset.max:
+        resolutionStrategy = ResolutionStrategy.getHighestAvailableStrategy();
+        break;
       case null:
-        // Default to maximum resolution avaiable or highest device-preferred
-        // resolution that matches default aspect ratio.
-        return null;
+        // TODO(camsim99): Add comment here about default behavior.
+        break;
     }
+
+    return ResolutionSelector(resolutionStrategy: resolutionStrategy);
   }
 
   // Methods for calls that need to be tested:
@@ -820,18 +838,19 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns a [Preview] configured with the specified target rotation and
   /// resolution.
   @visibleForTesting
-  Preview createPreview(int targetRotation, ResolutionInfo? targetResolution) {
+  Preview createPreview(
+      int targetRotation, ResolutionSelector? resolutionSelector) {
     return Preview(
-        targetRotation: targetRotation, targetResolution: targetResolution);
+        targetRotation: targetRotation, resolutionSelector: resolutionSelector);
   }
 
   /// Returns an [ImageCapture] configured with specified flash mode and
   /// target resolution.
   @visibleForTesting
   ImageCapture createImageCapture(
-      int? flashMode, ResolutionInfo? targetResolution) {
+      int? flashMode, ResolutionSelector? resolutionSelector) {
     return ImageCapture(
-        targetFlashMode: flashMode, targetResolution: targetResolution);
+        targetFlashMode: flashMode, resolutionSelector: resolutionSelector);
   }
 
   /// Returns a [Recorder] for use in video capture.
@@ -848,7 +867,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Returns an [ImageAnalysis] configured with specified target resolution.
   @visibleForTesting
-  ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
-    return ImageAnalysis(targetResolution: targetResolution);
+  ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
+    return ImageAnalysis(resolutionSelector: resolutionSelector);
   }
 }

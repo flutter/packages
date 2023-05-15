@@ -46,13 +46,6 @@ class CameraPermissionsErrorData {
   String description;
 }
 
-class CameraSize {
-  CameraSize(this.width, this.height);
-
-  int width;
-  int height;
-}
-
 /// The states the camera can be in.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraState.Type.
@@ -203,7 +196,7 @@ abstract class SystemServicesFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestPreviewHostApi')
 abstract class PreviewHostApi {
-  void create(int identifier, int? rotation, ResolutionInfo? targetResolution);
+  void create(int identifier, int? rotation, int? resolutionSelectorId);
 
   int setSurfaceProvider(int identifier);
 
@@ -268,7 +261,7 @@ abstract class RecordingFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')
 abstract class ImageCaptureHostApi {
-  void create(int identifier, int? flashMode, ResolutionInfo? targetResolution);
+  void create(int identifier, int? flashMode, int? resolutionSelectorId);
 
   void setFlashMode(int identifier, int flashMode);
 
@@ -284,7 +277,7 @@ abstract class ImageCaptureHostApi {
 @HostApi(dartHostTestHandler: 'TestResolutionStrategyHostApi')
 abstract class ResolutionStrategyHostApi {
   /// Create a new native instance and add it to the `InstanceManager`.
-  void create(int identifier, CameraSize boundSize, int fallbackRule);
+  void create(int identifier, ResolutionInfo? boundSize, int? fallbackRule);
 }
 
 /// Host API for `ResolutionSelector`.
@@ -333,7 +326,7 @@ abstract class ZoomStateFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
 abstract class ImageAnalysisHostApi {
-  void create(int identifier, ResolutionInfo? targetResolutionIdentifier);
+  void create(int identifier, int? resolutionSelectorId);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
