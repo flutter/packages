@@ -1,3 +1,7 @@
+## 0.10.6
+
+* Fixes camera resource handling
+
 ## 0.10.5
 
 * Adds NV21 as an image streaming option for Android.
