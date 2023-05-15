@@ -680,7 +680,7 @@ dependencies {
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(example,
-          pluginName: packageName, kotlinVersion: '1.7.10');
+          pluginName: packageName, kotlinVersion: minKotlinVersion.toString());
       writeFakeManifest(example, isApp: true);
 
       final List<String> output =
@@ -738,8 +738,8 @@ dependencies {
         output,
         containsAllInOrder(<Matcher>[
           contains('build.gradle sets "ext.kotlin_version" to "1.6.21". The '
-              'minimum Kotlin version that can be specified is 1.7.10, for '
-              'compatibility with modern dependencies.'),
+              'minimum Kotlin version that can be specified is '
+              '$minKotlinVersion, for compatibility with modern dependencies.'),
         ]),
       );
     });

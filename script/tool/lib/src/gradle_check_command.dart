@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:meta/meta.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
@@ -11,7 +12,8 @@ import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 /// The lowest `ext.kotlin_version` that example apps are allowed to use.
-final Version _minKotlinVersion = Version(1, 7, 10);
+@visibleForTesting
+final Version minKotlinVersion = Version(1, 7, 10);
 
 /// A command to enforce gradle file conventions and best practices.
 class GradleCheckCommand extends PackageLoopingCommand {
@@ -367,10 +369,10 @@ gradle.projectsEvaluated {
       return match != null;
     })) {
       final Version version = Version.parse(match!.group(1)!);
-      if (version < _minKotlinVersion) {
+      if (version < minKotlinVersion) {
         printError('build.gradle sets "ext.kotlin_version" to "$version". The '
             'minimum Kotlin version that can be specified is '
-            '$_minKotlinVersion, for compatibility with modern dependencies.');
+            '$minKotlinVersion, for compatibility with modern dependencies.');
         return false;
       }
     }
