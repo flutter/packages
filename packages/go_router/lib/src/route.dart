@@ -199,7 +199,7 @@ class GoRoute extends RouteBase {
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
   ///
-  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/path_and_query_parameters.dart)
   /// to learn more about parameters.
   final String path;
 
