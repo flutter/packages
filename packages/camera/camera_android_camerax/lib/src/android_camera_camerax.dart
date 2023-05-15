@@ -239,11 +239,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Configure Preview instance.
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
-    preview = createPreview(targetRotation, _presetResolutionSelector);
+    preview = createPreview(targetRotation);
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.
-    imageCapture = createImageCapture(null, _presetResolutionSelector);
+    imageCapture = createImageCapture(null);
 
     // Configure VideoCapture and Recorder instances.
     // TODO(gmackall): Enable video capture resolution configuration in createRecorder().
@@ -633,7 +633,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = createImageAnalysis(_presetResolutionSelector);
+    imageAnalysis = createImageAnalysis();
     imageAnalysis!.setAnalyzer(analyzer);
 
     // TODO(camsim99): Reset live camera state observers here when
@@ -838,19 +838,19 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns a [Preview] configured with the specified target rotation and
   /// resolution.
   @visibleForTesting
-  Preview createPreview(
-      int targetRotation, ResolutionSelector? resolutionSelector) {
+  Preview createPreview(int targetRotation) {
     return Preview(
-        targetRotation: targetRotation, resolutionSelector: resolutionSelector);
+        targetRotation: targetRotation,
+        resolutionSelector: _presetResolutionSelector);
   }
 
   /// Returns an [ImageCapture] configured with specified flash mode and
   /// target resolution.
   @visibleForTesting
-  ImageCapture createImageCapture(
-      int? flashMode, ResolutionSelector? resolutionSelector) {
+  ImageCapture createImageCapture(int? flashMode) {
     return ImageCapture(
-        targetFlashMode: flashMode, resolutionSelector: resolutionSelector);
+        targetFlashMode: flashMode,
+        resolutionSelector: _presetResolutionSelector);
   }
 
   /// Returns a [Recorder] for use in video capture.
@@ -867,7 +867,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Returns an [ImageAnalysis] configured with specified target resolution.
   @visibleForTesting
-  ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
-    return ImageAnalysis(resolutionSelector: resolutionSelector);
+  ImageAnalysis createImageAnalysis() {
+    return ImageAnalysis(resolutionSelector: _presetResolutionSelector);
   }
 }
