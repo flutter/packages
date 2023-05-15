@@ -19,10 +19,8 @@ const String _outputDirectoryFlag = 'output-dir';
 
 const String _projectName = 'all_packages';
 
-const int _exitUpdateMacosPodfileFailed = 3;
-const int _exitUpdateMacosPbxprojFailed = 4;
-const int _exitGenNativeBuildFilesFailed = 5;
-const int _exitMissingBuildFile = 6;
+const int _exitGenNativeBuildFilesFailed = 3;
+const int _exitMissingFile = 4;
 
 /// A command to create an application that builds all in a single application.
 class CreateAllPackagesAppCommand extends PackageCommand {
@@ -127,27 +125,45 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     if (replacements.isEmpty && additions.isEmpty) {
       return;
     }
-    // XXX TODO
+    if (!file.existsSync()) {
+      printError('Unable to find ${file.path} for updating.');
+      throw ToolExit(_exitMissingFile);
+    }
+
+    final StringBuffer output = StringBuffer();
+    for (final String line in file.readAsLinesSync()) {
+      List<String> lines = <String>[line];
+      for (final String targetString in replacements.keys) {
+        if (line.contains(targetString)) {
+          lines = replacements[targetString]!;
+          break;
+        }
+      }
+      lines.forEach(output.writeln);
+
+      for (final String targetString in additions.keys) {
+        if (line.contains(targetString)) {
+          additions[targetString]!.forEach(output.writeln);
+        }
+      }
+    }
+    file.writeAsStringSync(output.toString());
   }
 
   Future<void> _updateTopLevelGradle({String? agpVersion}) async {
     final File gradleFile = app
         .platformDirectory(FlutterPlatform.android)
         .childFile('build.gradle');
-    if (!gradleFile.existsSync()) {
-      throw ToolExit(_exitMissingBuildFile);
-    }
-
-    final StringBuffer newGradle = StringBuffer();
-    for (final String line in gradleFile.readAsLinesSync()) {
-      if (agpVersion != null && line.contains('com.android.tools.build:')) {
-        newGradle.writeln(
-            "        classpath 'com.android.tools.build:gradle:$agpVersion'");
-      } else {
-        newGradle.writeln(line);
-      }
-    }
-    gradleFile.writeAsStringSync(newGradle.toString());
+    _adjustFile(
+      gradleFile,
+      replacements: <String, List<String>>{
+        if (agpVersion != null)
+          // minSdkVersion 21 is required by camera_android.
+          'com.android.tools.build:': <String>[
+            "        classpath 'com.android.tools.build:gradle:$agpVersion'"
+          ],
+      },
+    );
   }
 
   Future<void> _updateAppGradle() async {
@@ -155,34 +171,22 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         .platformDirectory(FlutterPlatform.android)
         .childDirectory('app')
         .childFile('build.gradle');
-    if (!gradleFile.existsSync()) {
-      throw ToolExit(_exitMissingBuildFile);
-    }
-
-    final StringBuffer newGradle = StringBuffer();
-    for (final String line in gradleFile.readAsLinesSync()) {
-      // Replacements.
-      if (line.contains('minSdkVersion')) {
+    _adjustFile(
+      gradleFile,
+      replacements: <String, List<String>>{
         // minSdkVersion 21 is required by camera_android.
-        newGradle.writeln('minSdkVersion 21');
-      } else if (line.contains('compileSdkVersion')) {
+        'minSdkVersion': <String>['minSdkVersion 21'],
         // compileSdkVersion 33 is required by local_auth.
-        newGradle.writeln('compileSdkVersion 33');
-      } else {
-        newGradle.writeln(line);
-      }
-
-      // Additions.
-      if (line.contains('defaultConfig {')) {
-        newGradle.writeln('        multiDexEnabled true');
-      } else if (line.contains('dependencies {')) {
+        'compileSdkVersion': <String>['compileSdkVersion 33'],
+      },
+      additions: <String, List<String>>{
+        'defaultConfig {': <String>['        multiDexEnabled true'],
         // Tests for https://github.com/flutter/flutter/issues/43383
-        newGradle.writeln(
-          "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'\n",
-        );
-      }
-    }
-    gradleFile.writeAsStringSync(newGradle.toString());
+        'dependencies {': <String>[
+          "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'\n"
+        ],
+      },
+    );
   }
 
   Future<void> _updateManifest() async {
@@ -192,25 +196,16 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         .childDirectory('src')
         .childDirectory('main')
         .childFile('AndroidManifest.xml');
-    if (!manifestFile.existsSync()) {
-      throw ToolExit(_exitMissingBuildFile);
-    }
-
-    final StringBuffer newManifest = StringBuffer();
-    for (final String line in manifestFile.readAsLinesSync()) {
-      if (line.contains('package="com.example.$_projectName"')) {
-        newManifest
-          ..writeln('package="com.example.$_projectName"')
-          ..writeln('xmlns:tools="http://schemas.android.com/tools">')
-          ..writeln()
-          ..writeln(
-            '<uses-sdk tools:overrideLibrary="io.flutter.plugins.camera"/>',
-          );
-      } else {
-        newManifest.writeln(line);
-      }
-    }
-    manifestFile.writeAsStringSync(newManifest.toString());
+    _adjustFile(
+      manifestFile,
+      additions: <String, List<String>>{
+        'package="com.example.$_projectName"': <String>[
+          'xmlns:tools="http://schemas.android.com/tools">',
+          '',
+          '<uses-sdk tools:overrideLibrary="io.flutter.plugins.camera"/>',
+        ],
+      },
+    );
   }
 
   Future<void> _genPubspecWithAllPlugins() async {
@@ -339,23 +334,15 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
       return;
     }
 
-    final File podfileFile =
+    final File podfile =
         app.platformDirectory(FlutterPlatform.macos).childFile('Podfile');
-    if (!podfileFile.existsSync()) {
-      printError("Can't find Podfile for macOS");
-      throw ToolExit(_exitUpdateMacosPodfileFailed);
-    }
-
-    final StringBuffer newPodfile = StringBuffer();
-    for (final String line in podfileFile.readAsLinesSync()) {
-      if (line.contains('platform :osx')) {
+    _adjustFile(
+      podfile,
+      replacements: <String, List<String>>{
         // macOS 10.15 is required by in_app_purchase.
-        newPodfile.writeln("platform :osx, '10.15'");
-      } else {
-        newPodfile.writeln(line);
-      }
-    }
-    podfileFile.writeAsStringSync(newPodfile.toString());
+        'platform :osx': <String>["platform :osx, '10.15'"],
+      },
+    );
   }
 
   Future<void> _updateMacosPbxproj() async {
@@ -363,20 +350,14 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
         .platformDirectory(FlutterPlatform.macos)
         .childDirectory('Runner.xcodeproj')
         .childFile('project.pbxproj');
-    if (!pbxprojFile.existsSync()) {
-      printError("Can't find project.pbxproj for macOS");
-      throw ToolExit(_exitUpdateMacosPbxprojFailed);
-    }
-
-    final StringBuffer newPbxproj = StringBuffer();
-    for (final String line in pbxprojFile.readAsLinesSync()) {
-      if (line.contains('MACOSX_DEPLOYMENT_TARGET')) {
+    _adjustFile(
+      pbxprojFile,
+      replacements: <String, List<String>>{
         // macOS 10.15 is required by in_app_purchase.
-        newPbxproj.writeln('				MACOSX_DEPLOYMENT_TARGET = 10.15;');
-      } else {
-        newPbxproj.writeln(line);
-      }
-    }
-    pbxprojFile.writeAsStringSync(newPbxproj.toString());
+        'MACOSX_DEPLOYMENT_TARGET': <String>[
+          '				MACOSX_DEPLOYMENT_TARGET = 10.15;'
+        ],
+      },
+    );
   }
 }
