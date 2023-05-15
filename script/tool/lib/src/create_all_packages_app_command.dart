@@ -15,8 +15,6 @@ import 'common/package_command.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
-const String _outputDirectoryFlag = 'output-dir';
-
 const String _projectName = 'all_packages';
 
 const int _exitGenNativeBuildFilesFailed = 3;
@@ -38,7 +36,26 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         help:
             'The path the directory to create the "$_projectName" project in.\n'
             'Defaults to the repository root.');
+    argParser.addOption(_agpVersionFlag,
+        help: 'The AGP version to use in the created app, instead of the '
+            'default `flutter create`d version. Will generally need to be used '
+            ' with $_gradleVersionFlag due to compatibility limits.');
+    argParser.addOption(_androidLanguageFlag,
+        defaultsTo: 'kotlin',
+        allowed: <String>['java', 'kotlin'],
+        help: 'The AGP version to use in the created app, instead of the '
+            'default `flutter create`d version. Will generally need to be used '
+            ' with $_gradleVersionFlag due to compatibility limits.');
+    argParser.addOption(_gradleVersionFlag,
+        help: 'The Gradle version to use in the created app, instead of the '
+            'default `flutter create`d version. Will generally need to be used '
+            ' with $_agpVersionFlag due to compatibility limits.');
   }
+
+  static const String _androidLanguageFlag = 'android-language';
+  static const String _agpVersionFlag = 'agp-version';
+  static const String _gradleVersionFlag = 'gradle-version';
+  static const String _outputDirectoryFlag = 'output-dir';
 
   /// The location to create the synthesized app project.
   Directory get _appDirectory => packagesDir.fileSystem
@@ -87,7 +104,9 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     }
 
     await Future.wait(<Future<void>>[
-      _updateTopLevelGradle(),
+      _updateTopLevelGradle(agpVersion: getNullableStringArg(_agpVersionFlag)),
+      _updateGradleWrapper(
+          gradleVersion: getNullableStringArg(_gradleVersionFlag)),
       _updateAppGradle(),
       _updateManifest(),
       _updateMacosPbxproj(),
@@ -104,7 +123,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         'create',
         '--template=app',
         '--project-name=$_projectName',
-        '--android-language=java',
+        '--android-language=${getStringArg(_androidLanguageFlag)}',
         _appDirectory.path,
       ],
     );
@@ -158,9 +177,25 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       gradleFile,
       replacements: <String, List<String>>{
         if (agpVersion != null)
-          // minSdkVersion 21 is required by camera_android.
           'com.android.tools.build:': <String>[
             "        classpath 'com.android.tools.build:gradle:$agpVersion'"
+          ],
+      },
+    );
+  }
+
+  Future<void> _updateGradleWrapper({String? gradleVersion}) async {
+    final File gradleFile = app
+        .platformDirectory(FlutterPlatform.android)
+        .childDirectory('gradle')
+        .childDirectory('wrapper')
+        .childFile('gradle-wrapper.properties');
+    _adjustFile(
+      gradleFile,
+      replacements: <String, List<String>>{
+        if (gradleVersion != null)
+          'distributionUrl': <String>[
+            'distributionUrl=https\\://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip'
           ],
       },
     );
