@@ -283,7 +283,9 @@ void main() {
         'Test for publish-check command.',
       );
       runner.addCommand(PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient));
+          platform: mockPlatform,
+          processRunner: processRunner,
+          httpClient: mockClient));
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
@@ -339,7 +341,9 @@ void main() {
         'Test for publish-check command.',
       );
       runner.addCommand(PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient));
+          platform: mockPlatform,
+          processRunner: processRunner,
+          httpClient: mockClient));
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['publish-check']);
