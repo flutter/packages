@@ -10,6 +10,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'common/core.dart';
+import 'common/file_utils.dart';
 import 'common/package_command.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';
@@ -22,6 +23,7 @@ const String allPackagesProjectName = 'all_packages';
 const int _exitFlutterCreateFailed = 3;
 const int _exitGenNativeBuildFilesFailed = 4;
 const int _exitMissingFile = 5;
+const int _exitMissingLegacySource = 6;
 
 /// A command to create an application that builds all in a single application.
 class CreateAllPackagesAppCommand extends PackageCommand {
@@ -53,12 +55,20 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     argParser.addOption(_kotlinVersionFlag,
         help: 'The Kotlin version to use in the created app, instead of the '
             'default `flutter create`d version.');
+    argParser.addOption(_legacySourceFlag,
+        help: 'A partial project directory to use as a source for replacing '
+            'portions of the created app. All top-level directories in the '
+            'source will replace the corresponding directories in the output '
+            'directory post-create.\n\n'
+            'The replacement will be done before any tool-driven '
+            'modifications.');
   }
 
   static const String _androidLanguageFlag = 'android-language';
   static const String _agpVersionFlag = 'agp-version';
   static const String _gradleVersionFlag = 'gradle-version';
   static const String _kotlinVersionFlag = 'kotlin-version';
+  static const String _legacySourceFlag = 'legacy-source';
   static const String _outputDirectoryFlag = 'output-dir';
 
   /// The location to create the synthesized app project.
@@ -82,6 +92,13 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     if (exitCode != 0) {
       printError('Failed to `flutter create`: $exitCode');
       throw ToolExit(_exitFlutterCreateFailed);
+    }
+
+    final String? legacySource = getNullableStringArg(_legacySourceFlag);
+    if (legacySource != null) {
+      final Directory legacyDir =
+          packagesDir.fileSystem.directory(legacySource);
+      await _replaceWithLegacy(target: _appDirectory, source: legacyDir);
     }
 
     final Set<String> excluded = getExcludedPackageNames();
@@ -133,6 +150,42 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         _appDirectory.path,
       ],
     );
+  }
+
+  Future<void> _replaceWithLegacy(
+      {required Directory target, required Directory source}) async {
+    if (!source.existsSync()) {
+      printError('No such legacy source directory: ${source.path}');
+      throw ToolExit(_exitMissingLegacySource);
+    }
+    for (final FileSystemEntity entity in source.listSync()) {
+      final String basename = entity.basename;
+      if (entity is Directory) {
+        target.childDirectory(basename).deleteSync(recursive: true);
+      } else {
+        target.childFile(basename).deleteSync();
+      }
+      _copyDirectory(source: source, target: target);
+    }
+  }
+
+  void _copyDirectory({required Directory target, required Directory source}) {
+    target.createSync(recursive: true);
+    for (final FileSystemEntity entity in source.listSync(recursive: true)) {
+      final List<String> subcomponents =
+          p.split(p.relative(entity.path, from: source.path));
+      if (entity is Directory) {
+        childDirectoryWithSubcomponents(target, subcomponents)
+            .createSync(recursive: true);
+      } else if (entity is File) {
+        final File targetFile =
+            childFileWithSubcomponents(target, subcomponents);
+        targetFile.parent.createSync(recursive: true);
+        entity.copySync(targetFile.path);
+      } else {
+        throw UnimplementedError('Unsupported entity: $entity');
+      }
+    }
   }
 
   /// Rewrites [file], replacing any lines contain a key in [replacements] with

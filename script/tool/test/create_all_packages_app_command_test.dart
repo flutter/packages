@@ -47,32 +47,12 @@ void main() {
     Directory outputDirectory, {
     String dartSdkConstraint = '>=3.0.0 <4.0.0',
     String? appBuildGradleDependencies,
+    bool androidOnly = false,
   }) {
     final RepositoryPackage package = RepositoryPackage(
         outputDirectory.childDirectory(allPackagesProjectName));
 
-    package.pubspecFile
-      ..createSync(recursive: true)
-      ..writeAsStringSync('''
-name: $allPackagesProjectName
-description: Flutter app containing all 1st party plugins.
-publish_to: none
-version: 1.0.0
-
-environment:
-  sdk: '$dartSdkConstraint'
-
-dependencies:
-  flutter:
-    sdk: flutter
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-###
-''');
-
-// Android
+    // Android
     final Directory android =
         package.platformDirectory(FlutterPlatform.android);
     android.childFile('build.gradle')
@@ -124,6 +104,32 @@ $dependencies
 distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
 distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
+''');
+
+    if (androidOnly) {
+      return;
+    }
+
+    // Non-platform-specific
+    package.pubspecFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+name: $allPackagesProjectName
+description: Flutter app containing all 1st party plugins.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: '$dartSdkConstraint'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+###
 ''');
 
     // macOS
@@ -245,6 +251,100 @@ project 'Runner', {
             contains(RegExp('path: .*/packages/plugina')),
             contains(RegExp('path: .*/packages/pluginb')),
             contains(RegExp('path: .*/packages/pluginc')),
+          ]));
+    });
+
+    test('legacy files are copied when requested', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+      // Make a fake legacy source with all the necessary files, replacing one
+      // of them.
+      final Directory legacyDir = testRoot.childDirectory('legacy');
+      final RepositoryPackage legacySource =
+          RepositoryPackage(legacyDir.childDirectory(allPackagesProjectName));
+      writeFakeFlutterCreateOutput(legacyDir, androidOnly: true);
+      const String legacyAppBuildGradleContents = 'Fake legacy content';
+      final File legacyGradleFile = legacySource
+          .platformDirectory(FlutterPlatform.android)
+          .childFile('build.gradle');
+      legacyGradleFile.writeAsStringSync(legacyAppBuildGradleContents);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--legacy-source=${legacySource.path}',
+      ]);
+
+      final File buildGradle = command.app
+          .platformDirectory(FlutterPlatform.android)
+          .childFile('build.gradle');
+
+      expect(buildGradle.readAsStringSync(), legacyAppBuildGradleContents);
+    });
+
+    test('legacy directory replaces, rather than overlaying', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+      final File extraFile =
+          RepositoryPackage(testRoot.childDirectory(allPackagesProjectName))
+              .platformDirectory(FlutterPlatform.android)
+              .childFile('extra_file');
+      extraFile.createSync(recursive: true);
+      // Make a fake legacy source with all the necessary files, but not
+      // including the extra file.
+      final Directory legacyDir = testRoot.childDirectory('legacy');
+      final RepositoryPackage legacySource =
+          RepositoryPackage(legacyDir.childDirectory(allPackagesProjectName));
+      writeFakeFlutterCreateOutput(legacyDir, androidOnly: true);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--legacy-source=${legacySource.path}',
+      ]);
+
+      expect(extraFile.existsSync(), false);
+    });
+
+    test('legacy files are modified as needed by the tool', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+      // Make a fake legacy source with all the necessary files, replacing one
+      // of them.
+      final Directory legacyDir = testRoot.childDirectory('legacy');
+      final RepositoryPackage legacySource =
+          RepositoryPackage(legacyDir.childDirectory(allPackagesProjectName));
+      writeFakeFlutterCreateOutput(legacyDir, androidOnly: true);
+      const String legacyAppBuildGradleContents = '''
+# This is the legacy file
+android {
+    compileSdkVersion flutter.compileSdkVersion
+    defaultConfig {
+        minSdkVersion flutter.minSdkVersion
+    }
+}
+''';
+      final File legacyGradleFile = legacySource
+          .platformDirectory(FlutterPlatform.android)
+          .childDirectory('app')
+          .childFile('build.gradle');
+      legacyGradleFile.writeAsStringSync(legacyAppBuildGradleContents);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--legacy-source=${legacySource.path}',
+      ]);
+
+      final List<String> buildGradle = command.app
+          .platformDirectory(FlutterPlatform.android)
+          .childDirectory('app')
+          .childFile('build.gradle')
+          .readAsLinesSync();
+
+      expect(
+          buildGradle,
+          containsAll(<Matcher>[
+            contains('This is the legacy file'),
+            contains('minSdkVersion 21'),
+            contains('compileSdkVersion 33'),
           ]));
     });
 
