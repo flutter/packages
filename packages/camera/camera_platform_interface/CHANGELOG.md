@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.5.0
 
 * Adds NV21 as an image stream format (suitable for Android).

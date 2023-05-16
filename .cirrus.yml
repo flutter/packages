@@ -83,11 +83,6 @@ task:
     zone: us-central1-a
     namespace: default
   matrix:
-    ### Platform-agnostic tasks ###
-    - name: Linux plugin_tools_tests
-      script:
-        - cd script/tool
-        - dart pub run test
     # Repository rules and best-practice enforcement.
     # Only channel-agnostic tests should go here since it is only run once
     # (on Flutter master).
@@ -97,7 +92,7 @@ task:
         license_script: $PLUGIN_TOOL_COMMAND license-check
         # The major and minor version here should match the lowest version
         # analyzed in legacy_version_analyze.
-        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0 --allow-dependencies=script/configs/allowed_unpinned_deps.yaml --allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml
+        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.3.0 --allow-dependencies=script/configs/allowed_unpinned_deps.yaml --allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml
         readme_script:
           - ./script/tool_runner.sh readme-check
           # Re-run with --require-excerpts, skipping packages that still need
@@ -163,7 +158,7 @@ task:
       matrix:
         # Change the arguments to pubspec-check when changing these values.
         env:
-          CHANNEL: "3.0.5"
+          CHANNEL: "3.7.12"
           DART_VERSION: "2.17.6"
         env:
           CHANNEL: "3.3.10"

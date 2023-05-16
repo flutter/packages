@@ -1,6 +1,14 @@
-## 0.8.6+13
+## 0.8.6+15
 
 * Bumps androidx.activity:activity from 1.6.1 to 1.7.0.
+
+## 0.8.6+14
+
+* Fixes Java warnings.
+
+## 0.8.6+13
+
+* Fixes `BuildContext` handling in example.
 
 ## 0.8.6+12
 
