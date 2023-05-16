@@ -23,10 +23,20 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    // TODO: Should support passing extensions also.
     final FileResponse? file = await _api.openFile(
       initialDirectory,
-      acceptedTypeGroups == null ? null : _combineMimeTypes(acceptedTypeGroups),
+      acceptedTypeGroups == null
+          ? null
+          : _combine<String>(
+              acceptedTypeGroups,
+              (XTypeGroup group) => group.mimeTypes,
+            ),
+      acceptedTypeGroups == null
+          ? null
+          : _combine<String>(
+              acceptedTypeGroups,
+              (XTypeGroup group) => group.extensions,
+            ),
     );
     return file == null ? null : _xFileFromFileResponse(file);
   }
@@ -39,7 +49,18 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   }) async {
     final List<FileResponse?> files = await _api.openFiles(
       initialDirectory,
-      null,
+      acceptedTypeGroups == null
+          ? null
+          : _combine<String>(
+              acceptedTypeGroups,
+              (XTypeGroup group) => group.mimeTypes,
+            ),
+      acceptedTypeGroups == null
+          ? null
+          : _combine<String>(
+              acceptedTypeGroups,
+              (XTypeGroup group) => group.extensions,
+            ),
     );
     return files
         .cast<FileResponse>()
@@ -65,19 +86,27 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   }
 
   XFile _xFileFromFileResponse(FileResponse file) {
-    return XFile(
-      file.path,
+    return XFile.fromData(
+      file.bytes,
+      // Note: The name parameter is not used by XFile. The XFile.name returns
+      // the extracted file name from XFile.path.
       name: file.name,
+      length: file.size,
       mimeType: file.mimeType,
-      bytes: file.bytes,
+      path: file.path,
     );
   }
 
-  List<String> _combineMimeTypes(List<XTypeGroup> groups) {
-    return groups.fold<Set<String>>(
-      <String>{},
-      (Set<String> previousValue, XTypeGroup element) {
-        previousValue.addAll(element.mimeTypes ?? <String>[]);
+  // Combines list values from a list of `XTypeGroup`s. Prevents repeated
+  // values.
+  List<T> _combine<T>(
+    List<XTypeGroup> groups,
+    List<T>? Function(XTypeGroup group) onGetList,
+  ) {
+    return groups.fold<Set<T>>(
+      <T>{},
+      (Set<T> previousValue, XTypeGroup element) {
+        previousValue.addAll(onGetList(element) ?? <T>[]);
         return previousValue;
       },
     ).toList();

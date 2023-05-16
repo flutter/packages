@@ -25,19 +25,25 @@ import 'package:pigeon/pigeon.dart';
 class FileResponse {
   late final String path;
   late final String? mimeType;
-  late final String name;
+  late final String? name;
+  late final int size;
   late final Uint8List bytes;
 }
 
 @HostApi(dartHostTestHandler: 'TestFileSelectorApi')
 abstract class FileSelectorApi {
   @async
-  FileResponse? openFile(String? initialDirectory, List<String?>? mimeTypes);
+  FileResponse? openFile(
+    String? initialDirectory,
+    List<String?>? mimeTypes,
+    List<String?>? extensions,
+  );
 
   @async
   List<FileResponse?> openFiles(
     String? initialDirectory,
     List<String?>? mimeTypes,
+    List<String?>? extensions,
   );
 
   @async

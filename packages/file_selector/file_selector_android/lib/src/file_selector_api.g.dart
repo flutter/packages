@@ -15,7 +15,8 @@ class FileResponse {
   FileResponse({
     required this.path,
     this.mimeType,
-    required this.name,
+    this.name,
+    required this.size,
     required this.bytes,
   });
 
@@ -23,7 +24,9 @@ class FileResponse {
 
   String? mimeType;
 
-  String name;
+  String? name;
+
+  int size;
 
   Uint8List bytes;
 
@@ -32,6 +35,7 @@ class FileResponse {
       path,
       mimeType,
       name,
+      size,
       bytes,
     ];
   }
@@ -41,8 +45,9 @@ class FileResponse {
     return FileResponse(
       path: result[0]! as String,
       mimeType: result[1] as String?,
-      name: result[2]! as String,
-      bytes: result[3]! as Uint8List,
+      name: result[2] as String?,
+      size: result[3]! as int,
+      bytes: result[4]! as Uint8List,
     );
   }
 }
@@ -80,13 +85,14 @@ class FileSelectorApi {
 
   static const MessageCodec<Object?> codec = _FileSelectorApiCodec();
 
-  Future<FileResponse?> openFile(
-      String? arg_initialDirectory, List<String?>? arg_mimeTypes) async {
+  Future<FileResponse?> openFile(String? arg_initialDirectory,
+      List<String?>? arg_mimeTypes, List<String?>? arg_extensions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.openFile', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_initialDirectory, arg_mimeTypes]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(
+            <Object?>[arg_initialDirectory, arg_mimeTypes, arg_extensions])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -103,13 +109,14 @@ class FileSelectorApi {
     }
   }
 
-  Future<List<FileResponse?>> openFiles(
-      String? arg_initialDirectory, List<String?>? arg_mimeTypes) async {
+  Future<List<FileResponse?>> openFiles(String? arg_initialDirectory,
+      List<String?>? arg_mimeTypes, List<String?>? arg_extensions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.openFiles', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_initialDirectory, arg_mimeTypes]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(
+            <Object?>[arg_initialDirectory, arg_mimeTypes, arg_extensions])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
