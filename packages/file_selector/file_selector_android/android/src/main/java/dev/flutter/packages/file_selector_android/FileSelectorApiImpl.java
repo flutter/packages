@@ -7,7 +7,6 @@ package dev.flutter.packages.file_selector_android;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -36,8 +35,6 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   private static final int OPEN_FILES = 222;
   // Request code for selecting a directory.
   private static final int OPEN_DIR = 223;
-
-  public Context tryContext;
 
   @VisibleForTesting
   abstract static class OnResultListener {
@@ -253,7 +250,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       return null;
     }
 
-    final ContentResolver contentResolver = tryContext.getContentResolver();
+    final ContentResolver contentResolver = activityPluginBinding.getActivity().getContentResolver();
 
     String name = null;
     Integer size = null;
