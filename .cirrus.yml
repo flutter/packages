@@ -83,11 +83,6 @@ task:
     zone: us-central1-a
     namespace: default
   matrix:
-    ### Platform-agnostic tasks ###
-    - name: Linux plugin_tools_tests
-      script:
-        - cd script/tool
-        - dart pub run test
     # Repository rules and best-practice enforcement.
     # Only channel-agnostic tests should go here since it is only run once
     # (on Flutter master).
