@@ -296,7 +296,8 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
 
     // dispose resources from previous camera description
-    if (await _initCalled ?? false) {
+    if (_initCalled != null) {
+      await _initCalled;
       _unawaited(CameraPlatform.instance.dispose(_cameraId));
     }
 
