@@ -306,6 +306,11 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
+      create_all_packages_app_legacy_script:
+        - $PLUGIN_TOOL_COMMAND create-all-packages-app --agp-version=4.1.0 --gradle-version=6.5 --output-dir=legacy/ --android-language=java --exclude script/configs/exclude_all_packages_app.yaml
+      build_all_packages_legacy_script:
+        - cd legacy/all_packages
+        - flutter build $BUILD_ALL_ARGS --debug
     ### Web tasks ###
     - name: web-platform_tests
       env:
