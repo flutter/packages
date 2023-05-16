@@ -50,11 +50,15 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         help: 'The Gradle version to use in the created app, instead of the '
             'default `flutter create`d version. Will generally need to be used '
             ' with $_agpVersionFlag due to compatibility limits.');
+    argParser.addOption(_kotlinVersionFlag,
+        help: 'The Kotlin version to use in the created app, instead of the '
+            'default `flutter create`d version.');
   }
 
   static const String _androidLanguageFlag = 'android-language';
   static const String _agpVersionFlag = 'agp-version';
   static const String _gradleVersionFlag = 'gradle-version';
+  static const String _kotlinVersionFlag = 'kotlin-version';
   static const String _outputDirectoryFlag = 'output-dir';
 
   /// The location to create the synthesized app project.
@@ -105,7 +109,9 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     }
 
     await Future.wait(<Future<void>>[
-      _updateTopLevelGradle(agpVersion: getNullableStringArg(_agpVersionFlag)),
+      _updateTopLevelGradle(
+          agpVersion: getNullableStringArg(_agpVersionFlag),
+          kotlinVersion: getNullableStringArg(_kotlinVersionFlag)),
       _updateGradleWrapper(
           gradleVersion: getNullableStringArg(_gradleVersionFlag)),
       _updateAppGradle(),
@@ -178,7 +184,10 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     file.writeAsStringSync(output.toString());
   }
 
-  Future<void> _updateTopLevelGradle({String? agpVersion}) async {
+  Future<void> _updateTopLevelGradle({
+    String? agpVersion,
+    String? kotlinVersion,
+  }) async {
     final File gradleFile = app
         .platformDirectory(FlutterPlatform.android)
         .childFile('build.gradle');
@@ -188,6 +197,10 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         if (agpVersion != null)
           'com.android.tools.build:': <String>[
             "        classpath 'com.android.tools.build:gradle:$agpVersion'"
+          ],
+        if (kotlinVersion != null)
+          'ext.kotlin_version =': <String>[
+            "    ext.kotlin_version = '$kotlinVersion'"
           ],
       },
     );

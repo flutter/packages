@@ -332,16 +332,18 @@ project 'Runner', {
           ]));
     });
 
-    test('Android AGP and Gradle versions are modified if requested', () async {
+    test('Android dependency versions are modified if requested', () async {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
       const String agpVersion = '9.8.7';
       const String gradleVersion = '99.87';
+      const String kotlinVersion = '7.8.9';
       await runCapturingPrint(runner, <String>[
         'create-all-packages-app',
         '--agp-version=$agpVersion',
-        '--gradle-version=$gradleVersion'
+        '--gradle-version=$gradleVersion',
+        '--kotlin-version=$kotlinVersion',
       ]);
 
       final List<String> buildGradle = command.app
@@ -357,8 +359,10 @@ project 'Runner', {
 
       expect(
           buildGradle,
-          contains(contains(
-              "classpath 'com.android.tools.build:gradle:$agpVersion'")));
+          containsAll(<Matcher>[
+            contains("ext.kotlin_version = '$kotlinVersion'"),
+            contains("classpath 'com.android.tools.build:gradle:$agpVersion'"),
+          ]));
       expect(
           gradleWrapper,
           contains(contains(
