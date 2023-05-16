@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported macOS version to 10.14.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 0.9.3
 
 * Adds `getDirectoryPaths` for selecting multiple directories.
