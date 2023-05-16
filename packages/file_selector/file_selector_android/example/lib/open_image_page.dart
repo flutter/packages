@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,30 +14,21 @@ class OpenImagePage extends StatelessWidget {
 
   Future<void> _openImageFile(BuildContext context) async {
     const XTypeGroup typeGroup = XTypeGroup(mimeTypes: <String>['image/*']);
-    // final XFile? file = await FileSelectorPlatform.instance
-    //     .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-    // if (file == null) {
-    //   // Operation was canceled by the user.
-    //   return;
-    // }
-    // final String fileName = file.name;
-    // final String filePath = file.path;
+    final XFile? file = await FileSelectorPlatform.instance
+        .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    if (file == null) {
+      // Operation was canceled by the user.
+      return;
+    }
 
-    final List<XFile> files = await FileSelectorPlatform.instance.openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-    print(files[0].path);
-    print(files[1].path);
+    final Uint8List bytes = await file.readAsBytes();
 
-    // print('FILE:');
-    // print(file.name);
-    // print(file.path);
-    // print(file.mimeType);
-    // print((await file.readAsBytes()).length);
-    // if (context.mounted) {
-    //   await showDialog<void>(
-    //     context: context,
-    //     builder: (BuildContext context) => ImageDisplay(fileName, filePath),
-    //   );
-    // }
+    if (context.mounted) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => ImageDisplay(file.path, bytes),
+      );
+    }
   }
 
   @override
@@ -73,19 +62,19 @@ class OpenImagePage extends StatelessWidget {
 /// Widget that displays an image in a dialog.
 class ImageDisplay extends StatelessWidget {
   /// Default Constructor.
-  const ImageDisplay(this.fileName, this.filePath, {super.key});
-
-  /// The name of the selected file.
-  final String fileName;
+  const ImageDisplay(this.filePath, this.bytes, {super.key});
 
   /// The path to the selected file.
   final String filePath;
 
+  /// The bytes of the selected file.
+  final Uint8List bytes;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(fileName),
-      content: Image.file(File(filePath)),
+      title: Text(filePath),
+      content: Image.memory(bytes),
       actions: <Widget>[
         TextButton(
           child: const Text('Close'),
