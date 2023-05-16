@@ -71,26 +71,50 @@ dev_dependencies:
         package.platformDirectory(FlutterPlatform.android);
     android.childFile('build.gradle')
       ..createSync(recursive: true)
-      ..writeAsStringSync('''
+      ..writeAsStringSync(r'''
+buildscript {
+    ext.kotlin_version = '1.6.21'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 ''');
     android.childDirectory('app').childFile('build.gradle')
       ..createSync(recursive: true)
-      ..writeAsStringSync('''
+      ..writeAsStringSync(r'''
+android {
+    namespace 'dev.flutter.packages.foo.example'
+    compileSdkVersion flutter.compileSdkVersion
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+    defaultConfig {
+        applicationId "dev.flutter.packages.foo.example"
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion 32
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+}
 ''');
     android
         .childDirectory('gradle')
         .childDirectory('wrapper')
         .childFile('gradle-wrapper.properties')
       ..createSync(recursive: true)
-      ..writeAsStringSync('''
-''');
-    android
-        .childDirectory('app')
-        .childDirectory('src')
-        .childDirectory('main')
-        .childFile('AndroidManifest.xml')
-      ..createSync(recursive: true)
-      ..writeAsStringSync('''
+      ..writeAsStringSync(r'''
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
 ''');
 
     // macOS
@@ -230,6 +254,65 @@ project 'Runner', {
       const String dartSdkKey = 'sdk';
       expect(generatedPubspec.environment?[dartSdkKey].toString(),
           existingSdkConstraint);
+    });
+
+    test('Android app gradle is modified as expected', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--platforms=android',
+      ]);
+
+      final List<String> buildGradle = command.app
+          .platformDirectory(FlutterPlatform.android)
+          .childDirectory('app')
+          .childFile('build.gradle')
+          .readAsLinesSync();
+
+      expect(
+          buildGradle,
+          containsAll(<Matcher>[
+            contains('minSdkVersion 21'),
+            contains('compileSdkVersion 33'),
+            contains('multiDexEnabled true'),
+            contains('androidx.lifecycle:lifecycle-runtime'),
+          ]));
+    });
+
+    test('Android AGP and Gradle versions are modified if requested', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      const String agpVersion = '9.8.7';
+      const String gradleVersion = '99.87';
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--platforms=android',
+        '--agp-version=$agpVersion',
+        '--gradle-version=$gradleVersion'
+      ]);
+
+      final List<String> buildGradle = command.app
+          .platformDirectory(FlutterPlatform.android)
+          .childFile('build.gradle')
+          .readAsLinesSync();
+      final List<String> gradleWrapper = command.app
+          .platformDirectory(FlutterPlatform.android)
+          .childDirectory('gradle')
+          .childDirectory('wrapper')
+          .childFile('gradle-wrapper.properties')
+          .readAsLinesSync();
+
+      expect(
+          buildGradle,
+          contains(contains(
+              "classpath 'com.android.tools.build:gradle:$agpVersion'")));
+      expect(
+          gradleWrapper,
+          contains(contains(
+              'distributionUrl=https\\://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip')));
     });
 
     test('macOS deployment target is modified in pbxproj', () async {

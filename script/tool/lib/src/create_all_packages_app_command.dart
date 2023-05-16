@@ -114,7 +114,6 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         _updateGradleWrapper(
             gradleVersion: getNullableStringArg(_gradleVersionFlag)),
         _updateAppGradle(),
-        _updateManifest(),
       ],
       if (_targetPlatformIncludes(platformMacOS)) ...<Future<void>>[
         _updateMacosPbxproj(),
@@ -234,25 +233,6 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         // Tests for https://github.com/flutter/flutter/issues/43383
         'dependencies {': <String>[
           "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'\n"
-        ],
-      },
-    );
-  }
-
-  Future<void> _updateManifest() async {
-    final File manifestFile = app
-        .platformDirectory(FlutterPlatform.android)
-        .childDirectory('app')
-        .childDirectory('src')
-        .childDirectory('main')
-        .childFile('AndroidManifest.xml');
-    _adjustFile(
-      manifestFile,
-      additions: <String, List<String>>{
-        'package="com.example.$allPackagesProjectName"': <String>[
-          'xmlns:tools="http://schemas.android.com/tools">',
-          '',
-          '<uses-sdk tools:overrideLibrary="io.flutter.plugins.camera"/>',
         ],
       },
     );
