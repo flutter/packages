@@ -245,8 +245,6 @@ public class GeneratedFileSelectorApi {
 
     void getDirectoryPath(@Nullable String initialDirectory, @NonNull Result<String> result);
 
-    void getDirectoryPaths(@Nullable String initialDirectory, @NonNull Result<List<String>> result);
-
     /** The codec used by FileSelectorApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return FileSelectorApiCodec.INSTANCE;
@@ -341,37 +339,6 @@ public class GeneratedFileSelectorApi {
                     };
 
                 api.getDirectoryPath(initialDirectoryArg, resultCallback);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger,
-                "dev.flutter.pigeon.FileSelectorApi.getDirectoryPaths",
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                ArrayList<Object> args = (ArrayList<Object>) message;
-                String initialDirectoryArg = (String) args.get(0);
-                Result<List<String>> resultCallback =
-                    new Result<List<String>>() {
-                      public void success(List<String> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
-                      }
-
-                      public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
-                      }
-                    };
-
-                api.getDirectoryPaths(initialDirectoryArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

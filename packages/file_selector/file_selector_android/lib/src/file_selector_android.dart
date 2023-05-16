@@ -76,15 +76,6 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     return _api.getDirectoryPath(initialDirectory);
   }
 
-  @override
-  Future<List<String>> getDirectoryPaths({
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
-    final List<String?> dirs = await _api.getDirectoryPaths(initialDirectory);
-    return dirs.cast<String>();
-  }
-
   XFile _xFileFromFileResponse(FileResponse file) {
     return XFile.fromData(
       file.bytes,

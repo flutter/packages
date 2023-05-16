@@ -48,7 +48,4 @@ abstract class FileSelectorApi {
 
   @async
   String? getDirectoryPath(String? initialDirectory);
-
-  @async
-  List<String?> getDirectoryPaths(String? initialDirectory);
 }

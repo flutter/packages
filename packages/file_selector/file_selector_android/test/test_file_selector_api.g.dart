@@ -49,8 +49,6 @@ abstract class TestFileSelectorApi {
 
   Future<String?> getDirectoryPath(String? initialDirectory);
 
-  Future<List<String?>> getDirectoryPaths(String? initialDirectory);
-
   static void setup(TestFileSelectorApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -120,27 +118,6 @@ abstract class TestFileSelectorApi {
           final String? arg_initialDirectory = (args[0] as String?);
           final String? output =
               await api.getDirectoryPath(arg_initialDirectory);
-          return <Object?>[output];
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FileSelectorApi.getDirectoryPaths', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(channel,
-                (Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.FileSelectorApi.getDirectoryPaths was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_initialDirectory = (args[0] as String?);
-          final List<String?> output =
-              await api.getDirectoryPaths(arg_initialDirectory);
           return <Object?>[output];
         });
       }
