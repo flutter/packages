@@ -43,8 +43,11 @@ void main() {
 
   /// Simulates enough of `flutter create`s output to allow the modifications
   /// made by the command to work.
-  void writeFakeFlutterCreateOutput(Directory outputDirectory,
-      {String dartSdkConstraint = '>=3.0.0 <4.0.0'}) {
+  void writeFakeFlutterCreateOutput(
+    Directory outputDirectory, {
+    String dartSdkConstraint = '>=3.0.0 <4.0.0',
+    String? appBuildGradleDependencies,
+  }) {
     final RepositoryPackage package = RepositoryPackage(
         outputDirectory.childDirectory(allPackagesProjectName));
 
@@ -88,9 +91,15 @@ buildscript {
     }
 }
 ''');
+    final String dependencies = appBuildGradleDependencies ??
+        r'''
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+''';
     android.childDirectory('app').childFile('build.gradle')
       ..createSync(recursive: true)
-      ..writeAsStringSync(r'''
+      ..writeAsStringSync('''
 android {
     namespace 'dev.flutter.packages.foo.example'
     compileSdkVersion flutter.compileSdkVersion
@@ -104,10 +113,7 @@ android {
     }
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
-}
+$dependencies
 ''');
     android
         .childDirectory('gradle')
@@ -275,6 +281,54 @@ project 'Runner', {
             contains('compileSdkVersion 33'),
             contains('multiDexEnabled true'),
             contains('androidx.lifecycle:lifecycle-runtime'),
+          ]));
+    });
+
+    // The template's app/build.gradle does not always have a dependencies
+    // section; ensure that the dependency is added if there is not one.
+    test('Android lifecyle dependency is added with no dependencies', () async {
+      writeFakeFlutterCreateOutput(testRoot, appBuildGradleDependencies: '');
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+
+      final List<String> buildGradle = command.app
+          .platformDirectory(FlutterPlatform.android)
+          .childDirectory('app')
+          .childFile('build.gradle')
+          .readAsLinesSync();
+
+      expect(
+          buildGradle,
+          containsAllInOrder(<Matcher>[
+            equals('dependencies {'),
+            contains('androidx.lifecycle:lifecycle-runtime'),
+            equals('}'),
+          ]));
+    });
+
+    // Some versions of the template's app/build.gradle has an empty
+    // dependencies section; ensure that the dependency is added in that case.
+    test('Android lifecyle dependency is added with empty dependencies',
+        () async {
+      writeFakeFlutterCreateOutput(testRoot,
+          appBuildGradleDependencies: 'dependencies {}');
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+
+      final List<String> buildGradle = command.app
+          .platformDirectory(FlutterPlatform.android)
+          .childDirectory('app')
+          .childFile('build.gradle')
+          .readAsLinesSync();
+
+      expect(
+          buildGradle,
+          containsAllInOrder(<Matcher>[
+            equals('dependencies {'),
+            contains('androidx.lifecycle:lifecycle-runtime'),
+            equals('}'),
           ]));
     });
 

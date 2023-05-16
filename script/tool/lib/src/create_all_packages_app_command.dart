@@ -136,6 +136,8 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     File file, {
     Map<String, List<String>> replacements = const <String, List<String>>{},
     Map<String, List<String>> additions = const <String, List<String>>{},
+    Map<RegExp, List<String>> regexReplacements =
+        const <RegExp, List<String>>{},
   }) {
     if (replacements.isEmpty && additions.isEmpty) {
       return;
@@ -147,14 +149,25 @@ class CreateAllPackagesAppCommand extends PackageCommand {
 
     final StringBuffer output = StringBuffer();
     for (final String line in file.readAsLinesSync()) {
-      List<String> lines = <String>[line];
-      for (final String targetString in replacements.keys) {
-        if (line.contains(targetString)) {
-          lines = replacements[targetString]!;
+      List<String>? replacementLines;
+      for (final MapEntry<String, List<String>> replacement
+          in replacements.entries) {
+        if (line.contains(replacement.key)) {
+          replacementLines = replacement.value;
           break;
         }
       }
-      lines.forEach(output.writeln);
+      if (replacementLines == null) {
+        for (final MapEntry<RegExp, List<String>> replacement
+            in regexReplacements.entries) {
+          final RegExpMatch? match = replacement.key.firstMatch(line);
+          if (match != null) {
+            replacementLines = replacement.value;
+            break;
+          }
+        }
+      }
+      (replacementLines ?? <String>[line]).forEach(output.writeln);
 
       for (final String targetString in additions.keys) {
         if (line.contains(targetString)) {
@@ -202,6 +215,20 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         .platformDirectory(FlutterPlatform.android)
         .childDirectory('app')
         .childFile('build.gradle');
+
+    // Ensure that there is a dependencies section, so the dependencies addition
+    // below will work.
+    final String content = gradleFile.readAsStringSync();
+    if (!content.contains('\ndependencies {')) {
+      gradleFile.writeAsStringSync('''
+$content
+dependencies {}
+''');
+    }
+
+    const String lifecycleDependency =
+        "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'";
+
     _adjustFile(
       gradleFile,
       replacements: <String, List<String>>{
@@ -212,10 +239,24 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       },
       additions: <String, List<String>>{
         'defaultConfig {': <String>['        multiDexEnabled true'],
+      },
+      regexReplacements: <RegExp, List<String>>{
         // Tests for https://github.com/flutter/flutter/issues/43383
-        'dependencies {': <String>[
-          "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'\n"
+        // Handling of 'dependencies' is more complex since it hasn't been very
+        // stable across template versions.
+        // - Handle an empty, collapsed dependencies section.
+        RegExp(r'^dependencies\s+{\s*}$'): <String>[
+          'dependencies {',
+          lifecycleDependency,
+          '}',
         ],
+        // - Handle a normal dependencies section.
+        RegExp(r'^dependencies\s+{$'): <String>[
+          'dependencies {',
+          lifecycleDependency,
+        ],
+        // - See below for handling of the case where there is no dependencies
+        // section.
       },
     );
   }
