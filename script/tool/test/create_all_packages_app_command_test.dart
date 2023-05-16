@@ -18,12 +18,14 @@ import 'util.dart';
 void main() {
   late CommandRunner<void> runner;
   late CreateAllPackagesAppCommand command;
+  late Platform mockPlatform;
   late FileSystem fileSystem;
   late Directory testRoot;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
 
   setUp(() {
+    mockPlatform = MockPlatform(isMacOS: true);
     fileSystem = MemoryFileSystem();
     testRoot = fileSystem.systemTempDirectory.createTempSync();
     packagesDir = testRoot.childDirectory('packages');
@@ -32,6 +34,7 @@ void main() {
     command = CreateAllPackagesAppCommand(
       packagesDir,
       processRunner: processRunner,
+      platform: mockPlatform,
     );
     runner = CommandRunner<void>(
         'create_all_test', 'Test for $CreateAllPackagesAppCommand');
@@ -148,13 +151,11 @@ project 'Runner', {
 
   group('non-macOS host', () {
     setUp(() {
+      mockPlatform = MockPlatform(isLinux: true);
       command = CreateAllPackagesAppCommand(
         packagesDir,
         processRunner: processRunner,
-        // Set isWindows or not based on the actual host, so that
-        // `flutterCommand` works, since these tests actually call 'flutter'.
-        // The important thing is that isMacOS always returns false.
-        platform: MockPlatform(isWindows: const LocalPlatform().isWindows),
+        platform: mockPlatform,
       );
       runner = CommandRunner<void>(
           'create_all_test', 'Test for $CreateAllPackagesAppCommand');
@@ -170,7 +171,7 @@ project 'Runner', {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              getFlutterCommand(const LocalPlatform()),
+              getFlutterCommand(mockPlatform),
               <String>[
                 'create',
                 '--template=app',
@@ -193,7 +194,7 @@ project 'Runner', {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              getFlutterCommand(const LocalPlatform()),
+              getFlutterCommand(mockPlatform),
               <String>[
                 'create',
                 '--template=app',
@@ -337,19 +338,18 @@ project 'Runner', {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              getFlutterCommand(const LocalPlatform()),
+              getFlutterCommand(mockPlatform),
               const <String>['pub', 'get'],
               testRoot.childDirectory(allPackagesProjectName).path)));
-    },
-        // See comment about Windows in create_all_packages_app_command.dart
-        skip: io.Platform.isWindows);
+    });
 
     test('fails if flutter create fails', () async {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
-      processRunner.mockProcessesForExecutable[
-          getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['create'])
       ];
       Error? commandError;
@@ -370,8 +370,9 @@ project 'Runner', {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
-      processRunner.mockProcessesForExecutable[
-          getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['create']),
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
       ];
