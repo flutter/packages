@@ -21,13 +21,14 @@
 //
 // //////////////////////////////////////////////////////////
 
-import 'dart:html' as html show Navigator;
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
 /// Determines if the `navigator` is Safari.
-bool navigatorIsSafari(html.Navigator navigator) {
+bool navigatorIsSafari(web.Navigator navigator) {
   // An web view running in an iOS app does not have a 'Version/X.X.X' string in the appVersion
-  final String vendor = navigator.vendor;
-  final String appVersion = navigator.appVersion;
+  final String vendor = navigator.vendor.toDart;
+  final String appVersion = navigator.appVersion.toDart;
   return vendor != null &&
       vendor.contains('Apple') &&
       appVersion != null &&

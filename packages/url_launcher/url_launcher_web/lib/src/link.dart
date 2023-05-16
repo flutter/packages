@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:js_util';
 
 import 'package:flutter/foundation.dart';
@@ -13,6 +13,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart' show urlStrategy;
 import 'package:url_launcher_platform_interface/link.dart';
+import 'package:web/web.dart' as web;
 
 /// The unique identifier for the view type to be used for link platform views.
 const String linkViewType = '__url_launcher::link';
@@ -21,7 +22,7 @@ const String linkViewType = '__url_launcher::link';
 const String linkViewIdProperty = '__url_launcher::link::viewId';
 
 /// Signature for a function that takes a unique [id] and creates an HTML element.
-typedef HtmlViewFactory = html.Element Function(int viewId);
+typedef HtmlViewFactory = web.Element Function(int viewId);
 
 /// Factory that returns the link DOM element for each unique view id.
 HtmlViewFactory get linkViewFactory => LinkViewController._viewFactory;
@@ -97,6 +98,19 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   }
 }
 
+class WebSubscription {
+  WebSubscription(this.target, String rawType, this.listener) :
+    type = rawType.toJS {
+    target.addEventListener(type, listener);
+  }
+
+  final JSString type;
+  final web.EventTarget target;
+  final web.EventListener listener;
+
+  void cancel() => target.removeEventListener(type, listener);
+}
+
 /// Controls link views.
 class LinkViewController extends PlatformViewController {
   /// Creates a [LinkViewController] instance with the unique [viewId].
@@ -104,7 +118,9 @@ class LinkViewController extends PlatformViewController {
     if (_instances.isEmpty) {
       // This is the first controller being created, attach the global click
       // listener.
-      _clickSubscription = html.window.onClick.listen(_onGlobalClick);
+
+      _clickSubscription = WebSubscription(web.window, 'onclick',
+          _onGlobalClick.toJS);
     }
     _instances[viewId] = this;
   }
@@ -131,15 +147,15 @@ class LinkViewController extends PlatformViewController {
   static final Map<int, LinkViewController> _instances =
       <int, LinkViewController>{};
 
-  static html.Element _viewFactory(int viewId) {
+  static web.Element _viewFactory(int viewId) {
     return _instances[viewId]!._element;
   }
 
   static int? _hitTestedViewId;
 
-  static late StreamSubscription<html.MouseEvent> _clickSubscription;
+  static late WebSubscription _clickSubscription;
 
-  static void _onGlobalClick(html.MouseEvent event) {
+  static void _onGlobalClick(web.MouseEvent event) {
     final int? viewId = getViewIdFromTarget(event);
     _instances[viewId]?._onDomClick(event);
     // After the DOM click event has been received, clean up the hit test state
@@ -164,23 +180,23 @@ class LinkViewController extends PlatformViewController {
   @override
   final int viewId;
 
-  late html.Element _element;
+  late web.HTMLElement _element;
 
   bool get _isInitialized => _element != null;
 
   Future<void> _initialize() async {
-    _element = html.Element.tag('a');
+    _element = web.document.createElement('a'.toJS) as web.HTMLElement;
     setProperty(_element, linkViewIdProperty, viewId);
     _element.style
-      ..opacity = '0'
-      ..display = 'block'
-      ..width = '100%'
-      ..height = '100%'
-      ..cursor = 'unset';
+      ..setProperty('opacity'.toJS, '0'.toJS)
+      ..setProperty('display'.toJS, 'block'.toJS)
+      ..setProperty('width'.toJS, '100%'.toJS)
+      ..setProperty('height'.toJS, '100%'.toJS)
+      ..setProperty('cursor'.toJS, 'unset'.toJS);
 
     // This is recommended on MDN:
     // - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-target
-    _element.setAttribute('rel', 'noreferrer noopener');
+    _element.setAttribute('rel'.toJS, 'noreferrer noopener'.toJS);
 
     final Map<String, dynamic> args = <String, dynamic>{
       'id': viewId,
@@ -189,7 +205,7 @@ class LinkViewController extends PlatformViewController {
     await SystemChannels.platform_views.invokeMethod<void>('create', args);
   }
 
-  void _onDomClick(html.MouseEvent event) {
+  void _onDomClick(web.MouseEvent event) {
     final bool isHitTested = _hitTestedViewId == viewId;
     if (!isHitTested) {
       // There was no hit test registered for this click. This means the click
@@ -222,7 +238,7 @@ class LinkViewController extends PlatformViewController {
     assert(_isInitialized);
     _uri = uri;
     if (uri == null) {
-      _element.removeAttribute('href');
+      _element.removeAttribute('href'.toJS);
     } else {
       String href = uri.toString();
       // in case an internal uri is given, the url mus be properly encoded
@@ -230,14 +246,14 @@ class LinkViewController extends PlatformViewController {
       if (!uri.hasScheme) {
         href = urlStrategy?.prepareExternalUrl(href) ?? href;
       }
-      _element.setAttribute('href', href);
+      _element.setAttribute('href'.toJS, href.toJS);
     }
   }
 
   /// Set the [LinkTarget] value for this link.
   void setTarget(LinkTarget target) {
     assert(_isInitialized);
-    _element.setAttribute('target', _getHtmlTarget(target));
+    _element.setAttribute('target'.toJS, _getHtmlTarget(target).toJS);
   }
 
   String _getHtmlTarget(LinkTarget target) {
@@ -274,7 +290,7 @@ class LinkViewController extends PlatformViewController {
       assert(_instances[viewId] == this);
       _instances.remove(viewId);
       if (_instances.isEmpty) {
-        await _clickSubscription.cancel();
+        _clickSubscription.cancel();
       }
       await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
     }
@@ -282,8 +298,8 @@ class LinkViewController extends PlatformViewController {
 }
 
 /// Finds the view id of the DOM element targeted by the [event].
-int? getViewIdFromTarget(html.Event event) {
-  final html.Element? linkElement = getLinkElementFromTarget(event);
+int? getViewIdFromTarget(web.Event event) {
+  final web.Element? linkElement = getLinkElementFromTarget(event);
   if (linkElement != null) {
     // TODO(stuartmorgan): Remove this ignore (and change to getProperty<int>)
     // once the templated version is available on stable. On master (2.8) this
@@ -297,15 +313,16 @@ int? getViewIdFromTarget(html.Event event) {
 /// Finds the targeted DOM element by the [event].
 ///
 /// It handles the case where the target element is inside a shadow DOM too.
-html.Element? getLinkElementFromTarget(html.Event event) {
-  final html.EventTarget? target = event.target;
-  if (target != null && target is html.Element) {
-    if (isLinkElement(target)) {
+web.Element? getLinkElementFromTarget(web.Event event) {
+  final web.EventTarget? target = event.target;
+  if (target != null && instanceOfString(target, 'Element')) {
+    if (isLinkElement(target as web.Element)) {
       return target;
     }
     if (target.shadowRoot != null) {
-      final html.Node? child = target.shadowRoot!.lastChild;
-      if (child != null && child is html.Element && isLinkElement(child)) {
+      final web.Node? child = target.shadowRoot!.lastChild;
+      if (child != null && instanceOfString(child, 'Element') &&
+          isLinkElement(child as web.Element)) {
         return child;
       }
     }
@@ -315,8 +332,8 @@ html.Element? getLinkElementFromTarget(html.Event event) {
 
 /// Checks if the given [element] is a link that was created by
 /// [LinkViewController].
-bool isLinkElement(html.Element? element) {
+bool isLinkElement(web.Element? element) {
   return element != null &&
-      element.tagName == 'A' &&
+      element.tagName.toDart == 'A' &&
       hasProperty(element, linkViewIdProperty);
 }

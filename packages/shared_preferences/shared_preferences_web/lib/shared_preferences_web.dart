@@ -4,9 +4,10 @@
 
 import 'dart:async';
 import 'dart:convert' show json;
-import 'dart:html' as html;
+import 'dart:js_interop';
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:web/web.dart' as web;
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 /// The web implementation of [SharedPreferencesStorePlatform].
@@ -30,7 +31,9 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
     //            _prefix
-    _getStoredFlutterKeys(prefix).forEach(html.window.localStorage.remove);
+    for (final key in _getStoredFlutterKeys(prefix)) {
+      web.window.localStorage.removeItem(key.toJS);
+    }
     return true;
   }
 
@@ -43,26 +46,33 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
     final Map<String, Object> allData = <String, Object>{};
     for (final String key in _getStoredFlutterKeys(prefix)) {
-      allData[key] = _decodeValue(html.window.localStorage[key]!);
+      String dartKey = web.window.localStorage.getItem(key.toJS)!.toDart;
+      allData[key] = _decodeValue(dartKey);
     }
     return allData;
   }
 
   @override
   Future<bool> remove(String key) async {
-    html.window.localStorage.remove(key);
+    web.window.localStorage.removeItem(key.toJS);
     return true;
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object? value) async {
-    html.window.localStorage[key] = _encodeValue(value);
+    web.window.localStorage.setItem(key.toJS, _encodeValue(value).toJS);
     return true;
   }
 
   Iterable<String> _getStoredFlutterKeys(String prefix) {
-    return html.window.localStorage.keys
-        .where((String key) => key.startsWith(prefix));
+    List<String> keys = [];
+    for (int i = 0; i < web.window.localStorage.length.toDart; i++) {
+      String key = web.window.localStorage.key(i.toDouble().toJS)!.toDart;
+      if (key.startsWith(prefix)) {
+        keys.add(key);
+      }
+    }
+    return keys;
   }
 
   String _encodeValue(Object? value) {

@@ -3,12 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+import 'package:web/web.dart' as web;
 
 import 'src/link.dart';
 import 'src/shims/dart_ui.dart' as ui;
@@ -29,12 +30,12 @@ bool _isSafariTargetTopScheme(String url) =>
 /// This class implements the `package:url_launcher` functionality for the web.
 class UrlLauncherPlugin extends UrlLauncherPlatform {
   /// A constructor that allows tests to override the window object used by the plugin.
-  UrlLauncherPlugin({@visibleForTesting html.Window? debugWindow})
-      : _window = debugWindow ?? html.window {
+  UrlLauncherPlugin({@visibleForTesting web.Window? debugWindow})
+      : _window = debugWindow ?? web.window {
     _isSafari = navigatorIsSafari(_window.navigator);
   }
 
-  final html.Window _window;
+  final web.Window _window;
   bool _isSafari = false;
 
   // The set of schemes that can be handled by the plugin
@@ -59,13 +60,13 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   ///
   /// Returns the newly created window.
   @visibleForTesting
-  html.WindowBase openNewWindow(String url, {String? webOnlyWindowName}) {
+  web.Window openNewWindow(String url, {String? webOnlyWindowName}) {
     // We need to open mailto, tel and sms urls on the _top window context on safari browsers.
     // See https://github.com/flutter/flutter/issues/51461 for reference.
     final String target = webOnlyWindowName ??
         ((_isSafari && _isSafariTargetTopScheme(url)) ? '_top' : '');
     // ignore: unsafe_html
-    return _window.open(url, target);
+    return _window.open(url.toJS, target.toJS)!;
   }
 
   @override

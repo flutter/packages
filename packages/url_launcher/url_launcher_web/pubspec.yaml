@@ -22,6 +22,8 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   url_launcher_platform_interface: ^2.0.3
+  web:
+    path: /usr/local/google/home/joshualitt/a/web
 
 dev_dependencies:
   flutter_test:
