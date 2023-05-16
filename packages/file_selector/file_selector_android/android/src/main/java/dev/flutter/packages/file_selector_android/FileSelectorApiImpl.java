@@ -116,7 +116,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
                 final ClipData clipData = data.getClipData();
                 if (clipData != null) {
                   final List<GeneratedFileSelectorApi.FileResponse> files = new ArrayList<>(clipData.getItemCount());
-                  for (int i = 0; i < 2; i++) {
+                  for (int i = 0; i < clipData.getItemCount(); i++) {
                     final ClipData.Item clipItem = clipData.getItemAt(i);
                     files.add(toFileResponse(clipItem.getUri()));
                   }
@@ -134,12 +134,78 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
 
   @Override
   public void getDirectoryPath(
-      @Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<String> result) {}
+      @Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<String> result) {
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+      throw new UnsupportedOperationException("Selecting a directory is only supported on versions >= android.os.Build.VERSION_CODES.LOLLIPOP");
+    }
+
+    final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+    try {
+      trySetInitialDirectory(intent, initialDirectory);
+      tryStartActivityForResult(
+          intent,
+          OPEN_DIR,
+          new OnResultListener() {
+            @Override
+            public void onResult(int resultCode, @Nullable Intent data) {
+              if (resultCode == Activity.RESULT_OK && data != null) {
+                final Uri uri = data.getData();
+                result.success(uri.toString());
+              } else {
+                result.success(null);
+              }
+            }
+          });
+    } catch (Exception exception) {
+      result.error(exception);
+    }
+  }
 
   @Override
   public void getDirectoryPaths(
       @Nullable String initialDirectory,
-      @NonNull GeneratedFileSelectorApi.Result<List<String>> result) {}
+      @NonNull GeneratedFileSelectorApi.Result<List<String>> result) {
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+      throw new UnsupportedOperationException("Selecting a directory is only supported on versions >= android.os.Build.VERSION_CODES.LOLLIPOP");
+    }
+
+    final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+    try {
+      trySetInitialDirectory(intent, initialDirectory);
+      tryStartActivityForResult(
+          intent,
+          OPEN_DIRS,
+          new OnResultListener() {
+            @Override
+            public void onResult(int resultCode, @Nullable Intent data) {
+              if (resultCode == Activity.RESULT_OK && data != null) {
+                // Only one file was returned.
+                final Uri uri = data.getData();
+                if (uri != null) {
+                  result.success(Collections.singletonList(uri.toString()));
+                }
+
+                // Multiple files were returned.
+                final ClipData clipData = data.getClipData();
+                if (clipData != null) {
+                  final List<String> files = new ArrayList<>(clipData.getItemCount());
+                  for (int i = 0; i < clipData.getItemCount(); i++) {
+                    final ClipData.Item clipItem = clipData.getItemAt(i);
+                    files.add(clipItem.getUri().toString());
+                  }
+                  result.success(files);
+                }
+              } else {
+                result.success(new ArrayList<>());
+              }
+            }
+          });
+    } catch (Exception exception) {
+      result.error(exception);
+    }
+  }
 
   public void setActivityPluginBinding(@Nullable ActivityPluginBinding activityPluginBinding) {
     this.activityPluginBinding = activityPluginBinding;
