@@ -5,6 +5,7 @@
 package dev.flutter.packages.file_selector_android;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,12 +25,19 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelectorApi {
   private static final String TAG = "FileSelectorApiImpl";
   // Request code for selecting a file.
   private static final int OPEN_FILE = 221;
+  // Request code for selecting files.
+  private static final int OPEN_FILES = 222;
+  // Request code for selecting a directory.
+  private static final int OPEN_DIR = 223;
+  // Request code for selecting directories.
+  private static final int OPEN_DIRS = 224;
 
   public Context tryContext;
 
@@ -82,7 +90,47 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       @Nullable List<String> mimeTypes,
       @Nullable List<String> extensions,
       @NonNull
-          GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {}
+          GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
+    final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+    intent.addCategory(Intent.CATEGORY_OPENABLE);
+    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+    trySetMimeTypes(intent, mimeTypes, extensions);
+
+    try {
+      trySetInitialDirectory(intent, initialDirectory);
+      tryStartActivityForResult(
+          intent,
+          OPEN_FILES,
+          new OnResultListener() {
+            @Override
+            public void onResult(int resultCode, @Nullable Intent data) {
+              if (resultCode == Activity.RESULT_OK && data != null) {
+                // Only one file was returned.
+                final Uri uri = data.getData();
+                if (uri != null) {
+                  result.success(Collections.singletonList(toFileResponse(uri)));
+                }
+
+                // Multiple files were returned.
+                final ClipData clipData = data.getClipData();
+                if (clipData != null) {
+                  final List<GeneratedFileSelectorApi.FileResponse> files = new ArrayList<>(clipData.getItemCount());
+                  for (int i = 0; i < 2; i++) {
+                    final ClipData.Item clipItem = clipData.getItemAt(i);
+                    files.add(toFileResponse(clipItem.getUri()));
+                  }
+                  result.success(files);
+                }
+              } else {
+                result.success(new ArrayList<>());
+              }
+            }
+          });
+    } catch (Exception exception) {
+      result.error(exception);
+    }
+  }
 
   @Override
   public void getDirectoryPath(
