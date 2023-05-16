@@ -4,7 +4,7 @@
 
 import 'dart:async';
 import 'dart:js_interop';
-import 'dart:js_util';
+import 'dart:js_interop_unsafe';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -98,8 +98,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   }
 }
 
-class WebSubscription {
-  WebSubscription(this.target, String rawType, this.listener) :
+class _WebSubscription {
+  _WebSubscription(this.target, String rawType, this.listener) :
     type = rawType.toJS {
     target.addEventListener(type, listener);
   }
@@ -119,7 +119,7 @@ class LinkViewController extends PlatformViewController {
       // This is the first controller being created, attach the global click
       // listener.
 
-      _clickSubscription = WebSubscription(web.window, 'onclick',
+      _clickSubscription = _WebSubscription(web.window, 'onclick',
           _onGlobalClick.toJS);
     }
     _instances[viewId] = this;
@@ -153,7 +153,7 @@ class LinkViewController extends PlatformViewController {
 
   static int? _hitTestedViewId;
 
-  static late WebSubscription _clickSubscription;
+  static late _WebSubscription _clickSubscription;
 
   static void _onGlobalClick(web.MouseEvent event) {
     final int? viewId = getViewIdFromTarget(event);
@@ -186,13 +186,13 @@ class LinkViewController extends PlatformViewController {
 
   Future<void> _initialize() async {
     _element = web.document.createElement('a'.toJS) as web.HTMLElement;
-    setProperty(_element, linkViewIdProperty, viewId);
-    _element.style
-      ..setProperty('opacity'.toJS, '0'.toJS)
-      ..setProperty('display'.toJS, 'block'.toJS)
-      ..setProperty('width'.toJS, '100%'.toJS)
-      ..setProperty('height'.toJS, '100%'.toJS)
-      ..setProperty('cursor'.toJS, 'unset'.toJS);
+    _element[linkViewIdProperty.toJS] = viewId.toJS;
+    final web.CSSStyleDeclaration style = _element.style;
+    style['opacity'.toJS] = '0'.toJS;
+    style['display'.toJS] = 'block'.toJS;
+    style['width'.toJS] = '100%'.toJS;
+    style['height'.toJS] = '100%'.toJS;
+    style['cursor'.toJS] = 'unset'.toJS;
 
     // This is recommended on MDN:
     // - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-target
@@ -305,23 +305,26 @@ int? getViewIdFromTarget(web.Event event) {
     // once the templated version is available on stable. On master (2.8) this
     // is already not necessary.
     // ignore: return_of_invalid_type
-    return getProperty(linkElement, linkViewIdProperty);
+    return linkElement[linkViewIdProperty.toJS];
   }
   return null;
 }
+
+@JS('Element')
+JSFunction get _elementConstructor;
 
 /// Finds the targeted DOM element by the [event].
 ///
 /// It handles the case where the target element is inside a shadow DOM too.
 web.Element? getLinkElementFromTarget(web.Event event) {
   final web.EventTarget? target = event.target;
-  if (target != null && instanceOfString(target, 'Element')) {
+  if (target != null && target.instanceof(_elementConstructor).toDart) {
     if (isLinkElement(target as web.Element)) {
       return target;
     }
     if (target.shadowRoot != null) {
       final web.Node? child = target.shadowRoot!.lastChild;
-      if (child != null && instanceOfString(child, 'Element') &&
+      if (child != null && child.instanceof(_elementConstructor).toDart &&
           isLinkElement(child as web.Element)) {
         return child;
       }

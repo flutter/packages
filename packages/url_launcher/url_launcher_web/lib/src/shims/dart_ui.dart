@@ -7,4 +7,4 @@
 
 // TODO(ditman): Remove this file once web-only dart:ui APIs
 // are exposed from a dedicated place, flutter/flutter#55000.
-export 'dart_ui_fake.dart' if (dart.library.html) 'dart_ui_real.dart';
+export 'dart_ui_fake.dart' if (dart.library.js_interop) 'dart_ui_real.dart';
