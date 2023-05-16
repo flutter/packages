@@ -6,7 +6,7 @@ import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/local.dart';
+import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/create_all_packages_app_command.dart';
 import 'package:platform/platform.dart';
@@ -24,10 +24,7 @@ void main() {
   late RecordingProcessRunner processRunner;
 
   setUp(() {
-    // Since the core of this command is a call to 'flutter create', the test
-    // has to use the real filesystem. Put everything possible in a unique
-    // temporary to minimize effect on the host system.
-    fileSystem = const LocalFileSystem();
+    fileSystem = MemoryFileSystem();
     testRoot = fileSystem.systemTempDirectory.createTempSync();
     packagesDir = testRoot.childDirectory('packages');
     processRunner = RecordingProcessRunner();
@@ -35,16 +32,95 @@ void main() {
     command = CreateAllPackagesAppCommand(
       packagesDir,
       processRunner: processRunner,
-      pluginsRoot: testRoot,
     );
     runner = CommandRunner<void>(
         'create_all_test', 'Test for $CreateAllPackagesAppCommand');
     runner.addCommand(command);
   });
 
-  tearDown(() {
-    testRoot.deleteSync(recursive: true);
-  });
+  /// Simulates enough of `flutter create`s output to allow the modifications
+  /// made by the command to work.
+  void writeFakeFlutterCreateOutput(Directory outputDirectory,
+      {String dartSdkConstraint = '>=3.0.0 <4.0.0'}) {
+    final RepositoryPackage package = RepositoryPackage(
+        outputDirectory.childDirectory(allPackagesProjectName));
+
+    package.pubspecFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+name: $allPackagesProjectName
+description: Flutter app containing all 1st party plugins.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: '$dartSdkConstraint'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+###
+''');
+
+// Android
+    final Directory android =
+        package.platformDirectory(FlutterPlatform.android);
+    android.childFile('build.gradle')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+''');
+    android.childDirectory('app').childFile('build.gradle')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+''');
+    android
+        .childDirectory('gradle')
+        .childDirectory('wrapper')
+        .childFile('gradle-wrapper.properties')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+''');
+    android
+        .childDirectory('app')
+        .childDirectory('src')
+        .childDirectory('main')
+        .childFile('AndroidManifest.xml')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+''');
+
+    // macOS
+    final Directory macOS = package.platformDirectory(FlutterPlatform.macos);
+    macOS.childDirectory('Runner.xcodeproj').childFile('project.pbxproj')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+    97C147041CF9000F007C117D /* Release */ = {
+      isa = XCBuildConfiguration;
+      buildSettings = {
+        GCC_WARN_UNUSED_VARIABLE = YES;
+        MACOSX_DEPLOYMENT_TARGET = 10.14;
+      };
+      name = Release;
+    };
+''');
+    macOS.childFile('Podfile')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+# platform :osx, '10.14'
+
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+''');
+  }
 
   group('non-macOS host', () {
     setUp(() {
@@ -55,14 +131,58 @@ void main() {
         // `flutterCommand` works, since these tests actually call 'flutter'.
         // The important thing is that isMacOS always returns false.
         platform: MockPlatform(isWindows: const LocalPlatform().isWindows),
-        pluginsRoot: testRoot,
       );
       runner = CommandRunner<void>(
           'create_all_test', 'Test for $CreateAllPackagesAppCommand');
       runner.addCommand(command);
     });
 
+    test('calls with no platforms flag by default', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+
+      expect(
+          processRunner.recordedCalls,
+          contains(ProcessCall(
+              getFlutterCommand(const LocalPlatform()),
+              <String>[
+                'create',
+                '--template=app',
+                '--project-name=$allPackagesProjectName',
+                '--android-language=kotlin',
+                testRoot.childDirectory(allPackagesProjectName).path,
+              ],
+              null)));
+    });
+
+    test('calls with passed platforms', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--platforms=ios,windows',
+      ]);
+
+      expect(
+          processRunner.recordedCalls,
+          contains(ProcessCall(
+              getFlutterCommand(const LocalPlatform()),
+              <String>[
+                'create',
+                '--platforms=ios,windows',
+                '--template=app',
+                '--project-name=$allPackagesProjectName',
+                '--android-language=kotlin',
+                testRoot.childDirectory(allPackagesProjectName).path,
+              ],
+              null)));
+    });
+
     test('pubspec includes all plugins', () async {
+      writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
       createFakePlugin('pluginb', packagesDir);
       createFakePlugin('pluginc', packagesDir);
@@ -80,6 +200,7 @@ void main() {
     });
 
     test('pubspec has overrides for all plugins', () async {
+      writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
       createFakePlugin('pluginb', packagesDir);
       createFakePlugin('pluginc', packagesDir);
@@ -98,35 +219,25 @@ void main() {
     });
 
     test('pubspec preserves existing Dart SDK version', () async {
-      const String baselineProjectName = 'baseline';
-      final Directory baselineProjectDirectory =
-          testRoot.childDirectory(baselineProjectName);
-      io.Process.runSync(
-        getFlutterCommand(const LocalPlatform()),
-        <String>[
-          'create',
-          '--template=app',
-          '--project-name=$baselineProjectName',
-          baselineProjectDirectory.path,
-        ],
-      );
-      final Pubspec baselinePubspec =
-          RepositoryPackage(baselineProjectDirectory).parsePubspec();
-
+      const String existingSdkConstraint = '>=1.0.0 <99.0.0';
+      writeFakeFlutterCreateOutput(testRoot,
+          dartSdkConstraint: existingSdkConstraint);
       createFakePlugin('plugina', packagesDir);
 
       await runCapturingPrint(runner, <String>['create-all-packages-app']);
       final Pubspec generatedPubspec = command.app.parsePubspec();
 
       const String dartSdkKey = 'sdk';
-      expect(generatedPubspec.environment?[dartSdkKey],
-          baselinePubspec.environment?[dartSdkKey]);
+      expect(generatedPubspec.environment?[dartSdkKey].toString(),
+          existingSdkConstraint);
     });
 
     test('macOS deployment target is modified in pbxproj', () async {
+      writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
-      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+      await runCapturingPrint(
+          runner, <String>['create-all-packages-app', '--platforms=macos']);
       final List<String> pbxproj = command.app
           .platformDirectory(FlutterPlatform.macos)
           .childDirectory('Runner.xcodeproj')
@@ -141,27 +252,50 @@ void main() {
     });
 
     test('calls flutter pub get', () async {
+      writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
       await runCapturingPrint(runner, <String>['create-all-packages-app']);
 
       expect(
           processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-                getFlutterCommand(const LocalPlatform()),
-                const <String>['pub', 'get'],
-                testRoot.childDirectory('all_packages').path),
-          ]));
+          contains(ProcessCall(
+              getFlutterCommand(const LocalPlatform()),
+              const <String>['pub', 'get'],
+              testRoot.childDirectory(allPackagesProjectName).path)));
     },
         // See comment about Windows in create_all_packages_app_command.dart
         skip: io.Platform.isWindows);
 
-    test('fails if flutter pub get fails', () async {
+    test('fails if flutter create fails', () async {
+      writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
       processRunner.mockProcessesForExecutable[
           getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['create'])
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['create-all-packages-app'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to `flutter create`'),
+          ]));
+    });
+
+    test('fails if flutter pub get fails', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      processRunner.mockProcessesForExecutable[
+          getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['create']),
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
       ];
       Error? commandError;
@@ -182,20 +316,22 @@ void main() {
         skip: io.Platform.isWindows);
 
     test('handles --output-dir', () async {
-      createFakePlugin('plugina', packagesDir);
-
       final Directory customOutputDir =
           fileSystem.systemTempDirectory.createTempSync();
+      writeFakeFlutterCreateOutput(customOutputDir);
+      createFakePlugin('plugina', packagesDir);
+
       await runCapturingPrint(runner, <String>[
         'create-all-packages-app',
         '--output-dir=${customOutputDir.path}'
       ]);
 
       expect(command.app.path,
-          customOutputDir.childDirectory('all_packages').path);
+          customOutputDir.childDirectory(allPackagesProjectName).path);
     });
 
     test('logs exclusions', () async {
+      writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
       createFakePlugin('pluginb', packagesDir);
       createFakePlugin('pluginc', packagesDir);
@@ -219,7 +355,6 @@ void main() {
         packagesDir,
         processRunner: processRunner,
         platform: MockPlatform(isMacOS: true),
-        pluginsRoot: testRoot,
       );
       runner = CommandRunner<void>(
           'create_all_test', 'Test for $CreateAllPackagesAppCommand');
@@ -227,10 +362,11 @@ void main() {
     });
 
     test('macOS deployment target is modified in Podfile', () async {
+      writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
       final File podfileFile = RepositoryPackage(
-              command.packagesDir.parent.childDirectory('all_packages'))
+              command.packagesDir.parent.childDirectory(allPackagesProjectName))
           .platformDirectory(FlutterPlatform.macos)
           .childFile('Podfile');
       podfileFile.createSync(recursive: true);
@@ -239,7 +375,8 @@ platform :osx, '10.11'
 # some other line
 """);
 
-      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+      await runCapturingPrint(
+          runner, <String>['create-all-packages-app', '--platforms=macos']);
       final List<String> podfile = command.app
           .platformDirectory(FlutterPlatform.macos)
           .childFile('Podfile')

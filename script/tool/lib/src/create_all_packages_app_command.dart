@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:file/file.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -15,10 +14,14 @@ import 'common/package_command.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
-const String _projectName = 'all_packages';
+@visibleForTesting
 
-const int _exitGenNativeBuildFilesFailed = 3;
-const int _exitMissingFile = 4;
+/// The name of the build-all-packages project.
+const String allPackagesProjectName = 'all_packages';
+
+const int _exitFlutterCreateFailed = 3;
+const int _exitGenNativeBuildFilesFailed = 4;
+const int _exitMissingFile = 5;
 
 /// A command to create an application that builds all in a single application.
 class CreateAllPackagesAppCommand extends PackageCommand {
@@ -26,15 +29,12 @@ class CreateAllPackagesAppCommand extends PackageCommand {
   CreateAllPackagesAppCommand(
     Directory packagesDir, {
     ProcessRunner processRunner = const ProcessRunner(),
-    Directory? pluginsRoot,
     Platform platform = const LocalPlatform(),
   }) : super(packagesDir, processRunner: processRunner, platform: platform) {
-    final Directory defaultDir =
-        pluginsRoot ?? packagesDir.fileSystem.currentDirectory;
     argParser.addOption(_outputDirectoryFlag,
-        defaultsTo: defaultDir.path,
-        help:
-            'The path the directory to create the "$_projectName" project in.\n'
+        defaultsTo: packagesDir.parent.path,
+        help: 'The path the directory to create the "$allPackagesProjectName" '
+            'project in.\n'
             'Defaults to the repository root.');
     argParser.addOption(_agpVersionFlag,
         help: 'The AGP version to use in the created app, instead of the '
@@ -50,17 +50,20 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         help: 'The Gradle version to use in the created app, instead of the '
             'default `flutter create`d version. Will generally need to be used '
             ' with $_agpVersionFlag due to compatibility limits.');
+    argParser.addMultiOption(_platformsFlag,
+        help: 'A platforms list to pass to `flutter create`');
   }
 
   static const String _androidLanguageFlag = 'android-language';
   static const String _agpVersionFlag = 'agp-version';
   static const String _gradleVersionFlag = 'gradle-version';
   static const String _outputDirectoryFlag = 'output-dir';
+  static const String _platformsFlag = 'platforms';
 
   /// The location to create the synthesized app project.
   Directory get _appDirectory => packagesDir.fileSystem
       .directory(getStringArg(_outputDirectoryFlag))
-      .childDirectory(_projectName);
+      .childDirectory(allPackagesProjectName);
 
   /// The synthesized app project.
   RepositoryPackage get app => RepositoryPackage(_appDirectory);
@@ -76,7 +79,8 @@ class CreateAllPackagesAppCommand extends PackageCommand {
   Future<void> run() async {
     final int exitCode = await _createApp();
     if (exitCode != 0) {
-      throw ToolExit(exitCode);
+      printError('Failed to `flutter create`: $exitCode');
+      throw ToolExit(_exitFlutterCreateFailed);
     }
 
     final Set<String> excluded = getExcludedPackageNames();
@@ -104,33 +108,44 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     }
 
     await Future.wait(<Future<void>>[
-      _updateTopLevelGradle(agpVersion: getNullableStringArg(_agpVersionFlag)),
-      _updateGradleWrapper(
-          gradleVersion: getNullableStringArg(_gradleVersionFlag)),
-      _updateAppGradle(),
-      _updateManifest(),
-      _updateMacosPbxproj(),
-      // This step requires the native file generation triggered by
-      // flutter pub get above, so can't currently be run on Windows.
-      if (!platform.isWindows) _updateMacosPodfile(),
+      if (_targetPlatformIncludes(platformAndroid)) ...<Future<void>>[
+        _updateTopLevelGradle(
+            agpVersion: getNullableStringArg(_agpVersionFlag)),
+        _updateGradleWrapper(
+            gradleVersion: getNullableStringArg(_gradleVersionFlag)),
+        _updateAppGradle(),
+        _updateManifest(),
+      ],
+      if (_targetPlatformIncludes(platformMacOS)) ...<Future<void>>[
+        _updateMacosPbxproj(),
+        // This step requires the native file generation triggered by
+        // flutter pub get above, so can't currently be run on Windows.
+        if (!platform.isWindows) _updateMacosPodfile(),
+      ],
     ]);
   }
 
+  /// True if the created app includes [platform].
+  bool _targetPlatformIncludes(String platform) {
+    final List<String> platforms = getStringListArg(_platformsFlag);
+    // An empty platform list means the app targets all platforms, since that's
+    // how `flutter create` works.
+    return platforms.contains(platform) || platforms.isEmpty;
+  }
+
   Future<int> _createApp() async {
-    final io.ProcessResult result = io.Process.runSync(
+    final List<String> platforms = getStringListArg(_platformsFlag);
+    return processRunner.runAndStream(
       flutterCommand,
       <String>[
         'create',
+        if (platforms.isNotEmpty) '--platforms=${platforms.join(',')}',
         '--template=app',
-        '--project-name=$_projectName',
+        '--project-name=$allPackagesProjectName',
         '--android-language=${getStringArg(_androidLanguageFlag)}',
         _appDirectory.path,
       ],
     );
-
-    print(result.stdout);
-    print(result.stderr);
-    return result.exitCode;
   }
 
   /// Rewrites [file], replacing any lines contain a key in [replacements] with
@@ -234,7 +249,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     _adjustFile(
       manifestFile,
       additions: <String, List<String>>{
-        'package="com.example.$_projectName"': <String>[
+        'package="com.example.$allPackagesProjectName"': <String>[
           'xmlns:tools="http://schemas.android.com/tools">',
           '',
           '<uses-sdk tools:overrideLibrary="io.flutter.plugins.camera"/>',
@@ -259,7 +274,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     final Map<String, PathDependency> pluginDeps =
         await _getValidPathDependencies();
     final Pubspec pubspec = Pubspec(
-      _projectName,
+      allPackagesProjectName,
       description: 'Flutter app containing all 1st party plugins.',
       version: Version.parse('1.0.0+1'),
       environment: <String, VersionConstraint>{
