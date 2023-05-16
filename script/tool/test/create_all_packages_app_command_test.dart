@@ -161,7 +161,7 @@ project 'Runner', {
       runner.addCommand(command);
     });
 
-    test('calls with no platforms flag by default', () async {
+    test('uses Kotlin by default', () async {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
@@ -181,13 +181,13 @@ project 'Runner', {
               null)));
     });
 
-    test('calls with passed platforms', () async {
+    test('uses Java when requested', () async {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
       await runCapturingPrint(runner, <String>[
         'create-all-packages-app',
-        '--platforms=ios,windows',
+        '--android-language=java',
       ]);
 
       expect(
@@ -196,10 +196,9 @@ project 'Runner', {
               getFlutterCommand(const LocalPlatform()),
               <String>[
                 'create',
-                '--platforms=ios,windows',
                 '--template=app',
                 '--project-name=$allPackagesProjectName',
-                '--android-language=kotlin',
+                '--android-language=java',
                 testRoot.childDirectory(allPackagesProjectName).path,
               ],
               null)));
@@ -260,10 +259,7 @@ project 'Runner', {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
-      await runCapturingPrint(runner, <String>[
-        'create-all-packages-app',
-        '--platforms=android',
-      ]);
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
 
       final List<String> buildGradle = command.app
           .platformDirectory(FlutterPlatform.android)
@@ -289,7 +285,6 @@ project 'Runner', {
       const String gradleVersion = '99.87';
       await runCapturingPrint(runner, <String>[
         'create-all-packages-app',
-        '--platforms=android',
         '--agp-version=$agpVersion',
         '--gradle-version=$gradleVersion'
       ]);
@@ -319,8 +314,7 @@ project 'Runner', {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
-      await runCapturingPrint(
-          runner, <String>['create-all-packages-app', '--platforms=macos']);
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
       final List<String> pbxproj = command.app
           .platformDirectory(FlutterPlatform.macos)
           .childDirectory('Runner.xcodeproj')
@@ -458,8 +452,7 @@ platform :osx, '10.11'
 # some other line
 """);
 
-      await runCapturingPrint(
-          runner, <String>['create-all-packages-app', '--platforms=macos']);
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
       final List<String> podfile = command.app
           .platformDirectory(FlutterPlatform.macos)
           .childFile('Podfile')

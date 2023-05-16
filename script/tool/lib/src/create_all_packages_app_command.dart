@@ -50,15 +50,12 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         help: 'The Gradle version to use in the created app, instead of the '
             'default `flutter create`d version. Will generally need to be used '
             ' with $_agpVersionFlag due to compatibility limits.');
-    argParser.addMultiOption(_platformsFlag,
-        help: 'A platforms list to pass to `flutter create`');
   }
 
   static const String _androidLanguageFlag = 'android-language';
   static const String _agpVersionFlag = 'agp-version';
   static const String _gradleVersionFlag = 'gradle-version';
   static const String _outputDirectoryFlag = 'output-dir';
-  static const String _platformsFlag = 'platforms';
 
   /// The location to create the synthesized app project.
   Directory get _appDirectory => packagesDir.fileSystem
@@ -108,37 +105,22 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     }
 
     await Future.wait(<Future<void>>[
-      if (_targetPlatformIncludes(platformAndroid)) ...<Future<void>>[
-        _updateTopLevelGradle(
-            agpVersion: getNullableStringArg(_agpVersionFlag)),
-        _updateGradleWrapper(
-            gradleVersion: getNullableStringArg(_gradleVersionFlag)),
-        _updateAppGradle(),
-      ],
-      if (_targetPlatformIncludes(platformMacOS)) ...<Future<void>>[
-        _updateMacosPbxproj(),
-        // This step requires the native file generation triggered by
-        // flutter pub get above, so can't currently be run on Windows.
-        if (!platform.isWindows) _updateMacosPodfile(),
-      ],
+      _updateTopLevelGradle(agpVersion: getNullableStringArg(_agpVersionFlag)),
+      _updateGradleWrapper(
+          gradleVersion: getNullableStringArg(_gradleVersionFlag)),
+      _updateAppGradle(),
+      _updateMacosPbxproj(),
+      // This step requires the native file generation triggered by
+      // flutter pub get above, so can't currently be run on Windows.
+      if (!platform.isWindows) _updateMacosPodfile(),
     ]);
   }
 
-  /// True if the created app includes [platform].
-  bool _targetPlatformIncludes(String platform) {
-    final List<String> platforms = getStringListArg(_platformsFlag);
-    // An empty platform list means the app targets all platforms, since that's
-    // how `flutter create` works.
-    return platforms.contains(platform) || platforms.isEmpty;
-  }
-
   Future<int> _createApp() async {
-    final List<String> platforms = getStringListArg(_platformsFlag);
     return processRunner.runAndStream(
       flutterCommand,
       <String>[
         'create',
-        if (platforms.isNotEmpty) '--platforms=${platforms.join(',')}',
         '--template=app',
         '--project-name=$allPackagesProjectName',
         '--android-language=${getStringArg(_androidLanguageFlag)}',
