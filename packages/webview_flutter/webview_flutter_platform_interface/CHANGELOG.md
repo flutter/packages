@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Adds `WebResourceRequest` to `HttpResponseError`.
+
 ## 2.8.0
 
 * Adds support to track scroll position changes. See `PlatformWebViewController.setOnScrollPositionChange`.

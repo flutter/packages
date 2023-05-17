@@ -4,7 +4,8 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'web_resource_request.dart';
+import '../../webview_flutter_platform_interface.dart';
+import 'web_resource_response.dart';
 
 /// Error returned in `PlatformNavigationDelegate.setOnHttpError` when an HTTP
 /// response error has been received.
@@ -40,12 +41,16 @@ class HttpResponseError {
   /// Used by the platform implementation to create a new [HttpResponseError].
   const HttpResponseError({
     required this.statusCode,
-    this.request
+    this.requestParams,
+    this.response,
   });
 
   /// The HTTP status code.
   final int statusCode;
 
-  /// The associated request.
-  final WebResourceRequest? request;
+  /// The associated request parameters.
+  final LoadRequestParams? requestParams;
+
+  /// The associated response.
+  final WebResourceResponse? response;
 }
