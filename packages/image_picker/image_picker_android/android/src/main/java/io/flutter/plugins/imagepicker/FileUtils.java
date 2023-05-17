@@ -84,7 +84,7 @@ class FileUtils {
       // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
       // return `null`.
       //
-      // See [this issue](https://github.com/flutter/flutter/issues/100025) for more details.
+      // See https://github.com/flutter/flutter/issues/100025 for more details.
       return null;
     }
   }
