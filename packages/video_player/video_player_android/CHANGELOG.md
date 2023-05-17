@@ -1,3 +1,7 @@
+## 2.4.5
+
+* Bumps ExoPlayer version to 2.18.6.
+
 ## 2.4.4
 
 * Synchronizes `VideoPlayerValue.isPlaying` with `ExoPlayer`.
