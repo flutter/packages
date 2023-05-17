@@ -205,9 +205,9 @@ class VideoPlayer {
 
   /// Sets options
   Future<void> setOptions(VideoPlayerWebOptions options) async {
-    if (options.controlsEnabled) {
+    if (options.controls.enabled) {
       _videoElement.controls = true;
-      final String controlsList = options.controlsList;
+      final String controlsList = options.controls.controlsList;
       if (controlsList.isNotEmpty) {
         _videoElement.setAttribute('controlsList', controlsList);
       }
