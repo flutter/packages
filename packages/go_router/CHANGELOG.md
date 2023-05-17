@@ -8,6 +8,10 @@
 - Adds support for restorationId to ShellRoute (and StatefulShellRoute).
 - Adds support for restoring imperatively pushed routes.
 
+## 7.0.1
+
+- Adds a workaround for the `dart fix --apply` issue, https://github.com/dart-lang/sdk/issues/52233.
+
 ## 7.0.0
 
 - **BREAKING CHANGE**:

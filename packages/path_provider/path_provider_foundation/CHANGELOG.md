@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported macOS version to 10.14.
+
 ## 2.2.3
 
 * Updates minimum iOS version to 11.
