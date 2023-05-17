@@ -401,15 +401,36 @@ class VideoPlayerOptions {
 class VideoPlayerWebOptions {
   /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
   const VideoPlayerWebOptions({
-    this.controlsEnabled = false,
-    this.allowDownload = true,
-    this.allowFullscreen = true,
-    this.allowPlaybackRate = true,
+    this.controls = const VideoPlayerWebOptionsControls.disabled(),
     this.allowContextMenu = true,
   });
 
+  /// Additional settings how control options are displayed
+  final VideoPlayerWebOptionsControls controls;
+
+  /// Whether context menu (right click) is allowed
+  final bool allowContextMenu;
+}
+
+/// [VideoPlayerWebOptions] can be used to set how control options are displayed
+@immutable
+class VideoPlayerWebOptionsControls {
+  /// Enables controls and sets how the options are displayed
+  const VideoPlayerWebOptionsControls.enabled({
+    this.allowDownload = true,
+    this.allowFullscreen = true,
+    this.allowPlaybackRate = true,
+  }) : enabled = true;
+
+  /// Disables control options. Default behavior.
+  const VideoPlayerWebOptionsControls.disabled()
+      : enabled = false,
+        allowDownload = false,
+        allowFullscreen = false,
+        allowPlaybackRate = false;
+
   /// Whether native controls are enabled
-  final bool controlsEnabled;
+  final bool enabled;
 
   /// Whether downloaded control is displayed
   ///
@@ -425,9 +446,6 @@ class VideoPlayerWebOptions {
   ///
   /// Only applicable when [controlsEnabled] is true
   final bool allowPlaybackRate;
-
-  /// Whether context menu (right click) is allowed
-  final bool allowContextMenu;
 
   /// A string representation of disallowed controls
   String get controlsList {
