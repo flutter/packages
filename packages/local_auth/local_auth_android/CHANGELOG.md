@@ -1,6 +1,7 @@
-## NEXT
+## 1.0.29
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Bumps androidx.core version to 1.10.1.
 
 ## 1.0.28
 
