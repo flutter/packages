@@ -73,7 +73,7 @@ void main() {
       ]);
     });
 
-    test('handles emtpy', () async {
+    test('handles empty', () async {
       when(api.getEnrolledBiometrics())
           .thenAnswer((_) async => <AuthBiometricWrapper>[]);
 
