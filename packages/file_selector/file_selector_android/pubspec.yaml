@@ -1,7 +1,6 @@
 name: file_selector_android
 description: A new Flutter plugin project.
 version: 0.0.1
-publish_to: none
 
 environment:
   sdk: ">=2.18.0 <4.0.0"

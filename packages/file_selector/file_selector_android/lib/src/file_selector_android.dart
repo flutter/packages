@@ -23,6 +23,17 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    assert(
+      acceptedTypeGroups == null ||
+          acceptedTypeGroups.any(
+            (XTypeGroup group) {
+              return group.allowsAny ||
+                  group.mimeTypes != null ||
+                  group.extensions != null;
+            },
+          ),
+    );
+
     final FileResponse? file = await _api.openFile(
       initialDirectory,
       _combine<String>(
@@ -43,6 +54,17 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    assert(
+      acceptedTypeGroups == null ||
+          acceptedTypeGroups.any(
+            (XTypeGroup group) {
+              return group.allowsAny ||
+                  group.mimeTypes != null ||
+                  group.extensions != null;
+            },
+          ),
+    );
+
     final List<FileResponse?> files = await _api.openFiles(
       initialDirectory,
       _combine<String>(

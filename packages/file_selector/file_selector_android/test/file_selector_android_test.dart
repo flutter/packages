@@ -2,33 +2,141 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data';
+
 import 'package:file_selector_android/src/file_selector_android.dart';
-import 'package:file_selector_android/file_selector_android_method_channel.dart';
-import 'package:file_selector_android/file_selector_android_platform_interface.dart';
+import 'package:file_selector_android/src/file_selector_api.g.dart';
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
-class MockFileSelectorAndroidPlatform
-    with MockPlatformInterfaceMixin
-    implements FileSelectorAndroidPlatform {
-  @override
-  Future<String?> getPlatformVersion() => Future<String>.value('42');
-}
+import 'file_selector_android_test.mocks.dart';
+import 'test_file_selector_api.g.dart';
 
+@GenerateMocks(<Type>[TestFileSelectorApi])
 void main() {
-  final FileSelectorAndroidPlatform initialPlatform =
-      FileSelectorAndroidPlatform.instance;
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('$MethodChannelFileSelectorAndroid is the default instance', () {
-    expect(initialPlatform, isInstanceOf<MethodChannelFileSelectorAndroid>());
+  late FileSelectorAndroid plugin;
+  late MockTestFileSelectorApi mockApi;
+
+  setUp(() {
+    mockApi = MockTestFileSelectorApi();
+    TestFileSelectorApi.setup(mockApi);
+    plugin = FileSelectorAndroid();
   });
 
-  test('getPlatformVersion', () async {
-    final FileSelectorAndroid fileSelectorAndroidPlugin = FileSelectorAndroid();
-    final MockFileSelectorAndroidPlatform fakePlatform =
-        MockFileSelectorAndroidPlatform();
-    FileSelectorAndroidPlatform.instance = fakePlatform;
+  test('registered instance', () {
+    FileSelectorAndroid.registerWith();
+    expect(FileSelectorPlatform.instance, isA<FileSelectorAndroid>());
+  });
 
-    expect(await fileSelectorAndroidPlugin.getPlatformVersion(), '42');
+  group('openFile', () {
+    test('passes the accepted type groups correctly', () async {
+      when(
+        mockApi.openFile(
+          'some/path/',
+          <String>['text/plain', 'image/jpg'],
+          <String>['txt', 'jpg'],
+        ),
+      ).thenAnswer(
+        (_) => Future<FileResponse?>.value(
+          FileResponse(
+            path: 'some/path.txt',
+            size: 30,
+            bytes: Uint8List(0),
+            name: 'name',
+            mimeType: 'text/plain',
+          ),
+        ),
+      );
+
+      const XTypeGroup group = XTypeGroup(
+        extensions: <String>['txt'],
+        mimeTypes: <String>['text/plain'],
+      );
+
+      const XTypeGroup group2 = XTypeGroup(
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
+
+      final XFile? file = await plugin.openFile(
+        acceptedTypeGroups: <XTypeGroup>[group, group2],
+        initialDirectory: 'some/path/',
+      );
+
+      expect(file?.path, 'some/path.txt');
+      expect(file?.mimeType, 'text/plain');
+      expect(await file?.length(), 30);
+      expect(await file?.readAsBytes(), Uint8List(0));
+    });
+  });
+
+  group('openFiles', () {
+    test('passes the accepted type groups correctly', () async {
+      when(
+        mockApi.openFiles(
+          'some/path/',
+          <String>['text/plain', 'image/jpg'],
+          <String>['txt', 'jpg'],
+        ),
+      ).thenAnswer(
+        (_) => Future<List<FileResponse>>.value(
+          <FileResponse>[
+            FileResponse(
+              path: 'some/path.txt',
+              size: 30,
+              bytes: Uint8List(0),
+              name: 'name',
+              mimeType: 'text/plain',
+            ),
+            FileResponse(
+              path: 'other/dir.jpg',
+              size: 40,
+              bytes: Uint8List(0),
+              mimeType: 'image/jpg',
+            ),
+          ],
+        ),
+      );
+
+      const XTypeGroup group = XTypeGroup(
+        extensions: <String>['txt'],
+        mimeTypes: <String>['text/plain'],
+      );
+
+      const XTypeGroup group2 = XTypeGroup(
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
+
+      final List<XFile> files = await plugin.openFiles(
+        acceptedTypeGroups: <XTypeGroup>[group, group2],
+        initialDirectory: 'some/path/',
+      );
+
+      expect(files[0].path, 'some/path.txt');
+      expect(files[0].mimeType, 'text/plain');
+      expect(await files[0].length(), 30);
+      expect(await files[0].readAsBytes(), Uint8List(0));
+
+      expect(files[1].path, 'other/dir.jpg');
+      expect(files[1].mimeType, 'image/jpg');
+      expect(await files[1].length(), 40);
+      expect(await files[1].readAsBytes(), Uint8List(0));
+    });
+  });
+
+  test('getDirectoryPath', () async {
+    when(mockApi.getDirectoryPath('some/path'))
+        .thenAnswer((_) => Future<String?>.value('some/path/chosen/'));
+
+    final String? path = await plugin.getDirectoryPath(
+      initialDirectory: 'some/path',
+    );
+
+    expect(path, 'some/path/chosen/');
   });
 }
