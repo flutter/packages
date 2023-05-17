@@ -42,10 +42,10 @@ abstract class TestFileSelectorApi {
   static const MessageCodec<Object?> codec = _TestFileSelectorApiCodec();
 
   Future<FileResponse?> openFile(String? initialDirectory,
-      List<String?>? mimeTypes, List<String?>? extensions);
+      List<String?> mimeTypes, List<String?> extensions);
 
   Future<List<FileResponse?>> openFiles(String? initialDirectory,
-      List<String?>? mimeTypes, List<String?>? extensions);
+      List<String?> mimeTypes, List<String?> extensions);
 
   Future<String?> getDirectoryPath(String? initialDirectory);
 
@@ -68,10 +68,14 @@ abstract class TestFileSelectorApi {
           final String? arg_initialDirectory = (args[0] as String?);
           final List<String?>? arg_mimeTypes =
               (args[1] as List<Object?>?)?.cast<String?>();
+          assert(arg_mimeTypes != null,
+              'Argument for dev.flutter.pigeon.FileSelectorApi.openFile was null, expected non-null List<String?>.');
           final List<String?>? arg_extensions =
               (args[2] as List<Object?>?)?.cast<String?>();
+          assert(arg_extensions != null,
+              'Argument for dev.flutter.pigeon.FileSelectorApi.openFile was null, expected non-null List<String?>.');
           final FileResponse? output = await api.openFile(
-              arg_initialDirectory, arg_mimeTypes, arg_extensions);
+              arg_initialDirectory, arg_mimeTypes!, arg_extensions!);
           return <Object?>[output];
         });
       }
@@ -93,10 +97,14 @@ abstract class TestFileSelectorApi {
           final String? arg_initialDirectory = (args[0] as String?);
           final List<String?>? arg_mimeTypes =
               (args[1] as List<Object?>?)?.cast<String?>();
+          assert(arg_mimeTypes != null,
+              'Argument for dev.flutter.pigeon.FileSelectorApi.openFiles was null, expected non-null List<String?>.');
           final List<String?>? arg_extensions =
               (args[2] as List<Object?>?)?.cast<String?>();
+          assert(arg_extensions != null,
+              'Argument for dev.flutter.pigeon.FileSelectorApi.openFiles was null, expected non-null List<String?>.');
           final List<FileResponse?> output = await api.openFiles(
-              arg_initialDirectory, arg_mimeTypes, arg_extensions);
+              arg_initialDirectory, arg_mimeTypes!, arg_extensions!);
           return <Object?>[output];
         });
       }

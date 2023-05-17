@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelectorApi {
   private static final String TAG = "FileSelectorApiImpl";
@@ -50,16 +52,18 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   @Override
   public void openFile(
       @Nullable String initialDirectory,
-      @Nullable List<String> mimeTypes,
-      @Nullable List<String> extensions,
+      @NonNull List<String> mimeTypes,
+      @NonNull List<String> extensions,
       @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
     final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-    trySetMimeTypes(intent, mimeTypes, extensions);
+    setMimeTypes(intent, mimeTypes, extensions);
 
     try {
-      trySetInitialDirectory(intent, initialDirectory);
+      if (initialDirectory != null) {
+        trySetInitialDirectory(intent, initialDirectory);
+      }
       tryStartActivityForResult(
           intent,
           OPEN_FILE,
@@ -68,7 +72,12 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
-                result.success(toFileResponse(uri));
+                final GeneratedFileSelectorApi.FileResponse file = toFileResponse(uri);
+                if (file != null) {
+                  result.success(file);
+                } else {
+                  result.error(new Exception(String.format("Failed to read file: %s", uri)));
+                }
               } else {
                 result.success(null);
               }
@@ -82,18 +91,20 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   @Override
   public void openFiles(
       @Nullable String initialDirectory,
-      @Nullable List<String> mimeTypes,
-      @Nullable List<String> extensions,
+      @NonNull List<String> mimeTypes,
+      @NonNull List<String> extensions,
       @NonNull
           GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
     final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
     intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
-    trySetMimeTypes(intent, mimeTypes, extensions);
+    setMimeTypes(intent, mimeTypes, extensions);
 
     try {
-      trySetInitialDirectory(intent, initialDirectory);
+      if (initialDirectory != null) {
+        trySetInitialDirectory(intent, initialDirectory);
+      }
       tryStartActivityForResult(
           intent,
           OPEN_FILES,
@@ -114,7 +125,14 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
                       new ArrayList<>(clipData.getItemCount());
                   for (int i = 0; i < clipData.getItemCount(); i++) {
                     final ClipData.Item clipItem = clipData.getItemAt(i);
-                    files.add(toFileResponse(clipItem.getUri()));
+                    final GeneratedFileSelectorApi.FileResponse file =
+                        toFileResponse(clipItem.getUri());
+                    if (file != null) {
+                      files.add(file);
+                    } else {
+                      result.error(new Exception(String.format("Failed to read file: %s", uri)));
+                      return;
+                    }
                   }
                   result.success(files);
                 }
@@ -138,7 +156,9 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
 
     final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
     try {
-      trySetInitialDirectory(intent, initialDirectory);
+      if (initialDirectory != null) {
+        trySetInitialDirectory(intent, initialDirectory);
+      }
       tryStartActivityForResult(
           intent,
           OPEN_DIR,
@@ -165,21 +185,13 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   // Setting the mimeType with `setType` is required when opening files. This handles setting the
   // mimeType based on the `mimeTypes` list and converts extensions to mimeTypes.
   // See https://developer.android.com/guide/components/intents-common#OpenFile
-  private void trySetMimeTypes(
-      @NonNull Intent intent, @Nullable List<String> mimeTypes, @Nullable List<String> extensions) {
-    final List<String> extensionMimeTypes = tryConvertExtensionsToMimetypes(extensions);
-
+  private void setMimeTypes(
+      @NonNull Intent intent, @NonNull List<String> mimeTypes, @NonNull List<String> extensions) {
     final List<String> allMimetypes = new ArrayList<>();
-    if (mimeTypes != null) {
-      allMimetypes.addAll(mimeTypes);
-    }
-    if (extensionMimeTypes != null) {
-      allMimetypes.addAll(extensionMimeTypes);
-    }
+    allMimetypes.addAll(mimeTypes);
+    allMimetypes.addAll(tryConvertExtensionsToMimetypes(extensions));
 
-    if (mimeTypes == null && extensionMimeTypes == null) {
-      intent.setType("*/*");
-    } else if (allMimetypes.isEmpty()) {
+    if (allMimetypes.isEmpty()) {
       intent.setType("*/*");
     } else if (allMimetypes.size() == 1) {
       intent.setType(allMimetypes.get(0));
@@ -189,35 +201,35 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
     }
   }
 
-  @Nullable
-  private List<String> tryConvertExtensionsToMimetypes(@Nullable List<String> extensions) {
-    if (extensions == null) {
-      return null;
+  // Attempts to convert each extension to Android compatible mimeType. Logs a warning if an
+  // extension could not be converted.
+  @NonNull
+  private List<String> tryConvertExtensionsToMimetypes(@NonNull List<String> extensions) {
+    if (extensions.isEmpty()) {
+      return Collections.emptyList();
     }
 
     final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-    final List<String> mimeTypes = new ArrayList<>();
+    final Set<String> mimeTypes = new HashSet<>();
     for (String extension : extensions) {
       final String mimetype = mimeTypeMap.getMimeTypeFromExtension(extension);
       if (mimetype != null) {
         mimeTypes.add(mimetype);
       } else {
-        Log.d(TAG, String.format("Extension not supported: %s", extension));
+        Log.w(TAG, String.format("Extension not supported: %s", extension));
       }
     }
 
-    return mimeTypes;
+    return new ArrayList<>(mimeTypes);
   }
 
-  private void trySetInitialDirectory(@NonNull Intent intent, @Nullable String initialDirectory)
+  private void trySetInitialDirectory(@NonNull Intent intent, @NonNull String initialDirectory)
       throws Exception {
-    if (initialDirectory != null) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialDirectory));
-      } else {
-        throw new Exception(
-            "Setting an initial directory requires Android version Build.VERSION_CODES.O or greater.");
-      }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialDirectory));
+    } else {
+      throw new Exception(
+          "Setting an initial directory requires Android version Build.VERSION_CODES.O or greater.");
     }
   }
 
@@ -250,7 +262,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       return null;
     }
 
-    final ContentResolver contentResolver = activityPluginBinding.getActivity().getContentResolver();
+    final ContentResolver contentResolver =
+        activityPluginBinding.getActivity().getContentResolver();
 
     String name = null;
     Integer size = null;

@@ -43,6 +43,7 @@ public class FileSelectorAndroidPlugin implements FlutterPlugin, ActivityAware {
       fileSelectorApi.setActivityPluginBinding(binding);
     } else {
       fileSelectorApi = new FileSelectorApiImpl(binding);
+      GeneratedFileSelectorApi.FileSelectorApi.setup(binaryMessenger, fileSelectorApi);
     }
   }
 

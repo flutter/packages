@@ -35,15 +35,15 @@ abstract class FileSelectorApi {
   @async
   FileResponse? openFile(
     String? initialDirectory,
-    List<String?>? mimeTypes,
-    List<String?>? extensions,
+    List<String?> mimeTypes,
+    List<String?> extensions,
   );
 
   @async
   List<FileResponse?> openFiles(
     String? initialDirectory,
-    List<String?>? mimeTypes,
-    List<String?>? extensions,
+    List<String?> mimeTypes,
+    List<String?> extensions,
   );
 
   @async

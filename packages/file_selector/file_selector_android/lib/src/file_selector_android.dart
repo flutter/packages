@@ -25,18 +25,14 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   }) async {
     final FileResponse? file = await _api.openFile(
       initialDirectory,
-      acceptedTypeGroups == null
-          ? null
-          : _combine<String>(
-              acceptedTypeGroups,
-              (XTypeGroup group) => group.mimeTypes,
-            ),
-      acceptedTypeGroups == null
-          ? null
-          : _combine<String>(
-              acceptedTypeGroups,
-              (XTypeGroup group) => group.extensions,
-            ),
+      _combine<String>(
+        acceptedTypeGroups ?? <XTypeGroup>[],
+        (XTypeGroup group) => group.mimeTypes,
+      ),
+      _combine<String>(
+        acceptedTypeGroups ?? <XTypeGroup>[],
+        (XTypeGroup group) => group.extensions,
+      ),
     );
     return file == null ? null : _xFileFromFileResponse(file);
   }
@@ -49,18 +45,14 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   }) async {
     final List<FileResponse?> files = await _api.openFiles(
       initialDirectory,
-      acceptedTypeGroups == null
-          ? null
-          : _combine<String>(
-              acceptedTypeGroups,
-              (XTypeGroup group) => group.mimeTypes,
-            ),
-      acceptedTypeGroups == null
-          ? null
-          : _combine<String>(
-              acceptedTypeGroups,
-              (XTypeGroup group) => group.extensions,
-            ),
+      _combine<String>(
+        acceptedTypeGroups ?? <XTypeGroup>[],
+        (XTypeGroup group) => group.mimeTypes,
+      ),
+      _combine<String>(
+        acceptedTypeGroups ?? <XTypeGroup>[],
+        (XTypeGroup group) => group.extensions,
+      ),
     );
     return files
         .cast<FileResponse>()

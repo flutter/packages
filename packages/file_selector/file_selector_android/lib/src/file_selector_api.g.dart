@@ -86,7 +86,7 @@ class FileSelectorApi {
   static const MessageCodec<Object?> codec = _FileSelectorApiCodec();
 
   Future<FileResponse?> openFile(String? arg_initialDirectory,
-      List<String?>? arg_mimeTypes, List<String?>? arg_extensions) async {
+      List<String?> arg_mimeTypes, List<String?> arg_extensions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.openFile', codec,
         binaryMessenger: _binaryMessenger);
@@ -110,7 +110,7 @@ class FileSelectorApi {
   }
 
   Future<List<FileResponse?>> openFiles(String? arg_initialDirectory,
-      List<String?>? arg_mimeTypes, List<String?>? arg_extensions) async {
+      List<String?> arg_mimeTypes, List<String?> arg_extensions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.openFiles', codec,
         binaryMessenger: _binaryMessenger);

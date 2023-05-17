@@ -233,14 +233,14 @@ public class GeneratedFileSelectorApi {
 
     void openFile(
         @Nullable String initialDirectory,
-        @Nullable List<String> mimeTypes,
-        @Nullable List<String> extensions,
+        @NonNull List<String> mimeTypes,
+        @NonNull List<String> extensions,
         @NonNull Result<FileResponse> result);
 
     void openFiles(
         @Nullable String initialDirectory,
-        @Nullable List<String> mimeTypes,
-        @Nullable List<String> extensions,
+        @NonNull List<String> mimeTypes,
+        @NonNull List<String> extensions,
         @NonNull Result<List<FileResponse>> result);
 
     void getDirectoryPath(@Nullable String initialDirectory, @NonNull Result<String> result);
