@@ -46,7 +46,6 @@ platform_properties:
 targets:
   ### Linux tasks ###
   - name: Linux repo_tools_tests
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -335,7 +334,6 @@ targets:
         ]
 
   - name: Windows repo_tools_tests
-    bringup: true # https://github.com/flutter/flutter/issues/126750
     recipe: packages/packages
     timeout: 30
     properties:
