@@ -1,3 +1,27 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 1.0.28
+
+* Removes unused resources as indicated by Android lint warnings.
+
+## 1.0.27
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 1.0.26
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 1.0.25
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 1.0.24
+
+* Fixes `getEnrolledBiometrics` return value handling.
+
 ## 1.0.23
 
 * Switches internals to Pigeon and fixes Java warnings.

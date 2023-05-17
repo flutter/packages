@@ -24,6 +24,7 @@ import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import io.flutter.plugins.localauth.Messages.AuthClassification;
+import io.flutter.plugins.localauth.Messages.AuthClassificationWrapper;
 import io.flutter.plugins.localauth.Messages.AuthOptions;
 import io.flutter.plugins.localauth.Messages.AuthResult;
 import io.flutter.plugins.localauth.Messages.AuthResultWrapper;
@@ -98,17 +99,21 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     return hasBiometricHardware();
   }
 
-  public @NonNull List<AuthClassification> getEnrolledBiometrics() {
-    ArrayList<AuthClassification> biometrics = new ArrayList<>();
+  public @NonNull List<AuthClassificationWrapper> getEnrolledBiometrics() {
+    ArrayList<AuthClassificationWrapper> biometrics = new ArrayList<>();
     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
         == BiometricManager.BIOMETRIC_SUCCESS) {
-      biometrics.add(AuthClassification.WEAK);
+      biometrics.add(wrappedBiometric(AuthClassification.WEAK));
     }
     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
         == BiometricManager.BIOMETRIC_SUCCESS) {
-      biometrics.add(AuthClassification.STRONG);
+      biometrics.add(wrappedBiometric(AuthClassification.STRONG));
     }
     return biometrics;
+  }
+
+  private @NonNull AuthClassificationWrapper wrappedBiometric(AuthClassification value) {
+    return new AuthClassificationWrapper.Builder().setValue(value).build();
   }
 
   public @NonNull Boolean stopAuthentication() {

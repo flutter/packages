@@ -30,7 +30,7 @@
                                completion:(void (^)(FlutterError *_Nullable))completion {
   NSNumber *userContentControllerIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:userContentController]);
-  FWFWKScriptMessageData *messageData = FWFWKScriptMessageDataFromWKScriptMessage(message);
+  FWFWKScriptMessageData *messageData = FWFWKScriptMessageDataFromNativeWKScriptMessage(message);
   [self didReceiveScriptMessageForHandlerWithIdentifier:@([self identifierForHandler:instance])
                         userContentControllerIdentifier:userContentControllerIdentifier
                                                 message:messageData

@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -138,6 +137,75 @@ class WebKitWebViewController extends PlatformWebViewController {
         NSKeyValueObservingOptions.newValue,
       },
     );
+
+    final WeakReference<WebKitWebViewController> weakThis =
+        WeakReference<WebKitWebViewController>(this);
+    _uiDelegate = _webKitParams.webKitProxy.createUIDelegate(
+      instanceManager: _webKitParams._instanceManager,
+      onCreateWebView: (
+        WKWebView webView,
+        WKWebViewConfiguration configuration,
+        WKNavigationAction navigationAction,
+      ) {
+        if (!navigationAction.targetFrame.isMainFrame) {
+          webView.loadRequest(navigationAction.request);
+        }
+      },
+      requestMediaCapturePermission: (
+        WKUIDelegate instance,
+        WKWebView webView,
+        WKSecurityOrigin origin,
+        WKFrameInfo frame,
+        WKMediaCaptureType type,
+      ) async {
+        final void Function(PlatformWebViewPermissionRequest)? callback =
+            weakThis.target?._onPermissionRequestCallback;
+
+        if (callback == null) {
+          // The default response for iOS is to prompt. See
+          // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
+          return WKPermissionDecision.prompt;
+        } else {
+          late final Set<WebViewPermissionResourceType> types;
+          switch (type) {
+            case WKMediaCaptureType.camera:
+              types = <WebViewPermissionResourceType>{
+                WebViewPermissionResourceType.camera
+              };
+              break;
+            case WKMediaCaptureType.cameraAndMicrophone:
+              types = <WebViewPermissionResourceType>{
+                WebViewPermissionResourceType.camera,
+                WebViewPermissionResourceType.microphone
+              };
+              break;
+            case WKMediaCaptureType.microphone:
+              types = <WebViewPermissionResourceType>{
+                WebViewPermissionResourceType.microphone
+              };
+              break;
+            case WKMediaCaptureType.unknown:
+              // The default response for iOS is to prompt. See
+              // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
+              return WKPermissionDecision.prompt;
+          }
+
+          final Completer<WKPermissionDecision> decisionCompleter =
+              Completer<WKPermissionDecision>();
+
+          callback(
+            WebKitWebViewPermissionRequest._(
+              types: types,
+              onDecision: decisionCompleter.complete,
+            ),
+          );
+
+          return decisionCompleter.future;
+        }
+      },
+    );
+
+    _webView.setUIDelegate(_uiDelegate);
   }
 
   /// The WebKit WebView being controlled.
@@ -170,8 +238,8 @@ class WebKitWebViewController extends PlatformWebViewController {
             final UrlChangeCallback? urlChangeCallback =
                 controller._currentNavigationDelegate?._onUrlChange;
             if (urlChangeCallback != null) {
-              final NSUrl url = change[NSKeyValueChangeKey.newValue]! as NSUrl;
-              urlChangeCallback(UrlChange(url: await url.getAbsoluteString()));
+              final NSUrl? url = change[NSKeyValueChangeKey.newValue] as NSUrl?;
+              urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
             }
             break;
         }
@@ -180,11 +248,15 @@ class WebKitWebViewController extends PlatformWebViewController {
     instanceManager: _webKitParams._instanceManager,
   );
 
+  late final WKUIDelegate _uiDelegate;
+
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
       <String, WebKitJavaScriptChannelParams>{};
 
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
+
+  void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
       params as WebKitWebViewControllerCreationParams;
@@ -229,7 +301,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     return _webView.loadRequest(NSUrlRequest(
       url: params.uri.toString(),
       allHttpHeaderFields: params.headers,
-      httpMethod: describeEnum(params.method),
+      httpMethod: params.method.name,
       httpBody: params.body,
     ));
   }
@@ -410,10 +482,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     covariant WebKitNavigationDelegate handler,
   ) {
     _currentNavigationDelegate = handler;
-    return Future.wait(<Future<void>>[
-      _webView.setUIDelegate(handler._uiDelegate),
-      _webView.setNavigationDelegate(handler._navigationDelegate)
-    ]);
+    return _webView.setNavigationDelegate(handler._navigationDelegate);
   }
 
   Future<void> _disableZoom() {
@@ -453,6 +522,13 @@ class WebKitWebViewController extends PlatformWebViewController {
       // removed above.
       if (!_zoomEnabled) _disableZoom(),
     ]);
+  }
+
+  @override
+  Future<void> setOnPlatformPermissionRequest(
+    void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
+  ) async {
+    _onPermissionRequestCallback = onPermissionRequest;
   }
 }
 
@@ -689,27 +765,10 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         }
       },
     );
-
-    _uiDelegate = (this.params as WebKitNavigationDelegateCreationParams)
-        .webKitProxy
-        .createUIDelegate(
-      onCreateWebView: (
-        WKWebView webView,
-        WKWebViewConfiguration configuration,
-        WKNavigationAction navigationAction,
-      ) {
-        if (!navigationAction.targetFrame.isMainFrame) {
-          webView.loadRequest(navigationAction.request);
-        }
-      },
-    );
   }
 
   // Used to set `WKWebView.setNavigationDelegate` in `WebKitWebViewController`.
   late final WKNavigationDelegate _navigationDelegate;
-
-  // Used to set `WKWebView.setUIDelegate` in `WebKitWebViewController`.
-  late final WKUIDelegate _uiDelegate;
 
   PageEventCallback? _onPageFinished;
   PageEventCallback? _onPageStarted;
@@ -750,5 +809,30 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
     _onUrlChange = onUrlChange;
+  }
+}
+
+/// WebKit implementation of [PlatformWebViewPermissionRequest].
+class WebKitWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
+  const WebKitWebViewPermissionRequest._({
+    required super.types,
+    required void Function(WKPermissionDecision decision) onDecision,
+  }) : _onDecision = onDecision;
+
+  final void Function(WKPermissionDecision) _onDecision;
+
+  @override
+  Future<void> grant() async {
+    _onDecision(WKPermissionDecision.grant);
+  }
+
+  @override
+  Future<void> deny() async {
+    _onDecision(WKPermissionDecision.deny);
+  }
+
+  /// Prompt the user for permission for the requested resource.
+  Future<void> prompt() async {
+    _onDecision(WKPermissionDecision.prompt);
   }
 }

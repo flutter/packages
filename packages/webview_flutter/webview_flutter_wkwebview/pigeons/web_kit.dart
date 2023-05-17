@@ -59,6 +59,7 @@ enum NSKeyValueChangeKeyEnum {
   newValue,
   notificationIsPrior,
   oldValue,
+  unknown,
 }
 
 // TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
@@ -191,6 +192,70 @@ enum WKNavigationType {
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
   other,
+
+  /// An unknown navigation type.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
+}
+
+/// Possible permission decisions for device resource access.
+///
+/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision?language=objc.
+enum WKPermissionDecision {
+  /// Deny permission for the requested resource.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiondeny?language=objc.
+  deny,
+
+  /// Deny permission for the requested resource.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiongrant?language=objc.
+  grant,
+
+  /// Prompt the user for permission for the requested resource.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisionprompt?language=objc.
+  prompt,
+}
+
+// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
+class WKPermissionDecisionData {
+  late WKPermissionDecision value;
+}
+
+/// List of the types of media devices that can capture audio, video, or both.
+///
+/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype?language=objc.
+enum WKMediaCaptureType {
+  /// A media device that can capture video.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecamera?language=objc.
+  camera,
+
+  /// A media device or devices that can capture audio and video.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecameraandmicrophone?language=objc.
+  cameraAndMicrophone,
+
+  /// A media device that can capture audio.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
+  microphone,
+
+  /// An unknown media device.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
+}
+
+// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
+class WKMediaCaptureTypeData {
+  late WKMediaCaptureType value;
 }
 
 /// Mirror of NSURLRequest.
@@ -243,6 +308,15 @@ class NSErrorData {
 class WKScriptMessageData {
   late String name;
   late Object? body;
+}
+
+/// Mirror of WKSecurityOrigin.
+///
+/// See https://developer.apple.com/documentation/webkit/wksecurityorigin?language=objc.
+class WKSecurityOriginData {
+  late String host;
+  late int port;
+  late String protocol;
 }
 
 /// Mirror of NSHttpCookieData.
@@ -639,6 +713,19 @@ abstract class WKUIDelegateFlutterApi {
     int webViewIdentifier,
     int configurationIdentifier,
     WKNavigationActionData navigationAction,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.requestMediaCapturePermission`.
+  @ObjCSelector(
+    'requestMediaCapturePermissionForDelegateWithIdentifier:webViewIdentifier:origin:frame:type:',
+  )
+  @async
+  WKPermissionDecisionData requestMediaCapturePermission(
+    int identifier,
+    int webViewIdentifier,
+    WKSecurityOriginData origin,
+    WKFrameInfoData frame,
+    WKMediaCaptureTypeData type,
   );
 }
 

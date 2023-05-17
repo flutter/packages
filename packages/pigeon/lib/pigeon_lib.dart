@@ -718,6 +718,16 @@ List<Error> _validateAst(Root root, String source) {
               'Enums aren\'t yet supported for primitive return types: "${method.returnType}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
         ));
       }
+      if (method.arguments.any((NamedType arg) =>
+          (arg.type.baseName == 'List' || arg.type.baseName == 'Map') &&
+          arg.type.typeArguments.any(
+              (TypeDeclaration genericType) => isEnum(root, genericType)))) {
+        result.add(Error(
+          message:
+              'Enums aren\'t yet supported for collection types: "${method.arguments[0]}" in API: "${api.name}" method: "${method.name}" (https://github.com/flutter/flutter/issues/87307)',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
       for (final NamedType unnamedType in method.arguments
           .where((NamedType element) => element.type.baseName.isEmpty)) {
         result.add(Error(
@@ -994,6 +1004,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final dart_ast.NamedType? namedType =
         getFirstChildOfType<dart_ast.NamedType>(parameter);
     if (namedType != null) {
+      // TODO(stuartmorgan): Replace `name` when adopting the next version of
+      // analyzer.
+      // ignore: deprecated_member_use
       final String argTypeBaseName = namedType.name.name;
       final bool isNullable = namedType.question != null;
       final List<TypeDeclaration> argTypeArguments =
@@ -1071,15 +1084,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
-      final dart_ast.SimpleIdentifier returnTypeIdentifier =
-          getFirstChildOfType<dart_ast.SimpleIdentifier>(returnType)!;
+      returnType as dart_ast.NamedType;
       _currentApi!.methods.add(
         Method(
           name: node.name.lexeme,
           returnType: TypeDeclaration(
-              baseName: returnTypeIdentifier.name,
-              typeArguments: typeAnnotationsToTypeArguments(
-                  (returnType as dart_ast.NamedType).typeArguments),
+              // TODO(stuartmorgan): Replace `name` when adopting the next
+              // version of analyzer.
+              // ignore: deprecated_member_use
+              baseName: returnType.name.name,
+              typeArguments:
+                  typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
           arguments: arguments,
           isAsynchronous: isAsynchronous,
@@ -1126,6 +1141,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.NamedType) {
           result.add(TypeDeclaration(
+              // TODO(stuartmorgan): Replace `name` when adopting the next
+              // version of analyzer.
+              // ignore: deprecated_member_use
               baseName: x.name.name,
               isNullable: x.question != null,
               typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
@@ -1156,6 +1174,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           _currentClass!.fields.add(NamedType(
             type: TypeDeclaration(
+              // TODO(stuartmorgan): Replace `name` when adopting the next
+              // version of analyzer.
+              // ignore: deprecated_member_use
               baseName: type.name.name,
               isNullable: type.question != null,
               typeArguments: typeAnnotationsToTypeArguments(typeArguments),

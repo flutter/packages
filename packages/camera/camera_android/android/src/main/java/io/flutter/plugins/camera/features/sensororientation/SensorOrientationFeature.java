@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.camera.features.sensororientation;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.DartMessenger;
@@ -16,9 +18,9 @@ import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 
 /** Provides access to the sensor orientation of the camera devices. */
 public class SensorOrientationFeature extends CameraFeature<Integer> {
-  private Integer currentSetting = 0;
-  private final DeviceOrientationManager deviceOrientationListener;
-  private PlatformChannel.DeviceOrientation lockedCaptureOrientation;
+  @NonNull private Integer currentSetting = 0;
+  @NonNull private final DeviceOrientationManager deviceOrientationListener;
+  @Nullable private PlatformChannel.DeviceOrientation lockedCaptureOrientation;
 
   /**
    * Creates a new instance of the {@link ResolutionFeature}.
@@ -42,18 +44,21 @@ public class SensorOrientationFeature extends CameraFeature<Integer> {
     deviceOrientationListener.start();
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "SensorOrientationFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @NonNull
   @Override
   public Integer getValue() {
     return currentSetting;
   }
 
   @Override
-  public void setValue(Integer value) {
+  public void setValue(@NonNull Integer value) {
     this.currentSetting = value;
   }
 
@@ -63,7 +68,7 @@ public class SensorOrientationFeature extends CameraFeature<Integer> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     // Noop: when setting the sensor orientation there is no need to update the request builder.
   }
 
@@ -72,6 +77,7 @@ public class SensorOrientationFeature extends CameraFeature<Integer> {
    *
    * @return The instance of the {@link DeviceOrientationManager}.
    */
+  @NonNull
   public DeviceOrientationManager getDeviceOrientationManager() {
     return this.deviceOrientationListener;
   }
@@ -82,7 +88,7 @@ public class SensorOrientationFeature extends CameraFeature<Integer> {
    *
    * @param orientation The orientation in which to lock the capture orientation.
    */
-  public void lockCaptureOrientation(PlatformChannel.DeviceOrientation orientation) {
+  public void lockCaptureOrientation(@NonNull PlatformChannel.DeviceOrientation orientation) {
     this.lockedCaptureOrientation = orientation;
   }
 
@@ -99,6 +105,7 @@ public class SensorOrientationFeature extends CameraFeature<Integer> {
    *
    * @return The configured locked capture orientation.
    */
+  @Nullable
   public PlatformChannel.DeviceOrientation getLockedCaptureOrientation() {
     return this.lockedCaptureOrientation;
   }

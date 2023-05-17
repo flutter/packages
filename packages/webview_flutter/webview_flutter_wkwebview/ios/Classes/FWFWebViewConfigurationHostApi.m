@@ -119,7 +119,7 @@
       (WKWebViewConfiguration *)[self webViewConfigurationForIdentifier:identifier];
   WKAudiovisualMediaTypes typesInt = 0;
   for (FWFWKAudiovisualMediaTypeEnumData *data in types) {
-    typesInt |= FWFWKAudiovisualMediaTypeFromEnumData(data);
+    typesInt |= FWFNativeWKAudiovisualMediaTypeFromEnumData(data);
   }
   [configuration setMediaTypesRequiringUserActionForPlayback:typesInt];
 }

@@ -6,7 +6,7 @@
 
 #import <Flutter/Flutter.h>
 
-NSURLRequest *_Nullable FWFNSURLRequestFromRequestData(FWFNSUrlRequestData *data) {
+NSURLRequest *_Nullable FWFNativeNSURLRequestFromRequestData(FWFNSUrlRequestData *data) {
   NSURL *url = [NSURL URLWithString:data.url];
   if (!url) {
     return nil;
@@ -28,11 +28,11 @@ NSURLRequest *_Nullable FWFNSURLRequestFromRequestData(FWFNSUrlRequestData *data
   return request;
 }
 
-extern NSHTTPCookie *_Nullable FWFNSHTTPCookieFromCookieData(FWFNSHttpCookieData *data) {
+extern NSHTTPCookie *_Nullable FWFNativeNSHTTPCookieFromCookieData(FWFNSHttpCookieData *data) {
   NSMutableDictionary<NSHTTPCookiePropertyKey, id> *properties = [NSMutableDictionary dictionary];
   for (int i = 0; i < data.propertyKeys.count; i++) {
     NSHTTPCookiePropertyKey cookieKey =
-        FWFNSHTTPCookiePropertyKeyFromEnumData(data.propertyKeys[i]);
+        FWFNativeNSHTTPCookiePropertyKeyFromEnumData(data.propertyKeys[i]);
     if (!cookieKey) {
       // Some keys aren't supported on all versions, so this ignores keys
       // that require a higher version or are unsupported.
@@ -43,7 +43,7 @@ extern NSHTTPCookie *_Nullable FWFNSHTTPCookieFromCookieData(FWFNSHttpCookieData
   return [NSHTTPCookie cookieWithProperties:properties];
 }
 
-NSKeyValueObservingOptions FWFNSKeyValueObservingOptionsFromEnumData(
+NSKeyValueObservingOptions FWFNativeNSKeyValueObservingOptionsFromEnumData(
     FWFNSKeyValueObservingOptionsEnumData *data) {
   switch (data.value) {
     case FWFNSKeyValueObservingOptionsEnumNewValue:
@@ -59,7 +59,7 @@ NSKeyValueObservingOptions FWFNSKeyValueObservingOptionsFromEnumData(
   return -1;
 }
 
-NSHTTPCookiePropertyKey _Nullable FWFNSHTTPCookiePropertyKeyFromEnumData(
+NSHTTPCookiePropertyKey _Nullable FWFNativeNSHTTPCookiePropertyKeyFromEnumData(
     FWFNSHttpCookiePropertyKeyEnumData *data) {
   switch (data.value) {
     case FWFNSHttpCookiePropertyKeyEnumComment:
@@ -99,14 +99,14 @@ NSHTTPCookiePropertyKey _Nullable FWFNSHTTPCookiePropertyKeyFromEnumData(
   return nil;
 }
 
-extern WKUserScript *FWFWKUserScriptFromScriptData(FWFWKUserScriptData *data) {
+extern WKUserScript *FWFNativeWKUserScriptFromScriptData(FWFWKUserScriptData *data) {
   return [[WKUserScript alloc]
         initWithSource:data.source
-         injectionTime:FWFWKUserScriptInjectionTimeFromEnumData(data.injectionTime)
+         injectionTime:FWFNativeWKUserScriptInjectionTimeFromEnumData(data.injectionTime)
       forMainFrameOnly:data.isMainFrameOnly.boolValue];
 }
 
-WKUserScriptInjectionTime FWFWKUserScriptInjectionTimeFromEnumData(
+WKUserScriptInjectionTime FWFNativeWKUserScriptInjectionTimeFromEnumData(
     FWFWKUserScriptInjectionTimeEnumData *data) {
   switch (data.value) {
     case FWFWKUserScriptInjectionTimeEnumAtDocumentStart:
@@ -118,7 +118,7 @@ WKUserScriptInjectionTime FWFWKUserScriptInjectionTimeFromEnumData(
   return -1;
 }
 
-WKAudiovisualMediaTypes FWFWKAudiovisualMediaTypeFromEnumData(
+WKAudiovisualMediaTypes FWFNativeWKAudiovisualMediaTypeFromEnumData(
     FWFWKAudiovisualMediaTypeEnumData *data) {
   switch (data.value) {
     case FWFWKAudiovisualMediaTypeEnumNone:
@@ -134,7 +134,7 @@ WKAudiovisualMediaTypes FWFWKAudiovisualMediaTypeFromEnumData(
   return -1;
 }
 
-NSString *_Nullable FWFWKWebsiteDataTypeFromEnumData(FWFWKWebsiteDataTypeEnumData *data) {
+NSString *_Nullable FWFNativeWKWebsiteDataTypeFromEnumData(FWFWKWebsiteDataTypeEnumData *data) {
   switch (data.value) {
     case FWFWKWebsiteDataTypeEnumCookies:
       return WKWebsiteDataTypeCookies;
@@ -157,15 +157,15 @@ NSString *_Nullable FWFWKWebsiteDataTypeFromEnumData(FWFWKWebsiteDataTypeEnumDat
   return nil;
 }
 
-FWFWKNavigationActionData *FWFWKNavigationActionDataFromNavigationAction(
+FWFWKNavigationActionData *FWFWKNavigationActionDataFromNativeWKNavigationAction(
     WKNavigationAction *action) {
   return [FWFWKNavigationActionData
-      makeWithRequest:FWFNSUrlRequestDataFromNSURLRequest(action.request)
-          targetFrame:FWFWKFrameInfoDataFromWKFrameInfo(action.targetFrame)
-       navigationType:FWFWKNavigationTypeFromWKNavigationType(action.navigationType)];
+      makeWithRequest:FWFNSUrlRequestDataFromNativeNSURLRequest(action.request)
+          targetFrame:FWFWKFrameInfoDataFromNativeWKFrameInfo(action.targetFrame)
+       navigationType:FWFWKNavigationTypeFromNativeWKNavigationType(action.navigationType)];
 }
 
-FWFNSUrlRequestData *FWFNSUrlRequestDataFromNSURLRequest(NSURLRequest *request) {
+FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *request) {
   return [FWFNSUrlRequestData
               makeWithUrl:request.URL.absoluteString
                httpMethod:request.HTTPMethod
@@ -175,11 +175,11 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNSURLRequest(NSURLRequest *request) 
       allHttpHeaderFields:request.allHTTPHeaderFields ? request.allHTTPHeaderFields : @{}];
 }
 
-FWFWKFrameInfoData *FWFWKFrameInfoDataFromWKFrameInfo(WKFrameInfo *info) {
+FWFWKFrameInfoData *FWFWKFrameInfoDataFromNativeWKFrameInfo(WKFrameInfo *info) {
   return [FWFWKFrameInfoData makeWithIsMainFrame:@(info.isMainFrame)];
 }
 
-WKNavigationActionPolicy FWFWKNavigationActionPolicyFromEnumData(
+WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
     FWFWKNavigationActionPolicyEnumData *data) {
   switch (data.value) {
     case FWFWKNavigationActionPolicyEnumAllow:
@@ -191,13 +191,13 @@ WKNavigationActionPolicy FWFWKNavigationActionPolicyFromEnumData(
   return -1;
 }
 
-FWFNSErrorData *FWFNSErrorDataFromNSError(NSError *error) {
+FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
   return [FWFNSErrorData makeWithCode:@(error.code)
                                domain:error.domain
                  localizedDescription:error.localizedDescription];
 }
 
-FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNSKeyValueChangeKey(
+FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(
     NSKeyValueChangeKey key) {
   if ([key isEqualToString:NSKeyValueChangeIndexesKey]) {
     return [FWFNSKeyValueChangeKeyEnumData makeWithValue:FWFNSKeyValueChangeKeyEnumIndexes];
@@ -210,16 +210,18 @@ FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNSKeyValueChan
         makeWithValue:FWFNSKeyValueChangeKeyEnumNotificationIsPrior];
   } else if ([key isEqualToString:NSKeyValueChangeOldKey]) {
     return [FWFNSKeyValueChangeKeyEnumData makeWithValue:FWFNSKeyValueChangeKeyEnumOldValue];
+  } else {
+    return [FWFNSKeyValueChangeKeyEnumData makeWithValue:FWFNSKeyValueChangeKeyEnumUnknown];
   }
 
   return nil;
 }
 
-FWFWKScriptMessageData *FWFWKScriptMessageDataFromWKScriptMessage(WKScriptMessage *message) {
+FWFWKScriptMessageData *FWFWKScriptMessageDataFromNativeWKScriptMessage(WKScriptMessage *message) {
   return [FWFWKScriptMessageData makeWithName:message.name body:message.body];
 }
 
-FWFWKNavigationType FWFWKNavigationTypeFromWKNavigationType(WKNavigationType type) {
+FWFWKNavigationType FWFWKNavigationTypeFromNativeWKNavigationType(WKNavigationType type) {
   switch (type) {
     case WKNavigationTypeLinkActivated:
       return FWFWKNavigationTypeLinkActivated;
@@ -234,4 +236,42 @@ FWFWKNavigationType FWFWKNavigationTypeFromWKNavigationType(WKNavigationType typ
     case WKNavigationTypeOther:
       return FWFWKNavigationTypeOther;
   }
+
+  return FWFWKNavigationTypeUnknown;
+}
+
+FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(
+    WKSecurityOrigin *origin) {
+  return [FWFWKSecurityOriginData makeWithHost:origin.host
+                                          port:@(origin.port)
+                                      protocol:origin.protocol];
+}
+
+WKPermissionDecision FWFNativeWKPermissionDecisionFromData(FWFWKPermissionDecisionData *data) {
+  switch (data.value) {
+    case FWFWKPermissionDecisionDeny:
+      return WKPermissionDecisionDeny;
+    case FWFWKPermissionDecisionGrant:
+      return WKPermissionDecisionGrant;
+    case FWFWKPermissionDecisionPrompt:
+      return WKPermissionDecisionPrompt;
+  }
+
+  return -1;
+}
+
+FWFWKMediaCaptureTypeData *FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType(
+    WKMediaCaptureType type) {
+  switch (type) {
+    case WKMediaCaptureTypeCamera:
+      return [FWFWKMediaCaptureTypeData makeWithValue:FWFWKMediaCaptureTypeCamera];
+    case WKMediaCaptureTypeMicrophone:
+      return [FWFWKMediaCaptureTypeData makeWithValue:FWFWKMediaCaptureTypeMicrophone];
+    case WKMediaCaptureTypeCameraAndMicrophone:
+      return [FWFWKMediaCaptureTypeData makeWithValue:FWFWKMediaCaptureTypeCameraAndMicrophone];
+    default:
+      return [FWFWKMediaCaptureTypeData makeWithValue:FWFWKMediaCaptureTypeUnknown];
+  }
+
+  return nil;
 }

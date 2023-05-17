@@ -407,21 +407,34 @@ class WebView extends JavaObject {
 }
 
 /// Manages cookies globally for all webviews.
-class CookieManager {
-  CookieManager._();
+///
+/// See https://developer.android.com/reference/android/webkit/CookieManager.
+class CookieManager extends JavaObject {
+  /// Instantiates a [CookieManager] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  CookieManager.detached({super.binaryMessenger, super.instanceManager})
+      : _cookieManagerApi = CookieManagerHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
 
-  static CookieManager? _instance;
+  static final CookieManager _instance =
+      CookieManagerHostApiImpl().attachInstanceFromInstances(
+    CookieManager.detached(),
+  );
 
-  /// Gets the globally set CookieManager instance.
-  static CookieManager get instance => _instance ??= CookieManager._();
+  final CookieManagerHostApiImpl _cookieManagerApi;
 
-  /// Setter for the singleton value, for testing purposes only.
-  @visibleForTesting
-  static set instance(CookieManager value) => _instance = value;
-
-  /// Pigeon Host Api implementation for [CookieManager].
-  @visibleForTesting
-  static CookieManagerHostApi api = CookieManagerHostApi();
+  /// Access a static field synchronously.
+  static CookieManager get instance {
+    AndroidWebViewFlutterApis.instance.ensureSetUp();
+    return _instance;
+  }
 
   /// Sets a single cookie (key-value pair) for the given URL. Any existing
   /// cookie with the same host, path and name will be replaced with the new
@@ -441,12 +454,37 @@ class CookieManager {
   /// Params:
   /// url – the URL for which the cookie is to be set
   /// value – the cookie as a string, using the format of the 'Set-Cookie' HTTP response header
-  Future<void> setCookie(String url, String value) => api.setCookie(url, value);
+  Future<void> setCookie(String url, String value) {
+    return _cookieManagerApi.setCookieFromInstances(this, url, value);
+  }
 
   /// Removes all cookies.
   ///
   /// The returned future resolves to true if any cookies were removed.
-  Future<bool> clearCookies() => api.clearCookies();
+  Future<bool> removeAllCookies() {
+    return _cookieManagerApi.removeAllCookiesFromInstances(this);
+  }
+
+  /// Sets whether the WebView should allow third party cookies to be set.
+  ///
+  /// Apps that target `Build.VERSION_CODES.KITKAT` or below default to allowing
+  /// third party cookies. Apps targeting `Build.VERSION_CODES.LOLLIPOP` or
+  /// later default to disallowing third party cookies.
+  Future<void> setAcceptThirdPartyCookies(WebView webView, bool accept) {
+    return _cookieManagerApi.setAcceptThirdPartyCookiesFromInstances(
+      this,
+      webView,
+      accept,
+    );
+  }
+
+  @override
+  CookieManager copy() {
+    return CookieManager.detached(
+      binaryMessenger: _cookieManagerApi.binaryMessenger,
+      instanceManager: _cookieManagerApi.instanceManager,
+    );
+  }
 }
 
 /// Manages settings state for a [WebView].
@@ -934,6 +972,7 @@ class WebChromeClient extends JavaObject {
   WebChromeClient({
     this.onProgressChanged,
     this.onShowFileChooser,
+    this.onPermissionRequest,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -950,6 +989,7 @@ class WebChromeClient extends JavaObject {
   WebChromeClient.detached({
     this.onProgressChanged,
     this.onShowFileChooser,
+    this.onPermissionRequest,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -973,6 +1013,16 @@ class WebChromeClient extends JavaObject {
     WebView webView,
     FileChooserParams params,
   )? onShowFileChooser;
+
+  /// Notify the host application that web content is requesting permission to
+  /// access the specified resources and the permission currently isn't granted
+  /// or denied.
+  ///
+  /// Only invoked on Android versions 21+.
+  final void Function(
+    WebChromeClient instance,
+    PermissionRequest request,
+  )? onPermissionRequest;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -1010,6 +1060,77 @@ class WebChromeClient extends JavaObject {
       onShowFileChooser: onShowFileChooser,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
+    );
+  }
+}
+
+/// This class defines a permission request and is used when web content
+/// requests access to protected resources.
+///
+/// Only supported on Android versions >= 21.
+///
+/// See https://developer.android.com/reference/android/webkit/PermissionRequest.
+class PermissionRequest extends JavaObject {
+  /// Instantiates a [PermissionRequest] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  PermissionRequest.detached({
+    required this.resources,
+    required super.binaryMessenger,
+    required super.instanceManager,
+  })  : _permissionRequestApi = PermissionRequestHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  /// Resource belongs to audio capture device, like microphone.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_AUDIO_CAPTURE.
+  static const String audioCapture = 'android.webkit.resource.AUDIO_CAPTURE';
+
+  /// Resource will allow sysex messages to be sent to or received from MIDI
+  /// devices.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_MIDI_SYSEX.
+  static const String midiSysex = 'android.webkit.resource.MIDI_SYSEX';
+
+  /// Resource belongs to video capture device, like camera.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_VIDEO_CAPTURE.
+  static const String videoCapture = 'android.webkit.resource.VIDEO_CAPTURE';
+
+  /// Resource belongs to protected media identifier.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_VIDEO_CAPTURE.
+  static const String protectedMediaId =
+      'android.webkit.resource.PROTECTED_MEDIA_ID';
+
+  final PermissionRequestHostApiImpl _permissionRequestApi;
+
+  /// Resources the web page is trying to access.
+  final List<String> resources;
+
+  /// Call this method to get the resources the web page is trying to access.
+  Future<void> grant(List<String> resources) {
+    return _permissionRequestApi.grantFromInstances(this, resources);
+  }
+
+  /// Call this method to grant origin the permission to access the given
+  /// resources.
+  Future<void> deny() {
+    return _permissionRequestApi.denyFromInstances(this);
+  }
+
+  @override
+  PermissionRequest copy() {
+    return PermissionRequest.detached(
+      resources: resources,
+      binaryMessenger: _permissionRequestApi.binaryMessenger,
+      instanceManager: _permissionRequestApi.instanceManager,
     );
   }
 }

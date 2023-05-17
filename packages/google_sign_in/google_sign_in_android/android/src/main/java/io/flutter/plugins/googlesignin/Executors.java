@@ -6,6 +6,7 @@ package io.flutter.plugins.googlesignin;
 
 import android.os.Handler;
 import android.os.Looper;
+import androidx.annotation.NonNull;
 import java.util.concurrent.Executor;
 
 /**
@@ -16,7 +17,7 @@ import java.util.concurrent.Executor;
  */
 public final class Executors {
 
-  private static final class UiThreadExecutor implements Executor {
+  static final class UiThreadExecutor implements Executor {
     private static final Handler UI_THREAD = new Handler(Looper.getMainLooper());
 
     @Override
@@ -26,7 +27,7 @@ public final class Executors {
   }
 
   /** Returns an {@code Executor} that will post commands to the UI thread. */
-  public static Executor uiThreadExecutor() {
+  public static @NonNull Executor uiThreadExecutor() {
     return new UiThreadExecutor();
   }
 

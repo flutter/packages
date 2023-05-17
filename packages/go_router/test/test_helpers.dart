@@ -37,18 +37,18 @@ class GoRouterNamedLocationSpy extends GoRouter {
   GoRouterNamedLocationSpy({required super.routes});
 
   String? name;
-  Map<String, String>? params;
-  Map<String, dynamic>? queryParams;
+  Map<String, String>? pathParameters;
+  Map<String, dynamic>? queryParameters;
 
   @override
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) {
     this.name = name;
-    this.params = params;
-    this.queryParams = queryParams;
+    this.pathParameters = pathParameters;
+    this.queryParameters = queryParameters;
     return '';
   }
 }
@@ -70,20 +70,20 @@ class GoRouterGoNamedSpy extends GoRouter {
   GoRouterGoNamedSpy({required super.routes});
 
   String? name;
-  Map<String, String>? params;
-  Map<String, dynamic>? queryParams;
+  Map<String, String>? pathParameters;
+  Map<String, dynamic>? queryParameters;
   Object? extra;
 
   @override
   void goNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) {
     this.name = name;
-    this.params = params;
-    this.queryParams = queryParams;
+    this.pathParameters = pathParameters;
+    this.queryParameters = queryParameters;
     this.extra = extra;
   }
 }
@@ -106,20 +106,20 @@ class GoRouterPushNamedSpy extends GoRouter {
   GoRouterPushNamedSpy({required super.routes});
 
   String? name;
-  Map<String, String>? params;
-  Map<String, dynamic>? queryParams;
+  Map<String, String>? pathParameters;
+  Map<String, dynamic>? queryParameters;
   Object? extra;
 
   @override
   Future<T?> pushNamed<T extends Object?>(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) {
     this.name = name;
-    this.params = params;
-    this.queryParams = queryParams;
+    this.pathParameters = pathParameters;
+    this.queryParameters = queryParameters;
     this.extra = extra;
     return Future<T?>.value(extra as T?);
   }

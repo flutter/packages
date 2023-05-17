@@ -137,6 +137,14 @@ Page resource error:
           );
         },
       ))
+      ..setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) {
+          debugPrint(
+            'requesting permissions for ${request.types.map((WebViewPermissionResourceType type) => type.name)}',
+          );
+          request.grant();
+        },
+      )
       ..loadRequest(LoadRequestParams(
         uri: Uri.parse('https://flutter.dev'),
       ));

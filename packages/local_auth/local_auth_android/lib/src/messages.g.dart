@@ -174,18 +174,42 @@ class AuthResultWrapper {
   }
 }
 
+class AuthClassificationWrapper {
+  AuthClassificationWrapper({
+    required this.value,
+  });
+
+  AuthClassification value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static AuthClassificationWrapper decode(Object result) {
+    result as List<Object?>;
+    return AuthClassificationWrapper(
+      value: AuthClassification.values[result[0]! as int],
+    );
+  }
+}
+
 class _LocalAuthApiCodec extends StandardMessageCodec {
   const _LocalAuthApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AuthOptions) {
+    if (value is AuthClassificationWrapper) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is AuthResultWrapper) {
+    } else if (value is AuthOptions) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AuthStrings) {
+    } else if (value is AuthResultWrapper) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is AuthStrings) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -196,10 +220,12 @@ class _LocalAuthApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AuthOptions.decode(readValue(buffer)!);
+        return AuthClassificationWrapper.decode(readValue(buffer)!);
       case 129:
-        return AuthResultWrapper.decode(readValue(buffer)!);
+        return AuthOptions.decode(readValue(buffer)!);
       case 130:
+        return AuthResultWrapper.decode(readValue(buffer)!);
+      case 131:
         return AuthStrings.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -304,7 +330,7 @@ class LocalAuthApi {
 
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
-  Future<List<AuthClassification?>> getEnrolledBiometrics() async {
+  Future<List<AuthClassificationWrapper?>> getEnrolledBiometrics() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.LocalAuthApi.getEnrolledBiometrics', codec,
         binaryMessenger: _binaryMessenger);
@@ -326,7 +352,8 @@ class LocalAuthApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<AuthClassification?>();
+      return (replyList[0] as List<Object?>?)!
+          .cast<AuthClassificationWrapper?>();
     }
   }
 

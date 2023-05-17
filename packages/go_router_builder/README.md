@@ -8,12 +8,12 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^3.1.0
+  go_router: ^7.0.0
 
 dev_dependencies:
   # ...along with your other dev-dependencies
   build_runner: ^2.0.0
-  go_router_builder: ^1.0.0
+  go_router_builder: ^2.0.0
 ```
 
 ### Source code
@@ -46,7 +46,7 @@ Read more about using
 in a URI format into one or more page builders, each that require zero or more
 arguments that are passed as path and query parameters as part of the location.
 `go_router` does a good job of making the path and query parameters available
-via the `params` and `queryParams` properties of the `GoRouterState` object, but
+via the `pathParameters` and `queryParameters` properties of the `GoRouterState` object, but
 often the page builder must first parse the parameters into types that aren't
 `String`s, e.g.
 
@@ -55,7 +55,7 @@ GoRoute(
   path: ':authorId',
   builder: (context, state) {
     // require the authorId to be present and be an integer
-    final authorId = int.parse(state.params['authorId']!);
+    final authorId = int.parse(state.pathParameters['authorId']!);
     return AuthorDetailsScreen(authorId: authorId);
   },
 ),
@@ -165,6 +165,17 @@ void _tap() => PersonRoute(pid: 'p1').go(context);
 
 This is the point of typed routing: the error is found statically.
 
+## Return value
+
+Starting from `go_router` 6.5.0, pushing a route and subsequently popping it, can produce
+a return value. The generated routes also follow this functionality.
+
+```dart
+void _tap() async {
+  final result = await PersonRoute(pid: 'p1').go(context);
+}
+```
+
 ## Query parameters
 
 Optional parameters (named or positional) indicate query parameters:
@@ -247,8 +258,8 @@ generator:
 ```dart
 redirect: (state) {
   final loggedIn = loginInfo.loggedIn;
-  final loggingIn = state.subloc == LoginRoute().location;
-  if( !loggedIn && !loggingIn ) return LoginRoute(from: state.subloc).location;
+  final loggingIn = state.matchedLocation == LoginRoute().location;
+  if( !loggedIn && !loggingIn ) return LoginRoute(from: state.matchedLocation).location;
   if( loggedIn && loggingIn ) return HomeRoute().location;
   return null;
 }
@@ -269,7 +280,7 @@ class HomeRoute extends GoRouteData {
 ## Type conversions
 
 The code generator can convert simple types like `int` and `enum` to/from the
-`String` type of the underlying params:
+`String` type of the underlying pathParameters:
 
 ```dart
 enum BookKind { all, popular, recent }
@@ -330,7 +341,7 @@ class FancyRoute extends GoRouteData {
 
 ## TypedShellRoute and navigator keys
 
-There may be situations were a child route of a shell needs to be displayed on a
+There may be situations where a child route of a shell needs to be displayed on a
 different navigator. This kind of scenarios can be achieved by declaring a
 **static** navigator key named:
 

@@ -49,7 +49,7 @@
                                                             FlutterError *_Nullable))completion {
   NSMutableSet<NSString *> *stringDataTypes = [NSMutableSet set];
   for (FWFWKWebsiteDataTypeEnumData *type in dataTypes) {
-    [stringDataTypes addObject:FWFWKWebsiteDataTypeFromEnumData(type)];
+    [stringDataTypes addObject:FWFNativeWKWebsiteDataTypeFromEnumData(type)];
   }
 
   WKWebsiteDataStore *dataStore = [self websiteDataStoreForIdentifier:identifier];

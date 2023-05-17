@@ -5,6 +5,8 @@
 package io.flutter.plugins.googlemaps;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.CameraPosition;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.StandardMessageCodec;
@@ -30,7 +32,8 @@ public class GoogleMapFactory extends PlatformViewFactory {
 
   @SuppressWarnings("unchecked")
   @Override
-  public PlatformView create(Context context, int id, Object args) {
+  @NonNull
+  public PlatformView create(@NonNull Context context, int id, @Nullable Object args) {
     Map<String, Object> params = (Map<String, Object>) args;
     final GoogleMapBuilder builder = new GoogleMapBuilder();
 

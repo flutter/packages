@@ -124,7 +124,7 @@
                                     request:(nonnull FWFNSUrlRequestData *)request
                                       error:
                                           (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  NSURLRequest *urlRequest = FWFNSURLRequestFromRequestData(request);
+  NSURLRequest *urlRequest = FWFNativeNSURLRequestFromRequestData(request);
   if (!urlRequest) {
     *error = [FlutterError errorWithCode:@"FWFURLRequestParsingError"
                                  message:@"Failed instantiating an NSURLRequest."
@@ -190,7 +190,7 @@
          } else {
            flutterError = [FlutterError errorWithCode:@"FWFEvaluateJavaScriptError"
                                               message:@"Failed evaluating JavaScript."
-                                              details:FWFNSErrorDataFromNSError(error)];
+                                              details:FWFNSErrorDataFromNativeNSError(error)];
          }
 
          completion(returnValue, flutterError);

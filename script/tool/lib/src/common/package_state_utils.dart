@@ -194,7 +194,11 @@ bool _isExampleBuildFile(List<String> pathComponents) {
       pathComponents.contains('gradle.properties') ||
       pathComponents.contains('build.gradle') ||
       pathComponents.contains('Runner.xcodeproj') ||
+      pathComponents.contains('Runner.xcscheme') ||
+      pathComponents.contains('Runner.xcworkspace') ||
+      pathComponents.contains('Podfile') ||
       pathComponents.contains('CMakeLists.txt') ||
+      pathComponents.contains('.pluginToolsConfig.yaml') ||
       pathComponents.contains('pubspec.yaml');
 }
 

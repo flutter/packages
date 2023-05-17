@@ -51,14 +51,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -129,14 +128,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -213,6 +211,37 @@ void main() {
     });
   });
 
+  group('#getDirectoryPaths', () {
+    setUp(() {
+      when(mockApi.showOpenDialog(any, any, any))
+          .thenReturn(<String?>['foo', 'bar']);
+    });
+
+    test('simple call works', () async {
+      final List<String?> paths = await plugin.getDirectoryPaths();
+
+      expect(paths[0], 'foo');
+      expect(paths[1], 'bar');
+      final VerificationResult result =
+          verify(mockApi.showOpenDialog(captureAny, null, null));
+      final SelectionOptions options = result.captured[0] as SelectionOptions;
+      expect(options.allowMultiple, true);
+      expect(options.selectFolders, true);
+    });
+
+    test('passes initialDirectory correctly', () async {
+      await plugin.getDirectoryPath(initialDirectory: '/example/directory');
+
+      verify(mockApi.showOpenDialog(any, '/example/directory', null));
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      await plugin.getDirectoryPath(confirmButtonText: 'Open Directory');
+
+      verify(mockApi.showOpenDialog(any, null, 'Open Directory'));
+    });
+  });
+
   group('#getSavePath', () {
     setUp(() {
       when(mockApi.showSaveDialog(any, any, any, any))
@@ -235,14 +264,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin
           .getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);

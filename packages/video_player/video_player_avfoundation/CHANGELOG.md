@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.4.6
+
+* Fixes hang when seeking to end of video.
+
+## 2.4.5
+
+* Updates functions without a prototype to avoid deprecation warning.
+
 ## 2.4.4
 
 * Updates pigeon to fix warnings with clang 15.
