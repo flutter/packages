@@ -53,31 +53,16 @@ void main() {
         outputDirectory.childDirectory(allPackagesProjectName));
 
     // Android
-    final Directory android =
-        package.platformDirectory(FlutterPlatform.android);
-    android.childFile('build.gradle')
-      ..createSync(recursive: true)
-      ..writeAsStringSync(r'''
-buildscript {
-    ext.kotlin_version = '1.6.21'
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-''');
     final String dependencies = appBuildGradleDependencies ??
         r'''
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 ''';
-    android.childDirectory('app').childFile('build.gradle')
+    package
+        .platformDirectory(FlutterPlatform.android)
+        .childDirectory('app')
+        .childFile('build.gradle')
       ..createSync(recursive: true)
       ..writeAsStringSync('''
 android {
@@ -94,16 +79,6 @@ android {
 }
 
 $dependencies
-''');
-    android
-        .childDirectory('gradle')
-        .childDirectory('wrapper')
-        .childFile('gradle-wrapper.properties')
-      ..createSync(recursive: true)
-      ..writeAsStringSync(r'''
-distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
 ''');
 
     if (androidOnly) {
@@ -174,7 +149,7 @@ project 'Runner', {
       runner.addCommand(command);
     });
 
-    test('uses Kotlin by default', () async {
+    test('calls "flutter create"', () async {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
 
@@ -188,30 +163,6 @@ project 'Runner', {
                 'create',
                 '--template=app',
                 '--project-name=$allPackagesProjectName',
-                '--android-language=kotlin',
-                testRoot.childDirectory(allPackagesProjectName).path,
-              ],
-              null)));
-    });
-
-    test('uses Java when requested', () async {
-      writeFakeFlutterCreateOutput(testRoot);
-      createFakePlugin('plugina', packagesDir);
-
-      await runCapturingPrint(runner, <String>[
-        'create-all-packages-app',
-        '--android-language=java',
-      ]);
-
-      expect(
-          processRunner.recordedCalls,
-          contains(ProcessCall(
-              getFlutterCommand(mockPlatform),
-              <String>[
-                'create',
-                '--template=app',
-                '--project-name=$allPackagesProjectName',
-                '--android-language=java',
                 testRoot.childDirectory(allPackagesProjectName).path,
               ],
               null)));
@@ -430,43 +381,6 @@ android {
             contains('androidx.lifecycle:lifecycle-runtime'),
             equals('}'),
           ]));
-    });
-
-    test('Android dependency versions are modified if requested', () async {
-      writeFakeFlutterCreateOutput(testRoot);
-      createFakePlugin('plugina', packagesDir);
-
-      const String agpVersion = '9.8.7';
-      const String gradleVersion = '99.87';
-      const String kotlinVersion = '7.8.9';
-      await runCapturingPrint(runner, <String>[
-        'create-all-packages-app',
-        '--agp-version=$agpVersion',
-        '--gradle-version=$gradleVersion',
-        '--kotlin-version=$kotlinVersion',
-      ]);
-
-      final List<String> buildGradle = command.app
-          .platformDirectory(FlutterPlatform.android)
-          .childFile('build.gradle')
-          .readAsLinesSync();
-      final List<String> gradleWrapper = command.app
-          .platformDirectory(FlutterPlatform.android)
-          .childDirectory('gradle')
-          .childDirectory('wrapper')
-          .childFile('gradle-wrapper.properties')
-          .readAsLinesSync();
-
-      expect(
-          buildGradle,
-          containsAll(<Matcher>[
-            contains("ext.kotlin_version = '$kotlinVersion'"),
-            contains("classpath 'com.android.tools.build:gradle:$agpVersion'"),
-          ]));
-      expect(
-          gradleWrapper,
-          contains(contains(
-              'distributionUrl=https\\://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip')));
     });
 
     test('macOS deployment target is modified in pbxproj', () async {

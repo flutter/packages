@@ -38,23 +38,6 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         help: 'The path the directory to create the "$allPackagesProjectName" '
             'project in.\n'
             'Defaults to the repository root.');
-    argParser.addOption(_agpVersionFlag,
-        help: 'The AGP version to use in the created app, instead of the '
-            'default `flutter create`d version. Will generally need to be used '
-            ' with $_gradleVersionFlag due to compatibility limits.');
-    argParser.addOption(_androidLanguageFlag,
-        defaultsTo: 'kotlin',
-        allowed: <String>['java', 'kotlin'],
-        help: 'The AGP version to use in the created app, instead of the '
-            'default `flutter create`d version. Will generally need to be used '
-            ' with $_gradleVersionFlag due to compatibility limits.');
-    argParser.addOption(_gradleVersionFlag,
-        help: 'The Gradle version to use in the created app, instead of the '
-            'default `flutter create`d version. Will generally need to be used '
-            ' with $_agpVersionFlag due to compatibility limits.');
-    argParser.addOption(_kotlinVersionFlag,
-        help: 'The Kotlin version to use in the created app, instead of the '
-            'default `flutter create`d version.');
     argParser.addOption(_legacySourceFlag,
         help: 'A partial project directory to use as a source for replacing '
             'portions of the created app. All top-level directories in the '
@@ -64,10 +47,6 @@ class CreateAllPackagesAppCommand extends PackageCommand {
             'modifications.');
   }
 
-  static const String _androidLanguageFlag = 'android-language';
-  static const String _agpVersionFlag = 'agp-version';
-  static const String _gradleVersionFlag = 'gradle-version';
-  static const String _kotlinVersionFlag = 'kotlin-version';
   static const String _legacySourceFlag = 'legacy-source';
   static const String _outputDirectoryFlag = 'output-dir';
 
@@ -126,11 +105,6 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     }
 
     await Future.wait(<Future<void>>[
-      _updateTopLevelGradle(
-          agpVersion: getNullableStringArg(_agpVersionFlag),
-          kotlinVersion: getNullableStringArg(_kotlinVersionFlag)),
-      _updateGradleWrapper(
-          gradleVersion: getNullableStringArg(_gradleVersionFlag)),
       _updateAppGradle(),
       _updateMacosPbxproj(),
       // This step requires the native file generation triggered by
@@ -146,7 +120,6 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         'create',
         '--template=app',
         '--project-name=$allPackagesProjectName',
-        '--android-language=${getStringArg(_androidLanguageFlag)}',
         _appDirectory.path,
       ],
     );
@@ -235,45 +208,6 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       }
     }
     file.writeAsStringSync(output.toString());
-  }
-
-  Future<void> _updateTopLevelGradle({
-    String? agpVersion,
-    String? kotlinVersion,
-  }) async {
-    final File gradleFile = app
-        .platformDirectory(FlutterPlatform.android)
-        .childFile('build.gradle');
-    _adjustFile(
-      gradleFile,
-      replacements: <String, List<String>>{
-        if (agpVersion != null)
-          'com.android.tools.build:': <String>[
-            "        classpath 'com.android.tools.build:gradle:$agpVersion'"
-          ],
-        if (kotlinVersion != null)
-          'ext.kotlin_version =': <String>[
-            "    ext.kotlin_version = '$kotlinVersion'"
-          ],
-      },
-    );
-  }
-
-  Future<void> _updateGradleWrapper({String? gradleVersion}) async {
-    final File gradleFile = app
-        .platformDirectory(FlutterPlatform.android)
-        .childDirectory('gradle')
-        .childDirectory('wrapper')
-        .childFile('gradle-wrapper.properties');
-    _adjustFile(
-      gradleFile,
-      replacements: <String, List<String>>{
-        if (gradleVersion != null)
-          'distributionUrl': <String>[
-            'distributionUrl=https\\://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip'
-          ],
-      },
-    );
   }
 
   Future<void> _updateAppGradle() async {
