@@ -69,7 +69,8 @@ class WebKitWebViewControllerCreationParams
       );
     }
     _configuration.setAllowsInlineMediaPlayback(allowsInlineMediaPlayback);
-    _configuration.setLimitsNavigationsToAppBoundDomains(limitsNavigationsToAppBoundDomains);
+    _configuration.setLimitsNavigationsToAppBoundDomains(
+        limitsNavigationsToAppBoundDomains);
   }
 
   /// Constructs a [WebKitWebViewControllerCreationParams] using a
@@ -91,7 +92,8 @@ class WebKitWebViewControllerCreationParams
           webKitProxy: webKitProxy,
           mediaTypesRequiringUserAction: mediaTypesRequiringUserAction,
           allowsInlineMediaPlayback: allowsInlineMediaPlayback,
-          limitsNavigationsToAppBoundDomains: limitsNavigationsToAppBoundDomains,
+          limitsNavigationsToAppBoundDomains:
+              limitsNavigationsToAppBoundDomains,
           instanceManager: instanceManager,
         );
 

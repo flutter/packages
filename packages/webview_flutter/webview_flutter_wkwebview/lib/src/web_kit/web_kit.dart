@@ -679,7 +679,8 @@ class WKWebViewConfiguration extends NSObject {
   }
 
   Future<void> setLimitsNavigationsToAppBoundDomains(bool limit) {
-    return _webViewConfigurationApi.setLimitsNavigationsToAppBoundDomainsForInstances(
+    return _webViewConfigurationApi
+        .setLimitsNavigationsToAppBoundDomainsForInstances(
       this,
       limit,
     );
