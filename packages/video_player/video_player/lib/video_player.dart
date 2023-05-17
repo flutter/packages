@@ -19,7 +19,8 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
         DataSourceType,
         VideoFormat,
         VideoPlayerOptions,
-        VideoPlayerWebOptions;
+        VideoPlayerWebOptions,
+        VideoPlayerWebOptionsControls;
 
 export 'src/closed_caption_file.dart';
 
