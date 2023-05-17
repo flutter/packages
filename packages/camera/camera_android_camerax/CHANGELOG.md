@@ -1,3 +1,7 @@
+## 0.5.0+3
+
+* Fixes Java lints.
+
 ## 0.5.0+2
 
 * Adds a dependency on kotlin-bom to align versions of Kotlin transitive dependencies.
