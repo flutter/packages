@@ -678,6 +678,13 @@ class WKWebViewConfiguration extends NSObject {
     );
   }
 
+  Future<void> setLimitsNavigationsToAppBoundDomains(bool limit) {
+    return _webViewConfigurationApi.setLimitsNavigationsToAppBoundDomainsForInstances(
+      this,
+      limit,
+    );
+  }
+
   /// The media types that require a user gesture to begin playing.
   ///
   /// Use [WKAudiovisualMediaType.none] to indicate that no user gestures are
