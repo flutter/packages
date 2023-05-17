@@ -1,3 +1,7 @@
+## 7.0.1
+
+- Adds a workaround for the `dart fix --apply` issue, https://github.com/dart-lang/sdk/issues/52233.
+
 ## 7.0.0
 
 - **BREAKING CHANGE**:
