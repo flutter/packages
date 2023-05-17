@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
-import io.flutter.plugin.common.BinaryMessenger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,7 +19,6 @@ import org.mockito.junit.MockitoRule;
 public class AspectRatioStrategyTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
   @Mock public AspectRatioStrategy mockAspectRatioStrategy;
-  @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public AspectRatioStrategyHostApiImpl.AspectRatioStrategyProxy mockProxy;
 
   InstanceManager instanceManager;
@@ -43,7 +41,7 @@ public class AspectRatioStrategyTest {
     when(mockProxy.create(preferredAspectRatio, fallbackRule)).thenReturn(mockAspectRatioStrategy);
 
     final AspectRatioStrategyHostApiImpl hostApi =
-        new AspectRatioStrategyHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
+        new AspectRatioStrategyHostApiImpl(instanceManager, mockProxy);
 
     final long instanceIdentifier = 0;
     hostApi.create(instanceIdentifier, preferredAspectRatio, fallbackRule);

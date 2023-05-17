@@ -14,9 +14,11 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 import android.util.Size;
 import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.test.core.app.ApplicationProvider;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
+
 import java.util.concurrent.Executor;
 import org.junit.After;
 import org.junit.Before;
@@ -55,27 +57,19 @@ public class ImageAnalysisTest {
         new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
     final ImageAnalysis.Builder mockImageAnalysisBuilder = mock(ImageAnalysis.Builder.class);
-    final int targetResolutionWidth = 10;
-    final int targetResolutionHeight = 50;
-    final ResolutionInfo resolutionInfo =
-        new ResolutionInfo.Builder()
-            .setWidth(Long.valueOf(targetResolutionWidth))
-            .setHeight(Long.valueOf(targetResolutionHeight))
-            .build();
+    final ResolutionSelector mockResolutionSelector = mock(ResolutionSelector.class);
     final long instanceIdentifier = 0;
+    final long mockResolutionSelectorId = 25;
 
     hostApi.cameraXProxy = mockCameraXProxy;
-
-    final ArgumentCaptor<Size> sizeCaptor = ArgumentCaptor.forClass(Size.class);
+    instanceManager.addDartCreatedInstance(mockResolutionSelector, mockResolutionSelectorId);
 
     when(mockCameraXProxy.createImageAnalysisBuilder()).thenReturn(mockImageAnalysisBuilder);
     when(mockImageAnalysisBuilder.build()).thenReturn(mockImageAnalysis);
 
-    hostApi.create(instanceIdentifier, resolutionInfo);
+    hostApi.create(instanceIdentifier, mockResolutionSelectorId);
 
-    verify(mockImageAnalysisBuilder).setTargetResolution(sizeCaptor.capture());
-    assertEquals(sizeCaptor.getValue().getWidth(), targetResolutionWidth);
-    assertEquals(sizeCaptor.getValue().getHeight(), targetResolutionHeight);
+    verify(mockImageAnalysisBuilder).setResolutionSelector(mockResolutionSelector);
     assertEquals(instanceManager.getInstance(instanceIdentifier), mockImageAnalysis);
   }
 

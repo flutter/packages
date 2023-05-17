@@ -9,28 +9,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionStrategyHostApi;
 
 /**
- * Host API implementation for `ResolutionStrategy`.
+ * Host API implementation for {@link ResolutionStrategy}.
  *
- * <p>This class may handle instantiating and adding native object instances that are attached to a
+ * <p>This class handles instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi {
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
-  private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
   private final ResolutionStrategyProxy proxy;
 
-  /** Proxy for constructors and static method of `ResolutionStrategy`. */
+  /** Proxy for constructors and static method of {@link ResolutionStrategy}. */
   @VisibleForTesting
   public static class ResolutionStrategyProxy {
 
-    /** Creates an instance of `ResolutionStrategy`. */
+    /** Creates an instance of {@link ResolutionStrategy}. */
     @NonNull
     public ResolutionStrategy create(@NonNull Size boundSize, @NonNull Long fallbackRule) {
       return new ResolutionStrategy(boundSize, fallbackRule.intValue());
@@ -40,39 +35,42 @@ public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi 
   /**
    * Constructs a {@link ResolutionStrategyHostApiImpl}.
    *
-   * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public ResolutionStrategyHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-    this(binaryMessenger, instanceManager, new ResolutionStrategyProxy());
+      @NonNull InstanceManager instanceManager) {
+    this(instanceManager, new ResolutionStrategyProxy());
   }
 
   /**
    * Constructs a {@link ResolutionStrategyHostApiImpl}.
    *
-   * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of `ResolutionStrategy`
+   * @param proxy proxy for constructors and static method of {@link ResolutionStrategy}
    */
   @VisibleForTesting
   ResolutionStrategyHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
       @NonNull ResolutionStrategyProxy proxy) {
-    this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }
 
+  /**
+   * Creates a {@link ResolutionStrategy} instance with the {@link GeneratedCameraXLibrary.ResolutionInfo}
+   * bound size and {@code fallbackRule} if specified.
+   */
   @Override
   public void create(
       @NonNull Long identifier,
       @Nullable GeneratedCameraXLibrary.ResolutionInfo boundSize,
       @Nullable Long fallbackRule) {
     ResolutionStrategy resolutionStrategy;
-    if (boundSize == null) {
+    if (boundSize == null && fallbackRule == null) {
       resolutionStrategy = ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY;
+    }
+    else if (boundSize == null) {
+      throw new IllegalArgumentException("A bound size must be specified if a fallback rule is specified as non-null to create a valid ResolutionStrategy.");
     }
     else {
       resolutionStrategy = proxy.create(

@@ -269,25 +269,13 @@ abstract class ImageCaptureHostApi {
   String takePicture(int identifier);
 }
 
-/// Host API for `ResolutionStrategy`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
 @HostApi(dartHostTestHandler: 'TestResolutionStrategyHostApi')
 abstract class ResolutionStrategyHostApi {
-  /// Create a new native instance and add it to the `InstanceManager`.
   void create(int identifier, ResolutionInfo? boundSize, int? fallbackRule);
 }
 
-/// Host API for `ResolutionSelector`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
 @HostApi(dartHostTestHandler: 'TestResolutionSelectorHostApi')
 abstract class ResolutionSelectorHostApi {
-  /// Create a new native instance and add it to the `InstanceManager`.
   void create(
     int identifier,
     int? resolutionStrategyIdentifier,
@@ -295,14 +283,8 @@ abstract class ResolutionSelectorHostApi {
   );
 }
 
-/// Host API for `AspectRatioStrategy`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
 @HostApi(dartHostTestHandler: 'TestAspectRatioStrategyHostApi')
 abstract class AspectRatioStrategyHostApi {
-  /// Create a new native instance and add it to the `InstanceManager`.
   void create(int identifier, int preferredAspectRatio, int fallbackRule);
 }
 

@@ -8,7 +8,7 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-/// The aspect ratio of the use case.
+/// The aspect ratio of a use case.
 ///
 /// Aspect ratio is the ratio of width to height.
 ///
@@ -90,17 +90,30 @@ class AspectRatioStrategy extends JavaObject {
   final int fallbackRule;
 }
 
+/// Host API implementation of [AspectRatioStrategy].
 class _AspectRatioStrategyHostApiImpl extends AspectRatioStrategyHostApi {
+  /// Constructs an [_AspectRatioStrategyHostApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   _AspectRatioStrategyHostApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
   })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
         super(binaryMessenger: binaryMessenger);
 
+  /// Receives binary data across the Flutter platform barrier.
   final BinaryMessenger? binaryMessenger;
 
+  /// Maintains instances stored to communicate with native language objects.
   final InstanceManager instanceManager;
 
+  /// Creates a [AspectRatioStrategy] on the native side with the preferred
+  /// aspect ratio and fallback rule specified.
   Future<void> createFromInstances(
     AspectRatioStrategy instance,
     int preferredAspectRatio,

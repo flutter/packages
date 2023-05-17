@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/image_capture.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:camera_android_camerax/src/resolution_selector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -12,7 +12,7 @@ import 'package:mockito/mockito.dart';
 import 'image_capture_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestImageCaptureHostApi])
+@GenerateMocks(<Type>[TestImageCaptureHostApi, ResolutionSelector])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -29,11 +29,11 @@ void main() {
       ImageCapture.detached(
         instanceManager: instanceManager,
         targetFlashMode: ImageCapture.flashModeOn,
-        targetResolution: ResolutionInfo(width: 50, height: 10),
+        resolutionSelector: MockResolutionSelector(),
       );
 
       verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
-          argThat(isA<ResolutionInfo>())));
+          argThat(isA<ResolutionSelector>())));
     });
 
     test('create calls create on the Java side', () async {
@@ -44,21 +44,28 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
       const int targetFlashMode = ImageCapture.flashModeAuto;
-      const int targetResolutionWidth = 10;
-      const int targetResolutionHeight = 50;
+      final MockResolutionSelector mockResolutionSelector =
+          MockResolutionSelector();
+      const int mockResolutionSelectorId = 24;
+
+      instanceManager.addHostCreatedInstance(
+          mockResolutionSelector, mockResolutionSelectorId,
+          onCopy: (ResolutionSelector original) {
+        return ResolutionSelector(
+            resolutionStrategy: original.resolutionStrategy,
+            aspectRatioStrategy: original.aspectRatioStrategy);
+      });
+
       ImageCapture(
         instanceManager: instanceManager,
         targetFlashMode: targetFlashMode,
-        targetResolution: ResolutionInfo(
-            width: targetResolutionWidth, height: targetResolutionHeight),
+        resolutionSelector: mockResolutionSelector,
       );
 
-      final VerificationResult createVerification = verify(mockApi.create(
-          argThat(isA<int>()), argThat(equals(targetFlashMode)), captureAny));
-      final ResolutionInfo capturedResolutionInfo =
-          createVerification.captured.single as ResolutionInfo;
-      expect(capturedResolutionInfo.width, equals(targetResolutionWidth));
-      expect(capturedResolutionInfo.height, equals(targetResolutionHeight));
+      verify(mockApi.create(
+          argThat(isA<int>()),
+          argThat(equals(targetFlashMode)),
+          argThat(equals(mockResolutionSelector))));
     });
 
     test('setFlashMode makes call to set flash mode for ImageCapture instance',

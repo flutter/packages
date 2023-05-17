@@ -49,6 +49,9 @@ class ImageCapture extends UseCase {
   final int? targetFlashMode;
 
   /// Target resolution of the image output from taking a picture.
+  ///
+  /// If not set, this [UseCase] will default to the behavior described in:
+  /// https://developer.android.com/reference/androidx/camera/core/ImageCapture.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector).
   final ResolutionSelector? resolutionSelector;
 
   /// Constant for automatic flash mode.

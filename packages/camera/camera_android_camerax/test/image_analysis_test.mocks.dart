@@ -3,7 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i3;
+import 'package:camera_android_camerax/src/resolution_selector.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
 import 'test_camerax_library.g.dart' as _i2;
@@ -31,14 +31,14 @@ class MockTestImageAnalysisHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
-    _i3.ResolutionInfo? targetResolutionIdentifier,
+    int? resolutionSelectorId,
   ) =>
       super.noSuchMethod(
         Invocation.method(
           #create,
           [
             identifier,
-            targetResolutionIdentifier,
+            resolutionSelectorId,
           ],
         ),
         returnValueForMissingStub: null,
@@ -85,4 +85,14 @@ class MockTestInstanceManagerHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+}
+
+/// A class which mocks [ResolutionSelector].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockResolutionSelector extends _i1.Mock
+    implements _i3.ResolutionSelector {
+  MockResolutionSelector() {
+    _i1.throwOnMissingStub(this);
+  }
 }

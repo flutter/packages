@@ -48,6 +48,9 @@ class ImageAnalysis extends UseCase {
   late final _ImageAnalysisHostApiImpl _api;
 
   /// Target resolution of the camera preview stream.
+  ///
+  /// If not set, this [UseCase] will default to the behavior described in:
+  /// https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector).
   final ResolutionSelector? resolutionSelector;
 
   /// Sets an [Analyzer] to receive and analyze images.

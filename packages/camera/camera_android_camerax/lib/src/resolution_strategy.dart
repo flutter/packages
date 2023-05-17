@@ -24,6 +24,10 @@ class ResolutionStrategy extends JavaObject {
           binaryMessenger: binaryMessenger,
         ),
         super.detached() {
+    if (boundSize == null && fallbackRule != null) {
+      throw ArgumentError(
+          'fallbackRule cannot be specified with a null boundSize. If you wish to create the highest available resolution ResolutionStrategy, specify fallbackRule as null.');
+    }
     _api.createFromInstances(this, boundSize, fallbackRule);
   }
 
@@ -41,7 +45,12 @@ class ResolutionStrategy extends JavaObject {
           instanceManager: instanceManager,
           binaryMessenger: binaryMessenger,
         ),
-        super.detached();
+        super.detached() {
+    if (boundSize == null && fallbackRule != null) {
+      throw ArgumentError(
+          'fallbackRule cannot be specified with a null boundSize. If you wish to create the highest available resolution ResolutionStrategy, specify fallbackRule as null.');
+    }
+  }
 
   /// CameraX doesn't select an alternate size when the specified bound size is
   /// unavailable.
@@ -83,6 +92,10 @@ class ResolutionStrategy extends JavaObject {
   /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy#FALLBACK_RULE_CLOSEST_LOWER()
   static const int fallbackRuleClosestLower = 4;
 
+  /// Returns the resolution strategey that chooses the highest available
+  /// resolution.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy#HIGHEST_AVAILABLE_STRATEGY().
   static ResolutionStrategy getHighestAvailableStrategy({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
@@ -94,24 +107,46 @@ class ResolutionStrategy extends JavaObject {
   final _ResolutionStrategyHostApiImpl _api;
 
   /// The specified bound size for the desired resolution of the camera.
+  ///
+  /// If left null, [fallbackRule] must also be left null in order to create a
+  /// valid [ResolutionStrategy]. This will create the [ResolutionStrategy]
+  /// that chooses the highest available resolution, which can also be retrieved
+  /// by calling [getHighestAvailableStrategy].
   final Size? boundSize;
 
   /// The fallback rule for choosing an alternate size when the specified bound
   /// size is unavailable.
+  ///
+  /// Must be left null if [boundSize] is specified as null. This will create
+  /// the [ResolutionStrategy] that chooses the highest available resolution,
+  /// which can also be retrieved by calling [getHighestAvailableStrategy].
   final int? fallbackRule;
 }
 
+/// Host API implementation of [ResolutionStrategy].
 class _ResolutionStrategyHostApiImpl extends ResolutionStrategyHostApi {
+  /// Constructs an [_ResolutionStrategyHostApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   _ResolutionStrategyHostApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
   })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
         super(binaryMessenger: binaryMessenger);
 
+  /// Receives binary data across the Flutter platform barrier.
   final BinaryMessenger? binaryMessenger;
 
+  /// Maintains instances stored to communicate with native language objects.
   final InstanceManager instanceManager;
 
+  /// Creates a [ResolutionStrategy] on the native side with the bound [Size]
+  /// and fallback rule, if specified.
   Future<void> createFromInstances(
     ResolutionStrategy instance,
     Size? boundSize,

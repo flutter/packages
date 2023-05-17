@@ -28,7 +28,7 @@ void main() {
       TestInstanceManagerHostApi.setup(null);
     });
 
-    test('HostApi create', () {
+    test('HostApi create creates expected ResolutionSelector instance', () {
       final MockTestResolutionSelectorHostApi mockApi =
           MockTestResolutionSelectorHostApi();
       TestResolutionSelectorHostApi.setup(mockApi);

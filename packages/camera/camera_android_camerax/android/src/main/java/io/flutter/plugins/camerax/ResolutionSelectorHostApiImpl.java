@@ -10,27 +10,22 @@ import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionSelectorHostApi;
 
 /**
- * Host API implementation for `ResolutionSelector`.
+ * Host API implementation for {@link ResolutionSelector}.
  *
- * <p>This class may handle instantiating and adding native object instances that are attached to a
+ * <p>This class handles instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi {
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
-  private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
   private final ResolutionSelectorProxy proxy;
 
-  /** Proxy for constructors and static method of `ResolutionSelector`. */
+  /** Proxy for constructors and static method of {@link ResolutionSelector}. */
   @VisibleForTesting
   public static class ResolutionSelectorProxy {
-    /** Creates an instance of `ResolutionSelector`. */
+    /** Creates an instance of {@link ResolutionSelector}. */
     @NonNull
     public ResolutionSelector create(
         @Nullable ResolutionStrategy resolutionStrategy,
@@ -49,31 +44,31 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
   /**
    * Constructs a {@link ResolutionSelectorHostApiImpl}.
    *
-   * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public ResolutionSelectorHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-    this(binaryMessenger, instanceManager, new ResolutionSelectorProxy());
+      @NonNull InstanceManager instanceManager) {
+    this(instanceManager, new ResolutionSelectorProxy());
   }
 
   /**
    * Constructs a {@link ResolutionSelectorHostApiImpl}.
    *
-   * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of `ResolutionSelector`
+   * @param proxy proxy for constructors and static method of {@link ResolutionSelector}
    */
   @VisibleForTesting
   ResolutionSelectorHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
       @NonNull ResolutionSelectorProxy proxy) {
-    this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }
 
+  /**
+   * Creates a {@link ResolutionSelector} instance with the {@link ResolutionStrategy} and
+   * {@link AspectRatio} that have the identifiers specified if provided.
+   */
   @Override
   public void create(
       @NonNull Long identifier,

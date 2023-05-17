@@ -27,7 +27,53 @@ void main() {
       TestInstanceManagerHostApi.setup(null);
     });
 
-    test('HostApi create', () {
+    test(
+        'ResolutionStrategy constructor detects valid boundSize and fallbackRule combinations',
+        () {
+      final MockTestResolutionStrategyHostApi mockApi =
+          MockTestResolutionStrategyHostApi();
+      TestResolutionStrategyHostApi.setup(mockApi);
+      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      // Expect error if boundSize is null, but fallbackRule is not.
+      Size? boundSize;
+      int? fallbackRule = 5;
+      expect(
+          ResolutionStrategy(
+            boundSize: boundSize,
+            fallbackRule: fallbackRule,
+            instanceManager: instanceManager,
+          ),
+          throwsArgumentError);
+
+      // Expect no error if boundSize is non-null, but fallbackRule is not.
+      boundSize = const Size(3, 5);
+      fallbackRule = null;
+      expect(
+          ResolutionStrategy(
+            boundSize: boundSize,
+            fallbackRule: fallbackRule,
+            instanceManager: instanceManager,
+          ),
+          returnsNormally);
+
+      // Expect no error if boundSize and fallbackRule are both null.
+      boundSize = null;
+      fallbackRule = null;
+      expect(
+          ResolutionStrategy(
+            boundSize: boundSize,
+            fallbackRule: fallbackRule,
+            instanceManager: instanceManager,
+          ),
+          returnsNormally);
+    });
+
+    test('HostApi create creates expected ResolutionStrategy', () {
       final MockTestResolutionStrategyHostApi mockApi =
           MockTestResolutionStrategyHostApi();
       TestResolutionStrategyHostApi.setup(mockApi);
@@ -38,7 +84,6 @@ void main() {
       );
 
       const Size boundSize = Size(50, 30);
-
       const int fallbackRule = 0;
 
       final ResolutionStrategy instance = ResolutionStrategy(

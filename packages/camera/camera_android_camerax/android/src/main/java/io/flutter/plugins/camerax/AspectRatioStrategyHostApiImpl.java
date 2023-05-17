@@ -11,23 +11,19 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AspectRatioStrategyHostApi;
 
 /**
- * Host API implementation for `AspectRatioStrategy`.
+ * Host API implementation for {@link AspectRatioStrategy}.
  *
- * <p>This class may handle instantiating and adding native object instances that are attached to a
+ * <p>This class handles instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostApi {
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
-  private final BinaryMessenger binaryMessenger;
-
   private final InstanceManager instanceManager;
   private final AspectRatioStrategyProxy proxy;
 
-  /** Proxy for constructors and static method of `AspectRatioStrategy`. */
+  /** Proxy for constructors and static method of {@link AspectRatioStrategy}. */
   @VisibleForTesting
   public static class AspectRatioStrategyProxy {
-    /** Creates an instance of `AspectRatioStrategy`. */
+    /** Creates an instance of {@link AspectRatioStrategy}. */
     @NonNull
     public AspectRatioStrategy create(
         @NonNull Long preferredAspectRatio, @NonNull Long fallbackRule) {
@@ -38,27 +34,23 @@ public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostAp
   /**
    * Constructs a {@link AspectRatioStrategyHostApiImpl}.
    *
-   * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public AspectRatioStrategyHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-    this(binaryMessenger, instanceManager, new AspectRatioStrategyProxy());
+      @NonNull InstanceManager instanceManager) {
+    this(instanceManager, new AspectRatioStrategyProxy());
   }
 
   /**
    * Constructs a {@link AspectRatioStrategyHostApiImpl}.
    *
-   * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of `AspectRatioStrategy`
+   * @param proxy proxy for constructors and static method of {@link AspectRatioStrategy}
    */
   @VisibleForTesting
   AspectRatioStrategyHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
       @NonNull AspectRatioStrategyProxy proxy) {
-    this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }

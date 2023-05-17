@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
-import io.flutter.plugin.common.BinaryMessenger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,7 +22,6 @@ import org.mockito.junit.MockitoRule;
 public class ResolutionSelectorTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
   @Mock public ResolutionSelector mockResolutionSelector;
-  @Mock public BinaryMessenger mockBinaryMessenger;
   @Mock public ResolutionSelectorHostApiImpl.ResolutionSelectorProxy mockProxy;
 
   InstanceManager instanceManager;
@@ -39,7 +37,7 @@ public class ResolutionSelectorTest {
   }
 
   @Test
-  public void hostApiCreate() {
+  public void hostApiCreate_createsExpectedResolutionSelectorInstance() {
     final ResolutionStrategy mockResolutionStrategy = mock(ResolutionStrategy.class);
     final long resolutionStrategyIdentifier = 14;
     instanceManager.addDartCreatedInstance(mockResolutionStrategy, resolutionStrategyIdentifier);
@@ -51,7 +49,7 @@ public class ResolutionSelectorTest {
     when(mockProxy.create(mockResolutionStrategy, mockAspectRatioStrategy))
         .thenReturn(mockResolutionSelector);
     final ResolutionSelectorHostApiImpl hostApi =
-        new ResolutionSelectorHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
+        new ResolutionSelectorHostApiImpl(instanceManager, mockProxy);
 
     final long instanceIdentifier = 0;
     hostApi.create(instanceIdentifier, resolutionStrategyIdentifier, aspectRatioStrategyIdentifier);

@@ -115,9 +115,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraSelector? cameraSelector;
 
-  /// The [ResolutionSelector] that represents resolution preset used to create
-  /// a camera that should be used for capturing still images, recording video,
-  /// and image analysis.
+  /// The [ResolutionSelector] that represents the resolution preset used to
+  /// create a camera that will be used for capturing still images, recording
+  /// video, and image analysis.
   ResolutionSelector? _presetResolutionSelector;
 
   /// The controller we need to broadcast the different camera events.
@@ -330,6 +330,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// The camera's resolution has changed.
+  ///
+  /// This stream currently has no events being added to it from this plugin.
   @override
   Stream<CameraResolutionChangedEvent> onCameraResolutionChanged(int cameraId) {
     return _cameraEvents(cameraId).whereType<CameraResolutionChangedEvent>();
@@ -766,11 +768,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
+  /// Returns the [ResolutionSelector] that maps to the specified resolution
+  /// preset for camera [UseCase]s.
+  ///
+  /// If the specified [preset] is unavailable, the camera will fallback to the
+  /// closest lower resolution available.
   Future<ResolutionSelector?> _getResolutionSelectorFromPreset(
       ResolutionPreset? preset) async {
     ResolutionStrategy? resolutionStrategy;
-    const int generalFallbackRule =
-        ResolutionStrategy.fallbackRuleClosestHigher;
+    const int generalFallbackRule = ResolutionStrategy.fallbackRuleClosestLower;
     switch (preset) {
       case ResolutionPreset.low:
         resolutionStrategy = ResolutionStrategy(
@@ -799,7 +805,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         resolutionStrategy = ResolutionStrategy.getHighestAvailableStrategy();
         break;
       case null:
-        // TODO(camsim99): Add comment here about default behavior.
+        // If not preset is specified, default to CameraX's default behvaior
+        // for each UseCase.
         break;
     }
 
@@ -836,7 +843,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns a [Preview] configured with the specified target rotation and
-  /// resolution.
+  /// preset [ResolutionSelector].
   @visibleForTesting
   Preview createPreview(int targetRotation) {
     return Preview(
@@ -845,7 +852,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns an [ImageCapture] configured with specified flash mode and
-  /// target resolution.
+  /// the preset [ResolutionSelector].
   @visibleForTesting
   ImageCapture createImageCapture(int? flashMode) {
     return ImageCapture(
@@ -865,7 +872,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     return VideoCapture.withOutput(recorder);
   }
 
-  /// Returns an [ImageAnalysis] configured with specified target resolution.
+  /// Returns an [ImageAnalysis] configured with the preset [ResolutionSelector].
   @visibleForTesting
   ImageAnalysis createImageAnalysis() {
     return ImageAnalysis(resolutionSelector: _presetResolutionSelector);

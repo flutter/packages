@@ -10,7 +10,7 @@ import 'instance_manager.dart';
 import 'java_object.dart';
 import 'resolution_strategy.dart';
 
-/// A set of requirements and priorities used to select a resolution for the
+/// A set of requirements and priorities used to select a resolution for a
 /// UseCase.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionSelector.
@@ -56,17 +56,30 @@ class ResolutionSelector extends JavaObject {
   final AspectRatioStrategy? aspectRatioStrategy;
 }
 
+/// Host API implementation of [ResolutionSelector].
 class _ResolutionSelectorHostApiImpl extends ResolutionSelectorHostApi {
+  /// Constructs an [_ResolutionSelectorHostApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   _ResolutionSelectorHostApiImpl({
     this.binaryMessenger,
     InstanceManager? instanceManager,
   })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
         super(binaryMessenger: binaryMessenger);
 
+  /// Receives binary data across the Flutter platform barrier.
   final BinaryMessenger? binaryMessenger;
 
+  /// Maintains instances stored to communicate with native language objects.
   final InstanceManager instanceManager;
 
+  /// Creates a [ResolutionSelector] on the native side with the
+  /// [ResolutionStrategy] and [AspectRatioStrategy] if specified.
   Future<void> createFromInstances(
     ResolutionSelector instance,
     ResolutionStrategy? resolutionStrategy,

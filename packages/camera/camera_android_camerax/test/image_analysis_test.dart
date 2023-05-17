@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:camera_android_camerax/src/analyzer.dart';
-import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/image_proxy.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
+import 'package:camera_android_camerax/src/resolution_selector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -14,7 +14,11 @@ import 'package:mockito/mockito.dart';
 import 'image_analysis_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestImageAnalysisHostApi, TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[
+  TestImageAnalysisHostApi,
+  TestInstanceManagerHostApi,
+  ResolutionSelector,
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -22,8 +26,6 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ImageAnalysis', () {
-    setUp(() {});
-
     tearDown(() {
       TestImageAnalysisHostApi.setup(null);
       TestInstanceManagerHostApi.setup(null);
@@ -39,22 +41,25 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const int targetResolutionWidth = 65;
-      const int targetResolutionHeight = 99;
-      final ResolutionInfo targetResolution =
-          ResolutionInfo(width: 65, height: 99);
+      final MockResolutionSelector mockResolutionSelector =
+          MockResolutionSelector();
+      const int mockResolutionSelectorId = 24;
       final ImageAnalysis instance = ImageAnalysis(
-        targetResolution: targetResolution,
+        resolutionSelector: mockResolutionSelector,
         instanceManager: instanceManager,
       );
 
-      final VerificationResult createVerification = verify(mockApi.create(
+      instanceManager.addHostCreatedInstance(
+          mockResolutionSelector, mockResolutionSelectorId,
+          onCopy: (ResolutionSelector original) {
+        return ResolutionSelector(
+            resolutionStrategy: original.resolutionStrategy,
+            aspectRatioStrategy: original.aspectRatioStrategy);
+      });
+
+      verify(mockApi.create(
           argThat(equals(instanceManager.getIdentifier(instance))),
-          captureAny));
-      final ResolutionInfo capturedResolutionInfo =
-          createVerification.captured.single as ResolutionInfo;
-      expect(capturedResolutionInfo.width, equals(targetResolutionWidth));
-      expect(capturedResolutionInfo.height, equals(targetResolutionHeight));
+          argThat(equals(mockResolutionSelectorId))));
     });
 
     test('setAnalyzer', () async {
@@ -67,7 +72,7 @@ void main() {
       );
 
       final ImageAnalysis instance = ImageAnalysis.detached(
-        targetResolution: ResolutionInfo(width: 75, height: 98),
+        resolutionSelector: MockResolutionSelector(),
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
@@ -75,7 +80,7 @@ void main() {
         instance,
         instanceIdentifier,
         onCopy: (ImageAnalysis original) => ImageAnalysis.detached(
-          targetResolution: original.targetResolution,
+          resolutionSelector: original.resolutionSelector,
           instanceManager: instanceManager,
         ),
       );
@@ -114,7 +119,7 @@ void main() {
       );
 
       final ImageAnalysis instance = ImageAnalysis.detached(
-        targetResolution: ResolutionInfo(width: 75, height: 98),
+        resolutionSelector: MockResolutionSelector(),
         instanceManager: instanceManager,
       );
       const int instanceIdentifier = 0;
@@ -122,7 +127,7 @@ void main() {
         instance,
         instanceIdentifier,
         onCopy: (ImageAnalysis original) => ImageAnalysis.detached(
-          targetResolution: original.targetResolution,
+          resolutionSelector: original.resolutionSelector,
           instanceManager: instanceManager,
         ),
       );
