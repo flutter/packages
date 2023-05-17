@@ -46,7 +46,6 @@ platform_properties:
 targets:
   ### Linux tasks ###
   - name: Linux repo_tools_tests
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:

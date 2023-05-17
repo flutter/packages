@@ -32,23 +32,21 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
         "BillingClient#startConnection(BillingClientStateListener)";
     static final String END_CONNECTION = "BillingClient#endConnection()";
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
-    static final String QUERY_SKU_DETAILS =
-        "BillingClient#querySkuDetailsAsync(SkuDetailsParams, SkuDetailsResponseListener)";
+    static final String QUERY_PRODUCT_DETAILS =
+        "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
     static final String LAUNCH_BILLING_FLOW =
         "BillingClient#launchBillingFlow(Activity, BillingFlowParams)";
     static final String ON_PURCHASES_UPDATED =
-        "PurchasesUpdatedListener#onPurchasesUpdated(int, List<Purchase>)";
-    static final String QUERY_PURCHASES = "BillingClient#queryPurchases(String)";
-    static final String QUERY_PURCHASES_ASYNC = "BillingClient#queryPurchasesAsync(String)";
+        "PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)";
+    static final String QUERY_PURCHASES_ASYNC =
+        "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
     static final String QUERY_PURCHASE_HISTORY_ASYNC =
-        "BillingClient#queryPurchaseHistoryAsync(String, PurchaseHistoryResponseListener)";
+        "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
     static final String CONSUME_PURCHASE_ASYNC =
-        "BillingClient#consumeAsync(String, ConsumeResponseListener)";
+        "BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)";
     static final String ACKNOWLEDGE_PURCHASE =
-        "BillingClient#(AcknowledgePurchaseParams params, (AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
+        "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
-    static final String LAUNCH_PRICE_CHANGE_CONFIRMATION_FLOW =
-        "BillingClient#launchPriceChangeConfirmationFlow (Activity, PriceChangeFlowParams, PriceChangeConfirmationListener)";
     static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
 
     private MethodNames() {};
