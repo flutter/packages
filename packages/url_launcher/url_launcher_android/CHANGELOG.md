@@ -1,3 +1,7 @@
+## 6.0.34
+
+* Reverts ContextCompat usage that caused flutter/flutter#127014
+
 ## 6.0.33
 
 * Explicitly sets if reciever for close should be exported.
