@@ -1,5 +1,10 @@
-## NEXT
+## 0.9.2
 
+* Adds `getDirectoryPaths` implementation.
+
+## 0.9.1+8
+
+* Sets a cmake_policy compatibility version to fix build warnings.
 * Updates minimum Flutter version to 3.3.
 
 ## 0.9.1+7

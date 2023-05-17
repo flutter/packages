@@ -1,0 +1,44 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:go_router/go_router.dart';
+
+void main() {
+  const GoRouterState state = GoRouterState();
+  final GoRouter router = GoRouter(routes: <RouteBase>[]);
+  state.fullPath;
+  state.pathParameters;
+  state.matchedLocation;
+  state.queryParameters;
+  state.namedLocation(
+    'name',
+    pathParameters: <String, String>{},
+    queryParameters: <String, String>{},
+  );
+  router.namedLocation(
+    'name',
+    pathParameters: <String, String>{},
+    queryParameters: <String, String>{},
+  );
+  router.goNamed(
+    'name',
+    pathParameters: <String, String>{},
+    queryParameters: <String, String>{},
+  );
+  router.pushNamed(
+    'name',
+    pathParameters: <String, String>{},
+    queryParameters: <String, String>{},
+  );
+  router.pushReplacementNamed(
+    'name',
+    pathParameters: <String, String>{},
+    queryParameters: <String, String>{},
+  );
+  router.replaceNamed(
+    'name',
+    pathParameters: <String, String>{},
+    queryParameters: <String, String>{},
+  );
+}

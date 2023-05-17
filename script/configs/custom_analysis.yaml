@@ -23,3 +23,5 @@
 - rfw/example
 # Disables docs requirements, as it is test code.
 - web_benchmarks/testing/test_app
+# Has some test files that are intentionally broken to conduct dart fix tests.
+- go_router

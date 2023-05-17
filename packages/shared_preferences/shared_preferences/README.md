@@ -11,9 +11,9 @@ returning, so this plugin must not be used for storing critical data.
 
 Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
-|             | Android | iOS  | Linux | macOS  | Web | Windows     |
-|-------------|---------|------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 9.0+ | Any   | 10.11+ | Any | Any         |
+|             | Android | iOS   | Linux | macOS  | Web | Windows     |
+|-------------|---------|-------|-------|--------|-----|-------------|
+| **Support** | SDK 16+ | 11.0+ | Any   | 10.14+ | Any | Any         |
 
 ## Usage
 To use this plugin, add `shared_preferences` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).

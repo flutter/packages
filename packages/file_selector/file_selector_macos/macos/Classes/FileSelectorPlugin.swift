@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Cocoa
 import FlutterMacOS
-import Foundation
+import UniformTypeIdentifiers
 
 /// Protocol for showing panels, allowing for depenedency injection in tests.
 protocol PanelController {
@@ -47,6 +48,8 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
   private let openMethod = "openFile"
   private let openDirectoryMethod = "getDirectoryPath"
   private let saveMethod = "getSavePath"
+
+  var forceLegacyTypes = false
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = FileSelectorPlugin(
@@ -96,16 +99,31 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     }
 
     if let acceptedTypes = options.allowedFileTypes {
-      var allowedTypes: [String] = []
-      // The array values are non-null by convention even though Pigeon can't currently express
-      // that via the types; see messages.dart.
-      allowedTypes.append(contentsOf: acceptedTypes.extensions.map({ $0! }))
-      allowedTypes.append(contentsOf: acceptedTypes.utis.map({ $0! }))
-      // TODO: Add support for mimeTypes in macOS 11+. See
-      // https://github.com/flutter/flutter/issues/117843
-
-      if !allowedTypes.isEmpty {
-        panel.allowedFileTypes = allowedTypes
+      if #available(macOS 11, *), !forceLegacyTypes {
+        var allowedTypes: [UTType] = []
+        // The array values are non-null by convention even though Pigeon can't currently express
+        // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
+        allowedTypes.append(contentsOf: acceptedTypes.utis.compactMap({ UTType($0!) }))
+        allowedTypes.append(
+          contentsOf: acceptedTypes.extensions.flatMap({
+            UTType.types(tag: $0!, tagClass: UTTagClass.filenameExtension, conformingTo: nil)
+          }))
+        allowedTypes.append(
+          contentsOf: acceptedTypes.mimeTypes.flatMap({
+            UTType.types(tag: $0!, tagClass: UTTagClass.mimeType, conformingTo: nil)
+          }))
+        if !allowedTypes.isEmpty {
+          panel.allowedContentTypes = allowedTypes
+        }
+      } else {
+        var allowedTypes: [String] = []
+        // The array values are non-null by convention even though Pigeon can't currently express
+        // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
+        allowedTypes.append(contentsOf: acceptedTypes.extensions.map({ $0! }))
+        allowedTypes.append(contentsOf: acceptedTypes.utis.map({ $0! }))
+        if !allowedTypes.isEmpty {
+          panel.allowedFileTypes = allowedTypes
+        }
       }
     }
   }

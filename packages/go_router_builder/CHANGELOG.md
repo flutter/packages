@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.0.1
+
+* Supports name parameter for `TypedGoRoute`.
+## 2.0.0
+
+* Updates the documentation to go_router v7.0.0.
+* Bumps go_router version in example folder to v7.0.0.
+
 ## 1.2.2
 
 * Supports returning value in generated `push` method. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650)
