@@ -109,7 +109,7 @@ public class InstanceManager {
    *     `null` if the manager doesn't contain the value.
    */
   @Nullable
-  public Long getIdentifierForStrongReference(@NonNull Object instance) {
+  public Long getIdentifierForStrongReference(@Nullable Object instance) {
     logWarningIfFinalizationListenerHasStopped();
 
     final Long identifier = identifiers.get(instance);
@@ -178,7 +178,7 @@ public class InstanceManager {
    * @param instance the instance whose presence in this manager is to be tested.
    * @return whether this manager contains the given `instance`.
    */
-  public boolean containsInstance(@NonNull Object instance) {
+  public boolean containsInstance(@Nullable Object instance) {
     logWarningIfFinalizationListenerHasStopped();
     return identifiers.containsKey(instance);
   }
