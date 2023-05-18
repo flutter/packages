@@ -50,7 +50,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       return;
     }
 
-    methodCallHandler.stopListening();
+    methodCallHandler.stopListening(binding.getBinaryMessenger());
     methodCallHandler = null;
     urlLauncher = null;
   }

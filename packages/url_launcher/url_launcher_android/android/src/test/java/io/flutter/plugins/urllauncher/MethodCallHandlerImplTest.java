@@ -4,22 +4,21 @@
 
 package io.flutter.plugins.urllauncher;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.os.Bundle;
 import androidx.test.core.app.ApplicationProvider;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.BinaryMessenger.BinaryMessageHandler;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
+import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
 import java.util.HashMap;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,61 +37,15 @@ public class MethodCallHandlerImplTest {
   }
 
   @Test
-  public void startListening_registersChannel() {
-    BinaryMessenger messenger = mock(BinaryMessenger.class);
-
-    methodCallHandler.startListening(messenger);
-
-    verify(messenger, times(1))
-        .setMessageHandler(eq(CHANNEL_NAME), any(BinaryMessageHandler.class));
-  }
-
-  @Test
-  public void startListening_unregistersExistingChannel() {
-    BinaryMessenger firstMessenger = mock(BinaryMessenger.class);
-    BinaryMessenger secondMessenger = mock(BinaryMessenger.class);
-    methodCallHandler.startListening(firstMessenger);
-
-    methodCallHandler.startListening(secondMessenger);
-
-    // Unregisters the first and then registers the second.
-    verify(firstMessenger, times(1)).setMessageHandler(CHANNEL_NAME, null);
-    verify(secondMessenger, times(1))
-        .setMessageHandler(eq(CHANNEL_NAME), any(BinaryMessageHandler.class));
-  }
-
-  @Test
-  public void stopListening_unregistersExistingChannel() {
-    BinaryMessenger messenger = mock(BinaryMessenger.class);
-    methodCallHandler.startListening(messenger);
-
-    methodCallHandler.stopListening();
-
-    verify(messenger, times(1)).setMessageHandler(CHANNEL_NAME, null);
-  }
-
-  @Test
-  public void stopListening_doesNothingWhenUnset() {
-    BinaryMessenger messenger = mock(BinaryMessenger.class);
-
-    methodCallHandler.stopListening();
-
-    verify(messenger, never()).setMessageHandler(CHANNEL_NAME, null);
-  }
-
-  @Test
   public void onMethodCall_canLaunchReturnsTrue() {
     urlLauncher = mock(UrlLauncher.class);
     methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
     String url = "foo";
     when(urlLauncher.canLaunch(url)).thenReturn(true);
-    Result result = mock(Result.class);
-    Map<String, Object> args = new HashMap<>();
-    args.put("url", url);
 
-    methodCallHandler.onMethodCall(new MethodCall("canLaunch", args), result);
+    Boolean result = methodCallHandler.canLaunchUrl(url);
 
-    verify(result, times(1)).success(true);
+    assertTrue(result);
   }
 
   @Test
@@ -101,117 +54,78 @@ public class MethodCallHandlerImplTest {
     methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
     String url = "foo";
     when(urlLauncher.canLaunch(url)).thenReturn(false);
-    Result result = mock(Result.class);
-    Map<String, Object> args = new HashMap<>();
-    args.put("url", url);
 
-    methodCallHandler.onMethodCall(new MethodCall("canLaunch", args), result);
+    Boolean result = methodCallHandler.canLaunchUrl(url);
 
-    verify(result, times(1)).success(false);
+    assertFalse(result);
   }
 
   @Test
   public void onMethodCall_launchReturnsNoActivityError() {
     // Setup mock objects
     urlLauncher = mock(UrlLauncher.class);
-    Result result = mock(Result.class);
     // Setup expected values
     String url = "foo";
     boolean useWebView = false;
     boolean enableJavaScript = false;
     boolean enableDomStorage = false;
-    // Setup arguments map send on the method channel
-    Map<String, Object> args = new HashMap<>();
-    args.put("url", url);
-    args.put("useWebView", useWebView);
-    args.put("enableJavaScript", enableJavaScript);
-    args.put("enableDomStorage", enableDomStorage);
-    args.put("headers", new HashMap<>());
-    // Mock the launch method on the urlLauncher class
     when(urlLauncher.launch(
             eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
-        .thenReturn(UrlLauncher.LaunchStatus.NO_ACTIVITY);
-    // Act by calling the "launch" method on the method channel
+        .thenReturn(LaunchStatus.NO_CURRENT_ACTIVITY);
+
     methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    methodCallHandler.onMethodCall(new MethodCall("launch", args), result);
-    // Verify the results and assert
-    verify(result, times(1))
-        .error("NO_ACTIVITY", "Launching a URL requires a foreground activity.", null);
+    LaunchStatusWrapper result = methodCallHandler.launchUrl(url, new HashMap<>());
+
+    assertEquals(LaunchStatus.NO_CURRENT_ACTIVITY, result.getValue());
   }
 
   @Test
   public void onMethodCall_launchReturnsActivityNotFoundError() {
     // Setup mock objects
     urlLauncher = mock(UrlLauncher.class);
-    Result result = mock(Result.class);
     // Setup expected values
     String url = "foo";
     boolean useWebView = false;
     boolean enableJavaScript = false;
     boolean enableDomStorage = false;
-    // Setup arguments map send on the method channel
-    Map<String, Object> args = new HashMap<>();
-    args.put("url", url);
-    args.put("useWebView", useWebView);
-    args.put("enableJavaScript", enableJavaScript);
-    args.put("enableDomStorage", enableDomStorage);
-    args.put("headers", new HashMap<>());
     // Mock the launch method on the urlLauncher class
     when(urlLauncher.launch(
             eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
-        .thenReturn(UrlLauncher.LaunchStatus.ACTIVITY_NOT_FOUND);
-    // Act by calling the "launch" method on the method channel
+        .thenReturn(LaunchStatus.NO_HANDLING_ACTIVITY);
+
     methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    methodCallHandler.onMethodCall(new MethodCall("launch", args), result);
-    // Verify the results and assert
-    verify(result, times(1))
-        .error(
-            "ACTIVITY_NOT_FOUND",
-            String.format("No Activity found to handle intent { %s }", url),
-            null);
+    LaunchStatusWrapper result = methodCallHandler.launchUrl(url, new HashMap<>());
+
+    assertEquals(LaunchStatus.NO_HANDLING_ACTIVITY, result.getValue());
   }
 
   @Test
   public void onMethodCall_launchReturnsTrue() {
     // Setup mock objects
     urlLauncher = mock(UrlLauncher.class);
-    Result result = mock(Result.class);
     // Setup expected values
     String url = "foo";
     boolean useWebView = false;
     boolean enableJavaScript = false;
     boolean enableDomStorage = false;
-    // Setup arguments map send on the method channel
-    Map<String, Object> args = new HashMap<>();
-    args.put("url", url);
-    args.put("useWebView", useWebView);
-    args.put("enableJavaScript", enableJavaScript);
-    args.put("enableDomStorage", enableDomStorage);
-    args.put("headers", new HashMap<>());
     // Mock the launch method on the urlLauncher class
     when(urlLauncher.launch(
             eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
-        .thenReturn(UrlLauncher.LaunchStatus.OK);
-    // Act by calling the "launch" method on the method channel
+        .thenReturn(LaunchStatus.SUCCESS);
+
     methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    methodCallHandler.onMethodCall(new MethodCall("launch", args), result);
-    // Verify the results and assert
-    verify(result, times(1)).success(true);
+    LaunchStatusWrapper result = methodCallHandler.launchUrl(url, new HashMap<>());
+
+    assertEquals(LaunchStatus.SUCCESS, result.getValue());
   }
 
   @Test
   public void onMethodCall_closeWebView() {
     urlLauncher = mock(UrlLauncher.class);
     methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    String url = "foo";
-    when(urlLauncher.canLaunch(url)).thenReturn(true);
-    Result result = mock(Result.class);
-    Map<String, Object> args = new HashMap<>();
-    args.put("url", url);
 
-    methodCallHandler.onMethodCall(new MethodCall("closeWebView", args), result);
+    methodCallHandler.closeWebView();
 
     verify(urlLauncher, times(1)).closeWebView();
-    verify(result, times(1)).success(null);
   }
 }

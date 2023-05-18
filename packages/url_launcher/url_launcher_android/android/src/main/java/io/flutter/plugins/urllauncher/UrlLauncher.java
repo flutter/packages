@@ -15,6 +15,7 @@ import android.provider.Browser;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
 
 /** Launches components for URLs. */
 class UrlLauncher {
@@ -61,9 +62,9 @@ class UrlLauncher {
    * @param useWebView when true, the URL is launched inside of {@link WebViewActivity}.
    * @param enableJavaScript Only used if {@param useWebView} is true. Enables JS in the WebView.
    * @param enableDomStorage Only used if {@param useWebView} is true. Enables DOM storage in the
-   * @return {@link LaunchStatus#NO_ACTIVITY} if there's no available {@code applicationContext}.
-   *     {@link LaunchStatus#ACTIVITY_NOT_FOUND} if there's no activity found to handle {@code
-   *     launchIntent}. {@link LaunchStatus#OK} otherwise.
+   * @return {@link LaunchStatus#NO_CURRENT_ACTIVITY} if there's no available {@code
+   *     applicationContext}. {@link LaunchStatus#NO_HANDLING_ACTIVITY} if there's no activity found
+   *     to handle {@code launchIntent}. {@link LaunchStatus#SUCCESS} otherwise.
    */
   LaunchStatus launch(
       @NonNull String url,
@@ -72,7 +73,7 @@ class UrlLauncher {
       boolean enableJavaScript,
       boolean enableDomStorage) {
     if (activity == null) {
-      return LaunchStatus.NO_ACTIVITY;
+      return LaunchStatus.NO_CURRENT_ACTIVITY;
     }
 
     Intent launchIntent;
@@ -90,24 +91,14 @@ class UrlLauncher {
     try {
       activity.startActivity(launchIntent);
     } catch (ActivityNotFoundException e) {
-      return LaunchStatus.ACTIVITY_NOT_FOUND;
+      return LaunchStatus.NO_HANDLING_ACTIVITY;
     }
 
-    return LaunchStatus.OK;
+    return LaunchStatus.SUCCESS;
   }
 
   /** Closes any activities started with {@link #launch} {@code useWebView=true}. */
   void closeWebView() {
     applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
-  }
-
-  /** Result of a {@link #launch} call. */
-  enum LaunchStatus {
-    /** The intent was well formed. */
-    OK,
-    /** No activity was found to launch. */
-    NO_ACTIVITY,
-    /** No Activity found that can handle given intent. */
-    ACTIVITY_NOT_FOUND,
   }
 }

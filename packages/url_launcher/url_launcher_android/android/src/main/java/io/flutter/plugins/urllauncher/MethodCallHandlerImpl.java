@@ -5,48 +5,24 @@
 package io.flutter.plugins.urllauncher;
 
 import android.os.Bundle;
-import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugins.urllauncher.UrlLauncher.LaunchStatus;
+import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
+import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
+import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
+import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
 import java.util.Map;
 
 /**
  * Translates incoming UrlLauncher MethodCalls into well formed Java function calls for {@link
  * UrlLauncher}.
  */
-final class MethodCallHandlerImpl implements MethodCallHandler {
-  private static final String TAG = "MethodCallHandlerImpl";
+final class MethodCallHandlerImpl implements UrlLauncherApi {
   private final UrlLauncher urlLauncher;
-  @Nullable private MethodChannel channel;
 
   /** Forwards all incoming MethodChannel calls to the given {@code urlLauncher}. */
   MethodCallHandlerImpl(UrlLauncher urlLauncher) {
     this.urlLauncher = urlLauncher;
-  }
-
-  @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    final String url = call.argument("url");
-    switch (call.method) {
-      case "canLaunch":
-        onCanLaunch(result, url);
-        break;
-      case "launch":
-        onLaunch(call, result, url);
-        break;
-      case "closeWebView":
-        onCloseWebView(result);
-        break;
-      default:
-        result.notImplemented();
-        break;
-    }
   }
 
   /**
@@ -57,13 +33,7 @@ final class MethodCallHandlerImpl implements MethodCallHandler {
    * <p>This should be cleaned with {@link #stopListening} once the messenger is disposed of.
    */
   void startListening(BinaryMessenger messenger) {
-    if (channel != null) {
-      Log.wtf(TAG, "Setting a method call handler before the last was disposed.");
-      stopListening();
-    }
-
-    channel = new MethodChannel(messenger, "plugins.flutter.io/url_launcher_android");
-    channel.setMethodCallHandler(this);
+    UrlLauncherApi.setup(messenger, this);
   }
 
   /**
@@ -71,43 +41,38 @@ final class MethodCallHandlerImpl implements MethodCallHandler {
    *
    * <p>Does nothing if {@link #startListening} hasn't been called, or if we're already stopped.
    */
-  void stopListening() {
-    if (channel == null) {
-      Log.d(TAG, "Tried to stop listening when no MethodChannel had been initialized.");
-      return;
-    }
-
-    channel.setMethodCallHandler(null);
-    channel = null;
+  void stopListening(BinaryMessenger messenger) {
+    UrlLauncherApi.setup(messenger, null);
   }
 
-  private void onCanLaunch(@NonNull Result result, @NonNull String url) {
-    result.success(urlLauncher.canLaunch(url));
+  @Override
+  public @NonNull Boolean canLaunchUrl(@NonNull String url) {
+    return urlLauncher.canLaunch(url);
   }
 
-  private void onLaunch(@NonNull MethodCall call, @NonNull Result result, @NonNull String url) {
-    final boolean useWebView = call.argument("useWebView");
-    final boolean enableJavaScript = call.argument("enableJavaScript");
-    final boolean enableDomStorage = call.argument("enableDomStorage");
-    final Map<String, String> headersMap = call.argument("headers");
-    final Bundle headersBundle = extractBundle(headersMap);
+  @Override
+  public @NonNull LaunchStatusWrapper launchUrl(
+      @NonNull String url, @NonNull Map<String, String> headers) {
+    LaunchStatus launchStatus = urlLauncher.launch(url, extractBundle(headers), false, true, true);
+    return new LaunchStatusWrapper.Builder().setValue(launchStatus).build();
+  }
 
+  @Override
+  public @NonNull LaunchStatusWrapper openUrlInWebView(
+      @NonNull String url, @NonNull WebViewOptions options) {
     LaunchStatus launchStatus =
-        urlLauncher.launch(url, headersBundle, useWebView, enableJavaScript, enableDomStorage);
-
-    if (launchStatus == LaunchStatus.NO_ACTIVITY) {
-      result.error("NO_ACTIVITY", "Launching a URL requires a foreground activity.", null);
-    } else if (launchStatus == LaunchStatus.ACTIVITY_NOT_FOUND) {
-      result.error(
-          "ACTIVITY_NOT_FOUND", "No Activity found to handle intent { " + url + " }", null);
-    } else {
-      result.success(true);
-    }
+        urlLauncher.launch(
+            url,
+            extractBundle(options.getHeaders()),
+            true,
+            options.getEnableJavaScript(),
+            options.getEnableDomStorage());
+    return new LaunchStatusWrapper.Builder().setValue(launchStatus).build();
   }
 
-  private void onCloseWebView(Result result) {
+  @Override
+  public void closeWebView() {
     urlLauncher.closeWebView();
-    result.success(null);
   }
 
   private static @NonNull Bundle extractBundle(Map<String, String> headersMap) {
