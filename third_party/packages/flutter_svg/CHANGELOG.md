@@ -1,5 +1,10 @@
 # CHANGES
 
+## 2.0.6
+
+- Fix test-only issues with latest Flutter stable (3.10).
+- Roll vector_graphics to higher minimum version.
+
 ## 2.0.5
 
 - Allow malformed UTF-8 in loaders.

@@ -7,9 +7,9 @@ version: 2.0.6
 dependencies:
   flutter:
     sdk: flutter
-  vector_graphics: ^1.1.5+1
-  vector_graphics_codec: ^1.1.5+1
-  vector_graphics_compiler: ^1.1.5+1
+  vector_graphics: ^1.1.6
+  vector_graphics_codec: ^1.1.6
+  vector_graphics_compiler: ^1.1.6
 
 dev_dependencies:
   flutter_test:

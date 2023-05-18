@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui' show window;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -43,6 +42,8 @@ void main() {
   late FakeHttpClientResponse fakeResponse;
   late FakeHttpClientRequest fakeRequest;
   late FakeHttpClient fakeHttpClient;
+  final MediaQueryData mediaQueryData =
+      MediaQueryData.fromView(PlatformDispatcher.instance.implicitView!);
 
   setUpAll(() {
     final LocalFileComparator oldComparator =
@@ -107,7 +108,7 @@ void main() {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
-        data: MediaQueryData.fromWindow(window),
+        data: mediaQueryData,
         child: RepaintBoundary(
           key: key,
           child: SvgPicture.string(
@@ -127,7 +128,7 @@ void main() {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
-        data: MediaQueryData.fromWindow(window),
+        data: mediaQueryData,
         child: Center(
           key: key,
           child: SvgPicture.string(
@@ -145,7 +146,7 @@ void main() {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
-        data: MediaQueryData.fromWindow(window),
+        data: mediaQueryData,
         child: Center(
           key: key,
           child: SvgPicture.string(
@@ -163,7 +164,7 @@ void main() {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
-        data: MediaQueryData.fromWindow(window),
+        data: mediaQueryData,
         child: RepaintBoundary(
           key: key,
           child: Directionality(
@@ -204,7 +205,7 @@ void main() {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
-        data: MediaQueryData.fromWindow(window),
+        data: mediaQueryData,
         child: RepaintBoundary(
           key: key,
           child: Directionality(
@@ -245,7 +246,7 @@ void main() {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
-        data: MediaQueryData.fromWindow(window),
+        data: mediaQueryData,
         child: RepaintBoundary(
           key: key,
           child: SvgPicture.memory(
@@ -264,7 +265,7 @@ void main() {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
-        data: MediaQueryData.fromWindow(window),
+        data: mediaQueryData,
         child: RepaintBoundary(
           key: key,
           child: SvgPicture.asset(
@@ -286,7 +287,7 @@ void main() {
       Directionality(
         textDirection: TextDirection.ltr,
         child: MediaQuery(
-          data: MediaQueryData.fromWindow(window),
+          data: mediaQueryData,
           child: DefaultAssetBundle(
             bundle: fakeAsset,
             child: RepaintBoundary(
@@ -309,7 +310,7 @@ void main() {
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
         MediaQuery(
-          data: MediaQueryData.fromWindow(window),
+          data: mediaQueryData,
           child: RepaintBoundary(
             key: key,
             child: SvgPicture.network(
@@ -328,7 +329,7 @@ void main() {
       final GlobalKey key = GlobalKey();
       await tester.pumpWidget(
         MediaQuery(
-          data: MediaQueryData.fromWindow(window),
+          data: mediaQueryData,
           child: RepaintBoundary(
             key: key,
             child: SvgPicture.network('test.svg',
@@ -365,7 +366,7 @@ void main() {
         fakeResponse.statusCode = 400;
         await tester.pumpWidget(
           MediaQuery(
-            data: MediaQueryData.fromWindow(window),
+            data: mediaQueryData,
             child: SvgPicture.network(
               'notFound.svg',
             ),

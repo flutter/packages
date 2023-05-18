@@ -27,29 +27,19 @@ class ColumnsAndRows extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: <Widget>[
-        Row(children: const <Widget>[
+        Row(children: <Widget>[
           ImageWithText(),
         ]),
         Row(
-          children: const <Widget>[
+          children: <Widget>[
             ImageWithText(),
             ImageWithText(),
           ],
         ),
         Row(
-          children: const <Widget>[
-            ImageWithText(),
-            ImageWithText(),
-            ImageWithText(),
-            ImageWithText(),
-          ],
-        ),
-        Row(
-          children: const <Widget>[
-            ImageWithText(),
-            ImageWithText(),
+          children: <Widget>[
             ImageWithText(),
             ImageWithText(),
             ImageWithText(),
@@ -57,7 +47,17 @@ class ColumnsAndRows extends StatelessWidget {
           ],
         ),
         Row(
-          children: const <Widget>[
+          children: <Widget>[
+            ImageWithText(),
+            ImageWithText(),
+            ImageWithText(),
+            ImageWithText(),
+            ImageWithText(),
+            ImageWithText(),
+          ],
+        ),
+        Row(
+          children: <Widget>[
             ImageWithText(),
             ImageWithText(),
             ImageWithText(),
