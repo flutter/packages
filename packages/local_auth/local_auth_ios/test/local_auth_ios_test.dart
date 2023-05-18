@@ -87,7 +87,7 @@ void main() {
     group('strings', () {
       test('passes default values when nothing is provided', () async {
         when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultDetails(value: AuthResult.success));
+            (_) async => AuthResultDetails(result: AuthResult.success));
 
         const String reason = 'test reason';
         await plugin.authenticate(
@@ -109,7 +109,7 @@ void main() {
       test('passes default values when only other platform values are provided',
           () async {
         when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultDetails(value: AuthResult.success));
+            (_) async => AuthResultDetails(result: AuthResult.success));
 
         const String reason = 'test reason';
         await plugin.authenticate(
@@ -131,7 +131,7 @@ void main() {
 
       test('passes all non-default values correctly', () async {
         when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultDetails(value: AuthResult.success));
+            (_) async => AuthResultDetails(result: AuthResult.success));
 
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
@@ -167,7 +167,7 @@ void main() {
 
       test('passes provided messages with default fallbacks', () async {
         when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultDetails(value: AuthResult.success));
+            (_) async => AuthResultDetails(result: AuthResult.success));
 
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
@@ -203,7 +203,7 @@ void main() {
     group('options', () {
       test('passes default values', () async {
         when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultDetails(value: AuthResult.success));
+            (_) async => AuthResultDetails(result: AuthResult.success));
 
         await plugin.authenticate(
             localizedReason: 'reason', authMessages: <AuthMessages>[]);
@@ -218,7 +218,7 @@ void main() {
 
       test('passes provided non-default values', () async {
         when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultDetails(value: AuthResult.success));
+            (_) async => AuthResultDetails(result: AuthResult.success));
 
         await plugin.authenticate(
             localizedReason: 'reason',
@@ -241,7 +241,7 @@ void main() {
     group('return values', () {
       test('handles success', () async {
         when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultDetails(value: AuthResult.success));
+            (_) async => AuthResultDetails(result: AuthResult.success));
 
         final bool result = await plugin.authenticate(
             localizedReason: 'reason', authMessages: <AuthMessages>[]);
@@ -251,7 +251,7 @@ void main() {
 
       test('handles failure', () async {
         when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultDetails(value: AuthResult.failure));
+            (_) async => AuthResultDetails(result: AuthResult.failure));
 
         final bool result = await plugin.authenticate(
             localizedReason: 'reason', authMessages: <AuthMessages>[]);
@@ -264,7 +264,7 @@ void main() {
         const String errorDetails = 'some details';
         when(api.authenticate(any, any)).thenAnswer((_) async =>
             AuthResultDetails(
-                value: AuthResult.errorNotAvailable,
+                result: AuthResult.errorNotAvailable,
                 errorMessage: errorMessage,
                 errorDetails: errorDetails));
 
@@ -284,7 +284,7 @@ void main() {
         const String errorDetails = 'some details';
         when(api.authenticate(any, any)).thenAnswer((_) async =>
             AuthResultDetails(
-                value: AuthResult.errorNotEnrolled,
+                result: AuthResult.errorNotEnrolled,
                 errorMessage: errorMessage,
                 errorDetails: errorDetails));
 
@@ -305,7 +305,7 @@ void main() {
         const String errorDetails = 'some details';
         when(api.authenticate(any, any)).thenAnswer((_) async =>
             AuthResultDetails(
-                value: AuthResult.errorPasscodeNotSet,
+                result: AuthResult.errorPasscodeNotSet,
                 errorMessage: errorMessage,
                 errorDetails: errorDetails));
 

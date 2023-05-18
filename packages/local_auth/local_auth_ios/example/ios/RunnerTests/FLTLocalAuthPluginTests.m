@@ -77,10 +77,10 @@ static const NSTimeInterval kTimeout = 30.0;
                                                                  sticky:@NO
                                                         useErrorDialogs:@NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable result,
+                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
-                         XCTAssertEqual(result.value, FLAAuthResultSuccess);
+                         XCTAssertEqual(resultDetails.result, FLAAuthResultSuccess);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -115,10 +115,10 @@ static const NSTimeInterval kTimeout = 30.0;
                                                                  sticky:@NO
                                                         useErrorDialogs:@NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable result,
+                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
-                         XCTAssertEqual(result.value, FLAAuthResultSuccess);
+                         XCTAssertEqual(resultDetails.result, FLAAuthResultSuccess);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -153,14 +153,14 @@ static const NSTimeInterval kTimeout = 30.0;
                                                                  sticky:@NO
                                                         useErrorDialogs:@NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable result,
+                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
                          // TODO(stuartmorgan): Fix this; this was the pre-Pigeon-migration
                          // behavior, so is preserved as part of the migration, but a failed
                          // authentication should return failure, not an error that results in a
                          // PlatformException.
-                         XCTAssertEqual(result.value, FLAAuthResultErrorNotAvailable);
+                         XCTAssertEqual(resultDetails.result, FLAAuthResultErrorNotAvailable);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -195,10 +195,10 @@ static const NSTimeInterval kTimeout = 30.0;
                                                                  sticky:@NO
                                                         useErrorDialogs:@NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable result,
+                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
-                         XCTAssertEqual(result.value, FLAAuthResultErrorNotAvailable);
+                         XCTAssertEqual(resultDetails.result, FLAAuthResultErrorNotAvailable);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -233,10 +233,10 @@ static const NSTimeInterval kTimeout = 30.0;
                                                                  sticky:@NO
                                                         useErrorDialogs:@NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable result,
+                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
-                         XCTAssertEqual(result.value, FLAAuthResultFailure);
+                         XCTAssertEqual(resultDetails.result, FLAAuthResultFailure);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -271,14 +271,14 @@ static const NSTimeInterval kTimeout = 30.0;
                                                                  sticky:@NO
                                                         useErrorDialogs:@NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable result,
+                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
                          // TODO(stuartmorgan): Fix this; this was the pre-Pigeon-migration
                          // behavior, so is preserved as part of the migration, but a failed
                          // authentication should return failure, not an error that results in a
                          // PlatformException.
-                         XCTAssertEqual(result.value, FLAAuthResultErrorNotAvailable);
+                         XCTAssertEqual(resultDetails.result, FLAAuthResultErrorNotAvailable);
                          XCTAssertNil(error);
                          [expectation fulfill];
                        }];
@@ -314,7 +314,7 @@ static const NSTimeInterval kTimeout = 30.0;
                                                                  sticky:@NO
                                                         useErrorDialogs:@NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable result,
+                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          OCMVerify([mockAuthContext
                              setLocalizedFallbackTitle:strings.localizedFallbackTitle]);
@@ -352,7 +352,7 @@ static const NSTimeInterval kTimeout = 30.0;
                                                                  sticky:@NO
                                                         useErrorDialogs:@NO]
                           strings:strings
-                       completion:^(FLAAuthResultDetails *_Nullable result,
+                       completion:^(FLAAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
                          OCMVerify([mockAuthContext setLocalizedFallbackTitle:nil]);
                          [expectation fulfill];

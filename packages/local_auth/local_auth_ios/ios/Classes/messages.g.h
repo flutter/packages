@@ -72,11 +72,11 @@ typedef NS_ENUM(NSUInteger, FLAAuthBiometric) {
 @interface FLAAuthResultDetails : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithValue:(FLAAuthResult)value
-                 errorMessage:(nullable NSString *)errorMessage
-                 errorDetails:(nullable NSString *)errorDetails;
++ (instancetype)makeWithResult:(FLAAuthResult)result
+                  errorMessage:(nullable NSString *)errorMessage
+                  errorDetails:(nullable NSString *)errorDetails;
 /// The result of authenticating.
-@property(nonatomic, assign) FLAAuthResult value;
+@property(nonatomic, assign) FLAAuthResult result;
 /// A system-provided error message, if any.
 @property(nonatomic, copy, nullable) NSString *errorMessage;
 /// System-provided error details, if any.

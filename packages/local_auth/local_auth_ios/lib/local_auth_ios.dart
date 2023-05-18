@@ -35,7 +35,7 @@ class LocalAuthIOS extends LocalAuthPlatform {
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
     assert(localizedReason.isNotEmpty);
-    final AuthResultDetails result = await _api.authenticate(
+    final AuthResultDetails resultDetails = await _api.authenticate(
         AuthOptions(
             biometricOnly: options.biometricOnly,
             sticky: options.stickyAuth,
@@ -46,7 +46,7 @@ class LocalAuthIOS extends LocalAuthPlatform {
     // https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#platform-exception-handling
     // The PlatformExceptions thrown here are for compatibiilty with the
     // previous Objective-C implementation.
-    switch (result.value) {
+    switch (resultDetails.result) {
       case AuthResult.success:
         return true;
       case AuthResult.failure:
@@ -54,18 +54,18 @@ class LocalAuthIOS extends LocalAuthPlatform {
       case AuthResult.errorNotAvailable:
         throw PlatformException(
             code: 'NotAvailable',
-            message: result.errorMessage,
-            details: result.errorDetails);
+            message: resultDetails.errorMessage,
+            details: resultDetails.errorDetails);
       case AuthResult.errorNotEnrolled:
         throw PlatformException(
             code: 'NotEnrolled',
-            message: result.errorMessage,
-            details: result.errorDetails);
+            message: resultDetails.errorMessage,
+            details: resultDetails.errorDetails);
       case AuthResult.errorPasscodeNotSet:
         throw PlatformException(
             code: 'PasscodeNotSet',
-            message: result.errorMessage,
-            details: result.errorDetails);
+            message: resultDetails.errorMessage,
+            details: resultDetails.errorDetails);
     }
   }
 
@@ -103,6 +103,7 @@ class LocalAuthIOS extends LocalAuthPlatform {
     for (final AuthMessages entry in messagesList) {
       if (entry is IOSAuthMessages) {
         messages = entry;
+        break;
       }
     }
     return AuthStrings(

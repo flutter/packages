@@ -223,9 +223,9 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
 
 - (void)handleSucceeded:(BOOL)succeeded withCompletion:(nonnull AuthCompletion)completion {
   completion(
-      [FLAAuthResultDetails makeWithValue:(succeeded ? FLAAuthResultSuccess : FLAAuthResultFailure)
-                             errorMessage:nil
-                             errorDetails:nil],
+      [FLAAuthResultDetails makeWithResult:(succeeded ? FLAAuthResultSuccess : FLAAuthResultFailure)
+                              errorMessage:nil
+                              errorDetails:nil],
       nil);
 }
 
@@ -254,9 +254,9 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
                       completion:completion];
       return;
   }
-  completion([FLAAuthResultDetails makeWithValue:result
-                                    errorMessage:authError.localizedDescription
-                                    errorDetails:authError.domain],
+  completion([FLAAuthResultDetails makeWithResult:result
+                                     errorMessage:authError.localizedDescription
+                                     errorDetails:authError.domain],
              nil);
 }
 

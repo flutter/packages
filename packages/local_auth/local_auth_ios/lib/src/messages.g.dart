@@ -117,13 +117,13 @@ class AuthOptions {
 
 class AuthResultDetails {
   AuthResultDetails({
-    required this.value,
+    required this.result,
     this.errorMessage,
     this.errorDetails,
   });
 
   /// The result of authenticating.
-  AuthResult value;
+  AuthResult result;
 
   /// A system-provided error message, if any.
   String? errorMessage;
@@ -133,7 +133,7 @@ class AuthResultDetails {
 
   Object encode() {
     return <Object?>[
-      value.index,
+      result.index,
       errorMessage,
       errorDetails,
     ];
@@ -142,7 +142,7 @@ class AuthResultDetails {
   static AuthResultDetails decode(Object result) {
     result as List<Object?>;
     return AuthResultDetails(
-      value: AuthResult.values[result[0]! as int],
+      result: AuthResult.values[result[0]! as int],
       errorMessage: result[1] as String?,
       errorDetails: result[2] as String?,
     );

@@ -127,18 +127,18 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FLAAuthResultDetails
-+ (instancetype)makeWithValue:(FLAAuthResult)value
-                 errorMessage:(nullable NSString *)errorMessage
-                 errorDetails:(nullable NSString *)errorDetails {
++ (instancetype)makeWithResult:(FLAAuthResult)result
+                  errorMessage:(nullable NSString *)errorMessage
+                  errorDetails:(nullable NSString *)errorDetails {
   FLAAuthResultDetails *pigeonResult = [[FLAAuthResultDetails alloc] init];
-  pigeonResult.value = value;
+  pigeonResult.result = result;
   pigeonResult.errorMessage = errorMessage;
   pigeonResult.errorDetails = errorDetails;
   return pigeonResult;
 }
 + (FLAAuthResultDetails *)fromList:(NSArray *)list {
   FLAAuthResultDetails *pigeonResult = [[FLAAuthResultDetails alloc] init];
-  pigeonResult.value = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.result = [GetNullableObjectAtIndex(list, 0) integerValue];
   pigeonResult.errorMessage = GetNullableObjectAtIndex(list, 1);
   pigeonResult.errorDetails = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
@@ -148,7 +148,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 - (NSArray *)toList {
   return @[
-    @(self.value),
+    @(self.result),
     (self.errorMessage ?: [NSNull null]),
     (self.errorDetails ?: [NSNull null]),
   ];

@@ -66,10 +66,10 @@ class AuthOptions {
 
 class AuthResultDetails {
   AuthResultDetails(
-      {required this.value, this.errorMessage, this.errorDetails});
+      {required this.result, this.errorMessage, this.errorDetails});
 
   /// The result of authenticating.
-  final AuthResult value;
+  final AuthResult result;
 
   /// A system-provided error message, if any.
   final String? errorMessage;
