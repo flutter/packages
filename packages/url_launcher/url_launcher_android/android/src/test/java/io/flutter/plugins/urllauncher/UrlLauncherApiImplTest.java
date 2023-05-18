@@ -25,43 +25,43 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public class MethodCallHandlerImplTest {
+public class UrlLauncherApiImplTest {
   private static final String CHANNEL_NAME = "plugins.flutter.io/url_launcher_android";
   private UrlLauncher urlLauncher;
-  private MethodCallHandlerImpl methodCallHandler;
+  private UrlLauncherApiImpl api;
 
   @Before
   public void setUp() {
     urlLauncher = new UrlLauncher(ApplicationProvider.getApplicationContext(), /*activity=*/ null);
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
+    api = new UrlLauncherApiImpl(urlLauncher);
   }
 
   @Test
-  public void onMethodCall_canLaunchReturnsTrue() {
+  public void canLaunch_eturnsTrue() {
     urlLauncher = mock(UrlLauncher.class);
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
+    api = new UrlLauncherApiImpl(urlLauncher);
     String url = "foo";
     when(urlLauncher.canLaunch(url)).thenReturn(true);
 
-    Boolean result = methodCallHandler.canLaunchUrl(url);
+    Boolean result = api.canLaunchUrl(url);
 
     assertTrue(result);
   }
 
   @Test
-  public void onMethodCall_canLaunchReturnsFalse() {
+  public void canLaunch_returnsFalse() {
     urlLauncher = mock(UrlLauncher.class);
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
+    api = new UrlLauncherApiImpl(urlLauncher);
     String url = "foo";
     when(urlLauncher.canLaunch(url)).thenReturn(false);
 
-    Boolean result = methodCallHandler.canLaunchUrl(url);
+    Boolean result = api.canLaunchUrl(url);
 
     assertFalse(result);
   }
 
   @Test
-  public void onMethodCall_launchReturnsNoActivityError() {
+  public void launch_returnsNoActivityError() {
     // Setup mock objects
     urlLauncher = mock(UrlLauncher.class);
     // Setup expected values
@@ -73,14 +73,14 @@ public class MethodCallHandlerImplTest {
             eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
         .thenReturn(LaunchStatus.NO_CURRENT_ACTIVITY);
 
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    LaunchStatusWrapper result = methodCallHandler.launchUrl(url, new HashMap<>());
+    api = new UrlLauncherApiImpl(urlLauncher);
+    LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
 
     assertEquals(LaunchStatus.NO_CURRENT_ACTIVITY, result.getValue());
   }
 
   @Test
-  public void onMethodCall_launchReturnsActivityNotFoundError() {
+  public void launch_returnsActivityNotFoundError() {
     // Setup mock objects
     urlLauncher = mock(UrlLauncher.class);
     // Setup expected values
@@ -93,14 +93,14 @@ public class MethodCallHandlerImplTest {
             eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
         .thenReturn(LaunchStatus.NO_HANDLING_ACTIVITY);
 
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    LaunchStatusWrapper result = methodCallHandler.launchUrl(url, new HashMap<>());
+    api = new UrlLauncherApiImpl(urlLauncher);
+    LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
 
     assertEquals(LaunchStatus.NO_HANDLING_ACTIVITY, result.getValue());
   }
 
   @Test
-  public void onMethodCall_launchReturnsTrue() {
+  public void launch_returnsTrue() {
     // Setup mock objects
     urlLauncher = mock(UrlLauncher.class);
     // Setup expected values
@@ -113,18 +113,18 @@ public class MethodCallHandlerImplTest {
             eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
         .thenReturn(LaunchStatus.SUCCESS);
 
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    LaunchStatusWrapper result = methodCallHandler.launchUrl(url, new HashMap<>());
+    api = new UrlLauncherApiImpl(urlLauncher);
+    LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
 
     assertEquals(LaunchStatus.SUCCESS, result.getValue());
   }
 
   @Test
-  public void onMethodCall_closeWebView() {
+  public void closeWebView_closes() {
     urlLauncher = mock(UrlLauncher.class);
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
+    api = new UrlLauncherApiImpl(urlLauncher);
 
-    methodCallHandler.closeWebView();
+    api.closeWebView();
 
     verify(urlLauncher, times(1)).closeWebView();
   }

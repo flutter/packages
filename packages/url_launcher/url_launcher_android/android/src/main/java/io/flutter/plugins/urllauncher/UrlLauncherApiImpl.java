@@ -6,7 +6,7 @@ package io.flutter.plugins.urllauncher;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import io.flutter.plugin.common.BinaryMessenger;
+
 import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
@@ -17,11 +17,11 @@ import java.util.Map;
  * Translates incoming UrlLauncher MethodCalls into well formed Java function calls for {@link
  * UrlLauncher}.
  */
-final class MethodCallHandlerImpl implements UrlLauncherApi {
+final class UrlLauncherApiImpl implements UrlLauncherApi {
   private final UrlLauncher urlLauncher;
 
   /** Forwards all incoming MethodChannel calls to the given {@code urlLauncher}. */
-  MethodCallHandlerImpl(UrlLauncher urlLauncher) {
+  UrlLauncherApiImpl(UrlLauncher urlLauncher) {
     this.urlLauncher = urlLauncher;
   }
 

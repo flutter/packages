@@ -18,7 +18,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
  */
 public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   private static final String TAG = "UrlLauncherPlugin";
-  @Nullable private MethodCallHandlerImpl methodCallHandler;
+  @Nullable private UrlLauncherApiImpl urlLauncherApi;
   @Nullable private UrlLauncher urlLauncher;
 
   /**
@@ -31,33 +31,33 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   @SuppressWarnings("deprecation")
   public static void registerWith(
       @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    MethodCallHandlerImpl handler =
-        new MethodCallHandlerImpl(new UrlLauncher(registrar.context(), registrar.activity()));
+    UrlLauncherApiImpl handler =
+        new UrlLauncherApiImpl(new UrlLauncher(registrar.context(), registrar.activity()));
     Messages.UrlLauncherApi.setup(registrar.messenger(), handler);
   }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     urlLauncher = new UrlLauncher(binding.getApplicationContext(), /*activity=*/ null);
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), methodCallHandler);
+    urlLauncherApi = new UrlLauncherApiImpl(urlLauncher);
+    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncherApi);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    if (methodCallHandler == null) {
+    if (urlLauncherApi == null) {
       Log.wtf(TAG, "Already detached from the engine.");
       return;
     }
 
     Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), null);
-    methodCallHandler = null;
+    urlLauncherApi = null;
     urlLauncher = null;
   }
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-    if (methodCallHandler == null) {
+    if (urlLauncherApi == null) {
       Log.wtf(TAG, "urlLauncher was never set.");
       return;
     }
@@ -68,7 +68,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
 
   @Override
   public void onDetachedFromActivity() {
-    if (methodCallHandler == null) {
+    if (urlLauncherApi == null) {
       Log.wtf(TAG, "urlLauncher was never set.");
       return;
     }
