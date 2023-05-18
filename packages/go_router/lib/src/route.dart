@@ -578,8 +578,8 @@ class ShellRoute extends ShellRouteBase {
 /// sub-routes.
 ///
 /// Similar to [ShellRoute], this route class places its sub-route on a
-/// different Navigator than the root Navigator. However, this route class
-/// differs in that it creates separate Navigators for each of its nested
+/// different Navigator than the root [Navigator]. However, this route class
+/// differs in that it creates separate [Navigator]s for each of its nested
 /// branches (i.e. parallel navigation trees), making it possible to build an
 /// app with stateful nested navigation. This is convenient when for instance
 /// implementing a UI with a [BottomNavigationBar], with a persistent navigation

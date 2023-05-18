@@ -16,9 +16,9 @@ final GlobalKey<NavigatorState> _sectionANavigatorKey =
 // enables deep linking into nested pages.
 //
 // This example demonstrates how to display routes within a StatefulShellRoute,
-// that are places on separate navigators. The example also demonstrates how
-// state is maintained when switching between different bar items (and thus
-// branches and Navigators).
+// that are placed on separate navigators. The example also demonstrates how
+// state is maintained when switching between different bar items (which switches
+// between branches and Navigators).
 
 void main() {
   runApp(NestedTabNavigationExampleApp());
