@@ -24,6 +24,8 @@ import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -62,10 +64,10 @@ public class FileSelectorAndroidPluginTest {
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Test
   public void openFileReturnsSuccessfully() throws FileNotFoundException {
+    final ContentResolver mockContentResolver = mock(ContentResolver.class);
+
     final Uri mockUri = mock(Uri.class);
     when(mockUri.toString()).thenReturn("some/path/");
-
-    final ContentResolver mockContentResolver = mock(ContentResolver.class);
     mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain");
 
     when(mockTestProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
@@ -101,53 +103,68 @@ public class FileSelectorAndroidPluginTest {
     assertEquals(file.getPath(), "some/path/");
   }
 
-//  @SuppressWarnings({"rawtypes", "unchecked"})
-//  @Test
-//  public void openFilesReturnsSuccessfully() throws FileNotFoundException {
-//    final Uri mockUri = mock(Uri.class);
-//    when(mockUri.toString()).thenReturn("some/path/");
-//
-//    final Uri mockUri2 = mock(Uri.class);
-//    when(mockUri2.toString()).thenReturn("some/other/path/");
-//
-//    final ContentResolver mockContentResolver =
-//        mockContentResolver(mockUri, "filename", 30, "text/plain");
-//
-//    when(mockTestProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
-//    when(mockTestProxy.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
-//    when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
-//    when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
-//    final FileSelectorApiImpl fileSelectorApi =
-//        new FileSelectorApiImpl(mockActivityBinding, mockTestProxy);
-//
-//    final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
-//    fileSelectorApi.openFile(null, Collections.emptyList(), Collections.emptyList(), mockResult);
-//    verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
-//
-//    verify(mockActivity).startActivityForResult(mockIntent, 221);
-//
-//    final ArgumentCaptor<PluginRegistry.ActivityResultListener> listenerArgumentCaptor =
-//        ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-//    verify(mockActivityBinding).addActivityResultListener(listenerArgumentCaptor.capture());
-//
-//    final Intent resultMockIntent = mock(Intent.class);
-//    final ClipData mockClipData = mock(ClipData.class);
-//    when(mockClipData.getItemCount()).thenReturn(2);
-//    when(mockClipData.getItemAt(0)).thenReturn(mockUri);
-//    when(mockClipData.getItemAt(1)).thenReturn(mockUri);
-//    when(resultMockIntent.getClipData()).thenReturn(mockClipData);
-//
-//    listenerArgumentCaptor.getValue().onActivityResult(221, Activity.RESULT_OK, resultMockIntent);
-//
-//    final ArgumentCaptor<GeneratedFileSelectorApi.FileResponse> fileCaptor =
-//        ArgumentCaptor.forClass(GeneratedFileSelectorApi.FileResponse.class);
-//    verify(mockResult).success(fileCaptor.capture());
-//
-//    final GeneratedFileSelectorApi.FileResponse file = fileCaptor.getValue();
-//    assertEquals(file.getBytes().length, 30);
-//    assertEquals(file.getMimeType(), "text/plain");
-//    assertEquals(file.getName(), "filename");
-//    assertEquals(file.getSize(), (Long) 30L);
-//    assertEquals(file.getPath(), "some/path/");
-//  }
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Test
+  public void openFilesReturnsSuccessfully() throws FileNotFoundException {
+    final ContentResolver mockContentResolver = mock(ContentResolver.class);
+
+    final Uri mockUri = mock(Uri.class);
+    when(mockUri.toString()).thenReturn("some/path/");
+    mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain");
+
+    final Uri mockUri2 = mock(Uri.class);
+    when(mockUri2.toString()).thenReturn("some/other/path/");
+    mockContentResolver(mockContentResolver, mockUri2, "filename2", 40, "image/jpg");
+
+    when(mockTestProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
+    when(mockTestProxy.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
+    when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
+    when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
+    final FileSelectorApiImpl fileSelectorApi =
+        new FileSelectorApiImpl(mockActivityBinding, mockTestProxy);
+
+    final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
+    fileSelectorApi.openFiles(null, Collections.emptyList(), Collections.emptyList(), mockResult);
+    verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
+    verify(mockIntent).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+    verify(mockActivity).startActivityForResult(mockIntent, 222);
+
+    final ArgumentCaptor<PluginRegistry.ActivityResultListener> listenerArgumentCaptor =
+        ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+    verify(mockActivityBinding).addActivityResultListener(listenerArgumentCaptor.capture());
+
+    final Intent resultMockIntent = mock(Intent.class);
+    final ClipData mockClipData = mock(ClipData.class);
+    when(mockClipData.getItemCount()).thenReturn(2);
+
+    final ClipData.Item mockClipDataItem = mock(ClipData.Item.class);
+    when(mockClipDataItem.getUri()).thenReturn(mockUri);
+    when(mockClipData.getItemAt(0)).thenReturn(mockClipDataItem);
+
+    final ClipData.Item mockClipDataItem2 = mock(ClipData.Item.class);
+    when(mockClipDataItem2.getUri()).thenReturn(mockUri2);
+    when(mockClipData.getItemAt(1)).thenReturn(mockClipDataItem2);
+
+    when(resultMockIntent.getClipData()).thenReturn(mockClipData);
+
+    listenerArgumentCaptor.getValue().onActivityResult(222, Activity.RESULT_OK, resultMockIntent);
+
+    final ArgumentCaptor<List> fileListCaptor =
+        ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(fileListCaptor.capture());
+
+    final List<GeneratedFileSelectorApi.FileResponse> fileList = fileListCaptor.getValue();
+    assertEquals(fileList.get(0).getBytes().length, 30);
+    assertEquals(fileList.get(0).getMimeType(), "text/plain");
+    assertEquals(fileList.get(0).getName(), "filename");
+    assertEquals(fileList.get(0).getSize(), (Long) 30L);
+    assertEquals(fileList.get(0).getPath(), "some/path/");
+
+    assertEquals(fileList.get(1).getBytes().length, 40);
+    assertEquals(fileList.get(1).getMimeType(), "image/jpg");
+    assertEquals(fileList.get(1).getName(), "filename2");
+    assertEquals(fileList.get(1).getSize(), (Long) 40L);
+    assertEquals(fileList.get(1).getPath(), "some/other/path/");
+  }
 }
