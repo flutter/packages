@@ -37,7 +37,7 @@ public class UrlLauncherApiImplTest {
   }
 
   @Test
-  public void canLaunch_eturnsTrue() {
+  public void canLaunch_returnsTrue() {
     urlLauncher = mock(UrlLauncher.class);
     api = new UrlLauncherApiImpl(urlLauncher);
     String url = "foo";

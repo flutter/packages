@@ -33,7 +33,7 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
   @Override
   public @NonNull LaunchStatusWrapper launchUrl(
       @NonNull String url, @NonNull Map<String, String> headers) {
-    LaunchStatus launchStatus = urlLauncher.launch(url, extractBundle(headers), false, true, true);
+    LaunchStatus launchStatus = urlLauncher.launch(url, extractBundle(headers), false, false, false);
     return new LaunchStatusWrapper.Builder().setValue(launchStatus).build();
   }
 
