@@ -40,7 +40,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   private static final int OPEN_DIR = 223;
 
   private final TestProxy testProxy;
-  @Nullable private ActivityPluginBinding activityPluginBinding;
+  @Nullable ActivityPluginBinding activityPluginBinding;
 
   private abstract static class OnResultListener {
     public abstract void onResult(int resultCode, @Nullable Intent data);
@@ -98,7 +98,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
                 if (file != null) {
                   result.success(file);
                 } else {
-                  result.error(new Exception(String.format("Failed to read file: %s", uri)));
+                  result.error(new Exception("Failed to read file: " + uri));
                 }
               } else {
                 result.success(null);
@@ -152,7 +152,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
                     if (file != null) {
                       files.add(file);
                     } else {
-                      result.error(new Exception(String.format("Failed to read file: %s", uri)));
+                      result.error(new Exception("Failed to read file: " + uri));
                       return;
                     }
                   }
@@ -238,7 +238,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       if (mimetype != null) {
         mimeTypes.add(mimetype);
       } else {
-        Log.w(TAG, String.format("Extension not supported: %s", extension));
+        Log.w(TAG, "Extension not supported: " + extension);
       }
     }
 
@@ -278,7 +278,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Nullable
-  private GeneratedFileSelectorApi.FileResponse toFileResponse(@NonNull Uri uri) {
+  GeneratedFileSelectorApi.FileResponse toFileResponse(@NonNull Uri uri) {
     if (activityPluginBinding == null) {
       Log.d(TAG, "Activity is not available");
       return null;
