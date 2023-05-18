@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.6
+
+- Fix bug in text position computation when transforms are involved.
+
 ## 1.1.5+1
 
 - Remove/update some invalid assertions related to image formats.

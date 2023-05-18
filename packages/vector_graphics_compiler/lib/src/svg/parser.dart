@@ -1868,6 +1868,35 @@ class SvgAttributes {
     this.height,
   });
 
+  /// For use in tests to construct arbitrary attributes.
+  @visibleForTesting
+  const SvgAttributes.forTest({
+    this.raw = const <String, String>{},
+    this.id,
+    this.href,
+    this.transform = AffineMatrix.identity,
+    this.color = const ColorOrNone.color(),
+    this.stroke,
+    this.fill,
+    this.fillRule,
+    this.clipRule,
+    this.clipPathId,
+    this.blendMode,
+    this.fontFamily,
+    this.fontWeight,
+    this.fontSize,
+    this.textDecoration,
+    this.textDecorationStyle,
+    this.textDecorationColor,
+    this.x,
+    this.dx,
+    this.textAnchorMultiplier,
+    this.y,
+    this.dy,
+    this.width,
+    this.height,
+  });
+
   /// The empty set of properties.
   static const SvgAttributes empty = SvgAttributes._(raw: <String, String>{});
 

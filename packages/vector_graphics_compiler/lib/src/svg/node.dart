@@ -263,7 +263,7 @@ class TextPositionNode extends ParentNode {
 
     if (hasXY) {
       final Point baseline = consumeTransform
-          ? transform.transformPoint(Point(x, y))
+          ? computedTransform.transformPoint(Point(x, y))
           : Point(x, y);
       x = baseline.x;
       y = baseline.y;
@@ -271,7 +271,7 @@ class TextPositionNode extends ParentNode {
 
     if (hasDxDy) {
       final Point baseline = consumeTransform
-          ? transform.transformPoint(Point(dx, dy))
+          ? computedTransform.transformPoint(Point(dx, dy))
           : Point(dx, dy);
       dx = baseline.x;
       dy = baseline.y;
