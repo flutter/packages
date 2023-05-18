@@ -33,14 +33,14 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     MethodCallHandlerImpl handler =
         new MethodCallHandlerImpl(new UrlLauncher(registrar.context(), registrar.activity()));
-    handler.startListening(registrar.messenger());
+    Messages.UrlLauncherApi.setup(registrar.messenger(), handler);
   }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     urlLauncher = new UrlLauncher(binding.getApplicationContext(), /*activity=*/ null);
     methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    methodCallHandler.startListening(binding.getBinaryMessenger());
+    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), methodCallHandler);
   }
 
   @Override
@@ -50,7 +50,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       return;
     }
 
-    methodCallHandler.stopListening(binding.getBinaryMessenger());
+    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), null);
     methodCallHandler = null;
     urlLauncher = null;
   }

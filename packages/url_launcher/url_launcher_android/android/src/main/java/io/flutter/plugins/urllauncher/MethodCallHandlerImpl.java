@@ -25,26 +25,6 @@ final class MethodCallHandlerImpl implements UrlLauncherApi {
     this.urlLauncher = urlLauncher;
   }
 
-  /**
-   * Registers this instance as a method call handler on the given {@code messenger}.
-   *
-   * <p>Stops any previously started and unstopped calls.
-   *
-   * <p>This should be cleaned with {@link #stopListening} once the messenger is disposed of.
-   */
-  void startListening(BinaryMessenger messenger) {
-    UrlLauncherApi.setup(messenger, this);
-  }
-
-  /**
-   * Clears this instance from listening to method calls.
-   *
-   * <p>Does nothing if {@link #startListening} hasn't been called, or if we're already stopped.
-   */
-  void stopListening(BinaryMessenger messenger) {
-    UrlLauncherApi.setup(messenger, null);
-  }
-
   @Override
   public @NonNull Boolean canLaunchUrl(@NonNull String url) {
     return urlLauncher.canLaunch(url);
