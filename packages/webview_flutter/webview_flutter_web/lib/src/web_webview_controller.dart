@@ -28,7 +28,7 @@ class WebWebViewControllerCreationParams
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
-        HttpRequestFactory httpRequestFactory = const HttpRequestFactory(),
+    HttpRequestFactory httpRequestFactory = const HttpRequestFactory(),
   }) : this(httpRequestFactory: httpRequestFactory);
 
   static int _nextIFrameId = 0;
