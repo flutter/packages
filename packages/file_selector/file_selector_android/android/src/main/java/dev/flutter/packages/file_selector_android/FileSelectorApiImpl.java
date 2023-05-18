@@ -137,7 +137,12 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
                 // Only one file was returned.
                 final Uri uri = data.getData();
                 if (uri != null) {
-                  result.success(Collections.singletonList(toFileResponse(uri)));
+                  final GeneratedFileSelectorApi.FileResponse file = toFileResponse(uri);
+                  if (file != null) {
+                    result.success(Collections.singletonList(file));
+                  } else {
+                    result.error(new Exception("Failed to read file: " + uri));
+                  }
                 }
 
                 // Multiple files were returned.
