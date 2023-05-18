@@ -4,7 +4,12 @@
 
 package io.flutter.plugins.urllauncher;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
@@ -17,6 +22,8 @@ import java.util.Map;
  * UrlLauncher}.
  */
 final class UrlLauncherApiImpl implements UrlLauncherApi {
+  private static final String TAG = "UrlLauncher";
+
   private final UrlLauncher urlLauncher;
 
   /** Forwards all incoming MethodChannel calls to the given {@code urlLauncher}. */
@@ -26,7 +33,17 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
 
   @Override
   public @NonNull Boolean canLaunchUrl(@NonNull String url) {
-    return urlLauncher.canLaunch(url);
+    String componentName = urlLauncher.getViewerComponentName(Uri.parse(url));
+    if (BuildConfig.DEBUG) {
+      Log.i(TAG, "component name for " + url + " is " + componentName);
+    }
+    if (componentName == null) {
+      return false;
+    } else {
+      // Ignore the emulator fallback activity.
+      return !"{com.android.fallback/com.android.fallback.Fallback}"
+              .equals(componentName);
+    }
   }
 
   @Override

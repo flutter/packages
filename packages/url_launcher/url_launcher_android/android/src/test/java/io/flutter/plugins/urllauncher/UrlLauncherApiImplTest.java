@@ -9,11 +9,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.test.core.app.ApplicationProvider;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
@@ -22,6 +27,7 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
@@ -40,10 +46,10 @@ public class UrlLauncherApiImplTest {
   public void canLaunch_returnsTrue() {
     urlLauncher = mock(UrlLauncher.class);
     api = new UrlLauncherApiImpl(urlLauncher);
-    String url = "foo";
-    when(urlLauncher.canLaunch(url)).thenReturn(true);
+    Uri url = Uri.parse("https://flutter.dev");
+    when(urlLauncher.getViewerComponentName(url)).thenReturn("some.component");
 
-    Boolean result = api.canLaunchUrl(url);
+    Boolean result = api.canLaunchUrl(url.toString());
 
     assertTrue(result);
   }
@@ -52,20 +58,30 @@ public class UrlLauncherApiImplTest {
   public void canLaunch_returnsFalse() {
     urlLauncher = mock(UrlLauncher.class);
     api = new UrlLauncherApiImpl(urlLauncher);
-    String url = "foo";
-    when(urlLauncher.canLaunch(url)).thenReturn(false);
+    Uri url = Uri.parse("https://flutter.dev");
+    when(urlLauncher.getViewerComponentName(url)).thenReturn(null);
 
-    Boolean result = api.canLaunchUrl(url);
+    Boolean result = api.canLaunchUrl(url.toString());
+
+    assertFalse(result);
+  }
+
+  @Test
+  public void canLaunch_returnsFalseForEmulatorFallbackComponent() {
+    urlLauncher = mock(UrlLauncher.class);
+    api = new UrlLauncherApiImpl(urlLauncher);
+    Uri url = Uri.parse("https://flutter.dev");
+    when(urlLauncher.getViewerComponentName(url)).thenReturn("{com.android.fallback/com.android.fallback.Fallback}");
+
+    Boolean result = api.canLaunchUrl(url.toString());
 
     assertFalse(result);
   }
 
   @Test
   public void launch_returnsNoActivityError() {
-    urlLauncher = mock(UrlLauncher.class);
+    urlLauncher.setActivity(null);
     String url = "foo";
-    when(urlLauncher.launch(eq(url), any(Bundle.class)))
-        .thenReturn(LaunchStatus.NO_CURRENT_ACTIVITY);
 
     api = new UrlLauncherApiImpl(urlLauncher);
     LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
@@ -75,15 +91,33 @@ public class UrlLauncherApiImplTest {
 
   @Test
   public void launch_returnsActivityNotFoundError() {
-    urlLauncher = mock(UrlLauncher.class);
+    Activity activity = mock(Activity.class);
+    urlLauncher.setActivity(activity);
     String url = "foo";
-    when(urlLauncher.launch(eq(url), any(Bundle.class)))
-        .thenReturn(LaunchStatus.NO_HANDLING_ACTIVITY);
+    doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
     api = new UrlLauncherApiImpl(urlLauncher);
     LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
 
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture());
     assertEquals(LaunchStatus.NO_HANDLING_ACTIVITY, result.getValue());
+    assertEquals(url, intentCaptor.getValue().getData().toString());
+  }
+
+  @Test
+  public void launch_returnsTrue() {
+    Activity activity = mock(Activity.class);
+    urlLauncher.setActivity(activity);
+    String url = "foo";
+
+    api = new UrlLauncherApiImpl(urlLauncher);
+    LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture());
+    assertEquals(LaunchStatus.SUCCESS, result.getValue());
+    assertEquals(url, intentCaptor.getValue().getData().toString());
   }
 
   @Test
@@ -107,18 +141,6 @@ public class UrlLauncherApiImplTest {
                 .build());
 
     assertEquals(LaunchStatus.NO_CURRENT_ACTIVITY, result.getValue());
-  }
-
-  @Test
-  public void launch_returnsTrue() {
-    urlLauncher = mock(UrlLauncher.class);
-    String url = "foo";
-    when(urlLauncher.launch(eq(url), any(Bundle.class))).thenReturn(LaunchStatus.SUCCESS);
-
-    api = new UrlLauncherApiImpl(urlLauncher);
-    LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
-
-    assertEquals(LaunchStatus.SUCCESS, result.getValue());
   }
 
   @Test

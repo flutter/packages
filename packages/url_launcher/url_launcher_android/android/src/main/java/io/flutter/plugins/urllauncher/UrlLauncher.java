@@ -17,9 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
 
-/** Launches components for URLs. */
+/**
+ * Encapsulates the Android-specific parts of the launch logic, to allow unit testing higher-level
+ * code.
+ */
 class UrlLauncher {
-  private static final String TAG = "UrlLauncher";
   private final Context applicationContext;
 
   @Nullable private Activity activity;
@@ -38,21 +40,13 @@ class UrlLauncher {
     this.activity = activity;
   }
 
-  /** Returns whether the given {@code url} resolves into an existing component. */
-  boolean canLaunch(@NonNull String url) {
+  /** Returns the component name that {@code url} resolves to for viewing, if any. */
+  @Nullable String getViewerComponentName(@NonNull Uri url) {
     Intent launchIntent = new Intent(Intent.ACTION_VIEW);
-    launchIntent.setData(Uri.parse(url));
+    launchIntent.setData(url);
     ComponentName componentName =
-        launchIntent.resolveActivity(applicationContext.getPackageManager());
-
-    if (componentName == null) {
-      Log.i(TAG, "component name for " + url + " is null");
-      return false;
-    } else {
-      Log.i(TAG, "component name for " + url + " is " + componentName.toShortString());
-      return !"{com.android.fallback/com.android.fallback.Fallback}"
-          .equals(componentName.toShortString());
-    }
+            launchIntent.resolveActivity(applicationContext.getPackageManager());
+    return componentName == null ? null : componentName.toShortString();
   }
 
   /**
