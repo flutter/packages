@@ -19,7 +19,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   private static final String TAG = "UrlLauncherPlugin";
   @Nullable private UrlLauncherApiImpl urlLauncherApi;
-  @Nullable private UrlLauncher urlLauncher;
 
   /**
    * Registers a plugin implementation that uses the stable {@code io.flutter.plugin.common}
@@ -38,7 +37,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    urlLauncher = new UrlLauncher(binding.getApplicationContext(), /*activity=*/ null);
+    final UrlLauncher urlLauncher = new UrlLauncher(binding.getApplicationContext(), /*activity=*/ null);
     urlLauncherApi = new UrlLauncherApiImpl(urlLauncher);
     Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncherApi);
   }
@@ -52,7 +51,6 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
 
     Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), null);
     urlLauncherApi = null;
-    urlLauncher = null;
   }
 
   @Override
@@ -61,9 +59,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       Log.wtf(TAG, "urlLauncher was never set.");
       return;
     }
-
-    assert urlLauncher != null;
-    urlLauncher.setActivity(binding.getActivity());
+    urlLauncherApi.setActivity(binding.getActivity());
   }
 
   @Override
@@ -72,9 +68,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       Log.wtf(TAG, "urlLauncher was never set.");
       return;
     }
-
-    assert urlLauncher != null;
-    urlLauncher.setActivity(null);
+    urlLauncherApi.setActivity(null);
   }
 
   @Override

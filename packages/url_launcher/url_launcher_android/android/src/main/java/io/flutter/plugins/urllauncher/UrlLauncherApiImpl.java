@@ -4,13 +4,18 @@
 
 package io.flutter.plugins.urllauncher;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Browser;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
@@ -24,11 +29,18 @@ import java.util.Map;
 final class UrlLauncherApiImpl implements UrlLauncherApi {
   private static final String TAG = "UrlLauncher";
 
-  private final UrlLauncher urlLauncher;
+  @Nullable private Activity activity;
+
+  private final @NonNull UrlLauncher urlLauncher;
 
   /** Forwards all incoming MethodChannel calls to the given {@code urlLauncher}. */
-  UrlLauncherApiImpl(UrlLauncher urlLauncher) {
+  UrlLauncherApiImpl(@NonNull UrlLauncher urlLauncher) {
     this.urlLauncher = urlLauncher;
+  }
+
+  void setActivity(@Nullable Activity activity) {
+    this.activity = activity;
+    urlLauncher.setActivity(activity);
   }
 
   @Override
@@ -49,8 +61,21 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
   @Override
   public @NonNull LaunchStatusWrapper launchUrl(
       @NonNull String url, @NonNull Map<String, String> headers) {
-    LaunchStatus launchStatus = urlLauncher.launch(url, extractBundle(headers));
-    return new LaunchStatusWrapper.Builder().setValue(launchStatus).build();
+    if (activity == null) {
+      return wrapLaunchStatus(LaunchStatus.NO_CURRENT_ACTIVITY);
+    }
+
+    Intent launchIntent =
+            new Intent(Intent.ACTION_VIEW)
+                    .setData(Uri.parse(url))
+                    .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
+    try {
+      activity.startActivity(launchIntent);
+    } catch (ActivityNotFoundException e) {
+      return wrapLaunchStatus(LaunchStatus.NO_HANDLING_ACTIVITY);
+    }
+
+    return wrapLaunchStatus(LaunchStatus.SUCCESS);
   }
 
   @Override
@@ -77,5 +102,9 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
       headersBundle.putString(key, value);
     }
     return headersBundle;
+  }
+
+  private LaunchStatusWrapper wrapLaunchStatus(@NonNull LaunchStatus status) {
+    return new LaunchStatusWrapper.Builder().setValue(status).build();
   }
 }

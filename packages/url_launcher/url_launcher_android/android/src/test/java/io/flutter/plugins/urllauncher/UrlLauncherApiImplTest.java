@@ -92,11 +92,11 @@ public class UrlLauncherApiImplTest {
   @Test
   public void launch_returnsActivityNotFoundError() {
     Activity activity = mock(Activity.class);
-    urlLauncher.setActivity(activity);
     String url = "foo";
+    api = new UrlLauncherApiImpl(urlLauncher);
+    api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
-    api = new UrlLauncherApiImpl(urlLauncher);
     LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
@@ -108,10 +108,10 @@ public class UrlLauncherApiImplTest {
   @Test
   public void launch_returnsTrue() {
     Activity activity = mock(Activity.class);
-    urlLauncher.setActivity(activity);
+    api = new UrlLauncherApiImpl(urlLauncher);
+    api.setActivity(activity);
     String url = "foo";
 
-    api = new UrlLauncherApiImpl(urlLauncher);
     LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);

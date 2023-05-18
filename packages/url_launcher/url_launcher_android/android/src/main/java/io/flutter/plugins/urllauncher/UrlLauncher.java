@@ -50,32 +50,6 @@ class UrlLauncher {
   }
 
   /**
-   * Attempts to launch the given {@code url}.
-   *
-   * @param headersBundle forwarded to the intent as {@code Browser.EXTRA_HEADERS}.
-   * @return {@link LaunchStatus#NO_CURRENT_ACTIVITY} if there's no available {@code
-   *     applicationContext}. {@link LaunchStatus#NO_HANDLING_ACTIVITY} if there's no activity found
-   *     to handle {@code launchIntent}. {@link LaunchStatus#SUCCESS} otherwise.
-   */
-  LaunchStatus launch(@NonNull String url, @NonNull Bundle headersBundle) {
-    if (activity == null) {
-      return LaunchStatus.NO_CURRENT_ACTIVITY;
-    }
-
-    Intent launchIntent =
-        new Intent(Intent.ACTION_VIEW)
-            .setData(Uri.parse(url))
-            .putExtra(Browser.EXTRA_HEADERS, headersBundle);
-    try {
-      activity.startActivity(launchIntent);
-    } catch (ActivityNotFoundException e) {
-      return LaunchStatus.NO_HANDLING_ACTIVITY;
-    }
-
-    return LaunchStatus.SUCCESS;
-  }
-
-  /**
    * Attempts to open the given {@code url} in a WebView.
    *
    * @param headersBundle forwarded to the intent as {@code Browser.EXTRA_HEADERS}.
@@ -106,7 +80,7 @@ class UrlLauncher {
     return LaunchStatus.SUCCESS;
   }
 
-  /** Closes any activities started with {@link #launch} {@code useWebView=true}. */
+  /** Closes any activities started with {@link #openWebView}. */
   void closeWebView() {
     applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
   }
