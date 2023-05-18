@@ -32,7 +32,27 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/a',
     routes: <RouteBase>[
-      StatefulShellRoute.indexedStack(
+      StatefulShellRoute(
+        builder: (BuildContext context, GoRouterState state,
+            StatefulNavigationShell navigationShell) {
+          // This nested StatefulShellRoute demonstrates the use of a
+          // custom container for the branch Navigators. In this implementation,
+          // no customization is done in the builder function (navigationShell
+          // itself is simply used as the Widget for the route). Instead, the
+          // navigatorContainerBuilder function below is provided to
+          // customize the container for the branch Navigators.
+          return navigationShell;
+        },
+        navigatorContainerBuilder: (BuildContext context,
+            StatefulNavigationShell navigationShell, List<Widget> children) {
+          // Returning a customized container for the branch
+          // Navigators (i.e. the `List<Widget> children` argument).
+          //
+          // See ScaffoldWithNavBar for more details on how the children
+          // are managed (using AnimatedBranchContainer).
+          return ScaffoldWithNavBar(
+              navigationShell: navigationShell, children: children);
+        },
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
@@ -67,6 +87,23 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             // defaultLocation: '/c2',
             routes: <RouteBase>[
               StatefulShellRoute(
+                builder: (BuildContext context, GoRouterState state,
+                    StatefulNavigationShell navigationShell) {
+                  // Just like with the top level StatefulShellRoute, no
+                  // customization is done in the builder function.
+                  return navigationShell;
+                },
+                navigatorContainerBuilder: (BuildContext context,
+                    StatefulNavigationShell navigationShell,
+                    List<Widget> children) {
+                  // Returning a customized container for the branch
+                  // Navigators (i.e. the `List<Widget> children` argument).
+                  //
+                  // See TabbedRootScreen for more details on how the children
+                  // are managed (in a TabBarView).
+                  return TabbedRootScreen(
+                      navigationShell: navigationShell, children: children);
+                },
                 // This bottom tab uses a nested shell, wrapping sub routes in a
                 // top TabBar.
                 branches: <StatefulShellBranch>[
@@ -109,37 +146,10 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                     ),
                   ]),
                 ],
-                builder: (BuildContext context, GoRouterState state,
-                    StatefulNavigationShell navigationShell) {
-                  // This nested StatefulShellRoute demonstrates the use of a
-                  // custom container (TabBarView) for the branch Navigators.
-                  // In this implementation, no customization is done in the
-                  // builder function (navigationShell itself is simply used as
-                  // the Widget for the route). Instead, the
-                  // navigatorContainerBuilder function below is provided to
-                  // customize the container for the branch Navigators.
-                  return navigationShell;
-                },
-                navigatorContainerBuilder: (BuildContext context,
-                        StatefulNavigationShell navigationShell,
-                        List<Widget> children) =>
-                    // Returning a customized container for the branch
-                    // Navigators (i.e. the `List<Widget> children` argument).
-                    //
-                    // See TabbedRootScreen for more details on how the children
-                    // are used in the TabBarView.
-                    TabbedRootScreen(
-                        navigationShell: navigationShell, children: children),
               ),
             ],
           ),
         ],
-        builder: (BuildContext context, GoRouterState state,
-            StatefulNavigationShell navigationShell) {
-          // The builder uses the standard way of building the custom shell for
-          // a IndexedStack based StatefulShellRoute.
-          return ScaffoldWithNavBar(navigationShell: navigationShell);
-        },
       ),
     ],
   );
@@ -162,16 +172,24 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
     required this.navigationShell,
+    required this.children,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   /// The navigation shell and container for the branch Navigators.
   final StatefulNavigationShell navigationShell;
 
+  /// The children (branch Navigators) to display in a custom container
+  /// ([AnimatedBranchContainer]).
+  final List<Widget> children;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
+      body: AnimatedBranchContainer(
+        currentIndex: navigationShell.currentIndex,
+        children: children,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         // Here, the items of BottomNavigationBar are hard coded. In a real
         // world scenario, the items would most likely be generated from the
@@ -204,6 +222,46 @@ class ScaffoldWithNavBar extends StatelessWidget {
           .go(navigationShell.effectiveInitialBranchLocation(index));
     }
   }
+}
+
+/// Custom branch Navigator container that provides animated transitions
+/// when switching branches.
+class AnimatedBranchContainer extends StatelessWidget {
+  /// Creates a AnimatedBranchContainer
+  const AnimatedBranchContainer(
+      {super.key, required this.currentIndex, required this.children});
+
+  /// The index (in [children]) of the branch Navigator to display.
+  final int currentIndex;
+
+  /// The children (branch Navigators) to display in this container.
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+        children: children.mapIndexed(
+      (int index, Widget navigator) {
+        return AnimatedScale(
+          scale: index == currentIndex ? 1 : 1.5,
+          duration: const Duration(milliseconds: 400),
+          child: AnimatedOpacity(
+            opacity: index == currentIndex ? 1 : 0,
+            duration: const Duration(milliseconds: 400),
+            child: _branchNavigatorWrapper(index, navigator),
+          ),
+        );
+      },
+    ).toList());
+  }
+
+  Widget _branchNavigatorWrapper(int index, Widget navigator) => IgnorePointer(
+        ignoring: index != currentIndex,
+        child: TickerMode(
+          enabled: index == currentIndex,
+          child: navigator,
+        ),
+      );
 }
 
 /// Widget for the root page for the first section of the bottom navigation bar.
@@ -326,7 +384,7 @@ class TabbedRootScreen extends StatefulWidget {
   /// The current state of the parent StatefulShellRoute.
   final StatefulNavigationShell navigationShell;
 
-  /// The children (Navigators) to display in the [TabBarView].
+  /// The children (branch Navigators) to display in the [TabBarView].
   final List<Widget> children;
 
   @override

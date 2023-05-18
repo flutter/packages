@@ -19,6 +19,12 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       StatefulShellRoute.indexedStack(
         restorationScopeId: 'shell1',
+        pageBuilder: (BuildContext context, GoRouterState state,
+            StatefulNavigationShell navigationShell) {
+          return MaterialPage<void>(
+              restorationId: 'shellWidget1',
+              child: ScaffoldWithNavBar(navigationShell: navigationShell));
+        },
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
@@ -77,12 +83,6 @@ class RestorableStatefulShellRouteExampleApp extends StatelessWidget {
             ],
           ),
         ],
-        pageBuilder: (BuildContext context, GoRouterState state,
-            StatefulNavigationShell navigationShell) {
-          return MaterialPage<void>(
-              restorationId: 'shellWidget1',
-              child: ScaffoldWithNavBar(navigationShell: navigationShell));
-        },
       ),
     ],
   );

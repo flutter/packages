@@ -14,11 +14,6 @@ final GlobalKey<NavigatorState> _sectionANavigatorKey =
 // BottomNavigationBar, where each bar item uses its own persistent navigator,
 // i.e. navigation state is maintained separately for each item. This setup also
 // enables deep linking into nested pages.
-//
-// This example demonstrates how to display routes within a StatefulShellRoute,
-// that are placed on separate navigators. The example also demonstrates how
-// state is maintained when switching between different bar items (which switches
-// between branches and Navigators).
 
 void main() {
   runApp(NestedTabNavigationExampleApp());
@@ -34,6 +29,14 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     initialLocation: '/a',
     routes: <RouteBase>[
       StatefulShellRoute.indexedStack(
+        builder: (BuildContext context, GoRouterState state,
+            StatefulNavigationShell navigationShell) {
+          // Return the widget that implements the custom shell (in this case
+          // using a BottomNavigationBar). The StatefulNavigationShell is passed
+          // to be able access the state of the shell and to navigate to other
+          // branches in a stateful way.
+          return ScaffoldWithNavBar(navigationShell: navigationShell);
+        },
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
@@ -114,22 +117,6 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
             ],
           ),
         ],
-        builder: (BuildContext context, GoRouterState state,
-            StatefulNavigationShell navigationShell) {
-          // Return the widget that implements the custom shell (in this case
-          // using a BottomNavigationBar). The StatefulNavigationShell is passed
-          // to be able access the state of the shell and to navigate to other
-          // branches in a stateful way.
-          return ScaffoldWithNavBar(navigationShell: navigationShell);
-        },
-
-        // If it's necessary to customize the Page for StatefulShellRoute,
-        // provide a pageBuilder function instead of the builder, for example:
-        // pageBuilder: (BuildContext context, GoRouterState state,
-        //             StatefulNavigationShell navigationShell) {
-        //   return NoTransitionPage<dynamic>(
-        //       child: ScaffoldWithNavBar(navigationShell: navigationShell));
-        // },
       ),
     ],
   );

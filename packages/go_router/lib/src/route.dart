@@ -618,81 +618,28 @@ class ShellRoute extends ShellRouteBase {
 /// [Offstage] handling etc) of the branch Navigators and any animations needed
 /// when switching active branch.
 ///
-/// For a default implementation of [navigatorContainerBuilder], consider using
-/// [StatefulShellRoute].
+/// For a default implementation of [navigatorContainerBuilder] that is
+/// appropriate for most use cases, consider using the constructor
+/// [StatefulShellRoute.indexedStack].
 ///
-/// Below is a simple example of how a router configuration with
-/// StatefulShellRoute could be achieved. In this example, a
-/// BottomNavigationBar with two tabs is used, and each of the tabs gets its
-/// own Navigator. A container widget responsible for managing the Navigators
-/// for all route branches will then be passed as the child argument
-/// of the builder function.
+/// With StatefulShellRoute (and any route below it), animated transitions
+/// between routes in the same navigation stack works the same way as with other
+/// route classes, and can be customized using pageBuilder. However, since
+/// StatefulShellRoute maintains a set of parallel navigation stacks,
+/// any transitions when switching between branches is the responsibility of the
+/// branch Navigator container (i.e. [navigatorContainerBuilder]). The default
+/// [IndexedStack] implementation ([StatefulShellRoute.indexedStack]) does not
+/// use animated transitions, but an example is provided on how to accomplish
+/// this (see link to custom StatefulShellRoute example below).
 ///
-/// ```
-/// final GlobalKey<NavigatorState> _tabANavigatorKey =
-///   GlobalKey<NavigatorState>(debugLabel: 'tabANavigator');
-/// final GlobalKey<NavigatorState> _tabBNavigatorKey =
-///   GlobalKey<NavigatorState>(debugLabel: 'tabBNavigator');
-///
-/// final GoRouter _router = GoRouter(
-///   initialLocation: '/a',
-///   routes: <RouteBase>[
-///     StatefulShellRoute(
-///       builder: (BuildContext context, GoRouterState state,
-///             StatefulNavigationShell navigationShell) {
-///         return ScaffoldWithNavBar(navigationShell: navigationShell);
-///       },
-///       navigatorContainerBuilder: (BuildContext context,
-///             StatefulNavigationShell navigationShell,
-///             List<Widget> children) =>
-///                 MyCustomContainer(children: children),
-///       branches: [
-///         /// The first branch, i.e. tab 'A'
-///         StatefulShellBranch(
-///           navigatorKey: _tabANavigatorKey,
-///           routes: <RouteBase>[
-///             GoRoute(
-///               path: '/a',
-///               builder: (BuildContext context, GoRouterState state) =>
-///                   const RootScreen(label: 'A', detailsPath: '/a/details'),
-///               routes: <RouteBase>[
-///                 /// Will cover screen A but not the bottom navigation bar
-///                 GoRoute(
-///                   path: 'details',
-///                   builder: (BuildContext context, GoRouterState state) =>
-///                       const DetailsScreen(label: 'A'),
-///                 ),
-///               ],
-///             ),
-///           ],
-///         ),
-///         /// The second branch, i.e. tab 'B'
-///         StatefulShellBranch(
-///           navigatorKey: _tabBNavigatorKey,
-///           routes: <RouteBase>[
-///             GoRoute(
-///               path: '/b',
-///               builder: (BuildContext context, GoRouterState state) =>
-///                   const RootScreen(label: 'B', detailsPath: '/b/details'),
-///               routes: <RouteBase>[
-///                 /// Will cover screen B but not the bottom navigation bar
-///                 GoRoute(
-///                   path: 'details',
-///                   builder: (BuildContext context, GoRouterState state) =>
-///                       const DetailsScreen(label: 'B'),
-///                 ),
-///               ],
-///             ),
-///           ],
-///         ),
-///       ],
-///     ),
-///   ],
-/// );
-/// ```
-///
-/// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
-/// for a complete runnable example using StatefulShellRoute and StatefulShellRoute.
+/// See also:
+/// * [StatefulShellRoute.indexedStack] which provides a default
+/// StatefulShellRoute implementation suitable for most use cases.
+/// * [Stateful Nested Navigation example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart)
+/// for a complete runnable example using StatefulShellRoute.
+/// * [Custom StatefulShellRoute example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/others/custom_stateful_shell_route.dart)
+/// which demonstrates how to customize the container for the branch Navigators
+/// and how to implement animated transitions when switching branches.
 class StatefulShellRoute extends ShellRouteBase {
   /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch]es,
   /// each representing a separate nested navigation tree (branch).
