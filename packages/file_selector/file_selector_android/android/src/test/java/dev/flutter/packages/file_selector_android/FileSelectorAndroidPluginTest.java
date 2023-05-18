@@ -28,7 +28,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,7 +48,12 @@ public class FileSelectorAndroidPluginTest {
   @Mock public ActivityPluginBinding mockActivityBinding;
 
   private void mockContentResolver(
-      @NonNull ContentResolver mockResolver, @NonNull Uri uri, @NonNull String displayName, int size, @NonNull String mimeType) throws FileNotFoundException {
+      @NonNull ContentResolver mockResolver,
+      @NonNull Uri uri,
+      @NonNull String displayName,
+      int size,
+      @NonNull String mimeType)
+      throws FileNotFoundException {
     final Cursor mockCursor = mock(Cursor.class);
     when(mockCursor.moveToFirst()).thenReturn(true);
 
@@ -66,7 +70,8 @@ public class FileSelectorAndroidPluginTest {
   }
 
   @SuppressWarnings("JavaReflectionMemberAccess")
-  private static <T> void setFinalStatic(Class<T> classToModify, String fieldName, Object newValue) {
+  private static <T> void setFinalStatic(
+      Class<T> classToModify, String fieldName, Object newValue) {
     try {
       Field field = classToModify.getField(fieldName);
       field.setAccessible(true);
@@ -170,8 +175,7 @@ public class FileSelectorAndroidPluginTest {
 
     listenerArgumentCaptor.getValue().onActivityResult(222, Activity.RESULT_OK, resultMockIntent);
 
-    final ArgumentCaptor<List> fileListCaptor =
-        ArgumentCaptor.forClass(List.class);
+    final ArgumentCaptor<List> fileListCaptor = ArgumentCaptor.forClass(List.class);
     verify(mockResult).success(fileListCaptor.capture());
 
     final List<GeneratedFileSelectorApi.FileResponse> fileList = fileListCaptor.getValue();
