@@ -209,14 +209,14 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   // See https://developer.android.com/guide/components/intents-common#OpenFile
   private void setMimeTypes(
       @NonNull Intent intent, @NonNull List<String> mimeTypes, @NonNull List<String> extensions) {
-    final List<String> allMimetypes = new ArrayList<>();
+    final Set<String> allMimetypes = new HashSet<>();
     allMimetypes.addAll(mimeTypes);
     allMimetypes.addAll(tryConvertExtensionsToMimetypes(extensions));
 
     if (allMimetypes.isEmpty()) {
       intent.setType("*/*");
     } else if (allMimetypes.size() == 1) {
-      intent.setType(allMimetypes.get(0));
+      intent.setType(allMimetypes.iterator().next());
     } else {
       intent.setType("*/*");
       intent.putExtra(Intent.EXTRA_MIME_TYPES, allMimetypes.toArray(new String[0]));
