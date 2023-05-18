@@ -168,19 +168,17 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// Navigate to the current location of the branch at the provided index when
   /// tapping an item in the BottomNavigationBar.
   void _onTap(BuildContext context, int index) {
-    if (index != navigationShell.currentIndex) {
-      // When navigating to a new branch, it's recommended to use the goBranch
-      // method, as doing so makes sure the last navigation state of the
-      // Navigator for the branch is restored.
-      navigationShell.goBranch(index);
-    } else {
-      // If tapping the bar item for the branch that is already active, go to
-      // the initial location instead. The method
-      // effectiveInitialBranchLocation can be used to get the (implicitly or
-      // explicitly) configured initial location in a convenient way.
-      GoRouter.of(context)
-          .go(navigationShell.effectiveInitialBranchLocation(index));
-    }
+    // When navigating to a new branch, it's recommended to use the goBranch
+    // method, as doing so makes sure the last navigation state of the
+    // Navigator for the branch is restored.
+    navigationShell.goBranch(
+      index,
+      // A common pattern when using bottom navigation bars is to support
+      // navigating to the initial location when tapping the item that is
+      // already active. This example demonstrates how to support this behavior,
+      // using the resetLocation parameter of goBranch.
+      resetLocation: index == navigationShell.currentIndex,
+    );
   }
 }
 
