@@ -6,7 +6,7 @@
 
 #import <LocalAuthentication/LocalAuthentication.h>
 
-typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_Nullable);
+typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_Nullable);
 
 /**
  * A default context factory that wraps standard LAContext allocation.
@@ -28,16 +28,16 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
 @interface FLAStickyAuthState : NSObject
 @property(nonatomic, strong, nonnull) FLAAuthOptions *options;
 @property(nonatomic, strong, nonnull) FLAAuthStrings *strings;
-@property(nonatomic, strong, nonnull) AuthCompletion resultHandler;
+@property(nonatomic, copy, nonnull) FLAAuthCompletion resultHandler;
 - (instancetype)initWithOptions:(nonnull FLAAuthOptions *)options
                         strings:(nonnull FLAAuthStrings *)strings
-                  resultHandler:(nonnull AuthCompletion)resultHandler;
+                  resultHandler:(nonnull FLAAuthCompletion)resultHandler;
 @end
 
 @implementation FLAStickyAuthState
 - (instancetype)initWithOptions:(nonnull FLAAuthOptions *)options
                         strings:(nonnull FLAAuthStrings *)strings
-                  resultHandler:(nonnull AuthCompletion)resultHandler {
+                  resultHandler:(nonnull FLAAuthCompletion)resultHandler {
   self = [super init];
   if (self) {
     _options = options;
@@ -155,15 +155,15 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
 #pragma mark Private Methods
 
 - (void)showAlertWithMessage:(NSString *)message
-                 firstButton:(NSString *)firstButton
-            additionalButton:(NSString *)secondButton
-                  completion:(AuthCompletion)completion {
+          dismissButtonTitle:(NSString *)dismissButtonTitle
+     openSettingsButtonTitle:(NSString *)openSettingsButtonTitle
+                  completion:(FLAAuthCompletion)completion {
   UIAlertController *alert =
       [UIAlertController alertControllerWithTitle:@""
                                           message:message
                                    preferredStyle:UIAlertControllerStyleAlert];
 
-  UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:firstButton
+  UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:dismissButtonTitle
                                                           style:UIAlertActionStyleDefault
                                                         handler:^(UIAlertAction *action) {
                                                           [self handleSucceeded:NO
@@ -171,9 +171,9 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
                                                         }];
 
   [alert addAction:defaultAction];
-  if (secondButton != nil) {
+  if (openSettingsButtonTitle != nil) {
     UIAlertAction *additionalAction = [UIAlertAction
-        actionWithTitle:secondButton
+        actionWithTitle:openSettingsButtonTitle
                   style:UIAlertActionStyleDefault
                 handler:^(UIAlertAction *action) {
                   NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
@@ -193,7 +193,7 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
                              error:(NSError *)error
                            options:(FLAAuthOptions *)options
                            strings:(FLAAuthStrings *)strings
-                        completion:(nonnull AuthCompletion)completion {
+                        completion:(nonnull FLAAuthCompletion)completion {
   NSAssert([NSThread isMainThread], @"Response handling must be done on the main thread.");
   if (success) {
     [self handleSucceeded:YES withCompletion:completion];
@@ -221,7 +221,7 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
   }
 }
 
-- (void)handleSucceeded:(BOOL)succeeded withCompletion:(nonnull AuthCompletion)completion {
+- (void)handleSucceeded:(BOOL)succeeded withCompletion:(nonnull FLAAuthCompletion)completion {
   completion(
       [FLAAuthResultDetails makeWithResult:(succeeded ? FLAAuthResultSuccess : FLAAuthResultFailure)
                               errorMessage:nil
@@ -232,7 +232,7 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
 - (void)handleError:(NSError *)authError
         withOptions:(FLAAuthOptions *)options
             strings:(FLAAuthStrings *)strings
-         completion:(nonnull AuthCompletion)completion {
+         completion:(nonnull FLAAuthCompletion)completion {
   FLAAuthResult result = FLAAuthResultErrorNotAvailable;
   switch (authError.code) {
     case LAErrorPasscodeNotSet:
