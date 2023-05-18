@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +65,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @VisibleForTesting
-  FileSelectorApiImpl(@NonNull ActivityPluginBinding activityPluginBinding, @NonNull TestProxy testProxy) {
+  FileSelectorApiImpl(
+      @NonNull ActivityPluginBinding activityPluginBinding, @NonNull TestProxy testProxy) {
     this.activityPluginBinding = activityPluginBinding;
     this.testProxy = testProxy;
   }
