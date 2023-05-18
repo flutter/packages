@@ -97,11 +97,11 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation FLAAuthOptions
 + (instancetype)makeWithBiometricOnly:(NSNumber *)biometricOnly
                                sticky:(NSNumber *)sticky
-                       useErrorDialgs:(NSNumber *)useErrorDialgs {
+                      useErrorDialogs:(NSNumber *)useErrorDialogs {
   FLAAuthOptions *pigeonResult = [[FLAAuthOptions alloc] init];
   pigeonResult.biometricOnly = biometricOnly;
   pigeonResult.sticky = sticky;
-  pigeonResult.useErrorDialgs = useErrorDialgs;
+  pigeonResult.useErrorDialogs = useErrorDialogs;
   return pigeonResult;
 }
 + (FLAAuthOptions *)fromList:(NSArray *)list {
@@ -110,8 +110,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   NSAssert(pigeonResult.biometricOnly != nil, @"");
   pigeonResult.sticky = GetNullableObjectAtIndex(list, 1);
   NSAssert(pigeonResult.sticky != nil, @"");
-  pigeonResult.useErrorDialgs = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.useErrorDialgs != nil, @"");
+  pigeonResult.useErrorDialogs = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.useErrorDialogs != nil, @"");
   return pigeonResult;
 }
 + (nullable FLAAuthOptions *)nullableFromList:(NSArray *)list {
@@ -121,7 +121,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     (self.biometricOnly ?: [NSNull null]),
     (self.sticky ?: [NSNull null]),
-    (self.useErrorDialgs ?: [NSNull null]),
+    (self.useErrorDialogs ?: [NSNull null]),
   ];
 }
 @end

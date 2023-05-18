@@ -58,10 +58,10 @@ class AuthOptions {
   AuthOptions(
       {required this.biometricOnly,
       required this.sticky,
-      required this.useErrorDialgs});
+      required this.useErrorDialogs});
   final bool biometricOnly;
   final bool sticky;
-  final bool useErrorDialgs;
+  final bool useErrorDialogs;
 }
 
 class AuthResultDetails {

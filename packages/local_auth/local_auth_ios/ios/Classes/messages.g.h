@@ -63,10 +63,10 @@ typedef NS_ENUM(NSUInteger, FLAAuthBiometric) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithBiometricOnly:(NSNumber *)biometricOnly
                                sticky:(NSNumber *)sticky
-                       useErrorDialgs:(NSNumber *)useErrorDialgs;
+                      useErrorDialogs:(NSNumber *)useErrorDialogs;
 @property(nonatomic, strong) NSNumber *biometricOnly;
 @property(nonatomic, strong) NSNumber *sticky;
-@property(nonatomic, strong) NSNumber *useErrorDialgs;
+@property(nonatomic, strong) NSNumber *useErrorDialogs;
 @end
 
 @interface FLAAuthResultDetails : NSObject

@@ -237,7 +237,7 @@ typedef void (^AuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError *_N
   switch (authError.code) {
     case LAErrorPasscodeNotSet:
     case LAErrorBiometryNotEnrolled:
-      if (options.useErrorDialgs.boolValue) {
+      if (options.useErrorDialogs.boolValue) {
         [self showAlertWithMessage:strings.goToSettingsDescription
                        firstButton:strings.cancelButton
                   additionalButton:strings.goToSettingsButton

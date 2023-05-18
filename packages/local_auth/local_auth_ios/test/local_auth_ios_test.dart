@@ -213,7 +213,7 @@ void main() {
         final AuthOptions options = result.captured[0] as AuthOptions;
         expect(options.biometricOnly, false);
         expect(options.sticky, false);
-        expect(options.useErrorDialgs, true);
+        expect(options.useErrorDialogs, true);
       });
 
       test('passes provided non-default values', () async {
@@ -234,7 +234,7 @@ void main() {
         final AuthOptions options = result.captured[0] as AuthOptions;
         expect(options.biometricOnly, true);
         expect(options.sticky, true);
-        expect(options.useErrorDialgs, false);
+        expect(options.useErrorDialogs, false);
       });
     });
 

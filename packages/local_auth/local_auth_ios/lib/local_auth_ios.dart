@@ -39,7 +39,7 @@ class LocalAuthIOS extends LocalAuthPlatform {
         AuthOptions(
             biometricOnly: options.biometricOnly,
             sticky: options.stickyAuth,
-            useErrorDialgs: options.useErrorDialogs),
+            useErrorDialogs: options.useErrorDialogs),
         _pigeonStringsFromAuthMessages(localizedReason, authMessages));
     // TODO(stuartmorgan): Replace this with structured errors, coordinated
     // across all platform implementations, per

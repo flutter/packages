@@ -88,20 +88,20 @@ class AuthOptions {
   AuthOptions({
     required this.biometricOnly,
     required this.sticky,
-    required this.useErrorDialgs,
+    required this.useErrorDialogs,
   });
 
   bool biometricOnly;
 
   bool sticky;
 
-  bool useErrorDialgs;
+  bool useErrorDialogs;
 
   Object encode() {
     return <Object?>[
       biometricOnly,
       sticky,
-      useErrorDialgs,
+      useErrorDialogs,
     ];
   }
 
@@ -110,7 +110,7 @@ class AuthOptions {
     return AuthOptions(
       biometricOnly: result[0]! as bool,
       sticky: result[1]! as bool,
-      useErrorDialgs: result[2]! as bool,
+      useErrorDialogs: result[2]! as bool,
     );
   }
 }
