@@ -12,8 +12,8 @@ import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_android/src/channel.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
+import 'billing_client_wrappers/product_details_wrapper_test.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
-import 'billing_client_wrappers/sku_details_wrapper_test.dart';
 import 'stub_in_app_purchase_platform.dart';
 
 void main() {
@@ -90,7 +90,8 @@ void main() {
             name: acknowledgePurchaseCall, value: okValue),
       );
       final PurchaseDetails purchase =
-          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase);
+          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
+              .first;
       final BillingResultWrapper result =
           await iapAndroidPlatform.completePurchase(purchase);
       expect(
@@ -114,18 +115,18 @@ void main() {
     });
   });
 
-  group('querySkuDetails', () {
+  group('queryProductDetails', () {
     const String queryMethodName =
-        'BillingClient#querySkuDetailsAsync(SkuDetailsParams, SkuDetailsResponseListener)';
+        'BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)';
 
-    test('handles empty skuDetails', () async {
+    test('handles empty productDetails', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.ok;
       const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
           responseCode: responseCode, debugMessage: debugMessage);
       stubPlatform.addResponse(name: queryMethodName, value: <String, dynamic>{
         'billingResult': buildBillingResultMap(expectedBillingResult),
-        'skuDetailsList': <Map<String, dynamic>>[],
+        'productDetailsList': <Map<String, dynamic>>[],
       });
 
       final ProductDetailsResponse response =
@@ -140,16 +141,22 @@ void main() {
           responseCode: responseCode, debugMessage: debugMessage);
       stubPlatform.addResponse(name: queryMethodName, value: <String, dynamic>{
         'billingResult': buildBillingResultMap(expectedBillingResult),
-        'skuDetailsList': <Map<String, dynamic>>[buildSkuMap(dummySkuDetails)]
+        'productDetailsList': <Map<String, dynamic>>[
+          buildProductMap(dummyOneTimeProductDetails)
+        ]
       });
-      // Since queryProductDetails makes 2 platform method calls (one for each SkuType), the result will contain 2 dummyWrapper instead
+      // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
       // of 1.
       final ProductDetailsResponse response =
           await iapAndroidPlatform.queryProductDetails(<String>{'valid'});
-      expect(response.productDetails.first.title, dummySkuDetails.title);
+      expect(response.productDetails.first.title,
+          dummyOneTimeProductDetails.title);
       expect(response.productDetails.first.description,
-          dummySkuDetails.description);
-      expect(response.productDetails.first.price, dummySkuDetails.price);
+          dummyOneTimeProductDetails.description);
+      expect(
+          response.productDetails.first.price,
+          dummyOneTimeProductDetails
+              .oneTimePurchaseOfferDetails?.formattedPrice);
       expect(response.productDetails.first.currencySymbol, r'$');
     });
 
@@ -160,9 +167,11 @@ void main() {
           responseCode: responseCode, debugMessage: debugMessage);
       stubPlatform.addResponse(name: queryMethodName, value: <String, dynamic>{
         'billingResult': buildBillingResultMap(expectedBillingResult),
-        'skuDetailsList': <Map<String, dynamic>>[buildSkuMap(dummySkuDetails)]
+        'productDetailsList': <Map<String, dynamic>>[
+          buildProductMap(dummyOneTimeProductDetails)
+        ]
       });
-      // Since queryProductDetails makes 2 platform method calls (one for each SkuType), the result will contain 2 dummyWrapper instead
+      // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
       // of 1.
       final ProductDetailsResponse response =
           await iapAndroidPlatform.queryProductDetails(<String>{'invalid'});
@@ -178,8 +187,8 @@ void main() {
           value: <String, dynamic>{
             'responseCode':
                 const BillingResponseConverter().toJson(responseCode),
-            'skuDetailsList': <Map<String, dynamic>>[
-              buildSkuMap(dummySkuDetails)
+            'productDetailsList': <Map<String, dynamic>>[
+              buildProductMap(dummyOneTimeProductDetails)
             ]
           },
           additionalStepBeforeReturn: (dynamic _) {
@@ -189,7 +198,7 @@ void main() {
               details: <dynamic, dynamic>{'info': 'error_info'},
             );
           });
-      // Since queryProductDetails makes 2 platform method calls (one for each SkuType), the result will contain 2 dummyWrapper instead
+      // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
       // of 1.
       final ProductDetailsResponse response =
           await iapAndroidPlatform.queryProductDetails(<String>{'invalid'});
@@ -266,7 +275,7 @@ void main() {
       );
     });
 
-    test('returns SkuDetailsResponseWrapper', () async {
+    test('returns ProductDetailsResponseWrapper', () async {
       final Completer<List<PurchaseDetails>> completer =
           Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
@@ -294,7 +303,7 @@ void main() {
       });
 
       // Since queryPastPurchases makes 2 platform method calls (one for each
-      // SkuType), the result will contain 2 dummyPurchase instances instead
+      // ProductType), the result will contain 2 dummyPurchase instances instead
       // of 1.
       await iapAndroidPlatform.restorePurchases();
       final List<PurchaseDetails> restoredPurchases = await completer.future;
@@ -304,7 +313,7 @@ void main() {
         final GooglePlayPurchaseDetails purchase =
             element as GooglePlayPurchaseDetails;
 
-        expect(purchase.productID, dummyPurchase.sku);
+        expect(purchase.productID, dummyPurchase.products.first);
         expect(purchase.purchaseID, dummyPurchase.orderId);
         expect(purchase.verificationData.localVerificationData,
             dummyPurchase.originalJson);
@@ -325,7 +334,7 @@ void main() {
         'BillingClient#consumeAsync(String, ConsumeResponseListener)';
 
     test('buy non consumable, serializes and deserializes data', () async {
-      const SkuDetailsWrapper skuDetails = dummySkuDetails;
+      const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.ok;
@@ -344,7 +353,7 @@ void main() {
               'purchasesList': <dynamic>[
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
-                  'skus': <String>[skuDetails.sku],
+                  'products': <String>[productDetails.productId],
                   'isAutoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
@@ -370,7 +379,8 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails:
+              GooglePlayProductDetails.fromProductDetails(productDetails).first,
           applicationUserName: accountId);
       final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
           purchaseParam: purchaseParam);
@@ -379,11 +389,11 @@ void main() {
       expect(launchResult, isTrue);
       expect(result.purchaseID, 'orderID1');
       expect(result.status, PurchaseStatus.purchased);
-      expect(result.productID, dummySkuDetails.sku);
+      expect(result.productID, productDetails.productId);
     });
 
     test('handles an error with an empty purchases list', () async {
-      const SkuDetailsWrapper skuDetails = dummySkuDetails;
+      const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.error;
@@ -414,7 +424,8 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails:
+              GooglePlayProductDetails.fromProductDetails(productDetails).first,
           applicationUserName: accountId);
       await iapAndroidPlatform.buyNonConsumable(purchaseParam: purchaseParam);
       final PurchaseDetails result = await completer.future;
@@ -427,7 +438,7 @@ void main() {
 
     test('buy consumable with auto consume, serializes and deserializes data',
         () async {
-      const SkuDetailsWrapper skuDetails = dummySkuDetails;
+      const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.ok;
@@ -446,7 +457,7 @@ void main() {
               'purchasesList': <dynamic>[
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
-                  'skus': <String>[skuDetails.sku],
+                  'products': <String>[productDetails.productId],
                   'isAutoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
@@ -487,7 +498,8 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails:
+              GooglePlayProductDetails.fromProductDetails(productDetails).first,
           applicationUserName: accountId);
       final bool launchResult =
           await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
@@ -515,8 +527,9 @@ void main() {
 
       final bool result = await iapAndroidPlatform.buyNonConsumable(
           purchaseParam: GooglePlayPurchaseParam(
-              productDetails:
-                  GooglePlayProductDetails.fromSkuDetails(dummySkuDetails)));
+              productDetails: GooglePlayProductDetails.fromProductDetails(
+                      dummyOneTimeProductDetails)
+                  .first));
 
       // Verify that the failure has been converted and returned
       expect(result, isFalse);
@@ -535,15 +548,16 @@ void main() {
 
       final bool result = await iapAndroidPlatform.buyConsumable(
           purchaseParam: GooglePlayPurchaseParam(
-              productDetails:
-                  GooglePlayProductDetails.fromSkuDetails(dummySkuDetails)));
+              productDetails: GooglePlayProductDetails.fromProductDetails(
+                      dummyOneTimeProductDetails)
+                  .first));
 
       // Verify that the failure has been converted and returned
       expect(result, isFalse);
     });
 
     test('adds consumption failures to PurchaseDetails objects', () async {
-      const SkuDetailsWrapper skuDetails = dummySkuDetails;
+      const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.ok;
@@ -561,7 +575,7 @@ void main() {
               'purchasesList': <dynamic>[
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
-                  'skus': <String>[skuDetails.sku],
+                  'products': <String>[productDetails.productId],
                   'isAutoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
@@ -602,7 +616,8 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails:
+              GooglePlayProductDetails.fromProductDetails(productDetails).first,
           applicationUserName: accountId);
       await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
 
@@ -620,7 +635,7 @@ void main() {
     test(
         'buy consumable without auto consume, consume api should not receive calls',
         () async {
-      const SkuDetailsWrapper skuDetails = dummySkuDetails;
+      const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.developerError;
@@ -639,7 +654,7 @@ void main() {
               'purchasesList': <dynamic>[
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
-                  'skus': <String>[skuDetails.sku],
+                  'products': <String>[productDetails.productId],
                   'isAutoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
@@ -677,7 +692,8 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails:
+              GooglePlayProductDetails.fromProductDetails(productDetails).first,
           applicationUserName: accountId);
       await iapAndroidPlatform.buyConsumable(
           purchaseParam: purchaseParam, autoConsume: false);
@@ -687,7 +703,7 @@ void main() {
     test(
         'should get canceled purchase status when response code is BillingResponse.userCanceled',
         () async {
-      const SkuDetailsWrapper skuDetails = dummySkuDetails;
+      const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.userCanceled;
@@ -705,7 +721,7 @@ void main() {
               'purchasesList': <dynamic>[
                 <dynamic, dynamic>{
                   'orderId': 'orderID1',
-                  'sku': skuDetails.sku,
+                  'products': <String>[productDetails.productId],
                   'isAutoRenewing': false,
                   'packageName': 'package',
                   'purchaseTime': 1231231231,
@@ -746,7 +762,8 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails:
+              GooglePlayProductDetails.fromProductDetails(productDetails).first,
           applicationUserName: accountId);
       await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
 
@@ -759,7 +776,7 @@ void main() {
     test(
         'should get purchased purchase status when upgrading subscription by deferred proration mode',
         () async {
-      const SkuDetailsWrapper skuDetails = dummySkuDetails;
+      const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.ok;
@@ -790,11 +807,13 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails: GooglePlayProductDetails.fromSkuDetails(skuDetails),
+          productDetails:
+              GooglePlayProductDetails.fromProductDetails(productDetails).first,
           applicationUserName: accountId,
           changeSubscriptionParam: ChangeSubscriptionParam(
             oldPurchaseDetails: GooglePlayPurchaseDetails.fromPurchase(
-                dummyUnacknowledgedPurchase),
+                    dummyUnacknowledgedPurchase)
+                .first,
             prorationMode: ProrationMode.deferred,
           ));
       await iapAndroidPlatform.buyNonConsumable(purchaseParam: purchaseParam);
@@ -817,7 +836,8 @@ void main() {
         value: buildBillingResultMap(expectedBillingResult),
       );
       final PurchaseDetails purchaseDetails =
-          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase);
+          GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
+              .first;
       final Completer<BillingResultWrapper> completer =
           Completer<BillingResultWrapper>();
       purchaseDetails.status = PurchaseStatus.purchased;

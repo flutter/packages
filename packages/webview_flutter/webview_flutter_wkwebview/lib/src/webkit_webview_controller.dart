@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -302,7 +301,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     return _webView.loadRequest(NSUrlRequest(
       url: params.uri.toString(),
       allHttpHeaderFields: params.headers,
-      httpMethod: describeEnum(params.method),
+      httpMethod: params.method.name,
       httpBody: params.body,
     ));
   }
