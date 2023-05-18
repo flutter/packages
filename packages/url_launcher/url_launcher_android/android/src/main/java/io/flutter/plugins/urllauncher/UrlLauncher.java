@@ -59,35 +59,50 @@ class UrlLauncher {
    * Attempts to launch the given {@code url}.
    *
    * @param headersBundle forwarded to the intent as {@code Browser.EXTRA_HEADERS}.
-   * @param useWebView when true, the URL is launched inside of {@link WebViewActivity}.
+   * @return {@link LaunchStatus#NO_CURRENT_ACTIVITY} if there's no available {@code
+   *     applicationContext}. {@link LaunchStatus#NO_HANDLING_ACTIVITY} if there's no activity found
+   *     to handle {@code launchIntent}. {@link LaunchStatus#SUCCESS} otherwise.
+   */
+  LaunchStatus launch(@NonNull String url, @NonNull Bundle headersBundle) {
+    if (activity == null) {
+      return LaunchStatus.NO_CURRENT_ACTIVITY;
+    }
+
+    Intent launchIntent =
+        new Intent(Intent.ACTION_VIEW)
+            .setData(Uri.parse(url))
+            .putExtra(Browser.EXTRA_HEADERS, headersBundle);
+    try {
+      activity.startActivity(launchIntent);
+    } catch (ActivityNotFoundException e) {
+      return LaunchStatus.NO_HANDLING_ACTIVITY;
+    }
+
+    return LaunchStatus.SUCCESS;
+  }
+
+  /**
+   * Attempts to open the given {@code url} in a WebView.
+   *
+   * @param headersBundle forwarded to the intent as {@code Browser.EXTRA_HEADERS}.
    * @param enableJavaScript Only used if {@param useWebView} is true. Enables JS in the WebView.
    * @param enableDomStorage Only used if {@param useWebView} is true. Enables DOM storage in the
    * @return {@link LaunchStatus#NO_CURRENT_ACTIVITY} if there's no available {@code
    *     applicationContext}. {@link LaunchStatus#NO_HANDLING_ACTIVITY} if there's no activity found
    *     to handle {@code launchIntent}. {@link LaunchStatus#SUCCESS} otherwise.
    */
-  LaunchStatus launch(
+  LaunchStatus openWebView(
       @NonNull String url,
       @NonNull Bundle headersBundle,
-      boolean useWebView,
       boolean enableJavaScript,
       boolean enableDomStorage) {
     if (activity == null) {
       return LaunchStatus.NO_CURRENT_ACTIVITY;
     }
 
-    Intent launchIntent;
-    if (useWebView) {
-      launchIntent =
-          WebViewActivity.createIntent(
-              activity, url, enableJavaScript, enableDomStorage, headersBundle);
-    } else {
-      launchIntent =
-          new Intent(Intent.ACTION_VIEW)
-              .setData(Uri.parse(url))
-              .putExtra(Browser.EXTRA_HEADERS, headersBundle);
-    }
-
+    Intent launchIntent =
+        WebViewActivity.createIntent(
+            activity, url, enableJavaScript, enableDomStorage, headersBundle);
     try {
       activity.startActivity(launchIntent);
     } catch (ActivityNotFoundException e) {

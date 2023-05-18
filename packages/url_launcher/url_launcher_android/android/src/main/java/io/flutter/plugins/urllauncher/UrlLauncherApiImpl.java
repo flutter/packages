@@ -6,7 +6,6 @@ package io.flutter.plugins.urllauncher;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-
 import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
@@ -33,7 +32,7 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
   @Override
   public @NonNull LaunchStatusWrapper launchUrl(
       @NonNull String url, @NonNull Map<String, String> headers) {
-    LaunchStatus launchStatus = urlLauncher.launch(url, extractBundle(headers), false, false, false);
+    LaunchStatus launchStatus = urlLauncher.launch(url, extractBundle(headers));
     return new LaunchStatusWrapper.Builder().setValue(launchStatus).build();
   }
 
@@ -41,10 +40,9 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
   public @NonNull LaunchStatusWrapper openUrlInWebView(
       @NonNull String url, @NonNull WebViewOptions options) {
     LaunchStatus launchStatus =
-        urlLauncher.launch(
+        urlLauncher.openWebView(
             url,
             extractBundle(options.getHeaders()),
-            true,
             options.getEnableJavaScript(),
             options.getEnableDomStorage());
     return new LaunchStatusWrapper.Builder().setValue(launchStatus).build();

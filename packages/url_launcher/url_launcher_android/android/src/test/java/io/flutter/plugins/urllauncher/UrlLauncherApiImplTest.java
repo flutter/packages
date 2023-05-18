@@ -62,15 +62,9 @@ public class UrlLauncherApiImplTest {
 
   @Test
   public void launch_returnsNoActivityError() {
-    // Setup mock objects
     urlLauncher = mock(UrlLauncher.class);
-    // Setup expected values
     String url = "foo";
-    boolean useWebView = false;
-    boolean enableJavaScript = false;
-    boolean enableDomStorage = false;
-    when(urlLauncher.launch(
-            eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
+    when(urlLauncher.launch(eq(url), any(Bundle.class)))
         .thenReturn(LaunchStatus.NO_CURRENT_ACTIVITY);
 
     api = new UrlLauncherApiImpl(urlLauncher);
@@ -81,16 +75,9 @@ public class UrlLauncherApiImplTest {
 
   @Test
   public void launch_returnsActivityNotFoundError() {
-    // Setup mock objects
     urlLauncher = mock(UrlLauncher.class);
-    // Setup expected values
     String url = "foo";
-    boolean useWebView = false;
-    boolean enableJavaScript = false;
-    boolean enableDomStorage = false;
-    // Mock the launch method on the urlLauncher class
-    when(urlLauncher.launch(
-            eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
+    when(urlLauncher.launch(eq(url), any(Bundle.class)))
         .thenReturn(LaunchStatus.NO_HANDLING_ACTIVITY);
 
     api = new UrlLauncherApiImpl(urlLauncher);
@@ -100,18 +87,33 @@ public class UrlLauncherApiImplTest {
   }
 
   @Test
-  public void launch_returnsTrue() {
-    // Setup mock objects
+  public void openWebView_opens() {
     urlLauncher = mock(UrlLauncher.class);
-    // Setup expected values
     String url = "foo";
-    boolean useWebView = false;
-    boolean enableJavaScript = false;
-    boolean enableDomStorage = false;
-    // Mock the launch method on the urlLauncher class
-    when(urlLauncher.launch(
-            eq(url), any(Bundle.class), eq(useWebView), eq(enableJavaScript), eq(enableDomStorage)))
-        .thenReturn(LaunchStatus.SUCCESS);
+    boolean enableJavaScript = true;
+    boolean enableDomStorage = true;
+    when(urlLauncher.openWebView(
+            eq(url), any(Bundle.class), eq(enableJavaScript), eq(enableDomStorage)))
+        .thenReturn(LaunchStatus.NO_CURRENT_ACTIVITY);
+
+    api = new UrlLauncherApiImpl(urlLauncher);
+    LaunchStatusWrapper result =
+        api.openUrlInWebView(
+            url,
+            new Messages.WebViewOptions.Builder()
+                .setEnableJavaScript(enableJavaScript)
+                .setEnableDomStorage(enableDomStorage)
+                .setHeaders(new HashMap<>())
+                .build());
+
+    assertEquals(LaunchStatus.NO_CURRENT_ACTIVITY, result.getValue());
+  }
+
+  @Test
+  public void launch_returnsTrue() {
+    urlLauncher = mock(UrlLauncher.class);
+    String url = "foo";
+    when(urlLauncher.launch(eq(url), any(Bundle.class))).thenReturn(LaunchStatus.SUCCESS);
 
     api = new UrlLauncherApiImpl(urlLauncher);
     LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
