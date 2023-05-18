@@ -10,8 +10,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 
 /** Provides a static method for extracting lifecycle objects from Flutter plugin bindings. */
 public class FlutterLifecycleAdapter {
-  private static final String TAG = "FlutterLifecycleAdapter";
-
   /**
    * Returns the lifecycle object for the activity a plugin is bound to.
    *

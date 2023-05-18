@@ -4,9 +4,11 @@
 
 package io.flutter.plugins.inapppurchase;
 
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
+import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
-import static io.flutter.plugins.inapppurchase.Translator.fromSkuDetailsList;
+import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 
 import android.app.Activity;
 import android.app.Application;
@@ -24,14 +26,19 @@ import com.android.billingclient.api.BillingFlowParams.ProrationMode;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.ProductDetails;
+import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesResponseListener;
+import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.QueryProductDetailsParams.Product;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +48,7 @@ class MethodCallHandlerImpl
     implements MethodChannel.MethodCallHandler, Application.ActivityLifecycleCallbacks {
 
   private static final String TAG = "InAppPurchasePlugin";
-  private static final String LOAD_SKU_DOC_URL =
+  private static final String LOAD_PRODUCT_DOC_URL =
       "https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/README.md#loading-products-for-sale";
 
   @Nullable private BillingClient billingClient;
@@ -51,9 +58,7 @@ class MethodCallHandlerImpl
   private final Context applicationContext;
   private final MethodChannel methodChannel;
 
-  // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
-  @SuppressWarnings("deprecation")
-  private HashMap<String, com.android.billingclient.api.SkuDetails> cachedSkus = new HashMap<>();
+  private final HashMap<String, ProductDetails> cachedProducts = new HashMap<>();
 
   /** Constructs the MethodCallHandlerImpl */
   MethodCallHandlerImpl(
@@ -117,31 +122,28 @@ class MethodCallHandlerImpl
       case InAppPurchasePlugin.MethodNames.END_CONNECTION:
         endConnection(result);
         break;
-      case InAppPurchasePlugin.MethodNames.QUERY_SKU_DETAILS:
-        List<String> skusList = call.argument("skusList");
-        querySkuDetailsAsync((String) call.argument("skuType"), skusList, result);
+      case InAppPurchasePlugin.MethodNames.QUERY_PRODUCT_DETAILS:
+        List<Product> productList = toProductList(call.argument("productList"));
+        queryProductDetailsAsync(productList, result);
         break;
       case InAppPurchasePlugin.MethodNames.LAUNCH_BILLING_FLOW:
         launchBillingFlow(
-            (String) call.argument("sku"),
+            (String) call.argument("product"),
+            (String) call.argument("offerToken"),
             (String) call.argument("accountId"),
             (String) call.argument("obfuscatedProfileId"),
-            (String) call.argument("oldSku"),
+            (String) call.argument("oldProduct"),
             (String) call.argument("purchaseToken"),
             call.hasArgument("prorationMode")
                 ? (int) call.argument("prorationMode")
                 : ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
             result);
         break;
-      case InAppPurchasePlugin.MethodNames.QUERY_PURCHASES: // Legacy method name.
-        queryPurchasesAsync((String) call.argument("skuType"), result);
-        break;
       case InAppPurchasePlugin.MethodNames.QUERY_PURCHASES_ASYNC:
-        queryPurchasesAsync((String) call.argument("skuType"), result);
+        queryPurchasesAsync((String) call.argument("productType"), result);
         break;
       case InAppPurchasePlugin.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
-        Log.e("flutter", (String) call.argument("skuType"));
-        queryPurchaseHistoryAsync((String) call.argument("skuType"), result);
+        queryPurchaseHistoryAsync((String) call.argument("productType"), result);
         break;
       case InAppPurchasePlugin.MethodNames.CONSUME_PURCHASE_ASYNC:
         consumeAsync((String) call.argument("purchaseToken"), result);
@@ -151,9 +153,6 @@ class MethodCallHandlerImpl
         break;
       case InAppPurchasePlugin.MethodNames.IS_FEATURE_SUPPORTED:
         isFeatureSupported((String) call.argument("feature"), result);
-        break;
-      case InAppPurchasePlugin.MethodNames.LAUNCH_PRICE_CHANGE_CONFIRMATION_FLOW:
-        launchPriceChangeConfirmationFlow((String) call.argument("sku"), result);
         break;
       case InAppPurchasePlugin.MethodNames.GET_CONNECTION_STATE:
         getConnectionState(result);
@@ -183,77 +182,95 @@ class MethodCallHandlerImpl
     result.success(billingClient.isReady());
   }
 
-  // TODO(stuartmorgan): Migrate to new subscriptions API. See:
-  // - https://developer.android.com/google/play/billing/migrate-gpblv5
-  // - https://github.com/flutter/flutter/issues/114265
-  // - https://github.com/flutter/flutter/issues/107370
-  @SuppressWarnings("deprecation")
-  private void querySkuDetailsAsync(
-      final String skuType, final List<String> skusList, final MethodChannel.Result result) {
+  private void queryProductDetailsAsync(
+      final List<Product> productList, final MethodChannel.Result result) {
     if (billingClientError(result)) {
       return;
     }
 
-    com.android.billingclient.api.SkuDetailsParams params =
-        com.android.billingclient.api.SkuDetailsParams.newBuilder()
-            .setType(skuType)
-            .setSkusList(skusList)
-            .build();
-    billingClient.querySkuDetailsAsync(
+    QueryProductDetailsParams params =
+        QueryProductDetailsParams.newBuilder().setProductList(productList).build();
+    billingClient.queryProductDetailsAsync(
         params,
-        new com.android.billingclient.api.SkuDetailsResponseListener() {
+        new ProductDetailsResponseListener() {
           @Override
-          public void onSkuDetailsResponse(
-              BillingResult billingResult,
-              List<com.android.billingclient.api.SkuDetails> skuDetailsList) {
-            updateCachedSkus(skuDetailsList);
-            final Map<String, Object> skuDetailsResponse = new HashMap<>();
-            skuDetailsResponse.put("billingResult", Translator.fromBillingResult(billingResult));
-            skuDetailsResponse.put("skuDetailsList", fromSkuDetailsList(skuDetailsList));
-            result.success(skuDetailsResponse);
+          public void onProductDetailsResponse(
+              @NonNull BillingResult billingResult,
+              @NonNull List<ProductDetails> productDetailsList) {
+            updateCachedProducts(productDetailsList);
+            final Map<String, Object> productDetailsResponse = new HashMap<>();
+            productDetailsResponse.put("billingResult", fromBillingResult(billingResult));
+            productDetailsResponse.put(
+                "productDetailsList", fromProductDetailsList(productDetailsList));
+            result.success(productDetailsResponse);
           }
         });
   }
 
   private void launchBillingFlow(
-      String sku,
+      String product,
+      @Nullable String offerToken,
       @Nullable String accountId,
       @Nullable String obfuscatedProfileId,
-      @Nullable String oldSku,
+      @Nullable String oldProduct,
       @Nullable String purchaseToken,
       int prorationMode,
       MethodChannel.Result result) {
     if (billingClientError(result)) {
       return;
     }
-    // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
-    @SuppressWarnings("deprecation")
-    com.android.billingclient.api.SkuDetails skuDetails = cachedSkus.get(sku);
-    if (skuDetails == null) {
+
+    com.android.billingclient.api.ProductDetails productDetails = cachedProducts.get(product);
+    if (productDetails == null) {
       result.error(
           "NOT_FOUND",
-          "Details for sku "
-              + sku
-              + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
-              + LOAD_SKU_DOC_URL,
+          "Details for product "
+              + product
+              + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
+              + LOAD_PRODUCT_DOC_URL,
           null);
       return;
     }
 
-    if (oldSku == null
+    @Nullable
+    List<ProductDetails.SubscriptionOfferDetails> subscriptionOfferDetails =
+        productDetails.getSubscriptionOfferDetails();
+    if (subscriptionOfferDetails != null) {
+      boolean isValidOfferToken = false;
+      for (ProductDetails.SubscriptionOfferDetails offerDetails : subscriptionOfferDetails) {
+        if (offerToken != null && offerToken.equals(offerDetails.getOfferToken())) {
+          isValidOfferToken = true;
+          break;
+        }
+      }
+      if (!isValidOfferToken) {
+        result.error(
+            "INVALID_OFFER_TOKEN",
+            "Offer token "
+                + offerToken
+                + " for product "
+                + product
+                + " is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: "
+                + LOAD_PRODUCT_DOC_URL,
+            null);
+        return;
+      }
+    }
+
+    if (oldProduct == null
         && prorationMode != ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
       result.error(
-          "IN_APP_PURCHASE_REQUIRE_OLD_SKU",
-          "launchBillingFlow failed because oldSku is null. You must provide a valid oldSku in order to use a proration mode.",
+          "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
+          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
           null);
       return;
-    } else if (oldSku != null && !cachedSkus.containsKey(oldSku)) {
+    } else if (oldProduct != null && !cachedProducts.containsKey(oldProduct)) {
       result.error(
-          "IN_APP_PURCHASE_INVALID_OLD_SKU",
-          "Details for sku "
-              + oldSku
-              + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
-              + LOAD_SKU_DOC_URL,
+          "IN_APP_PURCHASE_INVALID_OLD_PRODUCT",
+          "Details for product "
+              + oldProduct
+              + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
+              + LOAD_PRODUCT_DOC_URL,
           null);
       return;
     }
@@ -261,17 +278,25 @@ class MethodCallHandlerImpl
     if (activity == null) {
       result.error(
           "ACTIVITY_UNAVAILABLE",
-          "Details for sku "
-              + sku
+          "Details for product "
+              + product
               + " are not available. This method must be run with the app in foreground.",
           null);
       return;
     }
 
-    // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
-    @SuppressWarnings("deprecation")
+    BillingFlowParams.ProductDetailsParams.Builder productDetailsParamsBuilder =
+        BillingFlowParams.ProductDetailsParams.newBuilder();
+    productDetailsParamsBuilder.setProductDetails(productDetails);
+    if (offerToken != null) {
+      productDetailsParamsBuilder.setOfferToken(offerToken);
+    }
+
+    List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<>();
+    productDetailsParamsList.add(productDetailsParamsBuilder.build());
+
     BillingFlowParams.Builder paramsBuilder =
-        BillingFlowParams.newBuilder().setSkuDetails(skuDetails);
+        BillingFlowParams.newBuilder().setProductDetailsParamsList(productDetailsParamsList);
     if (accountId != null && !accountId.isEmpty()) {
       paramsBuilder.setObfuscatedAccountId(accountId);
     }
@@ -280,7 +305,7 @@ class MethodCallHandlerImpl
     }
     BillingFlowParams.SubscriptionUpdateParams.Builder subscriptionUpdateParamsBuilder =
         BillingFlowParams.SubscriptionUpdateParams.newBuilder();
-    if (oldSku != null && !oldSku.isEmpty() && purchaseToken != null) {
+    if (oldProduct != null && !oldProduct.isEmpty() && purchaseToken != null) {
       subscriptionUpdateParamsBuilder.setOldPurchaseToken(purchaseToken);
       // The proration mode value has to match one of the following declared in
       // https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode
@@ -288,8 +313,7 @@ class MethodCallHandlerImpl
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
     result.success(
-        Translator.fromBillingResult(
-            billingClient.launchBillingFlow(activity, paramsBuilder.build())));
+        fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build())));
   }
 
   private void consumeAsync(String purchaseToken, final MethodChannel.Result result) {
@@ -301,7 +325,7 @@ class MethodCallHandlerImpl
         new ConsumeResponseListener() {
           @Override
           public void onConsumeResponse(BillingResult billingResult, String outToken) {
-            result.success(Translator.fromBillingResult(billingResult));
+            result.success(fromBillingResult(billingResult));
           }
         };
     ConsumeParams.Builder paramsBuilder =
@@ -312,7 +336,7 @@ class MethodCallHandlerImpl
     billingClient.consumeAsync(params, listener);
   }
 
-  private void queryPurchasesAsync(String skuType, MethodChannel.Result result) {
+  private void queryPurchasesAsync(String productType, MethodChannel.Result result) {
     if (billingClientError(result)) {
       return;
     }
@@ -320,7 +344,7 @@ class MethodCallHandlerImpl
     // Like in our connect call, consider the billing client responding a "success" here regardless
     // of status code.
     QueryPurchasesParams.Builder paramsBuilder = QueryPurchasesParams.newBuilder();
-    paramsBuilder.setProductType(skuType);
+    paramsBuilder.setProductType(productType);
     billingClient.queryPurchasesAsync(
         paramsBuilder.build(),
         new PurchasesResponseListener() {
@@ -331,26 +355,26 @@ class MethodCallHandlerImpl
             // The response code is no longer passed, as part of billing 4.0, so we pass OK here
             // as success is implied by calling this callback.
             serialized.put("responseCode", BillingClient.BillingResponseCode.OK);
-            serialized.put("billingResult", Translator.fromBillingResult(billingResult));
+            serialized.put("billingResult", fromBillingResult(billingResult));
             serialized.put("purchasesList", fromPurchasesList(purchasesList));
             result.success(serialized);
           }
         });
   }
 
-  private void queryPurchaseHistoryAsync(String skuType, final MethodChannel.Result result) {
+  private void queryPurchaseHistoryAsync(String productType, final MethodChannel.Result result) {
     if (billingClientError(result)) {
       return;
     }
 
     billingClient.queryPurchaseHistoryAsync(
-        QueryPurchaseHistoryParams.newBuilder().setProductType(skuType).build(),
+        QueryPurchaseHistoryParams.newBuilder().setProductType(productType).build(),
         new PurchaseHistoryResponseListener() {
           @Override
           public void onPurchaseHistoryResponse(
               BillingResult billingResult, List<PurchaseHistoryRecord> purchasesList) {
             final Map<String, Object> serialized = new HashMap<>();
-            serialized.put("billingResult", Translator.fromBillingResult(billingResult));
+            serialized.put("billingResult", fromBillingResult(billingResult));
             serialized.put(
                 "purchaseHistoryRecordList", fromPurchaseHistoryRecordList(purchasesList));
             result.success(serialized);
@@ -385,7 +409,7 @@ class MethodCallHandlerImpl
             alreadyFinished = true;
             // Consider the fact that we've finished a success, leave it to the Dart side to
             // validate the responseCode.
-            result.success(Translator.fromBillingResult(billingResult));
+            result.success(fromBillingResult(billingResult));
           }
 
           @Override
@@ -408,65 +432,19 @@ class MethodCallHandlerImpl
         new AcknowledgePurchaseResponseListener() {
           @Override
           public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
-            result.success(Translator.fromBillingResult(billingResult));
+            result.success(fromBillingResult(billingResult));
           }
         });
   }
 
-  // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
-  @SuppressWarnings("deprecation")
-  private void updateCachedSkus(
-      @Nullable List<com.android.billingclient.api.SkuDetails> skuDetailsList) {
-    if (skuDetailsList == null) {
+  protected void updateCachedProducts(@Nullable List<ProductDetails> productDetailsList) {
+    if (productDetailsList == null) {
       return;
     }
 
-    for (com.android.billingclient.api.SkuDetails skuDetails : skuDetailsList) {
-      cachedSkus.put(skuDetails.getSku(), skuDetails);
+    for (ProductDetails productDetails : productDetailsList) {
+      cachedProducts.put(productDetails.getProductId(), productDetails);
     }
-  }
-
-  // TODO(stuartmorgan): Migrate this code. See TODO on querySkuDetailsAsync.
-  @SuppressWarnings("deprecation")
-  private void launchPriceChangeConfirmationFlow(String sku, MethodChannel.Result result) {
-    if (activity == null) {
-      result.error(
-          "ACTIVITY_UNAVAILABLE",
-          "launchPriceChangeConfirmationFlow is not available. "
-              + "This method must be run with the app in foreground.",
-          null);
-      return;
-    }
-    if (billingClientError(result)) {
-      return;
-    }
-    // Note that assert doesn't work on Android (see https://stackoverflow.com/a/6176529/5167831 and https://stackoverflow.com/a/8164195/5167831)
-    // and that this assert is only added to silence the analyser. The actual null check
-    // is handled by the `billingClientError()` call.
-    assert billingClient != null;
-
-    com.android.billingclient.api.SkuDetails skuDetails = cachedSkus.get(sku);
-    if (skuDetails == null) {
-      result.error(
-          "NOT_FOUND",
-          "Details for sku "
-              + sku
-              + " are not available. It might because skus were not fetched prior to the call. Please fetch the skus first. An example of how to fetch the skus could be found here: "
-              + LOAD_SKU_DOC_URL,
-          null);
-      return;
-    }
-
-    com.android.billingclient.api.PriceChangeFlowParams params =
-        new com.android.billingclient.api.PriceChangeFlowParams.Builder()
-            .setSkuDetails(skuDetails)
-            .build();
-    billingClient.launchPriceChangeConfirmationFlow(
-        activity,
-        params,
-        billingResult -> {
-          result.success(Translator.fromBillingResult(billingResult));
-        });
   }
 
   private boolean billingClientError(MethodChannel.Result result) {

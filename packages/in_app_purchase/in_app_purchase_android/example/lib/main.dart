@@ -254,21 +254,7 @@ class _MyAppState extends State<_MyApp> {
               productDetails.description,
             ),
             trailing: previousPurchase != null
-                ? IconButton(
-                    onPressed: () {
-                      final InAppPurchaseAndroidPlatformAddition addition =
-                          InAppPurchasePlatformAddition.instance!
-                              as InAppPurchaseAndroidPlatformAddition;
-                      final SkuDetailsWrapper skuDetails =
-                          (productDetails as GooglePlayProductDetails)
-                              .skuDetails;
-                      addition
-                          .launchPriceChangeConfirmationFlow(
-                              sku: skuDetails.sku)
-                          .then((BillingResultWrapper value) => print(
-                              'confirmationResponse: ${value.responseCode}'));
-                    },
-                    icon: const Icon(Icons.upgrade))
+                ? const SizedBox.shrink()
                 : TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.green[800],
@@ -503,6 +489,8 @@ class _FeatureCard extends StatelessWidget {
         return 'inAppItemsOnVR';
       case BillingClientFeature.priceChangeConfirmation:
         return 'priceChangeConfirmation';
+      case BillingClientFeature.productDetails:
+        return 'productDetails';
       case BillingClientFeature.subscriptions:
         return 'subscriptions';
       case BillingClientFeature.subscriptionsOnVR:
