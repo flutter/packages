@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelectorApi {
   private static final String TAG = "FileSelectorApiImpl";
   // Request code for selecting a file.
@@ -38,15 +40,35 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   // Request code for selecting a directory.
   private static final int OPEN_DIR = 223;
 
-  @VisibleForTesting
-  abstract static class OnResultListener {
+  private final TestProxy testProxy;
+  @Nullable private ActivityPluginBinding activityPluginBinding;
+
+  private abstract static class OnResultListener {
     public abstract void onResult(int resultCode, @Nullable Intent data);
   }
 
-  @Nullable private ActivityPluginBinding activityPluginBinding;
+  // Proxy for instantiating Android classes for unit tests.
+  @VisibleForTesting
+  static class TestProxy {
+    @NonNull
+    Intent newIntent(@NonNull String action) {
+      return new Intent(action);
+    }
+
+    @NonNull
+    DataInputStream newDataInputStream(InputStream inputStream) {
+      return new DataInputStream(inputStream);
+    }
+  }
 
   public FileSelectorApiImpl(@NonNull ActivityPluginBinding activityPluginBinding) {
+    this(activityPluginBinding, new TestProxy());
+  }
+
+  @VisibleForTesting
+  FileSelectorApiImpl(@NonNull ActivityPluginBinding activityPluginBinding, @NonNull TestProxy testProxy) {
     this.activityPluginBinding = activityPluginBinding;
+    this.testProxy = testProxy;
   }
 
   @Override
@@ -55,7 +77,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       @NonNull List<String> mimeTypes,
       @NonNull List<String> extensions,
       @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
-    final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+    final Intent intent = testProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
     setMimeTypes(intent, mimeTypes, extensions);
@@ -95,7 +117,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       @NonNull List<String> extensions,
       @NonNull
           GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
-    final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+    final Intent intent = testProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
     intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
@@ -154,7 +176,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
           "Selecting a directory is only supported on versions >= android.os.Build.VERSION_CODES.LOLLIPOP");
     }
 
-    final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+    final Intent intent = testProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE);
     try {
       if (initialDirectory != null) {
         trySetInitialDirectory(intent, initialDirectory);
@@ -293,10 +315,11 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
     if (size != null) {
       bytes = new byte[size];
       try (InputStream inputStream = contentResolver.openInputStream(uri)) {
-        final DataInputStream dataInputStream = new DataInputStream(inputStream);
+        final DataInputStream dataInputStream = testProxy.newDataInputStream(inputStream);
         dataInputStream.readFully(bytes);
       } catch (IOException exception) {
-        Log.d(TAG, String.format("Failed to read bytes from file: %s", uri));
+        Log.w(TAG, exception.getMessage());
+        return null;
       }
     }
 
