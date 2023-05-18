@@ -1,6 +1,10 @@
 name: file_selector_android
-description: A new Flutter plugin project.
+description: Android implementation of the file_selector package.
+repository: https://github.com/flutter/packages/tree/main/packages/image_picker/file_selector_android
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+image_picker%22
+
 version: 0.0.1
+publish_to: none
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
