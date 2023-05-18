@@ -149,12 +149,9 @@ targets:
       version_file: flutter_stable.version
       target_file: ios_build_all_packages.yaml
 
-  # TODO(stuartmorgan): Change all of the ios_platform_tests_* task timeouts
-  # to 60 minutes once https://github.com/flutter/flutter/issues/119750 is
-  # fixed.
   - name: Mac_arm64 ios_platform_tests_shard_1 master
     recipe: packages/packages
-    timeout: 120
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
@@ -163,7 +160,7 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_2 master
     recipe: packages/packages
-    timeout: 120
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
@@ -172,7 +169,7 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_3 master
     recipe: packages/packages
-    timeout: 120
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
@@ -181,7 +178,7 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_4 master
     recipe: packages/packages
-    timeout: 120
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
@@ -190,7 +187,7 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_5 master
     recipe: packages/packages
-    timeout: 120
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
@@ -201,7 +198,7 @@ targets:
   - name: Mac_arm64 ios_platform_tests_shard_1 stable
     recipe: packages/packages
     presubmit: false
-    timeout: 120
+    timeout: 60
     properties:
       channel: stable
       add_recipes_cq: "true"
@@ -212,7 +209,7 @@ targets:
   - name: Mac_arm64 ios_platform_tests_shard_2 stable
     recipe: packages/packages
     presubmit: false
-    timeout: 120
+    timeout: 60
     properties:
       channel: stable
       add_recipes_cq: "true"
@@ -223,7 +220,7 @@ targets:
   - name: Mac_arm64 ios_platform_tests_shard_3 stable
     recipe: packages/packages
     presubmit: false
-    timeout: 120
+    timeout: 60
     properties:
       channel: stable
       add_recipes_cq: "true"
@@ -234,7 +231,7 @@ targets:
   - name: Mac_arm64 ios_platform_tests_shard_4 stable
     recipe: packages/packages
     presubmit: false
-    timeout: 120
+    timeout: 60
     properties:
       channel: stable
       add_recipes_cq: "true"
@@ -245,7 +242,7 @@ targets:
   - name: Mac_arm64 ios_platform_tests_shard_5 stable
     recipe: packages/packages
     presubmit: false
-    timeout: 120
+    timeout: 60
     properties:
       channel: stable
       add_recipes_cq: "true"
