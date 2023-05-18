@@ -239,9 +239,9 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
     case LAErrorBiometryNotEnrolled:
       if (options.useErrorDialogs.boolValue) {
         [self showAlertWithMessage:strings.goToSettingsDescription
-                       firstButton:strings.cancelButton
-                  additionalButton:strings.goToSettingsButton
-                        completion:completion];
+                 dismissButtonTitle:strings.cancelButton
+            openSettingsButtonTitle:strings.goToSettingsButton
+                         completion:completion];
         return;
       }
       result = authError.code == LAErrorPasscodeNotSet ? FLAAuthResultErrorPasscodeNotSet
@@ -249,9 +249,9 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
       break;
     case LAErrorBiometryLockout:
       [self showAlertWithMessage:strings.lockOut
-                     firstButton:strings.cancelButton
-                additionalButton:nil
-                      completion:completion];
+               dismissButtonTitle:strings.cancelButton
+          openSettingsButtonTitle:nil
+                       completion:completion];
       return;
   }
   completion([FLAAuthResultDetails makeWithResult:result
