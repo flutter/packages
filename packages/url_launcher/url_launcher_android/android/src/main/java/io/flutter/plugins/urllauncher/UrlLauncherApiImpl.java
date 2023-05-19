@@ -44,7 +44,9 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
 
   @Override
   public @NonNull Boolean canLaunchUrl(@NonNull String url) {
-    String componentName = urlLauncher.getViewerComponentName(Uri.parse(url));
+    Intent launchIntent = new Intent(Intent.ACTION_VIEW);
+    launchIntent.setData(Uri.parse(url));
+    String componentName = urlLauncher.getHandlerComponentName(launchIntent);
     if (BuildConfig.DEBUG) {
       Log.i(TAG, "component name for " + url + " is " + componentName);
     }

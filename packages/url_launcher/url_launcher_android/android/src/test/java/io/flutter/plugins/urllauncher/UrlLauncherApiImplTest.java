@@ -17,6 +17,10 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
@@ -45,10 +49,13 @@ public class UrlLauncherApiImplTest {
     UrlLauncherApiImpl api =
         new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     Uri url = Uri.parse("https://flutter.dev");
-    when(urlLauncher.getViewerComponentName(url)).thenReturn("some.component");
+    when(urlLauncher.getHandlerComponentName(any())).thenReturn("some.component");
 
     Boolean result = api.canLaunchUrl(url.toString());
 
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(urlLauncher).getHandlerComponentName(intentCaptor.capture());
+    assertEquals(url, intentCaptor.getValue().getData());
     assertTrue(result);
   }
 
@@ -58,10 +65,13 @@ public class UrlLauncherApiImplTest {
     UrlLauncherApiImpl api =
         new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     Uri url = Uri.parse("https://flutter.dev");
-    when(urlLauncher.getViewerComponentName(url)).thenReturn(null);
+    when(urlLauncher.getHandlerComponentName(any())).thenReturn(null);
 
     Boolean result = api.canLaunchUrl(url.toString());
 
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(urlLauncher).getHandlerComponentName(intentCaptor.capture());
+    assertEquals(url, intentCaptor.getValue().getData());
     assertFalse(result);
   }
 
@@ -71,11 +81,14 @@ public class UrlLauncherApiImplTest {
     UrlLauncherApiImpl api =
         new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     Uri url = Uri.parse("https://flutter.dev");
-    when(urlLauncher.getViewerComponentName(url))
+    when(urlLauncher.getHandlerComponentName(any()))
         .thenReturn("{com.android.fallback/com.android.fallback.Fallback}");
 
     Boolean result = api.canLaunchUrl(url.toString());
 
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(urlLauncher).getHandlerComponentName(intentCaptor.capture());
+    assertEquals(url, intentCaptor.getValue().getData());
     assertFalse(result);
   }
 

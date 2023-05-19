@@ -27,13 +27,11 @@ class UrlLauncher {
     this.applicationContext = applicationContext;
   }
 
-  /** Returns the component name that {@code url} resolves to for viewing, if any. */
+  /** Returns the component name that will handle {@code intent}, if any. */
   @Nullable
-  String getViewerComponentName(@NonNull Uri url) {
-    Intent launchIntent = new Intent(Intent.ACTION_VIEW);
-    launchIntent.setData(url);
+  String getHandlerComponentName(@NonNull Intent intent) {
     ComponentName componentName =
-        launchIntent.resolveActivity(applicationContext.getPackageManager());
+        intent.resolveActivity(applicationContext.getPackageManager());
     return componentName == null ? null : componentName.toShortString();
   }
 }
