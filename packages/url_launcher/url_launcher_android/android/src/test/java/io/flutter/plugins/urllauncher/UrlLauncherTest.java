@@ -6,6 +6,7 @@ package io.flutter.plugins.urllauncher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -21,8 +22,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
 import androidx.test.core.app.ApplicationProvider;
-import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
-import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
 import java.util.HashMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,13 +78,15 @@ public class UrlLauncherTest {
   }
 
   @Test
-  public void launch_returnsNoCurrentActivity() {
+  public void launch_throwsForNoCurrentActivity() {
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(null);
 
-    LaunchStatusWrapper result = api.launchUrl("https://flutter.dev", new HashMap<>());
-
-    assertEquals(LaunchStatus.NO_CURRENT_ACTIVITY, result.getValue());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> api.launchUrl("https://flutter.dev", new HashMap<>()));
+    assertEquals("NO_ACTIVITY", exception.code);
   }
 
   @Test
@@ -96,24 +97,23 @@ public class UrlLauncherTest {
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
-    LaunchStatusWrapper result = api.launchUrl(url, new HashMap<>());
+    api.launchUrl("https://flutter.dev", new HashMap<>());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
-    assertEquals(LaunchStatus.NO_HANDLING_ACTIVITY, result.getValue());
     assertEquals(url, intentCaptor.getValue().getData().toString());
   }
 
   @Test
-  public void launch_returnsNoHandlingActivity() {
+  public void launch_returnsFalse() {
     Activity activity = mock(Activity.class);
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
-    LaunchStatusWrapper result = api.launchUrl("https://flutter.dev", new HashMap<>());
+    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>());
 
-    assertEquals(LaunchStatus.NO_HANDLING_ACTIVITY, result.getValue());
+    assertFalse(result);
   }
 
   @Test
@@ -122,9 +122,9 @@ public class UrlLauncherTest {
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
 
-    LaunchStatusWrapper result = api.launchUrl("https://flutter.dev", new HashMap<>());
+    boolean result = api.launchUrl("https://flutter.dev", new HashMap<>());
 
-    assertEquals(LaunchStatus.SUCCESS, result.getValue());
+    assertTrue(result);
   }
 
   @Test
@@ -136,7 +136,7 @@ public class UrlLauncherTest {
     boolean enableJavaScript = false;
     boolean enableDomStorage = false;
 
-    LaunchStatusWrapper result =
+    boolean result =
         api.openUrlInWebView(
             url,
             new Messages.WebViewOptions.Builder()
@@ -147,7 +147,7 @@ public class UrlLauncherTest {
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
-    assertEquals(LaunchStatus.SUCCESS, result.getValue());
+    assertTrue(result);
     assertEquals(url, intentCaptor.getValue().getExtras().getString(WebViewActivity.URL_EXTRA));
     assertEquals(
         enableJavaScript,
@@ -230,30 +230,32 @@ public class UrlLauncherTest {
   }
 
   @Test
-  public void openWebView_returnsNoCurrentActivity() {
+  public void openWebView_throwsForNoCurrentActivity() {
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(null);
 
-    LaunchStatusWrapper result =
-        api.openUrlInWebView(
-            "https://flutter.dev",
-            new Messages.WebViewOptions.Builder()
-                .setEnableJavaScript(false)
-                .setEnableDomStorage(false)
-                .setHeaders(new HashMap<>())
-                .build());
-
-    assertEquals(LaunchStatus.NO_CURRENT_ACTIVITY, result.getValue());
+    Messages.FlutterError exception =
+        assertThrows(
+            Messages.FlutterError.class,
+            () ->
+                api.openUrlInWebView(
+                    "https://flutter.dev",
+                    new Messages.WebViewOptions.Builder()
+                        .setEnableJavaScript(false)
+                        .setEnableDomStorage(false)
+                        .setHeaders(new HashMap<>())
+                        .build()));
+    assertEquals("NO_ACTIVITY", exception.code);
   }
 
   @Test
-  public void openWebView_returnsNoHandlingActivity() {
+  public void openWebView_returnsFalse() {
     Activity activity = mock(Activity.class);
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
-    LaunchStatusWrapper result =
+    boolean result =
         api.openUrlInWebView(
             "https://flutter.dev",
             new Messages.WebViewOptions.Builder()
@@ -262,7 +264,7 @@ public class UrlLauncherTest {
                 .setHeaders(new HashMap<>())
                 .build());
 
-    assertEquals(LaunchStatus.NO_HANDLING_ACTIVITY, result.getValue());
+    assertFalse(result);
   }
 
   @Test

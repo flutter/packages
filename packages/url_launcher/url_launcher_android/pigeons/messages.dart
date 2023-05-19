@@ -11,25 +11,6 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-/// Possible responses for launching a URL.
-enum LaunchStatus {
-  /// The URL was launched successfully.
-  success,
-
-  /// There is no current activity to launch from.
-  noCurrentActivity,
-
-  /// No activity was found to handle the launch intent.
-  noHandlingActivity,
-}
-
-// TODO(stuartmorgan): Remove this when
-// https://github.com/flutter/flutter/issues/87307 is implemented.
-class LaunchStatusWrapper {
-  LaunchStatusWrapper({required this.value});
-  final LaunchStatus value;
-}
-
 /// Configuration options for an in-app WebView.
 class WebViewOptions {
   const WebViewOptions(
@@ -50,11 +31,11 @@ abstract class UrlLauncherApi {
   bool canLaunchUrl(String url);
 
   /// Opens the URL externally, returning true if successful.
-  LaunchStatusWrapper launchUrl(String url, Map<String, String> headers);
+  bool launchUrl(String url, Map<String, String> headers);
 
-  /// Opens the URL in an in-app WebView, returning true when it has loaded
+  /// Opens the URL in an in-app WebView, returning true if it opens
   /// successfully.
-  LaunchStatusWrapper openUrlInWebView(String url, WebViewOptions options);
+  bool openUrlInWebView(String url, WebViewOptions options);
 
   /// Closes the view opened by [openUrlInSafariViewController].
   void closeWebView();

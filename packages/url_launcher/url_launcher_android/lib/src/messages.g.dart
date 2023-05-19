@@ -11,39 +11,6 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-/// Possible responses for launching a URL.
-enum LaunchStatus {
-  /// The URL was launched successfully.
-  success,
-
-  /// There is no current activity to launch from.
-  noCurrentActivity,
-
-  /// No activity was found to handle the launch intent.
-  noHandlingActivity,
-}
-
-class LaunchStatusWrapper {
-  LaunchStatusWrapper({
-    required this.value,
-  });
-
-  LaunchStatus value;
-
-  Object encode() {
-    return <Object?>[
-      value.index,
-    ];
-  }
-
-  static LaunchStatusWrapper decode(Object result) {
-    result as List<Object?>;
-    return LaunchStatusWrapper(
-      value: LaunchStatus.values[result[0]! as int],
-    );
-  }
-}
-
 /// Configuration options for an in-app WebView.
 class WebViewOptions {
   WebViewOptions({
@@ -80,11 +47,8 @@ class _UrlLauncherApiCodec extends StandardMessageCodec {
   const _UrlLauncherApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is LaunchStatusWrapper) {
+    if (value is WebViewOptions) {
       buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is WebViewOptions) {
-      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -95,8 +59,6 @@ class _UrlLauncherApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return LaunchStatusWrapper.decode(readValue(buffer)!);
-      case 129:
         return WebViewOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -143,7 +105,7 @@ class UrlLauncherApi {
   }
 
   /// Opens the URL externally, returning true if successful.
-  Future<LaunchStatusWrapper> launchUrl(
+  Future<bool> launchUrl(
       String arg_url, Map<String?, String?> arg_headers) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UrlLauncherApi.launchUrl', codec,
@@ -167,13 +129,13 @@ class UrlLauncherApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as LaunchStatusWrapper?)!;
+      return (replyList[0] as bool?)!;
     }
   }
 
-  /// Opens the URL in an in-app WebView, returning true when it has loaded
+  /// Opens the URL in an in-app WebView, returning true if it opens
   /// successfully.
-  Future<LaunchStatusWrapper> openUrlInWebView(
+  Future<bool> openUrlInWebView(
       String arg_url, WebViewOptions arg_options) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UrlLauncherApi.openUrlInWebView', codec,
@@ -197,7 +159,7 @@ class UrlLauncherApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as LaunchStatusWrapper?)!;
+      return (replyList[0] as bool?)!;
     }
   }
 

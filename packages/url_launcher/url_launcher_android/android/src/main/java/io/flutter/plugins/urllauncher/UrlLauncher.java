@@ -16,8 +16,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
-import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
 import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
 import java.util.Map;
@@ -77,11 +75,9 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull LaunchStatusWrapper launchUrl(
-      @NonNull String url, @NonNull Map<String, String> headers) {
-    if (activity == null) {
-      return wrapLaunchStatus(LaunchStatus.NO_CURRENT_ACTIVITY);
-    }
+  public @NonNull Boolean launchUrl(@NonNull String url, @NonNull Map<String, String> headers) {
+    ensureActivity();
+    assert activity != null;
 
     Intent launchIntent =
         new Intent(Intent.ACTION_VIEW)
@@ -90,18 +86,16 @@ final class UrlLauncher implements UrlLauncherApi {
     try {
       activity.startActivity(launchIntent);
     } catch (ActivityNotFoundException e) {
-      return wrapLaunchStatus(LaunchStatus.NO_HANDLING_ACTIVITY);
+      return false;
     }
 
-    return wrapLaunchStatus(LaunchStatus.SUCCESS);
+    return true;
   }
 
   @Override
-  public @NonNull LaunchStatusWrapper openUrlInWebView(
-      @NonNull String url, @NonNull WebViewOptions options) {
-    if (activity == null) {
-      return wrapLaunchStatus(LaunchStatus.NO_CURRENT_ACTIVITY);
-    }
+  public @NonNull Boolean openUrlInWebView(@NonNull String url, @NonNull WebViewOptions options) {
+    ensureActivity();
+    assert activity != null;
 
     Intent launchIntent =
         WebViewActivity.createIntent(
@@ -113,10 +107,10 @@ final class UrlLauncher implements UrlLauncherApi {
     try {
       activity.startActivity(launchIntent);
     } catch (ActivityNotFoundException e) {
-      return wrapLaunchStatus(LaunchStatus.NO_HANDLING_ACTIVITY);
+      return false;
     }
 
-    return wrapLaunchStatus(LaunchStatus.SUCCESS);
+    return true;
   }
 
   @Override
@@ -133,7 +127,10 @@ final class UrlLauncher implements UrlLauncherApi {
     return headersBundle;
   }
 
-  private LaunchStatusWrapper wrapLaunchStatus(@NonNull LaunchStatus status) {
-    return new LaunchStatusWrapper.Builder().setValue(status).build();
+  private void ensureActivity() {
+    if (activity == null) {
+      throw new Messages.FlutterError(
+          "NO_ACTIVITY", "Launching a URL requires a foreground activity.", null);
+    }
   }
 }

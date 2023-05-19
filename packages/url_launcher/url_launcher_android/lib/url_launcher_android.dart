@@ -62,34 +62,26 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) async {
-    final LaunchStatus status;
+    final bool succeeded;
     if (useWebView) {
-      status = (await _hostApi.openUrlInWebView(
-              url,
-              WebViewOptions(
-                  enableJavaScript: enableJavaScript,
-                  enableDomStorage: enableDomStorage,
-                  headers: headers)))
-          .value;
+      succeeded = await _hostApi.openUrlInWebView(
+          url,
+          WebViewOptions(
+              enableJavaScript: enableJavaScript,
+              enableDomStorage: enableDomStorage,
+              headers: headers));
     } else {
-      status = (await _hostApi.launchUrl(url, headers)).value;
+      succeeded = await _hostApi.launchUrl(url, headers);
     }
-    // TODO(stuartmorgan): Convert noHandlingActivity to returning false, and
-    // noCurrentActivity to a more generic structured error, as part of a
+    // TODO(stuartmorgan): Remove this special handling as part of a
     // breaking change to rework failure handling across all platform. The
-    // current behavior is backwards compatible with previous Java errors.
-    switch (status) {
-      case LaunchStatus.success:
-        return true;
-      case LaunchStatus.noCurrentActivity:
-        throw PlatformException(
-            code: 'NO_ACTIVITY',
-            message: 'Launching a URL requires a foreground activity.');
-      case LaunchStatus.noHandlingActivity:
-        throw PlatformException(
-            code: 'ACTIVITY_NOT_FOUND',
-            message: 'No Activity found to handle intent { $url }');
+    // current behavior is backwards compatible with the previous Java error.
+    if (!succeeded) {
+      throw PlatformException(
+          code: 'ACTIVITY_NOT_FOUND',
+          message: 'No Activity found to handle intent { $url }');
     }
+    return succeeded;
   }
 
   // Returns the part of [url] up to the first ':', or an empty string if there

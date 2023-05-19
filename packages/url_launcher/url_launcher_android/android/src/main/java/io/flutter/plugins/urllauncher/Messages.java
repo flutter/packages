@@ -55,71 +55,6 @@ public class Messages {
     return errorList;
   }
 
-  /** Possible responses for launching a URL. */
-  public enum LaunchStatus {
-    /** The URL was launched successfully. */
-    SUCCESS(0),
-    /** There is no current activity to launch from. */
-    NO_CURRENT_ACTIVITY(1),
-    /** No activity was found to handle the launch intent. */
-    NO_HANDLING_ACTIVITY(2);
-
-    final int index;
-
-    private LaunchStatus(final int index) {
-      this.index = index;
-    }
-  }
-
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class LaunchStatusWrapper {
-    private @NonNull LaunchStatus value;
-
-    public @NonNull LaunchStatus getValue() {
-      return value;
-    }
-
-    public void setValue(@NonNull LaunchStatus setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"value\" is null.");
-      }
-      this.value = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    LaunchStatusWrapper() {}
-
-    public static final class Builder {
-
-      private @Nullable LaunchStatus value;
-
-      public @NonNull Builder setValue(@NonNull LaunchStatus setterArg) {
-        this.value = setterArg;
-        return this;
-      }
-
-      public @NonNull LaunchStatusWrapper build() {
-        LaunchStatusWrapper pigeonReturn = new LaunchStatusWrapper();
-        pigeonReturn.setValue(value);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
-      toListResult.add(value == null ? null : value.index);
-      return toListResult;
-    }
-
-    static @NonNull LaunchStatusWrapper fromList(@NonNull ArrayList<Object> list) {
-      LaunchStatusWrapper pigeonResult = new LaunchStatusWrapper();
-      Object value = list.get(0);
-      pigeonResult.setValue(value == null ? null : LaunchStatus.values()[(int) value]);
-      return pigeonResult;
-    }
-  }
-
   /**
    * Configuration options for an in-app WebView.
    *
@@ -230,8 +165,6 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return LaunchStatusWrapper.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
           return WebViewOptions.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -240,11 +173,8 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof LaunchStatusWrapper) {
+      if (value instanceof WebViewOptions) {
         stream.write(128);
-        writeValue(stream, ((LaunchStatusWrapper) value).toList());
-      } else if (value instanceof WebViewOptions) {
-        stream.write(129);
         writeValue(stream, ((WebViewOptions) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -259,10 +189,10 @@ public class Messages {
     Boolean canLaunchUrl(@NonNull String url);
     /** Opens the URL externally, returning true if successful. */
     @NonNull
-    LaunchStatusWrapper launchUrl(@NonNull String url, @NonNull Map<String, String> headers);
-    /** Opens the URL in an in-app WebView, returning true when it has loaded successfully. */
+    Boolean launchUrl(@NonNull String url, @NonNull Map<String, String> headers);
+    /** Opens the URL in an in-app WebView, returning true if it opens successfully. */
     @NonNull
-    LaunchStatusWrapper openUrlInWebView(@NonNull String url, @NonNull WebViewOptions options);
+    Boolean openUrlInWebView(@NonNull String url, @NonNull WebViewOptions options);
     /** Closes the view opened by [openUrlInSafariViewController]. */
     void closeWebView();
 
@@ -307,7 +237,7 @@ public class Messages {
                 String urlArg = (String) args.get(0);
                 Map<String, String> headersArg = (Map<String, String>) args.get(1);
                 try {
-                  LaunchStatusWrapper output = api.launchUrl(urlArg, headersArg);
+                  Boolean output = api.launchUrl(urlArg, headersArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -331,7 +261,7 @@ public class Messages {
                 String urlArg = (String) args.get(0);
                 WebViewOptions optionsArg = (WebViewOptions) args.get(1);
                 try {
-                  LaunchStatusWrapper output = api.openUrlInWebView(urlArg, optionsArg);
+                  Boolean output = api.openUrlInWebView(urlArg, optionsArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

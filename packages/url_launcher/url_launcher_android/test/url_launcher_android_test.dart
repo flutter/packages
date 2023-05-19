@@ -84,7 +84,7 @@ void main() {
       expect(api.passedWebViewOptions?.headers['key'], 'value');
     });
 
-    test('throws if there is no current activity', () async {
+    test('passes through no-activity exception', () async {
       final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
       expectLater(
           launcher.launch(
@@ -96,8 +96,7 @@ void main() {
             universalLinksOnly: false,
             headers: const <String, String>{},
           ),
-          throwsA(isA<PlatformException>()
-              .having((PlatformException e) => e.code, 'code', 'NO_ACTIVITY')));
+          throwsA(isA<PlatformException>()));
     });
 
     test('throws if there is no handling activity', () async {
@@ -166,7 +165,7 @@ void main() {
       expect(api.passedWebViewOptions?.enableDomStorage, true);
     });
 
-    test('throws if there is no current activity', () async {
+    test('passes through no-activity exception', () async {
       final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
       expectLater(
           launcher.launch(
@@ -178,8 +177,7 @@ void main() {
             universalLinksOnly: false,
             headers: const <String, String>{},
           ),
-          throwsA(isA<PlatformException>()
-              .having((PlatformException e) => e.code, 'code', 'NO_ACTIVITY')));
+          throwsA(isA<PlatformException>()));
     });
 
     test('throws if there is no handling activity', () async {
@@ -222,20 +220,15 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
 
   @override
   Future<bool> canLaunchUrl(String url) async {
-    try {
-      return _launch(url) == LaunchStatus.success;
-    } on PlatformException {
-      return false;
-    }
+    return _launch(url);
   }
 
   @override
-  Future<LaunchStatusWrapper> launchUrl(
-      String url, Map<String?, String?> headers) async {
+  Future<bool> launchUrl(String url, Map<String?, String?> headers) async {
     passedWebViewOptions = WebViewOptions(
         enableJavaScript: false, enableDomStorage: false, headers: headers);
     usedWebView = false;
-    return LaunchStatusWrapper(value: _launch(url));
+    return _launch(url);
   }
 
   @override
@@ -244,25 +237,22 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   }
 
   @override
-  Future<LaunchStatusWrapper> openUrlInWebView(
-      String url, WebViewOptions options) async {
+  Future<bool> openUrlInWebView(String url, WebViewOptions options) async {
     passedWebViewOptions = options;
     usedWebView = true;
-    return LaunchStatusWrapper(value: _launch(url));
+    return _launch(url);
   }
 
-  LaunchStatus _launch(String url) {
+  bool _launch(String url) {
     final String scheme = url.split(':')[0];
     switch (scheme) {
       case 'http':
       case 'https':
-        return url.contains(specialHandlerDomain)
-            ? LaunchStatus.noHandlingActivity
-            : LaunchStatus.success;
+        return !url.contains(specialHandlerDomain);
       case 'noactivity':
-        return LaunchStatus.noCurrentActivity;
+        throw PlatformException(code: 'NO_ACTIVITY');
       default:
-        return LaunchStatus.noHandlingActivity;
+        return false;
     }
   }
 }
