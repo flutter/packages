@@ -10,12 +10,12 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -101,7 +101,7 @@ public class UrlLauncherApiImplTest {
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
     assertEquals(LaunchStatus.NO_HANDLING_ACTIVITY, result.getValue());
-    assertEquals(intentCaptor.getValue().getData().toString(), url);
+    assertEquals(url, intentCaptor.getValue().getData().toString());
   }
 
   @Test
@@ -116,7 +116,7 @@ public class UrlLauncherApiImplTest {
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
     assertEquals(LaunchStatus.SUCCESS, result.getValue());
-    assertEquals(intentCaptor.getValue().getData().toString(), url);
+    assertEquals(url, intentCaptor.getValue().getData().toString());
   }
 
   @Test
@@ -140,13 +140,13 @@ public class UrlLauncherApiImplTest {
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
     assertEquals(LaunchStatus.SUCCESS, result.getValue());
-    assertEquals(intentCaptor.getValue().getExtras().getString(WebViewActivity.URL_EXTRA), url);
+    assertEquals(url, intentCaptor.getValue().getExtras().getString(WebViewActivity.URL_EXTRA));
     assertEquals(
-        intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_JS_EXTRA),
-        enableJavaScript);
+        enableJavaScript,
+        intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_JS_EXTRA));
     assertEquals(
-        intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_DOM_EXTRA),
-        enableDomStorage);
+        enableDomStorage,
+        intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_DOM_EXTRA));
   }
 
   @Test
@@ -168,8 +168,8 @@ public class UrlLauncherApiImplTest {
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
     assertEquals(
-        intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_JS_EXTRA),
-        enableJavaScript);
+        enableJavaScript,
+        intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_JS_EXTRA));
   }
 
   @Test
@@ -220,8 +220,8 @@ public class UrlLauncherApiImplTest {
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
     assertEquals(
-        intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_DOM_EXTRA),
-        enableDomStorage);
+        enableDomStorage,
+        intentCaptor.getValue().getExtras().getBoolean(WebViewActivity.ENABLE_DOM_EXTRA));
   }
 
   @Test
@@ -264,11 +264,14 @@ public class UrlLauncherApiImplTest {
 
   @Test
   public void closeWebView_closes() {
-    urlLauncher = mock(UrlLauncher.class);
+    Context context = mock(Context.class);
+    urlLauncher = new UrlLauncher(context);
     UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
 
     api.closeWebView();
 
-    verify(urlLauncher, times(1)).closeWebView();
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(context).sendBroadcast(intentCaptor.capture());
+    assertEquals(WebViewActivity.ACTION_CLOSE, intentCaptor.getValue().getAction());
   }
 }
