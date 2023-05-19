@@ -6,16 +6,13 @@ package io.flutter.plugins.urllauncher;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
@@ -53,8 +50,7 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
       return false;
     } else {
       // Ignore the emulator fallback activity.
-      return !"{com.android.fallback/com.android.fallback.Fallback}"
-              .equals(componentName);
+      return !"{com.android.fallback/com.android.fallback.Fallback}".equals(componentName);
     }
   }
 
@@ -66,9 +62,9 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
     }
 
     Intent launchIntent =
-            new Intent(Intent.ACTION_VIEW)
-                    .setData(Uri.parse(url))
-                    .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
+        new Intent(Intent.ACTION_VIEW)
+            .setData(Uri.parse(url))
+            .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
     try {
       activity.startActivity(launchIntent);
     } catch (ActivityNotFoundException e) {
@@ -81,13 +77,24 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
   @Override
   public @NonNull LaunchStatusWrapper openUrlInWebView(
       @NonNull String url, @NonNull WebViewOptions options) {
-    LaunchStatus launchStatus =
-        urlLauncher.openWebView(
+    if (activity == null) {
+      return wrapLaunchStatus(LaunchStatus.NO_CURRENT_ACTIVITY);
+    }
+
+    Intent launchIntent =
+        WebViewActivity.createIntent(
+            activity,
             url,
-            extractBundle(options.getHeaders()),
             options.getEnableJavaScript(),
-            options.getEnableDomStorage());
-    return new LaunchStatusWrapper.Builder().setValue(launchStatus).build();
+            options.getEnableDomStorage(),
+            extractBundle(options.getHeaders()));
+    try {
+      activity.startActivity(launchIntent);
+    } catch (ActivityNotFoundException e) {
+      return wrapLaunchStatus(LaunchStatus.NO_HANDLING_ACTIVITY);
+    }
+
+    return wrapLaunchStatus(LaunchStatus.SUCCESS);
   }
 
   @Override

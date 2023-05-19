@@ -37,7 +37,8 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    final UrlLauncher urlLauncher = new UrlLauncher(binding.getApplicationContext(), /*activity=*/ null);
+    final UrlLauncher urlLauncher =
+        new UrlLauncher(binding.getApplicationContext(), /*activity=*/ null);
     urlLauncherApi = new UrlLauncherApiImpl(urlLauncher);
     Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncherApi);
   }
