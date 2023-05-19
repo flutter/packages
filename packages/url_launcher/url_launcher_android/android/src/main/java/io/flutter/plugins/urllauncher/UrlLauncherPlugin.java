@@ -18,7 +18,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
  */
 public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   private static final String TAG = "UrlLauncherPlugin";
-  @Nullable private UrlLauncher urlLauncherApi;
+  @Nullable private UrlLauncher urlLauncher;
 
   /**
    * Registers a plugin implementation that uses the stable {@code io.flutter.plugin.common}
@@ -37,37 +37,37 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    urlLauncherApi = new UrlLauncher(binding.getApplicationContext());
-    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncherApi);
+    urlLauncher = new UrlLauncher(binding.getApplicationContext());
+    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncher);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    if (urlLauncherApi == null) {
+    if (urlLauncher == null) {
       Log.wtf(TAG, "Already detached from the engine.");
       return;
     }
 
     Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), null);
-    urlLauncherApi = null;
+    urlLauncher = null;
   }
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-    if (urlLauncherApi == null) {
+    if (urlLauncher == null) {
       Log.wtf(TAG, "urlLauncher was never set.");
       return;
     }
-    urlLauncherApi.setActivity(binding.getActivity());
+    urlLauncher.setActivity(binding.getActivity());
   }
 
   @Override
   public void onDetachedFromActivity() {
-    if (urlLauncherApi == null) {
+    if (urlLauncher == null) {
       Log.wtf(TAG, "urlLauncher was never set.");
       return;
     }
-    urlLauncherApi.setActivity(null);
+    urlLauncher.setActivity(null);
   }
 
   @Override
