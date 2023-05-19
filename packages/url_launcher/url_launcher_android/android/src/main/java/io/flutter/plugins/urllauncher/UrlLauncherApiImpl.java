@@ -6,6 +6,7 @@ package io.flutter.plugins.urllauncher;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,28 +15,45 @@ import android.provider.Browser;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatus;
 import io.flutter.plugins.urllauncher.Messages.LaunchStatusWrapper;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
 import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
 import java.util.Map;
 
-/**
- * Translates incoming UrlLauncher MethodCalls into well formed Java function calls for {@link
- * UrlLauncher}.
- */
+/** Implements the Pigeon-defined interface for calls from Dart. */
 final class UrlLauncherApiImpl implements UrlLauncherApi {
+  @VisibleForTesting
+  interface IntentResolver {
+    String getHandlerComponentName(@NonNull Intent intent);
+  }
+
   private static final String TAG = "UrlLauncher";
 
-  private @Nullable Activity activity;
   private final @NonNull Context applicationContext;
 
-  private final @NonNull UrlLauncher urlLauncher;
+  private final @NonNull IntentResolver intentResolver;
 
-  /** Forwards all incoming MethodChannel calls to the given {@code urlLauncher}. */
-  UrlLauncherApiImpl(@NonNull Context context, @NonNull UrlLauncher urlLauncher) {
+  private @Nullable Activity activity;
+
+  /**
+   * Creates an instance that uses {@code intentResolver} to look up the handler for intents. This
+   * is to allow injecting an alternate resolver for unit testing.
+   */
+  @VisibleForTesting
+  UrlLauncherApiImpl(@NonNull Context context, @NonNull IntentResolver intentResolver) {
     this.applicationContext = context;
-    this.urlLauncher = urlLauncher;
+    this.intentResolver = intentResolver;
+  }
+
+  UrlLauncherApiImpl(@NonNull Context context) {
+    this(
+        context,
+        intent -> {
+          ComponentName componentName = intent.resolveActivity(context.getPackageManager());
+          return componentName == null ? null : componentName.toShortString();
+        });
   }
 
   void setActivity(@Nullable Activity activity) {
@@ -46,7 +64,7 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
   public @NonNull Boolean canLaunchUrl(@NonNull String url) {
     Intent launchIntent = new Intent(Intent.ACTION_VIEW);
     launchIntent.setData(Uri.parse(url));
-    String componentName = urlLauncher.getHandlerComponentName(launchIntent);
+    String componentName = intentResolver.getHandlerComponentName(launchIntent);
     if (BuildConfig.DEBUG) {
       Log.i(TAG, "component name for " + url + " is " + componentName);
     }
@@ -104,7 +122,6 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
   @Override
   public void closeWebView() {
     applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
-    ;
   }
 
   private static @NonNull Bundle extractBundle(Map<String, String> headersMap) {
