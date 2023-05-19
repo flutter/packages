@@ -45,21 +45,83 @@ class UnsupportedType extends GoRouteData {
 }
 
 @ShouldThrow(
-  'Required parameters cannot be nullable.',
+  'Required parameters in the path cannot be nullable.',
 )
-@TypedGoRoute<NullableRequiredParam>(path: 'bob/:id')
-class NullableRequiredParam extends GoRouteData {
-  NullableRequiredParam({required this.id});
+@TypedGoRoute<NullableRequiredParamInPath>(path: 'bob/:id')
+class NullableRequiredParamInPath extends GoRouteData {
+  NullableRequiredParamInPath({required this.id});
   final int? id;
 }
 
-@ShouldThrow(
-  'Missing param `id` in path.',
-)
-@TypedGoRoute<MissingPathParam>(path: 'bob/')
-class MissingPathParam extends GoRouteData {
-  MissingPathParam({required this.id});
-  final String id;
+@ShouldGenerate(r'''
+RouteBase get $nullableRequiredParamNotInPath => GoRouteData.$route(
+      path: 'bob',
+      factory: $NullableRequiredParamNotInPathExtension._fromState,
+    );
+
+extension $NullableRequiredParamNotInPathExtension
+    on NullableRequiredParamNotInPath {
+  static NullableRequiredParamNotInPath _fromState(GoRouterState state) =>
+      NullableRequiredParamNotInPath(
+        id: _$convertMapValue('id', state.queryParameters, int.parse),
+      );
+
+  String get location => GoRouteData.$location(
+        'bob',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+''')
+@TypedGoRoute<NullableRequiredParamNotInPath>(path: 'bob')
+class NullableRequiredParamNotInPath extends GoRouteData {
+  NullableRequiredParamNotInPath({required this.id});
+  final int? id;
+}
+
+@ShouldGenerate(r'''
+RouteBase get $nonNullableRequiredParamNotInPath => GoRouteData.$route(
+      path: 'bob',
+      factory: $NonNullableRequiredParamNotInPathExtension._fromState,
+    );
+
+extension $NonNullableRequiredParamNotInPathExtension
+    on NonNullableRequiredParamNotInPath {
+  static NonNullableRequiredParamNotInPath _fromState(GoRouterState state) =>
+      NonNullableRequiredParamNotInPath(
+        id: int.parse(state.queryParameters['id']!),
+      );
+
+  String get location => GoRouteData.$location(
+        'bob',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+''')
+@TypedGoRoute<NonNullableRequiredParamNotInPath>(path: 'bob')
+class NonNullableRequiredParamNotInPath extends GoRouteData {
+  NonNullableRequiredParamNotInPath({required this.id});
+  final int id;
 }
 
 @ShouldGenerate(r'''
