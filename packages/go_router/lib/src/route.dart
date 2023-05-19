@@ -946,15 +946,15 @@ class StatefulNavigationShell extends StatefulWidget {
   ///
   /// This method will switch the currently active branch [Navigator] for the
   /// [StatefulShellRoute]. If the branch has not been visited before, or if
-  /// resetLocation is true, this method will navigate to initial location of
+  /// initialLocation is true, this method will navigate to initial location of
   /// the branch (see [StatefulShellBranch.initialLocation]).
-  void goBranch(int index, {bool resetLocation = false}) {
+  void goBranch(int index, {bool initialLocation = false}) {
     final StatefulShellRoute route =
         shellRouteContext.route as StatefulShellRoute;
     final StatefulNavigationShellState? shellState =
         route._shellStateKey.currentState;
     if (shellState != null) {
-      shellState.goBranch(index, resetLocation: resetLocation);
+      shellState.goBranch(index, initialLocation: initialLocation);
     } else {
       _router.go(_effectiveInitialBranchLocation(index));
     }
@@ -1110,12 +1110,12 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   ///
   /// This method will switch the currently active branch [Navigator] for the
   /// [StatefulShellRoute]. If the branch has not been visited before, or if
-  /// resetLocation is true, this method will navigate to initial location of
+  /// initialLocation is true, this method will navigate to initial location of
   /// the branch (see [StatefulShellBranch.initialLocation]).
-  void goBranch(int index, {bool resetLocation = false}) {
+  void goBranch(int index, {bool initialLocation = false}) {
     assert(index >= 0 && index < route.branches.length);
     final RouteMatchList? matchlist =
-        resetLocation ? null : _matchListForBranch(index);
+        initialLocation ? null : _matchListForBranch(index);
     if (matchlist != null && matchlist.isNotEmpty) {
       final RouteInformation preParsed =
           matchlist.toPreParsedRouteInformation();
