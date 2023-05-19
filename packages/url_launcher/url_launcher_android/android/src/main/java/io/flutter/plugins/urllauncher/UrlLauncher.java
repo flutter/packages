@@ -23,7 +23,7 @@ import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
 import java.util.Map;
 
 /** Implements the Pigeon-defined interface for calls from Dart. */
-final class UrlLauncherApiImpl implements UrlLauncherApi {
+final class UrlLauncher implements UrlLauncherApi {
   @VisibleForTesting
   interface IntentResolver {
     String getHandlerComponentName(@NonNull Intent intent);
@@ -42,12 +42,12 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
    * is to allow injecting an alternate resolver for unit testing.
    */
   @VisibleForTesting
-  UrlLauncherApiImpl(@NonNull Context context, @NonNull IntentResolver intentResolver) {
+  UrlLauncher(@NonNull Context context, @NonNull IntentResolver intentResolver) {
     this.applicationContext = context;
     this.intentResolver = intentResolver;
   }
 
-  UrlLauncherApiImpl(@NonNull Context context) {
+  UrlLauncher(@NonNull Context context) {
     this(
         context,
         intent -> {

@@ -18,7 +18,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
  */
 public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   private static final String TAG = "UrlLauncherPlugin";
-  @Nullable private UrlLauncherApiImpl urlLauncherApi;
+  @Nullable private UrlLauncher urlLauncherApi;
 
   /**
    * Registers a plugin implementation that uses the stable {@code io.flutter.plugin.common}
@@ -30,14 +30,14 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   @SuppressWarnings("deprecation")
   public static void registerWith(
       @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    UrlLauncherApiImpl handler = new UrlLauncherApiImpl(registrar.context());
+    UrlLauncher handler = new UrlLauncher(registrar.context());
     handler.setActivity(registrar.activity());
     Messages.UrlLauncherApi.setup(registrar.messenger(), handler);
   }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    urlLauncherApi = new UrlLauncherApiImpl(binding.getApplicationContext());
+    urlLauncherApi = new UrlLauncher(binding.getApplicationContext());
     Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncherApi);
   }
 
