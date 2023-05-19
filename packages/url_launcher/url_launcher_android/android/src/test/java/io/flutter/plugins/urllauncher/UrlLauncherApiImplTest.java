@@ -32,7 +32,6 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class UrlLauncherApiImplTest {
-  private static final String CHANNEL_NAME = "plugins.flutter.io/url_launcher_android";
   private UrlLauncher urlLauncher;
 
   @Before
@@ -43,7 +42,8 @@ public class UrlLauncherApiImplTest {
   @Test
   public void canLaunch_returnsTrue() {
     urlLauncher = mock(UrlLauncher.class);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     Uri url = Uri.parse("https://flutter.dev");
     when(urlLauncher.getViewerComponentName(url)).thenReturn("some.component");
 
@@ -55,7 +55,8 @@ public class UrlLauncherApiImplTest {
   @Test
   public void canLaunch_returnsFalse() {
     urlLauncher = mock(UrlLauncher.class);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     Uri url = Uri.parse("https://flutter.dev");
     when(urlLauncher.getViewerComponentName(url)).thenReturn(null);
 
@@ -67,7 +68,8 @@ public class UrlLauncherApiImplTest {
   @Test
   public void canLaunch_returnsFalseForEmulatorFallbackComponent() {
     urlLauncher = mock(UrlLauncher.class);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     Uri url = Uri.parse("https://flutter.dev");
     when(urlLauncher.getViewerComponentName(url))
         .thenReturn("{com.android.fallback/com.android.fallback.Fallback}");
@@ -79,7 +81,8 @@ public class UrlLauncherApiImplTest {
 
   @Test
   public void launch_returnsNoCurrentActivity() {
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(null);
     String url = "https://flutter.dev";
 
@@ -92,7 +95,8 @@ public class UrlLauncherApiImplTest {
   public void launch_returnsNoHandlingActivity() {
     Activity activity = mock(Activity.class);
     String url = "https://flutter.dev";
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
@@ -107,7 +111,8 @@ public class UrlLauncherApiImplTest {
   @Test
   public void launch_returnsTrue() {
     Activity activity = mock(Activity.class);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(activity);
     String url = "https://flutter.dev";
 
@@ -122,7 +127,8 @@ public class UrlLauncherApiImplTest {
   @Test
   public void openWebView_opensUrl() {
     Activity activity = mock(Activity.class);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(activity);
     String url = "https://flutter.dev";
     boolean enableJavaScript = false;
@@ -152,18 +158,18 @@ public class UrlLauncherApiImplTest {
   @Test
   public void openWebView_handlesEnableJavaScript() {
     Activity activity = mock(Activity.class);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(activity);
     boolean enableJavaScript = true;
 
-    LaunchStatusWrapper result =
-        api.openUrlInWebView(
-            "https://flutter.dev",
-            new Messages.WebViewOptions.Builder()
-                .setEnableJavaScript(enableJavaScript)
-                .setEnableDomStorage(false)
-                .setHeaders(new HashMap<>())
-                .build());
+    api.openUrlInWebView(
+        "https://flutter.dev",
+        new Messages.WebViewOptions.Builder()
+            .setEnableJavaScript(enableJavaScript)
+            .setEnableDomStorage(false)
+            .setHeaders(new HashMap<>())
+            .build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -175,7 +181,8 @@ public class UrlLauncherApiImplTest {
   @Test
   public void openWebView_handlesHeaders() {
     Activity activity = mock(Activity.class);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(activity);
     HashMap<String, String> headers = new HashMap<>();
     final String key1 = "key";
@@ -183,14 +190,13 @@ public class UrlLauncherApiImplTest {
     headers.put(key1, "value");
     headers.put(key2, "value2");
 
-    LaunchStatusWrapper result =
-        api.openUrlInWebView(
-            "https://flutter.dev",
-            new Messages.WebViewOptions.Builder()
-                .setEnableJavaScript(false)
-                .setEnableDomStorage(false)
-                .setHeaders(headers)
-                .build());
+    api.openUrlInWebView(
+        "https://flutter.dev",
+        new Messages.WebViewOptions.Builder()
+            .setEnableJavaScript(false)
+            .setEnableDomStorage(false)
+            .setHeaders(headers)
+            .build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -204,18 +210,18 @@ public class UrlLauncherApiImplTest {
   @Test
   public void openWebView_handlesEnableDomStorage() {
     Activity activity = mock(Activity.class);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(activity);
     boolean enableDomStorage = true;
 
-    LaunchStatusWrapper result =
-        api.openUrlInWebView(
-            "https://flutter.dev",
-            new Messages.WebViewOptions.Builder()
-                .setEnableJavaScript(false)
-                .setEnableDomStorage(enableDomStorage)
-                .setHeaders(new HashMap<>())
-                .build());
+    api.openUrlInWebView(
+        "https://flutter.dev",
+        new Messages.WebViewOptions.Builder()
+            .setEnableJavaScript(false)
+            .setEnableDomStorage(enableDomStorage)
+            .setHeaders(new HashMap<>())
+            .build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -226,9 +232,9 @@ public class UrlLauncherApiImplTest {
 
   @Test
   public void openWebView_returnsNoCurrentActivity() {
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(null);
-    String url = "https://flutter.dev";
 
     LaunchStatusWrapper result =
         api.openUrlInWebView(
@@ -245,8 +251,8 @@ public class UrlLauncherApiImplTest {
   @Test
   public void openWebView_returnsNoHandlingActivity() {
     Activity activity = mock(Activity.class);
-    String url = "https://flutter.dev";
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api =
+        new UrlLauncherApiImpl(ApplicationProvider.getApplicationContext(), urlLauncher);
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
 
@@ -266,7 +272,7 @@ public class UrlLauncherApiImplTest {
   public void closeWebView_closes() {
     Context context = mock(Context.class);
     urlLauncher = new UrlLauncher(context);
-    UrlLauncherApiImpl api = new UrlLauncherApiImpl(urlLauncher);
+    UrlLauncherApiImpl api = new UrlLauncherApiImpl(context, urlLauncher);
 
     api.closeWebView();
 

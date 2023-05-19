@@ -6,6 +6,7 @@ package io.flutter.plugins.urllauncher;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,12 +27,14 @@ import java.util.Map;
 final class UrlLauncherApiImpl implements UrlLauncherApi {
   private static final String TAG = "UrlLauncher";
 
-  @Nullable private Activity activity;
+  private @Nullable Activity activity;
+  private final @NonNull Context applicationContext;
 
   private final @NonNull UrlLauncher urlLauncher;
 
   /** Forwards all incoming MethodChannel calls to the given {@code urlLauncher}. */
-  UrlLauncherApiImpl(@NonNull UrlLauncher urlLauncher) {
+  UrlLauncherApiImpl(@NonNull Context context, @NonNull UrlLauncher urlLauncher) {
+    this.applicationContext = context;
     this.urlLauncher = urlLauncher;
   }
 
@@ -98,7 +101,8 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
 
   @Override
   public void closeWebView() {
-    urlLauncher.closeWebView();
+    applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
+    ;
   }
 
   private static @NonNull Bundle extractBundle(Map<String, String> headersMap) {

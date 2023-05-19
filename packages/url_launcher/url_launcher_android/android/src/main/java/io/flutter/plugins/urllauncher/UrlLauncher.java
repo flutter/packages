@@ -36,9 +36,4 @@ class UrlLauncher {
         launchIntent.resolveActivity(applicationContext.getPackageManager());
     return componentName == null ? null : componentName.toShortString();
   }
-
-  /** Closes any activities started with {@link #openWebView}. */
-  void closeWebView() {
-    applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
-  }
 }

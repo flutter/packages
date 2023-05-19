@@ -30,7 +30,8 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   @SuppressWarnings("deprecation")
   public static void registerWith(
       @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    UrlLauncherApiImpl handler = new UrlLauncherApiImpl(new UrlLauncher(registrar.context()));
+    UrlLauncherApiImpl handler =
+        new UrlLauncherApiImpl(registrar.context(), new UrlLauncher(registrar.context()));
     handler.setActivity(registrar.activity());
     Messages.UrlLauncherApi.setup(registrar.messenger(), handler);
   }
@@ -38,7 +39,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     final UrlLauncher urlLauncher = new UrlLauncher(binding.getApplicationContext());
-    urlLauncherApi = new UrlLauncherApiImpl(urlLauncher);
+    urlLauncherApi = new UrlLauncherApiImpl(binding.getApplicationContext(), urlLauncher);
     Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncherApi);
   }
 
