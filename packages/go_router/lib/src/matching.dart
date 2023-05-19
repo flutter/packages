@@ -244,10 +244,10 @@ class RouteMatchList {
   /// Returns a pre-parsed [RouteInformation], containing a reference to this
   /// match list.
   RouteInformation toPreParsedRouteInformation() {
-    // TODO(tolo): remove this ignore and migrate the code
-    // https://github.com/flutter/flutter/issues/124045.
-    // ignore: deprecated_member_use
     return RouteInformation(
+      // TODO(tolo): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       location: uri.toString(),
       state: this,
     );
