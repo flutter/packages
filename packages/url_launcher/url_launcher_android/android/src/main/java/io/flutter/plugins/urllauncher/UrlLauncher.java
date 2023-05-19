@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.urllauncher;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,20 +18,13 @@ import androidx.annotation.Nullable;
 class UrlLauncher {
   private final Context applicationContext;
 
-  @Nullable private Activity activity;
-
   /**
    * Uses the given {@code applicationContext} for launching intents.
    *
    * <p>It may be null initially, but should be set before calling {@link #launch}.
    */
-  UrlLauncher(Context applicationContext, @Nullable Activity activity) {
+  UrlLauncher(Context applicationContext) {
     this.applicationContext = applicationContext;
-    this.activity = activity;
-  }
-
-  void setActivity(@Nullable Activity activity) {
-    this.activity = activity;
   }
 
   /** Returns the component name that {@code url} resolves to for viewing, if any. */

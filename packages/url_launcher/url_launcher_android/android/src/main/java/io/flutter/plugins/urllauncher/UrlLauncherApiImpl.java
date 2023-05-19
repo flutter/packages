@@ -37,7 +37,6 @@ final class UrlLauncherApiImpl implements UrlLauncherApi {
 
   void setActivity(@Nullable Activity activity) {
     this.activity = activity;
-    urlLauncher.setActivity(activity);
   }
 
   @Override
