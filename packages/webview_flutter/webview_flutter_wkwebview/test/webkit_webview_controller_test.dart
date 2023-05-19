@@ -143,6 +143,24 @@ void main() {
         );
       });
 
+      test('limitsNavigationsToAppBoundDomains', () {
+        final MockWKWebViewConfiguration mockConfiguration =
+            MockWKWebViewConfiguration();
+
+        WebKitWebViewControllerCreationParams(
+          webKitProxy: WebKitProxy(
+            createWebViewConfiguration: ({InstanceManager? instanceManager}) {
+              return mockConfiguration;
+            },
+          ),
+          limitsNavigationsToAppBoundDomains: true,
+        );
+
+        verify(
+          mockConfiguration.setLimitsNavigationsToAppBoundDomains(true),
+        );
+      });
+
       test('mediaTypesRequiringUserAction', () {
         final MockWKWebViewConfiguration mockConfiguration =
             MockWKWebViewConfiguration();

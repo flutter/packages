@@ -62,6 +62,24 @@
   XCTAssertNil(error);
 }
 
+- (void)testsetLimitsNavigationsToAppBoundDomains {
+  WKWebViewConfiguration *mockWebViewConfiguration = OCMClassMock([WKWebViewConfiguration class]);
+
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+  [instanceManager addDartCreatedInstance:mockWebViewConfiguration withIdentifier:0];
+
+  FWFWebViewConfigurationHostApiImpl *hostAPI = [[FWFWebViewConfigurationHostApiImpl alloc]
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+
+  FlutterError *error;
+  [hostAPI setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:@0
+                                                            isLimited:@NO
+                                                                error:&error];
+  OCMVerify([mockWebViewConfiguration setLimitsNavigationsToAppBoundDomains:NO]);
+  XCTAssertNil(error);
+}
+
 - (void)testSetMediaTypesRequiringUserActionForPlayback {
   WKWebViewConfiguration *mockWebViewConfiguration = OCMClassMock([WKWebViewConfiguration class]);
 
