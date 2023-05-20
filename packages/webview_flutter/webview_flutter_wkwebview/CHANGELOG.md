@@ -1,4 +1,4 @@
-## 3.4.4
+## 3.5.0
 
 * Adds support to enable debugging of web contents on the latest versions of WebKit. See
   `WebKitWebViewController.setInspectable`.
