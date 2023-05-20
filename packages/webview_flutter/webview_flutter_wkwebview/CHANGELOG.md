@@ -1,7 +1,8 @@
 ## 3.4.4
 
-* Adds the `isInspectable` to `WebKitWebViewController`.
-
+* Adds support to enable debugging of web contents on the latest versions of WebKit. See
+  `WebKitWebViewController.setInspectable`.
+  
 ## 3.4.3
 
 * Replace `describeEnum` with the `name` getter.
