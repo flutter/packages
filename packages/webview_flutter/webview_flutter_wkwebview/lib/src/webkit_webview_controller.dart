@@ -531,7 +531,8 @@ class WebKitWebViewController extends PlatformWebViewController {
     _onPermissionRequestCallback = onPermissionRequest;
   }
 
-  /// Whether to enable the platform's webview content debugging tools.
+  /// Whether to enable tools for debugging the current WKWebView content.
+  /// It needs to be activated in each WKWebView where you want to enable it.
   ///
   /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
   /// the default value is set to false.
