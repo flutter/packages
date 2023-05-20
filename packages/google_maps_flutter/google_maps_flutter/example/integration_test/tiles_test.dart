@@ -21,10 +21,13 @@ final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS && !kIsWeb;
 final bool isAndroid = defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
 const bool isWeb = kIsWeb;
 
-// Integration Tests for the Tiles feature.
-
+/// Integration Tests for the Tiles feature. These also use the [GoogleMapsInspectorPlatform]. 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  GoogleMapsFlutterPlatform.instance.enableDebugInspection();
+
+  final GoogleMapsInspectorPlatform inspector = 
+    GoogleMapsInspectorPlatform.instance!;
 
   group('Tiles', () {
     testWidgets(
@@ -61,8 +64,6 @@ void main() {
         await tester.pumpAndSettle(const Duration(seconds: 3));
 
         final int mapId = await mapIdCompleter.future;
-        final GoogleMapsInspectorPlatform inspector =
-            GoogleMapsInspectorPlatform.instance!;
 
         final TileOverlay tileOverlayInfo1 = (await inspector
             .getTileOverlayInfo(tileOverlay1.mapsId, mapId: mapId))!;
@@ -116,8 +117,6 @@ void main() {
         );
 
         final int mapId = await mapIdCompleter.future;
-        final GoogleMapsInspectorPlatform inspector =
-            GoogleMapsInspectorPlatform.instance!;
 
         final TileOverlay tileOverlay1New = TileOverlay(
           tileOverlayId: const TileOverlayId('tile_overlay_1'),
@@ -186,8 +185,6 @@ void main() {
         );
 
         final int mapId = await mapIdCompleter.future;
-        final GoogleMapsInspectorPlatform inspector =
-            GoogleMapsInspectorPlatform.instance!;
 
         await tester.pumpWidget(
           Directionality(
