@@ -1,5 +1,6 @@
-## NEXT
+## 2.2.7
 
+* Added on point of interest clicked event handler interface.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 

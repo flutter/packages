@@ -19,6 +19,7 @@ export 'maps_object_updates.dart';
 export 'marker.dart';
 export 'marker_updates.dart';
 export 'pattern_item.dart';
+export 'point_of_interest.dart';
 export 'polygon.dart';
 export 'polygon_updates.dart';
 export 'polyline.dart';

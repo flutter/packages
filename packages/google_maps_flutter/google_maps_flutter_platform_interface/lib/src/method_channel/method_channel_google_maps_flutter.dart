@@ -169,6 +169,11 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     return _events(mapId).whereType<MapLongPressEvent>();
   }
 
+  @override
+  Stream<MapPoiClickEvent> onPoiClick({required int mapId}) {
+    return _events(mapId).whereType<MapPoiClickEvent>();
+  }
+
   Future<dynamic> _handleMethodCall(MethodCall call, int mapId) async {
     switch (call.method) {
       case 'camera#onMoveStarted':
@@ -241,6 +246,17 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
         _mapEventStreamController.add(CircleTapEvent(
           mapId,
           CircleId(arguments['circleId']! as String),
+        ));
+        break;
+      case 'map#onPoiClick':
+        final Map<String, Object?> arguments = _getArgumentDictionary(call);
+        _mapEventStreamController.add(MapPoiClickEvent(
+          mapId,
+          PointOfInterest(
+            LatLng.fromJson(arguments['position'])!,
+            arguments['name']! as String,
+            arguments['placeId']! as String,
+          ),
         ));
         break;
       case 'map#onTap':
