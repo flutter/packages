@@ -152,7 +152,7 @@ extension $LoginRouteExtension on LoginRoute {
 
   String get location => GoRouteData.$location(
         '/login',
-        queryParams: {
+        queryParameters: {
           if (fromPage != null) 'from-page': fromPage,
         },
       );

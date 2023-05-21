@@ -97,7 +97,7 @@ extension $BigIntRouteExtension on BigIntRoute {
 
   String get location => GoRouteData.$location(
         '/big-int-route/${Uri.encodeComponent(requiredBigIntField.toString())}',
-        queryParams: {
+        queryParameters: {
           if (bigIntField != null) 'big-int-field': bigIntField!.toString(),
         },
       );
@@ -125,7 +125,7 @@ extension $BoolRouteExtension on BoolRoute {
 
   String get location => GoRouteData.$location(
         '/bool-route/${Uri.encodeComponent(requiredBoolField.toString())}',
-        queryParams: {
+        queryParameters: {
           if (boolField != null) 'bool-field': boolField!.toString(),
           if (boolFieldWithDefaultValue != true)
             'bool-field-with-default-value':
@@ -151,7 +151,7 @@ extension $DateTimeRouteExtension on DateTimeRoute {
 
   String get location => GoRouteData.$location(
         '/date-time-route/${Uri.encodeComponent(requiredDateTimeField.toString())}',
-        queryParams: {
+        queryParameters: {
           if (dateTimeField != null)
             'date-time-field': dateTimeField!.toString(),
         },
@@ -180,7 +180,7 @@ extension $DoubleRouteExtension on DoubleRoute {
 
   String get location => GoRouteData.$location(
         '/double-route/${Uri.encodeComponent(requiredDoubleField.toString())}',
-        queryParams: {
+        queryParameters: {
           if (doubleField != null) 'double-field': doubleField!.toString(),
           if (doubleFieldWithDefaultValue != 1.0)
             'double-field-with-default-value':
@@ -210,7 +210,7 @@ extension $IntRouteExtension on IntRoute {
 
   String get location => GoRouteData.$location(
         '/int-route/${Uri.encodeComponent(requiredIntField.toString())}',
-        queryParams: {
+        queryParameters: {
           if (intField != null) 'int-field': intField!.toString(),
           if (intFieldWithDefaultValue != 1)
             'int-field-with-default-value': intFieldWithDefaultValue.toString(),
@@ -239,7 +239,7 @@ extension $NumRouteExtension on NumRoute {
 
   String get location => GoRouteData.$location(
         '/num-route/${Uri.encodeComponent(requiredNumField.toString())}',
-        queryParams: {
+        queryParameters: {
           if (numField != null) 'num-field': numField!.toString(),
           if (numFieldWithDefaultValue != 1)
             'num-field-with-default-value': numFieldWithDefaultValue.toString(),
@@ -269,7 +269,7 @@ extension $EnumRouteExtension on EnumRoute {
 
   String get location => GoRouteData.$location(
         '/enum-route/${Uri.encodeComponent(_$PersonDetailsEnumMap[requiredEnumField]!)}',
-        queryParams: {
+        queryParameters: {
           if (enumField != null)
             'enum-field': _$PersonDetailsEnumMap[enumField!],
           if (enumFieldWithDefaultValue != PersonDetails.favoriteFood)
@@ -301,7 +301,7 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
 
   String get location => GoRouteData.$location(
         '/enhanced-enum-route/${Uri.encodeComponent(_$SportDetailsEnumMap[requiredEnumField]!)}',
-        queryParams: {
+        queryParameters: {
           if (enumField != null)
             'enum-field': _$SportDetailsEnumMap[enumField!],
           if (enumFieldWithDefaultValue != SportDetails.football)
@@ -329,7 +329,7 @@ extension $StringRouteExtension on StringRoute {
 
   String get location => GoRouteData.$location(
         '/string-route/${Uri.encodeComponent(requiredStringField)}',
-        queryParams: {
+        queryParameters: {
           if (stringField != null) 'string-field': stringField,
           if (stringFieldWithDefaultValue != 'defaultValue')
             'string-field-with-default-value': stringFieldWithDefaultValue,
@@ -353,7 +353,7 @@ extension $UriRouteExtension on UriRoute {
 
   String get location => GoRouteData.$location(
         '/uri-route/${Uri.encodeComponent(requiredUriField.toString())}',
-        queryParams: {
+        queryParameters: {
           if (uriField != null) 'uri-field': uriField!.toString(),
         },
       );
@@ -418,7 +418,7 @@ extension $IterableRouteExtension on IterableRoute {
 
   String get location => GoRouteData.$location(
         '/iterable-route',
-        queryParams: {
+        queryParameters: {
           if (intIterableField != null)
             'int-iterable-field':
                 intIterableField?.map((e) => e.toString()).toList(),
@@ -544,7 +544,7 @@ extension $IterableRouteWithDefaultValuesExtension
 
   String get location => GoRouteData.$location(
         '/iterable-route-with-default-values',
-        queryParams: {
+        queryParameters: {
           if (intIterableField != const <int>[0])
             'int-iterable-field':
                 intIterableField.map((e) => e.toString()).toList(),

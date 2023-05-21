@@ -416,7 +416,7 @@ GoRouteData.\$route(
       return '';
     }
 
-    final StringBuffer buffer = StringBuffer('queryParams: {\n');
+    final StringBuffer buffer = StringBuffer('queryParameters: {\n');
 
     for (final ParameterElement param in _ctorQueryParams) {
       final String parameterName = param.name;

@@ -125,7 +125,7 @@ extension $DefaultValueRouteExtension on DefaultValueRoute {
 
   String get location => GoRouteData.$location(
         '/default-value-route',
-        queryParams: {
+        queryParameters: {
           if (param != 0) 'param': param.toString(),
         },
       );
@@ -168,7 +168,7 @@ extension $ExtraValueRouteExtension on ExtraValueRoute {
 
   String get location => GoRouteData.$location(
         '/default-value-route',
-        queryParams: {
+        queryParameters: {
           if (param != 0) 'param': param.toString(),
         },
       );
@@ -254,7 +254,7 @@ extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
 
   String get location => GoRouteData.$location(
         '/iterable-with-enum',
-        queryParams: {
+        queryParameters: {
           if (param != null)
             'param':
                 param?.map((e) => _$EnumOnlyUsedInIterableEnumMap[e]).toList(),
@@ -308,7 +308,7 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
 
   String get location => GoRouteData.$location(
         '/iterable-default-value-route',
-        queryParams: {
+        queryParameters: {
           if (param != const <int>[0])
             'param': param.map((e) => e.toString()).toList(),
         },
