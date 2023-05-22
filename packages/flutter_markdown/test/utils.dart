@@ -192,6 +192,10 @@ class TestAssetBundle extends CachingAssetBundle {
       final ByteData manifest = const StandardMessageCodec().encodeMessage(
           <String, List<Object>>{'assets/logo.png': <Object>[]})!;
       return Future<ByteData>.value(manifest);
+    } else if (key == 'AssetManifest.smcbin') {
+      final ByteData manifest = const StandardMessageCodec().encodeMessage(
+          <String, List<Object>>{'assets/logo.png': <Object>[]})!;
+      return Future<ByteData>.value(manifest);
     } else if (key == 'assets/logo.png') {
       // The root directory tests are run from is different for 'flutter test'
       // verses 'flutter test test/*_test.dart'. Adjust the root directory
