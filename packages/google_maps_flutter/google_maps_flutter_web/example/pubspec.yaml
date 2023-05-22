@@ -29,5 +29,4 @@ dev_dependencies:
 
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
 # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {google_maps_flutter: {path: ../../../google_maps_flutter/google_maps_flutter}, google_maps_flutter_platform_interface: {path: ../../../google_maps_flutter/google_maps_flutter_platform_interface}}
+dependency_overrides: { google_maps_flutter: ^2.2.6 }
