@@ -110,8 +110,10 @@
                                                                       (nonnull NSNumber *)limit
                                                                       error:(FlutterError *_Nullable
                                                                                  *_Nonnull)error {
-  [[self webViewConfigurationForIdentifier:identifier]
-      setLimitsNavigationsToAppBoundDomains:limit.boolValue];
+  if (@available(iOS 14, *)) {
+    [[self webViewConfigurationForIdentifier:identifier]
+        setLimitsNavigationsToAppBoundDomains:limit.boolValue];
+  }
 }
 
 - (void)
