@@ -1,3 +1,7 @@
+## 7.1.1
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 7.1.0
 
 - Introduces `StatefulShellRoute` to support using separate navigators for child routes as well as preserving state in each navigation tree (flutter/flutter#99124).
@@ -39,7 +43,7 @@
 
 ## 6.5.7
 
-- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s. 
+- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s.
 
 ## 6.5.6
 
