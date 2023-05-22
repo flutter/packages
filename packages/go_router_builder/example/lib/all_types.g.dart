@@ -323,7 +323,7 @@ extension $StringRouteExtension on StringRoute {
         requiredStringField: state.pathParameters['requiredStringField']!,
         stringField: state.queryParameters['string-field'],
         stringFieldWithDefaultValue:
-            state.queryParameters['string-field-with-default-value']! ??
+            state.queryParameters['string-field-with-default-value'] ??
                 'defaultValue',
       );
 

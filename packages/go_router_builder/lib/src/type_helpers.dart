@@ -103,7 +103,8 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   } else {
     access = 'queryParameters[${escapeDartString(element.name.kebab)}]';
   }
-  if (!element.type.isNullableType) {
+  if (pathParameters.contains(element.name) ||
+      (!element.type.isNullableType && !element.hasDefaultValue)) {
     access += '!';
   }
 
