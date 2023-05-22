@@ -1,3 +1,7 @@
+## 3.4.4
+
+* Adds support for `limitsNavigationsToAppBoundDomains` in `WebKitWebViewControllerCreationParams`
+
 ## 3.4.3
 
 * Replace `describeEnum` with the `name` getter.
