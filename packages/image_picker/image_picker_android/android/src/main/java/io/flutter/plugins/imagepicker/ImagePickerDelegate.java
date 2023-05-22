@@ -139,7 +139,9 @@ public class ImagePickerDelegate
   private final Object pendingCallStateLock = new Object();
 
   public ImagePickerDelegate(
-      final @NonNull Activity activity, final @NonNull ImageResizer imageResizer, final @NonNull ImagePickerCache cache) {
+      final @NonNull Activity activity,
+      final @NonNull ImageResizer imageResizer,
+      final @NonNull ImagePickerCache cache) {
     this(
         activity,
         imageResizer,
