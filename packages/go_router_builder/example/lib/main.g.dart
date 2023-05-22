@@ -53,6 +53,8 @@ extension $HomeRouteExtension on HomeRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
@@ -70,6 +72,8 @@ extension $FamilyRouteExtension on FamilyRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $PersonRouteExtension on PersonRoute {
@@ -88,6 +92,8 @@ extension $PersonRouteExtension on PersonRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
@@ -110,6 +116,9 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 extension $FamilyCountRouteExtension on FamilyCountRoute {
@@ -127,6 +136,8 @@ extension $FamilyCountRouteExtension on FamilyCountRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -163,4 +174,6 @@ extension $LoginRouteExtension on LoginRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

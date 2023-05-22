@@ -1,5 +1,6 @@
 ## NEXT
 
+* Added replace methods to the generated routes.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 2.0.1

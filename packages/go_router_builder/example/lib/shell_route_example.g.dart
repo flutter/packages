@@ -31,6 +31,8 @@ extension $LoginRouteExtension on LoginRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $myShellRouteData => ShellRouteData.$route(
@@ -65,6 +67,8 @@ extension $FooRouteDataExtension on FooRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $BarRouteDataExtension on BarRouteData {
@@ -80,4 +84,6 @@ extension $BarRouteDataExtension on BarRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
