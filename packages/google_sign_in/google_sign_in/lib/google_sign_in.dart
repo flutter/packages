@@ -48,9 +48,7 @@ class GoogleSignInAccount implements GoogleIdentity {
         id = data.id,
         photoUrl = data.photoUrl,
         serverAuthCode = data.serverAuthCode,
-        _idToken = data.idToken {
-    assert(id != null);
-  }
+        _idToken = data.idToken;
 
   // These error codes must match with ones declared on Android and iOS sides.
 

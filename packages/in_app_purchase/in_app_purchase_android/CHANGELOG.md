@@ -1,3 +1,7 @@
+## 0.3.0+2
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 0.3.0+1
 
 * Fixes misaligned method signature strings.

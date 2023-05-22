@@ -345,12 +345,6 @@ class BlinkTraceSummary {
         orElse: () => throw noMeasuredFramesFound(),
       );
 
-      if (firstMeasuredFrameEvent == null) {
-        // This happens in benchmarks that do not measure frames, such as some
-        // of the text layout benchmarks.
-        return null;
-      }
-
       final int tabPid = firstMeasuredFrameEvent.pid;
 
       // Filter out data from unrelated processes
