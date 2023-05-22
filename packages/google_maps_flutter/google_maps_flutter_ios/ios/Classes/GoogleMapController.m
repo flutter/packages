@@ -568,12 +568,12 @@
     didTapPOIWithPlaceID:(NSString *)placeID
                     name:(NSString *)name
                 location:(CLLocationCoordinate2D)location {
-  [_channel invokeMethod:@"map#onPoiClick"
-               arguments:@{
-                 @"position" : LocationToJson(coordinate),
-                 @"name" : name,
-                 @"placeId" : placeID,
-               }];
+  [self.channel invokeMethod:@"map#onPoiClick"
+                arguments:@{
+                  @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location],
+                  @"name" : name,
+                  @"placeId" : placeID,
+                }];
 }
 
 - (void)interpretMapOptions:(NSDictionary *)data {
