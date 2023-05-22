@@ -678,6 +678,12 @@ class WKWebViewConfiguration extends NSObject {
     );
   }
 
+  /// Indicates whether the web view limits navigation to pages within the app’s domain.
+  ///
+  /// When navigation is limited, JS evaluation in unrestricted.
+  /// See https://webkit.org/blog/10882/app-bound-domains/
+  ///
+  /// Sets [WKWebViewConfiguration.limitsNavigationsToAppBoundDomains](https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/3585117-limitsnavigationstoappbounddomai?language=objc).
   Future<void> setLimitsNavigationsToAppBoundDomains(bool limit) {
     return _webViewConfigurationApi
         .setLimitsNavigationsToAppBoundDomainsForInstances(

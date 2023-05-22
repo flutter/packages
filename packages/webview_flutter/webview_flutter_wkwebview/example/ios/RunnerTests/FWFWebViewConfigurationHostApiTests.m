@@ -74,8 +74,8 @@
 
   FlutterError *error;
   [hostAPI setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:@0
-                                                            isLimited:@NO
-                                                                error:&error];
+                                                                     isLimited:@NO
+                                                                         error:&error];
   OCMVerify([mockWebViewConfiguration setLimitsNavigationsToAppBoundDomains:NO]);
   XCTAssertNil(error);
 }

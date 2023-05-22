@@ -104,11 +104,12 @@
       setAllowsInlineMediaPlayback:allow.boolValue];
 }
 
-- (void)setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:(nonnull NSNumber *)identifier
-                                                         isLimited:(nonnull NSNumber *)limit
-                                                             error:
-                                                                 (FlutterError *_Nullable *_Nonnull)
-                                                                     error {
+- (void)setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:
+            (nonnull NSNumber *)identifier
+                                                                  isLimited:
+                                                                      (nonnull NSNumber *)limit
+                                                                      error:(FlutterError *_Nullable
+                                                                                 *_Nonnull)error {
   [[self webViewConfigurationForIdentifier:identifier]
       setLimitsNavigationsToAppBoundDomains:limit.boolValue];
 }
