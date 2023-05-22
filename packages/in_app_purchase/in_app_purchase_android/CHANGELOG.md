@@ -1,6 +1,10 @@
-## 0.3.0+1
+## 0.3.0+2
 
 * Removes obsolete null checks on non-nullable values.
+
+## 0.3.0+1
+
+* Fixes misaligned method signature strings.
 
 ## 0.3.0
 * **BREAKING CHANGE**: Removes `launchPriceChangeConfirmationFlow` from `InAppPurchaseAndroidPlatform`. Price changes are now [handled by Google Play](https://developer.android.com/google/play/billing/subscriptions#price-change).
