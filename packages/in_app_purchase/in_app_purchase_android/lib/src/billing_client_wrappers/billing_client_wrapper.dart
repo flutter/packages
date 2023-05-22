@@ -205,7 +205,6 @@ class BillingClient {
       String? oldProduct,
       String? purchaseToken,
       ProrationMode? prorationMode}) async {
-    assert(product != null);
     assert((oldProduct == null) == (purchaseToken == null),
         'oldProduct and purchaseToken must both be set, or both be null.');
     final Map<String, dynamic> arguments = <String, dynamic>{
@@ -237,7 +236,6 @@ class BillingClient {
   /// This wraps [`BillingClient#queryPurchases(String
   /// productType)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchasesAsync(com.android.billingclient.api.QueryPurchasesParams,%20com.android.billingclient.api.PurchasesResponseListener)).
   Future<PurchasesResultWrapper> queryPurchases(ProductType productType) async {
-    assert(productType != null);
     return PurchasesResultWrapper.fromJson((await channel
             .invokeMapMethod<String, dynamic>(
                 'BillingClient#queryPurchases(String)', <String, dynamic>{
@@ -261,7 +259,6 @@ class BillingClient {
   /// listener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchaseHistoryAsync(com.android.billingclient.api.QueryPurchaseHistoryParams,%20com.android.billingclient.api.PurchaseHistoryResponseListener)).
   Future<PurchasesHistoryResult> queryPurchaseHistory(
       ProductType productType) async {
-    assert(productType != null);
     return PurchasesHistoryResult.fromJson((await channel
             .invokeMapMethod<String, dynamic>(
                 'BillingClient#queryPurchaseHistoryAsync(String)',
@@ -278,7 +275,6 @@ class BillingClient {
   ///
   /// This wraps [`BillingClient#consumeAsync(String, ConsumeResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#consumeAsync(java.lang.String,%20com.android.billingclient.api.ConsumeResponseListener))
   Future<BillingResultWrapper> consumeAsync(String purchaseToken) async {
-    assert(purchaseToken != null);
     return BillingResultWrapper.fromJson((await channel
             .invokeMapMethod<String, dynamic>(
                 'BillingClient#consumeAsync(String, ConsumeResponseListener)',
@@ -306,7 +302,6 @@ class BillingClient {
   ///
   /// This wraps [`BillingClient#acknowledgePurchase(String, AcknowledgePurchaseResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#acknowledgePurchase(com.android.billingclient.api.AcknowledgePurchaseParams,%20com.android.billingclient.api.AcknowledgePurchaseResponseListener))
   Future<BillingResultWrapper> acknowledgePurchase(String purchaseToken) async {
-    assert(purchaseToken != null);
     return BillingResultWrapper.fromJson((await channel.invokeMapMethod<String,
                 dynamic>(
             'BillingClient#(AcknowledgePurchaseParams params, (AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)',
