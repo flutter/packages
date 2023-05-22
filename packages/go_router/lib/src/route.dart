@@ -1198,7 +1198,7 @@ class _RestorableRouteMatchList extends RestorableProperty<RouteMatchList> {
 
   @override
   Object? toPrimitives() {
-    if (value != null && value.isNotEmpty) {
+    if (value.isNotEmpty) {
       return _matchListCodec.encodeMatchList(value);
     }
     return null;

@@ -1,3 +1,7 @@
+## 0.10.8+2
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 0.10.8+1
 
 * Fixes lint errors.

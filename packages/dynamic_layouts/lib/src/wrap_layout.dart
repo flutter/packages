@@ -54,14 +54,13 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
     required this.childCrossAxisExtent,
     required this.crossAxisExtent,
     required this.scrollDirection,
-  })  : assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-        assert(crossAxisSpacing != null && crossAxisSpacing >= 0),
-        assert(childMainAxisExtent != null && childMainAxisExtent >= 0),
-        assert(childCrossAxisExtent != null && childCrossAxisExtent >= 0),
-        assert(crossAxisExtent != null && crossAxisExtent >= 0),
-        assert(scrollDirection != null &&
-            (scrollDirection == Axis.horizontal ||
-                scrollDirection == Axis.vertical));
+  })  : assert(mainAxisSpacing >= 0),
+        assert(crossAxisSpacing >= 0),
+        assert(childMainAxisExtent >= 0),
+        assert(childCrossAxisExtent >= 0),
+        assert(crossAxisExtent >= 0),
+        assert(scrollDirection == Axis.horizontal ||
+            scrollDirection == Axis.vertical);
 
   /// The direction in which the layout should be built.
   final Axis scrollDirection;
@@ -216,8 +215,8 @@ class SliverGridDelegateWithWrapping extends SliverGridDelegate {
     this.crossAxisSpacing = 0.0,
     this.childCrossAxisExtent = double.infinity,
     this.childMainAxisExtent = double.infinity,
-  })  : assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-        assert(crossAxisSpacing != null && crossAxisSpacing >= 0);
+  })  : assert(mainAxisSpacing >= 0),
+        assert(crossAxisSpacing >= 0);
 
   /// The number of pixels from the leading edge of one tile to the trailing
   /// edge of the same tile in the main axis.

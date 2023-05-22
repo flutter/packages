@@ -123,7 +123,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-  }) : assert(initialCameraPosition != null);
+  });
 
   /// Callback method for when the map is ready to be used.
   ///
@@ -418,7 +418,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onMarkerTap(MarkerId markerId) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onTap');
@@ -430,7 +429,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onMarkerDragStart(MarkerId markerId, LatLng position) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDragStart');
@@ -442,7 +440,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onMarkerDrag(MarkerId markerId, LatLng position) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDrag');
@@ -454,7 +451,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onMarkerDragEnd(MarkerId markerId, LatLng position) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDragEnd');
@@ -466,7 +462,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onPolygonTap(PolygonId polygonId) {
-    assert(polygonId != null);
     final Polygon? polygon = _polygons[polygonId];
     if (polygon == null) {
       throw UnknownMapObjectIdError('polygon', polygonId, 'onTap');
@@ -478,7 +473,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onPolylineTap(PolylineId polylineId) {
-    assert(polylineId != null);
     final Polyline? polyline = _polylines[polylineId];
     if (polyline == null) {
       throw UnknownMapObjectIdError('polyline', polylineId, 'onTap');
@@ -490,7 +484,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onCircleTap(CircleId circleId) {
-    assert(circleId != null);
     final Circle? circle = _circles[circleId];
     if (circle == null) {
       throw UnknownMapObjectIdError('marker', circleId, 'onTap');
@@ -502,7 +495,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onInfoWindowTap(MarkerId markerId) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'InfoWindow onTap');
@@ -514,7 +506,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onTap(LatLng position) {
-    assert(position != null);
     final ArgumentCallback<LatLng>? onTap = widget.onTap;
     if (onTap != null) {
       onTap(position);
@@ -522,7 +513,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onLongPress(LatLng position) {
-    assert(position != null);
     final ArgumentCallback<LatLng>? onLongPress = widget.onLongPress;
     if (onLongPress != null) {
       onLongPress(position);
