@@ -39,6 +39,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     // The internal instance of our controller is initialized eagerly in `buildView`,
     // so we don't have to do anything in this method, which is left intentionally
     // blank.
+    assert(_mapById[mapId] != null, 'Must call buildWidget before init!');
   }
 
   /// Updates the options of a given `mapId`.
