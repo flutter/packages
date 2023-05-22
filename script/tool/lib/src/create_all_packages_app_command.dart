@@ -15,9 +15,8 @@ import 'common/package_command.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
+/// The name of the build-all-packages project, as passed to `flutter create`.
 @visibleForTesting
-
-/// The name of the build-all-packages project.
 const String allPackagesProjectName = 'all_packages';
 
 const int _exitFlutterCreateFailed = 3;
