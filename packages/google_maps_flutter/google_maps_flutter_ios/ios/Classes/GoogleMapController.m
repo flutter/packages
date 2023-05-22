@@ -569,11 +569,11 @@
                     name:(NSString *)name
                 location:(CLLocationCoordinate2D)location {
   [self.channel invokeMethod:@"map#onPoiClick"
-                arguments:@{
-                  @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location],
-                  @"name" : name,
-                  @"placeId" : placeID,
-                }];
+                   arguments:@{
+                     @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location],
+                     @"name" : name,
+                     @"placeId" : placeID,
+                   }];
 }
 
 - (void)interpretMapOptions:(NSDictionary *)data {

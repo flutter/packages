@@ -1,5 +1,6 @@
-## NEXT
+## 2.2.7
 
+* Added point of interest clicked event handler.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 2.2.6
