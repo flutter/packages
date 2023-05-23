@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
@@ -171,6 +172,26 @@ void main() {
                   <dynamic>['fromAssetImage', 'some/path.png', 1.0]),
               isA<BitmapDescriptor>());
         });
+
+        test('mipmaps determines dpi', () async {
+          const ImageConfiguration imageConfiguration = ImageConfiguration(
+            devicePixelRatio: 3,
+          );
+
+          final BitmapDescriptor mip = await BitmapDescriptor.fromAssetImage(
+            imageConfiguration,
+            'red_square.png',
+          );
+          final BitmapDescriptor scaled = await BitmapDescriptor.fromAssetImage(
+            imageConfiguration,
+            'red_square.png',
+            mipmaps: false,
+          );
+
+          expect((mip.toJson() as List<dynamic>)[2], 1);
+          expect((scaled.toJson() as List<dynamic>)[2], 3);
+        });
+
         test('name cannot be null or empty', () {
           expect(() {
             BitmapDescriptor.fromJson(<dynamic>['fromAssetImage', null, 1.0]);
