@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
+## 2.4.7
+
+* Fixes missing `isPlaybackLikelyToKeepUp` check for iOS video player `bufferingEnd` event and `bufferingStart` event.
+
 ## 2.4.6
 
 * Fixes hang when seeking to end of video.
