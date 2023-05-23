@@ -28,9 +28,6 @@
 # Has some test files that are intentionally broken to conduct dart fix tests.
 # Also opts out of unawaited_futures, matching flutter/flutter.
 - go_router
-# Adds unawaited_futures. We should investigating adding this to the root
-# options instead.
-- metrics_center
 # Has some constructions that are currently handled poorly by dart format.
 - rfw/example
 # Disables docs requirements, as it is test code.
