@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 1.0.3
 
 * Updates iOS minimum version in README.

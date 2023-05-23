@@ -708,7 +708,6 @@ class BufferLogger extends Logger {
     String? progressId,
     int progressIndicatorPadding = kDefaultStatusPadding,
   }) {
-    assert(progressIndicatorPadding != null);
     printStatus(message);
     return SilentStatus(
       stopwatch: _stopwatchFactory.createStopwatch(),
@@ -983,7 +982,6 @@ class AnonymousSpinnerStatus extends Status {
 
   void _callback(Timer timer) {
     assert(this.timer == timer);
-    assert(timer != null);
     assert(timer.isActive);
     _writeToStdOut(_backspaceChar * _lastAnimationFrameLength);
     ticks += 1;
@@ -1147,7 +1145,7 @@ String wrapText(
   int? indent,
 }) {
   assert(columnWidth >= 0);
-  if (text == null || text.isEmpty) {
+  if (text.isEmpty) {
     return '';
   }
   indent ??= 0;
@@ -1231,7 +1229,7 @@ List<String> _wrapTextAsLines(
   required int columnWidth,
   required bool shouldWrap,
 }) {
-  if (text == null || text.isEmpty) {
+  if (text.isEmpty) {
     return <String>[''];
   }
   assert(start >= 0);
