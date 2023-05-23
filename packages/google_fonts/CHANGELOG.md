@@ -1,3 +1,7 @@
+## 4.0.5 - 2023-05-23
+### Changed
+- Bumped `http` version to 1.0.0
+
 ## 4.0.4 - 2023-04-26
 ### Changed
 - Bumped minimum SDK version to 2.14
