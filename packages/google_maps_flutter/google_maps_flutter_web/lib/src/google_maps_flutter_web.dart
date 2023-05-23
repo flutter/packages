@@ -327,4 +327,13 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
 
     return mapController.widget!;
   }
+
+  /// Populates [GoogleMapsFlutterInspectorPlatform.instance] to allow
+  /// inspecting the platform map state.
+  @override
+  void enableDebugInspection() {
+    GoogleMapsInspectorPlatform.instance = GoogleMapsInspectorWeb(
+        // pass this or the google maps object?
+        );
+  }
 }
