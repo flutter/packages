@@ -348,6 +348,8 @@ NS_INLINE UIViewController *rootViewController(void) {
     if (_eventSink != nil) {
       if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
         _eventSink(@{@"event" : @"bufferingEnd"});
+      } else {
+        _eventSink(@{@"event" : @"bufferingStart"});
       }
     }
   } else if (context == rateContext) {
