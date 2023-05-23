@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:integration_test/integration_test.dart';
 
 const LatLng _kInitialMapCenter = LatLng(0, 0);
@@ -20,11 +19,9 @@ final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
 final bool isAndroid = defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
 const bool isWeb = kIsWeb;
 
-// Integration Tests that only use the standard MapController.
-
+/// Integration Tests that only need a standard [GoogleMapController].
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
   // Repeatedly checks an asynchronous value against a test condition, waiting
   // one frame between each check, returning the value if it passes the predicate
@@ -48,46 +45,25 @@ void main() {
     return null;
   }
 
-  Widget wrapMap(GoogleMap map, [Size size = const Size.square(200)]) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: SizedBox.fromSize(
-            size: size,
-            child: map,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> pumpMap(WidgetTester tester, GoogleMap map, [Size size = const Size.square(200)]) async {
-    await tester.pumpWidget(wrapMap(map, size));
-    await tester.pumpAndSettle();
-  }
-
   testWidgets('testInitialCenterLocationAtCenter', (WidgetTester tester) async {
-    await tester.binding.setSurfaceSize(const Size(800, 600));
+    const Size mapSize = Size(640, 480);
+    await tester.binding.setSurfaceSize(mapSize);
 
     final Completer<GoogleMapController> mapControllerCompleter =
         Completer<GoogleMapController>();
     final Key key = GlobalKey();
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          key: key,
-          initialCameraPosition: _kInitialCameraPosition,
-          onMapCreated: (GoogleMapController controller) {
-            mapControllerCompleter.complete(controller);
-          },
-        ),
+    await pumpMap(tester, GoogleMap(
+        key: key,
+        initialCameraPosition: _kInitialCameraPosition,
+        onMapCreated: (GoogleMapController controller) {
+          mapControllerCompleter.complete(controller);
+        },
       ),
+      mapSize,
     );
+    await tester.pumpAndSettle();
     final GoogleMapController mapController =
         await mapControllerCompleter.future;
-
-    await tester.pumpAndSettle();
 
     // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
     // in `mapRendered`.
@@ -97,7 +73,11 @@ void main() {
     final ScreenCoordinate coordinate =
         await mapController.getScreenCoordinate(_kInitialCameraPosition.target);
     final Rect rect = tester.getRect(find.byKey(key));
-    if (isIOS) {
+    if (isWeb) {
+      // In the web, the initial position is in the center of the map
+      expect(coordinate.x, (rect.width / 2).round());
+      expect(coordinate.y, (rect.height / 2).round());
+    } else if (isIOS) {
       // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
       // So we don't need to do the conversion like we did below for other platforms.
       expect(coordinate.x, (rect.center.dx - rect.topLeft.dx).round());
@@ -129,18 +109,15 @@ void main() {
     final Completer<GoogleMapController> mapControllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           mapControllerCompleter.complete(controller);
         },
       ),
-    ));
+    );
     await tester.pumpAndSettle();
-
     final GoogleMapController mapController =
         await mapControllerCompleter.future;
 
@@ -192,18 +169,16 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
       ),
-    ));
-
+    );
     final GoogleMapController controller = await controllerCompleter.future;
+
     const String mapStyle =
         '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
     await controller.setMapStyle(mapStyle);
@@ -215,17 +190,14 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
       ),
-    ));
-
+    );
     final GoogleMapController controller = await controllerCompleter.future;
 
     try {
@@ -241,18 +213,16 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
       ),
-    ));
-
+    );
     final GoogleMapController controller = await controllerCompleter.future;
+
     await controller.setMapStyle(null);
   });
 
@@ -261,17 +231,14 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
       ),
-    ));
-
+    );
     final GoogleMapController controller = await controllerCompleter.future;
 
     await tester.pumpAndSettle();
@@ -296,17 +263,14 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
       ),
-    ));
-
+    );
     final GoogleMapController controller = await controllerCompleter.future;
 
     await tester.pumpAndSettle();
@@ -329,16 +293,14 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
       ),
-    ));
+    );
     final GoogleMapController controller = await controllerCompleter.future;
 
     await tester.pumpAndSettle();
@@ -360,24 +322,27 @@ void main() {
   testWidgets('testResizeWidget', (WidgetTester tester) async {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
-    final GoogleMap map = GoogleMap(
-      initialCameraPosition: _kInitialCameraPosition,
-      onMapCreated: (GoogleMapController controller) async {
-        controllerCompleter.complete(controller);
-      },
+
+    await pumpMap(tester, GoogleMap(
+        initialCameraPosition: _kInitialCameraPosition,
+        onMapCreated: (GoogleMapController controller) async {
+          controllerCompleter.complete(controller);
+        },
+      ),
+      const Size(100, 100),
     );
-    await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: MaterialApp(
-            home: Scaffold(
-                body: SizedBox(height: 100, width: 100, child: map)))));
     final GoogleMapController controller = await controllerCompleter.future;
 
-    await tester.pumpWidget(Directionality(
-        textDirection: TextDirection.ltr,
-        child: MaterialApp(
-            home: Scaffold(
-                body: SizedBox(height: 400, width: 400, child: map)))));
+    await pumpMap(tester, GoogleMap(
+        initialCameraPosition: _kInitialCameraPosition,
+        onMapCreated: (GoogleMapController controller) async {
+          // fail!
+          fail('The map should not get recreated!');
+          // controllerCompleter.complete(controller);
+        },
+      ),
+      const Size(400, 400),
+    );
 
     await tester.pumpAndSettle();
     // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
@@ -400,17 +365,14 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
         initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
         markers: markers,
         onMapCreated: (GoogleMapController googleMapController) {
           controllerCompleter.complete(googleMapController);
         },
       ),
-    ));
-
+    );
     final GoogleMapController controller = await controllerCompleter.future;
 
     bool iwVisibleStatus =
@@ -436,25 +398,42 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
+    await pumpMap(tester, GoogleMap(
           initialCameraPosition: _kInitialCameraPosition,
           onMapCreated: (GoogleMapController controller) {
             controllerCompleter.complete(controller);
           },
-        ),
       ),
     );
-
     await tester.pumpAndSettle(const Duration(seconds: 3));
-
     final GoogleMapController controller = await controllerCompleter.future;
+
     final Uint8List? bytes = await controller.takeSnapshot();
     expect(bytes?.isNotEmpty, true);
   },
       // TODO(cyanglaz): un-skip the test when we can test this on CI with API key enabled.
       // https://github.com/flutter/flutter/issues/57057
       skip: isAndroid || isWeb);
+}
+
+/// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
+Future<void> pumpMap(WidgetTester tester, GoogleMap map, [Size size = const Size.square(200)]) async {
+  await tester.pumpWidget(wrapMap(map, size));
+  await tester.pumpAndSettle();
+}
+
+/// Wraps a [map] in a bunch of widgets so it renders in all platforms.
+///
+/// An optional [size] can be passed.
+Widget wrapMap(GoogleMap map, [Size size = const Size.square(200)]) {
+  return MaterialApp(
+    home: Scaffold(
+      body: Center(
+        child: SizedBox.fromSize(
+          size: size,
+          child: map,
+        ),
+      ),
+    ),
+  );
 }
