@@ -1,5 +1,6 @@
-## NEXT
+## 3.1.6
 
+* Bumps minimum in_app_purchase_android version to 0.3.0.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
 
