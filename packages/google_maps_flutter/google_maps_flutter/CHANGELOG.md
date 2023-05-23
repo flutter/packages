@@ -1,6 +1,10 @@
-## 2.2.7
+## 2.2.8
 
 * Added point of interest clicked event handler.
+
+## 2.2.7
+
+* Removes obsolete null checks on non-nullable values.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 2.2.6

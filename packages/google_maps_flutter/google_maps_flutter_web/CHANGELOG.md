@@ -1,3 +1,7 @@
+## 0.4.0+9
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 0.4.0+8
 
 * Updates minimum Flutter version to 3.3.
