@@ -109,7 +109,7 @@ class DemoNotesView extends StatelessWidget {
     String? href,
     String title,
   ) async {
-    showDialog<Widget>(
+    await showDialog<Widget>(
       context: context,
       builder: (BuildContext context) =>
           _createDialog(context, text, href, title),

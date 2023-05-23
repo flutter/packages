@@ -296,11 +296,10 @@ class GoogleSignIn {
 
   // Performs initialization, guarding it with the _initialization future.
   Future<void> _ensureInitialized() async {
-    return _initialization ??= _doInitialization()
-      ..catchError((dynamic _) {
-        // Invalidate initialization if it errors out.
-        _initialization = null;
-      });
+    return (_initialization ??= _doInitialization()).catchError((dynamic _) {
+      // Invalidate initialization if it errors out.
+      _initialization = null;
+    });
   }
 
   // Actually performs the initialization.
@@ -317,10 +316,10 @@ class GoogleSignIn {
       forceCodeForRefreshToken: forceCodeForRefreshToken,
     ));
 
-    GoogleSignInPlatform.instance.userDataEvents
+    unawaited(GoogleSignInPlatform.instance.userDataEvents
         ?.map((GoogleSignInUserData? userData) {
       return userData != null ? GoogleSignInAccount._(this, userData) : null;
-    }).forEach(_setCurrentUser);
+    }).forEach(_setCurrentUser));
   }
 
   /// The most recently scheduled method call.

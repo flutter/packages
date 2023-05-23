@@ -27,7 +27,7 @@ void main() {
     final dom.DomHtmlElement target = dom.document.createElement('div');
 
     test('Injects script into desired target', () async {
-      loadWebSdk(target: target);
+      await loadWebSdk(target: target);
 
       // Target now should have a child that is a script element
       final Object children = js_util.getProperty<Object>(target, 'children');
