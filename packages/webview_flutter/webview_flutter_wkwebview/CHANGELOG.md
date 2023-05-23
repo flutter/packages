@@ -1,6 +1,10 @@
-## 3.4.4
+## 3.4.5
 
 * Adds support for `limitsNavigationsToAppBoundDomains` in `WebKitWebViewControllerCreationParams`
+
+## 3.4.4
+
+* Removes obsolete null checks on non-nullable values.
 
 ## 3.4.3
 
