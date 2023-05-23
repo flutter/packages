@@ -47,25 +47,27 @@ void main() {
   }
 
   testWidgets('testInitialCenterLocationAtCenter', (WidgetTester tester) async {
-    const Size mapSize = Size(320, 240);
+    await tester.binding.setSurfaceSize(const Size(800, 600));
 
     final Completer<GoogleMapController> mapControllerCompleter =
         Completer<GoogleMapController>();
     final Key key = GlobalKey();
-    await pumpMap(
-      tester,
-      GoogleMap(
-        key: key,
-        initialCameraPosition: _kInitialCameraPosition,
-        onMapCreated: (GoogleMapController controller) {
-          mapControllerCompleter.complete(controller);
-        },
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          key: key,
+          initialCameraPosition: _kInitialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            mapControllerCompleter.complete(controller);
+          },
+        ),
       ),
-      mapSize,
     );
-    await tester.pumpAndSettle();
     final GoogleMapController mapController =
         await mapControllerCompleter.future;
+
+    await tester.pumpAndSettle();
 
     // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
     // in `mapRendered`.
@@ -75,23 +77,33 @@ void main() {
     final ScreenCoordinate coordinate =
         await mapController.getScreenCoordinate(_kInitialCameraPosition.target);
     final Rect rect = tester.getRect(find.byKey(key));
-    if (isIOS || isIOS) {
+    if (isIOS || isWeb) {
       // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
       // So we don't need to do the conversion like we did below for other platforms.
-      expect(coordinate.x, (rect.width / 2).round());
-      expect(coordinate.y, (rect.height / 2).round());
+      expect(coordinate.x, (rect.center.dx - rect.topLeft.dx).round());
+      expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
     } else {
-      expect(tester.view.devicePixelRatio, greaterThan(0));
       expect(
           coordinate.x,
-          ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
+          ((rect.center.dx - rect.topLeft.dx) *
+                  // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
+                  // ignore: deprecated_member_use
+                  tester.binding.window.devicePixelRatio)
               .round());
       expect(
           coordinate.y,
-          ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
+          ((rect.center.dy - rect.topLeft.dy) *
+                  // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
+                  // ignore: deprecated_member_use
+                  tester.binding.window.devicePixelRatio)
               .round());
     }
-  });
+    await tester.binding.setSurfaceSize(null);
+  },
+      // Android doesn't like the layout required for the web, so we skip web in this test.
+      // The equivalent web test already exists here:
+      // https://github.com/flutter/packages/blob/c43cc13498a1a1c4f3d1b8af2add9ce7c15bd6d0/packages/google_maps_flutter/google_maps_flutter_web/example/integration_test/projection_test.dart#L78
+      skip: isWeb);
 
   testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
     final Key key = GlobalKey();
