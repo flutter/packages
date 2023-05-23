@@ -53,10 +53,15 @@ class GoogleMapController {
   final Set<Polygon> _polygons;
   final Set<Polyline> _polylines;
   final Set<Circle> _circles;
-  // The configuraiton passed by the user, before converting to gmaps.
+  // The configuration passed by the user, before converting to gmaps.
   // Caching this allows us to re-create the map faithfully when needed.
   MapConfiguration _lastMapConfiguration = const MapConfiguration();
   List<gmaps.MapTypeStyle> _lastStyles = const <gmaps.MapTypeStyle>[];
+
+  /// Configuration accessor for integration tests
+  @visibleForTesting
+  gmaps.MapOptions get options =>
+      _configurationAndStyleToGmapsOptions(_lastMapConfiguration, _lastStyles);
 
   // Creates the 'viewType' for the _widget
   String _getViewType(int mapId) => 'plugins.flutter.io/google_maps_$mapId';

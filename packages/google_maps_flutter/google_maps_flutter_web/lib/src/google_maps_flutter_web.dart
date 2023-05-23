@@ -24,10 +24,10 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   }
 
   // Convenience getter for a stream of events filtered by their mapId.
-  Stream<MapEvent<Object?>> _events(int mapId) => _map(mapId).events;
+  Stream<MapEvent<Object?>> _events(int mapId) => map(mapId).events;
 
-  // Convenience getter for a map controller by its mapId.
-  GoogleMapController _map(int mapId) {
+  /// Retrieve a map controller by its mapId.
+  GoogleMapController map(int mapId) {
     final GoogleMapController? controller = _mapById[mapId];
     assert(controller != null,
         'Maps cannot be retrieved before calling buildView!');
@@ -51,7 +51,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     MapConfiguration update, {
     required int mapId,
   }) async {
-    _map(mapId).updateMapConfiguration(update);
+    map(mapId).updateMapConfiguration(update);
   }
 
   /// Applies the passed in `markerUpdates` to the `mapId`.
@@ -60,7 +60,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     MarkerUpdates markerUpdates, {
     required int mapId,
   }) async {
-    _map(mapId).updateMarkers(markerUpdates);
+    map(mapId).updateMarkers(markerUpdates);
   }
 
   /// Applies the passed in `polygonUpdates` to the `mapId`.
@@ -69,7 +69,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     PolygonUpdates polygonUpdates, {
     required int mapId,
   }) async {
-    _map(mapId).updatePolygons(polygonUpdates);
+    map(mapId).updatePolygons(polygonUpdates);
   }
 
   /// Applies the passed in `polylineUpdates` to the `mapId`.
@@ -78,7 +78,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     PolylineUpdates polylineUpdates, {
     required int mapId,
   }) async {
-    _map(mapId).updatePolylines(polylineUpdates);
+    map(mapId).updatePolylines(polylineUpdates);
   }
 
   /// Applies the passed in `circleUpdates` to the `mapId`.
@@ -87,7 +87,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     CircleUpdates circleUpdates, {
     required int mapId,
   }) async {
-    _map(mapId).updateCircles(circleUpdates);
+    map(mapId).updateCircles(circleUpdates);
   }
 
   @override
@@ -121,7 +121,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     CameraUpdate cameraUpdate, {
     required int mapId,
   }) async {
-    return _map(mapId).moveCamera(cameraUpdate);
+    return map(mapId).moveCamera(cameraUpdate);
   }
 
   /// Sets the passed-in `mapStyle` to the map.
@@ -135,7 +135,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     String? mapStyle, {
     required int mapId,
   }) async {
-    _map(mapId).updateStyles(_mapStyles(mapStyle));
+    map(mapId).updateStyles(_mapStyles(mapStyle));
   }
 
   /// Returns the bounds of the current viewport.
@@ -143,7 +143,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   Future<LatLngBounds> getVisibleRegion({
     required int mapId,
   }) {
-    return _map(mapId).getVisibleRegion();
+    return map(mapId).getVisibleRegion();
   }
 
   /// Returns the screen coordinate (in pixels) of a given `latLng`.
@@ -152,7 +152,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     LatLng latLng, {
     required int mapId,
   }) {
-    return _map(mapId).getScreenCoordinate(latLng);
+    return map(mapId).getScreenCoordinate(latLng);
   }
 
   /// Returns the [LatLng] of a [ScreenCoordinate] of the viewport.
@@ -161,7 +161,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     ScreenCoordinate screenCoordinate, {
     required int mapId,
   }) {
-    return _map(mapId).getLatLng(screenCoordinate);
+    return map(mapId).getLatLng(screenCoordinate);
   }
 
   /// Shows the [InfoWindow] (if any) of the [Marker] identified by `markerId`.
@@ -174,7 +174,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) async {
-    _map(mapId).showInfoWindow(markerId);
+    map(mapId).showInfoWindow(markerId);
   }
 
   /// Hides the [InfoWindow] (if any) of the [Marker] identified by `markerId`.
@@ -187,7 +187,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) async {
-    _map(mapId).hideInfoWindow(markerId);
+    map(mapId).hideInfoWindow(markerId);
   }
 
   /// Returns true if the [InfoWindow] of the [Marker] identified by `markerId` is shown.
@@ -200,7 +200,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) async {
-    return _map(mapId).isInfoWindowShown(markerId);
+    return map(mapId).isInfoWindowShown(markerId);
   }
 
   /// Returns the zoom level of the `mapId`.
@@ -208,7 +208,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   Future<double> getZoomLevel({
     required int mapId,
   }) {
-    return _map(mapId).getZoomLevel();
+    return map(mapId).getZoomLevel();
   }
 
   // The following are the 11 possible streams of data from the native side
@@ -282,7 +282,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   /// Disposes of the current map. It can't be used afterwards!
   @override
   void dispose({required int mapId}) {
-    _map(mapId).dispose();
+    map(mapId).dispose();
     _mapById.remove(mapId);
   }
 
