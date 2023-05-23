@@ -18,16 +18,17 @@ const CameraPosition _kInitialCameraPosition =
     CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
 
 final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS && !kIsWeb;
-final bool isAndroid = defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
+final bool isAndroid =
+    defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
 const bool isWeb = kIsWeb;
 
-/// Integration Tests for the Tiles feature. These also use the [GoogleMapsInspectorPlatform]. 
+/// Integration Tests for the Tiles feature. These also use the [GoogleMapsInspectorPlatform].
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
-  final GoogleMapsInspectorPlatform inspector = 
-    GoogleMapsInspectorPlatform.instance!;
+  final GoogleMapsInspectorPlatform inspector =
+      GoogleMapsInspectorPlatform.instance!;
 
   group('Tiles', () {
     testWidgets(
@@ -72,14 +73,14 @@ void main() {
 
         expect(tileOverlayInfo1.visible, isTrue);
         expect(tileOverlayInfo1.fadeIn, isTrue);
-        expect(
-            tileOverlayInfo1.transparency, moreOrLessEquals(0.2, epsilon: 0.001));
+        expect(tileOverlayInfo1.transparency,
+            moreOrLessEquals(0.2, epsilon: 0.001));
         expect(tileOverlayInfo1.zIndex, 2);
 
         expect(tileOverlayInfo2.visible, isFalse);
         expect(tileOverlayInfo2.fadeIn, isFalse);
-        expect(
-            tileOverlayInfo2.transparency, moreOrLessEquals(0.3, epsilon: 0.001));
+        expect(tileOverlayInfo2.transparency,
+            moreOrLessEquals(0.3, epsilon: 0.001));
         expect(tileOverlayInfo2.zIndex, 1);
       },
     );
@@ -145,13 +146,13 @@ void main() {
 
         final TileOverlay tileOverlayInfo1 = (await inspector
             .getTileOverlayInfo(tileOverlay1.mapsId, mapId: mapId))!;
-        final TileOverlay? tileOverlayInfo2 =
-            await inspector.getTileOverlayInfo(tileOverlay2.mapsId, mapId: mapId);
+        final TileOverlay? tileOverlayInfo2 = await inspector
+            .getTileOverlayInfo(tileOverlay2.mapsId, mapId: mapId);
 
         expect(tileOverlayInfo1.visible, isFalse);
         expect(tileOverlayInfo1.fadeIn, isFalse);
-        expect(
-            tileOverlayInfo1.transparency, moreOrLessEquals(0.3, epsilon: 0.001));
+        expect(tileOverlayInfo1.transparency,
+            moreOrLessEquals(0.3, epsilon: 0.001));
         expect(tileOverlayInfo1.zIndex, 1);
 
         expect(tileOverlayInfo2, isNull);
@@ -200,8 +201,8 @@ void main() {
         );
 
         await tester.pumpAndSettle(const Duration(seconds: 3));
-        final TileOverlay? tileOverlayInfo1 =
-            await inspector.getTileOverlayInfo(tileOverlay1.mapsId, mapId: mapId);
+        final TileOverlay? tileOverlayInfo1 = await inspector
+            .getTileOverlayInfo(tileOverlay1.mapsId, mapId: mapId);
 
         expect(tileOverlayInfo1, isNull);
       },

@@ -17,7 +17,8 @@ const CameraPosition _kInitialCameraPosition =
     CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
 
 final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
-final bool isAndroid = defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
+final bool isAndroid =
+    defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
 const bool isWeb = kIsWeb;
 
 /// Integration Tests that use the [GoogleMapsInspectorPlatform].
@@ -25,13 +26,15 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
-  final GoogleMapsInspectorPlatform inspector = 
-    GoogleMapsInspectorPlatform.instance!;
+  final GoogleMapsInspectorPlatform inspector =
+      GoogleMapsInspectorPlatform.instance!;
 
   testWidgets('testCompassToggle', (WidgetTester tester) async {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         compassEnabled: false,
@@ -45,7 +48,9 @@ void main() {
     bool compassEnabled = await inspector.isCompassEnabled(mapId: mapId);
     expect(compassEnabled, false);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -62,7 +67,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         mapToolbarEnabled: false,
@@ -76,7 +83,9 @@ void main() {
     bool mapToolbarEnabled = await inspector.isMapToolbarEnabled(mapId: mapId);
     expect(mapToolbarEnabled, false);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -107,7 +116,9 @@ void main() {
     const MinMaxZoomPreference initialZoomLevel = MinMaxZoomPreference(4, 8);
     const MinMaxZoomPreference finalZoomLevel = MinMaxZoomPreference(6, 10);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         minMaxZoomPreference: initialZoomLevel,
@@ -135,7 +146,9 @@ void main() {
       expect(zoomLevel, equals(initialZoomLevel.minZoom));
     }
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         minMaxZoomPreference: finalZoomLevel,
@@ -166,7 +179,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         zoomGesturesEnabled: false,
@@ -181,7 +196,9 @@ void main() {
         await inspector.areZoomGesturesEnabled(mapId: mapId);
     expect(zoomGesturesEnabled, false);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -198,7 +215,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -214,7 +233,9 @@ void main() {
 
     /// Zoom Controls functionality is not available on iOS at the moment.
     if (!isIOS) {
-      await pumpMap(tester, GoogleMap(
+      await pumpMap(
+        tester,
+        GoogleMap(
           key: key,
           initialCameraPosition: _kInitialCameraPosition,
           zoomControlsEnabled: false,
@@ -234,7 +255,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -247,7 +270,9 @@ void main() {
     bool liteModeEnabled = await inspector.isLiteModeEnabled(mapId: mapId);
     expect(liteModeEnabled, false);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         liteModeEnabled: true,
@@ -265,7 +290,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         rotateGesturesEnabled: false,
@@ -280,7 +307,9 @@ void main() {
         await inspector.areRotateGesturesEnabled(mapId: mapId);
     expect(rotateGesturesEnabled, false);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -298,7 +327,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         tiltGesturesEnabled: false,
@@ -313,7 +344,9 @@ void main() {
         await inspector.areTiltGesturesEnabled(mapId: mapId);
     expect(tiltGesturesEnabled, false);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -330,7 +363,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         scrollGesturesEnabled: false,
@@ -345,7 +380,9 @@ void main() {
         await inspector.areScrollGesturesEnabled(mapId: mapId);
     expect(scrollGesturesEnabled, false);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -363,7 +400,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         trafficEnabled: true,
@@ -377,7 +416,9 @@ void main() {
     bool isTrafficEnabled = await inspector.isTrafficEnabled(mapId: mapId);
     expect(isTrafficEnabled, true);
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -394,7 +435,9 @@ void main() {
     final Key key = GlobalKey();
     final Completer<int> mapIdCompleter = Completer<int>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -416,7 +459,9 @@ void main() {
       final Key key = GlobalKey();
       final Completer<int> mapIdCompleter = Completer<int>();
 
-      await pumpMap(tester, GoogleMap(
+      await pumpMap(
+        tester,
+        GoogleMap(
           key: key,
           initialCameraPosition: _kInitialCameraPosition,
           onMapCreated: (GoogleMapController controller) {
@@ -430,7 +475,9 @@ void main() {
           await inspector.isMyLocationButtonEnabled(mapId: mapId);
       expect(myLocationButtonEnabled, true);
 
-      await pumpMap(tester, GoogleMap(
+      await pumpMap(
+        tester,
+        GoogleMap(
           key: key,
           initialCameraPosition: _kInitialCameraPosition,
           myLocationButtonEnabled: false,
@@ -450,7 +497,9 @@ void main() {
       final Key key = GlobalKey();
       final Completer<int> mapIdCompleter = Completer<int>();
 
-      await pumpMap(tester, GoogleMap(
+      await pumpMap(
+        tester,
+        GoogleMap(
           key: key,
           initialCameraPosition: _kInitialCameraPosition,
           myLocationButtonEnabled: false,
@@ -471,7 +520,9 @@ void main() {
       final Key key = GlobalKey();
       final Completer<int> mapIdCompleter = Completer<int>();
 
-      await pumpMap(tester, GoogleMap(
+      await pumpMap(
+        tester,
+        GoogleMap(
           key: key,
           initialCameraPosition: _kInitialCameraPosition,
           onMapCreated: (GoogleMapController controller) {
@@ -489,7 +540,8 @@ void main() {
 }
 
 /// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
-Future<void> pumpMap(WidgetTester tester, GoogleMap map, [Size size = const Size.square(200)]) async {
+Future<void> pumpMap(WidgetTester tester, GoogleMap map,
+    [Size size = const Size.square(200)]) async {
   await tester.pumpWidget(wrapMap(map, size));
   await tester.pumpAndSettle();
 }

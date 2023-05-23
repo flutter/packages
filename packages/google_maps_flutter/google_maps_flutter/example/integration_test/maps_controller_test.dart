@@ -16,7 +16,8 @@ const CameraPosition _kInitialCameraPosition =
     CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
 
 final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
-final bool isAndroid = defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
+final bool isAndroid =
+    defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
 const bool isWeb = kIsWeb;
 
 /// Integration Tests that only need a standard [GoogleMapController].
@@ -52,7 +53,9 @@ void main() {
     final Completer<GoogleMapController> mapControllerCompleter =
         Completer<GoogleMapController>();
     final Key key = GlobalKey();
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -109,7 +112,9 @@ void main() {
     final Completer<GoogleMapController> mapControllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -169,7 +174,9 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -190,7 +197,9 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -213,7 +222,9 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -231,7 +242,9 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -263,7 +276,9 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -293,7 +308,9 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         key: key,
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -323,7 +340,9 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) async {
           controllerCompleter.complete(controller);
@@ -333,7 +352,9 @@ void main() {
     );
     final GoogleMapController controller = await controllerCompleter.future;
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         initialCameraPosition: _kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) async {
           // fail!
@@ -365,7 +386,9 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
+    await pumpMap(
+      tester,
+      GoogleMap(
         initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
         markers: markers,
         onMapCreated: (GoogleMapController googleMapController) {
@@ -398,11 +421,13 @@ void main() {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
 
-    await pumpMap(tester, GoogleMap(
-          initialCameraPosition: _kInitialCameraPosition,
-          onMapCreated: (GoogleMapController controller) {
-            controllerCompleter.complete(controller);
-          },
+    await pumpMap(
+      tester,
+      GoogleMap(
+        initialCameraPosition: _kInitialCameraPosition,
+        onMapCreated: (GoogleMapController controller) {
+          controllerCompleter.complete(controller);
+        },
       ),
     );
     await tester.pumpAndSettle(const Duration(seconds: 3));
@@ -417,7 +442,8 @@ void main() {
 }
 
 /// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
-Future<void> pumpMap(WidgetTester tester, GoogleMap map, [Size size = const Size.square(200)]) async {
+Future<void> pumpMap(WidgetTester tester, GoogleMap map,
+    [Size size = const Size.square(200)]) async {
   await tester.pumpWidget(wrapMap(map, size));
   await tester.pumpAndSettle();
 }
