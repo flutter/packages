@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Updates iOS quick action documentation in README
+
 ## 1.0.3
 
 * Updates iOS minimum version in README.
