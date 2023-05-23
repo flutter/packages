@@ -1,3 +1,7 @@
+## 0.13.4+5
+
+* Pins `package:logging` dependency until `package:build_runner` catches up. [Issue](https://github.com/dart-lang/logging/issues/143).
+
 ## 0.13.4+4
 
 * Allows code excerpts in `example/README.md`.
