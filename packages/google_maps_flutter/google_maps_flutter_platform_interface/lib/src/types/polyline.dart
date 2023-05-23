@@ -180,13 +180,9 @@ class Polyline implements MapsObject<Polyline> {
     addIfPresent('width', width);
     addIfPresent('zIndex', zIndex);
 
-    if (points != null) {
-      json['points'] = _pointsToJson();
-    }
+    json['points'] = _pointsToJson();
 
-    if (patterns != null) {
-      json['pattern'] = _patternToJson();
-    }
+    json['pattern'] = _patternToJson();
 
     return json;
   }
@@ -228,9 +224,7 @@ class Polyline implements MapsObject<Polyline> {
   Object _patternToJson() {
     final List<Object> result = <Object>[];
     for (final PatternItem patternItem in patterns) {
-      if (patternItem != null) {
-        result.add(patternItem.toJson());
-      }
+      result.add(patternItem.toJson());
     }
     return result;
   }

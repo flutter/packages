@@ -278,11 +278,11 @@ class BenchmarkServer {
 
         final List<String> scoreKeys =
             List<String>.from(profile['scoreKeys'] as Iterable<dynamic>);
-        if (scoreKeys == null || scoreKeys.isEmpty) {
+        if (scoreKeys.isEmpty) {
           throw StateError('No score keys in benchmark "$benchmarkName"');
         }
         for (final String scoreKey in scoreKeys) {
-          if (scoreKey == null || scoreKey.isEmpty) {
+          if (scoreKey.isEmpty) {
             throw StateError(
                 'Score key is empty in benchmark "$benchmarkName". '
                 'Received [${scoreKeys.join(', ')}]');
