@@ -43,9 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final QuickActionsAndroid quickActions = QuickActionsAndroid();
     quickActions.initialize((String shortcutType) {
       setState(() {
-        if (shortcutType != null) {
-          shortcut = '$shortcutType has launched';
-        }
+        shortcut = '$shortcutType has launched';
       });
     });
 
