@@ -7,6 +7,7 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import com.android.billingclient.api.BillingResult;
@@ -29,7 +30,8 @@ class PluginPurchaseListener implements PurchasesUpdatedListener {
   }
 
   @Override
-  public void onPurchasesUpdated(BillingResult billingResult, @Nullable List<Purchase> purchases) {
+  public void onPurchasesUpdated(
+      @NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
     final Map<String, Object> callbackArgs = new HashMap<>();
     callbackArgs.put("billingResult", fromBillingResult(billingResult));
     callbackArgs.put("responseCode", billingResult.getResponseCode());
