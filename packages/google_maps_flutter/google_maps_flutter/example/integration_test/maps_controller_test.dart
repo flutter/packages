@@ -81,19 +81,14 @@ void main() {
       expect(coordinate.x, (rect.width / 2).round());
       expect(coordinate.y, (rect.height / 2).round());
     } else {
+      expect(tester.view.devicePixelRatio, greaterThan(0));
       expect(
           coordinate.x,
-          ((rect.center.dx - rect.topLeft.dx) *
-                  // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
-                  // ignore: deprecated_member_use
-                  tester.binding.window.devicePixelRatio)
+          ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
               .round());
       expect(
           coordinate.y,
-          ((rect.center.dy - rect.topLeft.dy) *
-                  // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
-                  // ignore: deprecated_member_use
-                  tester.binding.window.devicePixelRatio)
+          ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
               .round());
     }
   });
