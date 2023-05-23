@@ -477,7 +477,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onPolylineTap(PolylineId polylineId) {
-    assert(polylineId != null);
     final Polyline? polyline = _polylines[polylineId];
     if (polyline == null) {
       throw UnknownMapObjectIdError('polyline', polylineId, 'onTap');
