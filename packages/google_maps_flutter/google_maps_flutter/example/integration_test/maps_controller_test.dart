@@ -47,8 +47,7 @@ void main() {
   }
 
   testWidgets('testInitialCenterLocationAtCenter', (WidgetTester tester) async {
-    const Size mapSize = Size(640, 480);
-    await tester.binding.setSurfaceSize(mapSize);
+    const Size mapSize = Size(320, 240);
 
     final Completer<GoogleMapController> mapControllerCompleter =
         Completer<GoogleMapController>();
@@ -76,15 +75,11 @@ void main() {
     final ScreenCoordinate coordinate =
         await mapController.getScreenCoordinate(_kInitialCameraPosition.target);
     final Rect rect = tester.getRect(find.byKey(key));
-    if (isWeb) {
-      // In the web, the initial position is in the center of the map
-      expect(coordinate.x, (rect.width / 2).round());
-      expect(coordinate.y, (rect.height / 2).round());
-    } else if (isIOS) {
+    if (isIOS || isIOS) {
       // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
       // So we don't need to do the conversion like we did below for other platforms.
-      expect(coordinate.x, (rect.center.dx - rect.topLeft.dx).round());
-      expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
+      expect(coordinate.x, (rect.width / 2).round());
+      expect(coordinate.y, (rect.height / 2).round());
     } else {
       expect(
           coordinate.x,
@@ -101,7 +96,6 @@ void main() {
                   tester.binding.window.devicePixelRatio)
               .round());
     }
-    await tester.binding.setSurfaceSize(null);
   });
 
   testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
