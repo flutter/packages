@@ -4,18 +4,18 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.ACKNOWLEDGE_PURCHASE;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.CONSUME_PURCHASE_ASYNC;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.END_CONNECTION;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.IS_FEATURE_SUPPORTED;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.IS_READY;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.LAUNCH_BILLING_FLOW;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.ON_DISCONNECT;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.ON_PURCHASES_UPDATED;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.QUERY_PRODUCT_DETAILS;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.QUERY_PURCHASES_ASYNC;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
-import static io.flutter.plugins.inapppurchase.InAppPurchasePlugin.MethodNames.START_CONNECTION;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ACKNOWLEDGE_PURCHASE;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.CONSUME_PURCHASE_ASYNC;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.END_CONNECTION;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_FEATURE_SUPPORTED;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.IS_READY;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.LAUNCH_BILLING_FLOW;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.ON_DISCONNECT;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PRODUCT_DETAILS;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASES_ASYNC;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.MethodNames.START_CONNECTION;
+import static io.flutter.plugins.inapppurchase.PluginPurchaseListener.ON_PURCHASES_UPDATED;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
@@ -77,7 +77,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 public class MethodCallHandlerTest {
@@ -604,30 +603,28 @@ public class MethodCallHandlerTest {
 
     CountDownLatch lock = new CountDownLatch(1);
     doAnswer(
-            new Answer<Object>() {
-              public Object answer(InvocationOnMock invocation) {
-                lock.countDown();
-                return null;
-              }
-            })
+            (Answer<Object>)
+                invocation -> {
+                  lock.countDown();
+                  return null;
+                })
         .when(result)
         .success(any(HashMap.class));
 
     ArgumentCaptor<PurchasesResponseListener> purchasesResponseListenerArgumentCaptor =
         ArgumentCaptor.forClass(PurchasesResponseListener.class);
     doAnswer(
-            new Answer<Object>() {
-              public Object answer(InvocationOnMock invocation) {
-                BillingResult.Builder resultBuilder =
-                    BillingResult.newBuilder()
-                        .setResponseCode(BillingClient.BillingResponseCode.OK)
-                        .setDebugMessage("hello message");
-                purchasesResponseListenerArgumentCaptor
-                    .getValue()
-                    .onQueryPurchasesResponse(resultBuilder.build(), new ArrayList<Purchase>());
-                return null;
-              }
-            })
+            (Answer<Object>)
+                invocation -> {
+                  BillingResult.Builder resultBuilder =
+                      BillingResult.newBuilder()
+                          .setResponseCode(BillingClient.BillingResponseCode.OK)
+                          .setDebugMessage("hello message");
+                  purchasesResponseListenerArgumentCaptor
+                      .getValue()
+                      .onQueryPurchasesResponse(resultBuilder.build(), new ArrayList<Purchase>());
+                  return null;
+                })
         .when(mockBillingClient)
         .queryPurchasesAsync(
             any(QueryPurchasesParams.class), purchasesResponseListenerArgumentCaptor.capture());

@@ -1,3 +1,7 @@
+## 0.3.0+3
+
+* Fixes Java lint issues.
+
 ## 0.3.0+2
 
 * Removes obsolete null checks on non-nullable values.
@@ -7,6 +11,7 @@
 * Fixes misaligned method signature strings.
 
 ## 0.3.0
+
 * **BREAKING CHANGE**: Removes `launchPriceChangeConfirmationFlow` from `InAppPurchaseAndroidPlatform`. Price changes are now [handled by Google Play](https://developer.android.com/google/play/billing/subscriptions#price-change).
 * Returns both base plans and offers when `queryProductDetailsAsync` is called.
 
