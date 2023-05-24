@@ -1,6 +1,6 @@
 ## 1.0.5
 
-* Updates iOS quick action documentation in README
+* Updates iOS quick action documentation in README.
 
 ## 1.0.4
 
