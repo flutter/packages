@@ -1093,7 +1093,8 @@ class WKWebView extends UIView {
     );
   }
 
-  /// Enables debugging of web contents (HTML / CSS / JavaScript) current WKWebView
+  /// Enables debugging of web contents (HTML / CSS / JavaScript) in the
+  /// underlying WebView.
   ///
   /// This flag can be enabled in order to facilitate debugging of web layouts
   /// and JavaScript code running inside WebViews. Please refer to [WKWebView]
