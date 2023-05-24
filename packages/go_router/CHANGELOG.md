@@ -1,6 +1,21 @@
-## 7.1.0
+## 7.1.2
 
 - Adds `onExit` to `GoRoute` and `ShellRoute`.
+
+## 7.1.1
+
+- Removes obsolete null checks on non-nullable values.
+
+## 7.1.0
+
+- Introduces `StatefulShellRoute` to support using separate navigators for child routes as well as preserving state in each navigation tree (flutter/flutter#99124).
+- Updates documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
+  describe the meaning of the child argument in the builder functions.
+- Adds support for restorationId to ShellRoute (and StatefulShellRoute).
+
+## 7.0.2
+
+- Fixes `BuildContext` extension method `replaceNamed` to correctly pass `pathParameters` and `queryParameters`.
 
 ## 7.0.1
 

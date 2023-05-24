@@ -194,6 +194,9 @@ bool _isExampleBuildFile(List<String> pathComponents) {
       pathComponents.contains('gradle.properties') ||
       pathComponents.contains('build.gradle') ||
       pathComponents.contains('Runner.xcodeproj') ||
+      pathComponents.contains('Runner.xcscheme') ||
+      pathComponents.contains('Runner.xcworkspace') ||
+      pathComponents.contains('Podfile') ||
       pathComponents.contains('CMakeLists.txt') ||
       pathComponents.contains('.pluginToolsConfig.yaml') ||
       pathComponents.contains('pubspec.yaml');
@@ -208,9 +211,9 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
     return false;
   }
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
-  final RegExp changeLine = RegExp(r'[+-] ');
+  final RegExp changeLine = RegExp(r'^[+-] ');
   final RegExp testDependencyLine =
-      RegExp(r'[+-]\s*(?:androidT|t)estImplementation\s');
+      RegExp(r'^[+-]\s*(?:androidT|t)estImplementation\s');
   bool foundTestDependencyChange = false;
   for (final String line in diff) {
     if (!changeLine.hasMatch(line) ||
