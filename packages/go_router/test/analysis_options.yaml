@@ -3,7 +3,7 @@
 # Please do NOT add more changes here without consulting with
 # #hackers-ecosystem on Discord.
 
-include: ../../analysis_options.yaml
+include: ../../../analysis_options.yaml
 
 linter:
   rules:
