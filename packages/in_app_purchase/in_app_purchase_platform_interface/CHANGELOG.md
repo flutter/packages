@@ -1,5 +1,6 @@
-## NEXT
+## 1.3.4
 
+* Removes obsolete null checks on non-nullable values.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 

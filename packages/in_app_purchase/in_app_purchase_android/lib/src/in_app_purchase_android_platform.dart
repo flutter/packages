@@ -184,11 +184,6 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
       return const BillingResultWrapper(responseCode: BillingResponse.ok);
     }
 
-    if (googlePurchase.verificationData == null) {
-      throw ArgumentError(
-          'completePurchase unsuccessful. The `purchase.verificationData` is not valid');
-    }
-
     return billingClientManager.runWithClient(
       (BillingClient client) => client.acknowledgePurchase(
           purchase.verificationData.serverVerificationData),
