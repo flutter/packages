@@ -4,6 +4,8 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -185,7 +187,7 @@ class HomeScreen extends StatelessWidget {
                   value: '2',
                   child: const Text('Push w/ return value'),
                   onTap: () async {
-                    FamilyCountRoute(familyData.length)
+                    unawaited(FamilyCountRoute(familyData.length)
                         .push<int>(context)
                         .then((int? value) {
                       if (value != null) {
@@ -195,7 +197,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         );
                       }
-                    });
+                    }));
                   },
                 ),
                 PopupMenuItem<String>(

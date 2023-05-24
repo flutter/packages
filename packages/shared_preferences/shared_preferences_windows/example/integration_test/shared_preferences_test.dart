@@ -28,7 +28,7 @@ void main() {
 
     testWidgets('reading', (WidgetTester _) async {
       final SharedPreferencesWindows preferences = SharedPreferencesWindows();
-      preferences.clear();
+      await preferences.clear();
       final Map<String, Object> values = await preferences.getAll();
       expect(values['String'], isNull);
       expect(values['bool'], isNull);
@@ -39,7 +39,7 @@ void main() {
 
     testWidgets('writing', (WidgetTester _) async {
       final SharedPreferencesWindows preferences = SharedPreferencesWindows();
-      preferences.clear();
+      await preferences.clear();
       await preferences.setValue(
           'String', 'flutter.String', kTestValues2['flutter.String']!);
       await preferences.setValue(
@@ -60,7 +60,7 @@ void main() {
 
     testWidgets('removing', (WidgetTester _) async {
       final SharedPreferencesWindows preferences = SharedPreferencesWindows();
-      preferences.clear();
+      await preferences.clear();
       const String key = 'flutter.testKey';
       await preferences.setValue('String', key, kTestValues['flutter.String']!);
       await preferences.setValue('Bool', key, kTestValues['flutter.bool']!);
@@ -75,7 +75,7 @@ void main() {
 
     testWidgets('clearing', (WidgetTester _) async {
       final SharedPreferencesWindows preferences = SharedPreferencesWindows();
-      preferences.clear();
+      await preferences.clear();
       await preferences.setValue(
           'String', 'flutter.String', kTestValues['flutter.String']!);
       await preferences.setValue(
