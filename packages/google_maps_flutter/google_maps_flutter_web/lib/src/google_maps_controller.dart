@@ -59,9 +59,7 @@ class GoogleMapController {
   List<gmaps.MapTypeStyle> _lastStyles = const <gmaps.MapTypeStyle>[];
 
   /// Configuration accessor for integration tests
-  @visibleForTesting
-  gmaps.MapOptions get options =>
-      _configurationAndStyleToGmapsOptions(_lastMapConfiguration, _lastStyles);
+  MapConfiguration get configuration => _lastMapConfiguration;
 
   // Creates the 'viewType' for the _widget
   String _getViewType(int mapId) => 'plugins.flutter.io/google_maps_$mapId';

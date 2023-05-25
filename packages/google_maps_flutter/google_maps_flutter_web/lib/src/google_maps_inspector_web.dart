@@ -2,18 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: invalid_use_of_visible_for_testing_member
-
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
-import '../google_maps_flutter_web.dart';
+
+/// Function that gets the [MapConfiguration] for a given `mapId`.
+typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 
 /// This platform implementation allows inspecting the running maps.
 class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
   /// Build an "inspector" that is able to look into maps.
-  GoogleMapsInspectorWeb();
+  GoogleMapsInspectorWeb(ConfigurationProvider configurationProvider)
+      : _configurationProvider = configurationProvider;
 
-  GoogleMapController _map(int mapId) =>
-      (GoogleMapsFlutterPlatform.instance as GoogleMapsPlugin).map(mapId);
+  final ConfigurationProvider _configurationProvider;
 
   @override
   Future<bool> areBuildingsEnabled({required int mapId}) async {
@@ -22,40 +22,42 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
 
   @override
   Future<bool> areRotateGesturesEnabled({required int mapId}) async {
-    return false;
+    return false; // Not supported on the web
   }
 
   @override
   Future<bool> areScrollGesturesEnabled({required int mapId}) async {
-    return _map(mapId).options.gestureHandling != 'none';
+    return _configurationProvider(mapId).scrollGesturesEnabled ?? false;
   }
 
   @override
   Future<bool> areTiltGesturesEnabled({required int mapId}) async {
-    return false;
+    return false; // Not supported on the web
   }
 
   @override
   Future<bool> areZoomControlsEnabled({required int mapId}) async {
-    return _map(mapId).options.zoomControl ?? false;
+    return _configurationProvider(mapId).zoomControlsEnabled ?? false;
   }
 
   @override
   Future<bool> areZoomGesturesEnabled({required int mapId}) async {
-    return _map(mapId).options.gestureHandling != 'none';
+    return _configurationProvider(mapId).zoomGesturesEnabled ?? false;
   }
 
   @override
   Future<MinMaxZoomPreference> getMinMaxZoomLevels({required int mapId}) async {
-    return MinMaxZoomPreference(
-      _map(mapId).options.minZoom?.toDouble(),
-      _map(mapId).options.maxZoom?.toDouble(),
-    );
+    final MapConfiguration config = _configurationProvider(mapId);
+    assert(config.minMaxZoomPreference != null);
+
+    return config.minMaxZoomPreference!;
   }
 
   @override
-  Future<TileOverlay?> getTileOverlayInfo(TileOverlayId tileOverlayId,
-      {required int mapId}) async {
+  Future<TileOverlay?> getTileOverlayInfo(
+    TileOverlayId tileOverlayId, {
+    required int mapId,
+  }) async {
     return null; // Custom tiles not supported on the web
   }
 
@@ -81,6 +83,6 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
 
   @override
   Future<bool> isTrafficEnabled({required int mapId}) async {
-    return _map(mapId).trafficLayer != null;
+    return _configurationProvider(mapId).trafficEnabled ?? false;
   }
 }
