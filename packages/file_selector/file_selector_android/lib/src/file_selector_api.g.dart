@@ -52,12 +52,41 @@ class FileResponse {
   }
 }
 
+class FileTypes {
+  FileTypes({
+    required this.mimeTypes,
+    required this.extensions,
+  });
+
+  List<String?> mimeTypes;
+
+  List<String?> extensions;
+
+  Object encode() {
+    return <Object?>[
+      mimeTypes,
+      extensions,
+    ];
+  }
+
+  static FileTypes decode(Object result) {
+    result as List<Object?>;
+    return FileTypes(
+      mimeTypes: (result[0] as List<Object?>?)!.cast<String?>(),
+      extensions: (result[1] as List<Object?>?)!.cast<String?>(),
+    );
+  }
+}
+
 class _FileSelectorApiCodec extends StandardMessageCodec {
   const _FileSelectorApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is FileResponse) {
       buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is FileTypes) {
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -67,14 +96,17 @@ class _FileSelectorApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return FileResponse.decode(readValue(buffer)!);
+      case 129: 
+        return FileTypes.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
+/// An API to call to native code to select files or directories.
 class FileSelectorApi {
   /// Constructor for [FileSelectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -85,14 +117,15 @@ class FileSelectorApi {
 
   static const MessageCodec<Object?> codec = _FileSelectorApiCodec();
 
-  Future<FileResponse?> openFile(String? arg_initialDirectory,
-      List<String?> arg_mimeTypes, List<String?> arg_extensions) async {
+  /// Opens a file dialog for loading files and returns a file path.
+  ///
+  /// Returns `null` if user cancels the operation.
+  Future<FileResponse?> openFile(String? arg_initialDirectory, FileTypes arg_allowedTypes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.openFile', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(
-            <Object?>[arg_initialDirectory, arg_mimeTypes, arg_extensions])
-        as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_initialDirectory, arg_allowedTypes]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -109,14 +142,14 @@ class FileSelectorApi {
     }
   }
 
-  Future<List<FileResponse?>> openFiles(String? arg_initialDirectory,
-      List<String?> arg_mimeTypes, List<String?> arg_extensions) async {
+  /// Opens a file dialog for loading files and returns a list of file responses
+  /// chosen by the user.
+  Future<List<FileResponse?>> openFiles(String? arg_initialDirectory, FileTypes arg_allowedTypes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.openFiles', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(
-            <Object?>[arg_initialDirectory, arg_mimeTypes, arg_extensions])
-        as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_initialDirectory, arg_allowedTypes]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -138,6 +171,9 @@ class FileSelectorApi {
     }
   }
 
+  /// Opens a file dialog for loading directories and returns a directory path.
+  ///
+  /// Returns `null` if user cancels the operation.
   Future<String?> getDirectoryPath(String? arg_initialDirectory) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.getDirectoryPath', codec,

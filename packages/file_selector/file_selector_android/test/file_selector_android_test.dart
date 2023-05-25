@@ -12,19 +12,17 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'file_selector_android_test.mocks.dart';
-import 'test_file_selector_api.g.dart';
 
-@GenerateMocks(<Type>[TestFileSelectorApi])
+@GenerateMocks(<Type>[FileSelectorApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late FileSelectorAndroid plugin;
-  late MockTestFileSelectorApi mockApi;
+  late MockFileSelectorApi mockApi;
 
   setUp(() {
-    mockApi = MockTestFileSelectorApi();
-    TestFileSelectorApi.setup(mockApi);
-    plugin = FileSelectorAndroid();
+    mockApi = MockFileSelectorApi();
+    plugin = FileSelectorAndroid(api: mockApi);
   });
 
   test('registered instance', () {
@@ -37,8 +35,17 @@ void main() {
       when(
         mockApi.openFile(
           'some/path/',
-          <String>['text/plain', 'image/jpg'],
-          <String>['txt', 'jpg'],
+          argThat(
+            isA<FileTypes>().having(
+              (FileTypes types) => types.mimeTypes,
+              'mimeTypes',
+              <String>['text/plain', 'image/jpg'],
+            ).having(
+              (FileTypes types) => types.extensions,
+              'extensions',
+              <String>['txt', 'jpg'],
+            ),
+          ),
         ),
       ).thenAnswer(
         (_) => Future<FileResponse?>.value(
@@ -79,8 +86,17 @@ void main() {
       when(
         mockApi.openFiles(
           'some/path/',
-          <String>['text/plain', 'image/jpg'],
-          <String>['txt', 'jpg'],
+          argThat(
+            isA<FileTypes>().having(
+              (FileTypes types) => types.mimeTypes,
+              'mimeTypes',
+              <String>['text/plain', 'image/jpg'],
+            ).having(
+              (FileTypes types) => types.extensions,
+              'extensions',
+              <String>['txt', 'jpg'],
+            ),
+          ),
         ),
       ).thenAnswer(
         (_) => Future<List<FileResponse>>.value(

@@ -7,12 +7,6 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/file_selector_api.g.dart',
-    dartTestOut: 'test/test_file_selector_api.g.dart',
-    dartOptions: DartOptions(copyrightHeader: <String>[
-      'Copyright 2013 The Flutter Authors. All rights reserved.',
-      'Use of this source code is governed by a BSD-style license that can be',
-      'found in the LICENSE file.',
-    ]),
     javaOut:
         'android/src/main/java/dev/flutter/packages/file_selector_android/GeneratedFileSelectorApi.java',
     javaOptions: JavaOptions(
@@ -30,22 +24,31 @@ class FileResponse {
   late final Uint8List bytes;
 }
 
-@HostApi(dartHostTestHandler: 'TestFileSelectorApi')
-abstract class FileSelectorApi {
-  @async
-  FileResponse? openFile(
-    String? initialDirectory,
-    List<String?> mimeTypes,
-    List<String?> extensions,
-  );
+class FileTypes {
+  late List<String?> mimeTypes;
+  late List<String?> extensions;
+}
 
+/// An API to call to native code to select files or directories.
+@HostApi()
+abstract class FileSelectorApi {
+  /// Opens a file dialog for loading files and returns a file path.
+  ///
+  /// Returns `null` if user cancels the operation.
+  @async
+  FileResponse? openFile(String? initialDirectory, FileTypes allowedTypes);
+
+  /// Opens a file dialog for loading files and returns a list of file responses
+  /// chosen by the user.
   @async
   List<FileResponse?> openFiles(
     String? initialDirectory,
-    List<String?> mimeTypes,
-    List<String?> extensions,
+    FileTypes allowedTypes,
   );
 
+  /// Opens a file dialog for loading directories and returns a directory path.
+  ///
+  /// Returns `null` if user cancels the operation.
   @async
   String? getDirectoryPath(String? initialDirectory);
 }

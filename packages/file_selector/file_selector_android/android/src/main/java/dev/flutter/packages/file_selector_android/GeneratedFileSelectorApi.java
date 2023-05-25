@@ -16,7 +16,11 @@ import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -31,7 +35,8 @@ public class GeneratedFileSelectorApi {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
+    {
       super(message);
       this.code = code;
       this.details = details;
@@ -50,7 +55,7 @@ public class GeneratedFileSelectorApi {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -187,10 +192,82 @@ public class GeneratedFileSelectorApi {
       Object name = list.get(2);
       pigeonResult.setName((String) name);
       Object size = list.get(3);
-      pigeonResult.setSize(
-          (size == null) ? null : ((size instanceof Integer) ? (Integer) size : (Long) size));
+      pigeonResult.setSize((size == null) ? null : ((size instanceof Integer) ? (Integer) size : (Long) size));
       Object bytes = list.get(4);
       pigeonResult.setBytes((byte[]) bytes);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class FileTypes {
+    private @NonNull List<String> mimeTypes;
+
+    public @NonNull List<String> getMimeTypes() {
+      return mimeTypes;
+    }
+
+    public void setMimeTypes(@NonNull List<String> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"mimeTypes\" is null.");
+      }
+      this.mimeTypes = setterArg;
+    }
+
+    private @NonNull List<String> extensions;
+
+    public @NonNull List<String> getExtensions() {
+      return extensions;
+    }
+
+    public void setExtensions(@NonNull List<String> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"extensions\" is null.");
+      }
+      this.extensions = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    FileTypes() {}
+
+    public static final class Builder {
+
+      private @Nullable List<String> mimeTypes;
+
+      public @NonNull Builder setMimeTypes(@NonNull List<String> setterArg) {
+        this.mimeTypes = setterArg;
+        return this;
+      }
+
+      private @Nullable List<String> extensions;
+
+      public @NonNull Builder setExtensions(@NonNull List<String> setterArg) {
+        this.extensions = setterArg;
+        return this;
+      }
+
+      public @NonNull FileTypes build() {
+        FileTypes pigeonReturn = new FileTypes();
+        pigeonReturn.setMimeTypes(mimeTypes);
+        pigeonReturn.setExtensions(extensions);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(mimeTypes);
+      toListResult.add(extensions);
+      return toListResult;
+    }
+
+    static @NonNull FileTypes fromList(@NonNull ArrayList<Object> list) {
+      FileTypes pigeonResult = new FileTypes();
+      Object mimeTypes = list.get(0);
+      pigeonResult.setMimeTypes((List<String>) mimeTypes);
+      Object extensions = list.get(1);
+      pigeonResult.setExtensions((List<String>) extensions);
       return pigeonResult;
     }
   }
@@ -212,6 +289,8 @@ public class GeneratedFileSelectorApi {
       switch (type) {
         case (byte) 128:
           return FileResponse.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
+          return FileTypes.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -222,36 +301,44 @@ public class GeneratedFileSelectorApi {
       if (value instanceof FileResponse) {
         stream.write(128);
         writeValue(stream, ((FileResponse) value).toList());
+      } else if (value instanceof FileTypes) {
+        stream.write(129);
+        writeValue(stream, ((FileTypes) value).toList());
       } else {
         super.writeValue(stream, value);
       }
     }
   }
 
-  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  /**
+   * An API to call to native code to select files or directories.
+   *
+   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
   public interface FileSelectorApi {
-
-    void openFile(
-        @Nullable String initialDirectory,
-        @NonNull List<String> mimeTypes,
-        @NonNull List<String> extensions,
-        @NonNull Result<FileResponse> result);
-
-    void openFiles(
-        @Nullable String initialDirectory,
-        @NonNull List<String> mimeTypes,
-        @NonNull List<String> extensions,
-        @NonNull Result<List<FileResponse>> result);
-
+    /**
+     * Opens a file dialog for loading files and returns a file path.
+     *
+     * Returns `null` if user cancels the operation.
+     */
+    void openFile(@Nullable String initialDirectory, @NonNull FileTypes allowedTypes, @NonNull Result<FileResponse> result);
+    /**
+     * Opens a file dialog for loading files and returns a list of file responses
+     * chosen by the user.
+     */
+    void openFiles(@Nullable String initialDirectory, @NonNull FileTypes allowedTypes, @NonNull Result<List<FileResponse>> result);
+    /**
+     * Opens a file dialog for loading directories and returns a directory path.
+     *
+     * Returns `null` if user cancels the operation.
+     */
     void getDirectoryPath(@Nullable String initialDirectory, @NonNull Result<String> result);
 
     /** The codec used by FileSelectorApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return FileSelectorApiCodec.INSTANCE;
     }
-    /**
-     * Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`.
-     */
+    /**Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable FileSelectorApi api) {
       {
         BasicMessageChannel<Object> channel =
@@ -263,8 +350,7 @@ public class GeneratedFileSelectorApi {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String initialDirectoryArg = (String) args.get(0);
-                List<String> mimeTypesArg = (List<String>) args.get(1);
-                List<String> extensionsArg = (List<String>) args.get(2);
+                FileTypes allowedTypesArg = (FileTypes) args.get(1);
                 Result<FileResponse> resultCallback =
                     new Result<FileResponse>() {
                       public void success(FileResponse result) {
@@ -278,7 +364,7 @@ public class GeneratedFileSelectorApi {
                       }
                     };
 
-                api.openFile(initialDirectoryArg, mimeTypesArg, extensionsArg, resultCallback);
+                api.openFile(initialDirectoryArg, allowedTypesArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -294,8 +380,7 @@ public class GeneratedFileSelectorApi {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String initialDirectoryArg = (String) args.get(0);
-                List<String> mimeTypesArg = (List<String>) args.get(1);
-                List<String> extensionsArg = (List<String>) args.get(2);
+                FileTypes allowedTypesArg = (FileTypes) args.get(1);
                 Result<List<FileResponse>> resultCallback =
                     new Result<List<FileResponse>>() {
                       public void success(List<FileResponse> result) {
@@ -309,7 +394,7 @@ public class GeneratedFileSelectorApi {
                       }
                     };
 
-                api.openFiles(initialDirectoryArg, mimeTypesArg, extensionsArg, resultCallback);
+                api.openFiles(initialDirectoryArg, allowedTypesArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

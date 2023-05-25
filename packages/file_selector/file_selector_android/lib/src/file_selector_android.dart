@@ -5,12 +5,16 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'file_selector_api.g.dart';
 
 /// An implementation of [FileSelectorPlatform] for Android.
 class FileSelectorAndroid extends FileSelectorPlatform {
-  final FileSelectorApi _api = FileSelectorApi();
+  FileSelectorAndroid({@visibleForTesting FileSelectorApi? api})
+      : _api = api ?? FileSelectorApi();
+
+  final FileSelectorApi _api;
 
   /// Registers this class as the implementation of the file_selector platform interface.
   static void registerWith() {
@@ -36,13 +40,15 @@ class FileSelectorAndroid extends FileSelectorPlatform {
 
     final FileResponse? file = await _api.openFile(
       initialDirectory,
-      _combine<String>(
-        acceptedTypeGroups ?? <XTypeGroup>[],
-        (XTypeGroup group) => group.mimeTypes,
-      ),
-      _combine<String>(
-        acceptedTypeGroups ?? <XTypeGroup>[],
-        (XTypeGroup group) => group.extensions,
+      FileTypes(
+        mimeTypes: _combine<String>(
+          acceptedTypeGroups ?? <XTypeGroup>[],
+          (XTypeGroup group) => group.mimeTypes,
+        ),
+        extensions: _combine<String>(
+          acceptedTypeGroups ?? <XTypeGroup>[],
+          (XTypeGroup group) => group.extensions,
+        ),
       ),
     );
     return file == null ? null : _xFileFromFileResponse(file);
@@ -67,13 +73,15 @@ class FileSelectorAndroid extends FileSelectorPlatform {
 
     final List<FileResponse?> files = await _api.openFiles(
       initialDirectory,
-      _combine<String>(
-        acceptedTypeGroups ?? <XTypeGroup>[],
-        (XTypeGroup group) => group.mimeTypes,
-      ),
-      _combine<String>(
-        acceptedTypeGroups ?? <XTypeGroup>[],
-        (XTypeGroup group) => group.extensions,
+      FileTypes(
+        mimeTypes: _combine<String>(
+          acceptedTypeGroups ?? <XTypeGroup>[],
+          (XTypeGroup group) => group.mimeTypes,
+        ),
+        extensions: _combine<String>(
+          acceptedTypeGroups ?? <XTypeGroup>[],
+          (XTypeGroup group) => group.extensions,
+        ),
       ),
     );
     return files

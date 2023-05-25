@@ -5,10 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:file_selector_android/src/file_selector_api.g.dart' as _i4;
+import 'package:file_selector_android/src/file_selector_api.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-
-import 'test_file_selector_api.g.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -21,56 +19,51 @@ import 'test_file_selector_api.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [TestFileSelectorApi].
+/// A class which mocks [FileSelectorApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTestFileSelectorApi extends _i1.Mock
-    implements _i2.TestFileSelectorApi {
-  MockTestFileSelectorApi() {
+class MockFileSelectorApi extends _i1.Mock implements _i2.FileSelectorApi {
+  MockFileSelectorApi() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<_i4.FileResponse?> openFile(
-    String? initialDirectory,
-    List<String?>? mimeTypes,
-    List<String?>? extensions,
+  _i3.Future<_i2.FileResponse?> openFile(
+    String? arg_initialDirectory,
+    _i2.FileTypes? arg_allowedTypes,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #openFile,
           [
-            initialDirectory,
-            mimeTypes,
-            extensions,
+            arg_initialDirectory,
+            arg_allowedTypes,
           ],
         ),
-        returnValue: _i3.Future<_i4.FileResponse?>.value(),
-      ) as _i3.Future<_i4.FileResponse?>);
+        returnValue: _i3.Future<_i2.FileResponse?>.value(),
+      ) as _i3.Future<_i2.FileResponse?>);
   @override
-  _i3.Future<List<_i4.FileResponse?>> openFiles(
-    String? initialDirectory,
-    List<String?>? mimeTypes,
-    List<String?>? extensions,
+  _i3.Future<List<_i2.FileResponse?>> openFiles(
+    String? arg_initialDirectory,
+    _i2.FileTypes? arg_allowedTypes,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #openFiles,
           [
-            initialDirectory,
-            mimeTypes,
-            extensions,
+            arg_initialDirectory,
+            arg_allowedTypes,
           ],
         ),
         returnValue:
-            _i3.Future<List<_i4.FileResponse?>>.value(<_i4.FileResponse?>[]),
-      ) as _i3.Future<List<_i4.FileResponse?>>);
+            _i3.Future<List<_i2.FileResponse?>>.value(<_i2.FileResponse?>[]),
+      ) as _i3.Future<List<_i2.FileResponse?>>);
   @override
-  _i3.Future<String?> getDirectoryPath(String? initialDirectory) =>
+  _i3.Future<String?> getDirectoryPath(String? arg_initialDirectory) =>
       (super.noSuchMethod(
         Invocation.method(
           #getDirectoryPath,
-          [initialDirectory],
+          [arg_initialDirectory],
         ),
         returnValue: _i3.Future<String?>.value(),
       ) as _i3.Future<String?>);
