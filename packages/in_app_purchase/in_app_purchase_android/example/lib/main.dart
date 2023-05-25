@@ -397,7 +397,7 @@ class _MyAppState extends State<_MyApp> {
             purchaseDetails.status == PurchaseStatus.restored) {
           final bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
-            deliverProduct(purchaseDetails);
+            unawaited(deliverProduct(purchaseDetails));
           } else {
             _handleInvalidPurchase(purchaseDetails);
             return;
@@ -458,7 +458,8 @@ class _FeatureCard extends StatelessWidget {
             children: <Widget>[
           const ListTile(title: Text('Available features')),
           const Divider(),
-          for (BillingClientFeature feature in BillingClientFeature.values)
+          for (final BillingClientFeature feature
+              in BillingClientFeature.values)
             _buildFeatureWidget(feature),
         ]));
   }

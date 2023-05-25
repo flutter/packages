@@ -827,8 +827,7 @@ class Profile {
   ///
   /// [name] and [useCustomWarmUp] must not be null.
   Profile({required this.name, this.useCustomWarmUp = false})
-      : assert(name != null),
-        _isWarmingUp = useCustomWarmUp;
+      : _isWarmingUp = useCustomWarmUp;
 
   /// The name of the benchmark that produced this profile.
   final String name;
@@ -1213,13 +1212,6 @@ final Map<String, EngineBenchmarkValueListener> _engineBenchmarkListeners =
 /// If another listener is already registered, overrides it.
 void registerEngineBenchmarkValueListener(
     String name, EngineBenchmarkValueListener listener) {
-  if (listener == null) {
-    throw ArgumentError(
-      'Listener must not be null. To stop listening to engine benchmark values '
-      'under label "$name", call stopListeningToEngineBenchmarkValues(\'$name\').',
-    );
-  }
-
   if (_engineBenchmarkListeners.containsKey(name)) {
     throw StateError('A listener for "$name" is already registered.\n'
         'Call `stopListeningToEngineBenchmarkValues` to unregister the previous '

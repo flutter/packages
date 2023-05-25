@@ -27,7 +27,7 @@ class GoogleUserCircleAvatar extends StatelessWidget {
     this.placeholderPhotoUrl,
     this.foregroundColor,
     this.backgroundColor,
-  }) : assert(identity != null);
+  });
 
   /// A regular expression that matches against the "size directive" path
   /// segment of Google profile image URLs.
