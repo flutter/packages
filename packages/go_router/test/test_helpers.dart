@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/match.dart';
 
 Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(
@@ -147,6 +148,7 @@ Future<GoRouter> createRouter(
   int redirectLimit = 5,
   GlobalKey<NavigatorState>? navigatorKey,
   GoRouterWidgetBuilder? errorBuilder,
+  String? restorationScopeId,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
@@ -158,9 +160,12 @@ Future<GoRouter> createRouter(
         (BuildContext context, GoRouterState state) =>
             TestErrorScreen(state.error!),
     navigatorKey: navigatorKey,
+    restorationScopeId: restorationScopeId,
   );
   await tester.pumpWidget(
     MaterialApp.router(
+      restorationScopeId:
+          restorationScopeId != null ? '$restorationScopeId-root' : null,
       routerConfig: goRouter,
     ),
   );
@@ -228,10 +233,49 @@ class DummyStatefulWidget extends StatefulWidget {
   const DummyStatefulWidget({super.key});
 
   @override
-  State<DummyStatefulWidget> createState() => DummyStatefulWidgetState();
+  State<StatefulWidget> createState() => DummyStatefulWidgetState();
 }
 
 class DummyStatefulWidgetState extends State<DummyStatefulWidget> {
+  int counter = 0;
+
+  void increment() => setState(() {
+        counter++;
+      });
+
+  @override
+  Widget build(BuildContext context) => Container();
+}
+
+class DummyRestorableStatefulWidget extends StatefulWidget {
+  const DummyRestorableStatefulWidget({super.key, this.restorationId});
+
+  final String? restorationId;
+
+  @override
+  State<StatefulWidget> createState() => DummyRestorableStatefulWidgetState();
+}
+
+class DummyRestorableStatefulWidgetState
+    extends State<DummyRestorableStatefulWidget> with RestorationMixin {
+  final RestorableInt _counter = RestorableInt(0);
+
+  @override
+  String? get restorationId => widget.restorationId;
+
+  int get counter => _counter.value;
+
+  void increment([int count = 1]) => setState(() {
+        _counter.value += count;
+      });
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    if (restorationId != null) {
+      registerForRestoration(_counter, restorationId!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Container();
 }
@@ -241,4 +285,24 @@ Future<void> simulateAndroidBackButton(WidgetTester tester) async {
       const JSONMethodCodec().encodeMethodCall(const MethodCall('popRoute'));
   await tester.binding.defaultBinaryMessenger
       .handlePlatformMessage('flutter/navigation', message, (_) {});
+}
+
+GoRouterPageBuilder createPageBuilder(
+        {String? restorationId, required Widget child}) =>
+    (BuildContext context, GoRouterState state) =>
+        MaterialPage<dynamic>(restorationId: restorationId, child: child);
+
+StatefulShellRouteBuilder mockStackedShellBuilder = (BuildContext context,
+    GoRouterState state, StatefulNavigationShell navigationShell) {
+  return navigationShell;
+};
+
+RouteMatch createRouteMatch(RouteBase route, String location) {
+  return RouteMatch(
+    route: route,
+    matchedLocation: location,
+    extra: null,
+    error: null,
+    pageKey: ValueKey<String>(location),
+  );
 }

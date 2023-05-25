@@ -159,7 +159,7 @@ void main() {
     test('fails if AUTHORS is missing', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
-      package.authorsFile.delete();
+      package.authorsFile.deleteSync();
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -183,7 +183,7 @@ void main() {
           packagesDir.parent
               .childDirectory('third_party')
               .childDirectory('packages'));
-      package.authorsFile.delete();
+      package.authorsFile.deleteSync();
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['publish-check']);
@@ -283,7 +283,9 @@ void main() {
         'Test for publish-check command.',
       );
       runner.addCommand(PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient));
+          platform: mockPlatform,
+          processRunner: processRunner,
+          httpClient: mockClient));
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
@@ -339,7 +341,9 @@ void main() {
         'Test for publish-check command.',
       );
       runner.addCommand(PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient));
+          platform: mockPlatform,
+          processRunner: processRunner,
+          httpClient: mockClient));
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['publish-check']);
