@@ -86,7 +86,7 @@ void main() {
 
     test('passes through no-activity exception', () async {
       final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
-      expectLater(
+      await expectLater(
           launcher.launch(
             'noactivity://',
             useSafariVC: false,
@@ -101,7 +101,7 @@ void main() {
 
     test('throws if there is no handling activity', () async {
       final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
-      expectLater(
+      await expectLater(
           launcher.launch(
             'unknown://scheme',
             useSafariVC: false,
@@ -167,7 +167,7 @@ void main() {
 
     test('passes through no-activity exception', () async {
       final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
-      expectLater(
+      await expectLater(
           launcher.launch(
             'noactivity://scheme',
             useSafariVC: false,
@@ -182,7 +182,7 @@ void main() {
 
     test('throws if there is no handling activity', () async {
       final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
-      expectLater(
+      await expectLater(
           launcher.launch(
             'unknown://scheme',
             useSafariVC: false,
