@@ -43,7 +43,7 @@ public class FileSelectorAndroidPluginTest {
 
   @Mock public Activity mockActivity;
 
-  @Mock FileSelectorApiImpl.TestProxy mockTestProxy;
+  @Mock FileSelectorApiImpl.NativeObjectFactory mockObjectFactory;
 
   @Mock public ActivityPluginBinding mockActivityBinding;
 
@@ -95,15 +95,21 @@ public class FileSelectorAndroidPluginTest {
     when(mockUri.toString()).thenReturn("some/path/");
     mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain");
 
-    when(mockTestProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
-    when(mockTestProxy.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
+    when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
+    when(mockObjectFactory.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
     when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockTestProxy);
+        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
-    fileSelectorApi.openFile(null, new GeneratedFileSelectorApi.FileTypes.Builder().setMimeTypes(Collections.emptyList()).setExtensions(Collections.emptyList()).build(), mockResult);
+    fileSelectorApi.openFile(
+        null,
+        new GeneratedFileSelectorApi.FileTypes.Builder()
+            .setMimeTypes(Collections.emptyList())
+            .setExtensions(Collections.emptyList())
+            .build(),
+        mockResult);
     verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
 
     verify(mockActivity).startActivityForResult(mockIntent, 221);
@@ -141,15 +147,21 @@ public class FileSelectorAndroidPluginTest {
     when(mockUri2.toString()).thenReturn("some/other/path/");
     mockContentResolver(mockContentResolver, mockUri2, "filename2", 40, "image/jpg");
 
-    when(mockTestProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
-    when(mockTestProxy.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
+    when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
+    when(mockObjectFactory.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
     when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockTestProxy);
+        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
-    fileSelectorApi.openFiles(null, new GeneratedFileSelectorApi.FileTypes.Builder().setMimeTypes(Collections.emptyList()).setExtensions(Collections.emptyList()).build(), mockResult);
+    fileSelectorApi.openFiles(
+        null,
+        new GeneratedFileSelectorApi.FileTypes.Builder()
+            .setMimeTypes(Collections.emptyList())
+            .setExtensions(Collections.emptyList())
+            .build(),
+        mockResult);
     verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
     verify(mockIntent).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
@@ -200,10 +212,10 @@ public class FileSelectorAndroidPluginTest {
     final Uri mockUri = mock(Uri.class);
     when(mockUri.toString()).thenReturn("some/path/");
 
-    when(mockTestProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE)).thenReturn(mockIntent);
+    when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE)).thenReturn(mockIntent);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockTestProxy);
+        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
     fileSelectorApi.getDirectoryPath(null, mockResult);

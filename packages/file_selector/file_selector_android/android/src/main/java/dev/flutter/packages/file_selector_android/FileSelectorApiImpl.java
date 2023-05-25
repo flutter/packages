@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings("unused")
 public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelectorApi {
   private static final String TAG = "FileSelectorApiImpl";
   // Request code for selecting a file.
@@ -39,16 +38,17 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   // Request code for selecting a directory.
   private static final int OPEN_DIR = 223;
 
-  private final TestProxy testProxy;
+  private final NativeObjectFactory objectFactory;
   @Nullable ActivityPluginBinding activityPluginBinding;
 
   private abstract static class OnResultListener {
     public abstract void onResult(int resultCode, @Nullable Intent data);
   }
 
-  // Proxy for instantiating Android classes for unit tests.
+  // Handles instantiating class objects that are needed by this class. This is provided to be
+  // overridden for tests.
   @VisibleForTesting
-  static class TestProxy {
+  static class NativeObjectFactory {
     @NonNull
     Intent newIntent(@NonNull String action) {
       return new Intent(action);
@@ -61,28 +61,30 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   public FileSelectorApiImpl(@NonNull ActivityPluginBinding activityPluginBinding) {
-    this(activityPluginBinding, new TestProxy());
+    this(activityPluginBinding, new NativeObjectFactory());
   }
 
   @VisibleForTesting
   FileSelectorApiImpl(
-      @NonNull ActivityPluginBinding activityPluginBinding, @NonNull TestProxy testProxy) {
+      @NonNull ActivityPluginBinding activityPluginBinding,
+      @NonNull NativeObjectFactory objectFactory) {
     this.activityPluginBinding = activityPluginBinding;
-    this.testProxy = testProxy;
+    this.objectFactory = objectFactory;
   }
 
   @Override
-  public void openFile(@Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes, @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
-    final Intent intent = testProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT);
+  public void openFile(
+      @Nullable String initialDirectory,
+      @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes,
+      @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
+    final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
     setMimeTypes(intent, allowedTypes);
+    trySetInitialDirectory(intent, initialDirectory);
 
     try {
-      if (initialDirectory != null) {
-        trySetInitialDirectory(intent, initialDirectory);
-      }
-      tryStartActivityForResult(
+      startActivityForResult(
           intent,
           OPEN_FILE,
           new OnResultListener() {
@@ -107,18 +109,20 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Override
-  public void openFiles(@Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes, @NonNull GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
-    final Intent intent = testProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT);
+  public void openFiles(
+      @Nullable String initialDirectory,
+      @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes,
+      @NonNull
+          GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
+    final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
     intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
     setMimeTypes(intent, allowedTypes);
+    trySetInitialDirectory(intent, initialDirectory);
 
     try {
-      if (initialDirectory != null) {
-        trySetInitialDirectory(intent, initialDirectory);
-      }
-      tryStartActivityForResult(
+      startActivityForResult(
           intent,
           OPEN_FILES,
           new OnResultListener() {
@@ -169,15 +173,14 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       @Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<String> result) {
     if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
       throw new UnsupportedOperationException(
-          "Selecting a directory is only supported on versions >= android.os.Build.VERSION_CODES.LOLLIPOP");
+          "Selecting a directory is only supported on versions >= 21");
     }
 
-    final Intent intent = testProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+    final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+    trySetInitialDirectory(intent, initialDirectory);
+
     try {
-      if (initialDirectory != null) {
-        trySetInitialDirectory(intent, initialDirectory);
-      }
-      tryStartActivityForResult(
+      startActivityForResult(
           intent,
           OPEN_DIR,
           new OnResultListener() {
@@ -241,17 +244,13 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
     return new ArrayList<>(mimeTypes);
   }
 
-  private void trySetInitialDirectory(@NonNull Intent intent, @NonNull String initialDirectory)
-      throws Exception {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+  private void trySetInitialDirectory(@NonNull Intent intent, @Nullable String initialDirectory) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && initialDirectory != null) {
       intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialDirectory));
-    } else {
-      throw new Exception(
-          "Setting an initial directory requires Android version Build.VERSION_CODES.O or greater.");
     }
   }
 
-  private void tryStartActivityForResult(
+  private void startActivityForResult(
       @NonNull Intent intent, int attemptRequestCode, @NonNull OnResultListener resultListener)
       throws Exception {
     if (activityPluginBinding == null) {
@@ -311,7 +310,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
     if (size != null) {
       bytes = new byte[size];
       try (InputStream inputStream = contentResolver.openInputStream(uri)) {
-        final DataInputStream dataInputStream = testProxy.newDataInputStream(inputStream);
+        final DataInputStream dataInputStream = objectFactory.newDataInputStream(inputStream);
         dataInputStream.readFully(bytes);
       } catch (IOException exception) {
         Log.w(TAG, exception.getMessage());

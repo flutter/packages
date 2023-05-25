@@ -11,7 +11,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 
-/** FileSelectorAndroidPlugin */
+/** Native portion of the Android platform implementation of the file_selector plugin. */
 public class FileSelectorAndroidPlugin implements FlutterPlugin, ActivityAware {
   @Nullable private FileSelectorApiImpl fileSelectorApi;
   private BinaryMessenger binaryMessenger;
@@ -22,7 +22,9 @@ public class FileSelectorAndroidPlugin implements FlutterPlugin, ActivityAware {
   }
 
   @Override
-  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {}
+  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+    binaryMessenger = null;
+  }
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {

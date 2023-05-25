@@ -16,11 +16,7 @@ import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -35,8 +31,7 @@ public class GeneratedFileSelectorApi {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -55,7 +50,7 @@ public class GeneratedFileSelectorApi {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -192,7 +187,8 @@ public class GeneratedFileSelectorApi {
       Object name = list.get(2);
       pigeonResult.setName((String) name);
       Object size = list.get(3);
-      pigeonResult.setSize((size == null) ? null : ((size instanceof Integer) ? (Integer) size : (Long) size));
+      pigeonResult.setSize(
+          (size == null) ? null : ((size instanceof Integer) ? (Integer) size : (Long) size));
       Object bytes = list.get(4);
       pigeonResult.setBytes((byte[]) bytes);
       return pigeonResult;
@@ -313,24 +309,30 @@ public class GeneratedFileSelectorApi {
   /**
    * An API to call to native code to select files or directories.
    *
-   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
   public interface FileSelectorApi {
     /**
      * Opens a file dialog for loading files and returns a file path.
      *
-     * Returns `null` if user cancels the operation.
+     * <p>Returns `null` if user cancels the operation.
      */
-    void openFile(@Nullable String initialDirectory, @NonNull FileTypes allowedTypes, @NonNull Result<FileResponse> result);
+    void openFile(
+        @Nullable String initialDirectory,
+        @NonNull FileTypes allowedTypes,
+        @NonNull Result<FileResponse> result);
     /**
-     * Opens a file dialog for loading files and returns a list of file responses
-     * chosen by the user.
+     * Opens a file dialog for loading files and returns a list of file responses chosen by the
+     * user.
      */
-    void openFiles(@Nullable String initialDirectory, @NonNull FileTypes allowedTypes, @NonNull Result<List<FileResponse>> result);
+    void openFiles(
+        @Nullable String initialDirectory,
+        @NonNull FileTypes allowedTypes,
+        @NonNull Result<List<FileResponse>> result);
     /**
      * Opens a file dialog for loading directories and returns a directory path.
      *
-     * Returns `null` if user cancels the operation.
+     * <p>Returns `null` if user cancels the operation.
      */
     void getDirectoryPath(@Nullable String initialDirectory, @NonNull Result<String> result);
 
@@ -338,7 +340,9 @@ public class GeneratedFileSelectorApi {
     static @NonNull MessageCodec<Object> getCodec() {
       return FileSelectorApiCodec.INSTANCE;
     }
-    /**Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`. */
+    /**
+     * Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`.
+     */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable FileSelectorApi api) {
       {
         BasicMessageChannel<Object> channel =

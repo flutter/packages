@@ -96,9 +96,9 @@ class _FileSelectorApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return FileResponse.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return FileTypes.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -120,12 +120,14 @@ class FileSelectorApi {
   /// Opens a file dialog for loading files and returns a file path.
   ///
   /// Returns `null` if user cancels the operation.
-  Future<FileResponse?> openFile(String? arg_initialDirectory, FileTypes arg_allowedTypes) async {
+  Future<FileResponse?> openFile(
+      String? arg_initialDirectory, FileTypes arg_allowedTypes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.openFile', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_initialDirectory, arg_allowedTypes]) as List<Object?>?;
+        await channel.send(<Object?>[arg_initialDirectory, arg_allowedTypes])
+            as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -144,12 +146,14 @@ class FileSelectorApi {
 
   /// Opens a file dialog for loading files and returns a list of file responses
   /// chosen by the user.
-  Future<List<FileResponse?>> openFiles(String? arg_initialDirectory, FileTypes arg_allowedTypes) async {
+  Future<List<FileResponse?>> openFiles(
+      String? arg_initialDirectory, FileTypes arg_allowedTypes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FileSelectorApi.openFiles', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_initialDirectory, arg_allowedTypes]) as List<Object?>?;
+        await channel.send(<Object?>[arg_initialDirectory, arg_allowedTypes])
+            as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
