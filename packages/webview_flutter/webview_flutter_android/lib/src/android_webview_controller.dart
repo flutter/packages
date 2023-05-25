@@ -120,9 +120,10 @@ class AndroidWebViewController extends PlatformWebViewController {
         (WeakReference<AndroidWebViewController> weakReference) {
       return (String origin,
           android_webview.GeolocationPermissionsCallback callback) async {
-        if (weakReference.target?._onGeolocationPermissionsShowPrompt != null) {
-          final GeolocationPermissionsResponse response =
-              await weakReference.target!._onGeolocationPermissionsShowPrompt!(
+        final OnGeolocationPermissionsShowPrompt? onShowPrompt =
+            weakReference.target?._onGeolocationPermissionsShowPrompt;
+        if (onShowPrompt != null) {
+          final GeolocationPermissionsResponse response = await onShowPrompt(
             GeolocationPermissionsRequestParams(origin: origin),
           );
           callback.invoke(origin, response.allow, response.retain);
@@ -135,8 +136,10 @@ class AndroidWebViewController extends PlatformWebViewController {
     onGeolocationPermissionsHidePrompt: withWeakReferenceTo(this,
         (WeakReference<AndroidWebViewController> weakReference) {
       return (android_webview.WebChromeClient instance) {
-        if (weakReference.target?._onGeolocationPermissionsHidePrompt != null) {
-          weakReference.target!._onGeolocationPermissionsHidePrompt!();
+        final OnGeolocationPermissionsHidePrompt? onHidePrompt =
+            weakReference.target?._onGeolocationPermissionsHidePrompt;
+        if (onHidePrompt != null) {
+          onHidePrompt();
         }
       };
     }),
@@ -211,11 +214,9 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
 
-  Future<GeolocationPermissionsResponse> Function(
-          GeolocationPermissionsRequestParams request)?
-      _onGeolocationPermissionsShowPrompt;
+  OnGeolocationPermissionsShowPrompt? _onGeolocationPermissionsShowPrompt;
 
-  void Function()? _onGeolocationPermissionsHidePrompt;
+  OnGeolocationPermissionsHidePrompt? _onGeolocationPermissionsHidePrompt;
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
@@ -492,10 +493,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsHidePrompt()
   Future<void> setGeolocationPermissionsPromptCallbacks({
-    Future<GeolocationPermissionsResponse> Function(
-            GeolocationPermissionsRequestParams requestParams)?
-        onShowPrompt,
-    void Function()? onHidePrompt,
+    OnGeolocationPermissionsShowPrompt? onShowPrompt,
+    OnGeolocationPermissionsHidePrompt? onHidePrompt,
   }) async {
     _onGeolocationPermissionsShowPrompt = onShowPrompt;
     _onGeolocationPermissionsHidePrompt = onHidePrompt;
@@ -538,7 +537,16 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   }
 }
 
+/// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API.
+typedef OnGeolocationPermissionsShowPrompt
+    = Future<GeolocationPermissionsResponse> Function(
+        GeolocationPermissionsRequestParams request);
+
+/// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API is cancel.
+typedef OnGeolocationPermissionsHidePrompt = void Function();
+
 /// A request params used by the host application to set the Geolocation permission state for an origin.
+@immutable
 class GeolocationPermissionsRequestParams {
   /// [origin]: The origin for which permissions are set.
   const GeolocationPermissionsRequestParams({
@@ -550,6 +558,7 @@ class GeolocationPermissionsRequestParams {
 }
 
 /// A response used by the host application to set the Geolocation permission state for an origin.
+@immutable
 class GeolocationPermissionsResponse {
   /// [allow]: Whether or not the origin should be allowed to use the Geolocation API.
   ///

@@ -1017,6 +1017,17 @@ class DownloadListener extends JavaObject {
   }
 }
 
+/// Responsible for request the Geolocation API.
+typedef GeolocationPermissionsShowPrompt = Future<void> Function(
+  String origin,
+  GeolocationPermissionsCallback callback,
+);
+
+/// Responsible for request the Geolocation API is Cancel.
+typedef GeolocationPermissionsHidePrompt = void Function(
+  WebChromeClient instance,
+);
+
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
@@ -1080,15 +1091,14 @@ class WebChromeClient extends JavaObject {
   )? onPermissionRequest;
 
   /// Indicates the client should handle geolocation permissions.
-  final Future<void> Function(
-          String origin, GeolocationPermissionsCallback callback)?
-      onGeolocationPermissionsShowPrompt;
+  final GeolocationPermissionsShowPrompt? onGeolocationPermissionsShowPrompt;
 
   /// Notify the host application that a request for Geolocation permissions,
   /// made with a previous call to [onGeolocationPermissionsShowPrompt] has been
   /// canceled.
-  final void Function(WebChromeClient instance)?
-      onGeolocationPermissionsHidePrompt;
+  final void Function(
+    WebChromeClient instance,
+  )? onGeolocationPermissionsHidePrompt;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.

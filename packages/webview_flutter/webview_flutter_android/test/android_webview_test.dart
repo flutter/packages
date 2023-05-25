@@ -889,7 +889,7 @@ void main() {
       });
 
       test('onGeolocationPermissionsShowPrompt', () async {
-        const String origin = 'https://www.xxx.com';
+        const String origin = 'https://www.example.com';
         final GeolocationPermissionsCallback callback =
             GeolocationPermissionsCallback.detached();
         final int paramsId = instanceManager.addDartCreatedInstance(callback);

@@ -939,8 +939,10 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     final GeolocationPermissionsCallback callback =
         instanceManager.getInstanceWithWeakReference(paramsInstanceId)!
             as GeolocationPermissionsCallback;
-    if (instance.onGeolocationPermissionsShowPrompt != null) {
-      instance.onGeolocationPermissionsShowPrompt!(origin, callback);
+    final GeolocationPermissionsShowPrompt? onShowPrompt =
+        instance.onGeolocationPermissionsShowPrompt;
+    if (onShowPrompt != null) {
+      onShowPrompt(origin, callback);
     }
   }
 
@@ -948,8 +950,10 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
   void onGeolocationPermissionsHidePrompt(int identifier) {
     final WebChromeClient instance =
         instanceManager.getInstanceWithWeakReference(identifier)!;
-    if (instance.onGeolocationPermissionsHidePrompt != null) {
-      return instance.onGeolocationPermissionsHidePrompt!(instance);
+    final GeolocationPermissionsHidePrompt? onHidePrompt =
+        instance.onGeolocationPermissionsHidePrompt;
+    if (onHidePrompt != null) {
+      return onHidePrompt(instance);
     }
   }
 

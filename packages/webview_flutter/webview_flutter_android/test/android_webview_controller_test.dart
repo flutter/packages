@@ -59,12 +59,10 @@ void main() {
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
       )? onShowFileChooser,
-      Future<void> Function(
-        String origin,
-        android_webview.GeolocationPermissionsCallback callback,
-      )? onGeolocationPermissionsShowPrompt,
-      void Function(android_webview.WebChromeClient instance)?
-          onGeolocationPermissionsHidePrompt,
+      android_webview.GeolocationPermissionsShowPrompt?
+         onGeolocationPermissionsShowPrompt,
+      android_webview.GeolocationPermissionsHidePrompt?
+         onGeolocationPermissionsHidePrompt,
       void Function(
         android_webview.WebChromeClient instance,
         android_webview.PermissionRequest request,
@@ -591,11 +589,8 @@ void main() {
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
           )? onShowFileChooser,
-          Future<void> Function(String origin,
-                  android_webview.GeolocationPermissionsCallback callback)?
-              onGeolocationPermissionsShowPrompt,
-          void Function(android_webview.WebChromeClient instance)?
-              onGeolocationPermissionsHidePrompt,
+          dynamic onGeolocationPermissionsShowPrompt,
+          dynamic onGeolocationPermissionsHidePrompt,
           dynamic onPermissionRequest,
         }) {
           onShowFileChooserCallback = onShowFileChooser!;

@@ -456,10 +456,8 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> setGeolocationPermissionsPromptCallbacks({
-    _i5.Future<_i6.GeolocationPermissionsResponse> Function(
-            _i6.GeolocationPermissionsRequestParams)?
-        onShowPrompt,
-    void Function()? onHidePrompt,
+    _i6.OnGeolocationPermissionsShowPrompt? onShowPrompt,
+    _i6.OnGeolocationPermissionsHidePrompt? onHidePrompt,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
