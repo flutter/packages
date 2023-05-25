@@ -249,7 +249,8 @@ $dependencyOverridesKey:
     // example app doesn't. Since integration tests are run in the example app,
     // it needs the overrides in order for tests to pass.
     for (final RepositoryPackage example in package.getExamples()) {
-      _addDependencyOverridesIfNecessary(example, localDependencies, versions,
+      await _addDependencyOverridesIfNecessary(
+          example, localDependencies, versions,
           additionalPackagesToOverride: packagesToOverride);
     }
 

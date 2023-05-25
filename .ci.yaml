@@ -31,6 +31,10 @@ platform_properties:
       device_type: none
       cpu: arm64
       xcode: 14e222b
+      $flutter/osx_sdk : >-
+        {
+          "sdk_version": "14e222b"
+        }
   mac_x64:
     properties:
       dependencies: >-
@@ -42,6 +46,10 @@ platform_properties:
       device_type: none
       cpu: x86
       xcode: 14e222b
+      $flutter/osx_sdk : >-
+        {
+          "sdk_version": "14e222b"
+        }
 
 targets:
   ### Linux tasks ###
