@@ -458,7 +458,8 @@ class _FeatureCard extends StatelessWidget {
             children: <Widget>[
           const ListTile(title: Text('Available features')),
           const Divider(),
-          for (BillingClientFeature feature in BillingClientFeature.values)
+          for (final BillingClientFeature feature
+              in BillingClientFeature.values)
             _buildFeatureWidget(feature),
         ]));
   }
