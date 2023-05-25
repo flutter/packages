@@ -60,9 +60,9 @@ void main() {
         android_webview.FileChooserParams params,
       )? onShowFileChooser,
       android_webview.GeolocationPermissionsShowPrompt?
-         onGeolocationPermissionsShowPrompt,
+          onGeolocationPermissionsShowPrompt,
       android_webview.GeolocationPermissionsHidePrompt?
-         onGeolocationPermissionsHidePrompt,
+          onGeolocationPermissionsHidePrompt,
       void Function(
         android_webview.WebChromeClient instance,
         android_webview.PermissionRequest request,
