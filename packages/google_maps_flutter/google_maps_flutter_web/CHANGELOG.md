@@ -1,7 +1,7 @@
-## 0.4.1
+## 0.5.0
 
-* Fires a `MapStyleException` when an invalid JSON is used in `setMapStyle` (was
-  `FormatException` previously).
+* **BREAKING CHANGE:** Fires a `MapStyleException` when an invalid JSON is used
+  in `setMapStyle` (was `FormatException` previously).
 * Implements a `GoogleMapsInspectorPlatform` to allow integration tests to inspect
   parts of the internal state of a map.
 
