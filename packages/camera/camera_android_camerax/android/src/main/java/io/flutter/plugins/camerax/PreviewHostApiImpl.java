@@ -19,12 +19,12 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 
 public class PreviewHostApiImpl implements PreviewHostApi {
-  private final BinaryMessenger binaryMessenger;
+  final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
   private final TextureRegistry textureRegistry;
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture;
+  @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public @Nullable TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture;
 
   public PreviewHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
@@ -57,7 +57,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    * by a Flutter {@link TextureRegistry.SurfaceTextureEntry} used to build the {@link Preview}.
    */
   @Override
-  public Long setSurfaceProvider(@NonNull Long identifier) {
+  public @NonNull Long setSurfaceProvider(@NonNull Long identifier) {
     Preview preview = (Preview) Objects.requireNonNull(instanceManager.getInstance(identifier));
     flutterSurfaceTexture = textureRegistry.createSurfaceTexture();
     SurfaceTexture surfaceTexture = flutterSurfaceTexture.surfaceTexture();
@@ -72,10 +72,11 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    * {@code Preview} that is backed by a Flutter {@link TextureRegistry.SurfaceTextureEntry}.
    */
   @VisibleForTesting
-  public Preview.SurfaceProvider createSurfaceProvider(@NonNull SurfaceTexture surfaceTexture) {
+  public @NonNull Preview.SurfaceProvider createSurfaceProvider(
+      @NonNull SurfaceTexture surfaceTexture) {
     return new Preview.SurfaceProvider() {
       @Override
-      public void onSurfaceRequested(SurfaceRequest request) {
+      public void onSurfaceRequested(@NonNull SurfaceRequest request) {
         surfaceTexture.setDefaultBufferSize(
             request.getResolution().getWidth(), request.getResolution().getHeight());
         Surface flutterSurface = cameraXProxy.createSurface(surfaceTexture);
@@ -106,7 +107,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
                   break;
               }
             });
-      };
+      }
     };
   }
 
@@ -114,7 +115,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    * Returns an error description for each {@link SurfaceRequest.Result} that represents an error
    * with providing a surface.
    */
-  private String getProvideSurfaceErrorDescription(int resultCode) {
+  String getProvideSurfaceErrorDescription(int resultCode) {
     switch (resultCode) {
       case SurfaceRequest.Result.RESULT_INVALID_SURFACE:
         return resultCode + ": Provided surface could not be used by the camera.";
@@ -136,7 +137,8 @@ public class PreviewHostApiImpl implements PreviewHostApi {
 
   /** Returns the resolution information for the specified {@link Preview}. */
   @Override
-  public GeneratedCameraXLibrary.ResolutionInfo getResolutionInfo(@NonNull Long identifier) {
+  public @NonNull GeneratedCameraXLibrary.ResolutionInfo getResolutionInfo(
+      @NonNull Long identifier) {
     Preview preview = (Preview) Objects.requireNonNull(instanceManager.getInstance(identifier));
     Size resolution = preview.getResolutionInfo().getResolution();
 

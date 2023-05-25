@@ -177,7 +177,8 @@ Future<bool> _isDevChange(List<String> pathComponents,
       // Entry point for the 'custom-test' command, which is only for CI and
       // local testing.
       pathComponents.first == 'run_tests.sh' ||
-      // Ignoring lints doesn't affect clients.
+      // Lints don't affect clients.
+      pathComponents.contains('analysis_options.yaml') ||
       pathComponents.contains('lint-baseline.xml') ||
       // Example build files are very unlikely to be interesting to clients.
       _isExampleBuildFile(pathComponents) ||
@@ -211,9 +212,9 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
     return false;
   }
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
-  final RegExp changeLine = RegExp(r'[+-] ');
+  final RegExp changeLine = RegExp(r'^[+-] ');
   final RegExp testDependencyLine =
-      RegExp(r'[+-]\s*(?:androidT|t)estImplementation\s');
+      RegExp(r'^[+-]\s*(?:androidT|t)estImplementation\s');
   bool foundTestDependencyChange = false;
   for (final String line in diff) {
     if (!changeLine.hasMatch(line) ||

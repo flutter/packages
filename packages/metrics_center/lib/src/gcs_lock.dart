@@ -12,9 +12,7 @@ class GcsLock {
   /// Create a lock with an authenticated client and a GCS bucket name.
   ///
   /// The client is used to communicate with Google Cloud Storage APIs.
-  GcsLock(this._client, this._bucketName)
-      : assert(_client != null),
-        assert(_bucketName != null) {
+  GcsLock(this._client, this._bucketName) {
     _api = StorageApi(_client);
   }
 
