@@ -72,15 +72,11 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Override
-  public void openFile(
-      @Nullable String initialDirectory,
-      @NonNull List<String> mimeTypes,
-      @NonNull List<String> extensions,
-      @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
+  public void openFile(@Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes, @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
     final Intent intent = testProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-    setMimeTypes(intent, mimeTypes, extensions);
+    setMimeTypes(intent, allowedTypes);
 
     try {
       if (initialDirectory != null) {
@@ -111,17 +107,12 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Override
-  public void openFiles(
-      @Nullable String initialDirectory,
-      @NonNull List<String> mimeTypes,
-      @NonNull List<String> extensions,
-      @NonNull
-          GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
+  public void openFiles(@Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes, @NonNull GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
     final Intent intent = testProxy.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
     intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
-    setMimeTypes(intent, mimeTypes, extensions);
+    setMimeTypes(intent, allowedTypes);
 
     try {
       if (initialDirectory != null) {
@@ -213,10 +204,10 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   // mimeType based on the `mimeTypes` list and converts extensions to mimeTypes.
   // See https://developer.android.com/guide/components/intents-common#OpenFile
   private void setMimeTypes(
-      @NonNull Intent intent, @NonNull List<String> mimeTypes, @NonNull List<String> extensions) {
+      @NonNull Intent intent, @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes) {
     final Set<String> allMimetypes = new HashSet<>();
-    allMimetypes.addAll(mimeTypes);
-    allMimetypes.addAll(tryConvertExtensionsToMimetypes(extensions));
+    allMimetypes.addAll(allowedTypes.getMimeTypes());
+    allMimetypes.addAll(tryConvertExtensionsToMimetypes(allowedTypes.getExtensions()));
 
     if (allMimetypes.isEmpty()) {
       intent.setType("*/*");

@@ -103,7 +103,7 @@ public class FileSelectorAndroidPluginTest {
         new FileSelectorApiImpl(mockActivityBinding, mockTestProxy);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
-    fileSelectorApi.openFile(null, Collections.emptyList(), Collections.emptyList(), mockResult);
+    fileSelectorApi.openFile(null, new GeneratedFileSelectorApi.FileTypes.Builder().setMimeTypes(Collections.emptyList()).setExtensions(Collections.emptyList()).build(), mockResult);
     verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
 
     verify(mockActivity).startActivityForResult(mockIntent, 221);
@@ -149,7 +149,7 @@ public class FileSelectorAndroidPluginTest {
         new FileSelectorApiImpl(mockActivityBinding, mockTestProxy);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
-    fileSelectorApi.openFiles(null, Collections.emptyList(), Collections.emptyList(), mockResult);
+    fileSelectorApi.openFiles(null, new GeneratedFileSelectorApi.FileTypes.Builder().setMimeTypes(Collections.emptyList()).setExtensions(Collections.emptyList()).build(), mockResult);
     verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
     verify(mockIntent).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
