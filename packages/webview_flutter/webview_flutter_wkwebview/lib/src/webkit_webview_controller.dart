@@ -516,7 +516,8 @@ class WebKitWebViewController extends PlatformWebViewController {
     _javaScriptChannelParams.remove(removedJavaScriptChannel);
 
     await Future.wait(<Future<void>>[
-      for (JavaScriptChannelParams params in _javaScriptChannelParams.values)
+      for (final JavaScriptChannelParams params
+          in _javaScriptChannelParams.values)
         addJavaScriptChannel(params),
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.

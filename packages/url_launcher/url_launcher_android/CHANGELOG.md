@@ -1,3 +1,7 @@
+## 6.0.35
+
+* Converts method channels to Pigeon.
+
 ## 6.0.34
 
 * Reverts ContextCompat usage that caused flutter/flutter#127014
