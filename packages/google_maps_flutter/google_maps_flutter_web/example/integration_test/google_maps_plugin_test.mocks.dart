@@ -5,10 +5,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:google_maps/google_maps.dart' as _i2;
+import 'package:google_maps/google_maps.dart' as _i5;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
-    as _i4;
-import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as _i5;
+    as _i2;
+import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -22,8 +22,9 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeMapOptions_0 extends _i1.SmartFake implements _i2.MapOptions {
-  _FakeMapOptions_0(
+class _FakeMapConfiguration_0 extends _i1.SmartFake
+    implements _i2.MapConfiguration {
+  _FakeMapConfiguration_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -43,7 +44,7 @@ class _FakeStreamController_1<T> extends _i1.SmartFake
         );
 }
 
-class _FakeLatLngBounds_2 extends _i1.SmartFake implements _i4.LatLngBounds {
+class _FakeLatLngBounds_2 extends _i1.SmartFake implements _i2.LatLngBounds {
   _FakeLatLngBounds_2(
     Object parent,
     Invocation parentInvocation,
@@ -54,7 +55,7 @@ class _FakeLatLngBounds_2 extends _i1.SmartFake implements _i4.LatLngBounds {
 }
 
 class _FakeScreenCoordinate_3 extends _i1.SmartFake
-    implements _i4.ScreenCoordinate {
+    implements _i2.ScreenCoordinate {
   _FakeScreenCoordinate_3(
     Object parent,
     Invocation parentInvocation,
@@ -64,7 +65,7 @@ class _FakeScreenCoordinate_3 extends _i1.SmartFake
         );
 }
 
-class _FakeLatLng_4 extends _i1.SmartFake implements _i4.LatLng {
+class _FakeLatLng_4 extends _i1.SmartFake implements _i2.LatLng {
   _FakeLatLng_4(
     Object parent,
     Invocation parentInvocation,
@@ -78,38 +79,38 @@ class _FakeLatLng_4 extends _i1.SmartFake implements _i4.LatLng {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockGoogleMapController extends _i1.Mock
-    implements _i5.GoogleMapController {
+    implements _i4.GoogleMapController {
   @override
-  _i2.MapOptions get options => (super.noSuchMethod(
-        Invocation.getter(#options),
-        returnValue: _FakeMapOptions_0(
+  _i2.MapConfiguration get configuration => (super.noSuchMethod(
+        Invocation.getter(#configuration),
+        returnValue: _FakeMapConfiguration_0(
           this,
-          Invocation.getter(#options),
+          Invocation.getter(#configuration),
         ),
-        returnValueForMissingStub: _FakeMapOptions_0(
+        returnValueForMissingStub: _FakeMapConfiguration_0(
           this,
-          Invocation.getter(#options),
+          Invocation.getter(#configuration),
         ),
-      ) as _i2.MapOptions);
+      ) as _i2.MapConfiguration);
   @override
-  _i3.StreamController<_i4.MapEvent<Object?>> get stream => (super.noSuchMethod(
+  _i3.StreamController<_i2.MapEvent<Object?>> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _FakeStreamController_1<_i4.MapEvent<Object?>>(
+        returnValue: _FakeStreamController_1<_i2.MapEvent<Object?>>(
           this,
           Invocation.getter(#stream),
         ),
         returnValueForMissingStub:
-            _FakeStreamController_1<_i4.MapEvent<Object?>>(
+            _FakeStreamController_1<_i2.MapEvent<Object?>>(
           this,
           Invocation.getter(#stream),
         ),
-      ) as _i3.StreamController<_i4.MapEvent<Object?>>);
+      ) as _i3.StreamController<_i2.MapEvent<Object?>>);
   @override
-  _i3.Stream<_i4.MapEvent<Object?>> get events => (super.noSuchMethod(
+  _i3.Stream<_i2.MapEvent<Object?>> get events => (super.noSuchMethod(
         Invocation.getter(#events),
-        returnValue: _i3.Stream<_i4.MapEvent<Object?>>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i4.MapEvent<Object?>>.empty(),
-      ) as _i3.Stream<_i4.MapEvent<Object?>>);
+        returnValue: _i3.Stream<_i2.MapEvent<Object?>>.empty(),
+        returnValueForMissingStub: _i3.Stream<_i2.MapEvent<Object?>>.empty(),
+      ) as _i3.Stream<_i2.MapEvent<Object?>>);
   @override
   bool get isInitialized => (super.noSuchMethod(
         Invocation.getter(#isInitialized),
@@ -118,11 +119,11 @@ class MockGoogleMapController extends _i1.Mock
       ) as bool);
   @override
   void debugSetOverrides({
-    _i5.DebugCreateMapFunction? createMap,
-    _i5.MarkersController? markers,
-    _i5.CirclesController? circles,
-    _i5.PolygonsController? polygons,
-    _i5.PolylinesController? polylines,
+    _i4.DebugCreateMapFunction? createMap,
+    _i4.MarkersController? markers,
+    _i4.CirclesController? circles,
+    _i4.PolygonsController? polygons,
+    _i4.PolylinesController? polylines,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -147,7 +148,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void updateMapConfiguration(_i4.MapConfiguration? update) =>
+  void updateMapConfiguration(_i2.MapConfiguration? update) =>
       super.noSuchMethod(
         Invocation.method(
           #updateMapConfiguration,
@@ -156,7 +157,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void updateStyles(List<_i2.MapTypeStyle>? styles) => super.noSuchMethod(
+  void updateStyles(List<_i5.MapTypeStyle>? styles) => super.noSuchMethod(
         Invocation.method(
           #updateStyles,
           [styles],
@@ -164,12 +165,12 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  _i3.Future<_i4.LatLngBounds> getVisibleRegion() => (super.noSuchMethod(
+  _i3.Future<_i2.LatLngBounds> getVisibleRegion() => (super.noSuchMethod(
         Invocation.method(
           #getVisibleRegion,
           [],
         ),
-        returnValue: _i3.Future<_i4.LatLngBounds>.value(_FakeLatLngBounds_2(
+        returnValue: _i3.Future<_i2.LatLngBounds>.value(_FakeLatLngBounds_2(
           this,
           Invocation.method(
             #getVisibleRegion,
@@ -177,23 +178,23 @@ class MockGoogleMapController extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i4.LatLngBounds>.value(_FakeLatLngBounds_2(
+            _i3.Future<_i2.LatLngBounds>.value(_FakeLatLngBounds_2(
           this,
           Invocation.method(
             #getVisibleRegion,
             [],
           ),
         )),
-      ) as _i3.Future<_i4.LatLngBounds>);
+      ) as _i3.Future<_i2.LatLngBounds>);
   @override
-  _i3.Future<_i4.ScreenCoordinate> getScreenCoordinate(_i4.LatLng? latLng) =>
+  _i3.Future<_i2.ScreenCoordinate> getScreenCoordinate(_i2.LatLng? latLng) =>
       (super.noSuchMethod(
         Invocation.method(
           #getScreenCoordinate,
           [latLng],
         ),
         returnValue:
-            _i3.Future<_i4.ScreenCoordinate>.value(_FakeScreenCoordinate_3(
+            _i3.Future<_i2.ScreenCoordinate>.value(_FakeScreenCoordinate_3(
           this,
           Invocation.method(
             #getScreenCoordinate,
@@ -201,38 +202,38 @@ class MockGoogleMapController extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i4.ScreenCoordinate>.value(_FakeScreenCoordinate_3(
+            _i3.Future<_i2.ScreenCoordinate>.value(_FakeScreenCoordinate_3(
           this,
           Invocation.method(
             #getScreenCoordinate,
             [latLng],
           ),
         )),
-      ) as _i3.Future<_i4.ScreenCoordinate>);
+      ) as _i3.Future<_i2.ScreenCoordinate>);
   @override
-  _i3.Future<_i4.LatLng> getLatLng(_i4.ScreenCoordinate? screenCoordinate) =>
+  _i3.Future<_i2.LatLng> getLatLng(_i2.ScreenCoordinate? screenCoordinate) =>
       (super.noSuchMethod(
         Invocation.method(
           #getLatLng,
           [screenCoordinate],
         ),
-        returnValue: _i3.Future<_i4.LatLng>.value(_FakeLatLng_4(
+        returnValue: _i3.Future<_i2.LatLng>.value(_FakeLatLng_4(
           this,
           Invocation.method(
             #getLatLng,
             [screenCoordinate],
           ),
         )),
-        returnValueForMissingStub: _i3.Future<_i4.LatLng>.value(_FakeLatLng_4(
+        returnValueForMissingStub: _i3.Future<_i2.LatLng>.value(_FakeLatLng_4(
           this,
           Invocation.method(
             #getLatLng,
             [screenCoordinate],
           ),
         )),
-      ) as _i3.Future<_i4.LatLng>);
+      ) as _i3.Future<_i2.LatLng>);
   @override
-  _i3.Future<void> moveCamera(_i4.CameraUpdate? cameraUpdate) =>
+  _i3.Future<void> moveCamera(_i2.CameraUpdate? cameraUpdate) =>
       (super.noSuchMethod(
         Invocation.method(
           #moveCamera,
@@ -251,7 +252,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: _i3.Future<double>.value(0.0),
       ) as _i3.Future<double>);
   @override
-  void updateCircles(_i4.CircleUpdates? updates) => super.noSuchMethod(
+  void updateCircles(_i2.CircleUpdates? updates) => super.noSuchMethod(
         Invocation.method(
           #updateCircles,
           [updates],
@@ -259,7 +260,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void updatePolygons(_i4.PolygonUpdates? updates) => super.noSuchMethod(
+  void updatePolygons(_i2.PolygonUpdates? updates) => super.noSuchMethod(
         Invocation.method(
           #updatePolygons,
           [updates],
@@ -267,7 +268,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void updatePolylines(_i4.PolylineUpdates? updates) => super.noSuchMethod(
+  void updatePolylines(_i2.PolylineUpdates? updates) => super.noSuchMethod(
         Invocation.method(
           #updatePolylines,
           [updates],
@@ -275,7 +276,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void updateMarkers(_i4.MarkerUpdates? updates) => super.noSuchMethod(
+  void updateMarkers(_i2.MarkerUpdates? updates) => super.noSuchMethod(
         Invocation.method(
           #updateMarkers,
           [updates],
@@ -283,7 +284,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void showInfoWindow(_i4.MarkerId? markerId) => super.noSuchMethod(
+  void showInfoWindow(_i2.MarkerId? markerId) => super.noSuchMethod(
         Invocation.method(
           #showInfoWindow,
           [markerId],
@@ -291,7 +292,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void hideInfoWindow(_i4.MarkerId? markerId) => super.noSuchMethod(
+  void hideInfoWindow(_i2.MarkerId? markerId) => super.noSuchMethod(
         Invocation.method(
           #hideInfoWindow,
           [markerId],
@@ -299,7 +300,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  bool isInfoWindowShown(_i4.MarkerId? markerId) => (super.noSuchMethod(
+  bool isInfoWindowShown(_i2.MarkerId? markerId) => (super.noSuchMethod(
         Invocation.method(
           #isInfoWindowShown,
           [markerId],
