@@ -1,3 +1,7 @@
+## 0.3.0+5
+
+* Updates mockito-core from 4.7.0 to 5.3.1.
+
 ## 0.3.0+4
 
 * Fixes unawaited_futures violations.
