@@ -124,13 +124,6 @@ public class WebChromeClientTest {
     verify(mockFlutterApi).onPermissionRequest(eq(webChromeClient), eq(mockRequest), any());
   }
 
-  public void onGeolocationPermissionsShowPrompt() {
-    webChromeClient.onGeolocationPermissionsShowPrompt("https://www.google.com", (origin,allow,retain) -> {
-
-    } );
-    verify(mockFlutterApi).onGeolocationPermissionsShowPrompt(eq(webChromeClient), any());
-  }
-
   @Test
   public void onGeolocationPermissionsHidePrompt() {
     webChromeClient.onGeolocationPermissionsHidePrompt();
