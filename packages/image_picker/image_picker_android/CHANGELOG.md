@@ -1,3 +1,7 @@
+## 0.8.6+17
+
+* Bumps androidx.core:core from 1.9.0 to 1.10.1.
+
 ## 0.8.6+16
 
 * Fixes crashes caused by `SecurityException` when calling `getPathFromUri()`.
