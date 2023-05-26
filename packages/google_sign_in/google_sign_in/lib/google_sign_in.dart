@@ -448,7 +448,7 @@ class GoogleSignIn {
     return GoogleSignInPlatform.instance.requestScopes(scopes);
   }
 
-  /// Checks if the [_currentUser] can access all the given [scopes].
+  /// Checks if the current user has granted access to all the specified [scopes].
   ///
   /// Optionally, an [accessToken] can be passed to perform this check. This
   /// may be useful when an application holds on to a cached, potentially
