@@ -40,16 +40,7 @@ class FileSelectorAndroid extends FileSelectorPlatform {
 
     final FileResponse? file = await _api.openFile(
       initialDirectory,
-      FileTypes(
-        mimeTypes: _combine<String>(
-          acceptedTypeGroups ?? <XTypeGroup>[],
-          (XTypeGroup group) => group.mimeTypes,
-        ),
-        extensions: _combine<String>(
-          acceptedTypeGroups ?? <XTypeGroup>[],
-          (XTypeGroup group) => group.extensions,
-        ),
-      ),
+      _fileTypesFromTypeGroups(acceptedTypeGroups),
     );
     return file == null ? null : _xFileFromFileResponse(file);
   }
@@ -73,16 +64,7 @@ class FileSelectorAndroid extends FileSelectorPlatform {
 
     final List<FileResponse?> files = await _api.openFiles(
       initialDirectory,
-      FileTypes(
-        mimeTypes: _combine<String>(
-          acceptedTypeGroups ?? <XTypeGroup>[],
-          (XTypeGroup group) => group.mimeTypes,
-        ),
-        extensions: _combine<String>(
-          acceptedTypeGroups ?? <XTypeGroup>[],
-          (XTypeGroup group) => group.extensions,
-        ),
-      ),
+      _fileTypesFromTypeGroups(acceptedTypeGroups),
     );
     return files
         .cast<FileResponse>()
@@ -110,18 +92,32 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     );
   }
 
-  // Combines list values from a list of `XTypeGroup`s. Prevents repeated
-  // values.
-  List<T> _combine<T>(
-    List<XTypeGroup> groups,
-    List<T>? Function(XTypeGroup group) onGetList,
-  ) {
-    return groups.fold<Set<T>>(
-      <T>{},
-      (Set<T> previousValue, XTypeGroup element) {
-        previousValue.addAll(onGetList(element) ?? <T>[]);
-        return previousValue;
-      },
-    ).toList();
+  FileTypes _fileTypesFromTypeGroups(List<XTypeGroup>? typeGroups) {
+    if (typeGroups == null) {
+      return FileTypes(extensions: <String>[], mimeTypes: <String>[]);
+    }
+
+    final Set<String> mimeTypes = <String>{};
+    final Set<String> extensions = <String>{};
+
+    for (final XTypeGroup group in typeGroups) {
+      if (!group.allowsAny &&
+          group.mimeTypes == null &&
+          group.extensions == null) {
+        throw ArgumentError(
+          'Provided type group $group does not allow all files, but does not '
+          'set any of the Android supported filter categories. At least one of '
+          '"extensions" or "mimeTypes" must be non-empty for Android.',
+        );
+      }
+
+      mimeTypes.addAll(group.mimeTypes ?? <String>{});
+      extensions.addAll(group.extensions ?? <String>{});
+    }
+
+    return FileTypes(
+      mimeTypes: mimeTypes.toList(),
+      extensions: extensions.toList(),
+    );
   }
 }
