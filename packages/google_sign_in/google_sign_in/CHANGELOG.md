@@ -1,6 +1,6 @@
 ## 6.1.3
 
-* Clarifies `canAccessScopes` method dartdoc.
+* Clarifies `canAccessScopes` method documentation.
 
 ## 6.1.2
 
