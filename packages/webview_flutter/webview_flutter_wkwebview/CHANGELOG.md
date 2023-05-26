@@ -3,6 +3,10 @@
 * Adds support to enable debugging of web contents on the latest versions of WebKit. See
   `WebKitWebViewController.setInspectable`.
   
+## 3.4.4
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 3.4.3
 
 * Replace `describeEnum` with the `name` getter.

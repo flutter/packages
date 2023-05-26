@@ -1,3 +1,11 @@
+## 6.1.2
+
+* Fixes unawaited_futures violations.
+
+## 6.1.1
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 6.1.0
 
 * Exposes the new method `canAccessScopes`.
