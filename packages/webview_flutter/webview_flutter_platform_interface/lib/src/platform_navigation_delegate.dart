@@ -31,8 +31,7 @@ typedef WebResourceErrorCallback = void Function(WebResourceError error);
 typedef UrlChangeCallback = void Function(UrlChange change);
 
 /// Signature for callbacks that report basic auth events by the native web view
-typedef HttpAuthRequestCallback = void Function(
-    String host, String realm);
+typedef HttpAuthRequestCallback = void Function(String host, String realm);
 
 /// An interface defining navigation events that occur on the native platform.
 ///
@@ -136,7 +135,7 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
       'setOnUrlChange is not implemented on the current platform.',
     );
   }
-  
+
   /// Invoked when a page requests basic authorization.
   ///
   /// See [PlatformWebViewController.setPlatformNavigationDelegate].

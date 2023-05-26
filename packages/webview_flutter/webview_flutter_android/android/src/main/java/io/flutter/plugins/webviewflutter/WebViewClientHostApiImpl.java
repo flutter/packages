@@ -14,8 +14,6 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebViewDatabase;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
@@ -31,6 +29,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
   private final InstanceManager instanceManager;
   private final WebViewClientCreator webViewClientCreator;
   private final WebViewClientFlutterApiImpl flutterApi;
+
+  private static HttpAuthHandler publicHttpHandler;
 
   /** Implementation of {@link WebViewClient} that passes arguments of callback methods to Dart. */
   @RequiresApi(Build.VERSION_CODES.N)
@@ -99,21 +99,9 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
-    public void onReceivedHttpAuthRequest( @NonNull WebView view,  HttpAuthHandler handler,  String host,  String realm){
-      System.out.println("Hey 1");
-
-      // WebViewDatabase webViewDatabase = WebViewDatabase.getInstance(view.getContext());
-      // if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-      //   String[] credentials = webViewDatabase.getHttpAuthUsernamePassword(host, realm);
-      //   System.out.println(credentials);
-      //   if (credentials != null && credentials.length == 2) {
-      //     // If credentials exist, proceed with them
-      //     System.out.println("PROCEED WITH AUTH");
-      //     handler.proceed(credentials[0], credentials[1]);
-      //   } else {
-      //     System.out.println("NOT PROCEEDING WITH AUTH");
-      //   }
-      // }
+    public void onReceivedHttpAuthRequest(
+        @NonNull WebView view, HttpAuthHandler handler, String host, String realm) {
+      publicHttpHandler = handler;
       flutterApi.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> {});
     }
 
@@ -198,10 +186,13 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
       flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
     }
 
-
+    // Handles an HTTP Basic Authentication request.
+    //
+    // This callback is invoked when the WebView encounters a website requiring HTTP authentication.
+    // [host] and [realm] are provided for matching against stored credentials, if any.
     @Override
-    public void onReceivedHttpAuthRequest(@NonNull WebView view, HttpAuthHandler handler,  String host, String realm){
-      System.out.println("Hey 2");
+    public void onReceivedHttpAuthRequest(
+        @NonNull WebView view, HttpAuthHandler handler, String host, String realm) {
       flutterApi.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> {});
     }
 
@@ -280,5 +271,19 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
       throw new IllegalStateException(
           "This WebViewClient doesn't support setting the returnValueForShouldOverrideUrlLoading.");
     }
+  }
+
+  @Override
+  public void setAuthCredentials(
+      @NonNull Long instanceId,
+      @NonNull String host,
+      @NonNull String realm,
+      @NonNull String username,
+      @NonNull String password,
+      @NonNull GeneratedAndroidWebView.Result<Void> callBack) {
+    WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
+
+    publicHttpHandler.proceed(username, password);
+    callBack.success(null);
   }
 }

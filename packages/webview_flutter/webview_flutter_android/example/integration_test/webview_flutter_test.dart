@@ -75,6 +75,52 @@ Future<void> main() async {
     expect(currentUrl, primaryUrl);
   });
 
+  testWidgets('Basic auth', (WidgetTester tester) async {
+    const String testUrl = 'https://jigsaw.w3.org/HTTP/Basic/';
+    const String username = 'guest';
+    const String password = 'guest';
+
+    final Completer<String> hostCompleter = Completer<String>();
+    final Completer<String> realmCompleter = Completer<String>();
+    final Completer<void> pageFinishedCompleter = Completer<void>();
+
+    final PlatformWebViewController controller = PlatformWebViewController(
+      AndroidWebViewControllerCreationParams(),
+    )
+      ..setPlatformNavigationDelegate(PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      )
+        ..setOnReceiveHttpAuthRequest((String h, String r) {
+          hostCompleter.complete(h);
+          realmCompleter.complete(r);
+        })
+        ..setOnPageFinished((_) => pageFinishedCompleter.complete()))
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..clearCache()
+      ..loadRequest(LoadRequestParams(uri: Uri.parse(testUrl)));
+
+    await tester.pumpWidget(Builder(builder: (BuildContext context) {
+      return PlatformWebViewWidget(
+        AndroidWebViewWidgetCreationParams(
+          controller: controller,
+        ),
+      ).build(context);
+    }));
+
+    final String host = await hostCompleter.future;
+    final String realm = await realmCompleter.future;
+
+    expect(host, equals('jigsaw.w3.org'));
+    expect(realm, equals('test'));
+
+    await controller.setHttpAuthCredentials(host, realm, username, password);
+    await pageFinishedCompleter.future;
+
+    final String content = await controller.runJavaScriptReturningResult(
+        'document.documentElement.innerText') as String;
+    expect(content.contains('Your browser made it!'), isTrue);
+  });
+
   testWidgets(
       'withWeakRefenceTo allows encapsulating class to be garbage collected',
       (WidgetTester tester) async {

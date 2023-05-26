@@ -11,8 +11,6 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebViewDatabase;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
@@ -33,8 +31,6 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
 
   private final InstanceManager instanceManager;
   private final WebViewFlutterApiImpl webViewFlutterApi;
-
-  public static HttpAuthHandler publicHttpHandler;
 
   @RequiresApi(api = Build.VERSION_CODES.M)
   static GeneratedAndroidWebView.WebResourceErrorData createWebResourceErrorData(
@@ -236,15 +232,19 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   /** Passes arguments from {@link WebViewClient#onReceivedHttpAuthRequest} to Dart. */
-  public void onReceivedHttpAuthRequest(@NonNull WebViewClient webViewClient, @NonNull WebView webview
-          ,  HttpAuthHandler handler,  String host,  String realm, @NonNull Reply<Void> callback){
-            System.out.println("Hey pal");
-  webViewFlutterApi.create(webview, reply -> {});
+  public void onReceivedHttpAuthRequest(
+      @NonNull WebViewClient webViewClient,
+      @NonNull WebView webview,
+      HttpAuthHandler handler,
+      String host,
+      String realm,
+      @NonNull Reply<Void> callback) {
+    webViewFlutterApi.create(webview, reply -> {});
     final Long webViewIdentifier =
-            Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webview));
-      publicHttpHandler = handler;
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webview));
 
-    onReceivedHttpAuthRequest(getIdentifierForClient(webViewClient), webViewIdentifier, host, realm, callback);
+    onReceivedHttpAuthRequest(
+        getIdentifierForClient(webViewClient), webViewIdentifier, host, realm, callback);
   }
 
   private long getIdentifierForClient(WebViewClient webViewClient) {

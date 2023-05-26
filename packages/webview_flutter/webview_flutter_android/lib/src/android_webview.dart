@@ -11,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -396,10 +395,6 @@ class WebView extends JavaObject {
   /// Sets the background color of this WebView.
   Future<void> setBackgroundColor(Color color) {
     return api.setBackgroundColorFromInstance(this, color.value);
-  }
-  /// Sets the authentication credentials for the basic auth request.
-  Future<void> setHttpAuthCredentials(String host, String realm, String username, String password) {
-    return api.setHttpAuthCredentialsInstance(this, host, realm, username, password);
   }
 
   @override
@@ -911,6 +906,18 @@ class WebViewClient extends JavaObject {
     bool value,
   ) {
     return api.setShouldOverrideUrlLoadingReturnValueFromInstance(this, value);
+  }
+
+  /// Sets the authentication credentials for the basic authentication request.
+  static Future<void> setHttpAuthCredentials(
+    WebView webView,
+    String host,
+    String realm,
+    String username,
+    String password,
+  ) {
+    return api.setHttpAuthCredentialsInstance(
+        webView, host, realm, username, password);
   }
 
   @override

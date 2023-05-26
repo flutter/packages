@@ -356,13 +356,6 @@ class WebViewHostApiImpl extends WebViewHostApi {
   Future<void> setBackgroundColorFromInstance(WebView instance, int color) {
     return setBackgroundColor(instanceManager.getIdentifier(instance)!, color);
   }
-
-  /// Helper method to set auth credentials for basic auth
-  Future<void> setHttpAuthCredentialsInstance(WebView instance, String host,
-      String realm, String username, String password) {
-    return setAuthCredentials(instanceManager.getIdentifier(instance)!, host,
-        realm, username, password);
-  }
 }
 
 /// Flutter API implementation for [WebView].
@@ -614,6 +607,13 @@ class WebViewClientHostApiImpl extends WebViewClientHostApi {
       value,
     );
   }
+
+  /// Helper method to set auth credentials for basic authentication
+  Future<void> setHttpAuthCredentialsInstance(WebView instance, String host,
+      String realm, String username, String password) async {
+    await setAuthCredentials(instanceManager.getIdentifier(instance)!, host,
+        realm, username, password);
+  }
 }
 
 /// Flutter api implementation for [WebViewClient].
@@ -816,31 +816,6 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       throw Exception('onReceivedHttpAuthRequest');
     }
   }
-
-  //   @override
-  // Future<WebViewAuthInfo> onReceivedHttpAuthRequest(
-  //     int instanceId, int webViewInstanceId, String host, String realm) async {
-  //   final WebViewClient? instance = instanceManager
-  //       .getInstanceWithWeakReference(instanceId) as WebViewClient?;
-  //   final WebView? webViewInstance = instanceManager
-  //       .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
-  //   print('Hello from android webview api impls');
-  //   assert(
-  //     instance != null,
-  //     'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
-  //   );
-  //   assert(
-  //     webViewInstance != null,
-  //     'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
-  //   );
-  //   if (instance!.onReceivedHttpAuthRequest != null) {
-  //     return instance.onReceivedHttpAuthRequest!(webViewInstance!, host, realm);
-  //   } else {
-  //     // Return a default WebViewAuthInfo or throw an exception based on your requirements.
-  //     // For example:
-  //     throw Exception('onReceivedHttpAuthRequest callback is not set.');
-  //   }
-  // }
 }
 
 /// Host api implementation for [DownloadListener].

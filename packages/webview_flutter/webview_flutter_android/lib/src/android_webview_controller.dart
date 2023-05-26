@@ -428,6 +428,16 @@ class AndroidWebViewController extends PlatformWebViewController {
     );
   }
 
+  /// Sets HTTP Basic Authentication credentials for a given [host] and [realm].
+  ///
+  /// [username] and [password] are used for authentication.
+  @override
+  Future<void> setHttpAuthCredentials(
+      String host, String realm, String username, String password) async {
+    return android_webview.WebViewClient.setHttpAuthCredentials(
+        _webView, realm, host, username, password);
+  }
+
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
   ///
@@ -436,7 +446,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setOnPlatformPermissionRequest(
     void Function(
       PlatformWebViewPermissionRequest request,
-    ) onPermissionRequest,
+    )
+        onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
   }

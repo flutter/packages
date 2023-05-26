@@ -102,23 +102,30 @@ void main() {
                   int errorCode,
                   String description,
                   String failingUrl,
-                )? onReceivedError,
+                )?
+                        onReceivedError,
+                void Function(android_webview.WebView webView, String host,
+                        String realm)?
+                    onReceivedHttpAuthRequest,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
                   android_webview.WebResourceError error,
-                )? onReceivedRequestError,
+                )?
+                    onReceivedRequestError,
                 void Function(
                   android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
-                )? requestLoading,
+                )?
+                    requestLoading,
                 void Function(android_webview.WebView webView, String url)?
                     urlLoading,
                 void Function(
                   android_webview.WebView webView,
                   String url,
                   bool isReload,
-                )? doUpdateVisitedHistory,
+                )?
+                    doUpdateVisitedHistory,
               }) =>
                   mockWebViewClient ?? MockWebViewClient(),
               createFlutterAssetManager: () =>

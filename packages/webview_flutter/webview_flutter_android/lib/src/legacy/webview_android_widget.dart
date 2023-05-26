@@ -624,13 +624,15 @@ class WebViewProxy {
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
       android_webview.WebResourceError error,
-    )? onReceivedRequestError,
+    )?
+        onReceivedRequestError,
     void Function(
       android_webview.WebView webView,
       int errorCode,
       String description,
       String failingUrl,
-    )? onReceivedError,
+    )?
+        onReceivedError,
     void Function(android_webview.WebView webView,
             android_webview.WebResourceRequest request)?
         requestLoading,

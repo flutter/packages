@@ -446,6 +446,31 @@ void main() {
       expect(callbackNavigationRequest.url, 'https://www.google.com');
       expect(completer.isCompleted, true);
     });
+
+    test('onReceivedHttpAuthRequest emits host and realm', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      String? callbackHost;
+      String? callbackRealm;
+      androidNavigationDelegate
+          .setOnReceiveHttpAuthRequest((String host, String realm) {
+        callbackHost = host;
+        callbackRealm = realm;
+      });
+
+      const String expectedHost = 'expectedHost';
+      const String expectedRealm = 'expectedRealm';
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpAuthRequest!(
+        android_webview.WebView.detached(),
+        expectedHost,
+        expectedRealm,
+      );
+
+      expect(callbackHost, expectedHost);
+      expect(callbackRealm, expectedRealm);
+    });
   });
 
   test('onUrlChange', () {
@@ -489,6 +514,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onPageFinished,
     super.onPageStarted,
     super.onReceivedError,
+    super.onReceivedHttpAuthRequest,
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,

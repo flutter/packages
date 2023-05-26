@@ -91,7 +91,7 @@ class _WebViewExampleState extends State<WebViewExample> {
     await showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: const Text('Auth'),
+              title: const Text('Authentication'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -187,14 +187,12 @@ Page resource error:
           request.grant();
         },
       )
-      ..loadRequest(LoadRequestParams(
-        uri: Uri.parse(
-            'https://www.httpwatch.com/httpgallery/authentication/#showExample10'),
-      ));
+      ..loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse('https://flutter.dev'),
+        ),
+      );
   }
-
-  // https://authenticationtest.com/simpleFormAuth/
-  // https://www.httpwatch.com/httpgallery/authentication/#showExample10
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +245,7 @@ enum MenuOptions {
   loadHtmlString,
   transparentBackground,
   setCookie,
+  basicAuthentication,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -307,6 +306,9 @@ class SampleMenu extends StatelessWidget {
           case MenuOptions.setCookie:
             _onSetCookie();
             break;
+          case MenuOptions.basicAuthentication:
+            _onBasicAuthTest();
+            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -363,6 +365,9 @@ class SampleMenu extends StatelessWidget {
           value: MenuOptions.transparentBackground,
           child: Text('Transparent background example'),
         ),
+        const PopupMenuItem<MenuOptions>(
+            value: MenuOptions.basicAuthentication,
+            child: Text('Basic Authentication Test'))
       ],
     );
   }
@@ -510,6 +515,12 @@ class SampleMenu extends StatelessWidget {
     await indexFile.writeAsString(kLocalExamplePage);
 
     return indexFile.path;
+  }
+
+  Future<void> _onBasicAuthTest() {
+    return webViewController.loadRequest(LoadRequestParams(
+        uri: Uri.parse(
+            'https://www.httpwatch.com/httpgallery/authentication/#showExample10')));
   }
 }
 

@@ -711,6 +711,28 @@ class MockTestWebViewClientHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i5.Future<void> setAuthCredentials(
+    int? instanceId,
+    String? host,
+    String? realm,
+    String? username,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAuthCredentials,
+          [
+            instanceId,
+            host,
+            realm,
+            username,
+            password,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [TestWebViewHostApi].

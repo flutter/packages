@@ -261,6 +261,13 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'setUserAgent is not implemented on the current platform');
   }
 
+  /// Sets the auth credentials for basic authentication and can be used on onReceiveHttpAuthRequest with NavigationDelegate.
+  Future<void> setHttpAuthCredentials(
+      String host, String realm, String username, String password) {
+    throw UnimplementedError(
+        'setHttpAuthCredentials is not implemented on the current platform');
+  }
+
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
   Future<void> setOnPlatformPermissionRequest(
