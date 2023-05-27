@@ -66,7 +66,7 @@ final PictureInfo pictureInfo = await vg.loadPicture(SvgStringLoader(rawSvg), nu
 // You can draw the picture to a canvas:
 canvas.drawPicture(pictureInfo.picture);
 
-// Or convert the picture to a an image:
+// Or convert the picture to an image:
 final ui.Image image = pictureInfo.picture.toImage(...);
 
 pictureInfo.picture.dispose();
