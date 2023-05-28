@@ -17,8 +17,8 @@ import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
-import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
@@ -27,11 +27,6 @@ import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.ProductDetails;
-import com.android.billingclient.api.ProductDetailsResponseListener;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.PurchaseHistoryResponseListener;
-import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryProductDetailsParams.Product;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
@@ -47,6 +42,31 @@ import java.util.Map;
 class MethodCallHandlerImpl
     implements MethodChannel.MethodCallHandler, Application.ActivityLifecycleCallbacks {
 
+  @VisibleForTesting
+  static final class MethodNames {
+    static final String IS_READY = "BillingClient#isReady()";
+    static final String START_CONNECTION =
+        "BillingClient#startConnection(BillingClientStateListener)";
+    static final String END_CONNECTION = "BillingClient#endConnection()";
+    static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
+    static final String QUERY_PRODUCT_DETAILS =
+        "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
+    static final String LAUNCH_BILLING_FLOW =
+        "BillingClient#launchBillingFlow(Activity, BillingFlowParams)";
+    static final String QUERY_PURCHASES_ASYNC =
+        "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
+    static final String QUERY_PURCHASE_HISTORY_ASYNC =
+        "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
+    static final String CONSUME_PURCHASE_ASYNC =
+        "BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)";
+    static final String ACKNOWLEDGE_PURCHASE =
+        "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
+    static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
+    static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
+
+    private MethodNames() {}
+  }
+
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
       "https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/README.md#loading-products-for-sale";
@@ -56,7 +76,7 @@ class MethodCallHandlerImpl
 
   @Nullable private Activity activity;
   private final Context applicationContext;
-  private final MethodChannel methodChannel;
+  final MethodChannel methodChannel;
 
   private final HashMap<String, ProductDetails> cachedProducts = new HashMap<>();
 
@@ -111,22 +131,22 @@ class MethodCallHandlerImpl
   }
 
   @Override
-  public void onMethodCall(MethodCall call, MethodChannel.Result result) {
+  public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case InAppPurchasePlugin.MethodNames.IS_READY:
+      case MethodNames.IS_READY:
         isReady(result);
         break;
-      case InAppPurchasePlugin.MethodNames.START_CONNECTION:
+      case MethodNames.START_CONNECTION:
         startConnection((int) call.argument("handle"), result);
         break;
-      case InAppPurchasePlugin.MethodNames.END_CONNECTION:
+      case MethodNames.END_CONNECTION:
         endConnection(result);
         break;
-      case InAppPurchasePlugin.MethodNames.QUERY_PRODUCT_DETAILS:
+      case MethodNames.QUERY_PRODUCT_DETAILS:
         List<Product> productList = toProductList(call.argument("productList"));
         queryProductDetailsAsync(productList, result);
         break;
-      case InAppPurchasePlugin.MethodNames.LAUNCH_BILLING_FLOW:
+      case MethodNames.LAUNCH_BILLING_FLOW:
         launchBillingFlow(
             (String) call.argument("product"),
             (String) call.argument("offerToken"),
@@ -139,22 +159,22 @@ class MethodCallHandlerImpl
                 : ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
             result);
         break;
-      case InAppPurchasePlugin.MethodNames.QUERY_PURCHASES_ASYNC:
+      case MethodNames.QUERY_PURCHASES_ASYNC:
         queryPurchasesAsync((String) call.argument("productType"), result);
         break;
-      case InAppPurchasePlugin.MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
+      case MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
         queryPurchaseHistoryAsync((String) call.argument("productType"), result);
         break;
-      case InAppPurchasePlugin.MethodNames.CONSUME_PURCHASE_ASYNC:
+      case MethodNames.CONSUME_PURCHASE_ASYNC:
         consumeAsync((String) call.argument("purchaseToken"), result);
         break;
-      case InAppPurchasePlugin.MethodNames.ACKNOWLEDGE_PURCHASE:
+      case MethodNames.ACKNOWLEDGE_PURCHASE:
         acknowledgePurchase((String) call.argument("purchaseToken"), result);
         break;
-      case InAppPurchasePlugin.MethodNames.IS_FEATURE_SUPPORTED:
+      case MethodNames.IS_FEATURE_SUPPORTED:
         isFeatureSupported((String) call.argument("feature"), result);
         break;
-      case InAppPurchasePlugin.MethodNames.GET_CONNECTION_STATE:
+      case MethodNames.GET_CONNECTION_STATE:
         getConnectionState(result);
         break;
       default:
@@ -192,18 +212,13 @@ class MethodCallHandlerImpl
         QueryProductDetailsParams.newBuilder().setProductList(productList).build();
     billingClient.queryProductDetailsAsync(
         params,
-        new ProductDetailsResponseListener() {
-          @Override
-          public void onProductDetailsResponse(
-              @NonNull BillingResult billingResult,
-              @NonNull List<ProductDetails> productDetailsList) {
-            updateCachedProducts(productDetailsList);
-            final Map<String, Object> productDetailsResponse = new HashMap<>();
-            productDetailsResponse.put("billingResult", fromBillingResult(billingResult));
-            productDetailsResponse.put(
-                "productDetailsList", fromProductDetailsList(productDetailsList));
-            result.success(productDetailsResponse);
-          }
+        (billingResult, productDetailsList) -> {
+          updateCachedProducts(productDetailsList);
+          final Map<String, Object> productDetailsResponse = new HashMap<>();
+          productDetailsResponse.put("billingResult", fromBillingResult(billingResult));
+          productDetailsResponse.put(
+              "productDetailsList", fromProductDetailsList(productDetailsList));
+          result.success(productDetailsResponse);
         });
   }
 
@@ -322,12 +337,7 @@ class MethodCallHandlerImpl
     }
 
     ConsumeResponseListener listener =
-        new ConsumeResponseListener() {
-          @Override
-          public void onConsumeResponse(BillingResult billingResult, String outToken) {
-            result.success(fromBillingResult(billingResult));
-          }
-        };
+        (billingResult, outToken) -> result.success(fromBillingResult(billingResult));
     ConsumeParams.Builder paramsBuilder =
         ConsumeParams.newBuilder().setPurchaseToken(purchaseToken);
 
@@ -347,18 +357,14 @@ class MethodCallHandlerImpl
     paramsBuilder.setProductType(productType);
     billingClient.queryPurchasesAsync(
         paramsBuilder.build(),
-        new PurchasesResponseListener() {
-          @Override
-          public void onQueryPurchasesResponse(
-              BillingResult billingResult, List<Purchase> purchasesList) {
-            final Map<String, Object> serialized = new HashMap<>();
-            // The response code is no longer passed, as part of billing 4.0, so we pass OK here
-            // as success is implied by calling this callback.
-            serialized.put("responseCode", BillingClient.BillingResponseCode.OK);
-            serialized.put("billingResult", fromBillingResult(billingResult));
-            serialized.put("purchasesList", fromPurchasesList(purchasesList));
-            result.success(serialized);
-          }
+        (billingResult, purchasesList) -> {
+          final Map<String, Object> serialized = new HashMap<>();
+          // The response code is no longer passed, as part of billing 4.0, so we pass OK here
+          // as success is implied by calling this callback.
+          serialized.put("responseCode", BillingClient.BillingResponseCode.OK);
+          serialized.put("billingResult", fromBillingResult(billingResult));
+          serialized.put("purchasesList", fromPurchasesList(purchasesList));
+          result.success(serialized);
         });
   }
 
@@ -369,16 +375,11 @@ class MethodCallHandlerImpl
 
     billingClient.queryPurchaseHistoryAsync(
         QueryPurchaseHistoryParams.newBuilder().setProductType(productType).build(),
-        new PurchaseHistoryResponseListener() {
-          @Override
-          public void onPurchaseHistoryResponse(
-              BillingResult billingResult, List<PurchaseHistoryRecord> purchasesList) {
-            final Map<String, Object> serialized = new HashMap<>();
-            serialized.put("billingResult", fromBillingResult(billingResult));
-            serialized.put(
-                "purchaseHistoryRecordList", fromPurchaseHistoryRecordList(purchasesList));
-            result.success(serialized);
-          }
+        (billingResult, purchasesList) -> {
+          final Map<String, Object> serialized = new HashMap<>();
+          serialized.put("billingResult", fromBillingResult(billingResult));
+          serialized.put("purchaseHistoryRecordList", fromPurchaseHistoryRecordList(purchasesList));
+          result.success(serialized);
         });
   }
 
@@ -401,7 +402,7 @@ class MethodCallHandlerImpl
           private boolean alreadyFinished = false;
 
           @Override
-          public void onBillingSetupFinished(BillingResult billingResult) {
+          public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
             if (alreadyFinished) {
               Log.d(TAG, "Tried to call onBillingSetupFinished multiple times.");
               return;
@@ -416,7 +417,7 @@ class MethodCallHandlerImpl
           public void onBillingServiceDisconnected() {
             final Map<String, Object> arguments = new HashMap<>();
             arguments.put("handle", handle);
-            methodChannel.invokeMethod(InAppPurchasePlugin.MethodNames.ON_DISCONNECT, arguments);
+            methodChannel.invokeMethod(MethodNames.ON_DISCONNECT, arguments);
           }
         });
   }
@@ -428,13 +429,7 @@ class MethodCallHandlerImpl
     AcknowledgePurchaseParams params =
         AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
     billingClient.acknowledgePurchase(
-        params,
-        new AcknowledgePurchaseResponseListener() {
-          @Override
-          public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
-            result.success(fromBillingResult(billingResult));
-          }
-        });
+        params, billingResult -> result.success(fromBillingResult(billingResult)));
   }
 
   protected void updateCachedProducts(@Nullable List<ProductDetails> productDetailsList) {
