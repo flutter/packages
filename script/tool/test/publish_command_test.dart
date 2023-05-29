@@ -14,7 +14,6 @@ import 'package:flutter_plugin_tools/src/publish_command.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'common/package_command_test.mocks.dart';
@@ -22,11 +21,11 @@ import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  final String flutterCommand = getFlutterCommand(const LocalPlatform());
-
+  late MockPlatform platform;
   late Directory packagesDir;
   late MockGitDir gitDir;
   late TestProcessRunner processRunner;
+  late PublishCommand command;
   late CommandRunner<void> commandRunner;
   late MockStdin mockStdin;
   late FileSystem fileSystem;
@@ -34,13 +33,14 @@ void main() {
   late Map<String, Map<String, dynamic>> mockHttpResponses;
 
   void createMockCredentialFile() {
-    final String credentialPath = PublishCommand.getCredentialPath();
-    fileSystem.file(credentialPath)
+    fileSystem.file(command.credentialsPath)
       ..createSync(recursive: true)
       ..writeAsStringSync('some credential');
   }
 
   setUp(() async {
+    platform = MockPlatform(isLinux: true);
+    platform.environment['HOME'] = '/home';
     fileSystem = MemoryFileSystem();
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     processRunner = TestProcessRunner();
@@ -71,14 +71,15 @@ void main() {
     });
 
     mockStdin = MockStdin();
-    commandRunner = CommandRunner<void>('tester', '')
-      ..addCommand(PublishCommand(
-        packagesDir,
-        processRunner: processRunner,
-        stdinput: mockStdin,
-        gitDir: gitDir,
-        httpClient: mockClient,
-      ));
+    command = PublishCommand(
+      packagesDir,
+      platform: platform,
+      processRunner: processRunner,
+      stdinput: mockStdin,
+      gitDir: gitDir,
+      httpClient: mockClient,
+    );
+    commandRunner = CommandRunner<void>('tester', '')..addCommand(command);
   });
 
   group('Initial validation', () {
@@ -145,8 +146,7 @@ void main() {
       createFakePlugin('plugin1', packagesDir, examples: <String>[]);
       createFakePlugin('plugin2', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] =
-          <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(
             MockProcess(
                 stdout: 'Foo',
@@ -202,7 +202,7 @@ void main() {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              flutterCommand,
+              'flutter',
               const <String>['pub', 'publish', '--dry-run', '--server=bar'],
               plugin.path)));
     });
@@ -225,7 +225,7 @@ void main() {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              flutterCommand,
+              'flutter',
               const <String>['pub', 'publish', '--server=bar', '--force'],
               plugin.path)));
     });
@@ -249,21 +249,39 @@ void main() {
           processRunner.recordedCalls,
           containsAllInOrder(<ProcessCall>[
             ProcessCall(
-                flutterCommand,
+                'flutter',
                 const <String>['pub', 'publish', '--server=bar', '--force'],
                 plugin1.path),
             ProcessCall(
-                flutterCommand,
+                'flutter',
                 const <String>['pub', 'publish', '--server=bar', '--force'],
                 plugin2.path),
           ]));
     });
 
+    test('creates credential file from envirnoment variable if necessary',
+        () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+      const String credentials = 'some credential';
+      platform.environment['PUB_CREDENTIALS'] = credentials;
+
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+        '--skip-confirmation',
+        '--pub-publish-flags',
+        '--server=bar'
+      ]);
+
+      final File credentialFile = fileSystem.file(command.credentialsPath);
+      expect(credentialFile.existsSync(), true);
+      expect(credentialFile.readAsStringSync(), credentials);
+    });
+
     test('throws if pub publish fails', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] =
-          <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 128), <String>['pub', 'publish'])
       ];
 
@@ -348,8 +366,7 @@ void main() {
     test('only if publishing succeeded', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] =
-          <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 128), <String>['pub', 'publish']),
       ];
 
@@ -880,6 +897,44 @@ void main() {
           isNot(contains('git-push')));
     });
   });
+
+  group('credential location', () {
+    test('Linux with XDG', () async {
+      platform = MockPlatform(isLinux: true);
+      platform.environment['XDG_CONFIG_HOME'] = '/xdghome/config';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(
+          command.credentialsPath, '/xdghome/config/dart/pub-credentials.json');
+    });
+
+    test('Linux without XDG', () async {
+      platform = MockPlatform(isLinux: true);
+      platform.environment['HOME'] = '/home';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(
+          command.credentialsPath, '/home/.config/dart/pub-credentials.json');
+    });
+
+    test('macOS', () async {
+      platform = MockPlatform(isMacOS: true);
+      platform.environment['HOME'] = '/Users/someuser';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(command.credentialsPath,
+          '/Users/someuser/Library/Application Support/dart/pub-credentials.json');
+    });
+
+    test('Windows', () async {
+      platform = MockPlatform(isWindows: true);
+      platform.environment['APPDATA'] = r'C:\Users\SomeUser\AppData';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(command.credentialsPath,
+          r'C:\Users\SomeUser\AppData\dart\pub-credentials.json');
+    });
+  });
 }
 
 /// An extension of [RecordingProcessRunner] that stores 'flutter pub publish'
@@ -893,7 +948,7 @@ class TestProcessRunner extends RecordingProcessRunner {
       {Directory? workingDirectory}) async {
     final io.Process process =
         await super.start(executable, args, workingDirectory: workingDirectory);
-    if (executable == getFlutterCommand(const LocalPlatform()) &&
+    if (executable == 'flutter' &&
         args.isNotEmpty &&
         args[0] == 'pub' &&
         args[1] == 'publish') {

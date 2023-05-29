@@ -51,7 +51,7 @@ class AndroidWebViewProxy {
       android_webview.WebResourceError error,
     )? onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.')
-        void Function(
+    void Function(
       android_webview.WebView webView,
       int errorCode,
       String description,

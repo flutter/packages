@@ -2,6 +2,10 @@
 
 * Adds support for the native `onRenderProcessGone` callback.
 
+## 3.7.1
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 3.7.0
 
 * Adds support to accept third party cookies. See

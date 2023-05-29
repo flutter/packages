@@ -211,13 +211,13 @@ void main() {
     NullableReturnFlutterApi.setup(mockFlutterApi);
 
     final Completer<int?> resultCompleter = Completer<int?>();
-    binding.defaultBinaryMessenger.handlePlatformMessage(
+    unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableReturnFlutterApi.doit',
       NullableReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
         resultCompleter.complete(null);
       },
-    );
+    ));
 
     expect(resultCompleter.future, completion(null));
 
@@ -234,13 +234,13 @@ void main() {
 
     final Completer<List<String?>?> resultCompleter =
         Completer<List<String?>?>();
-    binding.defaultBinaryMessenger.handlePlatformMessage(
+    unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionReturnFlutterApi.doit',
       NullableCollectionReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
         resultCompleter.complete(null);
       },
-    );
+    ));
 
     expect(resultCompleter.future, completion(null));
 
