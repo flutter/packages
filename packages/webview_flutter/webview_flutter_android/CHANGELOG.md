@@ -1,6 +1,7 @@
 ## 3.8.0
 
-* Adds support for the native `onRenderProcessGone` callback.
+* Adds support to receive a notification when a WebView's render process has exited. See
+  `AndroidNavigationDelegate.setOnRenderProcessGone`.
 
 ## 3.7.1
 
