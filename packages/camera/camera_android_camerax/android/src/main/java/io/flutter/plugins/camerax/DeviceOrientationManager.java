@@ -14,6 +14,7 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
@@ -106,7 +107,7 @@ public class DeviceOrientationManager {
    *     into degrees.
    * @return The device's photo orientation in degrees.
    */
-  public int getPhotoOrientation(PlatformChannel.DeviceOrientation orientation) {
+  public int getPhotoOrientation(@Nullable PlatformChannel.DeviceOrientation orientation) {
     int angle = 0;
     // Fallback to device orientation when the orientation value is null.
     if (orientation == null) {
@@ -163,7 +164,7 @@ public class DeviceOrientationManager {
    *     into degrees.
    * @return The device's video orientation in clockwise degrees.
    */
-  public int getVideoOrientation(PlatformChannel.DeviceOrientation orientation) {
+  public int getVideoOrientation(@Nullable PlatformChannel.DeviceOrientation orientation) {
     int angle = 0;
 
     // Fallback to device orientation when the orientation value is null.
@@ -194,7 +195,7 @@ public class DeviceOrientationManager {
   }
 
   /** @return the last received UI orientation. */
-  public PlatformChannel.DeviceOrientation getLastUIOrientation() {
+  public @Nullable PlatformChannel.DeviceOrientation getLastUIOrientation() {
     return this.lastOrientation;
   }
 
@@ -236,6 +237,8 @@ public class DeviceOrientationManager {
    *
    * @return The current user interface orientation.
    */
+  // Configuration.ORIENTATION_SQUARE is deprecated.
+  @SuppressWarnings("deprecation")
   @VisibleForTesting
   PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDisplay().getRotation();
@@ -254,6 +257,8 @@ public class DeviceOrientationManager {
         } else {
           return PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
         }
+      case Configuration.ORIENTATION_SQUARE:
+      case Configuration.ORIENTATION_UNDEFINED:
       default:
         return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
     }

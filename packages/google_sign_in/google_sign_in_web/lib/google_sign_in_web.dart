@@ -47,13 +47,10 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   /// For tests, the plugin can skip its loading process with [debugOverrideLoader],
   /// and the implementation of the underlying GIS SDK client through [debugOverrideGisSdkClient].
   GoogleSignInPlugin({
+    @visibleForTesting bool debugOverrideLoader = false,
+    @visibleForTesting GisSdkClient? debugOverrideGisSdkClient,
     @visibleForTesting
-        bool debugOverrideLoader = false,
-    @visibleForTesting
-        GisSdkClient? debugOverrideGisSdkClient,
-    @visibleForTesting
-        StreamController<GoogleSignInUserData?>?
-            debugOverrideUserDataController,
+    StreamController<GoogleSignInUserData?>? debugOverrideUserDataController,
   })  : _gisSdkClient = debugOverrideGisSdkClient,
         _userDataController = debugOverrideUserDataController ??
             StreamController<GoogleSignInUserData?>.broadcast() {
@@ -262,14 +259,14 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<void> signOut() async {
     await initialized;
 
-    _gisClient.signOut();
+    await _gisClient.signOut();
   }
 
   @override
   Future<void> disconnect() async {
     await initialized;
 
-    _gisClient.disconnect();
+    await _gisClient.disconnect();
   }
 
   @override
@@ -283,7 +280,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<void> clearAuthCache({required String token}) async {
     await initialized;
 
-    _gisClient.clearAuthCache();
+    await _gisClient.clearAuthCache();
   }
 
   @override

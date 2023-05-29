@@ -9,23 +9,13 @@ final gmaps.LatLng _nullGmapsLatLng = gmaps.LatLng(0, 0);
 final gmaps.LatLngBounds _nullGmapsLatLngBounds =
     gmaps.LatLngBounds(_nullGmapsLatLng, _nullGmapsLatLng);
 
-// Defaults taken from the Google Maps Platform SDK documentation.
-const String _defaultCssColor = '#000000';
-const double _defaultCssOpacity = 0.0;
-
 // Converts a [Color] into a valid CSS value #RRGGBB.
 String _getCssColor(Color color) {
-  if (color == null) {
-    return _defaultCssColor;
-  }
   return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
 }
 
 // Extracts the opacity from a [Color].
 double _getCssOpacity(Color color) {
-  if (color == null) {
-    return _defaultCssOpacity;
-  }
   return color.opacity;
 }
 
@@ -114,11 +104,9 @@ gmaps.MapOptions _applyInitialPosition(
   gmaps.MapOptions options,
 ) {
   // Adjust the initial position, if passed...
-  if (initialPosition != null) {
-    options.zoom = initialPosition.zoom;
-    options.center = gmaps.LatLng(
-        initialPosition.target.latitude, initialPosition.target.longitude);
-  }
+  options.zoom = initialPosition.zoom;
+  options.center = gmaps.LatLng(
+      initialPosition.target.latitude, initialPosition.target.longitude);
   return options;
 }
 
@@ -255,33 +243,31 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
 
   gmaps.Icon? icon;
 
-  if (iconConfig != null) {
-    if (iconConfig[0] == 'fromAssetImage') {
-      assert(iconConfig.length >= 2);
-      // iconConfig[2] contains the DPIs of the screen, but that information is
-      // already encoded in the iconConfig[1]
-      icon = gmaps.Icon()
-        ..url = ui.webOnlyAssetManager.getAssetUrl(iconConfig[1]! as String);
+  if (iconConfig[0] == 'fromAssetImage') {
+    assert(iconConfig.length >= 2);
+    // iconConfig[2] contains the DPIs of the screen, but that information is
+    // already encoded in the iconConfig[1]
+    icon = gmaps.Icon()
+      ..url = ui.webOnlyAssetManager.getAssetUrl(iconConfig[1]! as String);
 
-      final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
-      if (size != null) {
-        icon
-          ..size = size
-          ..scaledSize = size;
-      }
-    } else if (iconConfig[0] == 'fromBytes') {
-      // Grab the bytes, and put them into a blob
-      final List<int> bytes = iconConfig[1]! as List<int>;
-      // Create a Blob from bytes, but let the browser figure out the encoding
-      final Blob blob = Blob(<dynamic>[bytes]);
-      icon = gmaps.Icon()..url = Url.createObjectUrlFromBlob(blob);
+    final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
+    if (size != null) {
+      icon
+        ..size = size
+        ..scaledSize = size;
+    }
+  } else if (iconConfig[0] == 'fromBytes') {
+    // Grab the bytes, and put them into a blob
+    final List<int> bytes = iconConfig[1]! as List<int>;
+    // Create a Blob from bytes, but let the browser figure out the encoding
+    final Blob blob = Blob(<dynamic>[bytes]);
+    icon = gmaps.Icon()..url = Url.createObjectUrlFromBlob(blob);
 
-      final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
-      if (size != null) {
-        icon
-          ..size = size
-          ..scaledSize = size;
-      }
+    final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
+    if (size != null) {
+      icon
+        ..size = size
+        ..scaledSize = size;
     }
   }
 

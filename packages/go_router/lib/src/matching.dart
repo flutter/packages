@@ -158,7 +158,7 @@ class RouteMatchList {
     newMatches.removeRange(index, newMatches.length);
 
     // Also pop ShellRoutes when there are no subsequent route matches
-    while (newMatches.isNotEmpty && newMatches.last.route is ShellRoute) {
+    while (newMatches.isNotEmpty && newMatches.last.route is ShellRouteBase) {
       newMatches.removeLast();
     }
     // Removing ImperativeRouteMatch should not change uri and pathParameters.
@@ -193,10 +193,13 @@ class RouteMatchList {
   RouteMatch get last => matches.last;
 
   /// Returns true if the current match intends to display an error screen.
-  bool get isError => matches.length == 1 && matches.first.error != null;
+  bool get isError => error != null;
 
   /// Returns the error that this match intends to display.
-  Exception? get error => matches.first.error;
+  Exception? get error => matches.firstOrNull?.error;
+
+  /// The routes for each of the matches.
+  List<RouteBase> get routes => matches.map((RouteMatch e) => e.route).toList();
 
   RouteMatchList _copyWith({
     List<RouteMatch>? matches,
@@ -236,6 +239,115 @@ class RouteMatchList {
   @override
   String toString() {
     return '${objectRuntimeType(this, 'RouteMatchList')}($fullPath)';
+  }
+
+  /// Returns a pre-parsed [RouteInformation], containing a reference to this
+  /// match list.
+  RouteInformation toPreParsedRouteInformation() {
+    return RouteInformation(
+      // TODO(tolo): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
+      location: uri.toString(),
+      state: this,
+    );
+  }
+
+  /// Attempts to extract a pre-parsed match list from the provided
+  /// [RouteInformation].
+  static RouteMatchList? fromPreParsedRouteInformation(
+      RouteInformation routeInformation) {
+    if (routeInformation.state is RouteMatchList) {
+      return routeInformation.state! as RouteMatchList;
+    }
+    return null;
+  }
+}
+
+/// Handles encoding and decoding of [RouteMatchList] objects to a format
+/// suitable for using with [StandardMessageCodec].
+///
+/// The primary use of this class is for state restoration.
+class RouteMatchListCodec {
+  /// Creates a new [RouteMatchListCodec] object.
+  RouteMatchListCodec(this._matcher);
+
+  static const String _encodedDataKey = 'go_router/encoded_route_match_list';
+  static const String _locationKey = 'location';
+  static const String _stateKey = 'state';
+  static const String _imperativeMatchesKey = 'imperativeMatches';
+  static const String _pageKey = 'pageKey';
+
+  final RouteMatcher _matcher;
+
+  /// Encodes the provided [RouteMatchList].
+  Object? encodeMatchList(RouteMatchList matchlist) {
+    if (matchlist.isEmpty) {
+      return null;
+    }
+    final List<Map<Object?, Object?>> imperativeMatches = matchlist.matches
+        .whereType<ImperativeRouteMatch<Object?>>()
+        .map((ImperativeRouteMatch<Object?> e) => _toPrimitives(
+            e.matches.uri.toString(), e.extra,
+            pageKey: e.pageKey.value))
+        .toList();
+
+    return <Object?, Object?>{
+      _encodedDataKey: _toPrimitives(
+          matchlist.uri.toString(), matchlist.matches.first.extra,
+          imperativeMatches: imperativeMatches),
+    };
+  }
+
+  static Map<Object?, Object?> _toPrimitives(String location, Object? state,
+      {List<dynamic>? imperativeMatches, String? pageKey}) {
+    return <Object?, Object?>{
+      _locationKey: location,
+      _stateKey: state,
+      if (imperativeMatches != null) _imperativeMatchesKey: imperativeMatches,
+      if (pageKey != null) _pageKey: pageKey,
+    };
+  }
+
+  /// Attempts to decode the provided object into a [RouteMatchList].
+  RouteMatchList? decodeMatchList(Object? object) {
+    if (object is Map && object[_encodedDataKey] is Map) {
+      final Map<Object?, Object?> data =
+          object[_encodedDataKey] as Map<Object?, Object?>;
+      final Object? rootLocation = data[_locationKey];
+      if (rootLocation is! String) {
+        return null;
+      }
+      final RouteMatchList matchList =
+          _matcher.findMatch(rootLocation, extra: data[_stateKey]);
+
+      final List<Object?>? imperativeMatches =
+          data[_imperativeMatchesKey] as List<Object?>?;
+      if (imperativeMatches != null) {
+        for (int i = 0; i < imperativeMatches.length; i++) {
+          final Object? match = imperativeMatches[i];
+          if (match is! Map ||
+              match[_locationKey] is! String ||
+              match[_pageKey] is! String) {
+            continue;
+          }
+          final ValueKey<String> pageKey =
+              ValueKey<String>(match[_pageKey] as String);
+          final RouteMatchList imperativeMatchList = _matcher.findMatch(
+              match[_locationKey] as String,
+              extra: match[_stateKey]);
+          final ImperativeRouteMatch<Object?> imperativeMatch =
+              ImperativeRouteMatch<Object?>(
+            pageKey: pageKey,
+            matches: imperativeMatchList,
+          );
+          matchList.push(imperativeMatch);
+        }
+      }
+
+      return matchList;
+    }
+    return null;
   }
 }
 
@@ -307,7 +419,7 @@ List<RouteMatch>? _getLocRouteRecursively({
       // Otherwise, recurse
       final String childRestLoc;
       final String newParentSubLoc;
-      if (match.route is ShellRoute) {
+      if (match.route is ShellRouteBase) {
         childRestLoc = remainingLocation;
         newParentSubLoc = matchedLocation;
       } else {

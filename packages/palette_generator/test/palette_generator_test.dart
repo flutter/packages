@@ -74,7 +74,7 @@ Future<void> main() async {
     // We need to have a testWidgets test in order to initialize the image
     // cache for the other tests, but they timeout if they too are testWidgets
     // tests.
-    tester.pumpWidget(const Placeholder());
+    await tester.pumpWidget(const Placeholder());
   });
 
   test(
