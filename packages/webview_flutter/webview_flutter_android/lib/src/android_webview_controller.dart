@@ -104,6 +104,20 @@ class AndroidWebViewController extends PlatformWebViewController {
   late final android_webview.WebView _webView =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebView();
 
+  late final android_webview.WebViewClient _webViewClient =
+      _androidWebViewParams.androidWebViewProxy.createAndroidWebViewClient(
+    onRenderProcessGone: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (android_webview.WebView webView,
+          android_webview.RenderProcessGoneDetail detail) {
+        if (weakReference.target?._onRenderProcessGone != null) {
+          weakReference.target!
+              ._onRenderProcessGone!(RenderProcessGoneInfo._(detail.didCrash));
+        }
+      };
+    }),
+  );
+
   late final android_webview.WebChromeClient _webChromeClient =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebChromeClient(
     onProgressChanged: withWeakReferenceTo(this,
@@ -187,6 +201,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
+
+  void Function(RenderProcessGoneInfo)? _onRenderProcessGone;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -426,6 +442,14 @@ class AndroidWebViewController extends PlatformWebViewController {
     return _webChromeClient.setSynchronousReturnValueForOnShowFileChooser(
       onShowFileSelector != null,
     );
+  }
+
+  /// Invoked when a render process has exited.
+  Future<void> setOnRenderProcessGone(
+    void Function(RenderProcessGoneInfo) onRenderProcessGone,
+  ) async {
+    _onRenderProcessGone = onRenderProcessGone;
+    _webViewClient.setSynchronousReturnValueForOnRenderProcessGone(true);
   }
 
   /// Sets a callback that notifies the host application that web content is
@@ -890,15 +914,6 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           ));
         }
       },
-      onRenderProcessGone: (
-        android_webview.WebView webView,
-        android_webview.RenderProcessGoneDetail detail,
-      ) {
-        if (weakThis.target?._onRenderProcessGone != null) {
-          weakThis.target!
-              ._onRenderProcessGone!(RenderProcessGoneInfo._(detail.didCrash));
-        }
-      },
       requestLoading: (
         android_webview.WebView webView,
         android_webview.WebResourceRequest request,
@@ -975,7 +990,6 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   PageEventCallback? _onPageStarted;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
-  void Function(RenderProcessGoneInfo)? _onRenderProcessGone;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
@@ -1063,13 +1077,5 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
     _onUrlChange = onUrlChange;
-  }
-
-  /// Invoked when a render process has exited.
-  Future<void> setOnRenderProcessGone(
-    void Function(RenderProcessGoneInfo) onRenderProcessGone,
-  ) async {
-    _onRenderProcessGone = onRenderProcessGone;
-    _webViewClient.setSynchronousReturnValueForOnRenderProcessGone(true);
   }
 }
