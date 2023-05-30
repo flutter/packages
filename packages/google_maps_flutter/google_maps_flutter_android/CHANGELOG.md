@@ -1,10 +1,10 @@
 ## 2.4.16
 
-* Added point of interest clicked event handler.
+* Adds point of interest clicked event handler.
+* Fixes unawaited_futures violations.
 
 ## 2.4.15
 
-* Added point of interest clicked event handler.
 * Removes obsolete null checks on non-nullable values.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 

@@ -174,9 +174,11 @@ public class WebViewActivity extends Activity {
     return super.onKeyDown(keyCode, event);
   }
 
-  private static final String URL_EXTRA = "url";
-  private static final String ENABLE_JS_EXTRA = "enableJavaScript";
-  private static final String ENABLE_DOM_EXTRA = "enableDomStorage";
+  @VisibleForTesting static final String URL_EXTRA = "url";
+
+  @VisibleForTesting static final String ENABLE_JS_EXTRA = "enableJavaScript";
+
+  @VisibleForTesting static final String ENABLE_DOM_EXTRA = "enableDomStorage";
 
   /* Hides the constants used to forward data to the Activity instance. */
   public static @NonNull Intent createIntent(

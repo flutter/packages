@@ -1,6 +1,6 @@
 ## 2.2.8
 
-* Added on point of interest clicked event handler interface.
+* Adds point of interest clicked event handler interface.
 
 ## 2.2.7
 

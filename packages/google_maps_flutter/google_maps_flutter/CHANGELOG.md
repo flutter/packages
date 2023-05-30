@@ -1,6 +1,10 @@
+## 2.2.9
+
+* Adds point of interest clicked event handler.
+
 ## 2.2.8
 
-* Added point of interest clicked event handler.
+* Fixes unawaited_futures violations.
 
 ## 2.2.7
 

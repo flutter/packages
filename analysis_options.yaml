@@ -183,7 +183,7 @@ linter:
     - tighten_type_of_initializing_formals
     # - type_annotate_public_apis # subset of always_specify_types
     - type_init_formals
-    # - unawaited_futures # too many false positives, especially with the way AnimationController works
+    - unawaited_futures # DIFFERENT FROM FLUTTER/FLUTTER: It's disabled there for "too many false positives"; that's not an issue here, and missing awaits have caused production issues in plugins.
     - unnecessary_await_in_return
     - unnecessary_brace_in_string_interps
     - unnecessary_const

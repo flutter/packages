@@ -62,7 +62,7 @@ class DropdownMenu<T> extends StatelessWidget {
               isDense: true,
               value: initialValue,
               items: <DropdownMenuItem<T>>[
-                for (String item in items.keys)
+                for (final String item in items.keys)
                   DropdownMenuItem<T>(
                     value: items[item],
                     child: Container(

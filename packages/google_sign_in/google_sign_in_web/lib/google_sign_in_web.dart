@@ -259,14 +259,14 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<void> signOut() async {
     await initialized;
 
-    _gisClient.signOut();
+    await _gisClient.signOut();
   }
 
   @override
   Future<void> disconnect() async {
     await initialized;
 
-    _gisClient.disconnect();
+    await _gisClient.disconnect();
   }
 
   @override
@@ -280,7 +280,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<void> clearAuthCache({required String token}) async {
     await initialized;
 
-    _gisClient.clearAuthCache();
+    await _gisClient.clearAuthCache();
   }
 
   @override
