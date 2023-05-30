@@ -414,21 +414,34 @@ class WebView extends JavaObject {
 }
 
 /// Manages cookies globally for all webviews.
-class CookieManager {
-  CookieManager._();
+///
+/// See https://developer.android.com/reference/android/webkit/CookieManager.
+class CookieManager extends JavaObject {
+  /// Instantiates a [CookieManager] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  CookieManager.detached({super.binaryMessenger, super.instanceManager})
+      : _cookieManagerApi = CookieManagerHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
 
-  static CookieManager? _instance;
+  static final CookieManager _instance =
+      CookieManagerHostApiImpl().attachInstanceFromInstances(
+    CookieManager.detached(),
+  );
 
-  /// Gets the globally set CookieManager instance.
-  static CookieManager get instance => _instance ??= CookieManager._();
+  final CookieManagerHostApiImpl _cookieManagerApi;
 
-  /// Setter for the singleton value, for testing purposes only.
-  @visibleForTesting
-  static set instance(CookieManager value) => _instance = value;
-
-  /// Pigeon Host Api implementation for [CookieManager].
-  @visibleForTesting
-  static CookieManagerHostApi api = CookieManagerHostApi();
+  /// Access a static field synchronously.
+  static CookieManager get instance {
+    AndroidWebViewFlutterApis.instance.ensureSetUp();
+    return _instance;
+  }
 
   /// Sets a single cookie (key-value pair) for the given URL. Any existing
   /// cookie with the same host, path and name will be replaced with the new
@@ -448,12 +461,37 @@ class CookieManager {
   /// Params:
   /// url – the URL for which the cookie is to be set
   /// value – the cookie as a string, using the format of the 'Set-Cookie' HTTP response header
-  Future<void> setCookie(String url, String value) => api.setCookie(url, value);
+  Future<void> setCookie(String url, String value) {
+    return _cookieManagerApi.setCookieFromInstances(this, url, value);
+  }
 
   /// Removes all cookies.
   ///
   /// The returned future resolves to true if any cookies were removed.
-  Future<bool> clearCookies() => api.clearCookies();
+  Future<bool> removeAllCookies() {
+    return _cookieManagerApi.removeAllCookiesFromInstances(this);
+  }
+
+  /// Sets whether the WebView should allow third party cookies to be set.
+  ///
+  /// Apps that target `Build.VERSION_CODES.KITKAT` or below default to allowing
+  /// third party cookies. Apps targeting `Build.VERSION_CODES.LOLLIPOP` or
+  /// later default to disallowing third party cookies.
+  Future<void> setAcceptThirdPartyCookies(WebView webView, bool accept) {
+    return _cookieManagerApi.setAcceptThirdPartyCookiesFromInstances(
+      this,
+      webView,
+      accept,
+    );
+  }
+
+  @override
+  CookieManager copy() {
+    return CookieManager.detached(
+      binaryMessenger: _cookieManagerApi.binaryMessenger,
+      instanceManager: _cookieManagerApi.instanceManager,
+    );
+  }
 }
 
 /// Manages settings state for a [WebView].

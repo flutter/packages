@@ -1,6 +1,15 @@
-## 3.6.4
+## 3.8.0
 
 * Adds support for `setOnContentOffsetChanged` method to the `AndroidWebViewController`.
+
+## 3.7.1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 3.7.0
+
+* Adds support to accept third party cookies. See
+  `AndroidWebViewCookieManager.setAcceptThirdPartyCookies`.
 
 ## 3.6.3
 

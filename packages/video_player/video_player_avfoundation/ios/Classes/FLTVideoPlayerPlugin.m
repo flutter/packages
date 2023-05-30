@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "FLTVideoPlayerPlugin.h"
+#import "FLTVideoPlayerPlugin_Test.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
@@ -33,6 +34,16 @@
 }
 @end
 
+@interface FVPDefaultPlayerFactory : NSObject <FVPPlayerFactory>
+@end
+
+@implementation FVPDefaultPlayerFactory
+- (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
+  return [AVPlayer playerWithPlayerItem:playerItem];
+}
+
+@end
+
 @interface FLTVideoPlayer : NSObject <FlutterTexture, FlutterStreamHandler>
 @property(readonly, nonatomic) AVPlayer *player;
 @property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
@@ -52,7 +63,8 @@
 @property(nonatomic, readonly) BOOL isInitialized;
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers;
+                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
+              playerFactory:(id<FVPPlayerFactory>)playerFactory;
 @end
 
 static void *timeRangeContext = &timeRangeContext;
@@ -65,9 +77,14 @@ static void *playbackBufferFullContext = &playbackBufferFullContext;
 static void *rateContext = &rateContext;
 
 @implementation FLTVideoPlayer
-- (instancetype)initWithAsset:(NSString *)asset frameUpdater:(FLTFrameUpdater *)frameUpdater {
+- (instancetype)initWithAsset:(NSString *)asset
+                 frameUpdater:(FLTFrameUpdater *)frameUpdater
+                playerFactory:(id<FVPPlayerFactory>)playerFactory {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-  return [self initWithURL:[NSURL fileURLWithPath:path] frameUpdater:frameUpdater httpHeaders:@{}];
+  return [self initWithURL:[NSURL fileURLWithPath:path]
+              frameUpdater:frameUpdater
+               httpHeaders:@{}
+             playerFactory:playerFactory];
 }
 
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
@@ -146,7 +163,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return degrees;
 };
 
-NS_INLINE UIViewController *rootViewController() {
+NS_INLINE UIViewController *rootViewController(void) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // TODO: (hellohuanlin) Provide a non-deprecated codepath. See
@@ -203,18 +220,20 @@ NS_INLINE UIViewController *rootViewController() {
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers {
+                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
+              playerFactory:(id<FVPPlayerFactory>)playerFactory {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
   }
   AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
   AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
-  return [self initWithPlayerItem:item frameUpdater:frameUpdater];
+  return [self initWithPlayerItem:item frameUpdater:frameUpdater playerFactory:playerFactory];
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                      frameUpdater:(FLTFrameUpdater *)frameUpdater {
+                      frameUpdater:(FLTFrameUpdater *)frameUpdater
+                     playerFactory:(id<FVPPlayerFactory>)playerFactory {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
@@ -247,7 +266,7 @@ NS_INLINE UIViewController *rootViewController() {
     }
   };
 
-  _player = [AVPlayer playerWithPlayerItem:item];
+  _player = [playerFactory playerWithPlayerItem:item];
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 
   // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
@@ -420,9 +439,15 @@ NS_INLINE UIViewController *rootViewController() {
 }
 
 - (void)seekTo:(int)location completionHandler:(void (^)(BOOL))completionHandler {
-  [_player seekToTime:CMTimeMake(location, 1000)
-        toleranceBefore:kCMTimeZero
-         toleranceAfter:kCMTimeZero
+  CMTime locationCMT = CMTimeMake(location, 1000);
+  CMTimeValue duration = _player.currentItem.asset.duration.value;
+  // Without adding tolerance when seeking to duration,
+  // seekToTime will never complete, and this call will hang.
+  // see issue https://github.com/flutter/flutter/issues/124475.
+  CMTime tolerance = location == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
+  [_player seekToTime:locationCMT
+        toleranceBefore:tolerance
+         toleranceAfter:tolerance
       completionHandler:completionHandler];
 }
 
@@ -523,6 +548,7 @@ NS_INLINE UIViewController *rootViewController() {
 @property(readonly, strong, nonatomic)
     NSMutableDictionary<NSNumber *, FLTVideoPlayer *> *playersByTextureId;
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
+@property(nonatomic, strong) id<FVPPlayerFactory> playerFactory;
 @end
 
 @implementation FLTVideoPlayerPlugin
@@ -533,11 +559,17 @@ NS_INLINE UIViewController *rootViewController() {
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  return [self initWithPlayerFactory:[[FVPDefaultPlayerFactory alloc] init] registrar:registrar];
+}
+
+- (instancetype)initWithPlayerFactory:(id<FVPPlayerFactory>)playerFactory
+                            registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = [registrar textures];
   _messenger = [registrar messenger];
   _registrar = registrar;
+  _playerFactory = playerFactory;
   _playersByTextureId = [NSMutableDictionary dictionaryWithCapacity:1];
   return self;
 }
@@ -588,12 +620,15 @@ NS_INLINE UIViewController *rootViewController() {
     } else {
       assetPath = [_registrar lookupKeyForAsset:input.asset];
     }
-    player = [[FLTVideoPlayer alloc] initWithAsset:assetPath frameUpdater:frameUpdater];
+    player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
+                                      frameUpdater:frameUpdater
+                                     playerFactory:_playerFactory];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else if (input.uri) {
     player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
-                                     httpHeaders:input.httpHeaders];
+                                     httpHeaders:input.httpHeaders
+                                   playerFactory:_playerFactory];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];

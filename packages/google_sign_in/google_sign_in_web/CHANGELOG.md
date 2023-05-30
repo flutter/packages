@@ -1,3 +1,7 @@
+## 0.12.0+1
+
+* Fixes unawaited_futures violations.
+
 ## 0.12.0
 
 * Authentication:

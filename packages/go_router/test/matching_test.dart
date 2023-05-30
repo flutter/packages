@@ -74,4 +74,37 @@ void main() {
     expect(matches1 == matches2, isTrue);
     expect(matches1 == matches3, isFalse);
   });
+
+  test('RouteMatchList is encoded and decoded correctly', () {
+    final RouteConfiguration configuration = RouteConfiguration(
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/a',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+        GoRoute(
+          path: '/b',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+      ],
+      redirectLimit: 0,
+      navigatorKey: GlobalKey<NavigatorState>(),
+      topRedirect: (_, __) => null,
+    );
+    final RouteMatcher matcher = RouteMatcher(configuration);
+    final RouteMatchListCodec codec = RouteMatchListCodec(matcher);
+
+    final RouteMatchList list1 = matcher.findMatch('/a');
+    final RouteMatchList list2 = matcher.findMatch('/b');
+    list1.push(ImperativeRouteMatch<Object?>(
+        pageKey: const ValueKey<String>('/b-p0'), matches: list2));
+
+    final Object? encoded = codec.encodeMatchList(list1);
+    final RouteMatchList? decoded = codec.decodeMatchList(encoded);
+
+    expect(decoded, isNotNull);
+    expect(decoded, equals(list1));
+  });
 }

@@ -51,14 +51,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -129,14 +128,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -266,14 +264,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin
           .getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);

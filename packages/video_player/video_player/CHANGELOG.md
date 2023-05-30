@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.6.1
 
 * Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.

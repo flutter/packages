@@ -61,7 +61,7 @@
                                                        webView:(WKWebView *)webView
                                                         origin:(WKSecurityOrigin *)origin
                                                          frame:(WKFrameInfo *)frame
-                                                          type:(FWFWKMediaCaptureType)type
+                                                          type:(WKMediaCaptureType)type
                                                     completion:
                                                         (void (^)(WKPermissionDecision))completion
     API_AVAILABLE(ios(15.0)) {

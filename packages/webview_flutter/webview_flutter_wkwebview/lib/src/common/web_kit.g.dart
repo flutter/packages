@@ -40,6 +40,7 @@ enum NSKeyValueChangeKeyEnum {
   newValue,
   notificationIsPrior,
   oldValue,
+  unknown,
 }
 
 /// Mirror of WKUserScriptInjectionTime.
@@ -136,6 +137,12 @@ enum WKNavigationType {
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
   other,
+
+  /// An unknown navigation type.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
 }
 
 /// Possible permission decisions for device resource access.
@@ -178,6 +185,9 @@ enum WKMediaCaptureType {
   microphone,
 
   /// An unknown media device.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
   unknown,
 }
 

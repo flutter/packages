@@ -874,10 +874,12 @@ tool/plugin/lib/plugin.dart
         processRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
+packages/plugin/example/android/.pluginToolsConfig.yaml
 packages/plugin/example/android/lint-baseline.xml
 packages/plugin/example/android/src/androidTest/foo/bar/FooTest.java
 packages/plugin/example/ios/RunnerTests/Foo.m
 packages/plugin/example/ios/RunnerUITests/info.plist
+packages/plugin/analysis_options.yaml
 packages/plugin/CHANGELOG.md
 ''')),
         ];
