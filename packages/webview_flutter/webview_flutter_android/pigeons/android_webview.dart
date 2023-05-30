@@ -365,6 +365,16 @@ abstract class WebChromeClientFlutterApi {
 
   /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
   void onPermissionRequest(int instanceId, int requestInstanceId);
+
+  /// Callback to Dart function `WebChromeClient.onShowCustomView`.
+  void onShowCustomView(
+    int instanceId,
+    int viewIdentifier,
+    int callbackIdentifier,
+  );
+
+  /// Callback to Dart function `WebChromeClient.onHideCustomView`.
+  void onHideCustomView(int instanceId);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebStorageHostApi')

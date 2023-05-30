@@ -969,12 +969,15 @@ class DownloadListener extends JavaObject {
 }
 
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
+@SimpleClassAnnotation()
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
   WebChromeClient({
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onPermissionRequest,
+    this.onShowCustomView,
+    this.onHideCustomView,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -992,6 +995,8 @@ class WebChromeClient extends JavaObject {
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onPermissionRequest,
+    this.onShowCustomView,
+    this.onHideCustomView,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -1025,6 +1030,21 @@ class WebChromeClient extends JavaObject {
     WebChromeClient instance,
     PermissionRequest request,
   )? onPermissionRequest;
+
+  /// Notify the host application that the current page has entered full screen
+  /// mode.
+  ///
+  /// After this call, web content will no longer be rendered in the WebView,
+  /// but will instead be rendered in `view`.
+  final void Function(
+    WebChromeClient instance,
+    View view,
+    CustomViewCallback callback,
+  )? onShowCustomView;
+
+  /// Notify the host application that the current page has exited full screen
+  /// mode.
+  final void Function(WebChromeClient instance)? onHideCustomView;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -1060,6 +1080,9 @@ class WebChromeClient extends JavaObject {
     return WebChromeClient.detached(
       onProgressChanged: onProgressChanged,
       onShowFileChooser: onShowFileChooser,
+      onPermissionRequest: onPermissionRequest,
+      onShowCustomView: onShowCustomView,
+      onHideCustomView: onHideCustomView,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
@@ -1311,6 +1334,14 @@ class View extends JavaObject {
   @protected
   View.detached({super.binaryMessenger, super.instanceManager})
       : super.detached();
+
+  @override
+  View copy() {
+    return View.detached(
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
 }
 
 /// A callback interface used by the host application to notify the current page
@@ -1338,5 +1369,13 @@ class CustomViewCallback extends JavaObject {
   /// Invoked when the host application dismisses the custom view.
   Future<void> onCustomViewHidden() {
     return _customViewCallbackApi.onCustomViewHiddenFromInstances(this);
+  }
+
+  @override
+  CustomViewCallback copy() {
+    return CustomViewCallback.detached(
+      binaryMessenger: _customViewCallbackApi.binaryMessenger,
+      instanceManager: _customViewCallbackApi.instanceManager,
+    );
   }
 }

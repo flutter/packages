@@ -1015,6 +1015,88 @@ void main() {
         expect(callbackParameters, <Object?>[instance, request]);
       });
 
+      test('onShowCustomView', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WebChromeClient instance = WebChromeClient.detached(
+          onShowCustomView: (
+            WebChromeClient instance,
+            View view,
+            CustomViewCallback callback,
+          ) {
+            callbackParameters = <Object?>[
+              instance,
+              view,
+              callback,
+            ];
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WebChromeClientFlutterApiImpl flutterApi =
+            WebChromeClientFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        final View view = View.detached(
+          instanceManager: instanceManager,
+        );
+        const int viewIdentifier = 50;
+        instanceManager.addHostCreatedInstance(view, viewIdentifier);
+
+        final CustomViewCallback callback = CustomViewCallback.detached(
+          instanceManager: instanceManager,
+        );
+        const int callbackIdentifier = 51;
+        instanceManager.addHostCreatedInstance(callback, callbackIdentifier);
+
+        flutterApi.onShowCustomView(
+          instanceIdentifier,
+          viewIdentifier,
+          callbackIdentifier,
+        );
+
+        expect(callbackParameters, <Object?>[
+          instance,
+          view,
+          callback,
+        ]);
+      });
+
+      test('onHideCustomView', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WebChromeClient instance = WebChromeClient.detached(
+          onHideCustomView: (
+            WebChromeClient instance,
+          ) {
+            callbackParameters = <Object?>[
+              instance,
+            ];
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WebChromeClientFlutterApiImpl flutterApi =
+            WebChromeClientFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        flutterApi.onHideCustomView(instanceIdentifier);
+
+        expect(callbackParameters, <Object?>[instance]);
+      });
+
       test('copy', () {
         expect(WebChromeClient.detached().copy(), isA<WebChromeClient>());
       });
