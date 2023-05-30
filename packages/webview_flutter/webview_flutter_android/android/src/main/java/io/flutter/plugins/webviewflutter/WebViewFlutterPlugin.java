@@ -40,7 +40,6 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
   private FlutterPluginBinding pluginBinding;
   private WebViewHostApiImpl webViewHostApi;
   private JavaScriptChannelHostApiImpl javaScriptChannelHostApi;
-  private WebChromeClientHostApiImpl webChromeClientHostApi;
 
   /**
    * Add an instance of this to {@link io.flutter.embedding.engine.plugins.PluginRegistry} to
@@ -89,7 +88,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
     InstanceManagerHostApi.setup(binaryMessenger, () -> instanceManager.clear());
 
     viewRegistry.registerViewFactory(
-        "plugins.flutter.io/webview", new FlutterWebViewFactory(instanceManager));
+        "plugins.flutter.io/webview", new FlutterViewFactory(instanceManager));
 
     webViewHostApi =
         new WebViewHostApiImpl(
@@ -101,13 +100,6 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             new JavaScriptChannelFlutterApiImpl(binaryMessenger, instanceManager),
             new Handler(context.getMainLooper()));
 
-    webChromeClientHostApi =
-        new WebChromeClientHostApiImpl(
-            instanceManager,
-            new WebChromeClientHostApiImpl.WebChromeClientCreator(),
-            new WebChromeClientFlutterApiImpl(binaryMessenger, instanceManager),
-            context);
-
     JavaObjectHostApi.setup(binaryMessenger, new JavaObjectHostApiImpl(instanceManager));
     WebViewHostApi.setup(binaryMessenger, webViewHostApi);
     JavaScriptChannelHostApi.setup(binaryMessenger, javaScriptChannelHostApi);
@@ -117,7 +109,12 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             instanceManager,
             new WebViewClientHostApiImpl.WebViewClientCreator(),
             new WebViewClientFlutterApiImpl(binaryMessenger, instanceManager)));
-    WebChromeClientHostApi.setup(binaryMessenger, webChromeClientHostApi);
+    WebChromeClientHostApi.setup(
+        binaryMessenger,
+        new WebChromeClientHostApiImpl(
+            instanceManager,
+            new WebChromeClientHostApiImpl.WebChromeClientCreator(),
+            new WebChromeClientFlutterApiImpl(binaryMessenger, instanceManager)));
     DownloadListenerHostApi.setup(
         binaryMessenger,
         new DownloadListenerHostApiImpl(
@@ -185,7 +182,6 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
   private void updateContext(Context context) {
     webViewHostApi.setContext(context);
     javaScriptChannelHostApi.setPlatformThreadHandler(new Handler(context.getMainLooper()));
-    webChromeClientHostApi.setContext(context);
   }
 
   /** Maintains instances used to communicate with the corresponding objects in Dart. */

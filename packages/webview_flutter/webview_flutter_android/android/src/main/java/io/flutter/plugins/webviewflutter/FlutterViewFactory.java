@@ -11,10 +11,10 @@ import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 
-class FlutterWebViewFactory extends PlatformViewFactory {
+class FlutterViewFactory extends PlatformViewFactory {
   private final InstanceManager instanceManager;
 
-  FlutterWebViewFactory(InstanceManager instanceManager) {
+  FlutterViewFactory(InstanceManager instanceManager) {
     super(StandardMessageCodec.INSTANCE);
     this.instanceManager = instanceManager;
   }
@@ -29,7 +29,7 @@ class FlutterWebViewFactory extends PlatformViewFactory {
 
     final PlatformView view = instanceManager.getInstance(identifier);
     if (view == null) {
-      throw new IllegalStateException("Unable to find WebView instance: " + args);
+      throw new IllegalStateException("Unable to find View instance: " + args);
     }
     return view;
   }

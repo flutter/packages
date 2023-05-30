@@ -1,4 +1,3 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -7,11 +6,11 @@
 
 package io.flutter.plugins.webviewflutter;
 
-// TODO(bparrishMines): Import native classes
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
+import android.webkit.WebChromeClient.CustomViewCallback;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CustomViewCallbackFlutterApi;
 import java.util.Objects;
@@ -37,17 +36,16 @@ public class CustomViewCallbackTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
   }
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
   public void onCustomViewHidden() {
-
     final long instanceIdentifier = 0;
     instanceManager.addDartCreatedInstance(mockCustomViewCallback, instanceIdentifier);
 

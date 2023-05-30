@@ -1,13 +1,10 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.webviewflutter;
 
-// TODO(bparrishMines): Import native classes
+import android.webkit.WebChromeClient.CustomViewCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -20,7 +17,6 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CustomViewCallb
  * arguments of callbacks methods to a Dart instance.
  */
 public class CustomViewCallbackFlutterApiImpl {
-
   // To ease adding additional methods, this value is added prematurely.
   @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;

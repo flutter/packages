@@ -5,7 +5,6 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -18,8 +17,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Message;
+import android.view.View;
 import android.view.Window;
 import android.webkit.PermissionRequest;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebView.WebViewTransport;
@@ -35,6 +36,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
 
 public class WebChromeClientTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -64,16 +66,14 @@ public class WebChromeClientTest {
           @Override
           @NonNull
           public WebChromeClientImpl createWebChromeClient(
-              @NonNull WebChromeClientFlutterApiImpl flutterApi, @NonNull Context context) {
-            webChromeClient = super.createWebChromeClient(flutterApi, context);
+              @NonNull WebChromeClientFlutterApiImpl flutterApi) {
+            webChromeClient = super.createWebChromeClient(flutterApi);
             return webChromeClient;
           }
         };
 
     hostApiImpl =
-        new WebChromeClientHostApiImpl(
-            instanceManager, webChromeClientCreator, mockFlutterApi, mockContext);
-    hostApiImpl.setContext(mockActivity);
+        new WebChromeClientHostApiImpl(instanceManager, webChromeClientCreator, mockFlutterApi);
     hostApiImpl.create(2L);
 
     when(mockActivity.getWindow()).thenReturn(mockWindow);
@@ -144,14 +144,70 @@ public class WebChromeClientTest {
 
   @Test
   public void onShowCustomView() {
-    webChromeClient.onShowCustomView(mockWebView, null);
-    assertNotNull(webChromeClient.getmFullscreenView());
+    final View mockView = mock(View.class);
+    instanceManager.addDartCreatedInstance(mockView, 10);
+
+    final WebChromeClient.CustomViewCallback mockCustomViewCallback =
+        mock(WebChromeClient.CustomViewCallback.class);
+    instanceManager.addDartCreatedInstance(mockView, 12);
+
+    webChromeClient.onShowCustomView(mockView, mockCustomViewCallback);
+    verify(mockFlutterApi)
+        .onShowCustomView(eq(webChromeClient), eq(mockView), eq(mockCustomViewCallback), any());
   }
 
   @Test
   public void onHideCustomView() {
-    webChromeClient.onShowCustomView(mockWebView, null);
     webChromeClient.onHideCustomView();
-    assertNull(webChromeClient.getmFullscreenView());
+    verify(mockFlutterApi).onHideCustomView(eq(webChromeClient), any());
   }
+
+  //  @Test
+  //  public void onShowCustomView() {
+  //    final WebChromeClientFlutterApiImpl flutterApi =
+  //        new WebChromeClientFlutterApiImpl(mockBinaryMessenger, instanceManager);
+  //    flutterApi.setApi(mockFlutterApi);
+  //
+  //    final WebChromeClientHostApiImpl.WebChromeClientImpl instance =
+  //        new WebChromeClientHostApiImpl.WebChromeClientImpl(mockBinaryMessenger, instanceManager);
+  //
+  //    instance.setApi(flutterApi);
+  //
+  //    final long instanceIdentifier = 0;
+  //    instanceManager.addDartCreatedInstance(instance, instanceIdentifier);
+  //
+  //    final View mockView = mock(View.class);
+  //
+  //    final CustomViewCallback mockCallback = mock(CustomViewCallback.class);
+  //
+  //    instance.onShowCustomView(mockView, mockCallback);
+  //
+  //    verify(mockFlutterApi)
+  //        .onShowCustomView(
+  //            eq(instanceIdentifier),
+  //            eq(Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockView))),
+  //            eq(
+  //                Objects.requireNonNull(
+  //                    instanceManager.getIdentifierForStrongReference(mockCallback))),
+  //            any());
+  //  }
+  //
+  //  @Test
+  //  public void onHideCustomView() {
+  //    final WebChromeClientFlutterApiImpl flutterApi =
+  //        new WebChromeClientFlutterApiImpl(mockBinaryMessenger, instanceManager);
+  //    flutterApi.setApi(mockFlutterApi);
+  //
+  //    final WebChromeClientHostApiImpl.WebChromeClientImpl instance =
+  //        new WebChromeClientHostApiImpl.WebChromeClientImpl(mockBinaryMessenger, instanceManager);
+  //
+  //    instance.setApi(flutterApi);
+  //
+  //    final long instanceIdentifier = 0;
+  //    instanceManager.addDartCreatedInstance(instance, instanceIdentifier);
+  //
+  //    instance.onHideCustomView();
+  //
+  //    verify(mockFlutterApi).onHideCustomView(eq(instanceIdentifier), any());
+  //  }
 }

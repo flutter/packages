@@ -7,7 +7,7 @@
 
 package io.flutter.plugins.webviewflutter;
 
-// TODO(bparrishMines): Import native classes
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -20,7 +20,6 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.ViewFlutterApi;
  * arguments of callbacks methods to a Dart instance.
  */
 public class ViewFlutterApiImpl {
-
   // To ease adding additional methods, this value is added prematurely.
   @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
@@ -46,7 +45,6 @@ public class ViewFlutterApiImpl {
    * attached to this one. If `instance` has already been added, this method does nothing.
    */
   public void create(@NonNull View instance, @NonNull ViewFlutterApi.Reply<Void> callback) {
-
     if (!instanceManager.containsInstance(instance)) {
       api.create(instanceManager.addHostCreatedInstance(instance), callback);
     }

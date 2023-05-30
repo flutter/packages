@@ -4,24 +4,17 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowManager;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -46,19 +39,14 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   public static class WebChromeClientImpl extends SecureWebChromeClient {
     private final WebChromeClientFlutterApiImpl flutterApi;
     private boolean returnValueForOnShowFileChooser = false;
-    private View mFullscreenView;
-    private Context context;
 
     /**
      * Creates a {@link WebChromeClient} that passes arguments of callbacks methods to Dart.
      *
      * @param flutterApi handles sending messages to Dart
-     * @param context the Activity or application context
      */
-    public WebChromeClientImpl(
-        @NonNull WebChromeClientFlutterApiImpl flutterApi, @NonNull Context context) {
+    public WebChromeClientImpl(@NonNull WebChromeClientFlutterApiImpl flutterApi) {
       this.flutterApi = flutterApi;
-      this.context = context;
     }
 
     @Override
@@ -68,64 +56,12 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
 
     @Override
     public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
-      if (mFullscreenView != null) {
-        ((ViewGroup) mFullscreenView.getParent()).removeView(mFullscreenView);
-      }
-      if (context instanceof Activity) {
-        Window window = ((Activity) context).getWindow();
-        mFullscreenView = view;
-        setFullscreenStatus(true, window);
-        window.addContentView(
-            mFullscreenView,
-            new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                Gravity.CENTER));
-      }
+      flutterApi.onShowCustomView(this, view, callback, reply -> {});
     }
 
     @Override
     public void onHideCustomView() {
-      if (mFullscreenView == null) {
-        return;
-      }
-      if (context instanceof Activity) {
-        setFullscreenStatus(false, ((Activity) context).getWindow());
-        ((ViewGroup) mFullscreenView.getParent()).removeView(mFullscreenView);
-        mFullscreenView = null;
-      }
-    }
-
-    @SuppressWarnings("deprecation")
-    void activateFullscreenDeprecated(Boolean fullscreen, Window window) {
-      View decorView = window.getDecorView();
-      if (fullscreen) {
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-      } else {
-        decorView.setSystemUiVisibility(View.STATUS_BAR_VISIBLE);
-
-        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-      }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.R) // >= 30
-    void setFullScreenCurrent(Boolean fullscreen, Window window) {
-      View decorView = window.getDecorView();
-      if (fullscreen) {
-        decorView.getWindowInsetsController().hide(WindowInsets.Type.statusBars());
-      } else {
-        decorView.getWindowInsetsController().show(WindowInsets.Type.statusBars());
-      }
-    }
-
-    void setFullscreenStatus(Boolean fullscreen, Window window) {
-      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-        activateFullscreenDeprecated(fullscreen, window);
-      } else {
-        setFullScreenCurrent(fullscreen, window);
-      }
+      flutterApi.onHideCustomView(this, reply -> {});
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -163,17 +99,6 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     /** Sets return value for {@link #onShowFileChooser}. */
     public void setReturnValueForOnShowFileChooser(boolean value) {
       returnValueForOnShowFileChooser = value;
-    }
-
-    /**
-     * Returns the fullscreen view
-     *
-     * @return View
-     */
-    @Nullable
-    @VisibleForTesting
-    public View getmFullscreenView() {
-      return this.mFullscreenView;
     }
   }
 
@@ -271,13 +196,12 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
      * Creates a {@link WebChromeClientHostApiImpl.WebChromeClientImpl}.
      *
      * @param flutterApi handles sending messages to Dart
-     * @param context the Activity or application context
      * @return the created {@link WebChromeClientHostApiImpl.WebChromeClientImpl}
      */
     @NonNull
     public WebChromeClientImpl createWebChromeClient(
-        @NonNull WebChromeClientFlutterApiImpl flutterApi, @NonNull Context context) {
-      return new WebChromeClientImpl(flutterApi, context);
+        @NonNull WebChromeClientFlutterApiImpl flutterApi) {
+      return new WebChromeClientImpl(flutterApi);
     }
   }
 
@@ -291,27 +215,16 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   public WebChromeClientHostApiImpl(
       @NonNull InstanceManager instanceManager,
       @NonNull WebChromeClientCreator webChromeClientCreator,
-      @NonNull WebChromeClientFlutterApiImpl flutterApi,
-      @NonNull Context context) {
+      @NonNull WebChromeClientFlutterApiImpl flutterApi) {
     this.instanceManager = instanceManager;
     this.webChromeClientCreator = webChromeClientCreator;
     this.flutterApi = flutterApi;
-    this.context = context;
-  }
-
-  /**
-   * Sets the context to construct {@link WebChromeClientImpl}s.
-   *
-   * @param context the new context
-   */
-  public void setContext(@NonNull Context context) {
-    this.context = context;
   }
 
   @Override
   public void create(@NonNull Long instanceId) {
     final WebChromeClient webChromeClient =
-        webChromeClientCreator.createWebChromeClient(flutterApi, context);
+        webChromeClientCreator.createWebChromeClient(flutterApi);
     instanceManager.addDartCreatedInstance(webChromeClient, instanceId);
   }
 

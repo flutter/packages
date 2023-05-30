@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
+import android.view.View;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -87,6 +88,37 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     super.onPermissionRequest(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(request)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onShowCustomView` on the Dart object
+   * representing `instance`.
+   */
+  public void onShowCustomView(
+      @NonNull WebChromeClient instance,
+      @NonNull View view,
+      @NonNull WebChromeClient.CustomViewCallback customViewCallback,
+      @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    new ViewFlutterApiImpl(binaryMessenger, instanceManager).create(view, reply -> {});
+    new CustomViewCallbackFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(customViewCallback, reply -> {});
+
+    onShowCustomView(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(view)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(callback)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onHideCustomView` on the Dart object
+   * representing `instance`.
+   */
+  public void onHideCustomView(
+      @NonNull WebChromeClient instance, @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    super.onHideCustomView(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         callback);
   }
 
