@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates `README.md` to fully cover unimplemented functionality.
+
 ## 0.5.0+4
 
 * Removes obsolete null checks on non-nullable values.
