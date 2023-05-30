@@ -20,6 +20,10 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  simple_ast:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      path: packages/simple_ast
   webview_flutter_platform_interface: ^2.3.0
 
 dev_dependencies:
@@ -30,3 +34,15 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.0
   pigeon: ^9.2.4
+  code_template_processor:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      path: packages/code_template_processor
+  gen_api_impls:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      path: packages/gen_api_impls
+  simple_ast_generator:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      path: packages/simple_ast_generator

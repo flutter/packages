@@ -17,6 +17,7 @@ import 'test_android_webview.g.dart';
   CookieManagerHostApi,
   DownloadListener,
   JavaScriptChannel,
+  TestCustomViewCallbackHostApi,
   TestDownloadListenerHostApi,
   TestInstanceManagerHostApi,
   TestJavaObjectHostApi,
@@ -1046,6 +1047,53 @@ void main() {
         expect(instance.acceptTypes, const <String>['my', 'list']);
         expect(instance.mode, FileChooserMode.openMultiple);
         expect(instance.filenameHint, 'filenameHint');
+      });
+    });
+
+    group('CustomViewCallback', () {
+      tearDown(() {
+        TestCustomViewCallbackHostApi.setup(null);
+        TestInstanceManagerHostApi.setup(null);
+      });
+
+      test('onCustomViewHidden', () async {
+        final MockTestCustomViewCallbackHostApi mockApi =
+            MockTestCustomViewCallbackHostApi();
+        TestCustomViewCallbackHostApi.setup(mockApi);
+
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final CustomViewCallback instance = CustomViewCallback.detached(
+          instanceManager: instanceManager,
+        );
+        const int instanceIdentifier = 0;
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        await instance.onCustomViewHidden();
+
+        verify(mockApi.onCustomViewHidden(instanceIdentifier));
+      });
+
+      test('FlutterAPI create', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final CustomViewCallbackFlutterApiImpl api =
+            CustomViewCallbackFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        const int instanceIdentifier = 0;
+
+        api.create(instanceIdentifier);
+
+        expect(
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+          isA<CustomViewCallback>(),
+        );
       });
     });
   });

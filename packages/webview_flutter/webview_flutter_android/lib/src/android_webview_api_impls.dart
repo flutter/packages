@@ -47,6 +47,7 @@ class AndroidWebViewFlutterApis {
     FileChooserParamsFlutterApiImpl? fileChooserParamsFlutterApi,
     WebViewFlutterApiImpl? webViewFlutterApi,
     PermissionRequestFlutterApiImpl? permissionRequestFlutterApi,
+    CustomViewCallbackFlutterApiImpl? customViewCallbackFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -63,6 +64,8 @@ class AndroidWebViewFlutterApis {
     this.webViewFlutterApi = webViewFlutterApi ?? WebViewFlutterApiImpl();
     this.permissionRequestFlutterApi =
         permissionRequestFlutterApi ?? PermissionRequestFlutterApiImpl();
+    this.customViewCallbackFlutterApi =
+        customViewCallbackFlutterApi ?? CustomViewCallbackFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -96,6 +99,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [PermissionRequest].
   late final PermissionRequestFlutterApiImpl permissionRequestFlutterApi;
 
+  /// Flutter Api for [CustomViewCallback].
+  late final CustomViewCallbackFlutterApiImpl customViewCallbackFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -107,6 +113,7 @@ class AndroidWebViewFlutterApis {
       FileChooserParamsFlutterApi.setup(fileChooserParamsFlutterApi);
       WebViewFlutterApi.setup(webViewFlutterApi);
       PermissionRequestFlutterApi.setup(permissionRequestFlutterApi);
+      CustomViewCallbackFlutterApi.setup(customViewCallbackFlutterApi);
       _haveBeenSetUp = true;
     }
   }
@@ -1068,6 +1075,63 @@ class PermissionRequestFlutterApiImpl implements PermissionRequestFlutterApi {
     instanceManager.addHostCreatedInstance(
       PermissionRequest.detached(
         resources: resources.cast<String>(),
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+}
+
+/// Host api implementation for [CustomViewCallback].
+class CustomViewCallbackHostApiImpl extends CustomViewCallbackHostApi {
+  /// Constructs a [CustomViewCallbackHostApiImpl].
+  CustomViewCallbackHostApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> onCustomViewHiddenFromInstances(CustomViewCallback instance) {
+    return onCustomViewHidden(instanceManager.getIdentifier(instance)!);
+  }
+}
+
+/// Flutter API implementation for [CustomViewCallback].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+class CustomViewCallbackFlutterApiImpl implements CustomViewCallbackFlutterApi {
+  /// Constructs a [CustomViewCallbackFlutterApiImpl].
+  CustomViewCallbackFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(int identifier) {
+    instanceManager.addHostCreatedInstance(
+      CustomViewCallback.detached(
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),

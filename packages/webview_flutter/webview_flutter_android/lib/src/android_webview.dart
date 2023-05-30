@@ -18,6 +18,8 @@ import 'instance_manager.dart';
 
 export 'android_webview_api_impls.dart' show FileChooserMode;
 
+import 'package:simple_ast/annotations.dart';
+
 /// Root of the Java class hierarchy.
 ///
 /// See https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html.
@@ -82,7 +84,7 @@ class JavaObject with Copyable {
 /// [Web-based content](https://developer.android.com/guide/webapps).
 ///
 /// When a [WebView] is no longer needed [release] must be called.
-class WebView extends JavaObject {
+class WebView extends View {
   /// Constructs a new WebView.
   ///
   /// Due to changes in Flutter 3.0 the [useHybridComposition] doesn't have
@@ -1256,5 +1258,40 @@ class WebStorage extends JavaObject {
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
+  }
+}
+
+class View extends JavaObject {
+  View.detached({
+    @visibleForTesting super.binaryMessenger,
+    @visibleForTesting super.instanceManager,
+  }) : super.detached();
+}
+
+/// A callback interface used by the host application to notify the current page
+/// that its custom view has been dismissed.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+class CustomViewCallback extends JavaObject {
+  /// Instantiates a [CustomViewCallback] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  CustomViewCallback.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _customViewCallbackApi = CustomViewCallbackHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  final CustomViewCallbackHostApiImpl _customViewCallbackApi;
+
+  /// Invoked when the host application dismisses the custom view.
+  Future<void> onCustomViewHidden() {
+    return _customViewCallbackApi.onCustomViewHiddenFromInstances(this);
   }
 }
