@@ -1261,11 +1261,18 @@ class WebStorage extends JavaObject {
   }
 }
 
+/// The basic building block for user interface components.
+///
+/// See https://developer.android.com/reference/android/view/View.
 class View extends JavaObject {
-  View.detached({
-    @visibleForTesting super.binaryMessenger,
-    @visibleForTesting super.instanceManager,
-  }) : super.detached();
+  /// Instantiates a [View] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  View.detached({super.binaryMessenger, super.instanceManager})
+      : super.detached();
 }
 
 /// A callback interface used by the host application to notify the current page

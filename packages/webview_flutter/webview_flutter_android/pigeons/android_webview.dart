@@ -425,3 +425,16 @@ abstract class CustomViewCallbackFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int identifier);
 }
+
+/// Flutter API for `View`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/view/View.
+@FlutterApi()
+abstract class ViewFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int identifier);
+}

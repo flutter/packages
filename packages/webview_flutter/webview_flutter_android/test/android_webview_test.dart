@@ -1053,7 +1053,6 @@ void main() {
     group('CustomViewCallback', () {
       tearDown(() {
         TestCustomViewCallbackHostApi.setup(null);
-        TestInstanceManagerHostApi.setup(null);
       });
 
       test('onCustomViewHidden', () async {
@@ -1093,6 +1092,27 @@ void main() {
         expect(
           instanceManager.getInstanceWithWeakReference(instanceIdentifier),
           isA<CustomViewCallback>(),
+        );
+      });
+    });
+
+    group('View', () {
+      test('FlutterAPI create', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final ViewFlutterApiImpl api = ViewFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        const int instanceIdentifier = 0;
+
+        api.create(instanceIdentifier);
+
+        expect(
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+          isA<View>(),
         );
       });
     });

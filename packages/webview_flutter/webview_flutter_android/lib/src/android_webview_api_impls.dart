@@ -48,6 +48,7 @@ class AndroidWebViewFlutterApis {
     WebViewFlutterApiImpl? webViewFlutterApi,
     PermissionRequestFlutterApiImpl? permissionRequestFlutterApi,
     CustomViewCallbackFlutterApiImpl? customViewCallbackFlutterApi,
+    ViewFlutterApiImpl? viewFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -66,6 +67,7 @@ class AndroidWebViewFlutterApis {
         permissionRequestFlutterApi ?? PermissionRequestFlutterApiImpl();
     this.customViewCallbackFlutterApi =
         customViewCallbackFlutterApi ?? CustomViewCallbackFlutterApiImpl();
+    this.viewFlutterApi = viewFlutterApi ?? ViewFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -102,6 +104,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [CustomViewCallback].
   late final CustomViewCallbackFlutterApiImpl customViewCallbackFlutterApi;
 
+  /// Flutter Api for [View].
+  late final ViewFlutterApiImpl viewFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -114,6 +119,7 @@ class AndroidWebViewFlutterApis {
       WebViewFlutterApi.setup(webViewFlutterApi);
       PermissionRequestFlutterApi.setup(permissionRequestFlutterApi);
       CustomViewCallbackFlutterApi.setup(customViewCallbackFlutterApi);
+      ViewFlutterApi.setup(viewFlutterApi);
       _haveBeenSetUp = true;
     }
   }
@@ -1132,6 +1138,39 @@ class CustomViewCallbackFlutterApiImpl implements CustomViewCallbackFlutterApi {
   void create(int identifier) {
     instanceManager.addHostCreatedInstance(
       CustomViewCallback.detached(
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+}
+
+/// Flutter API implementation for [View].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+class ViewFlutterApiImpl implements ViewFlutterApi {
+  /// Constructs a [ViewFlutterApiImpl].
+  ViewFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(int identifier) {
+    instanceManager.addHostCreatedInstance(
+      View.detached(
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
       ),

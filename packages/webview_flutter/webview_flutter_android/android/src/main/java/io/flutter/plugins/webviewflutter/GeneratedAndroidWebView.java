@@ -2613,4 +2613,41 @@ public class GeneratedAndroidWebView {
           channelReply -> callback.reply(null));
     }
   }
+  /**
+   * Flutter API for `View`.
+   *
+   * This class may handle instantiating and adding Dart instances that are
+   * attached to a native instance or receiving callback methods from an
+   * overridden native class.
+   *
+   * See https://developer.android.com/reference/android/view/View.
+   *
+   * Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   */
+  public static class ViewFlutterApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public ViewFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */ 
+    @SuppressWarnings("UnknownNullness")
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by ViewFlutterApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /** Create a new Dart instance and add it to the `InstanceManager`. */
+    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.ViewFlutterApi.create", getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          channelReply -> callback.reply(null));
+    }
+  }
 }
