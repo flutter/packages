@@ -1,5 +1,6 @@
-## NEXT
+## 1.0.29
 
+* Fixes a regression in 1.0.23 that caused canceled auths to return success.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 1.0.28
