@@ -5,12 +5,13 @@
 // See also: https://pub.dev/packages/pigeon
 
 import Foundation
+
 #if os(iOS)
-import Flutter
+  import Flutter
 #elseif os(macOS)
-import FlutterMacOS
+  import FlutterMacOS
 #else
-#error("Unsupported platform.")
+  #error("Unsupported platform.")
 #endif
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -22,13 +23,13 @@ private func wrapError(_ error: Any) -> [Any?] {
     return [
       flutterError.code,
       flutterError.message,
-      flutterError.details
+      flutterError.details,
     ]
   }
   return [
     "\(error)",
     "\(type(of: error))",
-    "Stacktrace: \(Thread.callStackSymbols)"
+    "Stacktrace: \(Thread.callStackSymbols)",
   ]
 }
 
@@ -140,14 +141,14 @@ struct OpenPanelOptions {
 private class FileSelectorApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
-      case 128:
-        return AllowedTypes.fromList(self.readValue() as! [Any])
-      case 129:
-        return OpenPanelOptions.fromList(self.readValue() as! [Any])
-      case 130:
-        return SavePanelOptions.fromList(self.readValue() as! [Any])
-      default:
-        return super.readValue(ofType: type)
+    case 128:
+      return AllowedTypes.fromList(self.readValue() as! [Any])
+    case 129:
+      return OpenPanelOptions.fromList(self.readValue() as! [Any])
+    case 130:
+      return SavePanelOptions.fromList(self.readValue() as! [Any])
+    default:
+      return super.readValue(ofType: type)
     }
   }
 }
@@ -189,11 +190,13 @@ protocol FileSelectorApi {
   /// selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
-  func displayOpenPanel(options: OpenPanelOptions, completion: @escaping (Result<[String?], Error>) -> Void)
+  func displayOpenPanel(
+    options: OpenPanelOptions, completion: @escaping (Result<[String?], Error>) -> Void)
   /// Shows a save panel with the given [options], returning the selected path.
   ///
   /// A null return corresponds to a cancelled save.
-  func displaySavePanel(options: SavePanelOptions, completion: @escaping (Result<String?, Error>) -> Void)
+  func displaySavePanel(
+    options: SavePanelOptions, completion: @escaping (Result<String?, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -206,17 +209,19 @@ class FileSelectorApiSetup {
     /// selected paths.
     ///
     /// An empty list corresponds to a cancelled selection.
-    let displayOpenPanelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FileSelectorApi.displayOpenPanel", binaryMessenger: binaryMessenger, codec: codec)
+    let displayOpenPanelChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.FileSelectorApi.displayOpenPanel", binaryMessenger: binaryMessenger,
+      codec: codec)
     if let api = api {
       displayOpenPanelChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
         let optionsArg = args[0] as! OpenPanelOptions
         api.displayOpenPanel(options: optionsArg) { result in
           switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
           }
         }
       }
@@ -226,17 +231,19 @@ class FileSelectorApiSetup {
     /// Shows a save panel with the given [options], returning the selected path.
     ///
     /// A null return corresponds to a cancelled save.
-    let displaySavePanelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.FileSelectorApi.displaySavePanel", binaryMessenger: binaryMessenger, codec: codec)
+    let displaySavePanelChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.FileSelectorApi.displaySavePanel", binaryMessenger: binaryMessenger,
+      codec: codec)
     if let api = api {
       displaySavePanelChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
         let optionsArg = args[0] as! SavePanelOptions
         api.displaySavePanel(options: optionsArg) { result in
           switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
           }
         }
       }

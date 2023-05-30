@@ -255,6 +255,11 @@ abstract class JavaObjectFlutterApi {
   }
 }
 
+/// Host API for `CookieManager`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
 class CookieManagerHostApi {
   /// Constructor for [CookieManagerHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -265,12 +270,59 @@ class CookieManagerHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<bool> clearCookies() async {
+  /// Handles attaching `CookieManager.instance` to a native instance.
+  Future<void> attachInstance(int arg_instanceIdentifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.CookieManagerHostApi.clearCookies', codec,
+        'dev.flutter.pigeon.CookieManagerHostApi.attachInstance', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+        await channel.send(<Object?>[arg_instanceIdentifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Handles Dart method `CookieManager.setCookie`.
+  Future<void> setCookie(int arg_identifier, String arg_url, String arg_value) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CookieManagerHostApi.setCookie', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier, arg_url, arg_value]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Handles Dart method `CookieManager.removeAllCookies`.
+  Future<bool> removeAllCookies(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CookieManagerHostApi.removeAllCookies', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -292,12 +344,13 @@ class CookieManagerHostApi {
     }
   }
 
-  Future<void> setCookie(String arg_url, String arg_value) async {
+  /// Handles Dart method `CookieManager.setAcceptThirdPartyCookies`.
+  Future<void> setAcceptThirdPartyCookies(int arg_identifier, int arg_webViewIdentifier, bool arg_accept) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.CookieManagerHostApi.setCookie', codec,
+        'dev.flutter.pigeon.CookieManagerHostApi.setAcceptThirdPartyCookies', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_url, arg_value]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_webViewIdentifier, arg_accept]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

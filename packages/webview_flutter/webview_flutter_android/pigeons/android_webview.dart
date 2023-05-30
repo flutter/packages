@@ -113,12 +113,29 @@ abstract class JavaObjectFlutterApi {
   void dispose(int identifier);
 }
 
-@HostApi()
+/// Host API for `CookieManager`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+@HostApi(dartHostTestHandler: 'TestCookieManagerHostApi')
 abstract class CookieManagerHostApi {
-  @async
-  bool clearCookies();
+  /// Handles attaching `CookieManager.instance` to a native instance.
+  void attachInstance(int instanceIdentifier);
 
-  void setCookie(String url, String value);
+  /// Handles Dart method `CookieManager.setCookie`.
+  void setCookie(int identifier, String url, String value);
+
+  /// Handles Dart method `CookieManager.removeAllCookies`.
+  @async
+  bool removeAllCookies(int identifier);
+
+  /// Handles Dart method `CookieManager.setAcceptThirdPartyCookies`.
+  void setAcceptThirdPartyCookies(
+    int identifier,
+    int webViewIdentifier,
+    bool accept,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestWebViewHostApi')

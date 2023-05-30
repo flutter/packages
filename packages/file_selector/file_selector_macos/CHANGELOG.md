@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported macOS version to 10.14.
+
+## 0.9.2
+
+* Adds support for MIME types on macOS 11+.
+
 ## 0.9.1+1
 
 * Updates references to the deprecated `macUTIs`.

@@ -31,10 +31,11 @@ public class CameraHostApiImpl implements CameraHostApi {
     Camera camera = (Camera) Objects.requireNonNull(instanceManager.getInstance(identifier));
     CameraInfo cameraInfo = camera.getCameraInfo();
 
-    CameraInfoFlutterApiImpl cameraInfoFlutterApiImpl =
-        new CameraInfoFlutterApiImpl(binaryMessenger, instanceManager);
-    cameraInfoFlutterApiImpl.create(cameraInfo, reply -> {});
-
+    if (!instanceManager.containsInstance(cameraInfo)) {
+      CameraInfoFlutterApiImpl cameraInfoFlutterApiImpl =
+          new CameraInfoFlutterApiImpl(binaryMessenger, instanceManager);
+      cameraInfoFlutterApiImpl.create(cameraInfo, reply -> {});
+    }
     return instanceManager.getIdentifierForStrongReference(cameraInfo);
   }
 }

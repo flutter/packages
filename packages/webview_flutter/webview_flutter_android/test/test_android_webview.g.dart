@@ -75,6 +75,119 @@ abstract class TestJavaObjectHostApi {
   }
 }
 
+/// Host API for `CookieManager`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+abstract class TestCookieManagerHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles attaching `CookieManager.instance` to a native instance.
+  void attachInstance(int instanceIdentifier);
+
+  /// Handles Dart method `CookieManager.setCookie`.
+  void setCookie(int identifier, String url, String value);
+
+  /// Handles Dart method `CookieManager.removeAllCookies`.
+  Future<bool> removeAllCookies(int identifier);
+
+  /// Handles Dart method `CookieManager.setAcceptThirdPartyCookies`.
+  void setAcceptThirdPartyCookies(int identifier, int webViewIdentifier, bool accept);
+
+  static void setup(TestCookieManagerHostApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CookieManagerHostApi.attachInstance', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.CookieManagerHostApi.attachInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceIdentifier = (args[0] as int?);
+          assert(arg_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.CookieManagerHostApi.attachInstance was null, expected non-null int.');
+          api.attachInstance(arg_instanceIdentifier!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CookieManagerHostApi.setCookie', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.CookieManagerHostApi.setCookie was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CookieManagerHostApi.setCookie was null, expected non-null int.');
+          final String? arg_url = (args[1] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.CookieManagerHostApi.setCookie was null, expected non-null String.');
+          final String? arg_value = (args[2] as String?);
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.CookieManagerHostApi.setCookie was null, expected non-null String.');
+          api.setCookie(arg_identifier!, arg_url!, arg_value!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CookieManagerHostApi.removeAllCookies', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.CookieManagerHostApi.removeAllCookies was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CookieManagerHostApi.removeAllCookies was null, expected non-null int.');
+          final bool output = await api.removeAllCookies(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CookieManagerHostApi.setAcceptThirdPartyCookies', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.CookieManagerHostApi.setAcceptThirdPartyCookies was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CookieManagerHostApi.setAcceptThirdPartyCookies was null, expected non-null int.');
+          final int? arg_webViewIdentifier = (args[1] as int?);
+          assert(arg_webViewIdentifier != null,
+              'Argument for dev.flutter.pigeon.CookieManagerHostApi.setAcceptThirdPartyCookies was null, expected non-null int.');
+          final bool? arg_accept = (args[2] as bool?);
+          assert(arg_accept != null,
+              'Argument for dev.flutter.pigeon.CookieManagerHostApi.setAcceptThirdPartyCookies was null, expected non-null bool.');
+          api.setAcceptThirdPartyCookies(arg_identifier!, arg_webViewIdentifier!, arg_accept!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
 class _TestWebViewHostApiCodec extends StandardMessageCodec {
   const _TestWebViewHostApiCodec();
   @override

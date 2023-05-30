@@ -28,8 +28,5 @@ bool navigatorIsSafari(html.Navigator navigator) {
   // An web view running in an iOS app does not have a 'Version/X.X.X' string in the appVersion
   final String vendor = navigator.vendor;
   final String appVersion = navigator.appVersion;
-  return vendor != null &&
-      vendor.contains('Apple') &&
-      appVersion != null &&
-      appVersion.contains('Version');
+  return vendor.contains('Apple') && appVersion.contains('Version');
 }

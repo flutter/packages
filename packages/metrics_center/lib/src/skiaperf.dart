@@ -201,7 +201,7 @@ class SkiaPerfPoint extends MetricPoint {
 class SkiaPerfGcsAdaptor {
   /// Construct the adaptor given the associated GCS bucket where the data is
   /// read from and written to.
-  SkiaPerfGcsAdaptor(this._gcsBucket) : assert(_gcsBucket != null);
+  SkiaPerfGcsAdaptor(this._gcsBucket);
 
   /// Used by Skia to differentiate json file format versions.
   static const int version = 1;
@@ -285,7 +285,6 @@ class SkiaPerfGcsAdaptor {
     final String firstGcsNameComponent = objectName.split('/')[0];
     _populateGcsNameToGithubRepoMapIfNeeded();
     final String githubRepo = _gcsNameToGithubRepo[firstGcsNameComponent]!;
-    assert(githubRepo != null);
 
     final String? gitHash = decodedJson[kSkiaPerfGitHashKey] as String?;
     final Map<String, dynamic> results =
@@ -403,11 +402,9 @@ class SkiaPerfDestination extends MetricDestination {
         <String, Map<String, Map<String, SkiaPerfPoint>>>{};
     for (final SkiaPerfPoint p
         in points.map((MetricPoint x) => SkiaPerfPoint.fromPoint(x))) {
-      if (p != null) {
-        pointMap[p.githubRepo] ??= <String, Map<String, SkiaPerfPoint>>{};
-        pointMap[p.githubRepo]![p.gitHash] ??= <String, SkiaPerfPoint>{};
-        pointMap[p.githubRepo]![p.gitHash]![p.id] = p;
-      }
+      pointMap[p.githubRepo] ??= <String, Map<String, SkiaPerfPoint>>{};
+      pointMap[p.githubRepo]![p.gitHash] ??= <String, SkiaPerfPoint>{};
+      pointMap[p.githubRepo]![p.gitHash]![p.id] = p;
     }
 
     // All created locks must be released before returning

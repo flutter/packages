@@ -1178,3 +1178,59 @@ class ViewFlutterApiImpl implements ViewFlutterApi {
     );
   }
 }
+
+/// Host api implementation for [CookieManager].
+class CookieManagerHostApiImpl extends CookieManagerHostApi {
+  /// Constructs a [CookieManagerHostApiImpl].
+  CookieManagerHostApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  /// Helper method to convert instance ids to objects.
+  CookieManager attachInstanceFromInstances(CookieManager instance) {
+    attachInstance(instanceManager.addDartCreatedInstance(instance));
+    return instance;
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> setCookieFromInstances(
+    CookieManager instance,
+    String url,
+    String value,
+  ) {
+    return setCookie(
+      instanceManager.getIdentifier(instance)!,
+      url,
+      value,
+    );
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<bool> removeAllCookiesFromInstances(CookieManager instance) {
+    return removeAllCookies(instanceManager.getIdentifier(instance)!);
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> setAcceptThirdPartyCookiesFromInstances(
+    CookieManager instance,
+    WebView webView,
+    bool accept,
+  ) {
+    return setAcceptThirdPartyCookies(
+      instanceManager.getIdentifier(instance)!,
+      instanceManager.getIdentifier(webView)!,
+      accept,
+    );
+  }
+}

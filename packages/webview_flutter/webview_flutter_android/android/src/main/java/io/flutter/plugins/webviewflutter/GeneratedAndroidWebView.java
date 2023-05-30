@@ -580,12 +580,24 @@ public class GeneratedAndroidWebView {
           channelReply -> callback.reply(null));
     }
   }
-  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  /**
+   * Host API for `CookieManager`.
+   *
+   * This class may handle instantiating and adding native object instances that
+   * are attached to a Dart instance or handle method calls on the associated
+   * native class or an instance of the class.
+   *
+   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
   public interface CookieManagerHostApi {
-
-    void clearCookies(@NonNull Result<Boolean> result);
-
-    void setCookie(@NonNull String url, @NonNull String value);
+    /** Handles attaching `CookieManager.instance` to a native instance. */
+    void attachInstance(@NonNull Long instanceIdentifier);
+    /** Handles Dart method `CookieManager.setCookie`. */
+    void setCookie(@NonNull Long identifier, @NonNull String url, @NonNull String value);
+    /** Handles Dart method `CookieManager.removeAllCookies`. */
+    void removeAllCookies(@NonNull Long identifier, @NonNull Result<Boolean> result);
+    /** Handles Dart method `CookieManager.setAcceptThirdPartyCookies`. */
+    void setAcceptThirdPartyCookies(@NonNull Long identifier, @NonNull Long webViewIdentifier, @NonNull Boolean accept);
 
     /** The codec used by CookieManagerHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -596,25 +608,22 @@ public class GeneratedAndroidWebView {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.CookieManagerHostApi.clearCookies", getCodec());
+                binaryMessenger, "dev.flutter.pigeon.CookieManagerHostApi.attachInstance", getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Boolean> resultCallback =
-                    new Result<Boolean>() {
-                      public void success(Boolean result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
-                      }
-
-                      public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
-                      }
-                    };
-
-                api.clearCookies(resultCallback);
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdentifierArg = (Number) args.get(0);
+                try {
+                  api.attachInstance((instanceIdentifierArg == null) ? null : instanceIdentifierArg.longValue());
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -629,10 +638,66 @@ public class GeneratedAndroidWebView {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                String urlArg = (String) args.get(0);
-                String valueArg = (String) args.get(1);
+                Number identifierArg = (Number) args.get(0);
+                String urlArg = (String) args.get(1);
+                String valueArg = (String) args.get(2);
                 try {
-                  api.setCookie(urlArg, valueArg);
+                  api.setCookie((identifierArg == null) ? null : identifierArg.longValue(), urlArg, valueArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.CookieManagerHostApi.removeAllCookies", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Result<Boolean> resultCallback =
+                    new Result<Boolean>() {
+                      public void success(Boolean result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.removeAllCookies((identifierArg == null) ? null : identifierArg.longValue(), resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.CookieManagerHostApi.setAcceptThirdPartyCookies", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number webViewIdentifierArg = (Number) args.get(1);
+                Boolean acceptArg = (Boolean) args.get(2);
+                try {
+                  api.setAcceptThirdPartyCookies((identifierArg == null) ? null : identifierArg.longValue(), (webViewIdentifierArg == null) ? null : webViewIdentifierArg.longValue(), acceptArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

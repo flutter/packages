@@ -130,7 +130,8 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             instanceManager, new WebSettingsHostApiImpl.WebSettingsCreator()));
     FlutterAssetManagerHostApi.setup(
         binaryMessenger, new FlutterAssetManagerHostApiImpl(flutterAssetManager));
-    CookieManagerHostApi.setup(binaryMessenger, new CookieManagerHostApiImpl());
+    CookieManagerHostApi.setup(
+        binaryMessenger, new CookieManagerHostApiImpl(binaryMessenger, instanceManager));
     WebStorageHostApi.setup(
         binaryMessenger,
         new WebStorageHostApiImpl(instanceManager, new WebStorageHostApiImpl.WebStorageCreator()));
