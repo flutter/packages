@@ -1575,6 +1575,21 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(Collections.singletonList(identifierArg)),
           channelReply -> callback.reply(null));
     }
+
+    public void onScrollChanged(
+        @NonNull Long webViewInstanceIdArg,
+        @NonNull Long xArg,
+        @NonNull Long yArg,
+        @NonNull Long oldXArg,
+        @NonNull Long oldYArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.WebViewFlutterApi.onScrollChanged", getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(webViewInstanceIdArg, xArg, yArg, oldXArg, oldYArg)),
+          channelReply -> callback.reply(null));
+    }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebSettingsHostApi {

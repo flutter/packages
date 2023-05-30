@@ -684,7 +684,8 @@ Future<void> main() async {
           base64Encode(const Utf8Encoder().convert(scrollTestPage));
 
       final Completer<void> pageLoaded = Completer<void>();
-      Completer<ContentOffsetChange> offsetsCompleter = Completer<ContentOffsetChange>();
+      Completer<ContentOffsetChange> offsetsCompleter =
+          Completer<ContentOffsetChange>();
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       )
@@ -701,9 +702,7 @@ Future<void> main() async {
             ),
           ),
         )
-        ..setOnContentOffsetChanged(
-            (ContentOffsetChange contentOffsetChange) {
-              print('comppp $contentOffsetChange');
+        ..setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
           offsetsCompleter.complete(contentOffsetChange);
         });
 
@@ -734,8 +733,11 @@ Future<void> main() async {
       expect(scrollPos.dx, X_SCROLL);
       expect(scrollPos.dy, Y_SCROLL);
       await expectLater(
-          offsetsCompleter.future.then((ContentOffsetChange contentOffsetChange) => <int>[contentOffsetChange.x, contentOffsetChange.y]), completion(<int>[X_SCROLL, Y_SCROLL]));
-      
+          offsetsCompleter.future.then(
+              (ContentOffsetChange contentOffsetChange) =>
+                  <int>[contentOffsetChange.x, contentOffsetChange.y]),
+          completion(<int>[X_SCROLL, Y_SCROLL]));
+
       // Check scrollBy() (on top of scrollTo())
       offsetsCompleter = Completer<ContentOffsetChange>();
       await controller.scrollBy(X_SCROLL, Y_SCROLL);
@@ -743,7 +745,10 @@ Future<void> main() async {
       expect(scrollPos.dx, X_SCROLL * 2);
       expect(scrollPos.dy, Y_SCROLL * 2);
       await expectLater(
-          offsetsCompleter.future.then((ContentOffsetChange contentOffsetChange) => <int>[contentOffsetChange.x, contentOffsetChange.y]), completion(<int>[X_SCROLL * 2, Y_SCROLL * 2]));
+          offsetsCompleter.future.then(
+              (ContentOffsetChange contentOffsetChange) =>
+                  <int>[contentOffsetChange.x, contentOffsetChange.y]),
+          completion(<int>[X_SCROLL * 2, Y_SCROLL * 2]));
     });
   });
 

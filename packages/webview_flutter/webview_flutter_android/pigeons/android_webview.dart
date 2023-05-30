@@ -229,8 +229,7 @@ abstract class WebViewFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int identifier);
 
-  void onScrollPosChange(
-      int webViewInstanceId, int x, int y);
+  void onScrollChanged(int webViewInstanceId, int x, int y, int oldX, int oldY);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebSettingsHostApi')

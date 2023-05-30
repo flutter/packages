@@ -1,3 +1,7 @@
+## 2.4.0
+
+* Adds support to track content offset changes. See `PlatformWebViewController.setOnContentOffsetChanged`.
+
 ## 2.3.1
 
 * Removes obsolete null checks on non-nullable values.
