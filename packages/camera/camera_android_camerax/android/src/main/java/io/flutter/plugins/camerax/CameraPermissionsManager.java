@@ -8,6 +8,7 @@ import android.Manifest;
 import android.Manifest.permission;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -99,7 +100,8 @@ final class CameraPermissionsManager {
     }
 
     @Override
-    public boolean onRequestPermissionsResult(int id, String[] permissions, int[] grantResults) {
+    public boolean onRequestPermissionsResult(
+        int id, @NonNull String[] permissions, @NonNull int[] grantResults) {
       if (alreadyCalled || id != CAMERA_REQUEST_ID) {
         return false;
       }

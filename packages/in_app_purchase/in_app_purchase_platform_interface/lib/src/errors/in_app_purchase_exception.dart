@@ -11,7 +11,7 @@ class InAppPurchaseException implements Exception {
     required this.source,
     required this.code,
     this.message,
-  }) : assert(code != null);
+  });
 
   /// An error code.
   final String code;

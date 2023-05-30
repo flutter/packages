@@ -1,3 +1,7 @@
+## 3.4.4
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 3.4.3
 
 * Replace `describeEnum` with the `name` getter.

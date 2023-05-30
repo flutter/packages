@@ -1,3 +1,8 @@
+## 2.0.15
+
+* Fixes Java lints.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.0.14
 
 * Fixes compatibility with ActivityPluginBinding.

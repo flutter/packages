@@ -42,8 +42,8 @@ class Xcode {
     final List<String> args = <String>[
       _xcodeBuildCommand,
       ...actions,
-      if (workspace != null) ...<String>['-workspace', workspace],
-      if (scheme != null) ...<String>['-scheme', scheme],
+      ...<String>['-workspace', workspace],
+      ...<String>['-scheme', scheme],
       if (configuration != null) ...<String>['-configuration', configuration],
       ...extraFlags,
     ];
