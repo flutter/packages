@@ -37,7 +37,9 @@ void main() {
         'placeId': 'placeId',
       });
 
-      expect(identical(poi, poiFromJson), isFalse);
+      expect(poiFromJson.position, equals(const LatLng(50.0, 50.0)));
+      expect(poiFromJson.name, equals('name'));
+      expect(poiFromJson.placeId, equals('placeId'));
     });
   });
 }

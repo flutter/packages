@@ -46,7 +46,7 @@ class PointOfInterest {
     assert(json is Map<String, dynamic> && json.length == 3);
     final Map<String, dynamic> data = json as Map<String, dynamic>;
     return PointOfInterest(LatLng.fromJson(data['position'])!,
-        data['location'].toString(), data['location'].toString());
+        data['name'].toString(), data['placeId'].toString());
   }
 
   @override
