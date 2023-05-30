@@ -446,8 +446,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setOnPlatformPermissionRequest(
     void Function(
       PlatformWebViewPermissionRequest request,
-    )
-        onPermissionRequest,
+    ) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
   }

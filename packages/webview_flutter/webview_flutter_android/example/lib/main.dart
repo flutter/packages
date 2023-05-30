@@ -310,7 +310,7 @@ class SampleMenu extends StatelessWidget {
             _onSetCookie();
             break;
           case MenuOptions.basicAuthentication:
-            _onBasicAuthTest();
+            _basicAuthExample();
             break;
         }
       },
@@ -370,7 +370,7 @@ class SampleMenu extends StatelessWidget {
         ),
         const PopupMenuItem<MenuOptions>(
             value: MenuOptions.basicAuthentication,
-            child: Text('Basic Authentication Test'))
+            child: Text('Basic Authentication Example'))
       ],
     );
   }
@@ -520,7 +520,7 @@ class SampleMenu extends StatelessWidget {
     return indexFile.path;
   }
 
-  Future<void> _onBasicAuthTest() {
+  Future<void> _basicAuthExample() {
     return webViewController.loadRequest(LoadRequestParams(
         uri: Uri.parse(
             'https://www.httpwatch.com/httpgallery/authentication/#showExample10')));

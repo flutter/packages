@@ -30,7 +30,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
   private final WebViewClientCreator webViewClientCreator;
   private final WebViewClientFlutterApiImpl flutterApi;
 
-  private static HttpAuthHandler publicHttpHandler;
+  private static HttpAuthHandler httpAuthHandler;
 
   /** Implementation of {@link WebViewClient} that passes arguments of callback methods to Dart. */
   @RequiresApi(Build.VERSION_CODES.N)
@@ -101,7 +101,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @Override
     public void onReceivedHttpAuthRequest(
         @NonNull WebView view, HttpAuthHandler handler, String host, String realm) {
-      publicHttpHandler = handler;
+      httpAuthHandler = handler;
       flutterApi.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> {});
     }
 
@@ -283,7 +283,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
       @NonNull GeneratedAndroidWebView.Result<Void> callBack) {
     WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
 
-    publicHttpHandler.proceed(username, password);
+    httpAuthHandler.proceed(username, password);
     callBack.success(null);
   }
 }

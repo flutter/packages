@@ -354,13 +354,6 @@ class WebViewHostApiImpl extends WebViewHostApi {
   Future<void> setBackgroundColorFromInstance(WebView instance, int color) {
     return setBackgroundColor(instanceManager.getIdentifier(instance)!, color);
   }
-
-  /// Helper method to set auth credentials for basic auth
-  Future<void> setHttpAuthCredentialsInstance(WebView instance, String host,
-      String realm, String username, String password) {
-    return setAuthCredentials(instanceManager.getIdentifier(instance)!, host,
-        realm, username, password);
-  }
 }
 
 /// Flutter API implementation for [WebView].
