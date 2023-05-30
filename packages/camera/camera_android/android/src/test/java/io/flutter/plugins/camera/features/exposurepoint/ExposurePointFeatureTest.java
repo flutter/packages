@@ -6,6 +6,7 @@ package io.flutter.plugins.camera.features.exposurepoint;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -347,5 +348,19 @@ public class ExposurePointFeatureTest {
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
 
     assertFalse(exposurePointFeature.shouldReset(mockCaptureRequestBuilder));
+  }
+
+  @Test
+  public void testCreateDefaultExposureRectangle() {
+    CameraProperties mockCameraProperties = mock(CameraProperties.class);
+    when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(null);
+    ExposurePointFeature exposurePointFeature =
+        new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
+    exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
+
+    mockDefaultExposureRectangle = exposurePointFeature.createDefaultExposureRectangle();
+
+    assertNotNull(mockDefaultExposureRectangle);
+    assertEquals(1, mockDefaultExposureRectangle.length);
   }
 }

@@ -37,6 +37,7 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       @NonNull SensorOrientationFeature sensorOrientationFeature) {
     super(cameraProperties);
     this.sensorOrientationFeature = sensorOrientationFeature;
+    this.defaultExposureRectangle = createDefaultExposureRectangle();
   }
 
   /**
@@ -123,14 +124,36 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       return true;
     }
 
-    if (exposureRectangle != null) {
-      for (MeteringRectangle rect : currentRectangles) {
-        if (rect.equals(exposureRectangle)) {
-          return false;
-        }
+    if (exposureRectangle == null) {
+      // If exposureRectangle is null, reset if any rectangles are currently set
+      return true;
+    }
+
+    for (MeteringRectangle rect : currentRectangles) {
+      if (rect.equals(exposureRectangle)) {
+        return false;
       }
     }
 
     return true;
+  }
+
+  /**
+   * Returns the default exposure rectangle(s).
+   *
+   * @return An array of default MeteringRectangle objects.
+   */
+  public MeteringRectangle[] createDefaultExposureRectangle() {
+    // Create and return your desired default exposure rectangles here
+    // Example: a single default rectangle covering the entire image
+    if (cameraBoundaries != null) {
+      int left = 0;
+      int top = 0;
+      int right = cameraBoundaries.getWidth();
+      int bottom = cameraBoundaries.getHeight();
+      return new MeteringRectangle[] {new MeteringRectangle(left, top, right, bottom, 0)};
+    } else {
+      return null;
+    }
   }
 }
