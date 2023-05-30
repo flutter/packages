@@ -8,14 +8,12 @@
 package io.flutter.plugins.webviewflutter;
 
 // TODO(bparrishMines): Import native classes
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.ViewFlutterApi;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -25,25 +23,15 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.ViewFlutterApi;
-
-
 public class ViewTest {
-  
+
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-  
-
-  
   @Mock public View mockView;
-  
 
   @Mock public BinaryMessenger mockBinaryMessenger;
 
   @Mock public ViewFlutterApi mockFlutterApi;
-
-  
 
   InstanceManager instanceManager;
 
@@ -57,36 +45,16 @@ public class ViewTest {
     instanceManager.close();
   }
 
-  
-  
-  
-
-  
-
-  
-
   @Test
   public void flutterApiCreate() {
     final ViewFlutterApiImpl flutterApi =
         new ViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
     flutterApi.setApi(mockFlutterApi);
 
-    
-
-    flutterApi.create(
-        mockView,
-        
-        reply -> {});
+    flutterApi.create(mockView, reply -> {});
 
     final long instanceIdentifier =
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockView));
-    verify(mockFlutterApi)
-        .create(
-            eq(instanceIdentifier),
-            
-            any());
+    verify(mockFlutterApi).create(eq(instanceIdentifier), any());
   }
-
-  
 }
-

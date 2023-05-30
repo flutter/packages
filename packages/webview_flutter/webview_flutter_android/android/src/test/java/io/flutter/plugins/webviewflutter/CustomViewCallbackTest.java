@@ -8,14 +8,12 @@
 package io.flutter.plugins.webviewflutter;
 
 // TODO(bparrishMines): Import native classes
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CustomViewCallbackFlutterApi;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
@@ -25,25 +23,15 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CustomViewCallbackFlutterApi;
-
-
 public class CustomViewCallbackTest {
-  
+
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-  
-
-  
   @Mock public CustomViewCallback mockCustomViewCallback;
-  
 
   @Mock public BinaryMessenger mockBinaryMessenger;
 
   @Mock public CustomViewCallbackFlutterApi mockFlutterApi;
-
-  
 
   InstanceManager instanceManager;
 
@@ -57,65 +45,19 @@ public class CustomViewCallbackTest {
     instanceManager.close();
   }
 
-  
-  
-  
-
-  
-
-  
-  
   @Test
   public void onCustomViewHidden() {
-    
 
-    
     final long instanceIdentifier = 0;
     instanceManager.addDartCreatedInstance(mockCustomViewCallback, instanceIdentifier);
-    
-
-    
-    
-    
-
-    
-
-    
-    
-    
-
-    
 
     final CustomViewCallbackHostApiImpl hostApi =
-        new CustomViewCallbackHostApiImpl(
-            mockBinaryMessenger, instanceManager );
+        new CustomViewCallbackHostApiImpl(mockBinaryMessenger, instanceManager);
 
-    
-    hostApi.onCustomViewHidden(
-         instanceIdentifier  
-        
-        );
-    
+    hostApi.onCustomViewHidden(instanceIdentifier);
 
-    
-    
-    
-
-    
-
-    verify( mockCustomViewCallback   )
-        .onCustomViewHidden(
-            
-            );
-
-    
-    
-    
-
-    
+    verify(mockCustomViewCallback).onCustomViewHidden();
   }
-  
-  
 
   @Test
   public void flutterApiCreate() {
@@ -123,22 +65,11 @@ public class CustomViewCallbackTest {
         new CustomViewCallbackFlutterApiImpl(mockBinaryMessenger, instanceManager);
     flutterApi.setApi(mockFlutterApi);
 
-    
-
-    flutterApi.create(
-        mockCustomViewCallback,
-        
-        reply -> {});
+    flutterApi.create(mockCustomViewCallback, reply -> {});
 
     final long instanceIdentifier =
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockCustomViewCallback));
-    verify(mockFlutterApi)
-        .create(
-            eq(instanceIdentifier),
-            
-            any());
+        Objects.requireNonNull(
+            instanceManager.getIdentifierForStrongReference(mockCustomViewCallback));
+    verify(mockFlutterApi).create(eq(instanceIdentifier), any());
   }
-
-  
 }
-

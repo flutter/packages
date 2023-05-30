@@ -7,14 +7,11 @@
 
 package io.flutter.plugins.webviewflutter;
 
-
 // TODO(bparrishMines): Import native classes
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.ViewFlutterApi;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
-import java.util.Objects;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.ViewFlutterApi;
 
 /**
  * Flutter API implementation for `View`.
@@ -22,9 +19,8 @@ import java.util.Objects;
  * <p>This class may handle adding native instances that are attached to a Dart instance or passing
  * arguments of callbacks methods to a Dart instance.
  */
-
 public class ViewFlutterApiImpl {
-  
+
   // To ease adding additional methods, this value is added prematurely.
   @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
@@ -46,23 +42,15 @@ public class ViewFlutterApiImpl {
   }
 
   /**
-   * Stores the `View` instance and notifies Dart to create and store a new
-   * `View` instance that is attached to this one. If `instance` has already been added,
-   * this method does nothing.
+   * Stores the `View` instance and notifies Dart to create and store a new `View` instance that is
+   * attached to this one. If `instance` has already been added, this method does nothing.
    */
-  public void create(
-      @NonNull View instance,
-      
-      @NonNull ViewFlutterApi.Reply<Void> callback) {
+  public void create(@NonNull View instance, @NonNull ViewFlutterApi.Reply<Void> callback) {
+
     if (!instanceManager.containsInstance(instance)) {
-      api.create(
-          instanceManager.addHostCreatedInstance(instance),
-          
-          callback);
+      api.create(instanceManager.addHostCreatedInstance(instance), callback);
     }
   }
-
-  
 
   /**
    * Sets the Flutter API used to send messages to Dart.
@@ -74,4 +62,3 @@ public class ViewFlutterApiImpl {
     this.api = api;
   }
 }
-

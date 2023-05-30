@@ -7,13 +7,10 @@
 
 package io.flutter.plugins.webviewflutter;
 
-
 // TODO(bparrishMines): Import native classes
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CustomViewCallbackHostApi;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CustomViewCallbackHostApi;
 import java.util.Objects;
 
 /**
@@ -22,19 +19,13 @@ import java.util.Objects;
  * <p>This class may handle instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
-
 public class CustomViewCallbackHostApiImpl implements CustomViewCallbackHostApi {
-  
+
   // To ease adding additional methods, this value is added prematurely.
   @SuppressWarnings({"unused", "FieldCanBeLocal"})
   private final BinaryMessenger binaryMessenger;
 
   private final InstanceManager instanceManager;
-  
-
-  
-
-  
 
   /**
    * Constructs a {@link CustomViewCallbackHostApiImpl}.
@@ -44,55 +35,18 @@ public class CustomViewCallbackHostApiImpl implements CustomViewCallbackHostApi 
    */
   public CustomViewCallbackHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-    
+
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    
-    
   }
 
-  
-
-  
-  
-  
-
-  
-
-  
-  
   @Override
-  public void onCustomViewHidden(
-       @NonNull Long identifier  
-       ) {
-    
+  public void onCustomViewHidden(@NonNull Long identifier) {
 
-    
-    getCustomViewCallbackInstance(identifier)
-        .onCustomViewHidden(
-            
-
-            
-
-            
-            );
-    
-
-    
-
-    
-
-    
-    
-    
-
-    
+    getCustomViewCallbackInstance(identifier).onCustomViewHidden();
   }
-  
-  
 
   private CustomViewCallback getCustomViewCallbackInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
 }
-
