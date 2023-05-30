@@ -143,6 +143,7 @@ public class ExposurePointFeature extends CameraFeature<Point> {
    *
    * @return An array of default MeteringRectangle objects.
    */
+  @Nullable
   public MeteringRectangle[] createDefaultExposureRectangle() {
     // Create and return your desired default exposure rectangles here
     // Example: a single default rectangle covering the entire image
