@@ -16,7 +16,7 @@ class PointOfInterest {
   final LatLng position;
 
   /// The name of the POI.
-  final String name;
+  final String? name;
 
   /// The placeId of the POI.
   final String placeId;
