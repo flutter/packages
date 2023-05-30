@@ -2171,6 +2171,76 @@ void main() {
       await tester.pumpAndSettle();
       expect(router.location, '/1');
     });
+
+    testWidgets('should be executed when using pushReplacement',
+        (WidgetTester tester) async {
+      int nbOfOnExitCalls = 0;
+      Completer<bool> completer = Completer<bool>();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/1',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Page1Screen(),
+          onExit: (BuildContext context) {
+            nbOfOnExitCalls++;
+            return completer.future;
+          },
+        ),
+        GoRoute(
+          path: '/2',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Page2Screen(),
+        ),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/1');
+      router.pushReplacement('/2');
+      await tester.pumpAndSettle();
+
+      expect(nbOfOnExitCalls, 1);
+      completer.complete(false);
+      await tester.pump();
+      expect(router.location, '/1');
+
+      // PushReplacement a second time and pretend onExit returned true.
+      completer = Completer<bool>();
+      router.pushReplacement('/2');
+      await tester.pump();
+      expect(nbOfOnExitCalls, 2);
+      completer.complete(true);
+      await tester.pumpAndSettle();
+      expect(router.location, '/2');
+    });
+
+    testWidgets('should not be executed when using replace',
+        (WidgetTester tester) async {
+      int nbOfOnExitCalls = 0;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/1',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Page1Screen(),
+          onExit: (BuildContext context) {
+            nbOfOnExitCalls++;
+            return false;
+          },
+        ),
+        GoRoute(
+          path: '/2',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Page2Screen(),
+        ),
+      ];
+
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/1');
+      router.replace('/2');
+      await tester.pumpAndSettle();
+
+      expect(nbOfOnExitCalls, 0);
+      expect(router.location, '/2');
+    });
   });
   group('initial location', () {
     testWidgets('initial location', (WidgetTester tester) async {

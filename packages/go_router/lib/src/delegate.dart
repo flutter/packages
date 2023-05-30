@@ -200,6 +200,21 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   ///   state and not run any page animation.
   void pushReplacement(RouteMatchList matches) {
     assert(matches.last.route is! ShellRoute);
+    if (_matchList.last.route.onExit != null) {
+      final FutureOr<bool> shouldPop =
+          _matchList.last.route.onExit!(navigatorKey.currentContext!);
+      if (shouldPop == false) {
+        return;
+      } else if (shouldPop is Future<bool>) {
+        shouldPop.then((bool shouldPop) {
+          if (shouldPop) {
+            _remove(_matchList.last);
+            push(matches); // [push] will notify the listeners.
+          }
+        });
+        return;
+      }
+    }
     _remove(_matchList.last);
     push(matches); // [push] will notify the listeners.
   }
