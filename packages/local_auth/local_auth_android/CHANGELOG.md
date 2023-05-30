@@ -1,3 +1,7 @@
+## 1.0.30
+
+* Updates androidx.fragment version to 1.5.6
+
 ## 1.0.29
 
 * Fixes a regression in 1.0.23 that caused canceled auths to return success.
