@@ -39,12 +39,12 @@ void main() {
         value: buildBillingResultMap(expectedBillingResult));
     stubPlatform.addResponse(name: endConnectionCall);
     iapAndroidPlatformAddition =
-        InAppPurchaseAndroidPlatformAddition(BillingClient((_) {}));
+        InAppPurchaseAndroidPlatformAddition(BillingClientManager());
   });
 
   group('consume purchases', () {
     const String consumeMethodName =
-        'BillingClient#consumeAsync(String, ConsumeResponseListener)';
+        'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)';
     test('consume purchase async success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';
@@ -56,7 +56,7 @@ void main() {
       );
       final BillingResultWrapper billingResultWrapper =
           await iapAndroidPlatformAddition.consumePurchase(
-              GooglePlayPurchaseDetails.fromPurchase(dummyPurchase));
+              GooglePlayPurchaseDetails.fromPurchase(dummyPurchase).first);
 
       expect(billingResultWrapper, equals(expectedBillingResult));
     });
@@ -64,7 +64,8 @@ void main() {
 
   group('queryPastPurchase', () {
     group('queryPurchaseDetails', () {
-      const String queryMethodName = 'BillingClient#queryPurchases(String)';
+      const String queryMethodName =
+          'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)';
       test('handles error', () async {
         const String debugMessage = 'dummy message';
         const BillingResponse responseCode = BillingResponse.developerError;
@@ -86,7 +87,7 @@ void main() {
         expect(response.error!.source, kIAPSource);
       });
 
-      test('returns SkuDetailsResponseWrapper', () async {
+      test('returns ProductDetailsResponseWrapper', () async {
         const String debugMessage = 'dummy message';
         const BillingResponse responseCode = BillingResponse.ok;
         const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
@@ -101,7 +102,7 @@ void main() {
           ]
         });
 
-        // Since queryPastPurchases makes 2 platform method calls (one for each SkuType), the result will contain 2 dummyWrapper instead
+        // Since queryPastPurchases makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead
         // of 1.
         final QueryPurchaseDetailsResponse response =
             await iapAndroidPlatformAddition.queryPastPurchases();
@@ -171,47 +172,6 @@ void main() {
           .isFeatureSupported(BillingClientFeature.subscriptions);
       expect(isSupported, isTrue);
       expect(arguments['feature'], equals('subscriptions'));
-    });
-  });
-
-  group('launchPriceChangeConfirmationFlow', () {
-    const String launchPriceChangeConfirmationFlowMethodName =
-        'BillingClient#launchPriceChangeConfirmationFlow (Activity, PriceChangeFlowParams, PriceChangeConfirmationListener)';
-    const String dummySku = 'sku';
-
-    const BillingResultWrapper expectedBillingResultPriceChangeConfirmation =
-        BillingResultWrapper(
-      responseCode: BillingResponse.ok,
-      debugMessage: 'dummy message',
-    );
-
-    test('serializes and deserializes data', () async {
-      stubPlatform.addResponse(
-        name: launchPriceChangeConfirmationFlowMethodName,
-        value:
-            buildBillingResultMap(expectedBillingResultPriceChangeConfirmation),
-      );
-
-      expect(
-        await iapAndroidPlatformAddition.launchPriceChangeConfirmationFlow(
-          sku: dummySku,
-        ),
-        equals(expectedBillingResultPriceChangeConfirmation),
-      );
-    });
-
-    test('passes sku to launchPriceChangeConfirmationFlow', () async {
-      stubPlatform.addResponse(
-        name: launchPriceChangeConfirmationFlowMethodName,
-        value:
-            buildBillingResultMap(expectedBillingResultPriceChangeConfirmation),
-      );
-      await iapAndroidPlatformAddition.launchPriceChangeConfirmationFlow(
-        sku: dummySku,
-      );
-      final MethodCall call = stubPlatform
-          .previousCallMatching(launchPriceChangeConfirmationFlowMethodName);
-      expect(call.arguments, equals(<dynamic, dynamic>{'sku': dummySku}));
     });
   });
 }

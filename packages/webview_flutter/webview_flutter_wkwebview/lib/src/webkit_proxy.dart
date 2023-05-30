@@ -80,5 +80,13 @@ class WebKitProxy {
       WKWebViewConfiguration configuration,
       WKNavigationAction navigationAction,
     )? onCreateWebView,
+    Future<WKPermissionDecision> Function(
+      WKUIDelegate instance,
+      WKWebView webView,
+      WKSecurityOrigin origin,
+      WKFrameInfo frame,
+      WKMediaCaptureType type,
+    )? requestMediaCapturePermission,
+    InstanceManager? instanceManager,
   }) createUIDelegate;
 }

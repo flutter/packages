@@ -1,3 +1,56 @@
+## 10.0.0
+
+* [swift] Avoids using `Any` to represent `Optional` in Swift.
+* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be 
+  translated into `[Any?]` (rather than `[Any]`) in Swift.
+* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be 
+  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`) in Swift. 
+* Adds an example application that uses Pigeon directly, rather than in a plugin.
+
+## 9.2.5
+
+* Reports an error when trying to use an enum directly in a `List` or `Map`
+  argument.
+
+## 9.2.4
+
+* [objc] Fixes a warning due to a C++-style function signature in the codec
+  getter's definition.
+
+## 9.2.3
+
+* [java] Fixes `UnknownNullability` and `SyntheticAccessor` warnings.
+
+## 9.2.2
+
+* [cpp] Minor changes to output style.
+
+## 9.2.1
+
+* [swift] Fixes NSNull casting crash.
+
+## 9.2.0
+
+* [cpp] Removes experimental tags.
+
+## 9.1.4
+
+* Migrates off deprecated `BinaryMessenger` API.
+
+## 9.1.3
+
+* [cpp] Requires passing any non-nullable fields of generated data classes as
+  constructor arguments, similar to what is done in other languages. This may
+  require updates to existing code that creates data class instances on the
+  native side.
+* [cpp] Adds a convenience constructor to generated data classes to set all
+  fields during construction.
+
+## 9.1.2
+
+* [cpp] Fixes class parameters to Flutter APIs.
+* Updates minimum Flutter version to 3.3.
+
 ## 9.1.1
 
 * [swift] Removes experimental tags.

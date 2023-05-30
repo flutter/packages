@@ -85,6 +85,23 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     return paths.isEmpty ? null : paths.first;
   }
 
+  @override
+  Future<List<String>> getDirectoryPaths({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    final List<String?> paths =
+        await _hostApi.displayOpenPanel(OpenPanelOptions(
+            allowsMultipleSelection: true,
+            canChooseDirectories: true,
+            canChooseFiles: false,
+            baseOptions: SavePanelOptions(
+              directoryPath: initialDirectory,
+              prompt: confirmButtonText,
+            )));
+    return paths.isEmpty ? <String>[] : List<String>.from(paths);
+  }
+
   // Converts the type group list into a flat list of all allowed types, since
   // macOS doesn't support filter groups.
   AllowedTypes? _allowedTypesFromTypeGroups(List<XTypeGroup>? typeGroups) {
@@ -104,17 +121,17 @@ class FileSelectorMacOS extends FileSelectorPlatform {
       // Reject a filter that isn't an allow-any, but doesn't set any
       // macOS-supported filter categories.
       if ((typeGroup.extensions?.isEmpty ?? true) &&
-          (typeGroup.macUTIs?.isEmpty ?? true) &&
+          (typeGroup.uniformTypeIdentifiers?.isEmpty ?? true) &&
           (typeGroup.mimeTypes?.isEmpty ?? true)) {
         throw ArgumentError('Provided type group $typeGroup does not allow '
             'all files, but does not set any of the macOS-supported filter '
-            'categories. At least one of "extensions", "macUTIs", or '
-            '"mimeTypes" must be non-empty for macOS if anything is '
-            'non-empty.');
+            'categories. At least one of "extensions", '
+            '"uniformTypeIdentifiers", or "mimeTypes" must be non-empty for '
+            'macOS if anything is non-empty.');
       }
       allowedTypes.extensions.addAll(typeGroup.extensions ?? <String>[]);
       allowedTypes.mimeTypes.addAll(typeGroup.mimeTypes ?? <String>[]);
-      allowedTypes.utis.addAll(typeGroup.macUTIs ?? <String>[]);
+      allowedTypes.utis.addAll(typeGroup.uniformTypeIdentifiers ?? <String>[]);
     }
 
     return allowedTypes;

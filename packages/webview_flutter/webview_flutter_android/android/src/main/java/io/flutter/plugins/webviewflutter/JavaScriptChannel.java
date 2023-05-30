@@ -30,8 +30,8 @@ public class JavaScriptChannel {
    */
   public JavaScriptChannel(
       @NonNull JavaScriptChannelFlutterApiImpl flutterApi,
-      String channelName,
-      Handler platformThreadHandler) {
+      @NonNull String channelName,
+      @NonNull Handler platformThreadHandler) {
     this.flutterApi = flutterApi;
     this.javaScriptChannelName = channelName;
     this.platformThreadHandler = platformThreadHandler;
@@ -40,11 +40,9 @@ public class JavaScriptChannel {
   // Suppressing unused warning as this is invoked from JavaScript.
   @SuppressWarnings("unused")
   @JavascriptInterface
-  public void postMessage(final String message) {
+  public void postMessage(@NonNull final String message) {
     final Runnable postMessageRunnable =
-        () -> {
-          flutterApi.postMessage(JavaScriptChannel.this, message, reply -> {});
-        };
+        () -> flutterApi.postMessage(JavaScriptChannel.this, message, reply -> {});
 
     if (platformThreadHandler.getLooper() == Looper.myLooper()) {
       postMessageRunnable.run();

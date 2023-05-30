@@ -260,6 +260,7 @@ class AdaptiveScaffold extends StatefulWidget {
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
+    double? groupAlignment,
     IconThemeData? selectedIconTheme,
     IconThemeData? unselectedIconTheme,
     TextStyle? selectedLabelTextStyle,
@@ -286,6 +287,7 @@ class AdaptiveScaffold extends StatefulWidget {
                       leading: leading,
                       trailing: trailing,
                       onDestinationSelected: onDestinationSelected,
+                      groupAlignment: groupAlignment,
                       backgroundColor: backgroundColor,
                       extended: extended,
                       selectedIndex: selectedIndex,
@@ -314,15 +316,24 @@ class AdaptiveScaffold extends StatefulWidget {
     ValueChanged<int>? onDestinationSelected,
   }) {
     return Builder(
-      builder: (_) {
-        return BottomNavigationBar(
-          currentIndex: currentIndex ?? 0,
-          iconSize: iconSize,
-          items: destinations
-              .map((NavigationDestination e) => _toBottomNavItem(e))
-              .toList(),
-          onTap: onDestinationSelected,
-        );
+      builder: (BuildContext context) {
+        final NavigationBarThemeData currentNavBarTheme =
+            NavigationBarTheme.of(context);
+        return NavigationBarTheme(
+            data: currentNavBarTheme.copyWith(
+              iconTheme: MaterialStateProperty.resolveWith(
+                  (Set<MaterialState> states) {
+                return currentNavBarTheme.iconTheme
+                        ?.resolve(states)
+                        ?.copyWith(size: iconSize) ??
+                    IconTheme.of(context).copyWith(size: iconSize);
+              }),
+            ),
+            child: NavigationBar(
+              selectedIndex: currentIndex ?? 0,
+              destinations: destinations,
+              onDestinationSelected: onDestinationSelected,
+            ));
       },
     );
   }
@@ -640,14 +651,6 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
       ),
     );
   }
-}
-
-BottomNavigationBarItem _toBottomNavItem(NavigationDestination destination) {
-  return BottomNavigationBarItem(
-    label: destination.label,
-    icon: destination.icon,
-    activeIcon: destination.selectedIcon,
-  );
 }
 
 class _BrickLayout extends StatelessWidget {

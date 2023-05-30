@@ -135,6 +135,26 @@ the branch point from `upstream/main`. For more complex use cases where you want
 a different diff point, you can pass a different `--base-branch`, or use
 `--base-sha` to pick the exact diff point.
 
+### Update a dependency
+
+`update-dependency` will update a pub dependency to a new version.
+
+For instance, to updated to version 3.0.0 of `some_package` in every package
+that depends on it:
+
+```sh
+cd <repository root>
+dart run script/tool/bin/flutter_plugin_tools.dart update-dependency \
+  --pub-package=some_package \
+  --version=3.0.0 \
+```
+
+If a `--version` is not provided, the latest version from pub will be used.
+
+Currently this only updates the dependency itself in pubspec.yaml, but in the
+future this will also update any generated code for packages that use code
+generation (e.g., regenerating mocks when updating `mockito`).
+
 ### Publish a Release
 
 **Releases are automated for `flutter/packages`.**

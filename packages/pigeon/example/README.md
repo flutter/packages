@@ -28,8 +28,11 @@ abstract class BookApi {
 
 ### invocation
 
-This is the call to Pigeon that will ingest `message.dart` and generate the code
-for iOS and Android.
+This an example call to Pigeon that would ingest a defintion file
+`pigeons/message.dart` and generate corresponding output code for each
+supported language. (In actual use, you would not normally use both Objective-C
+and Swift, or both Java and Kotlin, but instead use just the languages matching
+your project.)
 
 ```sh
 flutter pub run pigeon \
@@ -38,10 +41,13 @@ flutter pub run pigeon \
   --objc_header_out ios/Runner/pigeon.h \
   --objc_source_out ios/Runner/pigeon.m \
   --swift_out ios/Runner/Pigeon.swift \
-  --kotlin_out ./android/app/src/main/kotlin/dev/flutter/pigeon/Pigeon.kt \
-  --experimental_kotlin_package "dev.flutter.pigeon" \
-  --java_out ./android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
-  --java_package "dev.flutter.pigeon"
+  --kotlin_out android/app/src/main/kotlin/dev/flutter/pigeon/Pigeon.kt \
+  --kotlin_package "dev.flutter.pigeon" \
+  --java_out android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
+  --java_package "dev.flutter.pigeon" \
+  --cpp_header_out windows/runner/pigeon.h \
+  --cpp_source_out windows/runner/pigeon.cpp \
+  --cpp_namespace pigeon
 ```
 
 ### AppDelegate.m

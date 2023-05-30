@@ -26,7 +26,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     Platform platform = const LocalPlatform(),
   }) : super(packagesDir, processRunner: processRunner, platform: platform) {
     argParser.addFlag(platformAndroid,
-        help: 'Runs the Android implementation of the examples');
+        help: 'Runs the Android implementation of the examples',
+        aliases: const <String>[platformAndroidAlias]);
     argParser.addFlag(platformIOS,
         help: 'Runs the iOS implementation of the examples');
     argParser.addFlag(platformLinux,

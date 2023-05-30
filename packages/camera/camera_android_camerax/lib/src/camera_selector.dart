@@ -99,6 +99,9 @@ class CameraSelector extends JavaObject {
 /// Host API implementation of [CameraSelector].
 class CameraSelectorHostApiImpl extends CameraSelectorHostApi {
   /// Constructs a [CameraSelectorHostApiImpl].
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an `InstanceManager` is being created.
   CameraSelectorHostApiImpl(
       {this.binaryMessenger, InstanceManager? instanceManager})
       : super(binaryMessenger: binaryMessenger) {
@@ -152,7 +155,7 @@ class CameraSelectorHostApiImpl extends CameraSelectorHostApi {
     }
     return filteredCameraInfoIds
         .map<CameraInfo>((int? id) =>
-            instanceManager.getInstanceWithWeakReference(id!)! as CameraInfo)
+            instanceManager.getInstanceWithWeakReference<CameraInfo>(id!)!)
         .toList();
   }
 }
@@ -160,32 +163,37 @@ class CameraSelectorHostApiImpl extends CameraSelectorHostApi {
 /// Flutter API implementation of [CameraSelector].
 class CameraSelectorFlutterApiImpl implements CameraSelectorFlutterApi {
   /// Constructs a [CameraSelectorFlutterApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   CameraSelectorFlutterApiImpl({
-    this.binaryMessenger,
+    BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  })  : _binaryMessenger = binaryMessenger,
+        _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager instanceManager;
+  final InstanceManager _instanceManager;
 
   @override
   void create(int identifier, int? lensFacing) {
-    instanceManager.addHostCreatedInstance(
+    _instanceManager.addHostCreatedInstance(
       CameraSelector.detached(
-          binaryMessenger: binaryMessenger,
-          instanceManager: instanceManager,
+          binaryMessenger: _binaryMessenger,
+          instanceManager: _instanceManager,
           lensFacing: lensFacing),
       identifier,
       onCopy: (CameraSelector original) {
         return CameraSelector.detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager,
+            binaryMessenger: _binaryMessenger,
+            instanceManager: _instanceManager,
             lensFacing: original.lensFacing);
       },
     );

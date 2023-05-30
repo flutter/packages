@@ -91,6 +91,20 @@ void main() {
   });
 
   test(
+      'Default implementation of setOnHttpError should throw unimplemented error',
+      () {
+    final PlatformNavigationDelegate callbackDelegate =
+        ExtendsPlatformNavigationDelegate(
+            const PlatformNavigationDelegateCreationParams());
+
+    expect(
+      () => callbackDelegate.setOnHttpError((HttpResponseError error) {}),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+      // ignore: lines_longer_than_80_chars
       'Default implementation of setOnProgress should throw unimplemented error',
       () {
     final PlatformNavigationDelegate callbackDelegate =

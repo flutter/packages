@@ -27,6 +27,10 @@ project.getTasks().withType(JavaCompile){
 apply plugin: 'com.android.library'
 
 android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'io.flutter.plugins.videoplayer'
+    }
     compileSdkVersion 33
 
     defaultConfig {
@@ -34,6 +38,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
     }
     compileOptions {
@@ -42,7 +48,7 @@ android {
     }
 
     dependencies {
-        def exoplayer_version = "2.18.4"
+        def exoplayer_version = "2.18.6"
         implementation "com.google.android.exoplayer:exoplayer-core:${exoplayer_version}"
         implementation "com.google.android.exoplayer:exoplayer-hls:${exoplayer_version}"
         implementation "com.google.android.exoplayer:exoplayer-dash:${exoplayer_version}"

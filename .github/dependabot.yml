@@ -17,11 +17,13 @@ updates:
     schedule:
       interval: "daily"
     reviewers:
-      - "hixie"
-      - "godofredoc"
+      - "keyonghan"
+      - "yusuf-goog"
+      - "ricardoamador"
     labels:
       - "team"
       - "team: infra"
+      - "autosubmit"
 
   - package-ecosystem: "gradle"
     directory: "/packages/animations/example/android/app"
@@ -475,6 +477,25 @@ updates:
     open-pull-requests-limit: 10
     ignore:
       - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  - package-ecosystem: "gradle"
+    directory: "/packages/pigeon/example/app/android/app"
+    commit-message:
+      prefix: "[pigeon]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "com.android.tools.build:gradle"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "junit:junit"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.mockito:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "androidx.test:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.robolectric:*"
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
   - package-ecosystem: "gradle"

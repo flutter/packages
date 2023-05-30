@@ -24,8 +24,8 @@ Future<void> main() async {
 const Set<String> _expectedAnnotatedTests = <String>{
   'AppliedToWrongClassType',
   'BadPathParam',
-  'ExtraMustBeOptional',
   'ExtraValueRoute',
+  'RequiredExtraValueRoute',
   'MissingPathParam',
   'MissingPathValue',
   'MissingTypeAnnotation',
@@ -37,4 +37,6 @@ const Set<String> _expectedAnnotatedTests = <String>{
   'NullableDefaultValueRoute',
   'IterableWithEnumRoute',
   'IterableDefaultValueRoute',
+  'NamedRoute',
+  'NamedEscapedRoute',
 };

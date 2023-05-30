@@ -29,13 +29,13 @@ class EchoBinaryMessenger: NSObject, FlutterBinaryMessenger {
     guard
       let args = self.codec.decode(message) as? [Any?],
       let firstArg = args.first,
-      !(firstArg is NSNull)
+      let castedFirstArg: Any? = nilOrValue(firstArg)
     else {
       callback(self.defaultReturn.flatMap { self.codec.encode($0) })
       return
     }
     
-    callback(self.codec.encode(firstArg))
+    callback(self.codec.encode(castedFirstArg))
   }
   
   func setMessageHandlerOnChannel(
@@ -48,5 +48,10 @@ class EchoBinaryMessenger: NSObject, FlutterBinaryMessenger {
   
   func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {
     // Method not implemented because this messenger is just for echoing    
+  }
+
+  private func nilOrValue<T>(_ value: Any?) -> T? {
+    if value is NSNull { return nil }
+    return (value as Any) as! T?
   }
 }

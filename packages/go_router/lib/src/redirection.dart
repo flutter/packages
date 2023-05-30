@@ -96,8 +96,8 @@ FutureOr<RouteMatchList> redirect(
         name: null,
         // No name available at the top level trim the query params off the
         // sub-location to match route.redirect
-        subloc: prevMatchList.uri.path,
-        queryParams: prevMatchList.uri.queryParameters,
+        matchedLocation: prevMatchList.uri.path,
+        queryParameters: prevMatchList.uri.queryParameters,
         queryParametersAll: prevMatchList.uri.queryParametersAll,
         extra: extra,
         pageKey: const ValueKey<String>('topLevel'),
@@ -138,13 +138,13 @@ FutureOr<String?> _getRouteLevelRedirect(
       GoRouterState(
         configuration,
         location: matchList.uri.toString(),
-        subloc: match.subloc,
+        matchedLocation: match.matchedLocation,
         name: route.name,
         path: route.path,
-        fullpath: matchList.fullpath,
+        fullPath: matchList.fullPath,
         extra: match.extra,
-        params: matchList.pathParameters,
-        queryParams: matchList.uri.queryParameters,
+        pathParameters: matchList.pathParameters,
+        queryParameters: matchList.uri.queryParameters,
         queryParametersAll: matchList.uri.queryParametersAll,
         pageKey: match.pageKey,
       ),

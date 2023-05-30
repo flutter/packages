@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -320,8 +318,8 @@ void main() {
   test('fails if "pub get" fails', () async {
     createFakePlugin('foo', packagesDir);
 
-    processRunner.mockProcessesForExecutable['flutter'] = <io.Process>[
-      MockProcess(exitCode: 1) // flutter pub get
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
     Error? commandError;
@@ -342,8 +340,8 @@ void main() {
   test('fails if "pub downgrade" fails', () async {
     createFakePlugin('foo', packagesDir);
 
-    processRunner.mockProcessesForExecutable['flutter'] = <io.Process>[
-      MockProcess(exitCode: 1) // flutter pub downgrade
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'downgrade'])
     ];
 
     Error? commandError;
@@ -364,8 +362,8 @@ void main() {
   test('fails if "analyze" fails', () async {
     createFakePlugin('foo', packagesDir);
 
-    processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-      MockProcess(exitCode: 1) // dart analyze
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze'])
     ];
 
     Error? commandError;

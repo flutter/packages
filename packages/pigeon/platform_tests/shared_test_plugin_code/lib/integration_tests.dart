@@ -1112,10 +1112,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
       expect(echoObject.anEnum, genericAllTypes.anEnum);
-    },
-        // TODO(stuartmorgan): Fix and re-enable.
-        // See https://github.com/flutter/flutter/issues/118739
-        skip: targetGenerator == TargetGenerator.cpp);
+    });
 
     testWidgets(
         'Arguments of multiple types serialize and deserialize correctly',
@@ -1254,6 +1251,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const int sentObject = _regularInt;
+      final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
+      expect(echoObject, sentObject);
+    });
+
+    testWidgets('nullable big ints serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentObject = _biggerThanBigInt;
       final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
       expect(echoObject, sentObject);
     });

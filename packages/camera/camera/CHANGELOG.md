@@ -1,5 +1,19 @@
-## NEXT
+## 0.10.5+2
 
+* Fixes unawaited_futures violations.
+
+## 0.10.5+1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.10.5
+
+* Adds NV21 as an image streaming option for Android.
+
+## 0.10.4
+
+* Allows camera to be switched while video recording.
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.10.3+2

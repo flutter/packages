@@ -19,7 +19,7 @@ void main() {
     ByteData message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );
-    await ServicesBinding.instance.defaultBinaryMessenger
+    await tester.binding.defaultBinaryMessenger
         .handlePlatformMessage('flutter/navigation', message, (_) {});
 
     await tester.pumpAndSettle();
@@ -36,7 +36,7 @@ void main() {
     message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );
-    await ServicesBinding.instance.defaultBinaryMessenger
+    await tester.binding.defaultBinaryMessenger
         .handlePlatformMessage('flutter/navigation', message, (_) {});
 
     await tester.pumpAndSettle();

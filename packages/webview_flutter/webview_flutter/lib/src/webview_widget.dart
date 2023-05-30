@@ -105,7 +105,7 @@ class WebViewWidget extends StatelessWidget {
   /// Specifies which gestures should be consumed by the web view.
   ///
   /// It is possible for other gesture recognizers to be competing with the web
-  /// view on pointer events, e.g if the web view is inside a [ListView] the
+  /// view on pointer events, e.g. if the web view is inside a [ListView] the
   /// [ListView] will want to handle vertical drags. The web view will claim
   /// gestures that are recognized by any of the recognizers on this list.
   ///

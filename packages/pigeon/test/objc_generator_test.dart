@@ -300,6 +300,7 @@ void main() {
     expect(code, contains('/// @return `nil` only when `error != nil`.'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
     expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
+    expect(code, contains('ApiGetCodec(void)'));
   });
 
   test('gen one api source', () {
@@ -347,6 +348,7 @@ void main() {
         code,
         contains(
             'NSCAssert([api respondsToSelector:@selector(doSomething:error:)'));
+    expect(code, contains('ApiGetCodec(void) {'));
   });
 
   test('all the simple datatypes header', () {
@@ -654,6 +656,7 @@ void main() {
         contains(
             'initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;'));
     expect(code, matches('void.*doSomething.*Input.*Output'));
+    expect(code, contains('ApiGetCodec(void)'));
   });
 
   test('gen flutter api source', () {
@@ -695,6 +698,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
+    expect(code, contains('ApiGetCodec(void) {'));
   });
 
   test('gen host void header', () {

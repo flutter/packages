@@ -18,7 +18,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
  */
 public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   private static final String TAG = "UrlLauncherPlugin";
-  @Nullable private MethodCallHandlerImpl methodCallHandler;
   @Nullable private UrlLauncher urlLauncher;
 
   /**
@@ -29,48 +28,45 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
    * won't react to changes in activity or context, unlike {@link UrlLauncherPlugin}.
    */
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    MethodCallHandlerImpl handler =
-        new MethodCallHandlerImpl(new UrlLauncher(registrar.context(), registrar.activity()));
-    handler.startListening(registrar.messenger());
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+    UrlLauncher handler = new UrlLauncher(registrar.context());
+    handler.setActivity(registrar.activity());
+    Messages.UrlLauncherApi.setup(registrar.messenger(), handler);
   }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    urlLauncher = new UrlLauncher(binding.getApplicationContext(), /*activity=*/ null);
-    methodCallHandler = new MethodCallHandlerImpl(urlLauncher);
-    methodCallHandler.startListening(binding.getBinaryMessenger());
+    urlLauncher = new UrlLauncher(binding.getApplicationContext());
+    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncher);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    if (methodCallHandler == null) {
+    if (urlLauncher == null) {
       Log.wtf(TAG, "Already detached from the engine.");
       return;
     }
 
-    methodCallHandler.stopListening();
-    methodCallHandler = null;
+    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), null);
     urlLauncher = null;
   }
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-    if (methodCallHandler == null) {
+    if (urlLauncher == null) {
       Log.wtf(TAG, "urlLauncher was never set.");
       return;
     }
-
     urlLauncher.setActivity(binding.getActivity());
   }
 
   @Override
   public void onDetachedFromActivity() {
-    if (methodCallHandler == null) {
+    if (urlLauncher == null) {
       Log.wtf(TAG, "urlLauncher was never set.");
       return;
     }
-
     urlLauncher.setActivity(null);
   }
 

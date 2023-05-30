@@ -31,6 +31,7 @@ void main() {
     setUp(() {
       mockPlatform = MockGoogleSignInPlatform();
       when(mockPlatform.isMock).thenReturn(true);
+      when(mockPlatform.userDataEvents).thenReturn(null);
       when(mockPlatform.signInSilently())
           .thenAnswer((Invocation _) async => kDefaultUser);
       when(mockPlatform.signIn())
@@ -260,10 +261,13 @@ void main() {
     });
 
     test('can sign in after init failed before', () async {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-
+      // Web eagerly `initWithParams` when GoogleSignIn is created, so make sure
+      // the initWithParams is throwy ASAP.
       when(mockPlatform.initWithParams(any))
           .thenThrow(Exception('First init fails'));
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
       expect(googleSignIn.signIn(), throwsA(isInstanceOf<Exception>()));
 
       when(mockPlatform.initWithParams(any))
@@ -325,6 +329,63 @@ void main() {
       _verifyInit(mockPlatform);
       verify(mockPlatform.signIn());
       verify(mockPlatform.requestScopes(<String>['testScope']));
+    });
+
+    test('canAccessScopes forwards calls to platform', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      when(mockPlatform.canAccessScopes(
+        any,
+        accessToken: anyNamed('accessToken'),
+      )).thenAnswer((Invocation _) async => true);
+
+      await googleSignIn.signIn();
+      final bool result = await googleSignIn.canAccessScopes(
+        <String>['testScope'],
+        accessToken: 'xyz',
+      );
+
+      expect(result, isTrue);
+      _verifyInit(mockPlatform);
+      verify(mockPlatform.canAccessScopes(
+        <String>['testScope'],
+        accessToken: 'xyz',
+      ));
+    });
+
+    test('userDataEvents are forwarded through the onUserChanged stream',
+        () async {
+      final StreamController<GoogleSignInUserData?> userDataController =
+          StreamController<GoogleSignInUserData?>();
+
+      when(mockPlatform.userDataEvents)
+          .thenAnswer((Invocation _) => userDataController.stream);
+      when(mockPlatform.isSignedIn()).thenAnswer((Invocation _) async => false);
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      await googleSignIn.isSignedIn();
+
+      // This is needed to ensure `_ensureInitialized` is called!
+      final Future<List<GoogleSignInAccount?>> nextTwoEvents =
+          googleSignIn.onCurrentUserChanged.take(2).toList();
+
+      // Dispatch two events
+      userDataController.add(kDefaultUser);
+      userDataController.add(null);
+
+      final List<GoogleSignInAccount?> events = await nextTwoEvents;
+
+      expect(events.first, isNotNull);
+
+      final GoogleSignInAccount user = events.first!;
+
+      expect(user.displayName, equals(kDefaultUser.displayName));
+      expect(user.email, equals(kDefaultUser.email));
+      expect(user.id, equals(kDefaultUser.id));
+      expect(user.photoUrl, equals(kDefaultUser.photoUrl));
+      expect(user.serverAuthCode, equals(kDefaultUser.serverAuthCode));
+
+      // The second event was a null...
+      expect(events.last, isNull);
     });
 
     test('user starts as null', () async {

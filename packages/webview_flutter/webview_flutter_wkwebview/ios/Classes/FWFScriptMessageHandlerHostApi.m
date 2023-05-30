@@ -27,10 +27,10 @@
 - (void)didReceiveScriptMessageForHandler:(FWFScriptMessageHandler *)instance
                     userContentController:(WKUserContentController *)userContentController
                                   message:(WKScriptMessage *)message
-                               completion:(void (^)(NSError *_Nullable))completion {
+                               completion:(void (^)(FlutterError *_Nullable))completion {
   NSNumber *userContentControllerIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:userContentController]);
-  FWFWKScriptMessageData *messageData = FWFWKScriptMessageDataFromWKScriptMessage(message);
+  FWFWKScriptMessageData *messageData = FWFWKScriptMessageDataFromNativeWKScriptMessage(message);
   [self didReceiveScriptMessageForHandlerWithIdentifier:@([self identifierForHandler:instance])
                         userContentControllerIdentifier:userContentControllerIdentifier
                                                 message:messageData
@@ -55,7 +55,7 @@
   [self.scriptMessageHandlerAPI didReceiveScriptMessageForHandler:self
                                             userContentController:userContentController
                                                           message:message
-                                                       completion:^(NSError *error) {
+                                                       completion:^(FlutterError *error) {
                                                          NSAssert(!error, @"%@", error);
                                                        }];
 }

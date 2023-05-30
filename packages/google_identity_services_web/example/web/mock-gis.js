@@ -33,6 +33,13 @@ class Id {
   initialize(config) {
     this.config = config;
   }
+  renderButton(target, config) {
+    // Simulate rendering a button.
+    target.replaceChildren();
+    target.dataset.buttonConfig = config;
+    let button = document.createElement('button');
+    target.append(button);
+  }
   prompt(momentListener) {
     callAsync(() => {
       if (this.mockCredentialResponse) {

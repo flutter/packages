@@ -9,7 +9,7 @@
 /// final JavascriptChannelRegistry javascriptChannelRegistry = ...
 ///
 /// final WKScriptMessageHandler handler = WKScriptMessageHandler(
-///   didReceiveScriptMessage: withWeakRefenceTo(
+///   didReceiveScriptMessage: withWeakReferenceTo(
 ///     javascriptChannelRegistry,
 ///     (WeakReference<JavascriptChannelRegistry> weakReference) {
 ///       return (

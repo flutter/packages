@@ -33,7 +33,7 @@ void main() {
 
     expect(tester.getTopLeft(smallBody), Offset.zero);
     expect(tester.getTopLeft(smallSBody), const Offset(200, 0));
-    expect(tester.getTopLeft(bottomNav), const Offset(0, 744));
+    expect(tester.getTopLeft(bottomNav), const Offset(0, 720));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
     await tester.pumpWidget(SimulatedLayout.medium.app());
@@ -83,22 +83,22 @@ void main() {
 
     expect(tester.getTopLeft(b), const Offset(17.6, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(778.2, 755.2), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(778.2, 736), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(1178.2, 755.2), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(1178.2, 736), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(tester.getTopLeft(b), const Offset(70.4, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(416.0, 788.8), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(416.0, 784), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(816, 788.8), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(816, 784), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -499,6 +499,50 @@ void main() {
       );
     },
   );
+
+  // This test checks whether AdaptiveScaffold.standardNavigationRail function
+  // creates a NavigationRail widget as expected with groupAlignment provided,
+  // and checks whether the NavigationRail's groupAlignment matches the expected value.
+  testWidgets(
+      'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
+      (WidgetTester tester) async {
+    const List<NavigationRailDestination> destinations =
+        <NavigationRailDestination>[
+      NavigationRailDestination(
+        icon: Icon(Icons.home),
+        label: Text('Home'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.account_circle),
+        label: Text('Profile'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.settings),
+        label: Text('Settings'),
+      ),
+    ];
+
+    // Align to bottom.
+    const double groupAlignment = 1.0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return AdaptiveScaffold.standardNavigationRail(
+                destinations: destinations,
+                groupAlignment: groupAlignment,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    final NavigationRail rail =
+        tester.widget<NavigationRail>(find.byType(NavigationRail));
+    expect(rail.groupAlignment, equals(groupAlignment));
+  });
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that

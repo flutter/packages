@@ -1,3 +1,8 @@
+## 2.0.17
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum Flutter version to 3.3.
+
 ## 2.0.16
 
 * Clarifies explanation of endorsement in README.

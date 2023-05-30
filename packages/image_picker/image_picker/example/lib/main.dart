@@ -81,51 +81,53 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _onImageButtonPressed(ImageSource source,
-      {BuildContext? context, bool isMultiImage = false}) async {
+      {required BuildContext context, bool isMultiImage = false}) async {
     if (_controller != null) {
       await _controller!.setVolume(0.0);
     }
-    if (isVideo) {
-      final XFile? file = await _picker.pickVideo(
-          source: source, maxDuration: const Duration(seconds: 10));
-      await _playVideo(file);
-    } else if (isMultiImage) {
-      await _displayPickImageDialog(context!,
-          (double? maxWidth, double? maxHeight, int? quality) async {
-        try {
-          final List<XFile> pickedFileList = await _picker.pickMultiImage(
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            imageQuality: quality,
-          );
-          setState(() {
-            _imageFileList = pickedFileList;
-          });
-        } catch (e) {
-          setState(() {
-            _pickImageError = e;
-          });
-        }
-      });
-    } else {
-      await _displayPickImageDialog(context!,
-          (double? maxWidth, double? maxHeight, int? quality) async {
-        try {
-          final XFile? pickedFile = await _picker.pickImage(
-            source: source,
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            imageQuality: quality,
-          );
-          setState(() {
-            _setImageFileListFromFile(pickedFile);
-          });
-        } catch (e) {
-          setState(() {
-            _pickImageError = e;
-          });
-        }
-      });
+    if (context.mounted) {
+      if (isVideo) {
+        final XFile? file = await _picker.pickVideo(
+            source: source, maxDuration: const Duration(seconds: 10));
+        await _playVideo(file);
+      } else if (isMultiImage) {
+        await _displayPickImageDialog(context,
+            (double? maxWidth, double? maxHeight, int? quality) async {
+          try {
+            final List<XFile> pickedFileList = await _picker.pickMultiImage(
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+              imageQuality: quality,
+            );
+            setState(() {
+              _imageFileList = pickedFileList;
+            });
+          } catch (e) {
+            setState(() {
+              _pickImageError = e;
+            });
+          }
+        });
+      } else {
+        await _displayPickImageDialog(context,
+            (double? maxWidth, double? maxHeight, int? quality) async {
+          try {
+            final XFile? pickedFile = await _picker.pickImage(
+              source: source,
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+              imageQuality: quality,
+            );
+            setState(() {
+              _setImageFileListFromFile(pickedFile);
+            });
+          } catch (e) {
+            setState(() {
+              _pickImageError = e;
+            });
+          }
+        });
+      }
     }
   }
 
@@ -184,12 +186,18 @@ class _MyHomePageState extends State<MyHomePage> {
           key: UniqueKey(),
           itemBuilder: (BuildContext context, int index) {
             // Why network for web?
-            // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
+            // See https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
             return Semantics(
               label: 'image_picker_example_picked_image',
               child: kIsWeb
                   ? Image.network(_imageFileList![index].path)
-                  : Image.file(File(_imageFileList![index].path)),
+                  : Image.file(
+                      File(_imageFileList![index].path),
+                      errorBuilder: (BuildContext context, Object error,
+                              StackTrace? stackTrace) =>
+                          const Center(
+                              child: Text('This image type is not supported')),
+                    ),
             );
           },
           itemCount: _imageFileList!.length,
@@ -326,7 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.red,
               onPressed: () {
                 isVideo = true;
-                _onImageButtonPressed(ImageSource.gallery);
+                _onImageButtonPressed(ImageSource.gallery, context: context);
               },
               heroTag: 'video0',
               tooltip: 'Pick Video from gallery',
@@ -339,7 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.red,
               onPressed: () {
                 isVideo = true;
-                _onImageButtonPressed(ImageSource.camera);
+                _onImageButtonPressed(ImageSource.camera, context: context);
               },
               heroTag: 'video1',
               tooltip: 'Take a Video',

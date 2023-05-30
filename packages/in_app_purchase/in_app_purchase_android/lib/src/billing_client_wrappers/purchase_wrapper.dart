@@ -6,8 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'billing_client_wrapper.dart';
-import 'sku_details_wrapper.dart';
+import '../../billing_client_wrappers.dart';
 
 // WARNING: Changes to `@JsonSerializable` classes need to be reflected in the
 // below generated file. Run `flutter packages pub run build_runner watch` to
@@ -33,8 +32,7 @@ class PurchaseWrapper {
     required this.purchaseTime,
     required this.purchaseToken,
     required this.signature,
-    @Deprecated('Use skus instead') String? sku,
-    required this.skus,
+    required this.products,
     required this.isAutoRenewing,
     required this.originalJson,
     this.developerPayload,
@@ -42,7 +40,7 @@ class PurchaseWrapper {
     required this.purchaseState,
     this.obfuscatedAccountId,
     this.obfuscatedProfileId,
-  }) : _sku = sku;
+  });
 
   /// Factory for creating a [PurchaseWrapper] from a [Map] with the purchase details.
   factory PurchaseWrapper.fromJson(Map<String, dynamic> map) =>
@@ -62,7 +60,7 @@ class PurchaseWrapper {
         other.purchaseTime == purchaseTime &&
         other.purchaseToken == purchaseToken &&
         other.signature == signature &&
-        other.sku == sku &&
+        listEquals(other.products, products) &&
         other.isAutoRenewing == isAutoRenewing &&
         other.originalJson == originalJson &&
         other.isAcknowledged == isAcknowledged &&
@@ -76,7 +74,7 @@ class PurchaseWrapper {
       purchaseTime,
       purchaseToken,
       signature,
-      sku,
+      products.hashCode,
       isAutoRenewing,
       originalJson,
       isAcknowledged,
@@ -95,7 +93,7 @@ class PurchaseWrapper {
   @JsonKey(defaultValue: 0)
   final int purchaseTime;
 
-  /// A unique ID for a given [SkuDetailsWrapper], user, and purchase.
+  /// A unique ID for a given [ProductDetailsWrapper], user, and purchase.
   @JsonKey(defaultValue: '')
   final String purchaseToken;
 
@@ -104,23 +102,17 @@ class PurchaseWrapper {
   @JsonKey(defaultValue: '')
   final String signature;
 
-  /// The product ID of this purchase.
-  @Deprecated('Use skus instead')
-  @JsonKey(ignore: true)
-  String get sku => _sku ?? (skus.isNotEmpty ? skus.first : '');
-  final String? _sku;
-
   /// The product IDs of this purchase.
   @JsonKey(defaultValue: <String>[])
-  final List<String> skus;
+  final List<String> products;
 
   /// True for subscriptions that renew automatically. Does not apply to
-  /// [SkuType.inapp] products.
+  /// [ProductType.inapp] products.
   ///
-  /// For [SkuType.subs] this means that the subscription is canceled when it is
+  /// For [ProductType.subs] this means that the subscription is canceled when it is
   /// false.
   ///
-  /// The value is `false` for [SkuType.inapp] products.
+  /// The value is `false` for [ProductType.inapp] products.
   final bool isAutoRenewing;
 
   /// Details about this purchase, in JSON.
@@ -185,11 +177,10 @@ class PurchaseHistoryRecordWrapper {
     required this.purchaseTime,
     required this.purchaseToken,
     required this.signature,
-    @Deprecated('Use skus instead') String? sku,
-    required this.skus,
+    required this.products,
     required this.originalJson,
     required this.developerPayload,
-  }) : _sku = sku;
+  });
 
   /// Factory for creating a [PurchaseHistoryRecordWrapper] from a [Map] with the record details.
   factory PurchaseHistoryRecordWrapper.fromJson(Map<String, dynamic> map) =>
@@ -199,7 +190,7 @@ class PurchaseHistoryRecordWrapper {
   @JsonKey(defaultValue: 0)
   final int purchaseTime;
 
-  /// A unique ID for a given [SkuDetailsWrapper], user, and purchase.
+  /// A unique ID for a given [ProductDetailsWrapper], user, and purchase.
   @JsonKey(defaultValue: '')
   final String purchaseToken;
 
@@ -209,15 +200,8 @@ class PurchaseHistoryRecordWrapper {
   final String signature;
 
   /// The product ID of this purchase.
-  @Deprecated('Use skus instead')
-  @JsonKey(ignore: true)
-  String get sku => _sku ?? (skus.isNotEmpty ? skus.first : '');
-
-  final String? _sku;
-
-  /// The product ID of this purchase.
   @JsonKey(defaultValue: <String>[])
-  final List<String> skus;
+  final List<String> products;
 
   /// Details about this purchase, in JSON.
   ///
@@ -245,14 +229,20 @@ class PurchaseHistoryRecordWrapper {
         other.purchaseTime == purchaseTime &&
         other.purchaseToken == purchaseToken &&
         other.signature == signature &&
-        other.sku == sku &&
+        listEquals(other.products, products) &&
         other.originalJson == originalJson &&
         other.developerPayload == developerPayload;
   }
 
   @override
-  int get hashCode => Object.hash(purchaseTime, purchaseToken, signature, sku,
-      originalJson, developerPayload);
+  int get hashCode => Object.hash(
+        purchaseTime,
+        purchaseToken,
+        signature,
+        products.hashCode,
+        originalJson,
+        developerPayload,
+      );
 }
 
 /// A data struct representing the result of a transaction.
@@ -265,7 +255,7 @@ class PurchaseHistoryRecordWrapper {
 @JsonSerializable()
 @BillingResponseConverter()
 @immutable
-class PurchasesResultWrapper {
+class PurchasesResultWrapper implements HasBillingResponse {
   /// Creates a [PurchasesResultWrapper] with the given purchase result details.
   const PurchasesResultWrapper(
       {required this.responseCode,
@@ -300,6 +290,7 @@ class PurchasesResultWrapper {
   ///
   /// This can represent either the status of the "query purchase history" half
   /// of the operation and the "user made purchases" transaction itself.
+  @override
   final BillingResponse responseCode;
 
   /// The list of successful purchases made in this transaction.
@@ -316,7 +307,7 @@ class PurchasesResultWrapper {
 @JsonSerializable()
 @BillingResponseConverter()
 @immutable
-class PurchasesHistoryResult {
+class PurchasesHistoryResult implements HasBillingResponse {
   /// Creates a [PurchasesHistoryResult] with the provided history.
   const PurchasesHistoryResult(
       {required this.billingResult, required this.purchaseHistoryRecordList});
@@ -324,6 +315,9 @@ class PurchasesHistoryResult {
   /// Factory for creating a [PurchasesHistoryResult] from a [Map] with the history result details.
   factory PurchasesHistoryResult.fromJson(Map<String, dynamic> map) =>
       _$PurchasesHistoryResultFromJson(map);
+
+  @override
+  BillingResponse get responseCode => billingResult.responseCode;
 
   @override
   bool operator ==(Object other) {

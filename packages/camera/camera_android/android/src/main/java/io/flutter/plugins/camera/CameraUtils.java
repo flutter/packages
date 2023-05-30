@@ -10,6 +10,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +92,8 @@ public final class CameraUtils {
    * @return A map of all the available cameras, with their name as their key.
    * @throws CameraAccessException when the camera could not be accessed.
    */
-  public static List<Map<String, Object>> getAvailableCameras(Activity activity)
+  @NonNull
+  public static List<Map<String, Object>> getAvailableCameras(@NonNull Activity activity)
       throws CameraAccessException {
     CameraManager cameraManager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     String[] cameraNames = cameraManager.getCameraIdList();

@@ -29,12 +29,9 @@ android {
     // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
     namespace "com.example.espresso_example"
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -48,6 +45,9 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
+    }
+    lint {
+        disable 'InvalidPackage'
     }
 }
 

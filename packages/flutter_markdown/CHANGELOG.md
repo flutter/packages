@@ -1,6 +1,9 @@
 ## NEXT
 
+* Fixes unawaited_futures violations.
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
+* Replace `describeEnum` with the `name` getter.
 
 ## 0.6.14
 

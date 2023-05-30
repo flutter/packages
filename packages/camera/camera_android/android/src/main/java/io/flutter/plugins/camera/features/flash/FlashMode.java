@@ -4,6 +4,9 @@
 
 package io.flutter.plugins.camera.features.flash;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 // Mirrors flash_mode.dart
 public enum FlashMode {
   off("off"),
@@ -26,7 +29,8 @@ public enum FlashMode {
    * @param modeStr String value to convert into an {@see FlashMode} enum value.
    * @return Matching {@see FlashMode} enum value, or null if no match is found.
    */
-  public static FlashMode getValueForString(String modeStr) {
+  @Nullable
+  public static FlashMode getValueForString(@NonNull String modeStr) {
     for (FlashMode value : values()) {
       if (value.strValue.equals(modeStr)) return value;
     }

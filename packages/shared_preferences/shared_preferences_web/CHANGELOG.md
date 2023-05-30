@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.1.0
+
+* Adds `getAllWithPrefix` and `clearWithPrefix` methods.
+
 ## 2.0.6
 
 * Clarifies explanation of endorsement in README.

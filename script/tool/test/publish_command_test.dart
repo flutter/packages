@@ -14,7 +14,6 @@ import 'package:flutter_plugin_tools/src/publish_command.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'common/package_command_test.mocks.dart';
@@ -22,11 +21,11 @@ import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  final String flutterCommand = getFlutterCommand(const LocalPlatform());
-
+  late MockPlatform platform;
   late Directory packagesDir;
   late MockGitDir gitDir;
   late TestProcessRunner processRunner;
+  late PublishCommand command;
   late CommandRunner<void> commandRunner;
   late MockStdin mockStdin;
   late FileSystem fileSystem;
@@ -34,13 +33,14 @@ void main() {
   late Map<String, Map<String, dynamic>> mockHttpResponses;
 
   void createMockCredentialFile() {
-    final String credentialPath = PublishCommand.getCredentialPath();
-    fileSystem.file(credentialPath)
+    fileSystem.file(command.credentialsPath)
       ..createSync(recursive: true)
       ..writeAsStringSync('some credential');
   }
 
   setUp(() async {
+    platform = MockPlatform(isLinux: true);
+    platform.environment['HOME'] = '/home';
     fileSystem = MemoryFileSystem();
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     processRunner = TestProcessRunner();
@@ -71,14 +71,15 @@ void main() {
     });
 
     mockStdin = MockStdin();
-    commandRunner = CommandRunner<void>('tester', '')
-      ..addCommand(PublishCommand(
-        packagesDir,
-        processRunner: processRunner,
-        stdinput: mockStdin,
-        gitDir: gitDir,
-        httpClient: mockClient,
-      ));
+    command = PublishCommand(
+      packagesDir,
+      platform: platform,
+      processRunner: processRunner,
+      stdinput: mockStdin,
+      gitDir: gitDir,
+      httpClient: mockClient,
+    );
+    commandRunner = CommandRunner<void>('tester', '')..addCommand(command);
   });
 
   group('Initial validation', () {
@@ -86,8 +87,10 @@ void main() {
       final RepositoryPackage plugin =
           createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable['git-status'] = <io.Process>[
-        MockProcess(stdout: '?? ${plugin.directory.childFile('tmp').path}\n')
+      processRunner.mockProcessesForExecutable['git-status'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
+            stdout: '?? ${plugin.directory.childFile('tmp').path}\n'))
       ];
 
       Error? commandError;
@@ -116,8 +119,9 @@ void main() {
     test("fails immediately if the remote doesn't exist", () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable['git-remote'] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['git-remote'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;
@@ -142,16 +146,18 @@ void main() {
       createFakePlugin('plugin1', packagesDir, examples: <String>[]);
       createFakePlugin('plugin2', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] = <io.Process>[
-        MockProcess(
-            stdout: 'Foo',
-            stderr: 'Bar',
-            stdoutEncoding: utf8,
-            stderrEncoding: utf8), // pub publish for plugin1
-        MockProcess(
-            stdout: 'Baz',
-            stdoutEncoding: utf8,
-            stderrEncoding: utf8), // pub publish for plugin1
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(
+                stdout: 'Foo',
+                stderr: 'Bar',
+                stdoutEncoding: utf8,
+                stderrEncoding: utf8),
+            <String>['pub', 'publish']), // publish for plugin1
+        FakeProcessInfo(
+            MockProcess(
+                stdout: 'Baz', stdoutEncoding: utf8, stderrEncoding: utf8),
+            <String>['pub', 'publish']), // publish for plugin2
       ];
 
       final List<String> output = await runCapturingPrint(
@@ -196,7 +202,7 @@ void main() {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              flutterCommand,
+              'flutter',
               const <String>['pub', 'publish', '--dry-run', '--server=bar'],
               plugin.path)));
     });
@@ -219,7 +225,7 @@ void main() {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              flutterCommand,
+              'flutter',
               const <String>['pub', 'publish', '--server=bar', '--force'],
               plugin.path)));
     });
@@ -243,21 +249,40 @@ void main() {
           processRunner.recordedCalls,
           containsAllInOrder(<ProcessCall>[
             ProcessCall(
-                flutterCommand,
+                'flutter',
                 const <String>['pub', 'publish', '--server=bar', '--force'],
                 plugin1.path),
             ProcessCall(
-                flutterCommand,
+                'flutter',
                 const <String>['pub', 'publish', '--server=bar', '--force'],
                 plugin2.path),
           ]));
     });
 
+    test('creates credential file from envirnoment variable if necessary',
+        () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+      const String credentials = 'some credential';
+      platform.environment['PUB_CREDENTIALS'] = credentials;
+
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+        '--skip-confirmation',
+        '--pub-publish-flags',
+        '--server=bar'
+      ]);
+
+      final File credentialFile = fileSystem.file(command.credentialsPath);
+      expect(credentialFile.existsSync(), true);
+      expect(credentialFile.readAsStringSync(), credentials);
+    });
+
     test('throws if pub publish fails', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] = <io.Process>[
-        MockProcess(exitCode: 128) // pub publish
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 128), <String>['pub', 'publish'])
       ];
 
       Error? commandError;
@@ -341,8 +366,8 @@ void main() {
     test('only if publishing succeeded', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] = <io.Process>[
-        MockProcess(exitCode: 128) // pub publish
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 128), <String>['pub', 'publish']),
       ];
 
       Error? commandError;
@@ -483,10 +508,10 @@ void main() {
         'plugin2',
         packagesDir.childDirectory('plugin2'),
       );
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
       mockStdin.readLineOutput = 'y';
 
@@ -541,13 +566,13 @@ void main() {
 
       // Git results for plugin0 having been released already, and plugin1 and
       // plugin2 being new.
-      processRunner.mockProcessesForExecutable['git-tag'] = <io.Process>[
-        MockProcess(stdout: 'plugin0-v0.0.1\n')
+      processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'plugin0-v0.0.1\n'))
       ];
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
 
       mockStdin.readLineOutput = 'y';
@@ -589,10 +614,10 @@ void main() {
       final RepositoryPackage plugin2 =
           createFakePlugin('plugin2', packagesDir.childDirectory('plugin2'));
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
       mockStdin.readLineOutput = 'y';
 
@@ -642,10 +667,10 @@ void main() {
           'plugin2', packagesDir.childDirectory('plugin2'),
           version: '0.0.2');
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
 
       mockStdin.readLineOutput = 'y';
@@ -691,10 +716,10 @@ void main() {
           createFakePlugin('plugin2', packagesDir.childDirectory('plugin2'));
       plugin2.directory.deleteSync(recursive: true);
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
 
       mockStdin.readLineOutput = 'y';
@@ -737,15 +762,15 @@ void main() {
           'plugin2', packagesDir.childDirectory('plugin2'),
           version: '0.0.2');
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
-      processRunner.mockProcessesForExecutable['git-tag'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: 'plugin1-v0.0.2\n'
-                'plugin2-v0.0.2\n')
+                'plugin2-v0.0.2\n'))
       ];
 
       final List<String> output = await runCapturingPrint(commandRunner,
@@ -787,10 +812,10 @@ void main() {
           'plugin2', packagesDir.childDirectory('plugin2'),
           version: '0.0.2');
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n')
+                '${plugin2.pubspecFile.path}\n'))
       ];
 
       Error? commandError;
@@ -823,10 +848,10 @@ void main() {
       final RepositoryPackage plugin2 =
           createFakePlugin('plugin2', packagesDir.childDirectory('plugin2'));
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(
             stdout: '${plugin1.libDirectory.childFile('plugin1.dart').path}\n'
-                '${plugin2.libDirectory.childFile('plugin2.dart').path}\n')
+                '${plugin2.libDirectory.childFile('plugin2.dart').path}\n'))
       ];
 
       final List<String> output = await runCapturingPrint(commandRunner,
@@ -847,8 +872,9 @@ void main() {
 
       final RepositoryPackage flutterPluginTools =
           createFakePlugin('flutter_plugin_tools', packagesDir);
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(stdout: flutterPluginTools.pubspecFile.path)
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(stdout: flutterPluginTools.pubspecFile.path))
       ];
 
       final List<String> output = await runCapturingPrint(commandRunner,
@@ -871,6 +897,44 @@ void main() {
           isNot(contains('git-push')));
     });
   });
+
+  group('credential location', () {
+    test('Linux with XDG', () async {
+      platform = MockPlatform(isLinux: true);
+      platform.environment['XDG_CONFIG_HOME'] = '/xdghome/config';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(
+          command.credentialsPath, '/xdghome/config/dart/pub-credentials.json');
+    });
+
+    test('Linux without XDG', () async {
+      platform = MockPlatform(isLinux: true);
+      platform.environment['HOME'] = '/home';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(
+          command.credentialsPath, '/home/.config/dart/pub-credentials.json');
+    });
+
+    test('macOS', () async {
+      platform = MockPlatform(isMacOS: true);
+      platform.environment['HOME'] = '/Users/someuser';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(command.credentialsPath,
+          '/Users/someuser/Library/Application Support/dart/pub-credentials.json');
+    });
+
+    test('Windows', () async {
+      platform = MockPlatform(isWindows: true);
+      platform.environment['APPDATA'] = r'C:\Users\SomeUser\AppData';
+      command = PublishCommand(packagesDir, platform: platform);
+
+      expect(command.credentialsPath,
+          r'C:\Users\SomeUser\AppData\dart\pub-credentials.json');
+    });
+  });
 }
 
 /// An extension of [RecordingProcessRunner] that stores 'flutter pub publish'
@@ -884,7 +948,7 @@ class TestProcessRunner extends RecordingProcessRunner {
       {Directory? workingDirectory}) async {
     final io.Process process =
         await super.start(executable, args, workingDirectory: workingDirectory);
-    if (executable == getFlutterCommand(const LocalPlatform()) &&
+    if (executable == 'flutter' &&
         args.isNotEmpty &&
         args[0] == 'pub' &&
         args[1] == 'publish') {

@@ -21,6 +21,8 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
   @Deprecated('Use `SharedPreferencesStorePlatform.instance` instead.')
   static SharedPreferencesLinux instance = SharedPreferencesLinux();
 
+  static const String _defaultPrefix = 'flutter.';
+
   /// Registers the Linux implementation.
   static void registerWith() {
     SharedPreferencesStorePlatform.instance = SharedPreferencesLinux();
@@ -46,13 +48,8 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
     return fs.file(path.join(directory, 'shared_preferences.json'));
   }
 
-  /// Gets the preferences from the stored file. Once read, the preferences are
-  /// maintained in memory.
-  Future<Map<String, Object>> _readPreferences() async {
-    if (_cachedPreferences != null) {
-      return _cachedPreferences!;
-    }
-
+  /// Gets the preferences from the stored file and saves them in cache.
+  Future<Map<String, Object>> _reload() async {
     Map<String, Object> preferences = <String, Object>{};
     final File? localDataFile = await _getLocalDataFile();
     if (localDataFile != null && localDataFile.existsSync()) {
@@ -66,6 +63,12 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
     }
     _cachedPreferences = preferences;
     return preferences;
+  }
+
+  /// Checks for cached preferences and returns them or loads preferences from
+  /// file and returns and caches them.
+  Future<Map<String, Object>> _readPreferences() async {
+    return _cachedPreferences ?? await _reload();
   }
 
   /// Writes the cached preferences to disk. Returns [true] if the operation
@@ -91,14 +94,27 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
+    return clearWithPrefix(_defaultPrefix);
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
     final Map<String, Object> preferences = await _readPreferences();
-    preferences.clear();
+    preferences.removeWhere((String key, _) => key.startsWith(prefix));
     return _writePreferences(preferences);
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    return _readPreferences();
+    return getAllWithPrefix(_defaultPrefix);
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    final Map<String, Object> withPrefix =
+        Map<String, Object>.from(await _readPreferences());
+    withPrefix.removeWhere((String key, _) => !key.startsWith(prefix));
+    return withPrefix;
   }
 
   @override

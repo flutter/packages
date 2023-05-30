@@ -5,6 +5,7 @@
 package io.flutter.plugins.inapppurchase;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
 import com.android.billingclient.api.BillingClient;
 import io.flutter.plugin.common.MethodChannel;
 
@@ -12,7 +13,8 @@ import io.flutter.plugin.common.MethodChannel;
 final class BillingClientFactoryImpl implements BillingClientFactory {
 
   @Override
-  public BillingClient createBillingClient(Context context, MethodChannel channel) {
+  public BillingClient createBillingClient(
+      @NonNull Context context, @NonNull MethodChannel channel) {
     BillingClient.Builder builder = BillingClient.newBuilder(context).enablePendingPurchases();
 
     return builder.setListener(new PluginPurchaseListener(channel)).build();

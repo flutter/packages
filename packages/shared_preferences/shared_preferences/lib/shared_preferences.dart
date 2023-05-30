@@ -14,11 +14,45 @@ import 'package:shared_preferences_platform_interface/shared_preferences_platfor
 class SharedPreferences {
   SharedPreferences._(this._preferenceCache);
 
-  static const String _prefix = 'flutter.';
+  static String _prefix = 'flutter.';
+
+  static bool _prefixHasBeenChanged = false;
+
   static Completer<SharedPreferences>? _completer;
 
   static SharedPreferencesStorePlatform get _store =>
       SharedPreferencesStorePlatform.instance;
+
+  /// Sets the prefix that is attached to all keys for all shared preferences.
+  ///
+  /// This changes the inputs when adding data to preferences as well as
+  /// setting the filter that determines what data will be returned
+  /// from the `getInstance` method.
+  ///
+  /// By default, the prefix is 'flutter.', which is compatible with the
+  /// previous behavior of this plugin. To use preferences with no prefix,
+  /// set [prefix] to ''.
+  ///
+  /// No migration of existing preferences is performed by this method.
+  /// If you set a different prefix, and have previously stored preferences,
+  /// you will need to handle any migration yourself.
+  ///
+  /// This cannot be called after `getInstance`.
+  static void setPrefix(String prefix) {
+    if (_completer != null) {
+      throw StateError('setPrefix cannot be called after getInstance');
+    }
+    _prefix = prefix;
+    _prefixHasBeenChanged = true;
+  }
+
+  /// Resets class's static values to allow for testing of setPrefix flow.
+  @visibleForTesting
+  static void resetStatic() {
+    _completer = null;
+    _prefix = 'flutter.';
+    _prefixHasBeenChanged = false;
+  }
 
   /// Loads and parses the [SharedPreferences] for this app from disk.
   ///
@@ -146,6 +180,21 @@ class SharedPreferences {
   /// Completes with true once the user preferences for the app has been cleared.
   Future<bool> clear() {
     _preferenceCache.clear();
+    if (_prefixHasBeenChanged) {
+      try {
+        return _store.clearWithPrefix(_prefix);
+      } catch (e) {
+        // Catching and clarifying UnimplementedError to provide a more robust message.
+        if (e is UnimplementedError) {
+          throw UnimplementedError('''
+This implementation of Shared Preferences doesn't yet support the setPrefix method.
+Either update the implementation to support setPrefix, or do not call setPrefix.
+        ''');
+        } else {
+          rethrow;
+        }
+      }
+    }
     return _store.clear();
   }
 
@@ -161,9 +210,29 @@ class SharedPreferences {
   }
 
   static Future<Map<String, Object>> _getSharedPreferencesMap() async {
-    final Map<String, Object> fromSystem = await _store.getAll();
-    assert(fromSystem != null);
-    // Strip the flutter. prefix from the returned preferences.
+    final Map<String, Object> fromSystem = <String, Object>{};
+    if (_prefixHasBeenChanged) {
+      try {
+        fromSystem.addAll(await _store.getAllWithPrefix(_prefix));
+      } catch (e) {
+        // Catching and clarifying UnimplementedError to provide a more robust message.
+        if (e is UnimplementedError) {
+          throw UnimplementedError('''
+This implementation of Shared Preferences doesn't yet support the setPrefix method.
+Either update the implementation to support setPrefix, or do not call setPrefix.
+        ''');
+        } else {
+          rethrow;
+        }
+      }
+    } else {
+      fromSystem.addAll(await _store.getAll());
+    }
+
+    if (_prefix.isEmpty) {
+      return fromSystem;
+    }
+    // Strip the prefix from the returned preferences.
     final Map<String, Object> preferencesMap = <String, Object>{};
     for (final String key in fromSystem.keys) {
       assert(key.startsWith(_prefix));

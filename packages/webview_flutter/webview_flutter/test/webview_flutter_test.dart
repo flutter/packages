@@ -30,9 +30,13 @@ void main() {
       // ignore: unnecessary_statements
       main_file.PlatformWebViewCookieManagerCreationParams;
       // ignore: unnecessary_statements
+      main_file.PlatformWebViewPermissionRequest;
+      // ignore: unnecessary_statements
       main_file.PlatformWebViewWidgetCreationParams;
       // ignore: unnecessary_statements
       main_file.ProgressCallback;
+      // ignore: unnecessary_statements
+      main_file.WebViewPermissionResourceType;
       // ignore: unnecessary_statements
       main_file.WebResourceError;
       // ignore: unnecessary_statements
@@ -41,6 +45,8 @@ void main() {
       main_file.WebViewCookie;
       // ignore: unnecessary_statements
       main_file.WebResourceErrorType;
+      // ignore: unnecessary_statements
+      main_file.UrlChange;
     });
   });
 }

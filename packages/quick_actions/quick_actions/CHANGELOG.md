@@ -1,5 +1,15 @@
-## NEXT
+## 1.0.5
 
+* Updates iOS quick action documentation in README.
+
+## 1.0.4
+
+* Removes obsolete null checks on non-nullable values.
+
+## 1.0.3
+
+* Updates iOS minimum version in README.
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 1.0.2

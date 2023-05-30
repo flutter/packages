@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:math';
 // TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
 // ignore: unnecessary_import
@@ -23,6 +24,7 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'webkit_webview_controller_test.mocks.dart';
 
 @GenerateMocks(<Type>[
+  NSUrl,
   UIScrollView,
   WKPreferences,
   WKUserContentController,
@@ -37,6 +39,7 @@ void main() {
     WebKitWebViewController createControllerWithMocks({
       MockUIScrollView? mockScrollView,
       MockWKPreferences? mockPreferences,
+      WKUIDelegate? uiDelegate,
       MockWKUserContentController? mockUserContentController,
       MockWKWebsiteDataStore? mockWebsiteDataStore,
       MockWKWebView Function(
@@ -76,6 +79,27 @@ void main() {
                     observeValue: observeValue,
                   );
             return nonNullMockWebView;
+          },
+          createUIDelegate: ({
+            void Function(
+              WKWebView webView,
+              WKWebViewConfiguration configuration,
+              WKNavigationAction navigationAction,
+            )? onCreateWebView,
+            Future<WKPermissionDecision> Function(
+              WKUIDelegate instance,
+              WKWebView webView,
+              WKSecurityOrigin origin,
+              WKFrameInfo frame,
+              WKMediaCaptureType type,
+            )? requestMediaCapturePermission,
+            InstanceManager? instanceManager,
+          }) {
+            return uiDelegate ??
+                CapturingUIDelegate(
+                  onCreateWebView: onCreateWebView,
+                  requestMediaCapturePermission: requestMediaCapturePermission,
+                );
           },
         ),
         instanceManager: instanceManager,
@@ -809,11 +833,6 @@ void main() {
           CapturingNavigationDelegate.lastCreatedDelegate,
         ),
       );
-      verify(
-        mockWebView.setUIDelegate(
-          CapturingUIDelegate.lastCreatedDelegate,
-        ),
-      );
     });
 
     test('setPlatformNavigationDelegate onProgress', () async {
@@ -875,8 +894,32 @@ void main() {
       expect(callbackProgress, 0);
     });
 
+    test('Requests to open a new window loads request in same window', () {
+      // Reset last created delegate.
+      CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate();
+
+      // Create a new WebKitWebViewController that sets
+      // CapturingUIDelegate.lastCreatedDelegate.
+      createControllerWithMocks();
+
+      final MockWKWebView mockWebView = MockWKWebView();
+      const NSUrlRequest request = NSUrlRequest(url: 'https://www.google.com');
+
+      CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
+        mockWebView,
+        WKWebViewConfiguration.detached(),
+        const WKNavigationAction(
+          request: request,
+          targetFrame: WKFrameInfo(isMainFrame: false),
+          navigationType: WKNavigationType.linkActivated,
+        ),
+      );
+
+      verify(mockWebView.loadRequest(request));
+    });
+
     test(
-        'setPlatformNavigationDelegate onProgress can be changed by the WebKitNavigationDelegage',
+        'setPlatformNavigationDelegate onProgress can be changed by the WebKitNavigationDelegate',
         () async {
       final MockWKWebView mockWebView = MockWKWebView();
 
@@ -929,6 +972,120 @@ void main() {
       expect(callbackProgress, 0);
     });
 
+    test('setPlatformNavigationDelegate onUrlChange', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      late final void Function(
+        String keyPath,
+        NSObject object,
+        Map<NSKeyValueChangeKey, Object?> change,
+      ) webViewObserveValue;
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (
+          _, {
+          void Function(
+            String keyPath,
+            NSObject object,
+            Map<NSKeyValueChangeKey, Object?> change,
+          )? observeValue,
+        }) {
+          webViewObserveValue = observeValue!;
+          return mockWebView;
+        },
+      );
+
+      verify(
+        mockWebView.addObserver(
+          mockWebView,
+          keyPath: 'URL',
+          options: <NSKeyValueObservingOptions>{
+            NSKeyValueObservingOptions.newValue,
+          },
+        ),
+      );
+
+      final WebKitNavigationDelegate navigationDelegate =
+          WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+            createUIDelegate: WKUIDelegate.detached,
+          ),
+        ),
+      );
+
+      final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
+      navigationDelegate.setOnUrlChange(
+        (UrlChange change) => urlChangeCompleter.complete(change),
+      );
+
+      await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+      final MockNSUrl mockNSUrl = MockNSUrl();
+      when(mockNSUrl.getAbsoluteString()).thenAnswer((_) {
+        return Future<String>.value('https://www.google.com');
+      });
+      webViewObserveValue(
+        'URL',
+        mockWebView,
+        <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: mockNSUrl},
+      );
+
+      final UrlChange urlChange = await urlChangeCompleter.future;
+      expect(urlChange.url, 'https://www.google.com');
+    });
+
+    test('setPlatformNavigationDelegate onUrlChange to null NSUrl', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      late final void Function(
+        String keyPath,
+        NSObject object,
+        Map<NSKeyValueChangeKey, Object?> change,
+      ) webViewObserveValue;
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (
+          _, {
+          void Function(
+            String keyPath,
+            NSObject object,
+            Map<NSKeyValueChangeKey, Object?> change,
+          )? observeValue,
+        }) {
+          webViewObserveValue = observeValue!;
+          return mockWebView;
+        },
+      );
+
+      final WebKitNavigationDelegate navigationDelegate =
+          WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+            createUIDelegate: WKUIDelegate.detached,
+          ),
+        ),
+      );
+
+      final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
+      navigationDelegate.setOnUrlChange(
+        (UrlChange change) => urlChangeCompleter.complete(change),
+      );
+
+      await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+      webViewObserveValue(
+        'URL',
+        mockWebView,
+        <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: null},
+      );
+
+      final UrlChange urlChange = await urlChangeCompleter.future;
+      expect(urlChange.url, isNull);
+    });
+
     test('webViewIdentifier', () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
@@ -946,6 +1103,40 @@ void main() {
         controller.webViewIdentifier,
         instanceManager.getIdentifier(mockWebView),
       );
+    });
+
+    test('setOnPermissionRequest', () async {
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      late final PlatformWebViewPermissionRequest permissionRequest;
+      await controller.setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) async {
+          permissionRequest = request;
+          request.grant();
+        },
+      );
+
+      final Future<WKPermissionDecision> Function(
+        WKUIDelegate instance,
+        WKWebView webView,
+        WKSecurityOrigin origin,
+        WKFrameInfo frame,
+        WKMediaCaptureType type,
+      ) onPermissionRequestCallback = CapturingUIDelegate
+          .lastCreatedDelegate.requestMediaCapturePermission!;
+
+      final WKPermissionDecision decision = await onPermissionRequestCallback(
+        CapturingUIDelegate.lastCreatedDelegate,
+        WKWebView.detached(),
+        const WKSecurityOrigin(host: '', port: 0, protocol: ''),
+        const WKFrameInfo(isMainFrame: false),
+        WKMediaCaptureType.microphone,
+      );
+
+      expect(permissionRequest.types, <WebViewPermissionResourceType>[
+        WebViewPermissionResourceType.microphone,
+      ]);
+      expect(decision, WKPermissionDecision.grant);
     });
   });
 
@@ -1004,7 +1195,11 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
 
 // Records the last created instance of itself.
 class CapturingUIDelegate extends WKUIDelegate {
-  CapturingUIDelegate({super.onCreateWebView}) : super.detached() {
+  CapturingUIDelegate({
+    super.onCreateWebView,
+    super.requestMediaCapturePermission,
+    super.instanceManager,
+  }) : super.detached() {
     lastCreatedDelegate = this;
   }
   static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();

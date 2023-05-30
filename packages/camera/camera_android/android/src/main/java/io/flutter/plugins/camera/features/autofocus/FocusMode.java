@@ -4,6 +4,9 @@
 
 package io.flutter.plugins.camera.features.autofocus;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 // Mirrors focus_mode.dart
 public enum FocusMode {
   auto("auto"),
@@ -15,7 +18,8 @@ public enum FocusMode {
     this.strValue = strValue;
   }
 
-  public static FocusMode getValueForString(String modeStr) {
+  @Nullable
+  public static FocusMode getValueForString(@NonNull String modeStr) {
     for (FocusMode value : values()) {
       if (value.strValue.equals(modeStr)) {
         return value;

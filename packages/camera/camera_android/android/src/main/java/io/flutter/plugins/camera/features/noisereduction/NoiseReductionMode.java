@@ -4,6 +4,9 @@
 
 package io.flutter.plugins.camera.features.noisereduction;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 /** Only supports fast mode for now. */
 public enum NoiseReductionMode {
   off("off"),
@@ -27,7 +30,8 @@ public enum NoiseReductionMode {
    * @param modeStr String value to convert into an {@see NoiseReductionMode} enum value.
    * @return Matching {@see NoiseReductionMode} enum value, or null if no match is found.
    */
-  public static NoiseReductionMode getValueForString(String modeStr) {
+  @Nullable
+  public static NoiseReductionMode getValueForString(@NonNull String modeStr) {
     for (NoiseReductionMode value : values()) {
       if (value.strValue.equals(modeStr)) return value;
     }

@@ -26,6 +26,8 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
     SharedPreferencesStorePlatform.instance = SharedPreferencesWindows();
   }
 
+  static const String _defaultPrefix = 'flutter.';
+
   /// File system used to store to disk. Exposed for testing only.
   @visibleForTesting
   FileSystem fs = const LocalFileSystem();
@@ -55,10 +57,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
 
   /// Gets the preferences from the stored file. Once read, the preferences are
   /// maintained in memory.
-  Future<Map<String, Object>> _readPreferences() async {
-    if (_cachedPreferences != null) {
-      return _cachedPreferences!;
-    }
+  Future<Map<String, Object>> _reload() async {
     Map<String, Object> preferences = <String, Object>{};
     final File? localDataFile = await _getLocalDataFile();
     if (localDataFile != null && localDataFile.existsSync()) {
@@ -72,6 +71,10 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
     }
     _cachedPreferences = preferences;
     return preferences;
+  }
+
+  Future<Map<String, Object>> _readPreferences() async {
+    return _cachedPreferences ?? await _reload();
   }
 
   /// Writes the cached preferences to disk. Returns [true] if the operation
@@ -97,14 +100,27 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
+    return clearWithPrefix(_defaultPrefix);
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
     final Map<String, Object> preferences = await _readPreferences();
-    preferences.clear();
+    preferences.removeWhere((String key, _) => key.startsWith(prefix));
     return _writePreferences(preferences);
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    return _readPreferences();
+    return getAllWithPrefix(_defaultPrefix);
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    final Map<String, Object> withPrefix =
+        Map<String, Object>.from(await _readPreferences());
+    withPrefix.removeWhere((String key, _) => !key.startsWith(prefix));
+    return withPrefix;
   }
 
   @override

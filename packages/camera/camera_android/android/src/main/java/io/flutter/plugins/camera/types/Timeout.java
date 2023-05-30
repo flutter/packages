@@ -5,6 +5,7 @@
 package io.flutter.plugins.camera.types;
 
 import android.os.SystemClock;
+import androidx.annotation.NonNull;
 
 /**
  * This is a simple class for managing a timeout. In the camera we generally keep two timeouts: one
@@ -30,6 +31,7 @@ public class Timeout {
    * @param timeoutMs timeout to use.
    * @return returns a new Timeout.
    */
+  @NonNull
   public static Timeout create(long timeoutMs) {
     return new Timeout(timeoutMs);
   }

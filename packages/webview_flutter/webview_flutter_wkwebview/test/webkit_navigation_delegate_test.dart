@@ -6,17 +6,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart';
 import 'package:webview_flutter_wkwebview/src/web_kit/web_kit.dart';
 import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
-import 'webkit_navigation_delegate_test.mocks.dart';
-
-@GenerateMocks(<Type>[WKWebView])
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -33,7 +28,7 @@ void main() {
     });
 
     test('setOnPageFinished', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -43,7 +38,7 @@ void main() {
       );
 
       late final String callbackUrl;
-      webKitDelgate.setOnPageFinished((String url) => callbackUrl = url);
+      webKitDelegate.setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFinishNavigation!(
         WKWebView.detached(),
@@ -54,7 +49,7 @@ void main() {
     });
 
     test('setOnPageStarted', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -64,7 +59,7 @@ void main() {
       );
 
       late final String callbackUrl;
-      webKitDelgate.setOnPageStarted((String url) => callbackUrl = url);
+      webKitDelegate.setOnPageStarted((String url) => callbackUrl = url);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didStartProvisionalNavigation!(
@@ -76,7 +71,7 @@ void main() {
     });
 
     test('onWebResourceError from didFailNavigation', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -90,7 +85,7 @@ void main() {
         callbackError = error as WebKitWebResourceError;
       }
 
-      webKitDelgate.setOnWebResourceError(onWebResourceError);
+      webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
         WKWebView.detached(),
@@ -109,7 +104,7 @@ void main() {
     });
 
     test('onWebResourceError from didFailProvisionalNavigation', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -123,7 +118,7 @@ void main() {
         callbackError = error as WebKitWebResourceError;
       }
 
-      webKitDelgate.setOnWebResourceError(onWebResourceError);
+      webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didFailProvisionalNavigation!(
@@ -143,7 +138,7 @@ void main() {
     });
 
     test('onWebResourceError from webViewWebContentProcessDidTerminate', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -157,7 +152,7 @@ void main() {
         callbackError = error as WebKitWebResourceError;
       }
 
-      webKitDelgate.setOnWebResourceError(onWebResourceError);
+      webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.webViewWebContentProcessDidTerminate!(
@@ -175,7 +170,7 @@ void main() {
     });
 
     test('onNavigationRequest from decidePolicyForNavigationAction', () {
-      final WebKitNavigationDelegate webKitDelgate = WebKitNavigationDelegate(
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
@@ -191,7 +186,7 @@ void main() {
         return NavigationDecision.navigate;
       }
 
-      webKitDelgate.setOnNavigationRequest(onNavigationRequest);
+      webKitDelegate.setOnNavigationRequest(onNavigationRequest);
 
       expect(
         CapturingNavigationDelegate
@@ -208,33 +203,6 @@ void main() {
 
       expect(callbackRequest.url, 'https://www.google.com');
       expect(callbackRequest.isMainFrame, isFalse);
-    });
-
-    test('Requests to open a new window loads request in same window', () {
-      WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
-          webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
-          ),
-        ),
-      );
-
-      final MockWKWebView mockWebView = MockWKWebView();
-
-      const NSUrlRequest request = NSUrlRequest(url: 'https://www.google.com');
-
-      CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
-        mockWebView,
-        WKWebViewConfiguration.detached(),
-        const WKNavigationAction(
-          request: request,
-          targetFrame: WKFrameInfo(isMainFrame: false),
-          navigationType: WKNavigationType.linkActivated,
-        ),
-      );
-
-      verify(mockWebView.loadRequest(request));
     });
   });
 }
@@ -257,7 +225,11 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
 
 // Records the last created instance of itself.
 class CapturingUIDelegate extends WKUIDelegate {
-  CapturingUIDelegate({super.onCreateWebView}) : super.detached() {
+  CapturingUIDelegate({
+    super.onCreateWebView,
+    super.requestMediaCapturePermission,
+    super.instanceManager,
+  }) : super.detached() {
     lastCreatedDelegate = this;
   }
   static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();

@@ -10,7 +10,6 @@
 # Legacy allowances, for dependencies that predate the tooling.
 # TODO(stuartmorgan): Audit these. See
 # https://github.com/flutter/flutter/issues/122713
-- jwt_decoder
 - lcov_parser
 - adaptive_dialog
 - provider

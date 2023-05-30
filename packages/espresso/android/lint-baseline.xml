@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="5" by="lint 3.5.0" client="gradle" variant="debug" version="3.5.0">
+<issues format="6" by="lint 7.4.2" type="baseline" client="gradle" dependencies="false" name="AGP (7.4.2)" variant="all" version="7.4.2">
 
     <issue
         id="DefaultLocale"
@@ -35,347 +35,6 @@
     </issue>
 
     <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(errorObject.message, this.message)"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
-            line="50"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(errorObject.data, this.data);"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
-            line="51"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    hash = hash * 31 + Objects.hashCode(message);"
-        errorLine2="                               ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
-            line="60"
-            column="32"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    hash = hash * 31 + Objects.hashCode(data);"
-        errorLine2="                               ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
-            line="61"
-            column="32"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="        return Objects.equals(isolate.id, this.id)"
-        errorLine2="                       ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
-            line="114"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="            &amp;&amp; Objects.equals(isolate.runnable, this.runnable)"
-        errorLine2="                       ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
-            line="115"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="            &amp;&amp; Objects.equals(isolate.extensionRpcList, this.extensionRpcList);"
-        errorLine2="                       ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
-            line="116"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hash`"
-        errorLine1="      return Objects.hash(id, runnable, extensionRpcList);"
-        errorLine2="                     ~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
-            line="124"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="        return Objects.equals(this.name, widgetProperty.name)"
-        errorLine2="                       ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
-            line="178"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="            &amp;&amp; Objects.equals(this.value, widgetProperty.value)"
-        errorLine2="                       ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
-            line="179"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="            &amp;&amp; Objects.equals(this.description, widgetProperty.description);"
-        errorLine2="                       ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
-            line="180"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hash`"
-        errorLine1="      return Objects.hash(name, value, description);"
-        errorLine2="                     ~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
-            line="186"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="      return Objects.equals(objRequest.id, this.id)"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
-            line="136"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(objRequest.method, this.method)"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
-            line="137"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(objRequest.params, this.params);"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
-            line="138"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    int hash = Objects.hashCode(id);"
-        errorLine2="                       ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
-            line="146"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    hash = hash * 31 + Objects.hashCode(method);"
-        errorLine2="                               ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
-            line="147"
-            column="32"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    hash = hash * 31 + Objects.hashCode(params);"
-        errorLine2="                               ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
-            line="148"
-            column="32"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="      return Objects.equals(objResponse.id, this.id)"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
-            line="141"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(objResponse.result, this.result)"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
-            line="142"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(objResponse.error, this.error);"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
-            line="143"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    int hash = Objects.hashCode(id);"
-        errorLine2="                       ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
-            line="151"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    hash = hash * 31 + Objects.hashCode(result);"
-        errorLine2="                               ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
-            line="152"
-            column="32"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    hash = hash * 31 + Objects.hashCode(error);"
-        errorLine2="                               ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
-            line="153"
-            column="32"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="      return Objects.equals(actionId, otherAction.actionId);"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/api/SyntheticAction.java"
-            line="56"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hashCode`"
-        errorLine1="    return Objects.hashCode(actionId);"
-        errorLine2="                   ~~~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/api/SyntheticAction.java"
-            line="64"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="      return Objects.equals(widget.valueKey, this.valueKey)"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfo.java"
-            line="78"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(widget.runtimeType, this.runtimeType)"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfo.java"
-            line="79"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(widget.text, this.text)"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfo.java"
-            line="80"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#equals`"
-        errorLine1="          &amp;&amp; Objects.equals(widget.tooltip, this.tooltip);"
-        errorLine2="                     ~~~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfo.java"
-            line="81"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 19 (current min is 16): `java.util.Objects#hash`"
-        errorLine1="    return Objects.hash(valueKey, runtimeType, text, tooltip);"
-        errorLine2="                   ~~~~">
-        <location
-            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfo.java"
-            line="89"
-            column="20"/>
-    </issue>
-
-    <issue
         id="VisibleForTests"
         message="This method should only be accessed from tests or within private scope"
         errorLine1="          ((io.flutter.embedding.android.FlutterView) flutterView).getAttachedFlutterEngine();"
@@ -384,6 +43,2382 @@
             file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
             line="83"
             column="68"/>
+    </issue>
+
+    <issue
+        id="LogConditional"
+        message="The log call Log.i(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`"
+        errorLine1="    Log.i(TAG, &quot;Dart VM service protocol runs at uri: &quot; + serviceProtocolUri);"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="52"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="LogConditional"
+        message="The log call Log.d(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`"
+        errorLine1="    Log.d("
+        errorLine2="    ^">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="LogConditional"
+        message="The log call Log.d(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`"
+        errorLine1="      Log.d("
+        errorLine2="      ^">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="132"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="LogConditional"
+        message="The log call Log.d(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`"
+        errorLine1="    Log.d("
+        errorLine2="    ^">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/WidgetCoordinatesCalculator.java"
+            line="42"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="                      &quot;Error occurred when performing the given action %s on widget matched %s&quot;,"
+        errorLine2="                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="139"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="            String.format(&quot;Flutter testing APIs not registered with Dart isolate %s.&quot;, isolateId));"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="346"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="                &quot;Error occurred in JSON-RPC response when querying isolate info for %s: %s.&quot;,"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="358"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              String.format(&quot;Flutter testing API registered with Dart isolate %s.&quot;, isolateId));"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="368"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="          String.format(&quot;Dart VM Observatory url %s is malformed.&quot;, observatoryUrl), e);"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="40"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="        Log.w(TAG, String.format(&quot;Widget info that matches %s is null.&quot;, widgetMatcher));"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="127"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="            String.format(&quot;Widget info that matches %s is null.&quot;, widgetMatcher));"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="129"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="    return String.format(Locale.ROOT, &quot;type text(%s)&quot;, stringToBeTyped);"
+        errorLine2="                                      ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterTypeTextAction.java"
+            line="145"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="        &quot;Perform a %s action on the Flutter widget matched %s.&quot;, widgetAction, widgetMatcher);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="95"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="          String.format(&quot;Not a valid Flutter view:%s&quot;, HumanReadables.describe(view)));"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/assertion/FlutterViewAssertion.java"
+            line="40"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;Error occurred during retrieving a Flutter widget&apos;s geometry info. Response&quot;"
+        errorLine2="              ^">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="40"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;Error occurred during retrieving a Flutter widget&apos;s geometry info. Response&quot;"
+        errorLine2="              ^">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="49"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;Error occurred during retrieving a Flutter widget&apos;s geometry info. Response&quot;"
+        errorLine2="              ^">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="71"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;Error occurred during retrieving a Flutter widget&apos;s geometry info. Response&quot;"
+        errorLine2="              ^">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="84"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;Error occurred during retrieving Dart VM info. Response received: %s.&quot;,"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
+            line="40"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;Error occurred during retrieving Dart VM info. Response received: %s.&quot;,"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
+            line="48"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;Error occurred during retrieving widget&apos;s diagnostics info. Response received: %s.&quot;,"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
+            line="46"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;Error occurred during retrieving widget&apos;s diagnostics info. Response received: %s.&quot;,"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
+            line="54"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="          String.format(&quot;JSON-RPC Request sent to uri %s: %s.&quot;, webSocketUri, request.toJson()));"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="79"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="        Log.d(TAG, String.format(&quot;JSON-RPC response received: %s.&quot;, response));"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="111"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="                  &quot;Received a message with empty or unknown ID: %s. Drop the message.&quot;,"
+        errorLine2="                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="120"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="      Log.w(TAG, String.format(&quot;Failed to deliver message with error: %s.&quot;, t.getMessage()));"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="141"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="              &quot;The widget diagnostics info must contain the runtime type of the widget. Illegal&quot;"
+        errorLine2="              ^">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/WidgetInfoFactory.java"
+            line="58"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="StringFormatTrivial"
+        message="This formatting string is trivial. Rather than using `String.format` to create your String, it will be more performant to concatenate your arguments with `+`. "
+        errorLine1="                &quot;Unknown widget type: %s. Widget diagnostics info: %s.&quot;,"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/WidgetInfoFactory.java"
+            line="86"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `DartVmService` requires synthetic accessor"
+        errorLine1="              TAG,"
+        errorLine2="              ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="330"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `DartVmService` requires synthetic accessor"
+        errorLine1="              TAG,"
+        errorLine2="              ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="336"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `DartVmService` requires synthetic accessor"
+        errorLine1="            TAG,"
+        errorLine2="            ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="356"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `DartVmService` requires synthetic accessor"
+        errorLine1="              TAG,"
+        errorLine2="              ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="367"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `WidgetInteraction` requires synthetic accessor"
+        errorLine1="    return new WidgetInteraction(isFlutterView(), widgetMatcher);"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="61"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `EspressoFlutter` requires synthetic accessor"
+        errorLine1="        Log.w(TAG, String.format(&quot;Widget info that matches %s is null.&quot;, widgetMatcher));"
+        errorLine2="              ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="127"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `idGenerator` of class `EspressoFlutter` requires synthetic accessor"
+        errorLine1="              widgetMatcher, flutterAction, okHttpClient, idGenerator, taskExecutor);"
+        errorLine2="                                                          ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="145"
+            column="59"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `okHttpClient` of class `EspressoFlutter` requires synthetic accessor"
+        errorLine1="              widgetMatcher, flutterAction, okHttpClient, idGenerator, taskExecutor);"
+        errorLine2="                                            ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="145"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `taskExecutor` of class `EspressoFlutter` requires synthetic accessor"
+        errorLine1="              widgetMatcher, flutterAction, okHttpClient, idGenerator, taskExecutor);"
+        errorLine2="                                                                       ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="145"
+            column="72"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `MatchesWidgetAssertion` requires synthetic accessor"
+        errorLine1="    return new MatchesWidgetAssertion(checkNotNull(widgetMatcher, &quot;Matcher cannot be null.&quot;));"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/assertion/FlutterAssertions.java"
+            line="24"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `IsFlutterViewMatcher` requires synthetic accessor"
+        errorLine1="    return new IsFlutterViewMatcher();"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/FlutterMatchers.java"
+            line="24"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `resultFuture` of class `FlutterViewAction` requires synthetic accessor"
+        errorLine1="              resultFuture.set(actionResultFuture.get());"
+        errorLine2="              ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="154"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `resultFuture` of class `FlutterViewAction` requires synthetic accessor"
+        errorLine1="              resultFuture.setException(e);"
+        errorLine2="              ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="156"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `dx` of class `Coordinates` requires synthetic accessor"
+        errorLine1="      return response.dx;"
+        errorLine2="                      ~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="75"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `dy` of class `Coordinates` requires synthetic accessor"
+        errorLine1="      return response.dy;"
+        errorLine2="                      ~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="88"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `GetOffsetResponse` requires synthetic accessor"
+        errorLine1="      GetOffsetResponse response = new GetOffsetResponse();"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="133"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `isError` of class `GetOffsetResponse` requires synthetic accessor"
+        errorLine1="      response.isError = this.isError;"
+        errorLine2="               ~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="134"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `response` of class `GetOffsetResponse` requires synthetic accessor"
+        errorLine1="      response.response = this.coordinate;"
+        errorLine2="               ~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="135"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `type` of class `GetOffsetResponse` requires synthetic accessor"
+        errorLine1="      response.type = checkNotNull(type).toString();"
+        errorLine2="               ~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetResponse.java"
+            line="136"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `runtimeType` of class `DiagnosticNodeInfo` requires synthetic accessor"
+        errorLine1="      return widgetInfo.runtimeType;"
+        errorLine2="                        ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
+            line="71"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `description` of class `DiagnosticNodeInfo` requires synthetic accessor"
+        errorLine1="    return widgetInfo.description;"
+        errorLine2="                      ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
+            line="98"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `hasChildren` of class `DiagnosticNodeInfo` requires synthetic accessor"
+        errorLine1="    return widgetInfo.hasChildren;"
+        errorLine2="                      ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
+            line="110"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `GetWidgetDiagnosticsResponse` requires synthetic accessor"
+        errorLine1="        Log.w(TAG, &quot;Widget property list is null.&quot;);"
+        errorLine2="              ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetWidgetDiagnosticsResponse.java"
+            line="132"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` member of class `WebSocketListenerImpl` requires synthetic accessor"
+        errorLine1="    WebSocketListener webSocketListener = new WebSocketListenerImpl();"
+        errorLine2="                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="53"
+            column="43"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `JsonRpcClient` requires synthetic accessor"
+        errorLine1="      if (Log.isLoggable(TAG, Log.DEBUG)) {"
+        errorLine2="                         ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="110"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `JsonRpcClient` requires synthetic accessor"
+        errorLine1="        Log.d(TAG, String.format(&quot;JSON-RPC response received: %s.&quot;, response));"
+        errorLine2="              ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="111"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `responseFutures` of class `JsonRpcClient` requires synthetic accessor"
+        errorLine1="      synchronized (responseFutures) {"
+        errorLine2="                    ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="114"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `responseFutures` of class `JsonRpcClient` requires synthetic accessor"
+        errorLine1="            || !responseFutures.containsKey(responseObj.getId())) {"
+        errorLine2="                ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="116"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `JsonRpcClient` requires synthetic accessor"
+        errorLine1="              TAG,"
+        errorLine2="              ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="118"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `responseFutures` of class `JsonRpcClient` requires synthetic accessor"
+        errorLine1="            responseFutures.remove(responseObj.getId());"
+        errorLine2="            ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="125"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `JsonRpcClient` requires synthetic accessor"
+        errorLine1="          TAG,"
+        errorLine2="          ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="133"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `TAG` of class `JsonRpcClient` requires synthetic accessor"
+        errorLine1="      Log.w(TAG, String.format(&quot;Failed to deliver message with error: %s.&quot;, t.getMessage()));"
+        errorLine2="            ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="141"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` constructor of class `JsonRpcRequest` requires synthetic accessor"
+        errorLine1="      JsonRpcRequest request = new JsonRpcRequest(id, method);"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="214"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="SyntheticAccessor"
+        message="Access to `private` field `params` of class `JsonRpcRequest` requires synthetic accessor"
+        errorLine1="        request.params = this.params;"
+        errorLine2="                ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="216"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="LambdaLast"
+        message="Functional interface parameters (such as parameter 3, &quot;messageIdGenerator&quot;, in androidx.test.espresso.flutter.internal.protocol.impl.DartVmService.DartVmService) should be last to improve Kotlin interoperability; see https://kotlinlang.org/docs/reference/java-interop.html#sam-conversions"
+        errorLine1="      ExecutorService taskExecutor) {"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="90"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="LambdaLast"
+        message="Functional interface parameters (such as parameter 4, &quot;messageIdGenerator&quot;, in androidx.test.espresso.flutter.action.FlutterViewAction.FlutterViewAction) should be last to improve Kotlin interoperability; see https://kotlinlang.org/docs/reference/java-interop.html#sam-conversions"
+        errorLine1="      ExecutorService taskExecutor) {"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="79"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="LambdaLast"
+        message="Functional interface parameters (such as parameter 1, &quot;assertion&quot;, in androidx.test.espresso.flutter.assertion.FlutterViewAssertion.FlutterViewAssertion) should be last to improve Kotlin interoperability; see https://kotlinlang.org/docs/reference/java-interop.html#sam-conversions"
+        errorLine1="  public FlutterViewAssertion(WidgetAssertion assertion, WidgetInfo widgetInfo) {"
+        errorLine2="                                                         ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/assertion/FlutterViewAssertion.java"
+            line="29"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public AmbiguousWidgetMatcherException(String message) {"
+        errorLine2="                                         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/exception/AmbiguousWidgetMatcherException.java"
+            line="18"
+            column="42"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ListenableFuture&lt;Void> perform("
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/ClickAction.java"
+            line="43"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      String isolateId,"
+        errorLine2="      ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="87"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      JsonRpcClient jsonRpcClient,"
+        errorLine2="      ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="88"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      IdGenerator&lt;Integer> messageIdGenerator,"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="89"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      ExecutorService taskExecutor) {"
+        errorLine2="      ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="90"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;Void> connect() {"
+        errorLine2="         ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="116"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;Void> perform("
+        errorLine2="         ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="121"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      @Nullable final WidgetMatcher widgetMatcher, final SyntheticAction action) {"
+        errorLine2="                                                         ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="122"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;WidgetInfo> matchWidget(@Nonnull WidgetMatcher widgetMatcher) {"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="148"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;Rect> getLocalRect(@Nonnull WidgetMatcher widgetMatcher) {"
+        errorLine2="         ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="164"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;Void> waitUntilIdle() {"
+        errorLine2="         ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="207"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ListenableFuture&lt;JsonRpcResponse> getIsolateInfo() {"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="224"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ListenableFuture&lt;GetVmResponse> getVmInfo() {"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmService.java"
+            line="234"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static URI getServiceProtocolUri(String observatoryUrl) {"
+        errorLine2="                ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="29"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static URI getServiceProtocolUri(String observatoryUrl) {"
+        errorLine2="                                          ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="29"
+            column="43"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static String getDartIsolateId(View flutterView) {"
+        errorLine2="                ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="62"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static String getDartIsolateId(View flutterView) {"
+        errorLine2="                                        ~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="62"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static DartExecutor getDartExecutor(View flutterView) {"
+        errorLine2="                ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="75"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static DartExecutor getDartExecutor(View flutterView) {"
+        errorLine2="                                             ~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/DartVmServiceUtil.java"
+            line="75"
+            column="46"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Duration(long quantity, TimeUnit unit) {"
+        errorLine2="                                 ~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/common/Duration.java"
+            line="29"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public TimeUnit getUnit() {"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/common/Duration.java"
+            line="40"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Duration plus(@Nullable Duration duration) {"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/common/Duration.java"
+            line="53"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ErrorObject(int code, String message) {"
+        errorLine2="                               ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
+            line="20"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ErrorObject(int code, String message, JsonObject data) {"
+        errorLine2="                               ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
+            line="24"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ErrorObject(int code, String message, JsonObject data) {"
+        errorLine2="                                               ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
+            line="24"
+            column="48"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getMessage() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
+            line="36"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public JsonObject getData() {"
+        errorLine2="         ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/ErrorObject.java"
+            line="41"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetInteraction onFlutterWidget(@Nonnull WidgetMatcher widgetMatcher) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="60"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public WidgetInteraction perform(@Nonnull final WidgetAction... widgetActions) {"
+        errorLine2="           ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="104"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public WidgetInteraction check(@Nonnull WidgetAssertion assertion) {"
+        errorLine2="           ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/EspressoFlutter.java"
+            line="121"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/espresso/EspressoPlugin.java"
+            line="33"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  Future&lt;R> perform("
+        errorLine2="  ~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/FlutterAction.java"
+            line="25"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetAction click() {"
+        errorLine2="                ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterActions.java"
+            line="33"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetAction syntheticClick() {"
+        errorLine2="                ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterActions.java"
+            line="48"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetAction typeText(@Nonnull String stringToBeTyped) {"
+        errorLine2="                ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterActions.java"
+            line="64"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetAction scrollTo() {"
+        errorLine2="                ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterActions.java"
+            line="73"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetAssertion matches(@Nonnull Matcher&lt;WidgetInfo> widgetMatcher) {"
+        errorLine2="                ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/assertion/FlutterAssertions.java"
+            line="23"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static Matcher&lt;View> isFlutterView() {"
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/FlutterMatchers.java"
+            line="23"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetMatcher withTooltip(@Nonnull String tooltip) {"
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/FlutterMatchers.java"
+            line="32"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetMatcher withValueKey(@Nonnull String valueKey) {"
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/FlutterMatchers.java"
+            line="41"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetMatcher withType(@Nonnull String type) {"
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/FlutterMatchers.java"
+            line="55"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetMatcher withText(@Nonnull String text) {"
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/FlutterMatchers.java"
+            line="64"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static WidgetMatcher isDescendantOf("
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/FlutterMatchers.java"
+            line="74"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static Matcher&lt;WidgetInfo> isExisting() {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/FlutterMatchers.java"
+            line="86"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public FlutterProtocolException(String message) {"
+        errorLine2="                                  ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/FlutterProtocolException.java"
+            line="11"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public FlutterProtocolException(Throwable t) {"
+        errorLine2="                                  ~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/FlutterProtocolException.java"
+            line="15"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public FlutterProtocolException(String message, Throwable t) {"
+        errorLine2="                                  ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/FlutterProtocolException.java"
+            line="19"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public FlutterProtocolException(String message, Throwable t) {"
+        errorLine2="                                                  ~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/FlutterProtocolException.java"
+            line="19"
+            column="51"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;Void> perform("
+        errorLine2="         ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterScrollToAction.java"
+            line="25"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;Void> connect();"
+        errorLine2="         ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/FlutterTestingProtocol.java"
+            line="19"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  Future&lt;Void> perform(@Nullable WidgetMatcher widgetMatcher, @Nonnull SyntheticAction action);"
+        errorLine2="  ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/FlutterTestingProtocol.java"
+            line="41"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  Future&lt;WidgetInfo> matchWidget(@Nonnull WidgetMatcher widgetMatcher);"
+        errorLine2="  ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/FlutterTestingProtocol.java"
+            line="60"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  Future&lt;Rect> getLocalRect(@Nonnull WidgetMatcher widgetMatcher);"
+        errorLine2="  ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/FlutterTestingProtocol.java"
+            line="70"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  Future&lt;Void> waitUntilIdle();"
+        errorLine2="  ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/FlutterTestingProtocol.java"
+            line="73"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ListenableFuture&lt;Void> perform("
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterTypeTextAction.java"
+            line="77"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      WidgetMatcher widgetMatcher,"
+        errorLine2="      ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="75"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      FlutterAction&lt;T> widgetAction,"
+        errorLine2="      ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="76"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      OkHttpClient webSocketClient,"
+        errorLine2="      ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="77"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      IdGenerator&lt;Integer> messageIdGenerator,"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="78"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="      ExecutorService taskExecutor) {"
+        errorLine2="      ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="79"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Matcher&lt;View> getConstraints() {"
+        errorLine2="         ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="88"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getDescription() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="93"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void perform(UiController uiController, View flutterView) {"
+        errorLine2="                      ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="100"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void perform(UiController uiController, View flutterView) {"
+        errorLine2="                                                 ~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="100"
+            column="50"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public T waitUntilCompleted(long timeout, TimeUnit unit)"
+        errorLine2="                                            ~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/FlutterViewAction.java"
+            line="170"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public FlutterViewAssertion(WidgetAssertion assertion, WidgetInfo widgetInfo) {"
+        errorLine2="                              ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/assertion/FlutterViewAssertion.java"
+            line="29"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public FlutterViewAssertion(WidgetAssertion assertion, WidgetInfo widgetInfo) {"
+        errorLine2="                                                         ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/assertion/FlutterViewAssertion.java"
+            line="29"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void check(View view, NoMatchingViewException noViewFoundException) {"
+        errorLine2="                    ~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/assertion/FlutterViewAssertion.java"
+            line="35"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void check(View view, NoMatchingViewException noViewFoundException) {"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/assertion/FlutterViewAssertion.java"
+            line="35"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public static OffsetType fromString(String typeString) {"
+        errorLine2="                  ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetAction.java"
+            line="34"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public static OffsetType fromString(String typeString) {"
+        errorLine2="                                        ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetOffsetAction.java"
+            line="34"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static GetVmResponse fromJsonRpcResponse(JsonRpcResponse jsonRpcResponse) {"
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
+            line="35"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static GetVmResponse fromJsonRpcResponse(JsonRpcResponse jsonRpcResponse) {"
+        errorLine2="                                                  ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
+            line="35"
+            column="51"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Isolate getIsolate(int index) {"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/protocol/impl/GetVmResponse.java"
+            line="60"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public IdException(String message) {"
+        errorLine2="                     ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/idgenerator/IdException.java"
+            line="16"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public IdException(String message, Throwable throwable) {"
+        errorLine2="                     ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/idgenerator/IdException.java"
+            line="20"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public IdException(String message, Throwable throwable) {"
+        errorLine2="                                     ~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/idgenerator/IdException.java"
+            line="20"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public IdException(Throwable throwable) {"
+        errorLine2="                     ~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/idgenerator/IdException.java"
+            line="24"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static IdGenerator&lt;Integer> newIntegerIdGenerator(int nextValue) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/idgenerator/IdGenerators.java"
+            line="30"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static IdGenerator&lt;Integer> newIntegerIdGenerator() {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/idgenerator/IdGenerators.java"
+            line="54"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static IdGenerator&lt;String> randomUuidStringGenerator() {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/idgenerator/IdGenerators.java"
+            line="62"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public InvalidFlutterViewException(String message) {"
+        errorLine2="                                     ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/exception/InvalidFlutterViewException.java"
+            line="16"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public WidgetMatcher getAncestorMatcher() {"
+        errorLine2="         ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/IsDescendantOfMatcher.java"
+            line="47"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public WidgetMatcher getWidgetMatcher() {"
+        errorLine2="         ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/IsDescendantOfMatcher.java"
+            line="52"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  protected boolean matchesSafely(WidgetInfo widget) {"
+        errorLine2="                                  ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/IsDescendantOfMatcher.java"
+            line="62"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void describeTo(Description description) {"
+        errorLine2="                         ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/IsDescendantOfMatcher.java"
+            line="68"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  protected boolean matchesSafely(WidgetInfo widget) {"
+        errorLine2="                                  ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/IsExistingMatcher.java"
+            line="23"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void describeTo(Description description) {"
+        errorLine2="                         ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/IsExistingMatcher.java"
+            line="28"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public JsonRpcClient(OkHttpClient client, URI webSocketUri) {"
+        errorLine2="                       ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="45"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public JsonRpcClient(OkHttpClient client, URI webSocketUri) {"
+        errorLine2="                                            ~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="45"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ListenableFuture&lt;JsonRpcResponse> request(JsonRpcRequest request) {"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="74"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ListenableFuture&lt;JsonRpcResponse> request(JsonRpcRequest request) {"
+        errorLine2="                                                   ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/JsonRpcClient.java"
+            line="74"
+            column="52"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static JsonRpcRequest fromJson(String jsonString) {"
+        errorLine2="                ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="51"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static JsonRpcRequest fromJson(String jsonString) {"
+        errorLine2="                                        ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="51"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getVersion() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="86"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getId() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="95"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getMethod() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="104"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public JsonObject getParams() {"
+        errorLine2="         ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="109"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String toJson() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="118"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder(String method) {"
+        errorLine2="                   ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="172"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder setId(@Nullable String id) {"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="177"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder setMethod(String method) {"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="183"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder setMethod(String method) {"
+        errorLine2="                             ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="183"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder setParams(JsonObject params) {"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="189"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder setParams(JsonObject params) {"
+        errorLine2="                             ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="189"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder addParam(String tag, String value) {"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="195"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder addParam(String tag, String value) {"
+        errorLine2="                            ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="195"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder addParam(String tag, String value) {"
+        errorLine2="                                        ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="195"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder addParam(String tag, int value) {"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="201"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder addParam(String tag, int value) {"
+        errorLine2="                            ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="201"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder addParam(String tag, boolean value) {"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="207"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public Builder addParam(String tag, boolean value) {"
+        errorLine2="                            ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="207"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public JsonRpcRequest build() {"
+        errorLine2="           ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcRequest.java"
+            line="213"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static JsonRpcResponse fromJson(String jsonString) {"
+        errorLine2="                ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="49"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public static JsonRpcResponse fromJson(String jsonString) {"
+        errorLine2="                                         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="49"
+            column="42"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public JsonRpcResponse(String id) {"
+        errorLine2="                         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="62"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getVersion() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="72"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getId() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="77"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void setId(String id) {"
+        errorLine2="                    ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="86"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public JsonObject getResult() {"
+        errorLine2="         ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="91"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void setResult(JsonObject result) {"
+        errorLine2="                        ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="100"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public ErrorObject getError() {"
+        errorLine2="         ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="105"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void setError(ErrorObject error) {"
+        errorLine2="                       ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="114"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String toJson() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/internal/jsonrpc/message/JsonRpcResponse.java"
+            line="123"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public NoMatchingWidgetException(String message) {"
+        errorLine2="                                   ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/exception/NoMatchingWidgetException.java"
+            line="16"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  protected String actionId;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/SyntheticAction.java"
+            line="30"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;Void> perform("
+        errorLine2="         ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/SyntheticClickAction.java"
+            line="28"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;Void> perform("
+        errorLine2="         ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/WaitUntilIdleAction.java"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  Future&lt;Void> perform("
+        errorLine2="  ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/WidgetAction.java"
+            line="38"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  void check(View flutterView, WidgetInfo widgetInfo);"
+        errorLine2="             ~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/WidgetAssertion.java"
+            line="24"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  void check(View flutterView, WidgetInfo widgetInfo);"
+        errorLine2="                               ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/WidgetAssertion.java"
+            line="24"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public WidgetInfoBuilder setValueKey(@Nullable String valueKey) {"
+        errorLine2="         ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfoBuilder.java"
+            line="42"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public WidgetInfoBuilder setRuntimeType(@Nonnull String runtimeType) {"
+        errorLine2="         ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfoBuilder.java"
+            line="52"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public WidgetInfoBuilder setText(@Nullable String text) {"
+        errorLine2="         ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfoBuilder.java"
+            line="62"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public WidgetInfoBuilder setTooltip(@Nullable String tooltip) {"
+        errorLine2="         ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfoBuilder.java"
+            line="72"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public WidgetInfo build() {"
+        errorLine2="         ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/model/WidgetInfoBuilder.java"
+            line="78"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public Future&lt;WidgetInfo> perform("
+        errorLine2="         ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/action/WidgetInfoFetcher.java"
+            line="21"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  protected String matcherId;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/api/WidgetMatcher.java"
+            line="31"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getText() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTextMatcher.java"
+            line="31"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  protected boolean matchesSafely(WidgetInfo widget) {"
+        errorLine2="                                  ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTextMatcher.java"
+            line="41"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void describeTo(Description description) {"
+        errorLine2="                         ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTextMatcher.java"
+            line="46"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getTooltip() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTooltipMatcher.java"
+            line="34"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  protected boolean matchesSafely(WidgetInfo widget) {"
+        errorLine2="                                  ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTooltipMatcher.java"
+            line="44"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void describeTo(Description description) {"
+        errorLine2="                         ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTooltipMatcher.java"
+            line="49"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getType() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTypeMatcher.java"
+            line="31"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  protected boolean matchesSafely(WidgetInfo widget) {"
+        errorLine2="                                  ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTypeMatcher.java"
+            line="41"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void describeTo(Description description) {"
+        errorLine2="                         ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithTypeMatcher.java"
+            line="46"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public String getValueKey() {"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithValueKeyMatcher.java"
+            line="36"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  protected boolean matchesSafely(WidgetInfo widget) {"
+        errorLine2="                                  ~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithValueKeyMatcher.java"
+            line="46"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="  public void describeTo(Description description) {"
+        errorLine2="                         ~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/test/espresso/flutter/matcher/WithValueKeyMatcher.java"
+            line="51"
+            column="26"/>
     </issue>
 
 </issues>
