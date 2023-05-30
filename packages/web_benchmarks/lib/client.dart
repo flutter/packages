@@ -30,8 +30,6 @@ final LocalBenchmarkServerClient _client = LocalBenchmarkServerClient();
 /// When used without a server, prompts the user to select a benchmark to
 /// run next.
 Future<void> runBenchmarks(Map<String, RecorderFactory> benchmarks) async {
-  assert(benchmarks != null);
-
   // Set local benchmarks.
   _benchmarks = benchmarks;
 

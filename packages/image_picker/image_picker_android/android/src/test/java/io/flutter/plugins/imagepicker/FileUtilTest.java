@@ -5,10 +5,16 @@
 package io.flutter.plugins.imagepicker;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -66,7 +72,22 @@ public class FileUtilTest {
 
     assertTrue(bytes.length > 0);
     String imageStream = new String(bytes, UTF_8);
-    assertTrue(imageStream.equals("imageStream"));
+    assertEquals("imageStream", imageStream);
+  }
+
+  @Test
+  public void FileUtil_GetPathFromUri_securityException() throws IOException {
+    Uri uri = Uri.parse("content://dummy/dummy.png");
+
+    ContentResolver mockContentResolver = mock(ContentResolver.class);
+    when(mockContentResolver.openInputStream(any(Uri.class))).thenThrow(SecurityException.class);
+
+    Context mockContext = mock(Context.class);
+    when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
+
+    String path = fileUtils.getPathFromUri(mockContext, uri);
+
+    assertNull(path);
   }
 
   @Test

@@ -388,7 +388,6 @@ Safe to ignore if the package is deleted in this commit.
     required String tag,
     required _RemoteInfo remote,
   }) async {
-    assert(remote != null && tag != null);
     if (!getBoolArg(_dryRunFlag)) {
       final io.ProcessResult result = await (await gitDir).runCommand(
         <String>['push', remote.name, tag],
@@ -415,6 +414,7 @@ If running this command on CI, you can set the pub credential content in the $_p
 ''');
       throw ToolExit(1);
     }
+    credentialFile.createSync(recursive: true);
     credentialFile.openSync(mode: FileMode.writeOnlyAppend)
       ..writeStringSync(credential)
       ..closeSync();

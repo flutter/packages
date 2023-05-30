@@ -16,9 +16,7 @@ class LatLng {
   /// The longitude is normalized to the half-open interval from -180.0
   /// (inclusive) to +180.0 (exclusive).
   const LatLng(double latitude, double longitude)
-      : assert(latitude != null),
-        assert(longitude != null),
-        latitude =
+      : latitude =
             latitude < -90.0 ? -90.0 : (90.0 < latitude ? 90.0 : latitude),
         // Avoids normalization if possible to prevent unnecessary loss of precision
         longitude = longitude >= -180 && longitude < 180
@@ -76,9 +74,7 @@ class LatLngBounds {
   /// The latitude of the southwest corner cannot be larger than the
   /// latitude of the northeast corner.
   LatLngBounds({required this.southwest, required this.northeast})
-      : assert(southwest != null),
-        assert(northeast != null),
-        assert(southwest.latitude <= northeast.latitude);
+      : assert(southwest.latitude <= northeast.latitude);
 
   /// The southwest corner of the rectangle.
   final LatLng southwest;

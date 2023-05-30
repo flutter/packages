@@ -1,3 +1,8 @@
+## 0.3.0+5
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Bumps okhttp version to 4.11.0.
+
 ## 0.3.0+4
 
 * Fixes compatibility with AGP versions older than 4.2.
