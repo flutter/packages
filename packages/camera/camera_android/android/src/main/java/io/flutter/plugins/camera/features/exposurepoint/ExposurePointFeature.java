@@ -145,16 +145,21 @@ public class ExposurePointFeature extends CameraFeature<Point> {
    */
   @Nullable
   public MeteringRectangle[] createDefaultExposureRectangle() {
-    // Create and return your desired default exposure rectangles here
-    // Example: a single default rectangle covering the entire image
-    if (cameraBoundaries != null) {
-      int left = 0;
-      int top = 0;
-      int right = cameraBoundaries.getWidth();
-      int bottom = cameraBoundaries.getHeight();
-      return new MeteringRectangle[] {new MeteringRectangle(left, top, right, bottom, 0)};
-    } else {
-      return null;
+    try {
+      // Create and return your desired default exposure rectangles here
+      // Example: a single default rectangle covering the entire image
+      if (cameraBoundaries != null) {
+        int left = 0;
+        int top = 0;
+        int right = cameraBoundaries.getWidth();
+        int bottom = cameraBoundaries.getHeight();
+        return new MeteringRectangle[] {new MeteringRectangle(left, top, right, bottom, 0)};
+      }
+    } catch (Exception e) {
+      throw new AssertionError(
+          "Failed to create default exposure rectangle(s) for the ExposurePointFeature.");
     }
+
+    return null;
   }
 }
