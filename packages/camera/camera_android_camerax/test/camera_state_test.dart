@@ -20,10 +20,6 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('CameraState', () {
-    tearDown(() {
-      TestInstanceManagerHostApi.setup(null);
-    });
-
     test(
         'FlutterAPI create makes call to create CameraState instance with expected identifier',
         () {

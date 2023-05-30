@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates tests to mock `InstanceManager` to fix unit test flake.
+
 ## 0.5.0+4
 
 * Removes obsolete null checks on non-nullable values.

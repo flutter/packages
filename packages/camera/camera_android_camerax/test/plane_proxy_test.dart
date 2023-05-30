@@ -20,12 +20,6 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('PlaneProxy', () {
-    setUp(() {});
-
-    tearDown(() {
-      TestInstanceManagerHostApi.setup(null);
-    });
-
     test('FlutterAPI create', () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},

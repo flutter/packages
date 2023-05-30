@@ -18,8 +18,6 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ZoomState', () {
-    tearDown(() => TestInstanceManagerHostApi.setup(null));
-
     test('flutterApi create makes call to create expected ZoomState', () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
