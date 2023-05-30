@@ -259,7 +259,7 @@ class PersonScreen extends StatelessWidget {
               title: Text(
                   '${person.name} ${family.name} is ${person.age} years old'),
             ),
-            for (MapEntry<PersonDetails, String> entry
+            for (final MapEntry<PersonDetails, String> entry
                 in person.details.entries)
               ListTile(
                 title: Text(
