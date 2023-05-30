@@ -1,3 +1,9 @@
+## 3.8.0
+
+* Adds support for handling basic authentication.
+* See `PlatformNavigationDelegate.setOnReceiveHttpAuthRequest`.
+* See `PlatformWebViewController.setHttpAuthCredentials`.
+
 ## 3.7.1
 
 * Removes obsolete null checks on non-nullable values.
