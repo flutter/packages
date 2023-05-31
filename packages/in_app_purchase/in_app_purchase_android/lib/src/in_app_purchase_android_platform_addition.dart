@@ -50,10 +50,6 @@ class InAppPurchaseAndroidPlatformAddition
   /// delivered. The user won't be able to buy the same product again until the
   /// purchase of the product is consumed.
   Future<BillingResultWrapper> consumePurchase(PurchaseDetails purchase) {
-    if (purchase.verificationData == null) {
-      throw ArgumentError(
-          'consumePurchase unsuccessful. The `purchase.verificationData` is not valid');
-    }
     return _billingClientManager.runWithClient(
       (BillingClient client) =>
           client.consumeAsync(purchase.verificationData.serverVerificationData),

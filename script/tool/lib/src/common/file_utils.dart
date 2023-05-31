@@ -11,10 +11,21 @@ import 'package:file/file.dart';
 ///   childFileWithSubcomponents(rootDir, ['foo', 'bar', 'baz.txt'])
 /// creates a File representing /rootDir/foo/bar/baz.txt.
 File childFileWithSubcomponents(Directory base, List<String> components) {
-  Directory dir = base;
   final String basename = components.removeLast();
+  return childDirectoryWithSubcomponents(base, components).childFile(basename);
+}
+
+/// Returns a [Directory] created by appending everything in [components]
+/// to [base] as subdirectories.
+///
+/// Example:
+///   childFileWithSubcomponents(rootDir, ['foo', 'bar'])
+/// creates a File representing /rootDir/foo/bar/.
+Directory childDirectoryWithSubcomponents(
+    Directory base, List<String> components) {
+  Directory dir = base;
   for (final String directoryName in components) {
     dir = dir.childDirectory(directoryName);
   }
-  return dir.childFile(basename);
+  return dir;
 }

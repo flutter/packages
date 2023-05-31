@@ -54,13 +54,13 @@ void main() {
     test('waits for connection before executing the operations', () async {
       final Completer<void> calledCompleter1 = Completer<void>();
       final Completer<void> calledCompleter2 = Completer<void>();
-      manager.runWithClient((BillingClient _) async {
+      unawaited(manager.runWithClient((BillingClient _) async {
         calledCompleter1.complete();
         return const BillingResultWrapper(responseCode: BillingResponse.ok);
-      });
-      manager.runWithClientNonRetryable(
+      }));
+      unawaited(manager.runWithClientNonRetryable(
         (BillingClient _) async => calledCompleter2.complete(),
-      );
+      ));
       expect(calledCompleter1.isCompleted, equals(false));
       expect(calledCompleter1.isCompleted, equals(false));
       connectedCompleter.complete();
@@ -74,7 +74,7 @@ void main() {
       // Ensures all asynchronous connected code finishes.
       await manager.runWithClientNonRetryable((_) async {});
 
-      manager.client.callHandler(
+      await manager.client.callHandler(
         const MethodCall(onBillingServiceDisconnectedCallback,
             <String, dynamic>{'handle': 0}),
       );

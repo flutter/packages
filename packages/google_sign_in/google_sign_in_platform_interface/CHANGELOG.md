@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Clarifies `canAccessScopes` method documentation.
+
 ## 2.4.0
 
 * Introduces: `canAccessScopes` method and `userDataEvents` stream.
