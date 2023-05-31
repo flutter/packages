@@ -58,7 +58,12 @@ class GoogleMapController {
   MapConfiguration _lastMapConfiguration = const MapConfiguration();
   List<gmaps.MapTypeStyle> _lastStyles = const <gmaps.MapTypeStyle>[];
 
-  /// Configuration accessor for integration tests
+  /// Configuration accessor for the [GoogleMapsInspectorWeb].
+  ///
+  /// Returns the latest value of [MapConfiguration] set by the programmer.
+  ///
+  /// This should only be used by an inspector instance created when a test
+  /// calls [GoogleMapsPlugin.enableDebugInspection].
   MapConfiguration get configuration => _lastMapConfiguration;
 
   // Creates the 'viewType' for the _widget
