@@ -10,42 +10,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:integration_test/integration_test.dart';
 
-const LatLng _kInitialMapCenter = LatLng(0, 0);
-const double _kInitialZoomLevel = 5;
-const CameraPosition _kInitialCameraPosition =
-    CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
-
-final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
-final bool isAndroid =
-    defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
-const bool isWeb = kIsWeb;
+import 'shared.dart';
 
 /// Integration Tests that only need a standard [GoogleMapController].
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  runTests();
+}
 
-  // Repeatedly checks an asynchronous value against a test condition, waiting
-  // one frame between each check, returning the value if it passes the predicate
-  // before [maxTries] is reached.
-  //
-  // Returns null if the predicate is never satisfied.
-  //
-  // This is useful for cases where the Maps SDK has some internally
-  // asynchronous operation that we don't have visibility into (e.g., native UI
-  // animations).
-  Future<T?> waitForValueMatchingPredicate<T>(WidgetTester tester,
-      Future<T> Function() getValue, bool Function(T) predicate,
-      {int maxTries = 100}) async {
-    for (int i = 0; i < maxTries; i++) {
-      final T value = await getValue();
-      if (predicate(value)) {
-        return value;
-      }
-      await tester.pump();
-    }
-    return null;
-  }
-
+void runTests() {
   testWidgets('testInitialCenterLocationAtCenter', (WidgetTester tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 600));
 
@@ -57,7 +30,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: GoogleMap(
           key: key,
-          initialCameraPosition: _kInitialCameraPosition,
+          initialCameraPosition: kInitialCameraPosition,
           onMapCreated: (GoogleMapController controller) {
             mapControllerCompleter.complete(controller);
           },
@@ -75,7 +48,7 @@ void main() {
     await Future<void>.delayed(const Duration(seconds: 1));
 
     final ScreenCoordinate coordinate =
-        await mapController.getScreenCoordinate(_kInitialCameraPosition.target);
+        await mapController.getScreenCoordinate(kInitialCameraPosition.target);
     final Rect rect = tester.getRect(find.byKey(key));
     if (isIOS || isWeb) {
       // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
@@ -117,7 +90,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           mapControllerCompleter.complete(controller);
         },
@@ -135,7 +108,7 @@ void main() {
                 (LatLngBounds bounds) => bounds != zeroLatLngBounds) ??
             zeroLatLngBounds;
     expect(firstVisibleRegion, isNot(zeroLatLngBounds));
-    expect(firstVisibleRegion.contains(_kInitialMapCenter), isTrue);
+    expect(firstVisibleRegion.contains(kInitialMapCenter), isTrue);
 
     // Making a new `LatLngBounds` about (10, 10) distance south west to the `firstVisibleRegion`.
     // The size of the `LatLngBounds` is 10 by 10.
@@ -179,7 +152,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
@@ -202,7 +175,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
@@ -227,7 +200,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
@@ -247,7 +220,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
@@ -281,7 +254,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
@@ -296,7 +269,7 @@ void main() {
     await Future<void>.delayed(const Duration(seconds: 1));
 
     double zoom = await controller.getZoomLevel();
-    expect(zoom, _kInitialZoomLevel);
+    expect(zoom, kInitialZoomLevel);
 
     await controller.moveCamera(CameraUpdate.zoomTo(7));
     await tester.pumpAndSettle();
@@ -313,7 +286,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
@@ -344,7 +317,7 @@ void main() {
     await pumpMap(
       tester,
       GoogleMap(
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) async {
           controllerCompleter.complete(controller);
         },
@@ -356,7 +329,7 @@ void main() {
     await pumpMap(
       tester,
       GoogleMap(
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) async {
           // fail!
           fail('The map should not get recreated!');
@@ -425,7 +398,7 @@ void main() {
     await pumpMap(
       tester,
       GoogleMap(
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           controllerCompleter.complete(controller);
         },
@@ -442,25 +415,25 @@ void main() {
       skip: isAndroid || isWeb);
 }
 
-/// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
-Future<void> pumpMap(WidgetTester tester, GoogleMap map,
-    [Size size = const Size.square(200)]) async {
-  await tester.pumpWidget(wrapMap(map, size));
-  await tester.pumpAndSettle();
-}
-
-/// Wraps a [map] in a bunch of widgets so it renders in all platforms.
+/// Repeatedly checks an asynchronous value against a test condition.
 ///
-/// An optional [size] can be passed.
-Widget wrapMap(GoogleMap map, [Size size = const Size.square(200)]) {
-  return MaterialApp(
-    home: Scaffold(
-      body: Center(
-        child: SizedBox.fromSize(
-          size: size,
-          child: map,
-        ),
-      ),
-    ),
-  );
+/// This function waits one frame between each check, returning the value if it
+/// passes the predicate before [maxTries] is reached.
+///
+/// Returns null if the predicate is never satisfied.
+///
+/// This is useful for cases where the Maps SDK has some internally
+/// asynchronous operation that we don't have visibility into (e.g., native UI
+/// animations).
+Future<T?> waitForValueMatchingPredicate<T>(WidgetTester tester,
+    Future<T> Function() getValue, bool Function(T) predicate,
+    {int maxTries = 100}) async {
+  for (int i = 0; i < maxTries; i++) {
+    final T value = await getValue();
+    if (predicate(value)) {
+      return value;
+    }
+    await tester.pump();
+  }
+  return null;
 }

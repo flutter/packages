@@ -12,19 +12,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:integration_test/integration_test.dart';
 
-const LatLng _kInitialMapCenter = LatLng(0, 0);
-const double _kInitialZoomLevel = 5;
-const CameraPosition _kInitialCameraPosition =
-    CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
-
-final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS && !kIsWeb;
-final bool isAndroid =
-    defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
-const bool isWeb = kIsWeb;
+import 'shared.dart';
 
 /// Integration Tests for the Tiles feature. These also use the [GoogleMapsInspectorPlatform].
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  runTests();
+}
+
+void runTests() {
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
   final GoogleMapsInspectorPlatform inspector =
@@ -54,7 +50,7 @@ void main() {
           Directionality(
             textDirection: TextDirection.ltr,
             child: GoogleMap(
-              initialCameraPosition: _kInitialCameraPosition,
+              initialCameraPosition: kInitialCameraPosition,
               tileOverlays: <TileOverlay>{tileOverlay1, tileOverlay2},
               onMapCreated: (GoogleMapController controller) {
                 mapIdCompleter.complete(controller.mapId);
@@ -108,7 +104,7 @@ void main() {
             textDirection: TextDirection.ltr,
             child: GoogleMap(
               key: key,
-              initialCameraPosition: _kInitialCameraPosition,
+              initialCameraPosition: kInitialCameraPosition,
               tileOverlays: <TileOverlay>{tileOverlay1, tileOverlay2},
               onMapCreated: (GoogleMapController controller) {
                 mapIdCompleter.complete(controller.mapId);
@@ -133,7 +129,7 @@ void main() {
             textDirection: TextDirection.ltr,
             child: GoogleMap(
               key: key,
-              initialCameraPosition: _kInitialCameraPosition,
+              initialCameraPosition: kInitialCameraPosition,
               tileOverlays: <TileOverlay>{tileOverlay1New},
               onMapCreated: (GoogleMapController controller) {
                 fail('update: OnMapCreated should get called only once.');
@@ -176,7 +172,7 @@ void main() {
             textDirection: TextDirection.ltr,
             child: GoogleMap(
               key: key,
-              initialCameraPosition: _kInitialCameraPosition,
+              initialCameraPosition: kInitialCameraPosition,
               tileOverlays: <TileOverlay>{tileOverlay1},
               onMapCreated: (GoogleMapController controller) {
                 mapIdCompleter.complete(controller.mapId);
@@ -192,7 +188,7 @@ void main() {
             textDirection: TextDirection.ltr,
             child: GoogleMap(
               key: key,
-              initialCameraPosition: _kInitialCameraPosition,
+              initialCameraPosition: kInitialCameraPosition,
               onMapCreated: (GoogleMapController controller) {
                 fail('OnMapCreated should get called only once.');
               },

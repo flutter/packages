@@ -11,19 +11,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:integration_test/integration_test.dart';
 
-const LatLng _kInitialMapCenter = LatLng(0, 0);
-const double _kInitialZoomLevel = 5;
-const CameraPosition _kInitialCameraPosition =
-    CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
-
-final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
-final bool isAndroid =
-    defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
-const bool isWeb = kIsWeb;
+import 'shared.dart';
 
 /// Integration Tests that use the [GoogleMapsInspectorPlatform].
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  runTests();
+}
+
+void runTests() {
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
   final GoogleMapsInspectorPlatform inspector =
@@ -36,7 +32,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         compassEnabled: false,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
@@ -52,7 +48,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
         },
@@ -71,7 +67,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         mapToolbarEnabled: false,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
@@ -87,7 +83,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
         },
@@ -120,7 +116,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         minMaxZoomPreference: initialZoomLevel,
         onMapCreated: (GoogleMapController c) async {
           controllerCompleter.complete(c);
@@ -150,7 +146,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         minMaxZoomPreference: finalZoomLevel,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
@@ -183,7 +179,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         zoomGesturesEnabled: false,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
@@ -200,7 +196,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
         },
@@ -219,7 +215,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
         },
@@ -237,7 +233,7 @@ void main() {
         tester,
         GoogleMap(
           key: key,
-          initialCameraPosition: _kInitialCameraPosition,
+          initialCameraPosition: kInitialCameraPosition,
           zoomControlsEnabled: false,
           onMapCreated: (GoogleMapController controller) {
             fail('OnMapCreated should get called only once.');
@@ -259,7 +255,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
         },
@@ -274,7 +270,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         liteModeEnabled: true,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
@@ -294,7 +290,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         rotateGesturesEnabled: false,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
@@ -311,7 +307,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
         },
@@ -331,7 +327,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         tiltGesturesEnabled: false,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
@@ -348,7 +344,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
         },
@@ -367,7 +363,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         scrollGesturesEnabled: false,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
@@ -384,7 +380,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
         },
@@ -404,7 +400,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         trafficEnabled: true,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
@@ -420,7 +416,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           fail('OnMapCreated should get called only once.');
         },
@@ -439,7 +435,7 @@ void main() {
       tester,
       GoogleMap(
         key: key,
-        initialCameraPosition: _kInitialCameraPosition,
+        initialCameraPosition: kInitialCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
         },
@@ -463,7 +459,7 @@ void main() {
         tester,
         GoogleMap(
           key: key,
-          initialCameraPosition: _kInitialCameraPosition,
+          initialCameraPosition: kInitialCameraPosition,
           onMapCreated: (GoogleMapController controller) {
             mapIdCompleter.complete(controller.mapId);
           },
@@ -479,7 +475,7 @@ void main() {
         tester,
         GoogleMap(
           key: key,
-          initialCameraPosition: _kInitialCameraPosition,
+          initialCameraPosition: kInitialCameraPosition,
           myLocationButtonEnabled: false,
           onMapCreated: (GoogleMapController controller) {
             fail('OnMapCreated should get called only once.');
@@ -501,7 +497,7 @@ void main() {
         tester,
         GoogleMap(
           key: key,
-          initialCameraPosition: _kInitialCameraPosition,
+          initialCameraPosition: kInitialCameraPosition,
           myLocationButtonEnabled: false,
           onMapCreated: (GoogleMapController controller) {
             mapIdCompleter.complete(controller.mapId);
@@ -524,7 +520,7 @@ void main() {
         tester,
         GoogleMap(
           key: key,
-          initialCameraPosition: _kInitialCameraPosition,
+          initialCameraPosition: kInitialCameraPosition,
           onMapCreated: (GoogleMapController controller) {
             mapIdCompleter.complete(controller.mapId);
           },
@@ -537,27 +533,4 @@ void main() {
       expect(myLocationButtonEnabled, true);
     });
   }, skip: !isIOS);
-}
-
-/// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
-Future<void> pumpMap(WidgetTester tester, GoogleMap map,
-    [Size size = const Size.square(200)]) async {
-  await tester.pumpWidget(wrapMap(map, size));
-  await tester.pumpAndSettle();
-}
-
-/// Wraps a [map] in a bunch of widgets so it renders in all platforms.
-///
-/// An optional [size] can be passed.
-Widget wrapMap(GoogleMap map, [Size size = const Size.square(200)]) {
-  return MaterialApp(
-    home: Scaffold(
-      body: Center(
-        child: SizedBox.fromSize(
-          size: size,
-          child: map,
-        ),
-      ),
-    ),
-  );
 }
