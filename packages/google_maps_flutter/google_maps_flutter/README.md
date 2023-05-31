@@ -25,6 +25,7 @@ To use this plugin, add `google_maps_flutter` as a [dependency in your pubspec.y
   * Select "APIs" under the Google Maps menu.
   * To enable Google Maps for Android, select "Maps SDK for Android" in the "Additional APIs" section, then select "ENABLE".
   * To enable Google Maps for iOS, select "Maps SDK for iOS" in the "Additional APIs" section, then select "ENABLE".
+  * To enable Google Maps for Web, enable the "Maps JavaScript API".
   * Make sure the APIs you enabled are under the "Enabled APIs" section.
 
 For more details, see [Getting started with Google Maps Platform](https://developers.google.com/maps/gmp-get-started).
@@ -98,7 +99,16 @@ import GoogleMaps
 }
 ```
 
-### Both
+### Web
+
+You'll need to modify the `web/index.html` file of your Flutter Web application
+to include the Google Maps JS SDK.
+
+Check [package:google_maps_flutter_web README](https://pub.dev/packages/google_maps_flutter_web)
+for the latest information on how to prepare your App to use Google Maps on the
+web.
+
+### All
 
 You can now add a `GoogleMap` widget to your widget tree.
 
