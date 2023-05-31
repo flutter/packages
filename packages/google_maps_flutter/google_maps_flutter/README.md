@@ -6,9 +6,11 @@
 
 A Flutter plugin that provides a [Google Maps](https://developers.google.com/maps/) widget.
 
-|             | Android | iOS     |
-|-------------|---------|---------|
-| **Support** | SDK 20+ | iOS 11+ |
+|             | Android | iOS     | Web                              |
+|-------------|---------|---------|----------------------------------|
+| **Support** | SDK 20+ | iOS 11+ | Same as [Flutter's][web-support] |
+
+[web-support]: https://docs.flutter.dev/reference/supported-platforms
 
 ## Usage
 
