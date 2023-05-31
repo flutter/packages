@@ -32,12 +32,14 @@ import io.flutter.plugins.imagepicker.Messages.FlutterError;
 import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
 import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -74,6 +76,8 @@ public class ImagePickerDelegateTest {
 
   AutoCloseable mockCloseable;
 
+  File externalDirectory;
+
   private static class MockFileUriResolver implements ImagePickerDelegate.FileUriResolver {
     @Override
     public Uri resolveFileProviderUriForFile(String fileProviderName, File imageFile) {
@@ -87,7 +91,7 @@ public class ImagePickerDelegateTest {
   }
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
     mockCloseable = MockitoAnnotations.openMocks(this);
 
     mockStaticFile = Mockito.mockStatic(File.class);
@@ -97,6 +101,11 @@ public class ImagePickerDelegateTest {
 
     when(mockActivity.getPackageName()).thenReturn("com.example.test");
     when(mockActivity.getPackageManager()).thenReturn(mock(PackageManager.class));
+
+    TemporaryFolder temporaryFolder = new TemporaryFolder();
+    temporaryFolder.create();
+    externalDirectory = temporaryFolder.newFolder("image_picker_cache");
+    when(mockActivity.getCacheDir()).thenReturn(externalDirectory);
 
     when(mockFileUtils.getPathFromUri(any(Context.class), any(Uri.class)))
         .thenReturn("pathFromUri");
@@ -300,8 +309,7 @@ public class ImagePickerDelegateTest {
     delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     mockStaticFile.verify(
-        () -> File.createTempFile(any(), eq(".jpg"), eq(new File("/image_picker_cache"))),
-        times(1));
+        () -> File.createTempFile(any(), eq(".jpg"), eq(externalDirectory)), times(1));
   }
 
   @Test
@@ -674,7 +682,6 @@ public class ImagePickerDelegateTest {
   private ImagePickerDelegate createDelegate() {
     return new ImagePickerDelegate(
         mockActivity,
-        new File("/image_picker_cache"),
         mockImageResizer,
         null,
         null,
@@ -690,7 +697,6 @@ public class ImagePickerDelegateTest {
       @Nullable ImageSelectionOptions imageOptions, @Nullable VideoSelectionOptions videoOptions) {
     return new ImagePickerDelegate(
         mockActivity,
-        new File("/image_picker_cache"),
         mockImageResizer,
         imageOptions,
         videoOptions,

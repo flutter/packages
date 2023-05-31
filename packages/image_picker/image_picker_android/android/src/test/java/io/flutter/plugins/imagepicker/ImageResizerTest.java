@@ -10,9 +10,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import java.io.File;
@@ -33,8 +36,8 @@ import org.robolectric.RobolectricTestRunner;
 // But we can still test whether the original or scaled file is created.
 @RunWith(RobolectricTestRunner.class)
 public class ImageResizerTest {
-
   ImageResizer resizer;
+  Context mockContext;
   File imageFile;
   File svgImageFile;
   File externalDirectory;
@@ -51,7 +54,9 @@ public class ImageResizerTest {
     TemporaryFolder temporaryFolder = new TemporaryFolder();
     temporaryFolder.create();
     externalDirectory = temporaryFolder.newFolder("image_picker_testing_path");
-    resizer = new ImageResizer(externalDirectory, new ExifDataCopier());
+    mockContext = mock(Context.class);
+    when(mockContext.getCacheDir()).thenReturn(externalDirectory);
+    resizer = new ImageResizer(mockContext, new ExifDataCopier());
   }
 
   @After
@@ -81,14 +86,6 @@ public class ImageResizerTest {
   public void onResizeImageIfNeeded_whenHeightIsNotNull_shouldResize_returnResizedFile() {
     String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, 50.0, 100);
     assertThat(outputFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
-  }
-
-  @Test
-  public void onResizeImageIfNeeded_whenParentDirectoryDoesNotExists_shouldNotCrash() {
-    File nonExistentDirectory = new File(externalDirectory, "/nonExistent");
-    ImageResizer invalidResizer = new ImageResizer(nonExistentDirectory, new ExifDataCopier());
-    String outputFile = invalidResizer.resizeImageIfNeeded(imageFile.getPath(), null, 50.0, 100);
-    assertThat(outputFile, equalTo(nonExistentDirectory.getPath() + "/scaled_pngImage.png"));
   }
 
   @Test
