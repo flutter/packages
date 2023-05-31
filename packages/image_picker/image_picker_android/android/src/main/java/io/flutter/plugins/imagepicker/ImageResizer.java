@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.imagepicker;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -16,11 +17,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 class ImageResizer {
-  private final File externalFilesDirectory;
+  private final Context context;
   private final ExifDataCopier exifDataCopier;
 
-  ImageResizer(File externalFilesDirectory, ExifDataCopier exifDataCopier) {
-    this.externalFilesDirectory = externalFilesDirectory;
+  ImageResizer(final @NonNull Context context, final @NonNull ExifDataCopier exifDataCopier) {
+    this.context = context;
     this.exifDataCopier = exifDataCopier;
   }
 
@@ -193,7 +194,9 @@ class ImageResizer {
         saveAsPNG ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,
         imageQuality,
         outputStream);
-    File imageFile = createFile(externalFilesDirectory, name);
+
+    File cacheDirectory = context.getCacheDir();
+    File imageFile = createFile(cacheDirectory, name);
     FileOutputStream fileOutput = createOutputStream(imageFile);
     fileOutput.write(outputStream.toByteArray());
     fileOutput.close();
