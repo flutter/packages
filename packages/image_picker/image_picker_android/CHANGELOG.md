@@ -1,3 +1,7 @@
+## 0.8.6+17
+
+* Moves disk accesses to background thread.
+
 ## 0.8.6+16
 
 * Fixes crashes caused by `SecurityException` when calling `getPathFromUri()`.
