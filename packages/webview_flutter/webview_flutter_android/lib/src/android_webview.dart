@@ -18,8 +18,6 @@ import 'instance_manager.dart';
 
 export 'android_webview_api_impls.dart' show FileChooserMode;
 
-import 'package:simple_ast/annotations.dart';
-
 /// Root of the Java class hierarchy.
 ///
 /// See https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html.
@@ -969,7 +967,6 @@ class DownloadListener extends JavaObject {
 }
 
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
-@SimpleClassAnnotation()
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
   WebChromeClient({
