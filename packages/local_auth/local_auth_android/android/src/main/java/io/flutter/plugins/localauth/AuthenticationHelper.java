@@ -155,7 +155,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         if (activityPaused && isAuthSticky) {
           return;
         } else {
-          completionHandler.complete(Messages.AuthResult.SUCCESS);
+          completionHandler.complete(Messages.AuthResult.FAILURE);
         }
         break;
       default:

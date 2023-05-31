@@ -24,5 +24,5 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: 5.4.0
+  mockito: 5.4.1
   pigeon: ^9.2.4
