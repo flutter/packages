@@ -2,21 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
-
 import 'types.dart';
 
 /// A pair of latitude and longitude coordinates, stored as degrees.
-@immutable
 class PointOfInterest {
   /// Creates a PointOfInterest
-  const PointOfInterest(this.position, this.name, this.placeId);
+  PointOfInterest(this.position, this.name, this.placeId);
 
   /// The LatLng of the POI.
   final LatLng position;
 
   /// The name of the POI.
-  final String? name;
+  String? name;
 
   /// The placeId of the POI.
   final String placeId;
@@ -52,15 +49,4 @@ class PointOfInterest {
   @override
   String toString() =>
       'Marker(position: $position, name: $name, placeId: $placeId)';
-
-  @override
-  bool operator ==(Object other) {
-    return other is PointOfInterest &&
-        other.position == position &&
-        other.name == name &&
-        other.placeId == placeId;
-  }
-
-  @override
-  int get hashCode => Object.hash(position, name, placeId);
 }

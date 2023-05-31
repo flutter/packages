@@ -15,15 +15,15 @@ void main() {
       const String name = 'name';
       const String placeId = 'placeId';
 
-      const PointOfInterest poi = PointOfInterest(position, name, placeId);
+      final PointOfInterest poi = PointOfInterest(position, name, placeId);
 
       expect(poi.position, equals(const LatLng(0.0, 0.0)));
       expect(poi.name, equals('name'));
       expect(poi.placeId, equals('placeId'));
     });
     test('toJson / fromJson', () {
-      const PointOfInterest poi = PointOfInterest(
-        LatLng(50, 50),
+      final PointOfInterest poi = PointOfInterest(
+        const LatLng(50, 50),
         'name',
         'placeId',
       );
