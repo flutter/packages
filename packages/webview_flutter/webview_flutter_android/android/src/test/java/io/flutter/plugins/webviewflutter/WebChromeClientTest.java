@@ -71,10 +71,6 @@ public class WebChromeClientTest {
     hostApiImpl =
         new WebChromeClientHostApiImpl(instanceManager, webChromeClientCreator, mockFlutterApi);
     hostApiImpl.create(2L);
-
-    when(mockActivity.getWindow()).thenReturn(mockWindow);
-    when(mockWebView.getParent()).thenReturn(mockWebView);
-    when(mockWindow.getDecorView()).thenReturn(mockWebView);
   }
 
   @After
