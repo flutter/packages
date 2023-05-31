@@ -6,7 +6,6 @@ package io.flutter.plugins.webviewflutter;
 
 import android.content.Context;
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugin.common.StandardMessageCodec;
@@ -41,12 +40,13 @@ class FlutterViewFactory extends PlatformViewFactory {
         }
 
         @Override
-        public void dispose() {
-
-        }
+        public void dispose() {}
       };
     }
 
-    throw new IllegalStateException(String.format("Unable to find a PlatformView or View instance: args: %s, instance: %s", args, instance));
+    throw new IllegalStateException(
+        String.format(
+            "Unable to find a PlatformView or View instance: args: %s, instance: %s",
+            args, instance));
   }
 }
