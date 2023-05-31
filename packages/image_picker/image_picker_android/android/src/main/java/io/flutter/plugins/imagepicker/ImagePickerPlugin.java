@@ -23,7 +23,6 @@ import io.flutter.plugins.imagepicker.Messages.FlutterError;
 import io.flutter.plugins.imagepicker.Messages.ImagePickerApi;
 import io.flutter.plugins.imagepicker.Messages.Result;
 import io.flutter.plugins.imagepicker.Messages.SourceSpecification;
-import java.io.File;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -266,10 +265,9 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   final ImagePickerDelegate constructDelegate(final Activity setupActivity) {
     final ImagePickerCache cache = new ImagePickerCache(setupActivity);
 
-    final File externalFilesDirectory = setupActivity.getCacheDir();
     final ExifDataCopier exifDataCopier = new ExifDataCopier();
-    final ImageResizer imageResizer = new ImageResizer(externalFilesDirectory, exifDataCopier);
-    return new ImagePickerDelegate(setupActivity, externalFilesDirectory, imageResizer, cache);
+    final ImageResizer imageResizer = new ImageResizer(setupActivity, exifDataCopier);
+    return new ImagePickerDelegate(setupActivity, imageResizer, cache);
   }
 
   private @Nullable ImagePickerDelegate getImagePickerDelegate() {
