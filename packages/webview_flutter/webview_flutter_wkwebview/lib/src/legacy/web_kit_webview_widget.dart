@@ -654,7 +654,8 @@ class WebViewWidgetProxy {
       String keyPath,
       NSObject object,
       Map<NSKeyValueChangeKey, Object?> change,
-    )? observeValue,
+    )?
+        observeValue,
   }) {
     return WKWebView(configuration, observeValue: observeValue);
   }
@@ -664,7 +665,8 @@ class WebViewWidgetProxy {
     required void Function(
       WKUserContentController userContentController,
       WKScriptMessage message,
-    ) didReceiveScriptMessage,
+    )
+        didReceiveScriptMessage,
   }) {
     return WKScriptMessageHandler(
       didReceiveScriptMessage: didReceiveScriptMessage,
@@ -677,7 +679,8 @@ class WebViewWidgetProxy {
       WKWebView webView,
       WKWebViewConfiguration configuration,
       WKNavigationAction navigationAction,
-    )? onCreateWebView,
+    )?
+        onCreateWebView,
   }) {
     return WKUIDelegate(onCreateWebView: onCreateWebView);
   }
@@ -690,7 +693,8 @@ class WebViewWidgetProxy {
     Future<WKNavigationActionPolicy> Function(
       WKWebView webView,
       WKNavigationAction navigationAction,
-    )? decidePolicyForNavigationAction,
+    )?
+        decidePolicyForNavigationAction,
     void Function(WKWebView webView, NSError error)? didFailNavigation,
     void Function(WKWebView webView, NSError error)?
         didFailProvisionalNavigation,

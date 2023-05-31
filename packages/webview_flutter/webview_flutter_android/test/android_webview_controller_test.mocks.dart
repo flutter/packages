@@ -772,7 +772,8 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(
       _i2.WebChromeClient,
       _i2.PermissionRequest,
-    )? onPermissionRequest,
+    )?
+        onPermissionRequest,
     void Function(
       _i2.WebView,
       int,
@@ -789,7 +790,8 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebChromeClient,
             _i2.PermissionRequest,
-          )? onPermissionRequest,
+          )?
+              onPermissionRequest,
           void Function(
             _i2.WebView,
             int,
@@ -809,7 +811,8 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebChromeClient,
             _i2.PermissionRequest,
-          )? onPermissionRequest,
+          )?
+              onPermissionRequest,
           void Function(
             _i2.WebView,
             int,
@@ -829,7 +832,8 @@ class MockAndroidWebViewProxy extends _i1.Mock
         void Function(
           _i2.WebChromeClient,
           _i2.PermissionRequest,
-        )? onPermissionRequest,
+        )?
+            onPermissionRequest,
         void Function(
           _i2.WebView,
           int,

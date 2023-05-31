@@ -32,7 +32,8 @@ void main() {
               String keyPath,
               NSObject object,
               Map<NSKeyValueChangeKey, Object?> change,
-            )? observeValue,
+            )?
+                observeValue,
             InstanceManager? instanceManager,
           }) {
             final WKWebView webView = WKWebView.detached(

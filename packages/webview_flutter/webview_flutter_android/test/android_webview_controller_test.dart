@@ -58,12 +58,15 @@ void main() {
       Future<List<String>> Function(
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
-      )? onShowFileChooser,
+      )?
+          onShowFileChooser,
       void Function(
         android_webview.WebChromeClient instance,
         android_webview.PermissionRequest request,
-      )? onPermissionRequest,
-    })? createWebChromeClient,
+      )?
+          onPermissionRequest,
+    })?
+        createWebChromeClient,
     android_webview.WebView? mockWebView,
     android_webview.WebViewClient? mockWebViewClient,
     android_webview.WebStorage? mockWebStorage,
@@ -83,11 +86,13 @@ void main() {
                     Future<List<String>> Function(
                       android_webview.WebView webView,
                       android_webview.FileChooserParams params,
-                    )? onShowFileChooser,
+                    )?
+                        onShowFileChooser,
                     void Function(
                       android_webview.WebChromeClient instance,
                       android_webview.PermissionRequest request,
-                    )? onPermissionRequest,
+                    )?
+                        onPermissionRequest,
                   }) =>
                       MockWebChromeClient(),
               createAndroidWebView: () => nonNullMockWebView,
@@ -97,7 +102,7 @@ void main() {
                 void Function(android_webview.WebView webView, String url)?
                     onPageStarted,
                 @Deprecated('Only called on Android version < 23.')
-                void Function(
+                    void Function(
                   android_webview.WebView webView,
                   int errorCode,
                   String description,
@@ -584,7 +589,8 @@ void main() {
           Future<List<String>> Function(
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
-          )? onShowFileChooser,
+          )?
+              onShowFileChooser,
           dynamic onPermissionRequest,
         }) {
           onShowFileChooserCallback = onShowFileChooser!;
@@ -634,7 +640,8 @@ void main() {
           void Function(
             android_webview.WebChromeClient instance,
             android_webview.PermissionRequest request,
-          )? onPermissionRequest,
+          )?
+              onPermissionRequest,
         }) {
           onPermissionRequestCallback = onPermissionRequest!;
           return mockWebChromeClient;
@@ -684,7 +691,8 @@ void main() {
           void Function(
             android_webview.WebChromeClient instance,
             android_webview.PermissionRequest request,
-          )? onPermissionRequest,
+          )?
+              onPermissionRequest,
         }) {
           onPermissionRequestCallback = onPermissionRequest!;
           return mockWebChromeClient;

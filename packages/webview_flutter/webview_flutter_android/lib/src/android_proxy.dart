@@ -34,11 +34,13 @@ class AndroidWebViewProxy {
     Future<List<String>> Function(
       android_webview.WebView webView,
       android_webview.FileChooserParams params,
-    )? onShowFileChooser,
+    )?
+        onShowFileChooser,
     void Function(
       android_webview.WebChromeClient instance,
       android_webview.PermissionRequest request,
-    )? onPermissionRequest,
+    )?
+        onPermissionRequest,
   }) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
@@ -52,7 +54,7 @@ class AndroidWebViewProxy {
     )?
         onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.')
-    void Function(
+        void Function(
       android_webview.WebView webView,
       int errorCode,
       String description,

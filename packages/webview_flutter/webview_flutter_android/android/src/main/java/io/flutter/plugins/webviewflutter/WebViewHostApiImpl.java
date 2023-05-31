@@ -277,7 +277,6 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     webView.goForward();
   }
 
-
   @Override
   public void reload(@NonNull Long instanceId) {
     final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
