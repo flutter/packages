@@ -9,27 +9,27 @@ import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.BinaryMessenger;
 
 /** Native portion of the Android platform implementation of the file_selector plugin. */
 public class FileSelectorAndroidPlugin implements FlutterPlugin, ActivityAware {
   @Nullable private FileSelectorApiImpl fileSelectorApi;
-  private BinaryMessenger binaryMessenger;
+  private FlutterPluginBinding pluginBinding;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    binaryMessenger = binding.getBinaryMessenger();
+    pluginBinding = binding;
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    binaryMessenger = null;
+    pluginBinding = null;
   }
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
     fileSelectorApi = new FileSelectorApiImpl(binding);
-    GeneratedFileSelectorApi.FileSelectorApi.setup(binaryMessenger, fileSelectorApi);
+    GeneratedFileSelectorApi.FileSelectorApi.setup(
+        pluginBinding.getBinaryMessenger(), fileSelectorApi);
   }
 
   @Override
@@ -45,7 +45,8 @@ public class FileSelectorAndroidPlugin implements FlutterPlugin, ActivityAware {
       fileSelectorApi.setActivityPluginBinding(binding);
     } else {
       fileSelectorApi = new FileSelectorApiImpl(binding);
-      GeneratedFileSelectorApi.FileSelectorApi.setup(binaryMessenger, fileSelectorApi);
+      GeneratedFileSelectorApi.FileSelectorApi.setup(
+          pluginBinding.getBinaryMessenger(), fileSelectorApi);
     }
   }
 
