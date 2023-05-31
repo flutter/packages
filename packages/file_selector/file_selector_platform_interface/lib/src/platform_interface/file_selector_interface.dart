@@ -69,10 +69,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   /// Opens a file dialog for saving files and returns a file location at which
   /// to save.
   ///
-  /// Returns `null` if user cancels the operation.
+  /// Returns `null` if the user cancels the operation.
   Future<FileSaveLocationResult?> getSaveLocation({
     List<XTypeGroup>? acceptedTypeGroups,
-    FileDialogOptions options = const FileDialogOptions(),
+    SaveDialogOptions options = const SaveDialogOptions(),
   }) async {
     final String? path = await getSavePath(
       acceptedTypeGroups: acceptedTypeGroups,

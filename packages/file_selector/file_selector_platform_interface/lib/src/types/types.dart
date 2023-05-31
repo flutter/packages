@@ -4,5 +4,5 @@
 
 export 'package:cross_file/cross_file.dart';
 export 'file_dialog_options.dart';
-export 'file_save_result.dart';
-export 'x_type_group/x_type_group.dart';
+export 'file_save_location_result.dart';
+export 'x_type_group.dart';
