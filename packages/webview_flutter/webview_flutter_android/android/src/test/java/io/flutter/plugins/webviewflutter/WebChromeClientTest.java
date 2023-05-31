@@ -14,7 +14,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Message;
 import android.view.View;
@@ -46,8 +45,6 @@ public class WebChromeClientTest {
   @Mock public WebView mockWebView;
 
   @Mock public WebViewClient mockWebViewClient;
-
-  @Mock public Context mockContext;
 
   @Mock public Activity mockActivity;
 
@@ -161,53 +158,4 @@ public class WebChromeClientTest {
     webChromeClient.onHideCustomView();
     verify(mockFlutterApi).onHideCustomView(eq(webChromeClient), any());
   }
-
-  //  @Test
-  //  public void onShowCustomView() {
-  //    final WebChromeClientFlutterApiImpl flutterApi =
-  //        new WebChromeClientFlutterApiImpl(mockBinaryMessenger, instanceManager);
-  //    flutterApi.setApi(mockFlutterApi);
-  //
-  //    final WebChromeClientHostApiImpl.WebChromeClientImpl instance =
-  //        new WebChromeClientHostApiImpl.WebChromeClientImpl(mockBinaryMessenger, instanceManager);
-  //
-  //    instance.setApi(flutterApi);
-  //
-  //    final long instanceIdentifier = 0;
-  //    instanceManager.addDartCreatedInstance(instance, instanceIdentifier);
-  //
-  //    final View mockView = mock(View.class);
-  //
-  //    final CustomViewCallback mockCallback = mock(CustomViewCallback.class);
-  //
-  //    instance.onShowCustomView(mockView, mockCallback);
-  //
-  //    verify(mockFlutterApi)
-  //        .onShowCustomView(
-  //            eq(instanceIdentifier),
-  //            eq(Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockView))),
-  //            eq(
-  //                Objects.requireNonNull(
-  //                    instanceManager.getIdentifierForStrongReference(mockCallback))),
-  //            any());
-  //  }
-  //
-  //  @Test
-  //  public void onHideCustomView() {
-  //    final WebChromeClientFlutterApiImpl flutterApi =
-  //        new WebChromeClientFlutterApiImpl(mockBinaryMessenger, instanceManager);
-  //    flutterApi.setApi(mockFlutterApi);
-  //
-  //    final WebChromeClientHostApiImpl.WebChromeClientImpl instance =
-  //        new WebChromeClientHostApiImpl.WebChromeClientImpl(mockBinaryMessenger, instanceManager);
-  //
-  //    instance.setApi(flutterApi);
-  //
-  //    final long instanceIdentifier = 0;
-  //    instanceManager.addDartCreatedInstance(instance, instanceIdentifier);
-  //
-  //    instance.onHideCustomView();
-  //
-  //    verify(mockFlutterApi).onHideCustomView(eq(instanceIdentifier), any());
-  //  }
 }

@@ -107,7 +107,7 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     onShowCustomView(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(view)),
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(callback)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(customViewCallback)),
         callback);
   }
 
