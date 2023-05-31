@@ -13,11 +13,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Message;
 import android.view.View;
-import android.view.Window;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -44,10 +42,6 @@ public class WebChromeClientTest {
   @Mock public WebView mockWebView;
 
   @Mock public WebViewClient mockWebViewClient;
-
-  @Mock public Activity mockActivity;
-
-  @Mock public Window mockWindow;
 
   InstanceManager instanceManager;
   WebChromeClientHostApiImpl hostApiImpl;
