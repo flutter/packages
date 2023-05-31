@@ -45,8 +45,6 @@ class FlutterViewFactory extends PlatformViewFactory {
     }
 
     throw new IllegalStateException(
-        String.format(
-            "Unable to find a PlatformView or View instance: args: %s, instance: %s",
-            args, instance));
+        "Unable to find a PlatformView or View instance: " + args + ", " + instance);
   }
 }
