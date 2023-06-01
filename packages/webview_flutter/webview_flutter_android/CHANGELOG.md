@@ -1,3 +1,7 @@
+## 3.7.2
+
+* Bumps androidx.webkit:webkit from 1.6.0 to 1.7.0.
+
 ## 3.7.1
 
 * Removes obsolete null checks on non-nullable values.
