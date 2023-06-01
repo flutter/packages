@@ -1,3 +1,7 @@
+## 0.3.0+4
+
+* Fixes unawaited_futures violations.
+
 ## 0.3.0+3
 
 * Fixes Java lint issues.

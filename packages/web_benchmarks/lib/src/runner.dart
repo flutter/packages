@@ -151,7 +151,7 @@ class BenchmarkServer {
               'Requested to run benchmark ${benchmarkIterator.current}, but '
               'got results for $benchmarkName.',
             ));
-            server.close();
+            unawaited(server.close());
           }
 
           // Trace data is null when the benchmark is not frame-based, such as RawRecorder.
@@ -180,7 +180,7 @@ class BenchmarkServer {
         } else if (request.requestedUri.path.endsWith('/on-error')) {
           final Map<String, dynamic> errorDetails =
               json.decode(await request.readAsString()) as Map<String, dynamic>;
-          server.close();
+          unawaited(server.close());
           // Keep the stack trace as a string. It's thrown in the browser, not this Dart VM.
           final String errorMessage =
               'Caught browser-side error: ${errorDetails['error']}\n${errorDetails['stackTrace']}';
@@ -314,7 +314,7 @@ class BenchmarkServer {
         );
         await chrome?.whenExits;
       }
-      server.close();
+      unawaited(server.close());
     }
   }
 }

@@ -1,6 +1,10 @@
-## 0.8.6+17
+## 0.8.6+18
 
 * Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.10 to 1.8.21.
+
+## 0.8.6+17
+
+* Moves disk accesses to background thread.
 
 ## 0.8.6+16
 
