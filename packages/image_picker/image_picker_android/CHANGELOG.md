@@ -1,3 +1,7 @@
+## 0.8.6+17
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.10 to 1.8.21.
+
 ## 0.8.6+16
 
 * Fixes crashes caused by `SecurityException` when calling `getPathFromUri()`.
