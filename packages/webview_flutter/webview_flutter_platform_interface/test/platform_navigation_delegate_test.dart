@@ -144,18 +144,18 @@ void main() {
   });
 
   test(
-  'Default implementation of setOnReceiveHttpAuthRequest should throw unimplemented error',
-  () {
+      'Default implementation of setOnReceiveHttpAuthRequest should throw unimplemented error',
+      () {
     final PlatformNavigationDelegate callbackDelegate =
         ExtendsPlatformNavigationDelegate(
             const PlatformNavigationDelegateCreationParams());
 
     expect(
-      () => callbackDelegate.setOnReceiveHttpAuthRequest((String host, String realm) {}),
+      () => callbackDelegate
+          .setOnReceiveHttpAuthRequest((String host, String realm) {}),
       throwsUnimplementedError,
     );
   });
-
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform
