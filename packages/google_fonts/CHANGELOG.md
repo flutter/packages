@@ -1,3 +1,71 @@
+## 5.0.0 - 2023-06-01
+### Added
+- `Alkatra`
+- `Anuphan`
+- `Braah One`
+- `Bruno Ace`
+- `Bruno Ace SC`
+- `Carlito`
+- `Castoro Titling`
+- `Chivo Mono`
+- `Climate Crisis`
+- `Comme`
+- `Darumadrop One`
+- `Delicious Handrawn`
+- `Foldit`
+- `Gajraj One`
+- `Gloock`
+- `Golos Text`
+- `Hanken Grotesk`
+- `Instrument Sans`
+- `Instrument Serif`
+- `Konkhmer Sleokchher`
+- `Labrada`
+- `Martian Mono`
+- `Mynerve`
+- `Noto Sans NKo`
+- `Noto Sans Nag Mundari`
+- `Noto Sans Nandinagari`
+- `Noto Sans SignWriting`
+- `Noto Sans Tangsa`
+- `Noto Serif NP Hmong`
+- `Noto Serif Toto`
+- `Padyakke Expanded One`
+- `Pathway Extreme`
+- `Phudu`
+- `Poltawski Nowy`
+- `Rubik 80s Fade`
+- `Rubik Gemstones`
+- `Rubik Pixels`
+- `Rubik Spray Paint`
+- `Rubik Storm`
+- `Rubik Vinyl`
+- `Schibsted Grotesk`
+- `Shantell Sans`
+- `Sigmar`
+- `Sofia Sans`
+- `Sofia Sans Condensed`
+- `Sofia Sans Extra Condensed`
+- `Sofia Sans Semi Condensed`
+- `Solitreo`
+- `Tilt Neon`
+- `Tilt Prism`
+- `Tilt Warp`
+- `Unbounded`
+- `Vina Sans`
+- `Wix Madefor Display`
+- `Wix Madefor Text`
+- `Ysabeau`
+
+### Removed
+- `Arima Madurai`
+- `Fredoka One`
+- `Gentium Book Basic`
+- `Kantumruy`
+- `Merienda One`
+- `Noto Sans N Ko`
+- `Noto Serif Nyiakeng Puachue Hmong`
+
 ## 4.0.5 - 2023-05-23
 ### Changed
 - Bumped `http` version to 1.0.0

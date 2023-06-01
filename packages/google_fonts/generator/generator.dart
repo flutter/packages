@@ -175,7 +175,7 @@ class _FamiliesDelta {
     return diff;
   }
 
-  // Use cider to update CHANGELOG.md
+  // Use cider to update CHANGELOG.md and pubspec.yaml.
   Future<void> updateChangelogAndPubspec() async {
     for (final family in removed) {
       await Process.run('cider', ['log', 'removed', '`$family`']);
@@ -183,6 +183,15 @@ class _FamiliesDelta {
     for (final family in added) {
       await Process.run('cider', ['log', 'added', '`$family`']);
     }
+
+    await Process.run(
+      'cider',
+      ['bump', removed.isNotEmpty ? 'breaking' : 'minor'],
+    );
+    await Process.run(
+      'cider',
+      ['release'],
+    );
   }
 }
 
