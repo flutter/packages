@@ -100,7 +100,7 @@ void main() {
     const String subpackageName = 'special_test';
     final RepositoryPackage miscSubpackage =
         createFakePackage(subpackageName, package.directory);
-    miscSubpackage.readmeFile.delete();
+    miscSubpackage.readmeFile.deleteSync();
 
     final List<String> output =
         await runCapturingPrint(runner, <String>['readme-check']);
