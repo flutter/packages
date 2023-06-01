@@ -1,3 +1,7 @@
+## 3.1.7
+
+* Fixes unawaited_futures violations.
+
 ## 3.1.6
 
 * Bumps minimum in_app_purchase_android version to 0.3.0.
