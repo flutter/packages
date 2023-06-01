@@ -387,6 +387,20 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test(
+    'Default implementation of setHttpAuthCredentials should throw unimplemented error',
+    () {
+  final PlatformWebViewController controller =
+      ExtendsPlatformWebViewController(
+          const PlatformWebViewControllerCreationParams());
+
+  expect(
+    () => controller.setHttpAuthCredentials('host', 'realm', 'username', 'password'),
+    throwsUnimplementedError,
+  );
+});
+
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform
