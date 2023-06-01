@@ -108,7 +108,6 @@ public class ImagePickerDelegate
   @VisibleForTesting final String fileProviderName;
 
   private final @NonNull Activity activity;
-  @VisibleForTesting final @NonNull File externalFilesDirectory;
   private final @NonNull ImageResizer imageResizer;
   private final @NonNull ImagePickerCache cache;
   private final PermissionManager permissionManager;
@@ -141,12 +140,10 @@ public class ImagePickerDelegate
 
   public ImagePickerDelegate(
       final @NonNull Activity activity,
-      final @NonNull File externalFilesDirectory,
       final @NonNull ImageResizer imageResizer,
       final @NonNull ImagePickerCache cache) {
     this(
         activity,
-        externalFilesDirectory,
         imageResizer,
         null,
         null,
@@ -195,7 +192,6 @@ public class ImagePickerDelegate
   @VisibleForTesting
   ImagePickerDelegate(
       final @NonNull Activity activity,
-      final @NonNull File externalFilesDirectory,
       final @NonNull ImageResizer imageResizer,
       final @Nullable ImageSelectionOptions pendingImageOptions,
       final @Nullable VideoSelectionOptions pendingVideoOptions,
@@ -206,7 +202,6 @@ public class ImagePickerDelegate
       final FileUtils fileUtils,
       final ExecutorService executor) {
     this.activity = activity;
-    this.externalFilesDirectory = externalFilesDirectory;
     this.imageResizer = imageResizer;
     this.fileProviderName = activity.getPackageName() + ".flutter.image_provider";
     if (result != null) {
@@ -493,6 +488,7 @@ public class ImagePickerDelegate
   private File createTemporaryWritableFile(String suffix) {
     String filename = UUID.randomUUID().toString();
     File image;
+    File externalFilesDirectory = activity.getCacheDir();
 
     try {
       externalFilesDirectory.mkdirs();
