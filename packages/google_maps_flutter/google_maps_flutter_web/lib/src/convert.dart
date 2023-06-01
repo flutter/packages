@@ -126,25 +126,30 @@ bool _isJsonMapStyle(Map<String, Object?> value) {
 List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
   List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[];
   if (mapStyleJson != null) {
-    styles = (json.decode(mapStyleJson, reviver: (Object? key, Object? value) {
-      if (value is Map && _isJsonMapStyle(value as Map<String, Object?>)) {
-        List<Object?> stylers = <Object?>[];
-        if (value['stylers'] != null) {
-          stylers = (value['stylers']! as List<Object?>)
-              .map<Object?>((Object? e) => e != null ? jsify(e) : null)
-              .toList();
+    try {
+      styles =
+          (json.decode(mapStyleJson, reviver: (Object? key, Object? value) {
+        if (value is Map && _isJsonMapStyle(value as Map<String, Object?>)) {
+          List<Object?> stylers = <Object?>[];
+          if (value['stylers'] != null) {
+            stylers = (value['stylers']! as List<Object?>)
+                .map<Object?>((Object? e) => e != null ? jsify(e) : null)
+                .toList();
+          }
+          return gmaps.MapTypeStyle()
+            ..elementType = value['elementType'] as String?
+            ..featureType = value['featureType'] as String?
+            ..stylers = stylers;
         }
-        return gmaps.MapTypeStyle()
-          ..elementType = value['elementType'] as String?
-          ..featureType = value['featureType'] as String?
-          ..stylers = stylers;
-      }
-      return value;
-    }) as List<Object?>)
-        .where((Object? element) => element != null)
-        .cast<gmaps.MapTypeStyle>()
-        .toList();
-    // .toList calls are required so the JS API understands the underlying data structure.
+        return value;
+      }) as List<Object?>)
+              .where((Object? element) => element != null)
+              .cast<gmaps.MapTypeStyle>()
+              .toList();
+      // .toList calls are required so the JS API understands the underlying data structure.
+    } on FormatException catch (e) {
+      throw MapStyleException(e.message);
+    }
   }
   return styles;
 }
