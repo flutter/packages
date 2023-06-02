@@ -1,3 +1,7 @@
+## 0.6.15+1
+
+* Fixes 'The Scrollbar's ScrollController has no ScrollPosition attached' exception when scrolling scrollable code blocks.
+
 ## 0.6.15
 
 * Fixes unawaited_futures violations.
