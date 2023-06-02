@@ -40,6 +40,24 @@ class EncodedImage {
   final int height;
 }
 
+/// A class to hold the arguments for [PaletteGenerator.fromByteData] when
+/// calling from an isolate.
+class _FromByteDataArgs {
+  const _FromByteDataArgs(
+    this.encodedImage, {
+    this.region,
+    required this.maximumColorCount,
+    this.filters = const <PaletteFilter>[avoidRedBlackWhitePaletteFilter],
+    this.targets = const <PaletteTarget>[],
+  });
+
+  final EncodedImage encodedImage;
+  final Rect? region;
+  final int maximumColorCount;
+  final List<PaletteFilter> filters;
+  final List<PaletteTarget> targets;
+}
+
 /// A class to extract prominent colors from an image for use as user interface
 /// colors.
 ///
@@ -127,6 +145,9 @@ class PaletteGenerator with Diagnosticable {
   /// The [targets] are a list of target color types, specified by creating
   /// custom [PaletteTarget]s. By default, this is the list of targets in
   /// [PaletteTarget.baseTargets].
+  ///
+  /// If [useIsolate] is true, this function will be run in an isolate via
+  /// [compute].
   static Future<PaletteGenerator> fromByteData(
     EncodedImage encodedImage, {
     Rect? region,
@@ -135,6 +156,7 @@ class PaletteGenerator with Diagnosticable {
       avoidRedBlackWhitePaletteFilter
     ],
     List<PaletteTarget> targets = const <PaletteTarget>[],
+    bool useIsolate = true,
   }) async {
     assert(region == null || region != Rect.zero);
     assert(
@@ -152,6 +174,28 @@ class PaletteGenerator with Diagnosticable {
       "Image byte data doesn't match the image size, or has invalid encoding. "
       'The encoding must be RGBA with 8 bits per channel.',
     );
+
+    // If we want to use an isolate, make a recursive compute call. We do it
+    // this way to avoid changing the rest of the function.
+    if (useIsolate) {
+      return compute(
+          (_FromByteDataArgs message) => fromByteData(
+                message.encodedImage,
+                region: message.region,
+                maximumColorCount: message.maximumColorCount,
+                filters: message.filters,
+                targets: message.targets,
+                // This is false to stop us from infinitely recursing
+                useIsolate: false,
+              ),
+          _FromByteDataArgs(
+            encodedImage,
+            region: region,
+            maximumColorCount: maximumColorCount,
+            filters: filters,
+            targets: targets,
+          ));
+    }
 
     final _ColorCutQuantizer quantizer = _ColorCutQuantizer(
       encodedImage,
@@ -183,6 +227,9 @@ class PaletteGenerator with Diagnosticable {
   /// The [targets] are a list of target color types, specified by creating
   /// custom [PaletteTarget]s. By default, this is the list of targets in
   /// [PaletteTarget.baseTargets].
+  ///
+  /// If [useIsolate] is true, the underlying [PaletteGenerator.fromByteData]
+  /// will be run in an isolate via [compute].
   static Future<PaletteGenerator> fromImage(
     ui.Image image, {
     Rect? region,
@@ -191,6 +238,7 @@ class PaletteGenerator with Diagnosticable {
       avoidRedBlackWhitePaletteFilter
     ],
     List<PaletteTarget> targets = const <PaletteTarget>[],
+    bool useIsolate = true,
   }) async {
     final ByteData? imageData = await image.toByteData();
     if (imageData == null) {
@@ -207,6 +255,7 @@ class PaletteGenerator with Diagnosticable {
       maximumColorCount: maximumColorCount,
       filters: filters,
       targets: targets,
+      useIsolate: useIsolate,
     );
   }
 
@@ -235,6 +284,9 @@ class PaletteGenerator with Diagnosticable {
   /// The [timeout] describes how long to wait for the image to load before
   /// giving up on it. A value of Duration.zero implies waiting forever. The
   /// default timeout is 15 seconds.
+  ///
+  /// If [useIsolate] is true, the underlying [PaletteGenerator.fromByteData]
+  /// will be run in an isolate via [compute].
   static Future<PaletteGenerator> fromImageProvider(
     ImageProvider imageProvider, {
     Size? size,
@@ -245,6 +297,7 @@ class PaletteGenerator with Diagnosticable {
     ],
     List<PaletteTarget> targets = const <PaletteTarget>[],
     Duration timeout = const Duration(seconds: 15),
+    bool useIsolate = true,
   }) async {
     assert(region == null || size != null);
     assert(region == null || region != Rect.zero);
@@ -298,6 +351,7 @@ class PaletteGenerator with Diagnosticable {
       maximumColorCount: maximumColorCount,
       filters: filters,
       targets: targets,
+      useIsolate: useIsolate,
     );
   }
 
