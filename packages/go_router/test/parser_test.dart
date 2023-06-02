@@ -6,15 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/configuration.dart';
+import 'package:go_router/src/information_provider.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/parser.dart';
 
-RouteInformation createRouteInformation(String location, [Object? state]) {
+RouteInformation createRouteInformation(String location, [Object? extra]) {
   // TODO(chunhtai): remove this ignore and migrate the code
   // https://github.com/flutter/flutter/issues/124045.
   // ignore: deprecated_member_use
-  return RouteInformation(location: location, state: state);
+  return RouteInformation(
+      location: location,
+      state:
+          RouteInformationState<void>(type: NavigatingType.go, extra: extra));
 }
 
 void main() {

@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/builder.dart';
 import 'package:go_router/src/configuration.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/router.dart';
 
 import 'test_helpers.dart';
