@@ -106,7 +106,7 @@ import GoogleMaps
 You'll need to modify the `web/index.html` file of your Flutter Web application
 to include the Google Maps JS SDK.
 
-Check [package:google_maps_flutter_web README](https://pub.dev/packages/google_maps_flutter_web)
+Check [the `google_maps_flutter_web` README](https://pub.dev/packages/google_maps_flutter_web)
 for the latest information on how to prepare your App to use Google Maps on the
 web.
 
