@@ -22,7 +22,8 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'android_navigation_delegate_test.dart';
 import 'android_webview_controller_test.mocks.dart';
-import 'android_webview_test.mocks.dart' show MockTestGeolocationPermissionsCallbackHostApi;
+import 'android_webview_test.mocks.dart'
+    show MockTestGeolocationPermissionsCallbackHostApi;
 import 'test_android_webview.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
@@ -645,10 +646,10 @@ void main() {
       instanceManager.addHostCreatedInstance(testCallback, instanceIdentifier);
 
       late final Future<void> Function(String origin,
-          android_webview.GeolocationPermissionsCallback callback)
-        onGeoPermissionHandle;
+              android_webview.GeolocationPermissionsCallback callback)
+          onGeoPermissionHandle;
       late final void Function(android_webview.WebChromeClient instance)
-        onGeoPermissionHidePromptHandle;
+          onGeoPermissionHidePromptHandle;
 
       final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
       final AndroidWebViewController controller = createControllerWithMocks(
@@ -656,10 +657,10 @@ void main() {
           dynamic onProgressChanged,
           dynamic onShowFileChooser,
           Future<void> Function(String origin,
-              android_webview.GeolocationPermissionsCallback callback)?
-            onGeolocationPermissionsShowPrompt,
+                  android_webview.GeolocationPermissionsCallback callback)?
+              onGeolocationPermissionsShowPrompt,
           void Function(android_webview.WebChromeClient instance)?
-            onGeolocationPermissionsHidePrompt,
+              onGeolocationPermissionsHidePrompt,
           dynamic onPermissionRequest,
         }) {
           onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
@@ -674,10 +675,10 @@ void main() {
 
       late final GeolocationPermissionsResponse response;
       controller.setGeolocationPermissionsPromptCallbacks(
-        onShowPrompt:(GeolocationPermissionsRequestParams request) async {
+        onShowPrompt: (GeolocationPermissionsRequestParams request) async {
           isAllow = request.origin == allowOrigin;
-          response = GeolocationPermissionsResponse(
-              allow: isAllow, retain: isAllow);
+          response =
+              GeolocationPermissionsResponse(allow: isAllow, retain: isAllow);
           return response;
         },
         onHidePrompt: () {
@@ -694,7 +695,6 @@ void main() {
 
       onGeoPermissionHidePromptHandle(mockWebChromeClient);
       expect(testValue, 'changed');
-
     });
 
     test('setOnPlatformPermissionRequest', () async {
