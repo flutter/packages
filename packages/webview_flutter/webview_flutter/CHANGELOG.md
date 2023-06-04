@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unnecessary_import ignore.
+
 ## 4.2.1
 
 * Removes obsolete null checks on non-nullable values.

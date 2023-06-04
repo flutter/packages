@@ -1,5 +1,6 @@
 ## NEXT
 
+* Removes unnecessary_import ignore.
 * Fixes unawaited_futures violations.
 
 ## 2.4.15

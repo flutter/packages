@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unnecessary_import ignore.
+
 ## 2.2.8
 
 * Fixes unawaited_futures violations.
