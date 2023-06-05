@@ -765,8 +765,8 @@ void main() {
       camera.recording = recording;
       camera.videoOutputPath = null;
 
-      expect(
-          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
+      await expectLater(
+          camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
       expect(camera.recording, null);
     });
 
@@ -788,8 +788,8 @@ void main() {
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
 
-      expect(
-          () => camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
+      await expectLater(
+          camera.stopVideoRecording(0), throwsA(isA<CameraException>()));
     });
   });
 
