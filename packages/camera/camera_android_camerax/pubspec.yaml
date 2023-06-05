@@ -20,7 +20,9 @@ flutter:
 
 dependencies:
   async: ^2.5.0
-  camera_platform_interface: ^2.2.0
+  camera_platform_interface:
+    path: ../../camera/camera_platform_interface
+
   flutter:
     sdk: flutter
   integration_test:
@@ -34,11 +36,3 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.1
   pigeon: ^9.1.0
-
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-
-   {camera_platform_interface: {path: ../../camera/camera_platform_interface}}

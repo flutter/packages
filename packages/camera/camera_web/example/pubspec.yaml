@@ -9,23 +9,14 @@ dependencies:
   flutter:
     sdk: flutter
 
+  camera_web:
+    path: ../
 
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-
-
-  camera_platform_interface: 
+  camera_platform_interface:
     path: ../../../camera/camera_platform_interface
-  camera_web: 
-    path: ../../../camera/camera_web
 
 dev_dependencies:
   async: ^2.5.0
-  camera_platform_interface:
-  camera_web:
   cross_file: ^0.3.1
   flutter_driver:
     sdk: flutter

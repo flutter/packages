@@ -18,7 +18,8 @@ flutter:
         dartPluginClass: AVFoundationCamera
 
 dependencies:
-  camera_platform_interface: ^2.4.0
+  camera_platform_interface:
+    path: ../../camera/camera_platform_interface
   flutter:
     sdk: flutter
   stream_transform: ^2.0.0
@@ -29,11 +30,3 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-
-   {camera_platform_interface: {path: ../../camera/camera_platform_interface}}

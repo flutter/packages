@@ -8,29 +8,12 @@ environment:
 
 dependencies:
   camera_android_camerax:
-    # When depending on this package from a real application you should use:
-    #   camera_android_camerax: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
     path: ../
-  camera_platform_interface: ^2.2.0
+  camera_platform_interface:
+    path: ../../../camera/camera_platform_interface
   flutter:
     sdk: flutter
   video_player: ^2.4.10
-
-
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-
-
-  camera_android_camerax: 
-    path: ../../../camera/camera_android_camerax
-  camera_platform_interface: 
-    path: ../../../camera/camera_platform_interface
 
 dev_dependencies:
   espresso: ^0.2.0
