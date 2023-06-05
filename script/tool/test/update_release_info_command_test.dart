@@ -51,79 +51,53 @@ void main() {
   group('flags', () {
     test('fails if --changelog is missing', () async {
       Error? commandError;
-      Exception? commandException;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=next',
       ], errorHandler: (Error e) {
         commandError = e;
-      }, exceptionHandler: (Exception e) {
-        commandException = e;
       });
 
-      expect(
-        commandError is ArgumentError || commandException is UsageException,
-        isTrue,
-      );
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --changelog is blank', () async {
-      Error? commandError;
-      Exception? commandException;
+      Exception? commandError;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=next',
         '--changelog',
         '',
-      ], errorHandler: (Error e) {
+      ], exceptionHandler: (Exception e) {
         commandError = e;
-      }, exceptionHandler: (Exception e) {
-        commandException = e;
       });
 
-      expect(
-        commandError is ArgumentError || commandException is UsageException,
-        isTrue,
-      );
+      expect(commandError, isA<UsageException>());
     });
 
     test('fails if --version is missing', () async {
       Error? commandError;
-      Exception? commandException;
-      await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--changelog',
-        '',
-      ], errorHandler: (Error e) {
+      await runCapturingPrint(
+          runner, <String>['update-release-info', '--changelog', 'A change.'],
+          errorHandler: (Error e) {
         commandError = e;
-      }, exceptionHandler: (Exception e) {
-        commandException = e;
       });
 
-      expect(
-        commandError is ArgumentError || commandException is UsageException,
-        isTrue,
-      );
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --version is an unknown value', () async {
-      Error? commandError;
-      Exception? commandException;
+      Exception? commandError;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=foo',
         '--changelog',
-        '',
-      ], errorHandler: (Error e) {
+        'A change.',
+      ], exceptionHandler: (Exception e) {
         commandError = e;
-      }, exceptionHandler: (Exception e) {
-        commandException = e;
       });
 
-      expect(
-        commandError is ArgumentError || commandException is UsageException,
-        isTrue,
-      );
+      expect(commandError, isA<UsageException>());
     });
   });
 
