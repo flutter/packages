@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -103,7 +104,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     switch (type) {
       case RouteInformationReportingType.none:
         if (_valueInEngine.location == routeInformation.location &&
-            _valueInEngine.state == routeInformation.state) {
+            const DeepCollectionEquality().equals(_valueInEngine.state, routeInformation.state)) {
           return;
         }
         replace = _valueInEngine == _kEmptyRouteInformation;
