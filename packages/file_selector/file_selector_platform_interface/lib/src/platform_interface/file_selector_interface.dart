@@ -35,7 +35,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   }
 
   /// Opens a file dialog for loading files and returns a file path.
-  /// Returns `null` if user cancels the operation.
+  ///
+  /// Returns `null` if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
   Future<XFile?> openFile({
     List<XTypeGroup>? acceptedTypeGroups,
     String? initialDirectory,
@@ -45,6 +48,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   }
 
   /// Opens a file dialog for loading files and returns a list of file paths.
+  ///
+  /// Returns an empty list if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
   Future<List<XFile>> openFiles({
     List<XTypeGroup>? acceptedTypeGroups,
     String? initialDirectory,
@@ -56,7 +63,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   /// Opens a file dialog for saving files and returns a file path at which to
   /// save.
   ///
-  /// Returns `null` if user cancels the operation.
+  /// Returns `null` if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
+  @Deprecated('Use getSaveLocation instead')
   Future<String?> getSavePath({
     List<XTypeGroup>? acceptedTypeGroups,
     String? initialDirectory,
@@ -85,7 +95,9 @@ abstract class FileSelectorPlatform extends PlatformInterface {
 
   /// Opens a file dialog for loading directories and returns a directory path.
   ///
-  /// Returns `null` if user cancels the operation.
+  /// Returns `null` if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
   Future<String?> getDirectoryPath({
     String? initialDirectory,
     String? confirmButtonText,
@@ -95,6 +107,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
 
   /// Opens a file dialog for loading directories and returns multiple directory
   /// paths.
+  ///
+  /// Returns an empty list if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
   Future<List<String>> getDirectoryPaths({
     String? initialDirectory,
     String? confirmButtonText,
