@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui show Codec, FrameInfo, Image, instantiateImageCodec;
 
 import 'package:flutter/foundation.dart';
