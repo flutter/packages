@@ -1,3 +1,7 @@
+## 0.5.0+5
+
+* Updates Guava version to 32.0.0.
+
 ## 0.5.0+4
 
 * Removes obsolete null checks on non-nullable values.
