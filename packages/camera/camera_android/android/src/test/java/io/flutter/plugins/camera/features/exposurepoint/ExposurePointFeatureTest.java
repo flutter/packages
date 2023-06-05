@@ -35,8 +35,6 @@ public class ExposurePointFeatureTest {
   Size mockCameraBoundaries;
   SensorOrientationFeature mockSensorOrientationFeature;
   DeviceOrientationManager mockDeviceOrientationManager;
-  MeteringRectangle[] mockDefaultExposureRectangle;
-  MeteringRectangle mockExposureRectangle;
 
   @Before
   public void setUp() {

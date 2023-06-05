@@ -24,7 +24,6 @@ public class ExposurePointFeature extends CameraFeature<Point> {
   private Size cameraBoundaries;
   @Nullable private Point exposurePoint;
   private MeteringRectangle exposureRectangle;
-  private MeteringRectangle[] defaultExposureRectangle;
   @NonNull private final SensorOrientationFeature sensorOrientationFeature;
 
   /**
