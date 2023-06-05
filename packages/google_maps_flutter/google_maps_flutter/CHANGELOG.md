@@ -1,3 +1,8 @@
+## 2.3.0
+
+* Endorses [`google_maps_flutter_web`](https://pub.dev/packages/google_maps_flutter_web)
+  as the web implementation of this plugin.
+
 ## 2.2.8
 
 * Fixes unawaited_futures violations.
