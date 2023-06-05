@@ -1,3 +1,7 @@
+## 0.5.0+6
+
+* CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
+
 ## 0.5.0+5
 
 * Updates `README.md` to fully cover unimplemented functionality.

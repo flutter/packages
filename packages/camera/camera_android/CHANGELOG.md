@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.8+3
 
+* CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
 * Fixes unawaited_futures violations.
 
 ## 0.10.8+2

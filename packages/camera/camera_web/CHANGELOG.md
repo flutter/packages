@@ -1,4 +1,4 @@
-## NEXT
+## 0.3.1+5
 
 * CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
 
