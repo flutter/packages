@@ -24,13 +24,11 @@ platform_properties:
     properties:
       dependencies: >-
         [
-          {"dependency": "xcode", "version": "14e222b"},
           {"dependency": "gems", "version": "v3.3.14"}
         ]
       os: Mac-12
       device_type: none
       cpu: arm64
-      xcode: 14e222b
       $flutter/osx_sdk : >-
         {
           "sdk_version": "14e222b"
@@ -39,13 +37,11 @@ platform_properties:
     properties:
       dependencies: >-
         [
-          {"dependency": "xcode", "version": "14e222b"},
           {"dependency": "gems", "version": "v3.3.14"}
         ]
       os: Mac-12
       device_type: none
       cpu: x86
-      xcode: 14e222b
       $flutter/osx_sdk : >-
         {
           "sdk_version": "14e222b"
