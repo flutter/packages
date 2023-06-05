@@ -1,3 +1,7 @@
+## 4.2.2
+
+* Fixes documentation typo.
+
 ## 4.2.1
 
 * Removes obsolete null checks on non-nullable values.
