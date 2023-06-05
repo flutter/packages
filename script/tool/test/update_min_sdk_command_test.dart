@@ -35,7 +35,7 @@ void main() {
       commandError = e;
     });
 
-    expect(commandError, isA<UsageException>());
+    expect(commandError, isA<ArgumentError>());
   });
 
   test('updates Dart when only Dart is present', () async {

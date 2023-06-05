@@ -58,7 +58,7 @@ void main() {
         commandError = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --changelog is blank', () async {
@@ -72,7 +72,7 @@ void main() {
         commandError = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --version is missing', () async {
@@ -83,7 +83,7 @@ void main() {
         commandError = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --version is an unknown value', () async {
@@ -97,7 +97,7 @@ void main() {
         commandError = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ArgumentError>());
     });
   });
 
