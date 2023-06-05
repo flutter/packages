@@ -1,6 +1,6 @@
 ## 2.6.0
 
-* CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
+* CameraPlatform.createCameraWithSettings to allow recorded video fps and bitrate control.
 
 ## 2.5.1
 
