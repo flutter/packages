@@ -17,16 +17,17 @@ import 'test_camerax_library.g.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
   group('Observer', () {
     tearDown(() {
       TestObserverHostApi.setup(null);
-      TestInstanceManagerHostApi.setup(null);
     });
 
     test('HostApi create makes call to create Observer instance', () {
       final MockTestObserverHostApi mockApi = MockTestObserverHostApi();
       TestObserverHostApi.setup(mockApi);
-      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
@@ -47,7 +48,6 @@ void main() {
         () {
       final MockTestObserverHostApi mockApi = MockTestObserverHostApi();
       TestObserverHostApi.setup(mockApi);
-      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
       final Observer<String> cameraStateObserver =
           Observer<String>.detached(onChanged: (Object value) {});
