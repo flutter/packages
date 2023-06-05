@@ -98,9 +98,6 @@ void main() {
     return cameraClosingEventSent && cameraErrorSent;
   }
 
-  // Mocks the call to clear the native InstanceManager.
-  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
-
   test('Should fetch CameraDescription instances for available cameras',
       () async {
     // Arrange
