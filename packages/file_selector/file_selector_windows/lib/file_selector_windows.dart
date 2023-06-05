@@ -56,16 +56,31 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? suggestedName,
     String? confirmButtonText,
   }) async {
+    return (await getSaveLocation(
+            acceptedTypeGroups: acceptedTypeGroups,
+            options: SaveDialogOptions(
+              initialDirectory: initialDirectory,
+              suggestedName: suggestedName,
+              confirmButtonText: confirmButtonText,
+            )))
+        ?.path;
+  }
+
+  @override
+  Future<FileSaveLocationResult?> getSaveLocation({
+    List<XTypeGroup>? acceptedTypeGroups,
+    SaveDialogOptions options = const SaveDialogOptions(),
+  }) async {
     final List<String?> paths = await _hostApi.showSaveDialog(
         SelectionOptions(
           allowMultiple: false,
           selectFolders: false,
           allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
         ),
-        initialDirectory,
-        suggestedName,
-        confirmButtonText);
-    return paths.isEmpty ? null : paths.first!;
+        options.initialDirectory,
+        options.suggestedName,
+        options.confirmButtonText);
+    return paths.isEmpty ? null : FileSaveLocationResult(paths.first!);
   }
 
   @override
