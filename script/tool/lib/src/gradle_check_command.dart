@@ -3,11 +3,17 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:meta/meta.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
+
+/// The lowest `ext.kotlin_version` that example apps are allowed to use.
+@visibleForTesting
+final Version minKotlinVersion = Version(1, 7, 10);
 
 /// A command to enforce gradle file conventions and best practices.
 class GradleCheckCommand extends PackageLoopingCommand {
@@ -101,7 +107,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     if (!_validateNamespace(package, contents, isExample: false)) {
       succeeded = false;
     }
-    if (!_validateSourceCompatibilityVersion(lines)) {
+    if (!_validateCompatibilityVersions(lines)) {
       succeeded = false;
     }
     if (!_validateGradleDrivenLintConfig(package, lines)) {
@@ -123,6 +129,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
     // failures are reported at once, not just the first one.
     bool succeeded = true;
     if (!_validateJavacLintConfig(package, lines)) {
+      succeeded = false;
+    }
+    if (!_validateKotlinVersion(package, lines)) {
       succeeded = false;
     }
     return succeeded;
@@ -153,13 +162,32 @@ class GradleCheckCommand extends PackageLoopingCommand {
         RegExp('^\\s*namespace\\s+[\'"](.*?)[\'"]', multiLine: true);
     final RegExpMatch? namespaceMatch =
         namespaceRegex.firstMatch(gradleContents);
+
+    // For plugins, make sure the namespace is conditionalized so that it
+    // doesn't break client apps using AGP 4.1 and earlier (which don't have
+    // a namespace property, and will fail to build if it's set).
+    const String namespaceConditional =
+        'if (project.android.hasProperty("namespace"))';
+    String exampleSetNamespace = "namespace 'dev.flutter.foo'";
+    if (!isExample) {
+      exampleSetNamespace = '''
+$namespaceConditional {
+    $exampleSetNamespace
+}''';
+    }
+    // Wrap the namespace command in an `android` block, adding the indentation
+    // to make it line up correctly.
+    final String exampleAndroidNamespaceBlock = '''
+    android {
+        ${exampleSetNamespace.split('\n').join('\n        ')}
+    }
+''';
+
     if (namespaceMatch == null) {
-      const String errorMessage = '''
+      final String errorMessage = '''
 build.gradle must set a "namespace":
 
-    android {
-        namespace 'dev.flutter.foo'
-    }
+$exampleAndroidNamespaceBlock
 
 The value must match the "package" attribute in AndroidManifest.xml, if one is
 present. For more information, see:
@@ -170,6 +198,18 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
           '$indentation${errorMessage.split('\n').join('\n$indentation')}');
       return false;
     } else {
+      if (!isExample && !gradleContents.contains(namespaceConditional)) {
+        final String errorMessage = '''
+build.gradle for a plugin must conditionalize "namespace":
+
+$exampleAndroidNamespaceBlock
+''';
+
+        printError(
+            '$indentation${errorMessage.split('\n').join('\n$indentation')}');
+        return false;
+      }
+
       return _validateNamespaceMatchesManifest(package,
           isExample: isExample, namespace: namespaceMatch.group(1)!);
     }
@@ -204,18 +244,27 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
   /// Checks for a source compatibiltiy version, so that it's explicit rather
   /// than using whatever the client's local toolchaing defaults to (which can
   /// lead to compile errors that show up for clients, but not in CI).
-  bool _validateSourceCompatibilityVersion(List<String> gradleLines) {
-    if (!gradleLines.any((String line) =>
-            line.contains('languageVersion') && !_isCommented(line)) &&
-        !gradleLines.any((String line) =>
-            line.contains('sourceCompatibility') && !_isCommented(line))) {
+  bool _validateCompatibilityVersions(List<String> gradleLines) {
+    final bool hasLanguageVersion = gradleLines.any((String line) =>
+        line.contains('languageVersion') && !_isCommented(line));
+    final bool hasCompabilityVersions = gradleLines.any((String line) =>
+            line.contains('sourceCompatibility') && !_isCommented(line)) &&
+        // Newer toolchains default targetCompatibility to the same value as
+        // sourceCompatibility, but older toolchains require it to be set
+        // explicitly. The exact version cutoff (and of which piece of the
+        // toolchain; likely AGP) is unknown; for context see
+        // https://github.com/flutter/flutter/issues/125482
+        gradleLines.any((String line) =>
+            line.contains('targetCompatibility') && !_isCommented(line));
+    if (!hasLanguageVersion && !hasCompabilityVersions) {
       const String errorMessage = '''
 build.gradle must set an explicit Java compatibility version.
 
-This can be done either via "sourceCompatibility":
+This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
         }
     }
 
@@ -304,6 +353,28 @@ gradle.projectsEvaluated {
 }
 ''');
       return false;
+    }
+    return true;
+  }
+
+  /// Validates whether the given [example] has its Kotlin version set to at
+  /// least a minimum value, if it is set at all.
+  bool _validateKotlinVersion(
+      RepositoryPackage example, List<String> gradleLines) {
+    final RegExp kotlinVersionRegex =
+        RegExp(r"ext\.kotlin_version\s*=\s*'([\d.]+)'");
+    RegExpMatch? match;
+    if (gradleLines.any((String line) {
+      match = kotlinVersionRegex.firstMatch(line);
+      return match != null;
+    })) {
+      final Version version = Version.parse(match!.group(1)!);
+      if (version < minKotlinVersion) {
+        printError('build.gradle sets "ext.kotlin_version" to "$version". The '
+            'minimum Kotlin version that can be specified is '
+            '$minKotlinVersion, for compatibility with modern dependencies.');
+        return false;
+      }
     }
     return true;
   }

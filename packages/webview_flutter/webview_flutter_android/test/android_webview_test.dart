@@ -17,6 +17,7 @@ import 'test_android_webview.g.dart';
   CookieManagerHostApi,
   DownloadListener,
   JavaScriptChannel,
+  TestCookieManagerHostApi,
   TestDownloadListenerHostApi,
   TestInstanceManagerHostApi,
   TestJavaObjectHostApi,
@@ -35,8 +36,9 @@ import 'test_android_webview.g.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // Mocks the call to clear the native InstanceManager.
+  // Mocks the calls to the native InstanceManager.
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+  TestJavaObjectHostApi.setup(MockTestJavaObjectHostApi());
 
   group('Android WebView', () {
     group('JavaObject', () {
@@ -45,10 +47,6 @@ void main() {
       setUp(() {
         mockPlatformHostApi = MockTestJavaObjectHostApi();
         TestJavaObjectHostApi.setup(mockPlatformHostApi);
-      });
-
-      tearDown(() {
-        TestJavaObjectHostApi.setup(null);
       });
 
       test('JavaObject.dispose', () async {
@@ -1051,18 +1049,103 @@ void main() {
   });
 
   group('CookieManager', () {
-    test('setCookie calls setCookie on CookieManagerHostApi', () {
-      CookieManager.api = MockCookieManagerHostApi();
-      CookieManager.instance.setCookie('foo', 'bar');
-      verify(CookieManager.api.setCookie('foo', 'bar'));
+    tearDown(() {
+      TestCookieManagerHostApi.setup(null);
     });
 
-    test('clearCookies calls clearCookies on CookieManagerHostApi', () {
-      CookieManager.api = MockCookieManagerHostApi();
-      when(CookieManager.api.clearCookies())
-          .thenAnswer((_) => Future<bool>.value(true));
-      CookieManager.instance.clearCookies();
-      verify(CookieManager.api.clearCookies());
+    test('instance', () {
+      final MockTestCookieManagerHostApi mockApi =
+          MockTestCookieManagerHostApi();
+      TestCookieManagerHostApi.setup(mockApi);
+
+      final CookieManager instance = CookieManager.instance;
+
+      verify(mockApi.attachInstance(
+        JavaObject.globalInstanceManager.getIdentifier(instance),
+      ));
+    });
+
+    test('setCookie', () async {
+      final MockTestCookieManagerHostApi mockApi =
+          MockTestCookieManagerHostApi();
+      TestCookieManagerHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CookieManager instance = CookieManager.detached(
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      const String url = 'testString';
+      const String value = 'testString2';
+
+      await instance.setCookie(url, value);
+
+      verify(mockApi.setCookie(instanceIdentifier, url, value));
+    });
+
+    test('clearCookies', () async {
+      final MockTestCookieManagerHostApi mockApi =
+          MockTestCookieManagerHostApi();
+      TestCookieManagerHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CookieManager instance = CookieManager.detached(
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      const bool result = true;
+      when(mockApi.removeAllCookies(
+        instanceIdentifier,
+      )).thenAnswer((_) => Future<bool>.value(result));
+
+      expect(await instance.removeAllCookies(), result);
+
+      verify(mockApi.removeAllCookies(instanceIdentifier));
+    });
+
+    test('setAcceptThirdPartyCookies', () async {
+      final MockTestCookieManagerHostApi mockApi =
+          MockTestCookieManagerHostApi();
+      TestCookieManagerHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CookieManager instance = CookieManager.detached(
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      final WebView webView = WebView.detached(
+        instanceManager: instanceManager,
+      );
+      const int webViewIdentifier = 4;
+      instanceManager.addHostCreatedInstance(webView, webViewIdentifier);
+
+      const bool accept = true;
+
+      await instance.setAcceptThirdPartyCookies(
+        webView,
+        accept,
+      );
+
+      verify(mockApi.setAcceptThirdPartyCookies(
+        instanceIdentifier,
+        webViewIdentifier,
+        accept,
+      ));
     });
   });
 

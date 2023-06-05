@@ -8,6 +8,7 @@ import 'configuration.dart';
 import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
+import 'match.dart';
 import 'matching.dart';
 import 'misc/inherited_router.dart';
 import 'parser.dart';
@@ -142,11 +143,6 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   GoRouteInformationParser get routeInformationParser =>
       _routeInformationParser;
 
-  /// The route configuration. Used for testing.
-  // TODO(johnpryan): Remove this, integration tests shouldn't need access
-  @visibleForTesting
-  RouteConfiguration get routeConfiguration => _routeConfiguration;
-
   /// Gets the current location.
   // TODO(chunhtai): deprecates this once go_router_builder is migrated to
   // GoRouterState.of.
@@ -179,14 +175,21 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// This is useful for redirecting to a named location.
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) =>
       _routeInformationParser.configuration.namedLocation(
         name,
-        params: params,
-        queryParams: queryParams,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
       );
+
+  /// Get the location for the provided route.
+  ///
+  /// Builds the absolute path for the route, by concatenating the paths of the
+  /// route and all its ancestors.
+  String? locationForRoute(RouteBase route) =>
+      _routeInformationParser.configuration.locationForRoute(route);
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
@@ -203,16 +206,17 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.
-  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  /// `name='person', pathParameters={'fid': 'f2', 'pid': 'p1'}`
   /// Navigate to the named route.
   void goNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
       go(
-        namedLocation(name, params: params, queryParams: queryParams),
+        namedLocation(name,
+            pathParameters: pathParameters, queryParameters: queryParameters),
         extra: extra,
       );
 
@@ -245,15 +249,16 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Push a named route onto the page stack w/ optional parameters, e.g.
-  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  /// `name='person', pathParameters={'fid': 'f2', 'pid': 'p1'}`
   Future<T?> pushNamed<T extends Object?>(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
       push<T>(
-        namedLocation(name, params: params, queryParams: queryParams),
+        namedLocation(name,
+            pathParameters: pathParameters, queryParameters: queryParameters),
         extra: extra,
       );
 
@@ -283,7 +288,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Replaces the top-most page of the page stack with the named route w/
-  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
+  /// optional parameters, e.g. `name='person', pathParameters={'fid': 'f2', 'pid':
   /// 'p1'}`.
   ///
   /// See also:
@@ -291,12 +296,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// * [pushNamed] which pushes a named route onto the page stack.
   void pushReplacementNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) {
     pushReplacement(
-      namedLocation(name, params: params, queryParams: queryParams),
+      namedLocation(name,
+          pathParameters: pathParameters, queryParameters: queryParameters),
       extra: extra,
     );
   }
@@ -332,7 +338,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///
   /// This will preserve the state and not run any page animation. Optional
   /// parameters can be providded to the named route, e.g. `name='person',
-  /// params={'fid': 'f2', 'pid': 'p1'}`.
+  /// pathParameters={'fid': 'f2', 'pid': 'p1'}`.
   ///
   /// See also:
   /// * [pushNamed] which pushes the given location onto the page stack.
@@ -340,12 +346,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///   stack but always uses a new page key.
   void replaceNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) {
     replace(
-      namedLocation(name, params: params, queryParams: queryParams),
+      namedLocation(name,
+          pathParameters: pathParameters, queryParameters: queryParameters),
       extra: extra,
     );
   }

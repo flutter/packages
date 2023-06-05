@@ -69,14 +69,14 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
+        uniformTypeIdentifiers: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
           label: 'image',
           extensions: <String>['jpg'],
           mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image'],
+          uniformTypeIdentifiers: <String>['public.image'],
           webWildCards: <String>['image/*']);
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
@@ -165,14 +165,14 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
+        uniformTypeIdentifiers: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
           label: 'image',
           extensions: <String>['jpg'],
           mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image'],
+          uniformTypeIdentifiers: <String>['public.image'],
           webWildCards: <String>['image/*']);
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
@@ -256,14 +256,14 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
+        uniformTypeIdentifiers: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
           label: 'image',
           extensions: <String>['jpg'],
           mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image'],
+          uniformTypeIdentifiers: <String>['public.image'],
           webWildCards: <String>['image/*']);
 
       await plugin
@@ -317,6 +317,31 @@ void main() {
           plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
           completes);
     });
+
+    test('ignores all type groups if any of them is a wildcard', () async {
+      await plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[
+        const XTypeGroup(
+          label: 'text',
+          extensions: <String>['txt'],
+          mimeTypes: <String>['text/plain'],
+          uniformTypeIdentifiers: <String>['public.text'],
+        ),
+        const XTypeGroup(
+          label: 'image',
+          extensions: <String>['jpg'],
+          mimeTypes: <String>['image/jpg'],
+          uniformTypeIdentifiers: <String>['public.image'],
+        ),
+        const XTypeGroup(
+          label: 'any',
+        ),
+      ]);
+
+      final VerificationResult result =
+          verify(mockApi.displaySavePanel(captureAny));
+      final SavePanelOptions options = result.captured[0] as SavePanelOptions;
+      expect(options.allowedFileTypes, null);
+    });
   });
 
   group('getDirectoryPath', () {
@@ -366,28 +391,51 @@ void main() {
     });
   });
 
-  test('ignores all type groups if any of them is a wildcard', () async {
-    await plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[
-      const XTypeGroup(
-        label: 'text',
-        extensions: <String>['txt'],
-        mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
-      ),
-      const XTypeGroup(
-        label: 'image',
-        extensions: <String>['jpg'],
-        mimeTypes: <String>['image/jpg'],
-        macUTIs: <String>['public.image'],
-      ),
-      const XTypeGroup(
-        label: 'any',
-      ),
-    ]);
+  group('getDirectoryPaths', () {
+    test('works as expected with no arguments', () async {
+      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async =>
+          <String>['firstDirectory', 'secondDirectory', 'thirdDirectory']);
 
-    final VerificationResult result =
-        verify(mockApi.displaySavePanel(captureAny));
-    final SavePanelOptions options = result.captured[0] as SavePanelOptions;
-    expect(options.allowedFileTypes, null);
+      final List<String> path = await plugin.getDirectoryPaths();
+
+      expect(path,
+          <String>['firstDirectory', 'secondDirectory', 'thirdDirectory']);
+      final VerificationResult result =
+          verify(mockApi.displayOpenPanel(captureAny));
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.allowsMultipleSelection, true);
+      expect(options.canChooseFiles, false);
+      expect(options.canChooseDirectories, true);
+      expect(options.baseOptions.allowedFileTypes, null);
+      expect(options.baseOptions.directoryPath, null);
+      expect(options.baseOptions.nameFieldStringValue, null);
+      expect(options.baseOptions.prompt, null);
+    });
+
+    test('handles cancel', () async {
+      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String?>[]);
+
+      final List<String> paths = await plugin.getDirectoryPaths();
+
+      expect(paths, <String>[]);
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      await plugin.getDirectoryPaths(confirmButtonText: 'Select directories');
+
+      final VerificationResult result =
+          verify(mockApi.displayOpenPanel(captureAny));
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.baseOptions.prompt, 'Select directories');
+    });
+
+    test('passes initialDirectory correctly', () async {
+      await plugin.getDirectoryPaths(initialDirectory: '/example/directory');
+
+      final VerificationResult result =
+          verify(mockApi.displayOpenPanel(captureAny));
+      final OpenPanelOptions options = result.captured[0] as OpenPanelOptions;
+      expect(options.baseOptions.directoryPath, '/example/directory');
+    });
   });
 }

@@ -1,10 +1,49 @@
+## 7.1.1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 7.1.0
+
+- Introduces `StatefulShellRoute` to support using separate navigators for child routes as well as preserving state in each navigation tree (flutter/flutter#99124).
+- Updates documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
+  describe the meaning of the child argument in the builder functions.
+- Adds support for restorationId to ShellRoute (and StatefulShellRoute).
+
+## 7.0.2
+
+- Fixes `BuildContext` extension method `replaceNamed` to correctly pass `pathParameters` and `queryParameters`.
+
+## 7.0.1
+
+- Adds a workaround for the `dart fix --apply` issue, https://github.com/dart-lang/sdk/issues/52233.
+
+## 7.0.0
+
+- **BREAKING CHANGE**:
+  - For the below changes, run `dart fix --apply` to automatically migrate your code.
+    - `GoRouteState.subloc` has been renamed to `GoRouteState.matchedLocation`.
+    - `GoRouteState.params` has been renamed to `GoRouteState.pathParameters`.
+    - `GoRouteState.fullpath` has been renamed to `GoRouteState.fullPath`.
+    - `GoRouteState.queryParams` has been renamed to `GoRouteState.queryParameters`.
+    - `params` and `queryParams` in `GoRouteState.namedLocation` have been renamed to `pathParameters` and `queryParameters`.
+    - `params` and `queryParams` in `GoRouter`'s `namedLocation`, `pushNamed`, `pushReplacementNamed`
+      `replaceNamed` have been renamed to `pathParameters` and `queryParameters`.
+  - For the below changes, please follow the [migration guide](https://docs.google.com/document/d/10Xbpifbs4E-zh6YE5akIO8raJq_m3FIXs6nUGdOspOg).
+    - `params` and `queryParams` in `BuildContext`'s `namedLocation`, `pushNamed`, `pushReplacementNamed`
+      `replaceNamed` have been renamed to `pathParameters` and `queryParameters`.
+- Cleans up API and makes RouteMatchList immutable.
+
+## 6.5.9
+
+- Removes navigator keys from `GoRouteData` and `ShellRouteData`.
+
 ## 6.5.8
 
 - Adds name parameter to `TypedGoRoute`
 
 ## 6.5.7
 
-- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s. 
+- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s.
 
 ## 6.5.6
 
@@ -16,7 +55,7 @@
 
 ## 6.5.4
 
-- Remove navigator keys from `TypedGoRoute` and `TypedShellRoute`.
+- Removes navigator keys from `TypedGoRoute` and `TypedShellRoute`.
 
 ## 6.5.3
 

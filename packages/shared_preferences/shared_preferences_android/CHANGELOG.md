@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.1.4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 2.1.3
 
 * Adds a namespace for compatibility with AGP 8.0.

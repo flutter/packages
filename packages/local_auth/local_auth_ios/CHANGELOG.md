@@ -1,3 +1,12 @@
+## 1.1.3
+
+* Migrates internal implementation to Pigeon.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 1.1.2
+
+* Internal refactoring for maintainability.
+
 ## 1.1.1
 
 * Clarifies explanation of endorsement in README.

@@ -37,4 +37,6 @@ const Set<String> _expectedAnnotatedTests = <String>{
   'NullableDefaultValueRoute',
   'IterableWithEnumRoute',
   'IterableDefaultValueRoute',
+  'NamedRoute',
+  'NamedEscapedRoute',
 };

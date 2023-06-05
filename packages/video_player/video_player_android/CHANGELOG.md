@@ -1,3 +1,15 @@
+## 2.4.8
+
+* Bumps ExoPlayer version to 2.18.6.
+
+## 2.4.7
+
+* Fixes Java warnings.
+
+## 2.4.6
+
+* Fixes compatibility with AGP versions older than 4.2.
+
 ## 2.4.5
 
 * Adds a namespace for compatibility with AGP 8.0.

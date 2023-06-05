@@ -1,6 +1,12 @@
-## 0.9.13+2
+## NEXT
 
 * CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
+* Fixes unawaited_futures violations.
+
+## 0.9.13+2
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 0.9.13+1
 

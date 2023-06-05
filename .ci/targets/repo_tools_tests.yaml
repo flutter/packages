@@ -1,4 +1,5 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
-  # TODO(stuartmorgan): Add actual tests here when moving the repo tooling.
+  - name: tool unit tests
+    script: .ci/scripts/plugin_tools_tests.sh

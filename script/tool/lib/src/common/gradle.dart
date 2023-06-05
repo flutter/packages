@@ -44,12 +44,13 @@ class GradleProject {
 
   /// Runs a `gradlew` command with the given parameters.
   Future<int> runCommand(
-    String target, {
+    String task, {
+    List<String> additionalTasks = const <String>[],
     List<String> arguments = const <String>[],
   }) {
     return processRunner.runAndStream(
       gradleWrapper.path,
-      <String>[target, ...arguments],
+      <String>[task, ...additionalTasks, ...arguments],
       workingDir: androidDirectory,
     );
   }

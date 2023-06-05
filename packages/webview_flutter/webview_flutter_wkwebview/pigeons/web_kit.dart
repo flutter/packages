@@ -59,6 +59,7 @@ enum NSKeyValueChangeKeyEnum {
   newValue,
   notificationIsPrior,
   oldValue,
+  unknown,
 }
 
 // TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
@@ -191,6 +192,12 @@ enum WKNavigationType {
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
   other,
+
+  /// An unknown navigation type.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
 }
 
 /// Possible permission decisions for device resource access.
@@ -241,7 +248,7 @@ enum WKMediaCaptureType {
   /// An unknown media device.
   ///
   /// This does not represent an actual value provided by the platform and only
-  /// indicates a value was provided that we don't currently support.
+  /// indicates a value was provided that isn't currently supported.
   unknown,
 }
 

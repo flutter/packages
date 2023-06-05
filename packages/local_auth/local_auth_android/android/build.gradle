@@ -22,7 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.localauth'
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'io.flutter.plugins.localauth'
+    }
     compileSdkVersion 33
 
     defaultConfig {
@@ -32,13 +35,13 @@ android {
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
-        baseline file("lint-baseline.xml")
     }
 
 
@@ -58,10 +61,10 @@ android {
 dependencies {
     api "androidx.core:core:1.9.0"
     api "androidx.biometric:biometric:1.1.0"
-    api "androidx.fragment:fragment:1.5.5"
+    api "androidx.fragment:fragment:1.5.6"
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-inline:5.0.0'
-    testImplementation 'org.robolectric:robolectric:4.5'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

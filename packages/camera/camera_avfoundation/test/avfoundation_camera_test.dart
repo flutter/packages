@@ -1164,7 +1164,7 @@ void main() {
         isMethodCall('startImageStream', arguments: null),
       ]);
 
-      subscription.cancel();
+      await subscription.cancel();
     });
 
     test('Should stop streaming', () async {
@@ -1181,7 +1181,7 @@ void main() {
       final StreamSubscription<CameraImageData> subscription = camera
           .onStreamedFrameAvailable(cameraId)
           .listen((CameraImageData imageData) {});
-      subscription.cancel();
+      await subscription.cancel();
 
       // Assert
       expect(channel.log, <Matcher>[

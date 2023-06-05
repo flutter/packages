@@ -261,16 +261,14 @@ class _MyAppState extends State<_MyApp> {
           subtitle: Text(
             productDetails.description,
           ),
-          trailing: previousPurchase != null
+          trailing: previousPurchase != null && Platform.isIOS
               ? IconButton(
                   onPressed: () => confirmPriceChange(context),
                   icon: const Icon(Icons.upgrade))
               : TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.green[800],
-                    // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                    // ignore: deprecated_member_use
-                    primary: Colors.white,
+                    foregroundColor: Colors.white,
                   ),
                   onPressed: () {
                     late PurchaseParam purchaseParam;
@@ -369,9 +367,7 @@ class _MyAppState extends State<_MyApp> {
           TextButton(
             style: TextButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
-              // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-              // ignore: deprecated_member_use
-              primary: Colors.white,
+              foregroundColor: Colors.white,
             ),
             onPressed: () => _inAppPurchase.restorePurchases(),
             child: const Text('Restore purchases'),
@@ -440,7 +436,7 @@ class _MyAppState extends State<_MyApp> {
             purchaseDetails.status == PurchaseStatus.restored) {
           final bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
-            deliverProduct(purchaseDetails);
+            unawaited(deliverProduct(purchaseDetails));
           } else {
             _handleInvalidPurchase(purchaseDetails);
             return;
@@ -462,29 +458,10 @@ class _MyAppState extends State<_MyApp> {
   }
 
   Future<void> confirmPriceChange(BuildContext context) async {
-    if (Platform.isAndroid) {
-      final InAppPurchaseAndroidPlatformAddition androidAddition =
-          _inAppPurchase
-              .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
-      final BillingResultWrapper priceChangeConfirmationResult =
-          await androidAddition.launchPriceChangeConfirmationFlow(
-        sku: 'purchaseId',
-      );
-      if (context.mounted) {
-        if (priceChangeConfirmationResult.responseCode == BillingResponse.ok) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Price change accepted'),
-          ));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-              priceChangeConfirmationResult.debugMessage ??
-                  'Price change failed with code ${priceChangeConfirmationResult.responseCode}',
-            ),
-          ));
-        }
-      }
-    }
+    // Price changes for Android are not handled by the application, but are
+    // instead handled by the Play Store. See
+    // https://developer.android.com/google/play/billing/price-changes for more
+    // information on price changes on Android.
     if (Platform.isIOS) {
       final InAppPurchaseStoreKitPlatformAddition iapStoreKitPlatformAddition =
           _inAppPurchase

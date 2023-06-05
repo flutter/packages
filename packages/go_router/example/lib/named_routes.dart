@@ -84,14 +84,15 @@ class App extends StatelessWidget {
             name: 'family',
             path: 'family/:fid',
             builder: (BuildContext context, GoRouterState state) =>
-                FamilyScreen(fid: state.params['fid']!),
+                FamilyScreen(fid: state.pathParameters['fid']!),
             routes: <GoRoute>[
               GoRoute(
                 name: 'person',
                 path: 'person/:pid',
                 builder: (BuildContext context, GoRouterState state) {
                   return PersonScreen(
-                      fid: state.params['fid']!, pid: state.params['pid']!);
+                      fid: state.pathParameters['fid']!,
+                      pid: state.pathParameters['pid']!);
                 },
               ),
             ],
@@ -119,7 +120,7 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: Text(entry.value.name),
               onTap: () => context.go(context.namedLocation('family',
-                  params: <String, String>{'fid': entry.key})),
+                  pathParameters: <String, String>{'fid': entry.key})),
             )
         ],
       ),
@@ -147,8 +148,8 @@ class FamilyScreen extends StatelessWidget {
               title: Text(entry.value.name),
               onTap: () => context.go(context.namedLocation(
                 'person',
-                params: <String, String>{'fid': fid, 'pid': entry.key},
-                queryParams: <String, String>{'qid': 'quid'},
+                pathParameters: <String, String>{'fid': fid, 'pid': entry.key},
+                queryParameters: <String, String>{'qid': 'quid'},
               )),
             ),
         ],

@@ -1,3 +1,27 @@
+## 6.0.35
+
+* Converts method channels to Pigeon.
+
+## 6.0.34
+
+* Reverts ContextCompat usage that caused flutter/flutter#127014
+
+## 6.0.33
+
+* Explicitly sets if reciever for close should be exported.
+
+## 6.0.32
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 6.0.31
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 6.0.30
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
 ## 6.0.29
 
 * Adds a namespace for compatibility with AGP 8.0.

@@ -78,8 +78,11 @@ void main() {
         'packages/a_plugin/example/android/build.gradle',
         'packages/a_plugin/example/android/gradle/wrapper/gradle-wrapper.properties',
         'packages/a_plugin/example/ios/Runner.xcodeproj/project.pbxproj',
+        'packages/a_plugin/example/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme',
         'packages/a_plugin/example/linux/flutter/CMakeLists.txt',
+        'packages/a_plugin/example/macos/Podfile',
         'packages/a_plugin/example/macos/Runner.xcodeproj/project.pbxproj',
+        'packages/a_plugin/example/macos/Runner.xcworkspace/contents.xcworkspacedata',
         'packages/a_plugin/example/windows/CMakeLists.txt',
         'packages/a_plugin/example/pubspec.yaml',
         // Pigeon platform tests, which have an unusual structure.

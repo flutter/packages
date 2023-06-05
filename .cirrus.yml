@@ -1,4 +1,4 @@
-gcp_credentials: ENCRYPTED[!3a93d98d7c95a41f5033834ef30e50928fc5d81239dc632b153c2628200a8187f3811cb01ce338b1ab3b6505a7a65c37!]
+gcp_credentials: ENCRYPTED[!9c8e92e8da192ce2a51b7d4ed9948c4250d0bae3660193d9b901196c9692abbebe784d4a32e9f38b328571d65f6e7aed!]
 
 # Run on PRs and main branch post submit only. Don't run tests when tagging.
 only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
@@ -27,7 +27,7 @@ macos_template: &MACOS_TEMPLATE
   # PRs on macOS.
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   macos_instance:
-    image: ghcr.io/cirruslabs/macos-ventura-xcode:14
+    image: ghcr.io/cirruslabs/macos-ventura-xcode:14.3
 
 flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
   upgrade_flutter_script:
@@ -83,11 +83,6 @@ task:
     zone: us-central1-a
     namespace: default
   matrix:
-    ### Platform-agnostic tasks ###
-    - name: Linux plugin_tools_tests
-      script:
-        - cd script/tool
-        - dart pub run test
     # Repository rules and best-practice enforcement.
     # Only channel-agnostic tests should go here since it is only run once
     # (on Flutter master).
@@ -97,7 +92,7 @@ task:
         license_script: $PLUGIN_TOOL_COMMAND license-check
         # The major and minor version here should match the lowest version
         # analyzed in legacy_version_analyze.
-        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0 --allow-dependencies=script/configs/allowed_unpinned_deps.yaml --allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml
+        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.3.0 --allow-dependencies=script/configs/allowed_unpinned_deps.yaml --allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml
         readme_script:
           - ./script/tool_runner.sh readme-check
           # Re-run with --require-excerpts, skipping packages that still need
@@ -163,7 +158,7 @@ task:
       matrix:
         # Change the arguments to pubspec-check when changing these values.
         env:
-          CHANNEL: "3.0.5"
+          CHANNEL: "3.7.12"
           DART_VERSION: "2.17.6"
         env:
           CHANNEL: "3.3.10"
@@ -265,18 +260,19 @@ task:
       skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
       env:
         matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 5 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 6 --shardCount 7"
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 5 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 6 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 7 --shardCount 8"
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
         MAPS_API_KEY: ENCRYPTED[d6583b08f79f91ea4844c77460f04539965e46ad2fd97fb7c062b4dfe88016228b86ebe8c220ab4187e0c4bd773dc1e7]
-        GCLOUD_FIREBASE_TESTLAB_KEY: ENCRYPTED[62dec6b6b5e7f32dd915552cc33202a350796824de621870bbc54c9ae28a10751e6bd8112f9e21f7f77e65fde1d588cf]
+        GCLOUD_FIREBASE_TESTLAB_KEY: ENCRYPTED[1a2eebf9367197bbe812d9a0ea83a53a05aeba4bb5e4964fe6a69727883cd87e51238d39237b1f80b0894c48419ac268]
       build_script:
         - ./script/tool_runner.sh build-examples --apk
       lint_script:
@@ -306,6 +302,11 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
+      create_all_packages_app_legacy_script:
+        - $PLUGIN_TOOL_COMMAND create-all-packages-app --legacy-source=.ci/legacy_project/all_packages --output-dir=legacy/ --exclude script/configs/exclude_all_packages_app.yaml
+      build_all_packages_legacy_script:
+        - cd legacy/all_packages
+        - flutter build $BUILD_ALL_ARGS --debug
     ### Web tasks ###
     - name: web-platform_tests
       env:
@@ -350,7 +351,7 @@ task:
       # currently have a hard-coded device.
       create_simulator_script:
         - xcrun simctl list
-        - xcrun simctl create "iPhone 13" com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-0
+        - xcrun simctl create "iPhone 13" com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-4
       local_tests_script:
         # script/configs/linux_only_custom_test.yaml
         #   Custom tests need Chrome for these packages. (They run in linux-custom_package_tests)

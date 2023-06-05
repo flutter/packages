@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
 
@@ -11,8 +10,6 @@ import 'package:markdown/markdown.dart' as md;
 enum MarkdownExtensionSet { none, commonMark, githubFlavored, githubWeb }
 
 extension MarkdownExtensionSetExtension on MarkdownExtensionSet {
-  String get name => describeEnum(this);
-
   String get displayTitle => () {
         switch (this) {
           case MarkdownExtensionSet.none:
@@ -41,8 +38,6 @@ extension MarkdownExtensionSetExtension on MarkdownExtensionSet {
 }
 
 extension WrapAlignmentExtension on WrapAlignment {
-  String get name => describeEnum(this);
-
   String get displayTitle => () {
         switch (this) {
           case WrapAlignment.center:

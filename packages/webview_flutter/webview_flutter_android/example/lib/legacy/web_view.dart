@@ -81,9 +81,7 @@ class WebView extends StatefulWidget {
         AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
     this.allowsInlineMediaPlayback = false,
     this.backgroundColor,
-  })  : assert(javascriptMode != null),
-        assert(initialMediaPlaybackPolicy != null),
-        assert(allowsInlineMediaPlayback != null);
+  });
 
   /// The WebView platform that's used by this WebView.
   ///
@@ -366,7 +364,7 @@ class WebViewController {
     this._widget,
     this._webViewPlatformController,
     this._javascriptChannelRegistry,
-  ) : assert(_webViewPlatformController != null) {
+  ) {
     _settings = _webSettingsFromWidget(_widget);
   }
 
@@ -420,7 +418,6 @@ class WebViewController {
     String url, {
     Map<String, String>? headers,
   }) async {
-    assert(url != null);
     _validateUrlString(url);
     return _webViewPlatformController.loadUrl(url, headers);
   }
@@ -607,11 +604,9 @@ class WebViewController {
     assert(currentValue.hasNavigationDelegate != null);
     assert(currentValue.hasProgressTracking != null);
     assert(currentValue.debuggingEnabled != null);
-    assert(currentValue.userAgent != null);
     assert(newValue.javascriptMode != null);
     assert(newValue.hasNavigationDelegate != null);
     assert(newValue.debuggingEnabled != null);
-    assert(newValue.userAgent != null);
     assert(newValue.zoomEnabled != null);
 
     JavascriptMode? javascriptMode;

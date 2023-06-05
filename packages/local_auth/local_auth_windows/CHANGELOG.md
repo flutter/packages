@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 1.0.8
+
+* Sets a cmake_policy compatibility version to fix build warnings.
+
 ## 1.0.7
 
 * Clarifies explanation of endorsement in README.
