@@ -26,7 +26,7 @@ public protocol SystemURLHandler {
 
 extension NSWorkspace: SystemURLHandler {}
 
-public class UrlLauncherPlugin: NSObject, FlutterPlugin {
+public class UrlLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
 
   private var workspace: SystemURLHandler
 
@@ -35,42 +35,23 @@ public class UrlLauncherPlugin: NSObject, FlutterPlugin {
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(
-      name: "plugins.flutter.io/url_launcher_macos",
-      binaryMessenger: registrar.messenger)
     let instance = UrlLauncherPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    UrlLauncherApiSetup.setUp(binaryMessenger: registrar.messenger, api: instance)
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    let urlString: String? = (call.arguments as? [String: Any])?["url"] as? String
-    switch call.method {
-    case "canLaunch":
-      guard let unwrappedURLString = urlString,
-        let url = URL.init(string: unwrappedURLString)
-      else {
-        result(invalidURLError(urlString))
-        return
-      }
-      result(workspace.urlForApplication(toOpen: url) != nil)
-    case "launch":
-      guard let unwrappedURLString = urlString,
-        let url = URL.init(string: unwrappedURLString)
-      else {
-        result(invalidURLError(urlString))
-        return
-      }
-      result(workspace.open(url))
-    default:
-      result(FlutterMethodNotImplemented)
+  func canLaunch(url: String) throws -> UrlLauncherBoolResult {
+    guard let nsurl = URL.init(string: url) else {
+      return UrlLauncherBoolResult(value: false, error: .invalidUrl)
     }
+    let canOpen = workspace.urlForApplication(toOpen: nsurl) != nil
+    return UrlLauncherBoolResult(value: canOpen, error: nil)
   }
-}
 
-/// Returns an error for the case where a URL string can't be parsed as a URL.
-private func invalidURLError(_ url: String?) -> FlutterError {
-  return FlutterError(
-    code: "argument_error",
-    message: "Unable to parse URL",
-    details: "Provided URL: \(String(describing: url))")
+  func launch(url: String) throws -> UrlLauncherBoolResult {
+    guard let nsurl = URL.init(string: url) else {
+      return UrlLauncherBoolResult(value: false, error: .invalidUrl)
+    }
+    let success = workspace.open(nsurl)
+    return UrlLauncherBoolResult(value: success, error: nil)
+  }
 }

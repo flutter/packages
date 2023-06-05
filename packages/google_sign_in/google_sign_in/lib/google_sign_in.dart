@@ -48,9 +48,7 @@ class GoogleSignInAccount implements GoogleIdentity {
         id = data.id,
         photoUrl = data.photoUrl,
         serverAuthCode = data.serverAuthCode,
-        _idToken = data.idToken {
-    assert(id != null);
-  }
+        _idToken = data.idToken;
 
   // These error codes must match with ones declared on Android and iOS sides.
 
@@ -189,7 +187,15 @@ class GoogleSignIn {
     this.clientId,
     this.serverClientId,
     this.forceCodeForRefreshToken = false,
-  });
+  }) {
+    // Start initializing.
+    if (kIsWeb) {
+      // Start initializing the plugin ASAP, so the `userDataEvents` Stream for
+      // the web can be used without calling any other methods of the plugin
+      // (like `silentSignIn` or `isSignedIn`).
+      unawaited(_ensureInitialized());
+    }
+  }
 
   /// Factory for creating default sign in user experience.
   factory GoogleSignIn.standard({
@@ -261,11 +267,9 @@ class GoogleSignIn {
       StreamController<GoogleSignInAccount?>.broadcast();
 
   /// Subscribe to this stream to be notified when the current user changes.
-  Stream<GoogleSignInAccount?> get onCurrentUserChanged =>
-      _currentUserController.stream;
-
-  // Future that completes when we've finished calling `init` on the native side
-  Future<void>? _initialization;
+  Stream<GoogleSignInAccount?> get onCurrentUserChanged {
+    return _currentUserController.stream;
+  }
 
   Future<GoogleSignInAccount?> _callMethod(
       Future<dynamic> Function() method) async {
@@ -278,6 +282,7 @@ class GoogleSignIn {
         : null);
   }
 
+  // Sets the current user, and propagates it through the _currentUserController.
   GoogleSignInAccount? _setCurrentUser(GoogleSignInAccount? currentUser) {
     if (currentUser != _currentUser) {
       _currentUser = currentUser;
@@ -286,20 +291,38 @@ class GoogleSignIn {
     return _currentUser;
   }
 
-  Future<void> _ensureInitialized() {
-    return _initialization ??=
-        GoogleSignInPlatform.instance.initWithParams(SignInInitParameters(
+  // Future that completes when `init` has completed on the native side.
+  Future<void>? _initialization;
+
+  // Performs initialization, guarding it with the _initialization future.
+  Future<void> _ensureInitialized() async {
+    _initialization ??= _doInitialization().catchError((Object e) {
+      // Invalidate initialization if it errors out.
+      _initialization = null;
+      // ignore: only_throw_errors
+      throw e;
+    });
+    return _initialization;
+  }
+
+  // Actually performs the initialization.
+  //
+  // This method calls initWithParams, and then, if the plugin instance has a
+  // userDataEvents Stream, connects it to the [_setCurrentUser] method.
+  Future<void> _doInitialization() async {
+    await GoogleSignInPlatform.instance.initWithParams(SignInInitParameters(
       signInOption: signInOption,
       scopes: scopes,
       hostedDomain: hostedDomain,
       clientId: clientId,
       serverClientId: serverClientId,
       forceCodeForRefreshToken: forceCodeForRefreshToken,
-    ))
-          ..catchError((dynamic _) {
-            // Invalidate initialization if it errors out.
-            _initialization = null;
-          });
+    ));
+
+    unawaited(GoogleSignInPlatform.instance.userDataEvents
+        ?.map((GoogleSignInUserData? userData) {
+      return userData != null ? GoogleSignInAccount._(this, userData) : null;
+    }).forEach(_setCurrentUser));
   }
 
   /// The most recently scheduled method call.
@@ -423,5 +446,25 @@ class GoogleSignIn {
   Future<bool> requestScopes(List<String> scopes) async {
     await _ensureInitialized();
     return GoogleSignInPlatform.instance.requestScopes(scopes);
+  }
+
+  /// Checks if the current user has granted access to all the specified [scopes].
+  ///
+  /// Optionally, an [accessToken] can be passed to perform this check. This
+  /// may be useful when an application holds on to a cached, potentially
+  /// long-lived [accessToken].
+  Future<bool> canAccessScopes(
+    List<String> scopes, {
+    String? accessToken,
+  }) async {
+    await _ensureInitialized();
+
+    final String? token =
+        accessToken ?? (await _currentUser?.authentication)?.accessToken;
+
+    return GoogleSignInPlatform.instance.canAccessScopes(
+      scopes,
+      accessToken: token,
+    );
   }
 }

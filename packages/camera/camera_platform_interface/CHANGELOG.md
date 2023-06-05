@@ -1,6 +1,8 @@
 ## 2.5.1
 
 * CameraPlatfrom.createCameraWithSettings to allow recorded video fps and bitrate control.
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 2.5.0
 

@@ -1,3 +1,28 @@
+## 2.0.2
+
+* Fixes unawaited_futures violations.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.0.1
+
+* Supports name parameter for `TypedGoRoute`.
+## 2.0.0
+
+* Updates the documentation to go_router v7.0.0.
+* Bumps go_router version in example folder to v7.0.0.
+
+## 1.2.2
+
+* Supports returning value in generated `push` method. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650)
+
+## 1.2.1
+
+* Supports opt-in required extra parameters. [#117261](https://github.com/flutter/flutter/issues/117261)
+
+## 1.2.0
+
+* Adds Support for ShellRoute
+
 ## 1.1.7
 
 * Supports default values for `Set`, `List` and `Iterable` route parameters.

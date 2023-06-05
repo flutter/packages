@@ -105,6 +105,9 @@ You can now add a `GoogleMap` widget to your widget tree.
 The map view can be controlled with the `GoogleMapController` that is passed to
 the `GoogleMap`'s `onMapCreated` callback.
 
+The `GoogleMap` widget should be used within a widget with a bounded size. Using it
+in an unbounded widget will cause the application to throw a Flutter exception.
+
 ### Sample Usage
 
 <?code-excerpt "readme_sample.dart (MapSample)"?>
@@ -151,7 +154,7 @@ class MapSampleState extends State<MapSample> {
 
   Future<void> _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+    await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   }
 }
 ```

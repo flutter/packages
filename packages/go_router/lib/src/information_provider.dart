@@ -20,7 +20,6 @@ class GoRouteInformationProvider extends RouteInformationProvider
 
   final Listenable? _refreshListenable;
 
-  // ignore: unnecessary_non_null_assertion
   static WidgetsBinding get _binding => WidgetsBinding.instance;
 
   @override
@@ -30,11 +29,17 @@ class GoRouteInformationProvider extends RouteInformationProvider
     // Avoid adding a new history entry if the route is the same as before.
     final bool replace = type == RouteInformationReportingType.neglect ||
         (type == RouteInformationReportingType.none &&
+            // TODO(chunhtai): remove this ignore and migrate the code
+            // https://github.com/flutter/flutter/issues/124045.
+            // ignore: deprecated_member_use
             _valueInEngine.location == routeInformation.location);
     SystemNavigator.selectMultiEntryHistory();
     // TODO(chunhtai): report extra to browser through state if possible
     // See https://github.com/flutter/flutter/issues/108142
     SystemNavigator.routeInformationUpdated(
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use, unnecessary_null_checks, unnecessary_non_null_assertion
       location: routeInformation.location!,
       replace: replace,
     );
@@ -48,6 +53,9 @@ class GoRouteInformationProvider extends RouteInformationProvider
 
   set value(RouteInformation other) {
     final bool shouldNotify =
+        // TODO(chunhtai): remove this ignore and migrate the code
+        // https://github.com/flutter/flutter/issues/124045.
+        // ignore: deprecated_member_use
         _value.location != other.location || _value.state != other.state;
     _value = other;
     if (shouldNotify) {
@@ -56,6 +64,9 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   RouteInformation _valueInEngine =
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       RouteInformation(location: _binding.platformDispatcher.defaultRouteName);
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
@@ -102,6 +113,9 @@ class GoRouteInformationProvider extends RouteInformationProvider
   @override
   Future<bool> didPushRoute(String route) {
     assert(hasListeners);
+    // TODO(chunhtai): remove this ignore and migrate the code
+    // https://github.com/flutter/flutter/issues/124045.
+    // ignore: deprecated_member_use
     _platformReportsNewRouteInformation(RouteInformation(location: route));
     return SynchronousFuture<bool>(true);
   }

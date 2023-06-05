@@ -13,8 +13,11 @@ class _MockSharedPreferencesApi implements TestUserDefaultsApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Map<String?, Object?> getAll() {
-    return items;
+  Map<String?, Object?> getAllWithPrefix(String prefix) {
+    return <String?, Object?>{
+      for (final String key in items.keys)
+        if (key.startsWith(prefix)) key: items[key]
+    };
   }
 
   @override
@@ -38,14 +41,48 @@ class _MockSharedPreferencesApi implements TestUserDefaultsApi {
   }
 
   @override
-  void clear() {
-    items.clear();
+  void clearWithPrefix(String prefix) {
+    items.keys.toList().forEach((String key) {
+      if (key.startsWith(prefix)) {
+        items.remove(key);
+      }
+    });
   }
 }
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late _MockSharedPreferencesApi api;
+
+  const Map<String, Object> flutterTestValues = <String, Object>{
+    'flutter.String': 'hello world',
+    'flutter.Bool': true,
+    'flutter.Int': 42,
+    'flutter.Double': 3.14159,
+    'flutter.StringList': <String>['foo', 'bar'],
+  };
+
+  const Map<String, Object> prefixTestValues = <String, Object>{
+    'prefix.String': 'hello world',
+    'prefix.Bool': true,
+    'prefix.Int': 42,
+    'prefix.Double': 3.14159,
+    'prefix.StringList': <String>['foo', 'bar'],
+  };
+
+  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+    'String': 'hello world',
+    'Bool': true,
+    'Int': 42,
+    'Double': 3.14159,
+    'StringList': <String>['foo', 'bar'],
+  };
+
+  final Map<String, Object> allTestValues = <String, Object>{};
+
+  allTestValues.addAll(flutterTestValues);
+  allTestValues.addAll(prefixTestValues);
+  allTestValues.addAll(nonPrefixTestValues);
 
   setUp(() {
     api = _MockSharedPreferencesApi();
@@ -72,21 +109,39 @@ void main() {
     expect(api.items.containsKey('flutter.hi'), isFalse);
   });
 
+  test('clearWithPrefix', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 5);
+    await plugin.clearWithPrefix('prefix.');
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 0);
+  });
+
   test('getAll', () async {
     final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
-    api.items['flutter.aBool'] = true;
-    api.items['flutter.aDouble'] = 3.14;
-    api.items['flutter.anInt'] = 42;
-    api.items['flutter.aString'] = 'hello world';
-    api.items['flutter.aStringList'] = <String>['hello', 'world'];
+    for (final String key in flutterTestValues.keys) {
+      api.items[key] = flutterTestValues[key]!;
+    }
     final Map<String?, Object?> all = await plugin.getAll();
     expect(all.length, 5);
-    expect(all['flutter.aBool'], api.items['flutter.aBool']);
-    expect(all['flutter.aDouble'],
-        closeTo(api.items['flutter.aDouble']! as num, 0.0001));
-    expect(all['flutter.anInt'], api.items['flutter.anInt']);
-    expect(all['flutter.aString'], api.items['flutter.aString']);
-    expect(all['flutter.aStringList'], api.items['flutter.aStringList']);
+    expect(all, flutterTestValues);
+  });
+
+  test('getAllWithPrefix', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 5);
+    expect(all, prefixTestValues);
   });
 
   test('setValue', () async {
@@ -111,5 +166,28 @@ void main() {
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
     }, throwsA(isA<PlatformException>()));
+  });
+
+  test('getAllWithNoPrefix', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    expect(all, allTestValues);
+  });
+
+  test('clearWithNoPrefix', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    await plugin.clearWithPrefix('');
+    all = await plugin.getAllWithPrefix('');
+    expect(all.length, 0);
   });
 }

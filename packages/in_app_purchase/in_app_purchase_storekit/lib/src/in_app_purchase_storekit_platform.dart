@@ -131,12 +131,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
           invalidProductIdentifiers: identifiers.toList());
     }
     List<AppStoreProductDetails> productDetails = <AppStoreProductDetails>[];
-    if (response.products != null) {
-      productDetails = response.products
-          .map((SKProductWrapper productWrapper) =>
-              AppStoreProductDetails.fromSKProduct(productWrapper))
-          .toList();
-    }
+    productDetails = response.products
+        .map((SKProductWrapper productWrapper) =>
+            AppStoreProductDetails.fromSKProduct(productWrapper))
+        .toList();
     List<String> invalidIdentifiers = response.invalidProductIdentifiers;
     if (productDetails.isEmpty) {
       invalidIdentifiers = identifiers.toList();

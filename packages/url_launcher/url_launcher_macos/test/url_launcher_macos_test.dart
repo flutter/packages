@@ -4,28 +4,16 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:url_launcher_macos/src/messages.g.dart';
 import 'package:url_launcher_macos/url_launcher_macos.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  group('UrlLauncherMacOS', () {
+    late _FakeUrlLauncherApi api;
 
-  group('$UrlLauncherMacOS', () {
-    const MethodChannel channel =
-        MethodChannel('plugins.flutter.io/url_launcher_macos');
-    final List<MethodCall> log = <MethodCall>[];
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      log.add(methodCall);
-
-      // Return null explicitly instead of relying on the implicit null
-      // returned by the method channel if no return statement is specified.
-      return null;
-    });
-
-    tearDown(() {
-      log.clear();
+    setUp(() {
+      api = _FakeUrlLauncherApi();
     });
 
     test('registers instance', () {
@@ -33,120 +21,121 @@ void main() {
       expect(UrlLauncherPlatform.instance, isA<UrlLauncherMacOS>());
     });
 
-    test('canLaunch', () async {
-      final UrlLauncherMacOS launcher = UrlLauncherMacOS();
-      await launcher.canLaunch('http://example.com/');
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('canLaunch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-          })
-        ],
-      );
+    group('canLaunch', () {
+      test('success', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        expect(await launcher.canLaunch('http://example.com/'), true);
+      });
+
+      test('failure', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        expect(await launcher.canLaunch('unknown://scheme'), false);
+      });
+
+      test('invalid URL returns a PlatformException', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        await expectLater(launcher.canLaunch('invalid://u r l'),
+            throwsA(isA<PlatformException>()));
+      });
+
+      test('passes unexpected PlatformExceptions through', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        await expectLater(launcher.canLaunch('unexpectedthrow://someexception'),
+            throwsA(isA<PlatformException>()));
+      });
     });
 
-    test('canLaunch should return false if platform returns null', () async {
-      final UrlLauncherMacOS launcher = UrlLauncherMacOS();
-      final bool canLaunch = await launcher.canLaunch('http://example.com/');
+    group('launch', () {
+      test('success', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        expect(
+            await launcher.launch(
+              'http://example.com/',
+              useSafariVC: false,
+              useWebView: false,
+              enableJavaScript: false,
+              enableDomStorage: false,
+              universalLinksOnly: false,
+              headers: const <String, String>{},
+            ),
+            true);
+      });
 
-      expect(canLaunch, false);
-    });
+      test('failure', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        expect(
+            await launcher.launch(
+              'unknown://scheme',
+              useSafariVC: false,
+              useWebView: false,
+              enableJavaScript: false,
+              enableDomStorage: false,
+              universalLinksOnly: false,
+              headers: const <String, String>{},
+            ),
+            false);
+      });
 
-    test('launch', () async {
-      final UrlLauncherMacOS launcher = UrlLauncherMacOS();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{},
-          })
-        ],
-      );
-    });
+      test('invalid URL returns a PlatformException', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        await expectLater(
+            launcher.launch(
+              'invalid://u r l',
+              useSafariVC: false,
+              useWebView: false,
+              enableJavaScript: false,
+              enableDomStorage: false,
+              universalLinksOnly: false,
+              headers: const <String, String>{},
+            ),
+            throwsA(isA<PlatformException>()));
+      });
 
-    test('launch with headers', () async {
-      final UrlLauncherMacOS launcher = UrlLauncherMacOS();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{'key': 'value'},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{'key': 'value'},
-          })
-        ],
-      );
-    });
-
-    test('launch universal links only', () async {
-      final UrlLauncherMacOS launcher = UrlLauncherMacOS();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: true,
-        headers: const <String, String>{},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': true,
-            'headers': <String, String>{},
-          })
-        ],
-      );
-    });
-
-    test('launch should return false if platform returns null', () async {
-      final UrlLauncherMacOS launcher = UrlLauncherMacOS();
-      final bool launched = await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{},
-      );
-
-      expect(launched, false);
+      test('passes unexpected PlatformExceptions through', () async {
+        final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
+        await expectLater(
+            launcher.launch(
+              'unexpectedthrow://someexception',
+              useSafariVC: false,
+              useWebView: false,
+              enableJavaScript: false,
+              enableDomStorage: false,
+              universalLinksOnly: false,
+              headers: const <String, String>{},
+            ),
+            throwsA(isA<PlatformException>()));
+      });
     });
   });
 }
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
+/// A fake implementation of the host API that reacts to specific schemes.
 ///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+/// See _isLaunchable for the behaviors.
+class _FakeUrlLauncherApi implements UrlLauncherApi {
+  @override
+  Future<UrlLauncherBoolResult> canLaunchUrl(String url) async {
+    return _isLaunchable(url);
+  }
+
+  @override
+  Future<UrlLauncherBoolResult> launchUrl(String url) async {
+    return _isLaunchable(url);
+  }
+
+  UrlLauncherBoolResult _isLaunchable(String url) {
+    final String scheme = url.split(':')[0];
+    switch (scheme) {
+      case 'http':
+      case 'https':
+        return UrlLauncherBoolResult(value: true);
+      case 'invalid':
+        return UrlLauncherBoolResult(
+            value: false, error: UrlLauncherError.invalidUrl);
+      case 'unexpectedthrow':
+        throw PlatformException(code: 'argument_error');
+      default:
+        return UrlLauncherBoolResult(value: false);
+    }
+  }
+}

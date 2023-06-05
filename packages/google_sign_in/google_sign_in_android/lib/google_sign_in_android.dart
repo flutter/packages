@@ -70,7 +70,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     return channel
         .invokeMapMethod<String, dynamic>('getTokens', <String, dynamic>{
       'email': email,
-      'shouldRecoverAuth': shouldRecoverAuth,
+      'shouldRecoverAuth': shouldRecoverAuth ?? true,
     }).then((Map<String, dynamic>? result) => getTokenDataFromMap(result!));
   }
 

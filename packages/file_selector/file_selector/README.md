@@ -8,7 +8,7 @@ A Flutter plugin that manages files and interactions with file dialogs.
 
 |             | iOS     | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|--------|-----|-------------|
-| **Support** | iOS 11+ | Any   | 10.11+ | Any | Windows 10+ |
+| **Support** | iOS 11+ | Any   | 10.14+ | Any | Windows 10+ |
 
 ## Usage
 
@@ -99,12 +99,12 @@ Different platforms support different type group filter options. To avoid
 filters that cover all platforms you are targeting, or that you conditionally
 pass different `XTypeGroup`s based on `Platform`.
 
-|                | Linux | macOS  | Web | Windows     |
-|----------------|-------|--------|-----|-------------|
-| `extensions`   | ✔️     | ✔️      | ✔️   | ✔️           |
-| `mimeTypes`    | ✔️     | ✔️†     | ✔️   |             |
-| `macUTIs`      |       | ✔️      |     |             |
-| `webWildCards` |       |        | ✔️   |             |
+|                          | iOS | Linux | macOS  | Web | Windows     |
+|--------------------------|-----|-------|--------|-----|-------------|
+| `extensions`             |     | ✔️     | ✔️      | ✔️   | ✔️           |
+| `mimeTypes`              |     | ✔️     | ✔️†     | ✔️   |             |
+| `uniformTypeIdentifiers` | ✔️   |       | ✔️      |     |             |
+| `webWildCards`           |     |       |        | ✔️   |             |
 
 † `mimeTypes` are not supported on version of macOS earlier than 11 (Big Sur).
 

@@ -44,7 +44,8 @@ class HomeScreen extends StatelessWidget {
           color: Colors.black12,
           child: ListView(
             children: <Widget>[
-              for (MarkdownDemoWidget demo in _demos) DemoCard(widget: demo),
+              for (final MarkdownDemoWidget demo in _demos)
+                DemoCard(widget: demo),
             ],
           ),
         ),

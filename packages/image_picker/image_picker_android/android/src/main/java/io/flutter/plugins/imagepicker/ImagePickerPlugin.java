@@ -23,7 +23,6 @@ import io.flutter.plugins.imagepicker.Messages.FlutterError;
 import io.flutter.plugins.imagepicker.Messages.ImagePickerApi;
 import io.flutter.plugins.imagepicker.Messages.Result;
 import io.flutter.plugins.imagepicker.Messages.SourceSpecification;
-import java.io.File;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -176,20 +175,18 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   }
 
   private FlutterPluginBinding pluginBinding;
-  private ActivityState activityState;
+  ActivityState activityState;
 
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     if (registrar.activity() == null) {
       // If a background flutter view tries to register the plugin, there will be no activity from the registrar,
       // we stop the registering process immediately because the ImagePicker requires an activity.
       return;
     }
     Activity activity = registrar.activity();
-    Application application = null;
-    if (registrar.context() != null) {
-      application = (Application) (registrar.context().getApplicationContext());
-    }
+    Application application = (Application) (registrar.context().getApplicationContext());
     ImagePickerPlugin plugin = new ImagePickerPlugin();
     plugin.setup(registrar.messenger(), application, activity, registrar, null);
   }
@@ -268,10 +265,9 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   final ImagePickerDelegate constructDelegate(final Activity setupActivity) {
     final ImagePickerCache cache = new ImagePickerCache(setupActivity);
 
-    final File externalFilesDirectory = setupActivity.getCacheDir();
     final ExifDataCopier exifDataCopier = new ExifDataCopier();
-    final ImageResizer imageResizer = new ImageResizer(externalFilesDirectory, exifDataCopier);
-    return new ImagePickerDelegate(setupActivity, externalFilesDirectory, imageResizer, cache);
+    final ImageResizer imageResizer = new ImageResizer(setupActivity, exifDataCopier);
+    return new ImagePickerDelegate(setupActivity, imageResizer, cache);
   }
 
   private @Nullable ImagePickerDelegate getImagePickerDelegate() {
@@ -305,7 +301,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       @NonNull Messages.ImageSelectionOptions options,
       @NonNull Boolean allowMultiple,
       @NonNull Boolean usePhotoPicker,
-      Result<List<String>> result) {
+      @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
       result.error(
@@ -335,7 +331,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       @NonNull Messages.VideoSelectionOptions options,
       @NonNull Boolean allowMultiple,
       @NonNull Boolean usePhotoPicker,
-      Result<List<String>> result) {
+      @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
       result.error(

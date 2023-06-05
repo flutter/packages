@@ -25,7 +25,7 @@ Future<ByteData> Function(Object?, String) pushRouteToFrameworkFunction =
 /// ```dart
 /// Link(
 ///   uri: Uri.parse('https://flutter.dev'),
-///   builder: (BuildContext context, FollowLink followLink) => ElevatedButton(
+///   builder: (BuildContext context, FollowLink? followLink) => ElevatedButton(
 ///     onPressed: followLink,
 ///     // ... other properties here ...
 ///   )},
@@ -37,7 +37,7 @@ Future<ByteData> Function(Object?, String) pushRouteToFrameworkFunction =
 /// ```dart
 /// Link(
 ///   uri: Uri.parse('/home'),
-///   builder: (BuildContext context, FollowLink followLink) => ElevatedButton(
+///   builder: (BuildContext context, FollowLink? followLink) => ElevatedButton(
 ///     onPressed: followLink,
 ///     // ... other properties here ...
 ///   )},

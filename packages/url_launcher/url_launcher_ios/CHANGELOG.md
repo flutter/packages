@@ -1,3 +1,7 @@
+## 6.1.4
+
+* Updates pigeon to fix warnings with clang 15.
+
 ## 6.1.3
 
 * Switches to Pigeon for internal implementation.

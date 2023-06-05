@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -111,6 +109,50 @@ void main() {
         ]));
   });
 
+  test('updates example readme when config is present', () async {
+    final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+    final Directory example = getExampleDir(package);
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['update-excerpts']);
+
+    expect(
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall(
+              'dart',
+              const <String>[
+                'run',
+                'build_runner',
+                'build',
+                '--config',
+                'excerpt',
+                '--output',
+                'excerpts',
+                '--delete-conflicting-outputs',
+              ],
+              example.path),
+          ProcessCall(
+              'dart',
+              const <String>[
+                'run',
+                'code_excerpt_updater',
+                '--write-in-place',
+                '--yaml',
+                '--no-escape-ng-interpolation',
+                'README.md',
+              ],
+              example.path),
+        ]));
+
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Ran for 1 package(s)'),
+        ]));
+  });
+
   test('skips when no config is present', () async {
     createFakePlugin('a_package', packagesDir);
 
@@ -130,8 +172,8 @@ void main() {
     final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-      MockProcess(exitCode: 1), // dart pub get
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
     Error? commandError;
@@ -161,8 +203,8 @@ void main() {
     createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-      MockProcess(exitCode: 1), // dart pub get
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
     Error? commandError;
@@ -185,9 +227,9 @@ void main() {
     createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-      MockProcess(), // dart pub get
-      MockProcess(exitCode: 1), // dart run build_runner ...
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+      FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'build_runner'])
     ];
 
     Error? commandError;
@@ -210,10 +252,11 @@ void main() {
     createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <io.Process>[
-      MockProcess(), // dart pub get
-      MockProcess(), // dart run build_runner ...
-      MockProcess(exitCode: 1), // dart run code_excerpt_updater ...
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+      FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
+      FakeProcessInfo(
+          MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
     ];
 
     Error? commandError;
@@ -232,13 +275,41 @@ void main() {
         ]));
   });
 
+  test('fails if example injection fails', () async {
+    createFakePlugin('a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+
+    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+      FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
+      FakeProcessInfo(MockProcess(), <String>['run', 'code_excerpt_updater']),
+      FakeProcessInfo(
+          MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
+    ];
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['update-excerpts'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The following packages had errors:'),
+          contains('a_package:\n'
+              '    Unable to inject example excerpts')
+        ]));
+  });
+
   test('fails if READMEs are changed with --fail-on-change', () async {
     createFakePlugin('a_plugin', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
     const String changedFilePath = 'packages/a_plugin/README.md';
-    processRunner.mockProcessesForExecutable['git'] = <io.Process>[
-      MockProcess(stdout: changedFilePath),
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
     ];
 
     Error? commandError;
@@ -263,8 +334,8 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
     const String changedFilePath = 'packages/a_plugin/linux/CMakeLists.txt';
-    processRunner.mockProcessesForExecutable['git'] = <io.Process>[
-      MockProcess(stdout: changedFilePath),
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
     ];
 
     final List<String> output = await runCapturingPrint(
@@ -281,8 +352,8 @@ void main() {
     createFakePlugin('a_plugin', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['git'] = <io.Process>[
-      MockProcess(exitCode: 1)
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(exitCode: 1))
     ];
     Error? commandError;
     final List<String> output = await runCapturingPrint(

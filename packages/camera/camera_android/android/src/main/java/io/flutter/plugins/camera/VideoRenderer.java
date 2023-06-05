@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Surface;
+import androidx.annotation.NonNull;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -40,7 +41,7 @@ import java.nio.ByteOrder;
  */
 public class VideoRenderer {
 
-  private static String TAG = "VideoRenderer";
+  static String TAG = "VideoRenderer";
 
   private static final String vertexShaderCode =
       "  precision highp float;\n"
@@ -91,15 +92,15 @@ public class VideoRenderer {
   EGLSurface surface;
   private Thread thread;
   private final Surface outputSurface;
-  private SurfaceTexture inputSurfaceTexture;
+  SurfaceTexture inputSurfaceTexture;
   private Surface inputSurface;
 
   private HandlerThread surfaceTextureFrameAvailableHandler;
-  private final Object surfaceTextureAvailableFrameLock = new Object();
-  private Boolean surfaceTextureFrameAvailable = false;
+  final Object surfaceTextureAvailableFrameLock = new Object();
+  Boolean surfaceTextureFrameAvailable = false;
 
-  private final int recordingWidth;
-  private final int recordingHeight;
+  final int recordingWidth;
+  final int recordingHeight;
   private int rotation = 0;
 
   private final Object lock = new Object();
@@ -107,6 +108,7 @@ public class VideoRenderer {
   private final Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
 
   /** Gets surface for input. Blocks until surface is ready. */
+  @NonNull
   public Surface getInputSurface() throws InterruptedException {
     synchronized (lock) {
       while (inputSurface == null) {
@@ -117,10 +119,10 @@ public class VideoRenderer {
   }
 
   public VideoRenderer(
-      Surface outputSurface,
+      @NonNull Surface outputSurface,
       int recordingWidth,
       int recordingHeight,
-      Thread.UncaughtExceptionHandler uncaughtExceptionHandler) {
+      @NonNull Thread.UncaughtExceptionHandler uncaughtExceptionHandler) {
     this.outputSurface = outputSurface;
     this.recordingHeight = recordingHeight;
     this.recordingWidth = recordingWidth;
@@ -146,7 +148,7 @@ public class VideoRenderer {
   }
 
   /** Configures openGL. Must be called in same thread as draw is called. */
-  private void configureOpenGL() {
+  void configureOpenGL() {
     synchronized (lock) {
       display = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
       if (display == EGL14.EGL_NO_DISPLAY)
@@ -164,16 +166,29 @@ public class VideoRenderer {
         throw new RuntimeException(
             "cannot configure OpenGL. missing EGL_ANDROID_presentation_time");
 
-      int[] attribList =
-          new int[] {
-            EGL14.EGL_RED_SIZE, 8,
-            EGL14.EGL_GREEN_SIZE, 8,
-            EGL14.EGL_BLUE_SIZE, 8,
-            EGL14.EGL_ALPHA_SIZE, 8,
-            EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
-            EGLExt.EGL_RECORDABLE_ANDROID, 1,
-            EGL14.EGL_NONE
-          };
+      int[] attribList;
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        attribList =
+            new int[] {
+              EGL14.EGL_RED_SIZE, 8,
+              EGL14.EGL_GREEN_SIZE, 8,
+              EGL14.EGL_BLUE_SIZE, 8,
+              EGL14.EGL_ALPHA_SIZE, 8,
+              EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
+              EGLExt.EGL_RECORDABLE_ANDROID, 1,
+              EGL14.EGL_NONE
+            };
+      } else {
+        attribList =
+            new int[] {
+              EGL14.EGL_RED_SIZE, 8,
+              EGL14.EGL_GREEN_SIZE, 8,
+              EGL14.EGL_BLUE_SIZE, 8,
+              EGL14.EGL_ALPHA_SIZE, 8,
+              EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
+              EGL14.EGL_NONE
+            };
+      }
 
       EGLConfig[] configs = new EGLConfig[1];
       int[] numConfigs = new int[1];
@@ -307,6 +322,7 @@ public class VideoRenderer {
     return textureHandles[0];
   }
 
+  @NonNull
   public float[] moveMatrix() {
     float[] m = new float[16];
     Matrix.setIdentityM(m, 0);
@@ -331,7 +347,7 @@ public class VideoRenderer {
     GLES20.glDeleteShader(shader);
   }
 
-  public void draw(int viewportWidth, int viewportHeight, float[] texMatrix) {
+  public void draw(int viewportWidth, int viewportHeight, @NonNull float[] texMatrix) {
 
     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
     GLES20.glClearColor(0f, 0f, 0f, 0f);

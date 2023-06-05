@@ -55,8 +55,8 @@ public class MainActivityTest {
     }
 
     test('fails if gcloud auth fails', () async {
-      processRunner.mockProcessesForExecutable['gcloud'] = <Process>[
-        MockProcess(exitCode: 1)
+      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['auth'])
       ];
 
       const String javaTestFileRelativePath =
@@ -84,9 +84,9 @@ public class MainActivityTest {
     });
 
     test('retries gcloud set', () async {
-      processRunner.mockProcessesForExecutable['gcloud'] = <Process>[
-        MockProcess(), // auth
-        MockProcess(exitCode: 1), // config
+      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['auth']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['config']),
       ];
 
       const String javaTestFileRelativePath =
@@ -349,12 +349,15 @@ public class MainActivityTest {
       ]);
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
-      processRunner.mockProcessesForExecutable['gcloud'] = <Process>[
-        MockProcess(), // auth
-        MockProcess(), // config
-        MockProcess(exitCode: 1), // integration test #1
-        MockProcess(exitCode: 1), // integration test #1 retry
-        MockProcess(), // integration test #2
+      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['auth']),
+        FakeProcessInfo(MockProcess(), <String>['config']),
+        FakeProcessInfo(MockProcess(exitCode: 1),
+            <String>['firebase', 'test']), // integration test #1
+        FakeProcessInfo(MockProcess(exitCode: 1),
+            <String>['firebase', 'test']), // integration test #1 retry
+        FakeProcessInfo(
+            MockProcess(), <String>['firebase', 'test']), // integration test #2
       ];
 
       Error? commandError;
@@ -395,12 +398,15 @@ public class MainActivityTest {
       ]);
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
-      processRunner.mockProcessesForExecutable['gcloud'] = <Process>[
-        MockProcess(), // auth
-        MockProcess(), // config
-        MockProcess(exitCode: 1), // integration test #1
-        MockProcess(), // integration test #1 retry
-        MockProcess(), // integration test #2
+      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['auth']),
+        FakeProcessInfo(MockProcess(), <String>['config']),
+        FakeProcessInfo(MockProcess(exitCode: 1),
+            <String>['firebase', 'test']), // integration test #1
+        FakeProcessInfo(MockProcess(),
+            <String>['firebase', 'test']), // integration test #1 retry
+        FakeProcessInfo(
+            MockProcess(), <String>['firebase', 'test']), // integration test #2
       ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -654,8 +660,8 @@ public class MainActivityTest {
       ]);
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
-      processRunner.mockProcessesForExecutable['flutter'] = <Process>[
-        MockProcess(exitCode: 1) // flutter build
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['build'])
       ];
 
       Error? commandError;
@@ -695,8 +701,9 @@ public class MainActivityTest {
           .platformDirectory(FlutterPlatform.android)
           .childFile('gradlew')
           .path;
-      processRunner.mockProcessesForExecutable[gradlewPath] = <Process>[
-        MockProcess(exitCode: 1)
+      processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['app:assembleAndroidTest']),
       ];
 
       Error? commandError;
@@ -736,9 +743,9 @@ public class MainActivityTest {
           .platformDirectory(FlutterPlatform.android)
           .childFile('gradlew')
           .path;
-      processRunner.mockProcessesForExecutable[gradlewPath] = <Process>[
-        MockProcess(), // assembleAndroidTest
-        MockProcess(exitCode: 1), // assembleDebug
+      processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['app:assembleAndroidTest']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['app:assembleDebug'])
       ];
 
       Error? commandError;

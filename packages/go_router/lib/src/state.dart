@@ -16,12 +16,12 @@ class GoRouterState {
   const GoRouterState(
     this._configuration, {
     required this.location,
-    required this.subloc,
+    required this.matchedLocation,
     required this.name,
     this.path,
-    this.fullpath,
-    this.params = const <String, String>{},
-    this.queryParams = const <String, String>{},
+    this.fullPath,
+    this.pathParameters = const <String, String>{},
+    this.queryParameters = const <String, String>{},
     this.queryParametersAll = const <String, List<String>>{},
     this.extra,
     this.error,
@@ -35,8 +35,15 @@ class GoRouterState {
   /// The full location of the route, e.g. /family/f2/person/p1
   final String location;
 
-  /// The location of this sub-route, e.g. /family/f2
-  final String subloc;
+  /// The matched location until this point.
+  ///
+  /// For example:
+  ///
+  /// location = /family/f2/person/p1
+  /// route = GoRoute('/family/:id')
+  ///
+  /// matchedLocation = /family/f2
+  final String matchedLocation;
 
   /// The optional name of the route.
   final String? name;
@@ -45,13 +52,13 @@ class GoRouterState {
   final String? path;
 
   /// The full path to this sub-route, e.g. /family/:fid
-  final String? fullpath;
+  final String? fullPath;
 
   /// The parameters for this sub-route, e.g. {'fid': 'f2'}
-  final Map<String, String> params;
+  final Map<String, String> pathParameters;
 
   /// The query parameters for the location, e.g. {'from': '/family/f2'}
-  final Map<String, String> queryParams;
+  final Map<String, String> queryParameters;
 
   /// The query parameters for the location,
   /// e.g. `{'q1': ['v1'], 'q2': ['v2', 'v3']}`
@@ -98,7 +105,7 @@ class GoRouterState {
   /// class MyWidget extends StatelessWidget {
   ///   @override
   ///   Widget build(BuildContext context) {
-  ///     return Text('${GoRouterState.of(context).params['id']}');
+  ///     return Text('${GoRouterState.of(context).pathParameters['id']}');
   ///   }
   /// }
   /// ```
@@ -125,26 +132,27 @@ class GoRouterState {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  @Deprecated('Use GoRouter.of(context).namedLocation instead')
+  // TODO(chunhtai): remove this method when go_router can provide a way to
+  // look up named location during redirect.
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
   }) {
     return _configuration.namedLocation(name,
-        params: params, queryParams: queryParams);
+        pathParameters: pathParameters, queryParameters: queryParameters);
   }
 
   @override
   bool operator ==(Object other) {
     return other is GoRouterState &&
         other.location == location &&
-        other.subloc == subloc &&
+        other.matchedLocation == matchedLocation &&
         other.name == name &&
         other.path == path &&
-        other.fullpath == fullpath &&
-        other.params == params &&
-        other.queryParams == queryParams &&
+        other.fullPath == fullPath &&
+        other.pathParameters == pathParameters &&
+        other.queryParameters == queryParameters &&
         other.queryParametersAll == queryParametersAll &&
         other.extra == extra &&
         other.error == error &&
@@ -152,8 +160,18 @@ class GoRouterState {
   }
 
   @override
-  int get hashCode => Object.hash(location, subloc, name, path, fullpath,
-      params, queryParams, queryParametersAll, extra, error, pageKey);
+  int get hashCode => Object.hash(
+      location,
+      matchedLocation,
+      name,
+      path,
+      fullPath,
+      pathParameters,
+      queryParameters,
+      queryParametersAll,
+      extra,
+      error,
+      pageKey);
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.

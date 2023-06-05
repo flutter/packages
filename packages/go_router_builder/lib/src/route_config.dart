@@ -37,8 +37,11 @@ class InfoIterable extends IterableBase<String> {
 class RouteConfig {
   RouteConfig._(
     this._path,
+    this._name,
     this._routeDataClass,
     this._parent,
+    this._key,
+    this._isShellRoute,
   );
 
   /// Creates a new [RouteConfig] represented the annotation data in [reader].
@@ -66,19 +69,30 @@ class RouteConfig {
     RouteConfig? parent,
   ) {
     assert(!reader.isNull, 'reader should not be null');
-    final ConstantReader pathValue = reader.read('path');
-    if (pathValue.isNull) {
-      throw InvalidGenerationSourceError(
-        'Missing `path` value on annotation.',
-        element: element,
-      );
+    final InterfaceType type = reader.objectValue.type! as InterfaceType;
+    // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
+    // 5.2+ (when Flutter 3.4+ is on stable).
+    // ignore: deprecated_member_use
+    final bool isShellRoute = type.element.name == 'TypedShellRoute';
+
+    String? path;
+    String? name;
+
+    if (!isShellRoute) {
+      final ConstantReader pathValue = reader.read('path');
+      if (pathValue.isNull) {
+        throw InvalidGenerationSourceError(
+          'Missing `path` value on annotation.',
+          element: element,
+        );
+      }
+      path = pathValue.stringValue;
+
+      final ConstantReader nameValue = reader.read('name');
+      name = nameValue.isNull ? null : nameValue.stringValue;
     }
 
-    final String path = pathValue.stringValue;
-
-    final InterfaceType type = reader.objectValue.type! as InterfaceType;
     final DartType typeParamType = type.typeArguments.single;
-
     if (typeParamType is! InterfaceType) {
       throw InvalidGenerationSourceError(
         'The type parameter on one of the @TypedGoRoute declarations could not '
@@ -93,7 +107,17 @@ class RouteConfig {
     // ignore: deprecated_member_use
     final InterfaceElement classElement = typeParamType.element;
 
-    final RouteConfig value = RouteConfig._(path, classElement, parent);
+    final RouteConfig value = RouteConfig._(
+      path ?? '',
+      name,
+      classElement,
+      parent,
+      _generateNavigatorKeyGetterCode(
+        classElement,
+        keyName: isShellRoute ? r'$navigatorKey' : r'$parentNavigatorKey',
+      ),
+      isShellRoute,
+    );
 
     value._children.addAll(reader.read('routes').listValue.map((DartObject e) =>
         RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
@@ -103,8 +127,43 @@ class RouteConfig {
 
   final List<RouteConfig> _children = <RouteConfig>[];
   final String _path;
+  final String? _name;
   final InterfaceElement _routeDataClass;
   final RouteConfig? _parent;
+  final String? _key;
+  final bool _isShellRoute;
+
+  static String? _generateNavigatorKeyGetterCode(
+    InterfaceElement classElement, {
+    required String keyName,
+  }) {
+    final String? fieldDisplayName = classElement.fields
+        .where((FieldElement element) {
+          final DartType type = element.type;
+          if (!element.isStatic ||
+              element.name != keyName ||
+              type is! ParameterizedType) {
+            return false;
+          }
+          final List<DartType> typeArguments = type.typeArguments;
+          if (typeArguments.length != 1) {
+            return false;
+          }
+          final DartType typeArgument = typeArguments.single;
+          if (typeArgument.getDisplayString(withNullability: false) ==
+              'NavigatorState') {
+            return true;
+          }
+          return false;
+        })
+        .map<String>((FieldElement e) => e.displayName)
+        .firstOrNull;
+
+    if (fieldDisplayName == null) {
+      return null;
+    }
+    return '${classElement.name}.$fieldDisplayName';
+  }
 
   /// Generates all of the members that correspond to `this`.
   InfoIterable generateMembers() => InfoIterable._(
@@ -136,7 +195,15 @@ class RouteConfig {
   }
 
   /// Returns `extension` code.
-  String _extensionDefinition() => '''
+  String _extensionDefinition() {
+    if (_isShellRoute) {
+      return '''
+extension $_extensionName on $_className {
+  static $_className _fromState(GoRouterState state) $_newFromState
+}
+''';
+    }
+    return '''
 extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) $_newFromState
 
@@ -145,13 +212,14 @@ extension $_extensionName on $_className {
   void go(BuildContext context) =>
       context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
-  void push(BuildContext context) =>
-      context.push(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
+  }
 
   /// Returns this [RouteConfig] and all child [RouteConfig] instances.
   Iterable<RouteConfig> _flatten() sync* {
@@ -166,7 +234,7 @@ extension $_extensionName on $_className {
 
   /// Returns the `GoRoute` code for the annotated class.
   String _rootDefinition() => '''
-GoRoute get $_routeGetterName => ${_routeDefinition()};
+RouteBase get $_routeGetterName => ${_routeDefinition()};
 ''';
 
   /// Returns code representing the constant maps that contain the `enum` to
@@ -202,7 +270,10 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
 
   String get _newFromState {
     final StringBuffer buffer = StringBuffer('=>');
-    if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty) {
+    if (_ctor.isConst &&
+        _ctorParams.isEmpty &&
+        _ctorQueryParams.isEmpty &&
+        _extraParam == null) {
       buffer.writeln('const ');
     }
 
@@ -271,11 +342,26 @@ GoRoute get $_routeGetterName => ${_routeDefinition()};
         : '''
 routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
-
+    final String navigatorKeyParameterName =
+        _isShellRoute ? 'navigatorKey' : 'parentNavigatorKey';
+    final String navigatorKey = _key == null || _key!.isEmpty
+        ? ''
+        : '$navigatorKeyParameterName: $_key,';
+    if (_isShellRoute) {
+      return '''
+  ShellRouteData.\$route(
+    factory: $_extensionName._fromState,
+    $navigatorKey
+    $routesBit
+  )
+''';
+    }
     return '''
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
+      ${_name != null ? 'name: ${escapeDartString(_name!)},' : ''}
       factory: $_extensionName._fromState,
+      $navigatorKey
       $routesBit
 )
 ''';
@@ -290,7 +376,7 @@ GoRouteData.\$route(
         );
       }
 
-      if (!_pathParams.contains(element.name)) {
+      if (!_pathParams.contains(element.name) && !element.isExtraField) {
         throw InvalidGenerationSourceError(
           'Missing param `${element.name}` in path.',
           element: element,
@@ -361,13 +447,7 @@ GoRouteData.\$route(
 
   late final List<ParameterElement> _ctorParams =
       _ctor.parameters.where((ParameterElement element) {
-    if (element.isRequired) {
-      if (element.isExtraField) {
-        throw InvalidGenerationSourceError(
-          'Parameters named `$extraFieldName` cannot be required.',
-          element: element,
-        );
-      }
+    if (element.isRequired && !element.isExtraField) {
       return true;
     }
     return false;

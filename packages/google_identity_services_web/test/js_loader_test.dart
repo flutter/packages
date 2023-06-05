@@ -4,6 +4,8 @@
 
 @TestOn('browser') // Uses package:js
 
+import 'dart:async';
+
 import 'package:google_identity_services_web/loader.dart';
 import 'package:google_identity_services_web/src/js_interop/dom.dart' as dom;
 import 'package:google_identity_services_web/src/js_loader.dart';
@@ -27,7 +29,9 @@ void main() {
     final dom.DomHtmlElement target = dom.document.createElement('div');
 
     test('Injects script into desired target', () async {
-      loadWebSdk(target: target);
+      // This test doesn't simulate the callback that completes the future, and
+      // the code being tested runs synchronously.
+      unawaited(loadWebSdk(target: target));
 
       // Target now should have a child that is a script element
       final Object children = js_util.getProperty<Object>(target, 'children');

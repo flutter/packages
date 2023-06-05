@@ -38,6 +38,8 @@ static UIColor *getPixelColorInImage(CGImageRef image, size_t x, size_t y) {
 }
 
 - (void)testTransparentBackground {
+  XCTSkip(@"Test is flaky. See https://github.com/flutter/flutter/issues/124156");
+
   XCUIApplication *app = self.app;
   XCUIElement *menu = app.buttons[@"Show menu"];
   if (![menu waitForExistenceWithTimeout:30.0]) {

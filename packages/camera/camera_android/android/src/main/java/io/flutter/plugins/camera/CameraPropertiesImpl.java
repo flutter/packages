@@ -12,6 +12,8 @@ import android.os.Build.VERSION_CODES;
 import android.util.Range;
 import android.util.Rational;
 import android.util.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 /**
@@ -22,22 +24,25 @@ public class CameraPropertiesImpl implements CameraProperties {
   private final CameraCharacteristics cameraCharacteristics;
   private final String cameraName;
 
-  public CameraPropertiesImpl(String cameraName, CameraManager cameraManager)
+  public CameraPropertiesImpl(@NonNull String cameraName, @NonNull CameraManager cameraManager)
       throws CameraAccessException {
     this.cameraName = cameraName;
     this.cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraName);
   }
 
+  @NonNull
   @Override
   public String getCameraName() {
     return cameraName;
   }
 
+  @NonNull
   @Override
   public Range<Integer>[] getControlAutoExposureAvailableTargetFpsRanges() {
     return cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
   }
 
+  @NonNull
   @Override
   public Range<Integer> getControlAutoExposureCompensationRange() {
     return cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
@@ -51,27 +56,32 @@ public class CameraPropertiesImpl implements CameraProperties {
     return rational == null ? 0.0 : rational.doubleValue();
   }
 
+  @NonNull
   @Override
   public int[] getControlAutoFocusAvailableModes() {
     return cameraCharacteristics.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
   }
 
+  @NonNull
   @Override
   public Integer getControlMaxRegionsAutoExposure() {
     return cameraCharacteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE);
   }
 
+  @NonNull
   @Override
   public Integer getControlMaxRegionsAutoFocus() {
     return cameraCharacteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
   }
 
   @RequiresApi(api = VERSION_CODES.P)
+  @Nullable
   @Override
   public int[] getDistortionCorrectionAvailableModes() {
     return cameraCharacteristics.get(CameraCharacteristics.DISTORTION_CORRECTION_AVAILABLE_MODES);
   }
 
+  @NonNull
   @Override
   public Boolean getFlashInfoAvailable() {
     return cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
@@ -82,39 +92,56 @@ public class CameraPropertiesImpl implements CameraProperties {
     return cameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
   }
 
+  @Nullable
   @Override
   public Float getLensInfoMinimumFocusDistance() {
     return cameraCharacteristics.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
   }
 
+  @NonNull
   @Override
   public Float getScalerAvailableMaxDigitalZoom() {
     return cameraCharacteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
   }
 
   @RequiresApi(api = VERSION_CODES.R)
+  @Nullable
   @Override
   public Float getScalerMaxZoomRatio() {
-    return cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE).getUpper();
+    final Range<Float> range =
+        cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE);
+    if (range != null) {
+      return range.getUpper();
+    }
+    return null;
   }
 
   @RequiresApi(api = VERSION_CODES.R)
+  @Nullable
   @Override
   public Float getScalerMinZoomRatio() {
-    return cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE).getLower();
+    final Range<Float> range =
+        cameraCharacteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE);
+    if (range != null) {
+      return range.getLower();
+    }
+    return null;
   }
 
+  @NonNull
   @Override
   public Rect getSensorInfoActiveArraySize() {
     return cameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
   }
 
+  @NonNull
   @Override
   public Size getSensorInfoPixelArraySize() {
     return cameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE);
   }
 
   @RequiresApi(api = VERSION_CODES.M)
+  @NonNull
   @Override
   public Rect getSensorInfoPreCorrectionActiveArraySize() {
     return cameraCharacteristics.get(
@@ -131,6 +158,7 @@ public class CameraPropertiesImpl implements CameraProperties {
     return cameraCharacteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
   }
 
+  @NonNull
   @Override
   public int[] getAvailableNoiseReductionModes() {
     return cameraCharacteristics.get(

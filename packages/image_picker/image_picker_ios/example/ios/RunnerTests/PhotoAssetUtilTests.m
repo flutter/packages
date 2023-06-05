@@ -76,7 +76,7 @@
   NSDictionary *dummyInfo = @{
     UIImagePickerControllerMediaMetadata : @{
       (__bridge NSString *)kCGImagePropertyExifDictionary :
-          @{(__bridge NSString *)kCGImagePropertyExifMakerNote : @"aNote"}
+          @{(__bridge NSString *)kCGImagePropertyExifUserComment : @"aNote"}
     }
   };
   UIImage *imageJPG = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
@@ -86,7 +86,7 @@
   NSData *data = [NSData dataWithContentsOfFile:savedPathJPG];
   NSDictionary *meta = [FLTImagePickerMetaDataUtil getMetaDataFromImageData:data];
   XCTAssertEqualObjects(meta[(__bridge NSString *)kCGImagePropertyExifDictionary]
-                            [(__bridge NSString *)kCGImagePropertyExifMakerNote],
+                            [(__bridge NSString *)kCGImagePropertyExifUserComment],
                         @"aNote");
 }
 

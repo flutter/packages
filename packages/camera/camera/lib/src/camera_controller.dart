@@ -49,6 +49,7 @@ class CameraValue {
     required this.exposurePointSupported,
     required this.focusPointSupported,
     required this.deviceOrientation,
+    required this.description,
     this.lockedCaptureOrientation,
     this.recordingOrientation,
     this.isPreviewPaused = false,
@@ -56,7 +57,7 @@ class CameraValue {
   }) : _isRecordingPaused = isRecordingPaused;
 
   /// Creates a new camera controller state for an uninitialized controller.
-  const CameraValue.uninitialized()
+  const CameraValue.uninitialized(CameraDescription description)
       : this(
           isInitialized: false,
           isRecordingVideo: false,
@@ -70,6 +71,7 @@ class CameraValue {
           focusPointSupported: false,
           deviceOrientation: DeviceOrientation.portraitUp,
           isPreviewPaused: false,
+          description: description,
         );
 
   /// True after [CameraController.initialize] has completed successfully.
@@ -143,6 +145,9 @@ class CameraValue {
   /// The orientation of the currently running video recording.
   final DeviceOrientation? recordingOrientation;
 
+  /// The properties of the camera device controlled by this controller.
+  final CameraDescription description;
+
   /// Creates a modified copy of the object.
   ///
   /// Explicitly specified fields get the specified value, all other fields get
@@ -164,6 +169,7 @@ class CameraValue {
     Optional<DeviceOrientation>? lockedCaptureOrientation,
     Optional<DeviceOrientation>? recordingOrientation,
     bool? isPreviewPaused,
+    CameraDescription? description,
     Optional<DeviceOrientation>? previewPauseOrientation,
   }) {
     return CameraValue(
@@ -188,6 +194,7 @@ class CameraValue {
           ? this.recordingOrientation
           : recordingOrientation.orNull,
       isPreviewPaused: isPreviewPaused ?? this.isPreviewPaused,
+      description: description ?? this.description,
       previewPauseOrientation: previewPauseOrientation == null
           ? this.previewPauseOrientation
           : previewPauseOrientation.orNull,
@@ -211,7 +218,8 @@ class CameraValue {
         'lockedCaptureOrientation: $lockedCaptureOrientation, '
         'recordingOrientation: $recordingOrientation, '
         'isPreviewPaused: $isPreviewPaused, '
-        'previewPausedOrientation: $previewPauseOrientation)';
+        'previewPausedOrientation: $previewPauseOrientation, '
+        'description: $description)';
   }
 }
 
@@ -225,14 +233,14 @@ class CameraValue {
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   CameraController(
-    this.description,
+    CameraDescription description,
     this.resolutionPreset, {
     this.enableAudio = true,
     this.imageFormatGroup,
-  }) : super(const CameraValue.uninitialized());
+  }) : super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
-  final CameraDescription description;
+  CameraDescription get description => value.description;
 
   /// The resolution this controller is targeting.
   ///
@@ -274,7 +282,12 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Initializes the camera on the device.
   ///
   /// Throws a [CameraException] if the initialization fails.
-  Future<void> initialize() async {
+  Future<void> initialize() => _initializeWithDescription(description);
+
+  /// Initializes the camera on the device with the specified description.
+  ///
+  /// Throws a [CameraException] if the initialization fails.
+  Future<void> _initializeWithDescription(CameraDescription description) async {
     if (_isDisposed) {
       throw CameraException(
         'Disposed CameraController',
@@ -313,6 +326,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
       value = value.copyWith(
         isInitialized: true,
+        description: description,
         previewSize: await initializeCompleter.future
             .then((CameraInitializedEvent event) => Size(
                   event.previewWidth,
@@ -377,6 +391,18 @@ class CameraController extends ValueNotifier<CameraValue> {
           previewPauseOrientation: const Optional<DeviceOrientation>.absent());
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Sets the description of the camera.
+  ///
+  /// Throws a [CameraException] if setting the description fails.
+  Future<void> setDescription(CameraDescription description) async {
+    if (value.isRecordingVideo) {
+      await CameraPlatform.instance.setDescriptionWhileRecording(description);
+      value = value.copyWith(description: description);
+    } else {
+      await _initializeWithDescription(description);
     }
   }
 
@@ -526,7 +552,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
 
     if (value.isStreamingImages) {
-      stopImageStream();
+      await stopImageStream();
     }
 
     try {

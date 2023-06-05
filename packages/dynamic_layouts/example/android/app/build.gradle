@@ -26,6 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace 'dev.flutter.packages.animations.example'
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -60,6 +61,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    namespace 'com.example.example'
 }
 
 flutter {

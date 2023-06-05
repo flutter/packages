@@ -19,31 +19,17 @@ class WebViewAndroidWidget extends StatefulWidget {
   const WebViewAndroidWidget({
     super.key,
     required this.creationParams,
-    required this.useHybridComposition,
     required this.callbacksHandler,
     required this.javascriptChannelRegistry,
     required this.onBuildWidget,
+    @visibleForTesting this.webViewProxy = const WebViewProxy(),
     @visibleForTesting
-        this.webViewProxy = const WebViewProxy(),
-    @visibleForTesting
-        this.flutterAssetManager = const android_webview.FlutterAssetManager(),
-    @visibleForTesting
-        this.webStorage,
+    this.flutterAssetManager = const android_webview.FlutterAssetManager(),
+    @visibleForTesting this.webStorage,
   });
 
   /// Initial parameters used to setup the WebView.
   final CreationParams creationParams;
-
-  /// Whether the [android_webview.WebView] will be rendered with an [AndroidViewSurface].
-  ///
-  /// This implementation uses hybrid composition to render the
-  /// [WebViewAndroidWidget]. This comes at the cost of some performance on
-  /// Android versions below 10. See
-  /// https://flutter.dev/docs/development/platform-integration/platform-views#performance
-  /// for more information.
-  ///
-  /// Defaults to false.
-  final bool useHybridComposition;
 
   /// Handles callbacks that are made by [android_webview.WebViewClient], [android_webview.DownloadListener], and [android_webview.WebChromeClient].
   final WebViewPlatformCallbacksHandler callbacksHandler;
@@ -79,7 +65,6 @@ class _WebViewAndroidWidgetState extends State<WebViewAndroidWidget> {
   void initState() {
     super.initState();
     controller = WebViewAndroidPlatformController(
-      useHybridComposition: widget.useHybridComposition,
       creationParams: widget.creationParams,
       callbacksHandler: widget.callbacksHandler,
       javascriptChannelRegistry: widget.javascriptChannelRegistry,
@@ -99,22 +84,17 @@ class _WebViewAndroidWidgetState extends State<WebViewAndroidWidget> {
 class WebViewAndroidPlatformController extends WebViewPlatformController {
   /// Construct a [WebViewAndroidPlatformController].
   WebViewAndroidPlatformController({
-    required bool useHybridComposition,
     required CreationParams creationParams,
     required this.callbacksHandler,
     required this.javascriptChannelRegistry,
+    @visibleForTesting this.webViewProxy = const WebViewProxy(),
     @visibleForTesting
-        this.webViewProxy = const WebViewProxy(),
-    @visibleForTesting
-        this.flutterAssetManager = const android_webview.FlutterAssetManager(),
-    @visibleForTesting
-        android_webview.WebStorage? webStorage,
+    this.flutterAssetManager = const android_webview.FlutterAssetManager(),
+    @visibleForTesting android_webview.WebStorage? webStorage,
   })  : webStorage = webStorage ?? android_webview.WebStorage.instance,
         assert(creationParams.webSettings?.hasNavigationDelegate != null),
         super(callbacksHandler) {
-    webView = webViewProxy.createWebView(
-      useHybridComposition: useHybridComposition,
-    );
+    webView = webViewProxy.createWebView();
 
     webView.settings.setDomStorageEnabled(true);
     webView.settings.setJavaScriptCanOpenWindowsAutomatically(true);
@@ -632,8 +612,8 @@ class WebViewProxy {
   const WebViewProxy();
 
   /// Constructs a [android_webview.WebView].
-  android_webview.WebView createWebView({required bool useHybridComposition}) {
-    return android_webview.WebView(useHybridComposition: useHybridComposition);
+  android_webview.WebView createWebView() {
+    return android_webview.WebView();
   }
 
   /// Constructs a [android_webview.WebViewClient].

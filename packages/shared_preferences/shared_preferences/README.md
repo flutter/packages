@@ -11,9 +11,9 @@ returning, so this plugin must not be used for storing critical data.
 
 Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
-|             | Android | iOS  | Linux | macOS  | Web | Windows     |
-|-------------|---------|------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 9.0+ | Any   | 10.11+ | Any | Any         |
+|             | Android | iOS   | Linux | macOS  | Web | Windows     |
+|-------------|---------|-------|-------|--------|-----|-------------|
+| **Support** | SDK 16+ | 11.0+ | Any   | 10.14+ | Any | Any         |
 
 ## Usage
 To use this plugin, add `shared_preferences` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
@@ -84,6 +84,30 @@ If this is problematic for your use case, you can thumbs up
 [this issue](https://github.com/flutter/flutter/issues/123078) to express
 interest in APIs that provide direct (asynchronous) access to the underlying
 preference store, and/or subscribe to it for updates.
+
+### Migration and Prefixes
+
+By default, the `SharedPreferences` plugin will only read (and write) preferences
+that begin with the prefix `flutter.`. This is all handled internally by the plugin
+and does not require manually adding this prefix.
+
+Alternatively, `SharedPreferences` can be configured to use any prefix by adding 
+a call to `setPrefix` before any instances of `SharedPreferences` are instantiated.
+Calling `setPrefix` after an instance of `SharedPreferences` is  created will fail.
+Setting the prefix to an empty string `''` will allow access to all preferences created
+by any non-flutter versions of the app (for migrating from a native app to flutter).
+
+If the prefix is set to a value such as `''` that causes it to read values that were 
+not originally stored by the `SharedPreferences`, initializing `SharedPreferences` 
+may fail if any of the values are of types that are not supported by `SharedPreferences`.
+
+If you decide to remove the prefix entirely, you can still access previously created
+preferences by manually adding the previous prefix `flutter.` to the beginning of 
+the preference key.
+
+If you have been using `SharedPreferences` with the default prefix but wish to change
+to a new prefix, you will need to transform your current preferences manually to add 
+the new prefix otherwise the old preferences will be inaccessible.
 
 ### Testing
 

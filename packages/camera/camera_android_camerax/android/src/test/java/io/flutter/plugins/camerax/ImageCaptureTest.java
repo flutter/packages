@@ -48,14 +48,14 @@ public class ImageCaptureTest {
 
   @Before
   public void setUp() throws Exception {
-    testInstanceManager = spy(InstanceManager.open(identifier -> {}));
+    testInstanceManager = spy(InstanceManager.create(identifier -> {}));
     context = mock(Context.class);
     mockedStaticFile = mockStatic(File.class);
   }
 
   @After
   public void tearDown() {
-    testInstanceManager.close();
+    testInstanceManager.stopFinalizationListener();
     mockedStaticFile.close();
   }
 
@@ -190,12 +190,8 @@ public class ImageCaptureTest {
         mock(ImageCapture.OutputFileResults.class);
     final String mockFileAbsolutePath = "absolute/path/to/captured/image";
     final ImageCaptureException mockException = mock(ImageCaptureException.class);
-    final int testImageCaptureError = 54;
-    final String testExceptionMessage = "Test exception message";
 
     imageCaptureHostApiImpl.cameraXProxy = mockCameraXProxy;
-    when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger))
-        .thenReturn(mockSystemServicesFlutterApiImpl);
     when(mockFile.getAbsolutePath()).thenReturn(mockFileAbsolutePath);
 
     ImageCapture.OnImageSavedCallback onImageSavedCallback =
