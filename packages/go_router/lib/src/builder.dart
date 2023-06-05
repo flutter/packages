@@ -200,7 +200,7 @@ class RouteBuilder {
     final RouteMatch match = matchList.matches[startIndex];
 
     if (match.error != null) {
-      throw GoError('Match error found during build phase',
+      throw RouteBuilderException('Match error found during build phase',
           exception: match.error);
     }
 
@@ -283,7 +283,7 @@ class RouteBuilder {
       registry[page] = state;
       pagePopContext._setRouteMatchForPage(page, match);
     } else {
-      throw RouteBuilderException('Unsupported route type $route');
+      throw GoError('Unsupported route type $route');
     }
   }
 

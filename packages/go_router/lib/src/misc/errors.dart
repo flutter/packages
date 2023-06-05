@@ -5,13 +5,10 @@
 /// Thrown when [GoRouter] is used incorrectly.
 class GoError extends Error {
   /// Constructs a [GoError]
-  GoError(this.message, {this.exception});
+  GoError(this.message);
 
   /// The error message.
   final String message;
-
-  /// The exception that occurred.
-  final Exception? exception;
 
   @override
   String toString() => 'GoError: $message';
