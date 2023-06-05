@@ -6,7 +6,6 @@
 /// deep linking, data-driven routes and more.
 library go_router;
 
-export 'src/builder.dart' show RouteBuilderException;
 export 'src/configuration.dart'
     show
         GoRoute,
@@ -18,6 +17,7 @@ export 'src/configuration.dart'
         StatefulNavigationShellState,
         StatefulShellBranch,
         StatefulShellRoute;
+export 'src/misc/errors.dart' show RouteBuilderException;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/pages/custom_transition_page.dart';
