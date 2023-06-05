@@ -972,14 +972,16 @@ void main() {
       imageDataCompleter.complete(imageData);
     });
 
-    // Test ImageAnalysis use case is bound to ProcessCameraProvider.
     final Analyzer capturedAnalyzer =
         verify(camera.mockImageAnalysis.setAnalyzer(captureAny)).captured.single
             as Analyzer;
+
+    await capturedAnalyzer.analyze(mockImageProxy);
+
+    // Test ImageAnalysis use case is bound to ProcessCameraProvider.
     verify(mockProcessCameraProvider.bindToLifecycle(
         mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
 
-    await capturedAnalyzer.analyze(mockImageProxy);
     final CameraImageData imageData = await imageDataCompleter.future;
 
     // Test Analyzer correctly process ImageProxy instances.
