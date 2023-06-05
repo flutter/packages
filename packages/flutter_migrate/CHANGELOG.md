@@ -1,3 +1,7 @@
+## 0.0.1+3
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 0.0.1+2
 
 * Removes use of `runtimeType.toString()`.

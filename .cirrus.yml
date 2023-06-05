@@ -83,11 +83,6 @@ task:
     zone: us-central1-a
     namespace: default
   matrix:
-    ### Platform-agnostic tasks ###
-    - name: Linux plugin_tools_tests
-      script:
-        - cd script/tool
-        - dart pub run test
     # Repository rules and best-practice enforcement.
     # Only channel-agnostic tests should go here since it is only run once
     # (on Flutter master).
@@ -265,13 +260,14 @@ task:
       skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
       env:
         matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 5 --shardCount 7"
-          PACKAGE_SHARDING: "--shardIndex 6 --shardCount 7"
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 5 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 6 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 7 --shardCount 8"
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
@@ -306,6 +302,11 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
+      create_all_packages_app_legacy_script:
+        - $PLUGIN_TOOL_COMMAND create-all-packages-app --legacy-source=.ci/legacy_project/all_packages --output-dir=legacy/ --exclude script/configs/exclude_all_packages_app.yaml
+      build_all_packages_legacy_script:
+        - cd legacy/all_packages
+        - flutter build $BUILD_ALL_ARGS --debug
     ### Web tasks ###
     - name: web-platform_tests
       env:

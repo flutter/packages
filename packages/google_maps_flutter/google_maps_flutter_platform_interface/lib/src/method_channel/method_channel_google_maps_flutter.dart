@@ -292,7 +292,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
   }) {
-    assert(optionsUpdate != null);
     return channel(mapId).invokeMethod<void>(
       'map#update',
       <String, dynamic>{
@@ -306,7 +305,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MarkerUpdates markerUpdates, {
     required int mapId,
   }) {
-    assert(markerUpdates != null);
     return channel(mapId).invokeMethod<void>(
       'markers#update',
       markerUpdates.toJson(),
@@ -318,7 +316,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     PolygonUpdates polygonUpdates, {
     required int mapId,
   }) {
-    assert(polygonUpdates != null);
     return channel(mapId).invokeMethod<void>(
       'polygons#update',
       polygonUpdates.toJson(),
@@ -330,7 +327,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     PolylineUpdates polylineUpdates, {
     required int mapId,
   }) {
-    assert(polylineUpdates != null);
     return channel(mapId).invokeMethod<void>(
       'polylines#update',
       polylineUpdates.toJson(),
@@ -342,7 +338,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     CircleUpdates circleUpdates, {
     required int mapId,
   }) {
-    assert(circleUpdates != null);
     return channel(mapId).invokeMethod<void>(
       'circles#update',
       circleUpdates.toJson(),
@@ -452,7 +447,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    assert(markerId != null);
     return channel(mapId).invokeMethod<void>(
         'markers#showInfoWindow', <String, String>{'markerId': markerId.value});
   }
@@ -462,7 +456,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    assert(markerId != null);
     return channel(mapId).invokeMethod<void>(
         'markers#hideInfoWindow', <String, String>{'markerId': markerId.value});
   }
@@ -472,7 +465,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) async {
-    assert(markerId != null);
     return (await channel(mapId).invokeMethod<bool>('markers#isInfoWindowShown',
         <String, String>{'markerId': markerId.value}))!;
   }

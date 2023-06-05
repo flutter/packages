@@ -57,11 +57,17 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   ) {
     late final RouteMatchList initialMatches;
     try {
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use, unnecessary_non_null_assertion
-      initialMatches = matcher.findMatch(routeInformation.location!,
-          extra: routeInformation.state);
+      final RouteMatchList? preParsedMatchList =
+          RouteMatchList.fromPreParsedRouteInformation(routeInformation);
+      if (preParsedMatchList != null) {
+        initialMatches = preParsedMatchList;
+      } else {
+        // TODO(chunhtai): remove this ignore and migrate the code
+        // https://github.com/flutter/flutter/issues/124045.
+        // ignore: deprecated_member_use, unnecessary_non_null_assertion
+        initialMatches = matcher.findMatch(routeInformation.location!,
+            extra: routeInformation.state);
+      }
     } on MatcherError {
       // TODO(chunhtai): remove this ignore and migrate the code
       // https://github.com/flutter/flutter/issues/124045.

@@ -125,9 +125,6 @@ class SystemServicesFlutterApiImpl implements SystemServicesFlutterApi {
   void onDeviceOrientationChanged(String orientation) {
     final DeviceOrientation deviceOrientation =
         deserializeDeviceOrientation(orientation);
-    if (deviceOrientation == null) {
-      return;
-    }
     SystemServices.deviceOrientationChangedStreamController
         .add(DeviceOrientationChangedEvent(deviceOrientation));
   }

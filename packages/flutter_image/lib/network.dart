@@ -191,7 +191,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
           scale: key.scale,
         );
       } catch (error) {
-        request?.close();
+        await request?.close();
         lastFailure = error is FetchFailure
             ? error
             : FetchFailure._(

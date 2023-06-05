@@ -130,5 +130,8 @@ extension GoRouterHelper on BuildContext {
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
-      GoRouter.of(this).replaceNamed(name, extra: extra);
+      GoRouter.of(this).replaceNamed(name,
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          extra: extra);
 }
