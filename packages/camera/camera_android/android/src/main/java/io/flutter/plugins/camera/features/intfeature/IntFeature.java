@@ -4,7 +4,9 @@
 
 package io.flutter.plugins.camera.features.intfeature;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
+import androidx.annotation.Nullable;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
 
