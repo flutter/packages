@@ -1,3 +1,7 @@
+## 0.5.0+6
+
+* Updates Guava version to 32.0.0.
+
 ## 0.5.0+5
 
 * Updates `README.md` to fully cover unimplemented functionality.
