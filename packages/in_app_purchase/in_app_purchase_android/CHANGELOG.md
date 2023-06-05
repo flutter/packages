@@ -1,3 +1,7 @@
+## 0.3.0+6
+
+* Adds a [guide for migrating](migration_guide.md) to [0.3.0](#0.3.0).
+
 ## 0.3.0+5
 
 * Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.0 to 1.8.21.
