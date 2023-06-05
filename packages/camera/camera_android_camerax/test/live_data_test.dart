@@ -24,7 +24,6 @@ void main() {
   group('LiveData', () {
     tearDown(() {
       TestLiveDataHostApi.setup(null);
-      TestInstanceManagerHostApi.setup(null);
     });
 
     test('observe makes call to add observer to LiveData instance', () async {
@@ -103,7 +102,6 @@ void main() {
     test('getValue returns expected value', () async {
       final MockTestLiveDataHostApi mockApi = MockTestLiveDataHostApi();
       TestLiveDataHostApi.setup(mockApi);
-      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
