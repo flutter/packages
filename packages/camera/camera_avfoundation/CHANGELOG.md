@@ -1,6 +1,6 @@
 ## NEXT
 
-* Removes unnecessary_import ignore.
+* Removes unnecessary import typed_data
 * Fixes unawaited_futures violations.
 
 ## 0.9.13+2
