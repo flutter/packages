@@ -33,9 +33,9 @@ public class MediaRecorderBuilder {
   public MediaRecorderBuilder(
       @NonNull CamcorderProfile camcorderProfile,
       @NonNull String outputFilePath,
-      Integer fps,
-      Integer videoBitrate,
-      Integer audioBitrate) {
+      @NonNull Integer fps,
+      @NonNull Integer videoBitrate,
+      @NonNull Integer audioBitrate) {
     this(
         camcorderProfile,
         outputFilePath,
@@ -48,9 +48,9 @@ public class MediaRecorderBuilder {
   public MediaRecorderBuilder(
       @NonNull EncoderProfiles encoderProfiles,
       @NonNull String outputFilePath,
-      Integer fps,
-      Integer videoBitrate,
-      Integer audioBitrate) {
+      @NonNull Integer fps,
+      @NonNull Integer videoBitrate,
+      @NonNull Integer audioBitrate) {
     this(
         encoderProfiles,
         outputFilePath,
@@ -64,9 +64,9 @@ public class MediaRecorderBuilder {
       @NonNull CamcorderProfile camcorderProfile,
       @NonNull String outputFilePath,
       MediaRecorderFactory helper,
-      Integer fps,
-      Integer videoBitrate,
-      Integer audioBitrate) {
+      @NonNull Integer fps,
+      @NonNull Integer videoBitrate,
+      @NonNull Integer audioBitrate) {
     this.outputFilePath = outputFilePath;
     this.camcorderProfile = camcorderProfile;
     this.encoderProfiles = null;
@@ -80,9 +80,9 @@ public class MediaRecorderBuilder {
       @NonNull EncoderProfiles encoderProfiles,
       @NonNull String outputFilePath,
       MediaRecorderFactory helper,
-      Integer fps,
-      Integer videoBitrate,
-      Integer audioBitrate) {
+      @NonNull Integer fps,
+      @NonNull Integer videoBitrate,
+      @NonNull Integer audioBitrate) {
     this.outputFilePath = outputFilePath;
     this.encoderProfiles = encoderProfiles;
     this.camcorderProfile = null;
