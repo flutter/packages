@@ -19,3 +19,8 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {file_selector_platform_interface: {path: ../../../file_selector/file_selector_platform_interface}}

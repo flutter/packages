@@ -28,3 +28,8 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.1
   pigeon: ^9.1.0
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {file_selector_platform_interface: {path: ../../file_selector/file_selector_platform_interface}}
