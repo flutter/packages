@@ -37,7 +37,6 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       @NonNull SensorOrientationFeature sensorOrientationFeature) {
     super(cameraProperties);
     this.sensorOrientationFeature = sensorOrientationFeature;
-    this.defaultExposureRectangle = createDefaultExposureRectangle();
   }
 
   /**
@@ -85,8 +84,13 @@ public class ExposurePointFeature extends CameraFeature<Point> {
     if (exposureRectangle != null) {
       requestBuilder.set(
           CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
-    } else if (shouldReset(requestBuilder)) {
-      requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultExposureRectangle);
+    } else {
+      try {
+        requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, null);
+      } catch (Exception e) {
+        throw new AssertionError(
+            "Failed to clear exposure rectangle for the ExposurePointFeature.");
+      }
     }
   }
 
@@ -108,58 +112,5 @@ public class ExposurePointFeature extends CameraFeature<Point> {
           CameraRegionUtils.convertPointToMeteringRectangle(
               this.cameraBoundaries, this.exposurePoint.x, this.exposurePoint.y, orientation);
     }
-  }
-
-  /**
-   * Determines whether the exposure rectangle should be reset based on the current state of the
-   * {@link CaptureRequest.Builder} and the previously set exposure rectangle.
-   *
-   * @param requestBuilder the current {@link CaptureRequest.Builder}
-   * @return true if the exposure rectangle should be reset, false otherwise
-   */
-  public boolean shouldReset(@NonNull CaptureRequest.Builder requestBuilder) {
-    MeteringRectangle[] currentRectangles = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
-
-    if (currentRectangles == null || currentRectangles.length == 0) {
-      return true;
-    }
-
-    if (exposureRectangle == null) {
-      // If exposureRectangle is null, reset if any rectangles are currently set
-      return true;
-    }
-
-    for (MeteringRectangle rect : currentRectangles) {
-      if (rect.equals(exposureRectangle)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  /**
-   * Returns the default exposure rectangle(s).
-   *
-   * @return An array of default MeteringRectangle objects.
-   */
-  @Nullable
-  public MeteringRectangle[] createDefaultExposureRectangle() {
-    try {
-      // Create and return your desired default exposure rectangles here
-      // Example: a single default rectangle covering the entire image
-      if (cameraBoundaries != null) {
-        int left = 0;
-        int top = 0;
-        int right = cameraBoundaries.getWidth();
-        int bottom = cameraBoundaries.getHeight();
-        return new MeteringRectangle[] {new MeteringRectangle(left, top, right, bottom, 0)};
-      }
-    } catch (Exception e) {
-      throw new AssertionError(
-          "Failed to create default exposure rectangle(s) for the ExposurePointFeature.");
-    }
-
-    return null;
   }
 }

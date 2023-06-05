@@ -6,7 +6,6 @@ package io.flutter.plugins.camera.features.exposurepoint;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -315,52 +314,18 @@ public class ExposurePointFeatureTest {
   }
 
   @Test
-  public void testShouldResetReturnsTrue() {
+  public void updateBuilder_shouldClearExposureRectangleWhenNull() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);
-    when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(null);
+    when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(1);
     CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
     ExposurePointFeature exposurePointFeature =
         new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
     exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
 
     exposurePointFeature.setValue(null);
-    exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
-    exposurePointFeature.setValue(new Point(0d, null));
-    exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
-    exposurePointFeature.setValue(new Point(null, 0d));
+
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
 
-    assertTrue(exposurePointFeature.shouldReset(mockCaptureRequestBuilder));
-  }
-
-  @Test
-  public void testShouldResetReturnsFalse() {
-    CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
-    MeteringRectangle[] defaultRectangles = new MeteringRectangle[1];
-    defaultRectangles[0] = mock(MeteringRectangle.class);
-    when(mockCaptureRequestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS))
-        .thenReturn(defaultRectangles);
-    mockCaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultRectangles);
-
-    ExposurePointFeature exposurePointFeature = mock(ExposurePointFeature.class);
-    exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
-    exposurePointFeature.setValue(new Point(0.5, 0.5));
-    exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
-
-    assertFalse(exposurePointFeature.shouldReset(mockCaptureRequestBuilder));
-  }
-
-  @Test
-  public void testCreateDefaultExposureRectangle() {
-    CameraProperties mockCameraProperties = mock(CameraProperties.class);
-    when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(null);
-    ExposurePointFeature exposurePointFeature =
-        new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
-    exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
-
-    mockDefaultExposureRectangle = exposurePointFeature.createDefaultExposureRectangle();
-
-    assertNotNull(mockDefaultExposureRectangle);
-    assertEquals(1, mockDefaultExposureRectangle.length);
+    verify(mockCaptureRequestBuilder).set(CaptureRequest.CONTROL_AE_REGIONS, null);
   }
 }
