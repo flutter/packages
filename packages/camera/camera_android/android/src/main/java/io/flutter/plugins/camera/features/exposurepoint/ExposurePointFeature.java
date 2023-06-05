@@ -88,8 +88,8 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       try {
         requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, null);
       } catch (Exception e) {
-        throw new AssertionError(
-            "Failed to clear exposure rectangle for the ExposurePointFeature.");
+        throw new IllegalArgumentException(
+            "Failed to clear exposure rectangle for the ExposurePointFeature.", e);
       }
     }
   }
