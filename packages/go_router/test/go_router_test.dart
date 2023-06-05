@@ -1214,7 +1214,8 @@ void main() {
       ]);
     });
 
-    testWidgets('can handle route information update from browser', (WidgetTester tester) async {
+    testWidgets('can handle route information update from browser',
+        (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
@@ -1222,7 +1223,8 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: 'settings',
-              builder: (_, GoRouterState state) => DummyScreen(key: ValueKey<String>('settings-${state.extra}')),
+              builder: (_, GoRouterState state) =>
+                  DummyScreen(key: ValueKey<String>('settings-${state.extra}')),
             ),
           ],
         ),
@@ -1240,17 +1242,23 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey<String>('settings-1')), findsOneWidget);
 
-      final Map<Object?, Object?> arguments = log.last.arguments as Map<Object?, Object?>;
+      final Map<Object?, Object?> arguments =
+          log.last.arguments as Map<Object?, Object?>;
       // Stores the state after the last push. This should contain the encoded
       // RouteMatchList.
-      final Object? state = (log.last.arguments as Map<Object?, Object?>)['state'];
-      final String location = (arguments['location'] ?? arguments['uri']!) as String;
+      final Object? state =
+          (log.last.arguments as Map<Object?, Object?>)['state'];
+      final String location =
+          (arguments['location'] ?? arguments['uri']!) as String;
 
       router.go('/');
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
 
       router.routeInformationProvider.didPushRouteInformation(
+          // TODO(chunhtai): remove this ignore and migrate the code
+          // https://github.com/flutter/flutter/issues/124045.
+          // ignore: deprecated_member_use
           RouteInformation(location: location, state: state));
       await tester.pumpAndSettle();
       // Make sure it has all the imperative routes.

@@ -577,7 +577,6 @@ class _RouteBuilderError extends Error {
 /// matches.
 class _RouteBuilderException implements Exception {
   /// Constructs a [_RouteBuilderException].
-  //ignore: unused_element
   _RouteBuilderException(this.message, {this.exception});
 
   /// The error message.
