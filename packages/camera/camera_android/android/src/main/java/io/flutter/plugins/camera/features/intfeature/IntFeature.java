@@ -16,13 +16,14 @@ import io.flutter.plugins.camera.features.CameraFeature;
  */
 public class IntFeature extends CameraFeature<Integer> {
 
-  private Integer currentValue;
+  @NonNull private Integer currentValue;
 
-  public IntFeature(CameraProperties cameraProperties, Integer value) {
+  public IntFeature(@NonNull CameraProperties cameraProperties, @NonNull Integer value) {
     super(cameraProperties);
     currentValue = value;
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "IntFeature";
@@ -36,7 +37,7 @@ public class IntFeature extends CameraFeature<Integer> {
   }
 
   @Override
-  public void setValue(Integer value) {
+  public void setValue(@NonNull Integer value) {
     currentValue = value;
   }
 
@@ -46,5 +47,5 @@ public class IntFeature extends CameraFeature<Integer> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {}
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {}
 }
