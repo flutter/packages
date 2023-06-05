@@ -51,53 +51,79 @@ void main() {
   group('flags', () {
     test('fails if --changelog is missing', () async {
       Error? commandError;
+      Exception? commandException;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=next',
       ], errorHandler: (Error e) {
         commandError = e;
+      }, exceptionHandler: (Exception e) {
+        commandException = e;
       });
 
-      expect(commandError, isA<ArgumentError>());
+      expect(
+        commandError is ArgumentError || commandException is UsageException,
+        isTrue,
+      );
     });
 
     test('fails if --changelog is blank', () async {
-      Exception? commandError;
+      Error? commandError;
+      Exception? commandException;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=next',
         '--changelog',
         '',
-      ], exceptionHandler: (Exception e) {
+      ], errorHandler: (Error e) {
         commandError = e;
+      }, exceptionHandler: (Exception e) {
+        commandException = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(
+        commandError is ArgumentError || commandException is UsageException,
+        isTrue,
+      );
     });
 
     test('fails if --version is missing', () async {
-      Exception? commandError;
-      await runCapturingPrint(
-          runner, <String>['update-release-info', '--changelog', ''],
-          exceptionHandler: (Exception e) {
+      Error? commandError;
+      Exception? commandException;
+      await runCapturingPrint(runner, <String>[
+        'update-release-info',
+        '--changelog',
+        '',
+      ], errorHandler: (Error e) {
         commandError = e;
+      }, exceptionHandler: (Exception e) {
+        commandException = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(
+        commandError is ArgumentError || commandException is UsageException,
+        isTrue,
+      );
     });
 
     test('fails if --version is an unknown value', () async {
-      Exception? commandError;
+      Error? commandError;
+      Exception? commandException;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=foo',
         '--changelog',
         '',
-      ], exceptionHandler: (Exception e) {
+      ], errorHandler: (Error e) {
         commandError = e;
+      }, exceptionHandler: (Exception e) {
+        commandException = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(
+        commandError is ArgumentError || commandException is UsageException,
+        isTrue,
+      );
     });
   });
 

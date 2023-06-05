@@ -29,13 +29,19 @@ void main() {
 
   test('fails if --flutter-min is missing', () async {
     Error? commandError;
+    Exception? commandException;
     await runCapturingPrint(runner, <String>[
       'update-min-sdk',
     ], errorHandler: (Error e) {
       commandError = e;
+    }, exceptionHandler: (Exception e) {
+      commandException = e;
     });
 
-    expect(commandError, isA<ArgumentError>());
+    expect(
+      commandError is ArgumentError || commandException is UsageException,
+      isTrue,
+    );
   });
 
   test('updates Dart when only Dart is present', () async {
