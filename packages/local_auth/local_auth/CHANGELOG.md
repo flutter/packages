@@ -1,7 +1,10 @@
-## NEXT
+## 2.1.7
 
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
+* Updates AGP version to 8.0.2.
+* Updates androidx.fragment version to 1.5.7.
+* Updates androidx.core version to 1.10.1.
 
 ## 2.1.6
 
