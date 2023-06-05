@@ -26,6 +26,8 @@ public class IntFeature extends CameraFeature<Integer> {
     return "IntFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
+  @Nullable
   @Override
   public Integer getValue() {
     return currentValue;
