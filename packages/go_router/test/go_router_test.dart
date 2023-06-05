@@ -1214,6 +1214,57 @@ void main() {
       ]);
     });
 
+    testWidgets('can handle route information update from browser', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(key: ValueKey<String>('home')),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'settings',
+              builder: (_, GoRouterState state) => DummyScreen(key: ValueKey<String>('settings-${state.extra}')),
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
+
+      router.push('/settings', extra: 0);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('settings-0')), findsOneWidget);
+
+      log.clear();
+      router.push('/settings', extra: 1);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('settings-1')), findsOneWidget);
+
+      final Map<Object?, Object?> arguments = log.last.arguments as Map<Object?, Object?>;
+      // Stores the state after the last push. This should contain the encoded
+      // RouteMatchList.
+      final Object? state = (log.last.arguments as Map<Object?, Object?>)['state'];
+      final String location = (arguments['location'] ?? arguments['uri']!) as String;
+
+      router.go('/');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
+
+      router.routeInformationProvider.didPushRouteInformation(
+          RouteInformation(location: location, state: state));
+      await tester.pumpAndSettle();
+      // Make sure it has all the imperative routes.
+      expect(find.byKey(const ValueKey<String>('settings-1')), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('settings-0')), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
+    });
+
     testWidgets('works correctly with async redirect',
         (WidgetTester tester) async {
       final UniqueKey login = UniqueKey();
