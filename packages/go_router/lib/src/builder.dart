@@ -11,6 +11,7 @@ import 'logging.dart';
 import 'match.dart';
 import 'matching.dart';
 import 'misc/error_screen.dart';
+import 'misc/errors.dart';
 import 'pages/cupertino.dart';
 import 'pages/material.dart';
 import 'route_data.dart';
@@ -100,12 +101,9 @@ class RouteBuilder {
             _registry.updateRegistry(newRegistry);
             return GoRouterStateRegistryScope(
                 registry: _registry, child: result);
-          } on _RouteBuilderError catch (e) {
-            return _buildErrorNavigator(context, Exception(e), matchList.uri,
-                onPopPageWithRouteMatch, configuration.navigatorKey);
           } on RouteBuilderException catch (e) {
-            return _buildErrorNavigator(context, e, matchList.uri, onPopPageWithRouteMatch,
-                configuration.navigatorKey);
+            return _buildErrorNavigator(context, e, matchList.uri,
+                onPopPageWithRouteMatch, configuration.navigatorKey);
           }
         },
       ),
@@ -127,10 +125,7 @@ class RouteBuilder {
     // TODO(chunhtai): move the state from local scope to a central place.
     // https://github.com/flutter/flutter/issues/126365
     final _PagePopContext pagePopContext =
-        _PagePopContext._(
-    
-    
-    );
+        _PagePopContext._(onPopPageWithRouteMatch);
     return builderWithNav(
       context,
       _buildNavigator(
@@ -163,14 +158,8 @@ class RouteBuilder {
       assert(keyToPage.values.flattened.every((Page<Object?> page) =>
           pagePopContext.getRouteMatchForPage(page) != null));
       return keyToPage[navigatorKey]!;
-    } on _RouteBuilderError catch (e) {
-      return <Page<Object?>>[
-        _buildErrorPage(context, Exception(e), matchList.uri),
-      ];
     } on RouteBuilderException catch (e) {
-      return <Page<Object?>>[
-        _buildErrorPage(context, e, matchList.uri),
-      ];
+      return <Page<Object?>>[_buildErrorPage(context, e, matchList.uri)];
     } finally {
       /// Clean up previous cache to prevent memory leak, making sure any nested
       /// stateful shell routes for the current match list are kept.
@@ -211,7 +200,7 @@ class RouteBuilder {
     final RouteMatch match = matchList.matches[startIndex];
 
     if (match.error != null) {
-      throw _RouteBuilderError('Match error found during build phase',
+      throw GoError('Match error found during build phase',
           exception: match.error);
     }
 
@@ -294,7 +283,7 @@ class RouteBuilder {
       registry[page] = state;
       pagePopContext._setRouteMatchForPage(page, match);
     } else {
-      throw _RouteBuilderException('Unsupported route type $route');
+      throw RouteBuilderException('Unsupported route type $route');
     }
   }
 
@@ -380,7 +369,7 @@ class RouteBuilder {
     final GoRouterWidgetBuilder? builder = route.builder;
 
     if (builder == null) {
-      throw _RouteBuilderError('No routeBuilder provided to GoRoute: $route');
+      throw GoError('No routeBuilder provided to GoRoute: $route');
     }
     return builder(context, state);
   }
@@ -414,7 +403,7 @@ class RouteBuilder {
     final Widget? widget =
         route.buildWidget(context, state, shellRouteContext!);
     if (widget == null) {
-      throw _RouteBuilderError('No builder provided to ShellRoute: $route');
+      throw GoError('No builder provided to ShellRoute: $route');
     }
     return widget;
   }
@@ -495,17 +484,15 @@ class RouteBuilder {
 
   /// Builds a Navigator containing an error page.
   Widget _buildErrorNavigator(
-      BuildContext context, 
-      _RouteBuilderError e, 
-      Uri uri,
-      PopPageWithRouteMatchCallback onPopPage,
-      GlobalKey<NavigatorState> navigatorKey) {
-
+    BuildContext context,
+    Exception e,
+    Uri uri,
+    PopPageWithRouteMatchCallback onPopPage,
+    GlobalKey<NavigatorState> navigatorKey,
+  ) {
     return _buildNavigator(
       (Route<dynamic> route, dynamic result) => onPopPage(route, result, null),
-      <Page<Object?>>[
-        _buildErrorPage(context, e, uri),
-      ],
+      <Page<Object?>>[_buildErrorPage(context, e, uri)],
       navigatorKey,
     );
   }
@@ -564,43 +551,6 @@ typedef _PageBuilderForAppType = Page<void> Function({
   required String restorationId,
   required Widget child,
 });
-
-/// An error that occurred while building the app's UI based on the route
-/// matches.
-class _RouteBuilderError extends Error {
-  /// Constructs a [_RouteBuilderError].
-  _RouteBuilderError(this.message, {this.exception});
-
-  /// The error message.
-  final String message;
-
-  /// The exception that occurred.
-  final Exception? exception;
-
-  @override
-  String toString() {
-    return '$message ${exception ?? ""}';
-  }
-}
-
-/// An error that occurred while building the app's UI based on the route
-/// matches.
-class RouteBuilderException implements Exception {
-  /// Constructs a [RouteBuilderException].
-  //ignore: unused_element
-  RouteBuilderException(this.message, {this.exception});
-
-  /// The error message.
-  final String message;
-
-  /// The exception that occurred.
-  final Exception? exception;
-
-  @override
-  String toString() {
-    return '$message ${exception ?? ""}';
-  }
-}
 
 /// Context used to provide a route to page association when popping routes.
 class _PagePopContext {
