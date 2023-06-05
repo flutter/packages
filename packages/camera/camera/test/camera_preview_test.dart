@@ -34,13 +34,6 @@ class FakeController extends ValueNotifier<CameraValue>
   void debugCheckIsDisposed() {}
 
   @override
-  CameraDescription get description => const CameraDescription(
-      name: '', lensDirection: CameraLensDirection.back, sensorOrientation: 0);
-
-  @override
-  bool get enableAudio => false;
-
-  @override
   Future<double> getExposureOffsetStepSize() async => 1.0;
 
   @override

@@ -32,7 +32,11 @@ public class MediaRecorderBuilderTest {
   public void ctor_testLegacy() {
     MediaRecorderBuilder builder =
         new MediaRecorderBuilder(
-            CamcorderProfile.get(CamcorderProfile.QUALITY_1080P), "", testFps, testVideoBitrate, testAudioBitrate);
+            CamcorderProfile.get(CamcorderProfile.QUALITY_1080P),
+            "",
+            testFps,
+            testVideoBitrate,
+            testAudioBitrate);
 
     assertNotNull(builder);
   }
@@ -42,7 +46,11 @@ public class MediaRecorderBuilderTest {
   public void ctor_test() {
     MediaRecorderBuilder builder =
         new MediaRecorderBuilder(
-            CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P), "", testFps, testVideoBitrate, testAudioBitrate);
+            CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P),
+            "",
+            testFps,
+            testVideoBitrate,
+            testAudioBitrate);
 
     assertNotNull(builder);
   }
@@ -79,7 +87,13 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, testFps, testVideoBitrate, testAudioBitrate)
+        new MediaRecorderBuilder(
+                recorderProfile,
+                outputFilePath,
+                mockFactory,
+                testFps,
+                testVideoBitrate,
+                testAudioBitrate)
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
 
@@ -115,7 +129,13 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, testFps, testVideoBitrate, testAudioBitrate)
+        new MediaRecorderBuilder(
+                recorderProfile,
+                outputFilePath,
+                mockFactory,
+                testFps,
+                testVideoBitrate,
+                testAudioBitrate)
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
 
@@ -149,7 +169,13 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, testFps, testVideoBitrate, testAudioBitrate)
+        new MediaRecorderBuilder(
+                recorderProfile,
+                outputFilePath,
+                mockFactory,
+                testFps,
+                testVideoBitrate,
+                testAudioBitrate)
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
 
@@ -169,7 +195,13 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, testFps, testVideoBitrate, testAudioBitrate)
+        new MediaRecorderBuilder(
+                recorderProfile,
+                outputFilePath,
+                mockFactory,
+                testFps,
+                testVideoBitrate,
+                testAudioBitrate)
             .setEnableAudio(true)
             .setMediaOrientation(mediaOrientation);
 
@@ -209,7 +241,13 @@ public class MediaRecorderBuilderTest {
     String outputFilePath = "mock_video_file_path";
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
-        new MediaRecorderBuilder(recorderProfile, outputFilePath, mockFactory, testFps, testVideoBitrate, testAudioBitrate)
+        new MediaRecorderBuilder(
+                recorderProfile,
+                outputFilePath,
+                mockFactory,
+                testFps,
+                testVideoBitrate,
+                testAudioBitrate)
             .setEnableAudio(true)
             .setMediaOrientation(mediaOrientation);
 

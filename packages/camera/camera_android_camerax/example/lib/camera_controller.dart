@@ -521,7 +521,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
 
     if (value.isStreamingImages) {
-      stopImageStream();
+      await stopImageStream();
     }
 
     try {

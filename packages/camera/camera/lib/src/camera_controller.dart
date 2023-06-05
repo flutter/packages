@@ -240,11 +240,11 @@ class CameraController extends ValueNotifier<CameraValue> {
     this.imageFormatGroup,
   })  : mediaSettings = MediaSettings(
             resolutionPreset: resolutionPreset, enableAudio: enableAudio),
-        super(const CameraValue.uninitialized(description));
+        super(CameraValue.uninitialized(description));
 
   /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
   CameraController.withSettings(
-    this.description, {
+    CameraDescription description, {
     this.mediaSettings,
     this.imageFormatGroup,
   }) : super(CameraValue.uninitialized(description));
@@ -647,7 +647,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// The supplied [zoom] value should be between 1.0 and the maximum supported
   /// zoom level returned by the `getMaxZoomLevel`. Throws an `CameraException`
-  /// when an illegal zoom level is suplied.
+  /// when an illegal zoom level is supplied.
   Future<void> setZoomLevel(double zoom) {
     _throwIfNotInitialized('setZoomLevel');
     try {
