@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../go_router.dart';
+
 final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 
 /// Converts a [pattern] such as `/user/:id` into [RegExp].
@@ -134,4 +136,25 @@ String canonicalUri(String loc) {
   canon = canon.replaceFirst('/?', '?', 1);
 
   return canon;
+}
+
+/// Builds an absolute path for the provided route.
+String? fullPathForRoute(
+    RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
+  for (final RouteBase route in routes) {
+    final String fullPath = (route is GoRoute)
+        ? concatenatePaths(parentFullpath, route.path)
+        : parentFullpath;
+
+    if (route == targetRoute) {
+      return fullPath;
+    } else {
+      final String? subRoutePath =
+          fullPathForRoute(targetRoute, fullPath, route.routes);
+      if (subRoutePath != null) {
+        return subRoutePath;
+      }
+    }
+  }
+  return null;
 }

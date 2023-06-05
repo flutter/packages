@@ -1,5 +1,6 @@
-## NEXT
+## 1.0.8
 
+* Removes obsolete null checks on non-nullable values.
 * Updates minimum Flutter version to 3.3.
 
 ## 1.0.7

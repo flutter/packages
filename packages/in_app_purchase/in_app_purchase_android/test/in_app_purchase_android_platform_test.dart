@@ -25,7 +25,7 @@ void main() {
       'BillingClient#startConnection(BillingClientStateListener)';
   const String endConnectionCall = 'BillingClient#endConnection()';
   const String acknowledgePurchaseCall =
-      'BillingClient#(AcknowledgePurchaseParams params, (AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
+      'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
   const String onBillingServiceDisconnectedCallback =
       'BillingClientStateListener#onBillingServiceDisconnected()';
 
@@ -213,7 +213,8 @@ void main() {
   });
 
   group('restorePurchases', () {
-    const String queryMethodName = 'BillingClient#queryPurchases(String)';
+    const String queryMethodName =
+        'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)';
     test('handles error', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
@@ -331,7 +332,7 @@ void main() {
     const String launchMethodName =
         'BillingClient#launchBillingFlow(Activity, BillingFlowParams)';
     const String consumeMethodName =
-        'BillingClient#consumeAsync(String, ConsumeResponseListener)';
+        'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)';
 
     test('buy non consumable, serializes and deserializes data', () async {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
@@ -825,7 +826,7 @@ void main() {
 
   group('complete purchase', () {
     const String completeMethodName =
-        'BillingClient#(AcknowledgePurchaseParams params, (AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
+        'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
     test('complete purchase success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';

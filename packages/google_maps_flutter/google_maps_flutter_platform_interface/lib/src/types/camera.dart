@@ -23,10 +23,7 @@ class CameraPosition {
     required this.target,
     this.tilt = 0.0,
     this.zoom = 0.0,
-  })  : assert(bearing != null),
-        assert(target != null),
-        assert(tilt != null),
-        assert(zoom != null);
+  });
 
   /// The camera's bearing in degrees, measured clockwise from north.
   ///

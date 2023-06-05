@@ -23,7 +23,7 @@ class CreationParams {
         AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
     this.backgroundColor,
     this.cookies = const <WebViewCookie>[],
-  }) : assert(autoMediaPlaybackPolicy != null);
+  });
 
   /// The initialUrl to load in the webview.
   ///

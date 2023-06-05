@@ -70,7 +70,7 @@ class _SignInDemoState extends State<SignInDemo> {
       // Now that we know that the user can access the required scopes, the app
       // can call the REST API.
       if (isAuthorized) {
-        _handleGetContact(account!);
+        unawaited(_handleGetContact(account!));
       }
     });
 
@@ -156,7 +156,7 @@ class _SignInDemoState extends State<SignInDemo> {
       _isAuthorized = isAuthorized;
     });
     if (isAuthorized) {
-      _handleGetContact(_currentUser!);
+      unawaited(_handleGetContact(_currentUser!));
     }
   }
 

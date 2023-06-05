@@ -44,7 +44,7 @@ void main() {
 
   group('consume purchases', () {
     const String consumeMethodName =
-        'BillingClient#consumeAsync(String, ConsumeResponseListener)';
+        'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)';
     test('consume purchase async success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';
@@ -64,7 +64,8 @@ void main() {
 
   group('queryPastPurchase', () {
     group('queryPurchaseDetails', () {
-      const String queryMethodName = 'BillingClient#queryPurchases(String)';
+      const String queryMethodName =
+          'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)';
       test('handles error', () async {
         const String debugMessage = 'dummy message';
         const BillingResponse responseCode = BillingResponse.developerError;

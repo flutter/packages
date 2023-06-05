@@ -8,6 +8,7 @@
 //
 // usage: dart run tool/run_tests.dart
 // (needs a `chrome` executable in $PATH, or a tweak to dart_test.yaml)
+import 'dart:async';
 import 'dart:io';
 import 'package:path/path.dart' as p;
 
@@ -30,8 +31,8 @@ Future<void> main(List<String> args) async {
 
 Future<Process> _streamOutput(Future<Process> processFuture) async {
   final Process process = await processFuture;
-  stdout.addStream(process.stdout);
-  stderr.addStream(process.stderr);
+  unawaited(stdout.addStream(process.stdout));
+  unawaited(stderr.addStream(process.stderr));
   return process;
 }
 
