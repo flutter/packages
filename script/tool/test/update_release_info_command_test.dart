@@ -62,42 +62,42 @@ void main() {
     });
 
     test('fails if --changelog is blank', () async {
-      Error? commandError;
+      Exception? commandError;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=next',
         '--changelog',
         '',
-      ], errorHandler: (Error e) {
+      ], exceptionHandler: (Exception e) {
         commandError = e;
       });
 
-      expect(commandError, isA<ArgumentError>());
+      expect(commandError, isA<UsageException>());
     });
 
     test('fails if --version is missing', () async {
-      Error? commandError;
+      Exception? commandError;
       await runCapturingPrint(
           runner, <String>['update-release-info', '--changelog', ''],
-          errorHandler: (Error e) {
+          exceptionHandler: (Exception e) {
         commandError = e;
       });
 
-      expect(commandError, isA<ArgumentError>());
+      expect(commandError, isA<UsageException>());
     });
 
     test('fails if --version is an unknown value', () async {
-      Error? commandError;
+      Exception? commandError;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=foo',
         '--changelog',
         '',
-      ], errorHandler: (Error e) {
+      ], exceptionHandler: (Exception e) {
         commandError = e;
       });
 
-      expect(commandError, isA<ArgumentError>());
+      expect(commandError, isA<UsageException>());
     });
   });
 
