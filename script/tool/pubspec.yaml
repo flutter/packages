@@ -4,7 +4,7 @@ repository: https://github.com/flutter/packages/tree/main/script/tool
 version: 0.13.4+4
 
 dependencies:
-  args: ^2.3.2
+  args: ^2.1.0
   async: ^2.6.1
   collection: ^1.15.0
   colorize: ^3.0.0
