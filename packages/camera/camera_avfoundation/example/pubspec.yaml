@@ -27,7 +27,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # TODO: for PR
+# TODO: for PR
+dependency_overrides:
   camera_avfoundation:
     path: ../
   camera_platform_interface:
