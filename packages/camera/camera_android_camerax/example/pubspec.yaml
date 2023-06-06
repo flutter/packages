@@ -8,9 +8,8 @@ environment:
 
 dependencies:
   camera_android_camerax:
-    path: ../
   camera_platform_interface:
-    path: ../../../camera/camera_platform_interface
+
   flutter:
     sdk: flutter
   video_player: ^2.4.10
@@ -24,3 +23,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+# TODO: for PR
+dependency_overrides:
+  camera_android_camerax:
+    path: ../
+  camera_platform_interface:
+    path: ../../../camera/camera_platform_interface

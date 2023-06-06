@@ -7,10 +7,7 @@ environment:
 
 dependencies:
   camera_platform_interface:
-    path: ../../../camera/camera_platform_interface
-
   camera_web:
-    path: ../
 
   flutter:
     sdk: flutter
@@ -25,3 +22,11 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   mocktail: 0.3.0
+
+# TODO: for PR
+dependency_overrides:
+  camera_platform_interface:
+    path: ../../../camera/camera_platform_interface
+
+  camera_web:
+    path: ../

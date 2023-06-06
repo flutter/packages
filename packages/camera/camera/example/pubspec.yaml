@@ -8,9 +8,8 @@ environment:
 
 dependencies:
   camera:
-    path: ../
   camera_platform_interface:
-    path: ../../camera_platform_interface
+
   flutter:
     sdk: flutter
   path_provider: ^2.0.0
@@ -27,3 +26,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+# TODO: for PR
+dependency_overrides:
+  camera:
+    path: ../
+  camera_platform_interface:
+    path: ../../../camera/camera_platform_interface
