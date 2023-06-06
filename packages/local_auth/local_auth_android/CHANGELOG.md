@@ -1,3 +1,8 @@
+## 1.0.31
+
+* Updates androidx.fragment version to 1.5.7.
+* Updates androidx.core version to 1.10.1.
+
 ## 1.0.30
 
 * Updates androidx.fragment version to 1.5.6
