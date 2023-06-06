@@ -13,7 +13,6 @@
 # TODO(ditman): Fix this in the repo tooling.
 - camera_web
 - file_selector_web
-- google_maps_flutter
 - google_maps_flutter_web
 - google_sign_in_web
 - image_picker_for_web
