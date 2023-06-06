@@ -1,6 +1,7 @@
-## NEXT
+## 6.1.15
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Updates Guava to version 32.0.0.
 
 ## 6.1.14
 

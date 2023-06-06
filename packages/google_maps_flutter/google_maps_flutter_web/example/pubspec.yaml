@@ -20,8 +20,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   google_maps: ^6.1.0
-  google_maps_flutter: # Used for projection_test.dart
-    path: ../../google_maps_flutter
+  google_maps_flutter: ^2.2.0 # Needed for projection_test.dart
   http: ^1.0.0
   integration_test:
     sdk: flutter
