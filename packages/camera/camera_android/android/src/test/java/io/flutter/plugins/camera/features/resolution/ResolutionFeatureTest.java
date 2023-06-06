@@ -91,8 +91,9 @@ public class ResolutionFeatureTest {
   public void before() {
     mockProfileLow = mock(EncoderProfiles.class);
     EncoderProfiles mockProfile = mock(EncoderProfiles.class);
-    EncoderProfiles.VideoProfile mockVideoProfile = mockStatic(EncoderProfiles.VideoProfile.class);
-    List<EncoderProfiles.VideoProfile> mockVideoProfilesList = List.of(mockVideoProfile);
+    List<EncoderProfiles.VideoProfile> mockVideoProfilesList = new ArrayList<EncoderProfiles.VideoProfile>();
+    // Cannot mock EncoderProfiles.VideoProfile values to test.
+    mockVideoProfilesList.add(null);
 
     mockedStaticProfile
         .when(() -> CamcorderProfile.getAll("1", CamcorderProfile.QUALITY_HIGH))
@@ -117,8 +118,6 @@ public class ResolutionFeatureTest {
         .thenReturn(mockProfileLow);
 
     when(mockProfile.getVideoProfiles()).thenReturn(mockVideoProfilesList);
-    when(mockVideoProfile.getHeight()).thenReturn(100);
-    when(mockVideoProfile.getWidth()).thenReturn(100);
   }
 
   @After
