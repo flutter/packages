@@ -1135,7 +1135,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.NamedType) {
           result.add(TypeDeclaration(
-              baseName:_getNamedTypeQualifiedName(x),
+              baseName: _getNamedTypeQualifiedName(x),
               isNullable: x.question != null,
               typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
         }
