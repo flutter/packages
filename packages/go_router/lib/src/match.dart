@@ -131,7 +131,9 @@ class ImperativeRouteMatch<T> extends RouteMatch {
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
   void complete([dynamic value]) {
-    _completer.complete(value as T?);
+    if (!_completer.isCompleted) {
+      _completer.complete(value as T?);
+    }
   }
 
   /// The future of the [RouteMatch] completer.
