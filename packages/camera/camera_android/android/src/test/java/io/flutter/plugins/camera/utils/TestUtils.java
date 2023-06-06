@@ -5,48 +5,24 @@
 package io.flutter.plugins.camera.utils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import org.junit.Assert;
 
 public class TestUtils {
-  // public static <T> void setFinalStatic(Class<T> classToModify, String fieldName, Object newValue) {
-  //   try {
-  //     Field field = classToModify.getField(fieldName);
-  //     field.setAccessible(true);
+  public static <T> void setFinalStatic(Class<T> classToModify, String fieldName, Object newValue) {
+    try {
+      Field field = classToModify.getField(fieldName);
+      field.setAccessible(true);
 
-  //     Field modifiersField = Field.class.getDeclaredField("modifiers");
-  //     modifiersField.setAccessible(true);
-  //     modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+      Field modifiersField = Field.class.getDeclaredField("modifiers");
+      modifiersField.setAccessible(true);
+      modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-  //     field.set(null, newValue);
-  //   } catch (Exception e) {
-  //     System.out.println(e);
-  //     Assert.fail("Unable to mock static field: " + fieldName);
-  //   }
-  // }
-
-  public static <T> void setFinalStatic(Class<T> classToModify, String fieldName,  Object newValue) {
-  //   try {
-  //   Field field = classToModify.getField(fieldName);
-  //   field.setAccessible(true);
-  //   Method getDeclaredFields0 = Class.class.getDeclaredMethod("getDeclaredFields0", boolean.class);
-  //   getDeclaredFields0.setAccessible(true);
-  //   Field[] fields = (Field[]) getDeclaredFields0.invoke(Field.class, false);
-  //   Field modifiersField = null;
-  //   for (Field each : fields) {
-  //       if ("modifiers".equals(each.getName())) {
-  //           modifiersField = each;
-  //           break;
-  //       }
-  //   }
-  //   modifiersField.setAccessible(true);
-  //   modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-  //   field.set(null, newValue);
-  // } catch (Exception e) {
-  //   System.out.println(e);
-  // }
-}
+      field.set(null, newValue);
+    } catch (Exception e) {
+      Assert.fail("Unable to mock static field: " + fieldName);
+    }
+  }
 
   public static <T> void setPrivateField(T instance, String fieldName, Object newValue) {
     try {
