@@ -20,7 +20,7 @@ flutter:
 
 dependencies:
   async: ^2.5.0
-  camera_platform_interface:
+  camera_platform_interface: ^2.6.0
 
   flutter:
     sdk: flutter

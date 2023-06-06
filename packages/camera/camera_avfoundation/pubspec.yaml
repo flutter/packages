@@ -18,7 +18,7 @@ flutter:
         dartPluginClass: AVFoundationCamera
 
 dependencies:
-  camera_platform_interface:
+  camera_platform_interface: ^2.6.0
 
   flutter:
     sdk: flutter
