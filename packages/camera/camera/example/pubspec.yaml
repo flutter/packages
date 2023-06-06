@@ -9,8 +9,6 @@ environment:
 dependencies:
   camera:
     path: ../
-  camera_platform_interface:
-    path: ../../camera_platform_interface
   flutter:
     sdk: flutter
   path_provider: ^2.0.0
