@@ -55,12 +55,11 @@ if (product.productType == ProductType.inapp) {
 }
 ```
 
-### Use case: free trial subscriptions
+### Use case: free trials
 
 Below code shows how to handle free trials for subscriptions before and after
 the migration. As subscriptions can contain multiple offers, each containing
-multiple price phases, the logic is more involved. Other use cases such as
-dealing with introductory prices follow a similar pattern.
+multiple price phases, the logic is more involved.
 
 Code before migration:
 
@@ -88,6 +87,48 @@ if (product.productType == ProductType.subs) {
   if (freeTrialOffers.isNotEmpty) {
     SubscriptionOfferDetailsWrapper freeTrialOffer = freeTrialOffers.first;
     // Free trial period logic.
+  }
+}
+```
+
+### Use case: introductory prices
+
+Below code shows how to handle introductory prices for subscriptions before and
+after the migration. As subscriptions can contain multiple offers, each
+containing multiple price phases, the logic is more involved.
+
+Code before migration:
+
+```dart
+SkuDetailsWrapper sku;
+
+if (sku.type == SkuType.subs) {
+  if (sku.introductoryPriceAmountMicros != 0) {
+    // Introductory price period logic.
+  }
+}
+```
+
+Code after migration:
+
+```dart
+ProductDetailsWrapper product;
+
+if (product.productType == ProductType.subs) {
+  List<SubscriptionOfferDetailsWrapper> offers = product.subscriptionOfferDetails!;
+
+  Iterable<SubscriptionOfferDetailsWrapper> introductoryOffers = offers
+    .where((SubscriptionOfferDetailsWrapper offer) {
+      List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
+      if (pricingPhases.length < 2) {
+        return false;
+      }
+      return pricingPhases.first.priceAmountMicros < pricingPhases[1].priceAmountMicros;
+    });
+
+  if (introductoryOffers.isNotEmpty) {
+    SubscriptionOfferDetailsWrapper introductoryOffer = introductoryOffers.first;
+    // Introductory price period logic.
   }
 }
 ```
