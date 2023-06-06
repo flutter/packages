@@ -143,11 +143,6 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   GoRouteInformationParser get routeInformationParser =>
       _routeInformationParser;
 
-  /// The route configuration. Used for testing.
-  // TODO(johnpryan): Remove this, integration tests shouldn't need access
-  @visibleForTesting
-  RouteConfiguration get routeConfiguration => _routeConfiguration;
-
   /// Gets the current location.
   // TODO(chunhtai): deprecates this once go_router_builder is migrated to
   // GoRouterState.of.
@@ -188,6 +183,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
         pathParameters: pathParameters,
         queryParameters: queryParameters,
       );
+
+  /// Get the location for the provided route.
+  ///
+  /// Builds the absolute path for the route, by concatenating the paths of the
+  /// route and all its ancestors.
+  String? locationForRoute(RouteBase route) =>
+      _routeInformationParser.configuration.locationForRoute(route);
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`

@@ -155,7 +155,7 @@ class Marker implements MapsObject<Marker> {
     this.onDrag,
     this.onDragStart,
     this.onDragEnd,
-  }) : assert(alpha == null || (0.0 <= alpha && alpha <= 1.0));
+  }) : assert(0.0 <= alpha && alpha <= 1.0);
 
   /// Uniquely identifies a [Marker].
   final MarkerId markerId;

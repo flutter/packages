@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported macOS version to 10.14.
+
 ## 6.1.11
 
 * Fixes some url_launcher docs that were missing the null operator (?).

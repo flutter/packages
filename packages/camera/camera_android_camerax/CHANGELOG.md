@@ -1,3 +1,19 @@
+## 0.5.0+6
+
+* Updates Guava version to 32.0.0.
+
+## 0.5.0+5
+
+* Updates `README.md` to fully cover unimplemented functionality.
+
+## 0.5.0+4
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.5.0+3
+
+* Fixes Java lints.
+
 ## 0.5.0+2
 
 * Adds a dependency on kotlin-bom to align versions of Kotlin transitive dependencies.

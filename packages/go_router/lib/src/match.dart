@@ -36,7 +36,7 @@ class RouteMatch {
     required Map<String, String> pathParameters,
     required Object? extra,
   }) {
-    if (route is ShellRoute) {
+    if (route is ShellRouteBase) {
       return RouteMatch(
         route: route,
         matchedLocation: remainingLocation,
@@ -112,13 +112,15 @@ class RouteMatch {
 class ImperativeRouteMatch<T> extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
   ImperativeRouteMatch({
-    required super.route,
-    required super.matchedLocation,
-    required super.extra,
-    required super.error,
     required super.pageKey,
     required this.matches,
-  }) : _completer = Completer<T?>();
+  })  : _completer = Completer<T?>(),
+        super(
+          route: matches.last.route,
+          matchedLocation: matches.last.matchedLocation,
+          extra: matches.last.extra,
+          error: matches.last.error,
+        );
 
   /// The matches that produces this route match.
   final RouteMatchList matches;

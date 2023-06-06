@@ -148,13 +148,9 @@ class Polygon implements MapsObject<Polygon> {
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);
 
-    if (points != null) {
-      json['points'] = _pointsToJson();
-    }
+    json['points'] = _pointsToJson();
 
-    if (holes != null) {
-      json['holes'] = _holesToJson();
-    }
+    json['holes'] = _holesToJson();
 
     return json;
   }

@@ -24,35 +24,35 @@ public class CameraXProxy {
    * Converts a {@link ResolutionInfo} instance to a {@link Size} for setting the target resolution
    * of {@link UseCase}s.
    */
-  public static Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
+  public static @NonNull Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
     return new Size(resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
   }
 
-  public CameraSelector.Builder createCameraSelectorBuilder() {
+  public @NonNull CameraSelector.Builder createCameraSelectorBuilder() {
     return new CameraSelector.Builder();
   }
 
   /** Creates an instance of {@link CameraPermissionsManager}. */
-  public CameraPermissionsManager createCameraPermissionsManager() {
+  public @NonNull CameraPermissionsManager createCameraPermissionsManager() {
     return new CameraPermissionsManager();
   }
 
   /** Creates an instance of the {@link DeviceOrientationManager}. */
-  public DeviceOrientationManager createDeviceOrientationManager(
+  public @NonNull DeviceOrientationManager createDeviceOrientationManager(
       @NonNull Activity activity,
       @NonNull Boolean isFrontFacing,
-      @NonNull int sensorOrientation,
+      int sensorOrientation,
       @NonNull DeviceOrientationManager.DeviceOrientationChangeCallback callback) {
     return new DeviceOrientationManager(activity, isFrontFacing, sensorOrientation, callback);
   }
 
   /** Creates a builder for an instance of the {@link Preview} use case. */
-  public Preview.Builder createPreviewBuilder() {
+  public @NonNull Preview.Builder createPreviewBuilder() {
     return new Preview.Builder();
   }
 
   /** Creates a {@link Surface} instance from the specified {@link SurfaceTexture}. */
-  public Surface createSurface(@NonNull SurfaceTexture surfaceTexture) {
+  public @NonNull Surface createSurface(@NonNull SurfaceTexture surfaceTexture) {
     return new Surface(surfaceTexture);
   }
 
@@ -62,7 +62,7 @@ public class CameraXProxy {
    * <p>Included in this class to utilize the callback methods it provides, e.g. {@code
    * onCameraError(String)}.
    */
-  public SystemServicesFlutterApiImpl createSystemServicesFlutterApiImpl(
+  public @NonNull SystemServicesFlutterApiImpl createSystemServicesFlutterApiImpl(
       @NonNull BinaryMessenger binaryMessenger) {
     return new SystemServicesFlutterApiImpl(binaryMessenger);
   }

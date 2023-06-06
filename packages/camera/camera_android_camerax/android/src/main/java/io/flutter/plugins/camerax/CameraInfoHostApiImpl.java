@@ -20,7 +20,7 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  @VisibleForTesting public LiveDataFlutterApiWrapper liveDataFlutterApiWrapper;
+  @VisibleForTesting public @NonNull LiveDataFlutterApiWrapper liveDataFlutterApiWrapper;
 
   public CameraInfoHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {

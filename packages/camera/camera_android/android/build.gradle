@@ -34,7 +34,6 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        targetSdkVersion 31
         minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -46,10 +45,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    lint {
-        baseline = file("lint-baseline.xml")
     }
 
     testOptions {

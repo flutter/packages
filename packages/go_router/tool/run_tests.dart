@@ -8,6 +8,7 @@
 
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:io';
 import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as p;
@@ -99,8 +100,8 @@ dependencies:
 
 Future<Process> _streamOutput(Future<Process> processFuture) async {
   final Process process = await processFuture;
-  stdout.addStream(process.stdout);
-  stderr.addStream(process.stderr);
+  unawaited(stdout.addStream(process.stdout));
+  unawaited(stderr.addStream(process.stderr));
   return process;
 }
 
