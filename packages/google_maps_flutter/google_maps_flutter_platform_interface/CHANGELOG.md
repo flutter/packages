@@ -1,6 +1,6 @@
 ## NEXT
 
-* Removes unnecessary import typed_data
+* Removes unnecessary_import ignore.
 
 ## 2.2.7
 
