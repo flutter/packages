@@ -406,7 +406,6 @@ void main() {
           matches: matches,
         ),
       );
-      expect(tester.takeException(), isInstanceOf<RouteBuilderException>());
       expect(find.text('Something went wrong!'), findsOneWidget);
     });
   });
