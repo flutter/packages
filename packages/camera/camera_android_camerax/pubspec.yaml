@@ -21,7 +21,6 @@ flutter:
 dependencies:
   async: ^2.5.0
   camera_platform_interface:
-    path: ../../camera/camera_platform_interface
 
   flutter:
     sdk: flutter
@@ -36,3 +35,8 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.1
   pigeon: ^9.1.0
+
+# TODO: for PR
+dependency_overrides:
+  camera_platform_interface:
+    path: ../../camera/camera_platform_interface

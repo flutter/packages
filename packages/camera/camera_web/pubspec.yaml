@@ -19,7 +19,6 @@ flutter:
 
 dependencies:
   camera_platform_interface:
-    path: ../../camera/camera_platform_interface
 
   flutter:
     sdk: flutter
@@ -30,3 +29,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+# TODO: for PR
+dependency_overrides:
+  camera_platform_interface:
+    path: ../../camera/camera_platform_interface
