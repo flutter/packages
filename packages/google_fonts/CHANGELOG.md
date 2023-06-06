@@ -1,3 +1,7 @@
+## Unreleased
+### Added
+- Add ability to wait for fonts to load with `GoogleFonts.pendingFonts`
+
 ## 5.0.0 - 2023-06-01
 ### Added
 - `Alkatra`

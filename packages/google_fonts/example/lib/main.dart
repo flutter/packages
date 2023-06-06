@@ -10,9 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData.light(useMaterial3: true),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -29,6 +27,7 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  late Future googleFontsPending;
 
   void _incrementCounter() {
     setState(() {
@@ -37,26 +36,47 @@ class MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    googleFontsPending = GoogleFonts.pendingFonts([
+      GoogleFonts.poppins(),
+      GoogleFonts.montserrat(fontStyle: FontStyle.italic),
+    ]);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final pushButtonTextStyle = GoogleFonts.poppins(
+      textStyle: Theme.of(context).textTheme.headlineMedium,
+    );
+    final counterTextStyle = GoogleFonts.montserrat(
+      fontStyle: FontStyle.italic,
+      textStyle: Theme.of(context).textTheme.displayLarge,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-              style: GoogleFonts.alike(
-                textStyle: Theme.of(context).textTheme.displayMedium,
-              ),
-            ),
-            Text(
-              '$_counter',
-              style: GoogleFonts.lato(fontStyle: FontStyle.italic),
-            ),
-          ],
+        child: FutureBuilder(
+          future: googleFontsPending,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const SizedBox();
+            }
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'You have pushed the button this many times:',
+                  style: pushButtonTextStyle,
+                ),
+                Text('$_counter', style: counterTextStyle),
+              ],
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
