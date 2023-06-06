@@ -1,7 +1,3 @@
-## NEXT
-
-* Removes unnecessary_import ignore.
-
 ## 0.5.0+5
 
 * Updates `README.md` to fully cover unimplemented functionality.
