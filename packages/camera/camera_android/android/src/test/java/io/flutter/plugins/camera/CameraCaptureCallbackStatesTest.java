@@ -10,6 +10,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CaptureRequest;
@@ -43,7 +44,6 @@ public class CameraCaptureCallbackStatesTest extends TestCase {
   private CaptureTimeoutsWrapper mockCaptureTimeouts;
   private CameraCaptureProperties mockCaptureProps;
   private TotalCaptureResult mockTotalCaptureResult;
-  private MockedStatic<Timeout> mockedStaticTimeout;
   private Timeout mockTimeout;
 
   public static TestSuite suite() {
@@ -77,7 +77,6 @@ public class CameraCaptureCallbackStatesTest extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    mockedStaticTimeout = mockStatic(Timeout.class);
     mockCaptureStateListener = mock(CameraCaptureStateListener.class);
     mockCameraCaptureSession = mock(CameraCaptureSession.class);
     mockCaptureRequest = mock(CaptureRequest.class);
@@ -92,10 +91,14 @@ public class CameraCaptureCallbackStatesTest extends TestCase {
     Key<Integer> mockAeStateKey = mock(Key.class);
     Key<Integer> mockAfStateKey = mock(Key.class);
 
-    TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AE_STATE", mockAeStateKey);
-    TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AF_STATE", mockAfStateKey);
-
-    mockedStaticTimeout.when(() -> Timeout.create(1000)).thenReturn(mockTimeout);
+    // TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AE_STATE", mockAeStateKey);
+    // TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AF_STATE", mockAfStateKey);
+    // mockPartialCaptureResult.CONTROL_AE_STATE = mockAeStateKey;
+    // shadowOf(mockPartialCaptureResult).set(CaptureResult.CONTROL_AE_STATE, CaptureResult.CONTROL_AE_STATE_CONVERGED);    
+    when(mockPartialCaptureResult.get(CaptureResult.CONTROL_AF_STATE)).thenReturn(afState);
+    when(mockPartialCaptureResult.get(CaptureResult.CONTROL_AE_STATE)).thenReturn(aeState);
+    when(mockTotalCaptureResult.get(CaptureResult.CONTROL_AF_STATE)).thenReturn(afState);
+    when(mockTotalCaptureResult.get(CaptureResult.CONTROL_AE_STATE)).thenReturn(aeState);
 
     cameraCaptureCallback =
         CameraCaptureCallback.create(
@@ -106,14 +109,16 @@ public class CameraCaptureCallbackStatesTest extends TestCase {
   protected void tearDown() throws Exception {
     super.tearDown();
 
-    mockedStaticTimeout.close();
-
     TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AE_STATE", null);
     TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AF_STATE", null);
   }
 
   @Override
   protected void runTest() throws Throwable {
+    try (MockedStatic<Timeout> timeout = mockStatic(Timeout.class)) {
+      timeout.when(() -> Timeout.create(1000))
+        .thenReturn(mockTimeout);
+
     when(mockPartialCaptureResult.get(CaptureResult.CONTROL_AF_STATE)).thenReturn(afState);
     when(mockPartialCaptureResult.get(CaptureResult.CONTROL_AE_STATE)).thenReturn(aeState);
     when(mockTotalCaptureResult.get(CaptureResult.CONTROL_AF_STATE)).thenReturn(afState);
@@ -130,6 +135,7 @@ public class CameraCaptureCallbackStatesTest extends TestCase {
     }
 
     validate.run();
+  }
   }
 
   private static void setUpPreviewStateTest(TestSuite suite) {
