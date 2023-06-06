@@ -1,6 +1,6 @@
 ## 7.1.2
 
-- Expose RouteBuilderException to allow custom Errors handling.
+- Exposes RouteBuilderException to allow custom Errors handling.
 
 ## 7.1.1
 
