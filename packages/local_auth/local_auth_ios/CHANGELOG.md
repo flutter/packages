@@ -1,3 +1,8 @@
+## NEXT
+
+* Fixes stale ignore: prefer_const_constructors
+* Updates minimum Flutter version to 3.10.
+
 ## 1.1.3
 
 * Migrates internal implementation to Pigeon.

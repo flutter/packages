@@ -1,3 +1,8 @@
+## NEXT
+
+* Fixes stale ignore: prefer_const_constructors
+* Updates minimum Flutter version to 3.10.
+
 ## 1.0.31
 
 * Updates androidx.fragment version to 1.5.7.

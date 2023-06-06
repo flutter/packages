@@ -1,3 +1,8 @@
+## NEXT
+
+* Fixes stale ignore: prefer_const_constructors
+* Updates minimum Flutter version to 3.10.
+
 ## 2.3.0
 
 * Endorses [`google_maps_flutter_web`](https://pub.dev/packages/google_maps_flutter_web)

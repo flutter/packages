@@ -1,3 +1,8 @@
+## NEXT
+
+* Fixes stale ignore: prefer_const_constructors
+* Updates minimum Flutter version to 3.10.
+
 ## 1.0.9
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.

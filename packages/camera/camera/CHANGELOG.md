@@ -1,3 +1,8 @@
+## NEXT
+
+* Fixes stale ignore: prefer_const_constructors
+* Updates minimum Flutter version to 3.10.
+
 ## 0.10.5+2
 
 * Fixes unawaited_futures violations.

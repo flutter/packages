@@ -1,3 +1,8 @@
+## NEXT
+
+* Fixes stale ignore: prefer_const_constructors
+* Updates minimum Flutter version to 3.10.
+
 ## 0.1.4
 
 * Use Material 3 NavigationBar instead of BottomNavigationBar
