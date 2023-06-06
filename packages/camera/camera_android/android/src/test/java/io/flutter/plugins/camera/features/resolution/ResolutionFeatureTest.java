@@ -92,7 +92,6 @@ public class ResolutionFeatureTest {
     mockProfileLow = mock(EncoderProfiles.class);
     EncoderProfiles mockProfile = mock(EncoderProfiles.class);
     List<EncoderProfiles.VideoProfile> mockVideoProfilesList = new ArrayList<EncoderProfiles.VideoProfile>();
-    // Cannot mock EncoderProfiles.VideoProfile values to test.
     mockVideoProfilesList.add(null);
 
     mockedStaticProfile
@@ -385,7 +384,7 @@ public class ResolutionFeatureTest {
   @Config(minSdk = 31)
   @Test
   public void resolutionFeatureShouldUseLegacyBehaviorWhenEncoderProfilesNull() {
-    beforeLegacy();
+    before();
     try (MockedStatic<ResolutionFeature> mockedResolutionFeature =
         mockStatic(ResolutionFeature.class)) {
       mockedResolutionFeature
