@@ -14,7 +14,7 @@ dependencies:
   cross_file: ^0.3.0
   flutter:
     sdk: flutter
-  http: ^0.13.0
+  http: ">=0.13.0 <2.0.0"
   plugin_platform_interface: ^2.1.0
 
 dev_dependencies:

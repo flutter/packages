@@ -33,7 +33,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  http: ^0.13.0
+  http: ">=0.13.0 <2.0.0"
   integration_test:
     sdk: flutter
   mockito: 5.4.1
