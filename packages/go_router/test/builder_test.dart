@@ -8,6 +8,7 @@ import 'package:go_router/src/builder.dart';
 import 'package:go_router/src/configuration.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/matching.dart';
+import 'package:go_router/src/misc/errors.dart';
 import 'package:go_router/src/router.dart';
 
 import 'test_helpers.dart';
@@ -368,6 +369,45 @@ void main() {
       expect(
           (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
           'scope1');
+    });
+
+    testWidgets('RouteBuilderException gets catched',
+        (WidgetTester tester) async {
+      final RouteConfiguration config = RouteConfiguration(
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) {
+              throw RouteBuilderException('Something went wrong!');
+            },
+          ),
+        ],
+        redirectLimit: 10,
+        topRedirect: (BuildContext context, GoRouterState state) => null,
+        navigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+      final RouteMatchList matches = RouteMatchList(
+          matches: <RouteMatch>[
+            RouteMatch(
+              route: config.routes.first as GoRoute,
+              matchedLocation: '/',
+              extra: null,
+              error: null,
+              pageKey: const ValueKey<String>('/'),
+            ),
+          ],
+          uri: Uri.parse('/'),
+          pathParameters: const <String, String>{});
+
+      await tester.pumpWidget(
+        _BuilderTestWidget(
+          routeConfiguration: config,
+          matches: matches,
+        ),
+      );
+      expect(tester.takeException(), isInstanceOf<RouteBuilderException>());
+      expect(find.text('Something went wrong!'), findsOneWidget);
     });
   });
 }
