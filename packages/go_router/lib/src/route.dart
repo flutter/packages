@@ -1071,6 +1071,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     if (index > 0) {
       final List<RouteMatch> matches = matchList.matches.sublist(0, index);
       return RouteMatchList(
+        extra: matchList.extra,
         matches: matches,
         uri: Uri.parse(matches.last.matchedLocation),
         pathParameters: matchList.pathParameters,
@@ -1189,7 +1190,9 @@ class _RestorableRouteMatchList extends RestorableProperty<RouteMatchList> {
 
   @override
   RouteMatchList fromPrimitives(Object? data) {
-    return data == null ? RouteMatchList.empty : _matchListCodec.decode(data);
+    return data == null
+        ? RouteMatchList.empty
+        : _matchListCodec.decode(data as Map<Object?, Object?>);
   }
 
   @override

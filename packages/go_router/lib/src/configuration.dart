@@ -187,20 +187,8 @@ class RouteConfiguration {
   static RouteMatchList _errorRouteMatchList(Uri uri, String errorMessage) {
     final Exception error = Exception(errorMessage);
     return RouteMatchList(
-      matches: <RouteMatch>[
-        RouteMatch(
-          matchedLocation: uri.path,
-          extra: null,
-          error: error,
-          route: GoRoute(
-            path: uri.toString(),
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              throw UnimplementedError();
-            },
-          ),
-          pageKey: const ValueKey<String>('error'),
-        ),
-      ],
+      matches: const <RouteMatch>[],
+      error: error,
       uri: uri,
       pathParameters: const <String, String>{},
     );
@@ -267,25 +255,26 @@ class RouteConfiguration {
     final Uri uri = Uri.parse(canonicalUri(location));
 
     final Map<String, String> pathParameters = <String, String>{};
-    final List<RouteMatch>? matches =
-        _getLocRouteMatches(uri, extra, pathParameters);
+    final List<RouteMatch>? matches = _getLocRouteMatches(uri, pathParameters);
 
     if (matches == null) {
       return _errorRouteMatchList(uri, 'no routes for location: $uri');
     }
     return RouteMatchList(
-        matches: matches, uri: uri, pathParameters: pathParameters);
+        matches: matches,
+        uri: uri,
+        pathParameters: pathParameters,
+        extra: extra);
   }
 
   List<RouteMatch>? _getLocRouteMatches(
-      Uri uri, Object? extra, Map<String, String> pathParameters) {
+      Uri uri, Map<String, String> pathParameters) {
     final List<RouteMatch>? result = _getLocRouteRecursively(
       location: uri.path,
       remainingLocation: uri.path,
       matchedLocation: '',
       pathParameters: pathParameters,
       routes: routes,
-      extra: extra,
     );
     return result;
   }
@@ -296,7 +285,6 @@ class RouteConfiguration {
     required String matchedLocation,
     required Map<String, String> pathParameters,
     required List<RouteBase> routes,
-    required Object? extra,
   }) {
     List<RouteMatch>? result;
     late Map<String, String> subPathParameters;
@@ -309,7 +297,6 @@ class RouteConfiguration {
         remainingLocation: remainingLocation,
         matchedLocation: matchedLocation,
         pathParameters: subPathParameters,
-        extra: extra,
       );
 
       if (match == null) {
@@ -347,7 +334,6 @@ class RouteConfiguration {
           matchedLocation: newParentSubLoc,
           pathParameters: subPathParameters,
           routes: route.routes,
-          extra: extra,
         );
 
         // If there's no sub-route matches, there is no match for this location
@@ -369,7 +355,7 @@ class RouteConfiguration {
   /// location.
   FutureOr<RouteMatchList> redirect(
       BuildContext context, FutureOr<RouteMatchList> prevMatchListFuture,
-      {required List<RouteMatchList> redirectHistory, Object? extra}) {
+      {required List<RouteMatchList> redirectHistory}) {
     FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
       final String prevLocation = prevMatchList.uri.toString();
       FutureOr<RouteMatchList> processTopLevelRedirect(
@@ -388,7 +374,6 @@ class RouteConfiguration {
             context,
             newMatch,
             redirectHistory: redirectHistory,
-            extra: extra,
           );
         }
 
@@ -409,7 +394,6 @@ class RouteConfiguration {
               context,
               newMatch,
               redirectHistory: redirectHistory,
-              extra: extra,
             );
           }
           return prevMatchList;
@@ -437,7 +421,7 @@ class RouteConfiguration {
           matchedLocation: prevMatchList.uri.path,
           queryParameters: prevMatchList.uri.queryParameters,
           queryParametersAll: prevMatchList.uri.queryParametersAll,
-          extra: extra,
+          extra: prevMatchList.extra,
           pageKey: const ValueKey<String>('topLevel'),
         ),
       );
@@ -478,7 +462,7 @@ class RouteConfiguration {
           name: route.name,
           path: route.path,
           fullPath: matchList.fullPath,
-          extra: match.extra,
+          extra: matchList.extra,
           pathParameters: matchList.pathParameters,
           queryParameters: matchList.uri.queryParameters,
           queryParametersAll: matchList.uri.queryParametersAll,

@@ -132,7 +132,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
     currentConfiguration = configuration;
-    assert(currentConfiguration.isNotEmpty);
+    assert(currentConfiguration.isNotEmpty || currentConfiguration.isError);
     notifyListeners();
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking

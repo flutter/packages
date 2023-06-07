@@ -48,8 +48,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // This is a result of browser backward/forward button or state
       // restoration. In this case, the route match list is already stored in
       // the state.
-      final RouteMatchList matchList = _routeMatchListCodec.decode(state);
-      return debugParserFuture = _redirect(context, matchList, matchList.extra);
+      final RouteMatchList matchList =
+          _routeMatchListCodec.decode(state as Map<Object?, Object?>);
+      return debugParserFuture = _redirect(context, matchList);
     }
 
     late final RouteMatchList initialMatches;
@@ -68,11 +69,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     return debugParserFuture = _redirect(
       context,
       initialMatches,
-      state.extra,
     ).then<RouteMatchList>((RouteMatchList matchList) {
       return _updateRouteMatchList(
         matchList,
-        base: state.base,
+        baseRouteMatchList: state.baseRouteMatchList,
         completer: state.completer,
         type: state.type,
       );
@@ -92,7 +92,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     if (configuration.isEmpty) {
       return null;
     }
-    if (GoRouter.optionURLReflectImperativeAPIs &&
+    if (GoRouter.optionURLReflectsImperativeAPIs &&
         configuration.matches.last is ImperativeRouteMatch) {
       configuration =
           (configuration.matches.last as ImperativeRouteMatch).matches;
@@ -107,10 +107,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   }
 
   Future<RouteMatchList> _redirect(
-      BuildContext context, RouteMatchList routeMatch, Object? extra) {
-    final FutureOr<RouteMatchList> redirectedFuture = configuration.redirect(
-        context, routeMatch,
-        redirectHistory: <RouteMatchList>[], extra: extra);
+      BuildContext context, RouteMatchList routeMatch) {
+    final FutureOr<RouteMatchList> redirectedFuture = configuration
+        .redirect(context, routeMatch, redirectHistory: <RouteMatchList>[]);
     if (redirectedFuture is RouteMatchList) {
       return SynchronousFuture<RouteMatchList>(redirectedFuture);
     }
@@ -119,13 +118,13 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   RouteMatchList _updateRouteMatchList(
     RouteMatchList newMatchList, {
-    required RouteMatchList? base,
+    required RouteMatchList? baseRouteMatchList,
     required Completer<Object?>? completer,
     required NavigatingType type,
   }) {
     switch (type) {
       case NavigatingType.push:
-        return base!.push(
+        return baseRouteMatchList!.push(
           ImperativeRouteMatch(
             pageKey: _getUniqueValueKey(),
             completer: completer!,
@@ -133,8 +132,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           ),
         );
       case NavigatingType.pushReplacement:
-        final RouteMatch routeMatch = base!.last;
-        return base.remove(routeMatch).push(
+        final RouteMatch routeMatch = baseRouteMatchList!.last;
+        return baseRouteMatchList.remove(routeMatch).push(
               ImperativeRouteMatch(
                 pageKey: _getUniqueValueKey(),
                 completer: completer!,
@@ -142,8 +141,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
               ),
             );
       case NavigatingType.replace:
-        final RouteMatch routeMatch = base!.last;
-        return base.remove(routeMatch).push(
+        final RouteMatch routeMatch = baseRouteMatchList!.last;
+        return baseRouteMatchList.remove(routeMatch).push(
               ImperativeRouteMatch(
                 pageKey: routeMatch.pageKey,
                 completer: completer!,

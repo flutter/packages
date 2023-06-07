@@ -219,14 +219,14 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     return true;
   }
 
-  /// Whether the imperative API would affect browser URL bar.
+  /// Whether the imperative API affects browser URL bar.
   ///
-  /// The Imperative APIs refer [push], [pushReplacement], or [Replace].
+  /// The Imperative APIs refer to [push], [pushReplacement], or [Replace].
   ///
   /// If this option is set to true. The URL bar reflects the top-most [GoRoute]
   /// regardless the [RouteBase]s underneath.
   ///
-  /// If this option is set to faults. The URL bar reflects the [RouteBase]s
+  /// If this option is set to false. The URL bar reflects the [RouteBase]s
   /// in the current state but ignores any [RouteBase]s that are results of
   /// imperative API calls.
   ///
@@ -234,10 +234,10 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///
   /// This option is for backward compatibility. It is strongly suggested
   /// against setting this value to true, as the URL of the top-most [GoRoute]
-  /// does not always deeplink-able.
+  /// is not always deeplink-able.
   ///
   /// This option only affects web platform.
-  static bool optionURLReflectImperativeAPIs = false;
+  static bool optionURLReflectsImperativeAPIs = false;
 
   /// The route configuration used in go_router.
   late final RouteConfiguration configuration;
@@ -311,7 +311,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     log.info('going to ${matchList.uri}');
     routeInformationProvider.restore(
       matchList.uri.toString(),
-      encodedMatchList: RouteMatchListCodec(configuration).encode(matchList)!,
+      encodedMatchList: RouteMatchListCodec(configuration).encode(matchList),
     );
   }
 

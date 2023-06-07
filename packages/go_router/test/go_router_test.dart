@@ -132,7 +132,7 @@ void main() {
       await tester.pumpAndSettle();
       final List<RouteMatch> matches =
           router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
+      expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
     });
 
@@ -988,6 +988,7 @@ void main() {
   group('report correct url', () {
     final List<MethodCall> log = <MethodCall>[];
     setUp(() {
+      GoRouter.optionURLReflectsImperativeAPIs = false;
       _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
           .defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.navigation,
@@ -997,10 +998,41 @@ void main() {
       });
     });
     tearDown(() {
+      GoRouter.optionURLReflectsImperativeAPIs = false;
       _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
           .defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.navigation, null);
       log.clear();
+    });
+
+    testWidgets('on push with optionURLReflectImperativeAPIs = true',
+        (WidgetTester tester) async {
+      GoRouter.optionURLReflectsImperativeAPIs = true;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const DummyScreen(),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (_, __) => const DummyScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      log.clear();
+      router.push('/settings');
+      final RouteMatchListCodec codec =
+          RouteMatchListCodec(router.configuration);
+      await tester.pumpAndSettle();
+      final ImperativeRouteMatch match = router
+          .routerDelegate.currentConfiguration.last as ImperativeRouteMatch;
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall('/settings', false, codec.encode(match.matches)),
+      ]);
+      GoRouter.optionURLReflectsImperativeAPIs = false;
     });
 
     testWidgets('on push', (WidgetTester tester) async {
@@ -1861,7 +1893,7 @@ void main() {
 
       final List<RouteMatch> matches =
           router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
+      expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
       final TestErrorScreen screen =
           tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
@@ -1887,7 +1919,7 @@ void main() {
 
       final List<RouteMatch> matches =
           router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
+      expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
       final TestErrorScreen screen =
           tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
@@ -1910,7 +1942,7 @@ void main() {
 
       final List<RouteMatch> matches =
           router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
+      expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
       final TestErrorScreen screen =
           tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
@@ -1932,7 +1964,7 @@ void main() {
 
       final List<RouteMatch> matches =
           router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
+      expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
       final TestErrorScreen screen =
           tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
@@ -2086,11 +2118,52 @@ void main() {
 
       final List<RouteMatch> matches =
           router.routerDelegate.currentConfiguration.matches;
-      expect(matches, hasLength(1));
+      expect(matches, hasLength(0));
       expect(find.byType(TestErrorScreen), findsOneWidget);
       final TestErrorScreen screen =
           tester.widget<TestErrorScreen>(find.byType(TestErrorScreen));
       expect(screen.ex, isNotNull);
+    });
+
+    testWidgets('can push error page', (WidgetTester tester) async {
+      final GoRouter router = await createRouter(
+        <GoRoute>[
+          GoRoute(path: '/', builder: (_, __) => const Text('/')),
+        ],
+        tester,
+        errorBuilder: (_, GoRouterState state) {
+          return Text(state.location);
+        },
+      );
+
+      expect(find.text('/'), findsOneWidget);
+
+      router.push('/error1');
+      await tester.pumpAndSettle();
+
+      expect(find.text('/'), findsNothing);
+      expect(find.text('/error1'), findsOneWidget);
+
+      router.push('/error2');
+      await tester.pumpAndSettle();
+
+      expect(find.text('/'), findsNothing);
+      expect(find.text('/error1'), findsNothing);
+      expect(find.text('/error2'), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+
+      expect(find.text('/'), findsNothing);
+      expect(find.text('/error1'), findsOneWidget);
+      expect(find.text('/error2'), findsNothing);
+
+      router.pop();
+      await tester.pumpAndSettle();
+
+      expect(find.text('/'), findsOneWidget);
+      expect(find.text('/error1'), findsNothing);
+      expect(find.text('/error2'), findsNothing);
     });
 
     testWidgets('extra not null in redirect', (WidgetTester tester) async {

@@ -67,7 +67,7 @@ void main() {
     List<RouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matchesObj.uri.toString(), '/');
-    expect(matches[0].extra, isNull);
+    expect(matchesObj.extra, isNull);
     expect(matches[0].matchedLocation, '/');
     expect(matches[0].route, routes[0]);
 
@@ -77,11 +77,10 @@ void main() {
     matches = matchesObj.matches;
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/abc?def=ghi');
-    expect(matches[0].extra, extra);
+    expect(matchesObj.extra, extra);
     expect(matches[0].matchedLocation, '/');
     expect(matches[0].route, routes[0]);
 
-    expect(matches[1].extra, extra);
     expect(matches[1].matchedLocation, '/abc');
     expect(matches[1].route, routes[0].routes[0]);
   });
@@ -198,11 +197,10 @@ void main() {
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/def'), context);
     final List<RouteMatch> matches = matchesObj.matches;
-    expect(matches.length, 1);
+    expect(matches.length, 0);
     expect(matchesObj.uri.toString(), '/def');
-    expect(matches[0].extra, isNull);
-    expect(matches[0].matchedLocation, '/def');
-    expect(matches[0].error!.toString(),
+    expect(matchesObj.extra, isNull);
+    expect(matchesObj.error!.toString(),
         'Exception: no routes for location: /def');
   });
 
@@ -270,10 +268,9 @@ void main() {
     expect(matchesObj.pathParameters.length, 2);
     expect(matchesObj.pathParameters['uid'], '123');
     expect(matchesObj.pathParameters['fid'], '456');
-    expect(matches[0].extra, isNull);
+    expect(matchesObj.extra, isNull);
     expect(matches[0].matchedLocation, '/');
 
-    expect(matches[1].extra, isNull);
     expect(matches[1].matchedLocation, '/123/family/456');
   });
 
@@ -402,8 +399,8 @@ void main() {
             createRouteInformation('/abd'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
-    expect(matches, hasLength(1));
-    expect(matches.first.error, isNotNull);
+    expect(matches, hasLength(0));
+    expect(matchesObj.error, isNotNull);
   });
 
   testWidgets('Creates a match for ShellRoute', (WidgetTester tester) async {
@@ -447,6 +444,6 @@ void main() {
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(2));
-    expect(matches.first.error, isNull);
+    expect(matchesObj.error, isNull);
   });
 }

@@ -20,15 +20,15 @@ import 'match.dart';
 /// This enum is used by [RouteInformationState] to denote the navigation
 /// operations.
 enum NavigatingType {
-  /// Push new location on top of the [RouteInformationState.base].
+  /// Push new location on top of the [RouteInformationState.baseRouteMatchList].
   push,
 
   /// Push new location and remove top-most [RouteMatch] of the
-  /// [RouteInformationState.base].
+  /// [RouteInformationState.baseRouteMatchList].
   pushReplacement,
 
   /// Push new location and replace top-most [RouteMatch] of the
-  /// [RouteInformationState.base].
+  /// [RouteInformationState.baseRouteMatchList].
   replace,
 
   /// Replace the entire [RouteMatchList] with the new location.
@@ -46,10 +46,10 @@ class RouteInformationState<T> {
   RouteInformationState({
     this.extra,
     this.completer,
-    this.base,
+    this.baseRouteMatchList,
     required this.type,
-  }) : assert(
-            (type != NavigatingType.go) == (completer != null && base != null));
+  }) : assert((type != NavigatingType.go) ==
+            (completer != null && baseRouteMatchList != null));
 
   /// The extra object used when navigating with [GoRouter].
   final Object? extra;
@@ -63,7 +63,7 @@ class RouteInformationState<T> {
   /// The base route match list to push on top to.
   ///
   /// This is only null if [type] is [NavigatingType.go].
-  final RouteMatchList? base;
+  final RouteMatchList? baseRouteMatchList;
 
   /// The type of navigation.
   final NavigatingType type;
@@ -150,7 +150,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
       location,
       RouteInformationState<T>(
         extra: extra,
-        base: base,
+        baseRouteMatchList: base,
         completer: completer,
         type: NavigatingType.push,
       ),
@@ -186,7 +186,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
       location,
       RouteInformationState<T>(
         extra: extra,
-        base: base,
+        baseRouteMatchList: base,
         completer: completer,
         type: NavigatingType.pushReplacement,
       ),
@@ -202,7 +202,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
       location,
       RouteInformationState<T>(
         extra: extra,
-        base: base,
+        baseRouteMatchList: base,
         completer: completer,
         type: NavigatingType.replace,
       ),

@@ -42,7 +42,6 @@ void main() {
       remainingLocation: '/page-0',
       matchedLocation: '',
       pathParameters: params1,
-      extra: null,
     )!;
 
     final Map<String, String> params2 = <String, String>{};
@@ -51,7 +50,6 @@ void main() {
       remainingLocation: '/page-0',
       matchedLocation: '',
       pathParameters: params2,
-      extra: null,
     )!;
 
     final RouteMatchList matches1 = RouteMatchList(
@@ -103,7 +101,7 @@ void main() {
         matches: list2,
         completer: Completer<Object?>()));
 
-    final Object encoded = codec.encode(list1)!;
+    final Map<Object?, Object?> encoded = codec.encode(list1);
     final RouteMatchList decoded = codec.decode(encoded);
 
     expect(decoded, isNotNull);
