@@ -21,7 +21,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 public class GeolocationPermissionsCallbackTest {
-
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock public GeolocationPermissions.Callback mockGeolocationPermissionsCallback;

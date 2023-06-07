@@ -77,15 +77,15 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
   public void onGeolocationPermissionsShowPrompt(
       @NonNull WebChromeClient webChromeClient,
       @NonNull String origin,
-      @NonNull GeolocationPermissions.Callback callback) {
-
+      @NonNull GeolocationPermissions.Callback callback,
+      WebChromeClientFlutterApi.Reply<Void> replyCallback) {
     new GeolocationPermissionsCallbackFlutterApiImpl(binaryMessenger, instanceManager)
         .create(callback, reply -> {});
     onGeolocationPermissionsShowPrompt(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(callback)),
         origin,
-        reply -> {});
+        replyCallback);
   }
 
   /**
