@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:io';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 import 'dart:ui' as ui show Codec, FrameInfo, Image, instantiateImageCodec;
 
 import 'package:flutter/foundation.dart';
