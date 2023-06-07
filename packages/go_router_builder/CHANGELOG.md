@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Supports required/positional parameters that are not in the path.
+
 ## 2.0.2
 
 * Fixes unawaited_futures violations.
