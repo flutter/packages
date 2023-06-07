@@ -2,7 +2,6 @@
 
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Fixes stale ignore: prefer_const_constructors.
 
 ## 1.0.8
 

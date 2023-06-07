@@ -1,8 +1,8 @@
 ## NEXT
 
+* Aligns Dart and Flutter SDK constraints.
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Aligns Dart and Flutter SDK constraints.
 
 ## 2.1.6
 
