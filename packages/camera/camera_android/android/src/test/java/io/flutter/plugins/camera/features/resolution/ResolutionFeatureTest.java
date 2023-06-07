@@ -91,7 +91,8 @@ public class ResolutionFeatureTest {
   public void before() {
     mockProfileLow = mock(EncoderProfiles.class);
     EncoderProfiles mockProfile = mock(EncoderProfiles.class);
-    List<EncoderProfiles.VideoProfile> mockVideoProfilesList = new ArrayList<EncoderProfiles.VideoProfile>();
+    List<EncoderProfiles.VideoProfile> mockVideoProfilesList =
+        new ArrayList<EncoderProfiles.VideoProfile>();
     mockVideoProfilesList.add(null);
 
     mockedStaticProfile

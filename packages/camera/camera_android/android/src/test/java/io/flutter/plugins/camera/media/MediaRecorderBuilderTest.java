@@ -228,7 +228,7 @@ public class MediaRecorderBuilderTest {
   private EncoderProfiles.VideoProfile getEmptyEncoderProfilesVideoProfile() {
     try {
       Constructor<EncoderProfiles.VideoProfile> constructor =
-      EncoderProfiles.VideoProfile .class.getDeclaredConstructor(
+          EncoderProfiles.VideoProfile.class.getDeclaredConstructor(
               int.class, int.class, int.class, int.class, int.class, int.class);
 
       constructor.setAccessible(true);
@@ -242,7 +242,7 @@ public class MediaRecorderBuilderTest {
   private EncoderProfiles.AudioProfile getEmptyEncoderProfilesAudioProfile() {
     try {
       Constructor<EncoderProfiles.AudioProfile> constructor =
-      EncoderProfiles.AudioProfile .class.getDeclaredConstructor(
+          EncoderProfiles.AudioProfile.class.getDeclaredConstructor(
               int.class, int.class, int.class, int.class, int.class);
 
       constructor.setAccessible(true);
