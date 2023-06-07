@@ -67,7 +67,7 @@ class SharedPreferences {
         final Map<String, Object> preferencesMap =
             await _getSharedPreferencesMap();
         completer.complete(SharedPreferences._(preferencesMap));
-      } on Exception catch (e) {
+      } catch (e) {
         // If there's an error, explicitly return the future with an error.
         // then set the completer to null so we can retry.
         completer.completeError(e);
