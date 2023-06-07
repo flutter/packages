@@ -39,7 +39,8 @@ void main() {
       final FakeCameraDelegatingImagePickerPlatform implementation =
           FakeCameraDelegatingImagePickerPlatform();
 
-      expectLater(implementation.getImageFromSource(source: ImageSource.camera),
+      await expectLater(
+          implementation.getImageFromSource(source: ImageSource.camera),
           throwsStateError);
     });
 
@@ -47,7 +48,7 @@ void main() {
       final FakeCameraDelegatingImagePickerPlatform implementation =
           FakeCameraDelegatingImagePickerPlatform();
 
-      expectLater(implementation.getVideo(source: ImageSource.camera),
+      await expectLater(implementation.getVideo(source: ImageSource.camera),
           throwsStateError);
     });
 

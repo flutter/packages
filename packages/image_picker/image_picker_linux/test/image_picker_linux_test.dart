@@ -81,7 +81,7 @@ void main() {
     test(
         'getImageFromSource throws StateError when source is camera with no delegate',
         () async {
-      expectLater(plugin.getImageFromSource(source: ImageSource.camera),
+      await expectLater(plugin.getImageFromSource(source: ImageSource.camera),
           throwsStateError);
     });
 
@@ -121,7 +121,7 @@ void main() {
 
     test('getVideo throws StateError when source is camera with no delegate',
         () async {
-      expectLater(
+      await expectLater(
           plugin.getVideo(source: ImageSource.camera), throwsStateError);
     });
   });
