@@ -226,7 +226,7 @@ task:
     zone: us-central1-a
     namespace: default
     cpu: 4
-    memory: 16G
+    memory: 20G
   matrix:
     ### Platform-agnostic tasks ###
     - name: dart_unit_tests
