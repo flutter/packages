@@ -8,6 +8,7 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // This is a placeholder for tests to be added in the future.
-  testWidgets('placeholder test', (WidgetTester tester) async {});
+  // Since this test is lacking integration tests, this test ensures the example
+  // app can be launched on an emulator/device.
+  testWidgets('Launch Test', (WidgetTester tester) async {});
 }
