@@ -214,6 +214,16 @@ void main() {
     expect(value, 'foo');
   });
 
+  test('getInstance always returns the same instance', () async {
+    SharedPreferencesStorePlatform.instance = SlowInitSharedPreferencesStore();
+
+    final Future<SharedPreferences> firstFuture =
+        SharedPreferences.getInstance();
+    final Future<SharedPreferences> secondFuture =
+        SharedPreferences.getInstance();
+    expect(identical(await firstFuture, await secondFuture), true);
+  });
+
   test('calling setPrefix after getInstance throws', () async {
     const String newPrefix = 'newPrefix';
 
@@ -364,6 +374,15 @@ class UnimplementedSharedPreferencesStore
   @override
   Future<bool> setValue(String valueType, String key, Object value) {
     throw UnimplementedError();
+  }
+}
+
+class SlowInitSharedPreferencesStore
+    extends UnimplementedSharedPreferencesStore {
+  @override
+  Future<Map<String, Object>> getAll() async {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    return <String, Object>{};
   }
 }
 

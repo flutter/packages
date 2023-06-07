@@ -62,6 +62,7 @@ class SharedPreferences {
     if (_completer == null) {
       final Completer<SharedPreferences> completer =
           Completer<SharedPreferences>();
+      _completer = completer;
       try {
         final Map<String, Object> preferencesMap =
             await _getSharedPreferencesMap();
@@ -74,7 +75,6 @@ class SharedPreferences {
         _completer = null;
         return sharedPrefsFuture;
       }
-      _completer = completer;
     }
     return _completer!.future;
   }
