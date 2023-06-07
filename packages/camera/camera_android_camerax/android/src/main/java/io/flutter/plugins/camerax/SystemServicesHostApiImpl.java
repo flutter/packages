@@ -5,37 +5,52 @@
 package io.flutter.plugins.camerax;
 
 import android.app.Activity;
+import android.content.Context;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraPermissionsErrorData;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Result;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesFlutterApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesHostApi;
+import java.io.File;
+import java.io.IOException;
 
 public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
+  private Context context;
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public DeviceOrientationManager deviceOrientationManager;
-  @VisibleForTesting public SystemServicesFlutterApiImpl systemServicesFlutterApi;
+  @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public @Nullable DeviceOrientationManager deviceOrientationManager;
+  @VisibleForTesting public @NonNull SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
   private Activity activity;
   private PermissionsRegistry permissionsRegistry;
 
   public SystemServicesHostApiImpl(
-      BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull InstanceManager instanceManager,
+      @NonNull Context context) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
+    this.context = context;
     this.systemServicesFlutterApi = new SystemServicesFlutterApiImpl(binaryMessenger);
   }
 
-  public void setActivity(Activity activity) {
+  /** Sets the context, which is used to get the cache directory. */
+  public void setContext(@NonNull Context context) {
+    this.context = context;
+  }
+
+  public void setActivity(@NonNull Activity activity) {
     this.activity = activity;
   }
 
-  public void setPermissionsRegistry(PermissionsRegistry permissionsRegistry) {
+  public void setPermissionsRegistry(@NonNull PermissionsRegistry permissionsRegistry) {
     this.permissionsRegistry = permissionsRegistry;
   }
 
@@ -47,7 +62,7 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
    */
   @Override
   public void requestCameraPermissions(
-      Boolean enableAudio, Result<CameraPermissionsErrorData> result) {
+      @NonNull Boolean enableAudio, @NonNull Result<CameraPermissionsErrorData> result) {
     CameraPermissionsManager cameraPermissionsManager =
         cameraXProxy.createCameraPermissionsManager();
     cameraPermissionsManager.requestPermissions(
@@ -70,7 +85,7 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   }
 
   /**
-   * Starts listening for device orientation changes using an instace of a {@link
+   * Starts listening for device orientation changes using an instance of a {@link
    * DeviceOrientationManager}.
    *
    * <p>Whenever a change in device orientation is detected by the {@code DeviceOrientationManager},
@@ -78,7 +93,7 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
    */
   @Override
   public void startListeningForDeviceOrientationChange(
-      Boolean isFrontFacing, Long sensorOrientation) {
+      @NonNull Boolean isFrontFacing, @NonNull Long sensorOrientation) {
     deviceOrientationManager =
         cameraXProxy.createDeviceOrientationManager(
             activity,
@@ -106,6 +121,21 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   public void stopListeningForDeviceOrientationChange() {
     if (deviceOrientationManager != null) {
       deviceOrientationManager.stop();
+    }
+  }
+
+  /** Returns a path to be used to create a temp file in the current cache directory. */
+  @Override
+  @NonNull
+  public String getTempFilePath(@NonNull String prefix, @NonNull String suffix) {
+    try {
+      File path = File.createTempFile(prefix, suffix, context.getCacheDir());
+      return path.toString();
+    } catch (IOException | SecurityException e) {
+      throw new GeneratedCameraXLibrary.FlutterError(
+          "getTempFilePath_failure",
+          "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e.toString(),
+          null);
     }
   }
 }

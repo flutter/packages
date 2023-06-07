@@ -1,3 +1,16 @@
+## NEXT
+
+* Fixes unawaited_futures violations.
+
+## 0.10.8+2
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.10.8+1
+
+* Fixes lint errors.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 0.10.8
 
 * Updates gradle, AGP and fixes some lint errors.

@@ -154,7 +154,7 @@ void main() {
             confirmButtonText: confirmButtonText,
             acceptedTypeGroups: acceptedTypeGroups,
             suggestedName: suggestedName)
-        ..setPathResponse(expectedSavePath);
+        ..setPathsResponse(<String>[expectedSavePath]);
 
       final String? savePath = await getSavePath(
         initialDirectory: initialDirectory,
@@ -167,7 +167,7 @@ void main() {
     });
 
     test('works with no arguments', () async {
-      fakePlatformImplementation.setPathResponse(expectedSavePath);
+      fakePlatformImplementation.setPathsResponse(<String>[expectedSavePath]);
 
       final String? savePath = await getSavePath();
       expect(savePath, expectedSavePath);
@@ -176,7 +176,7 @@ void main() {
     test('sets the initial directory', () async {
       fakePlatformImplementation
         ..setExpectations(initialDirectory: initialDirectory)
-        ..setPathResponse(expectedSavePath);
+        ..setPathsResponse(<String>[expectedSavePath]);
 
       final String? savePath =
           await getSavePath(initialDirectory: initialDirectory);
@@ -186,7 +186,7 @@ void main() {
     test('sets the button confirmation label', () async {
       fakePlatformImplementation
         ..setExpectations(confirmButtonText: confirmButtonText)
-        ..setPathResponse(expectedSavePath);
+        ..setPathsResponse(<String>[expectedSavePath]);
 
       final String? savePath =
           await getSavePath(confirmButtonText: confirmButtonText);
@@ -196,7 +196,7 @@ void main() {
     test('sets the accepted type groups', () async {
       fakePlatformImplementation
         ..setExpectations(acceptedTypeGroups: acceptedTypeGroups)
-        ..setPathResponse(expectedSavePath);
+        ..setPathsResponse(<String>[expectedSavePath]);
 
       final String? savePath =
           await getSavePath(acceptedTypeGroups: acceptedTypeGroups);
@@ -206,7 +206,7 @@ void main() {
     test('sets the suggested name', () async {
       fakePlatformImplementation
         ..setExpectations(suggestedName: suggestedName)
-        ..setPathResponse(expectedSavePath);
+        ..setPathsResponse(<String>[expectedSavePath]);
 
       final String? savePath = await getSavePath(suggestedName: suggestedName);
       expect(savePath, expectedSavePath);
@@ -221,7 +221,7 @@ void main() {
         ..setExpectations(
             initialDirectory: initialDirectory,
             confirmButtonText: confirmButtonText)
-        ..setPathResponse(expectedDirectoryPath);
+        ..setPathsResponse(<String>[expectedDirectoryPath]);
 
       final String? directoryPath = await getDirectoryPath(
         initialDirectory: initialDirectory,
@@ -232,7 +232,8 @@ void main() {
     });
 
     test('works with no arguments', () async {
-      fakePlatformImplementation.setPathResponse(expectedDirectoryPath);
+      fakePlatformImplementation
+          .setPathsResponse(<String>[expectedDirectoryPath]);
 
       final String? directoryPath = await getDirectoryPath();
       expect(directoryPath, expectedDirectoryPath);
@@ -241,7 +242,7 @@ void main() {
     test('sets the initial directory', () async {
       fakePlatformImplementation
         ..setExpectations(initialDirectory: initialDirectory)
-        ..setPathResponse(expectedDirectoryPath);
+        ..setPathsResponse(<String>[expectedDirectoryPath]);
 
       final String? directoryPath =
           await getDirectoryPath(initialDirectory: initialDirectory);
@@ -251,11 +252,60 @@ void main() {
     test('sets the button confirmation label', () async {
       fakePlatformImplementation
         ..setExpectations(confirmButtonText: confirmButtonText)
-        ..setPathResponse(expectedDirectoryPath);
+        ..setPathsResponse(<String>[expectedDirectoryPath]);
 
       final String? directoryPath =
           await getDirectoryPath(confirmButtonText: confirmButtonText);
       expect(directoryPath, expectedDirectoryPath);
+    });
+  });
+
+  group('getDirectoryPaths', () {
+    const List<String> expectedDirectoryPaths = <String>[
+      '/example/path',
+      '/example/2/path'
+    ];
+
+    test('works', () async {
+      fakePlatformImplementation
+        ..setExpectations(
+            initialDirectory: initialDirectory,
+            confirmButtonText: confirmButtonText)
+        ..setPathsResponse(expectedDirectoryPaths);
+
+      final List<String?> directoryPaths = await getDirectoryPaths(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      );
+
+      expect(directoryPaths, expectedDirectoryPaths);
+    });
+
+    test('works with no arguments', () async {
+      fakePlatformImplementation.setPathsResponse(expectedDirectoryPaths);
+
+      final List<String?> directoryPaths = await getDirectoryPaths();
+      expect(directoryPaths, expectedDirectoryPaths);
+    });
+
+    test('sets the initial directory', () async {
+      fakePlatformImplementation
+        ..setExpectations(initialDirectory: initialDirectory)
+        ..setPathsResponse(expectedDirectoryPaths);
+
+      final List<String?> directoryPaths =
+          await getDirectoryPaths(initialDirectory: initialDirectory);
+      expect(directoryPaths, expectedDirectoryPaths);
+    });
+
+    test('sets the button confirmation label', () async {
+      fakePlatformImplementation
+        ..setExpectations(confirmButtonText: confirmButtonText)
+        ..setPathsResponse(expectedDirectoryPaths);
+
+      final List<String?> directoryPaths =
+          await getDirectoryPaths(confirmButtonText: confirmButtonText);
+      expect(directoryPaths, expectedDirectoryPaths);
     });
   });
 }
@@ -270,7 +320,7 @@ class FakeFileSelector extends Fake
   String? suggestedName;
   // Return values.
   List<XFile>? files;
-  String? path;
+  List<String>? paths;
 
   void setExpectations({
     List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
@@ -290,8 +340,8 @@ class FakeFileSelector extends Fake
   }
 
   // ignore: use_setters_to_change_properties
-  void setPathResponse(String path) {
-    this.path = path;
+  void setPathsResponse(List<String> paths) {
+    this.paths = paths;
   }
 
   @override
@@ -329,7 +379,7 @@ class FakeFileSelector extends Fake
     expect(initialDirectory, this.initialDirectory);
     expect(suggestedName, this.suggestedName);
     expect(confirmButtonText, this.confirmButtonText);
-    return path;
+    return paths?[0];
   }
 
   @override
@@ -339,6 +389,16 @@ class FakeFileSelector extends Fake
   }) async {
     expect(initialDirectory, this.initialDirectory);
     expect(confirmButtonText, this.confirmButtonText);
-    return path;
+    return paths?[0];
+  }
+
+  @override
+  Future<List<String>> getDirectoryPaths({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    expect(initialDirectory, this.initialDirectory);
+    expect(confirmButtonText, this.confirmButtonText);
+    return paths!;
   }
 }

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.0.27
 
 * Fixes compatibility with AGP versions older than 4.2.

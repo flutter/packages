@@ -2,13 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
 import 'dart:async';
-
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -43,9 +37,8 @@ class AndroidWebViewControllerCreationParams
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
-        AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting
-        android_webview.WebStorage? androidWebStorage,
+    AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
+    @visibleForTesting android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -195,7 +188,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   static Future<void> enableDebugging(
     bool enabled, {
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   }) {
     return webViewProxy.setWebContentsDebuggingEnabled(enabled);
   }
@@ -550,7 +543,7 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
     required super.name,
     required super.onMessageReceived,
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   })  : assert(name.isNotEmpty),
         _javaScriptChannel = webViewProxy.createJavaScriptChannel(
           name,
@@ -575,7 +568,7 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
   AndroidJavaScriptChannelParams.fromJavaScriptChannelParams(
     JavaScriptChannelParams params, {
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   }) : this(
           name: params.name,
           onMessageReceived: params.onMessageReceived,
@@ -600,10 +593,9 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
+    @visibleForTesting InstanceManager? instanceManager,
     @visibleForTesting
-        InstanceManager? instanceManager,
-    @visibleForTesting
-        this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
+    this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =
             instanceManager ?? android_webview.JavaObject.globalInstanceManager;
 
@@ -801,7 +793,7 @@ class AndroidNavigationDelegateCreationParams
     // ignore: avoid_unused_constructor_parameters
     PlatformNavigationDelegateCreationParams params, {
     @visibleForTesting
-        AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
   }) {
     return AndroidNavigationDelegateCreationParams._(
       androidWebViewProxy: androidWebViewProxy,

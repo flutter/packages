@@ -5,6 +5,7 @@
   implementation to be provided at the application level via implementation
   of `CameraDelegatingImagePickerPlatform`.
 * Adds `supportsImageSource` to check source support at runtime.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.6.3

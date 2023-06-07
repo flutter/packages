@@ -1,4 +1,5 @@
-## NEXT
+## 0.8.7+4
+* Fixes `BuildContext` handling in example.
 * Updates metadata unit test to work on iOS 16.2.
 
 ## 0.8.7+3

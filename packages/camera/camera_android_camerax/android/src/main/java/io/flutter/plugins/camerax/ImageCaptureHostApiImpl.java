@@ -27,7 +27,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   public static final String TEMPORARY_FILE_NAME = "CAP";
   public static final String JPG_FILE_TYPE = ".jpg";
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
 
   public ImageCaptureHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
@@ -42,7 +42,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
    * Sets the context that the {@link ImageCapture} will use to find a location to save a captured
    * image.
    */
-  public void setContext(Context context) {
+  public void setContext(@NonNull Context context) {
     this.context = context;
   }
 
@@ -101,7 +101,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
 
   /** Creates a callback used when saving a captured image. */
   @VisibleForTesting
-  public ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
+  public @NonNull ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
       @NonNull File file, @NonNull GeneratedCameraXLibrary.Result<String> result) {
     return new ImageCapture.OnImageSavedCallback() {
       @Override

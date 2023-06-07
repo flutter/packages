@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
 import 'logging.dart';
+import 'matching.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
@@ -25,6 +26,8 @@ class RouteConfiguration {
             _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
         assert(_debugCheckParentNavigatorKeys(
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
+    assert(_debugCheckStatefulShellBranchDefaultLocations(
+        routes, RouteMatcher(this)));
     _cacheNameToPath('', routes);
     log.info(debugKnownRoutes());
   }
@@ -41,7 +44,7 @@ class RouteConfiguration {
               'sub-route path may not start or end with /: $route');
         }
         subRouteIsTopLevel = false;
-      } else if (route is ShellRoute) {
+      } else if (route is ShellRouteBase) {
         subRouteIsTopLevel = isTopLevel;
       }
       _debugCheckPath(route.routes, subRouteIsTopLevel);
@@ -86,6 +89,21 @@ class RouteConfiguration {
           route.routes,
           <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
         );
+      } else if (route is StatefulShellRoute) {
+        for (final StatefulShellBranch branch in route.branches) {
+          assert(
+              !allowedKeys.contains(branch.navigatorKey),
+              'StatefulShellBranch must not reuse an ancestor navigatorKey '
+              '(${branch.navigatorKey})');
+
+          _debugCheckParentNavigatorKeys(
+            branch.routes,
+            <GlobalKey<NavigatorState>>[
+              ...allowedKeys,
+              branch.navigatorKey,
+            ],
+          );
+        }
       }
     }
     return true;
@@ -107,6 +125,56 @@ class RouteConfiguration {
       }
       _debugVerifyNoDuplicatePathParameter(route.routes, usedPathParams);
       route.pathParameters.forEach(usedPathParams.remove);
+    }
+    return true;
+  }
+
+  // Check to see that the configured initialLocation of StatefulShellBranches
+  // points to a descendant route of the route branch.
+  bool _debugCheckStatefulShellBranchDefaultLocations(
+      List<RouteBase> routes, RouteMatcher matcher) {
+    try {
+      for (final RouteBase route in routes) {
+        if (route is StatefulShellRoute) {
+          for (final StatefulShellBranch branch in route.branches) {
+            if (branch.initialLocation == null) {
+              // Recursively search for the first GoRoute descendant. Will
+              // throw assertion error if not found.
+              final GoRoute? route = branch.defaultRoute;
+              final String? initialLocation =
+                  route != null ? locationForRoute(route) : null;
+              assert(
+                  initialLocation != null,
+                  'The default location of a StatefulShellBranch must be '
+                  'derivable from GoRoute descendant');
+              assert(
+                  route!.pathParameters.isEmpty,
+                  'The default location of a StatefulShellBranch cannot be '
+                  'a parameterized route');
+            } else {
+              final List<RouteBase> matchRoutes =
+                  matcher.findMatch(branch.initialLocation!).routes;
+              final int shellIndex = matchRoutes.indexOf(route);
+              bool matchFound = false;
+              if (shellIndex >= 0 && (shellIndex + 1) < matchRoutes.length) {
+                final RouteBase branchRoot = matchRoutes[shellIndex + 1];
+                matchFound = branch.routes.contains(branchRoot);
+              }
+              assert(
+                  matchFound,
+                  'The initialLocation (${branch.initialLocation}) of '
+                  'StatefulShellBranch must match a descendant route of the '
+                  'branch');
+            }
+          }
+        }
+        _debugCheckStatefulShellBranchDefaultLocations(route.routes, matcher);
+      }
+    } on MatcherError catch (e) {
+      assert(
+          false,
+          'initialLocation (${e.location}) of StatefulShellBranch must '
+          'be a valid location');
     }
     return true;
   }
@@ -167,6 +235,13 @@ class RouteConfiguration {
         .toString();
   }
 
+  /// Get the location for the provided route.
+  ///
+  /// Builds the absolute path for the route, by concatenating the paths of the
+  /// route and all its ancestors.
+  String? locationForRoute(RouteBase route) =>
+      fullPathForRoute(route, '', routes);
+
   @override
   String toString() {
     return 'RouterConfiguration: $routes';
@@ -222,7 +297,7 @@ class RouteConfiguration {
         if (route.routes.isNotEmpty) {
           _cacheNameToPath(fullPath, route.routes);
         }
-      } else if (route is ShellRoute) {
+      } else if (route is ShellRouteBase) {
         if (route.routes.isNotEmpty) {
           _cacheNameToPath(parentFullPath, route.routes);
         }

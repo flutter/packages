@@ -95,7 +95,7 @@ public class ImagePickerDelegate
     public final @Nullable VideoSelectionOptions videoOptions;
     public final @NonNull Messages.Result<List<String>> result;
 
-    private PendingCallState(
+    PendingCallState(
         @Nullable ImageSelectionOptions imageOptions,
         @Nullable VideoSelectionOptions videoOptions,
         @NonNull Messages.Result<List<String>> result) {
@@ -107,10 +107,9 @@ public class ImagePickerDelegate
 
   @VisibleForTesting final String fileProviderName;
 
-  private final Activity activity;
-  @VisibleForTesting final File externalFilesDirectory;
-  private final ImageResizer imageResizer;
-  private final ImagePickerCache cache;
+  private final @NonNull Activity activity;
+  private final @NonNull ImageResizer imageResizer;
+  private final @NonNull ImagePickerCache cache;
   private final PermissionManager permissionManager;
   private final FileUriResolver fileUriResolver;
   private final FileUtils fileUtils;
@@ -140,13 +139,11 @@ public class ImagePickerDelegate
   private final Object pendingCallStateLock = new Object();
 
   public ImagePickerDelegate(
-      final Activity activity,
-      final File externalFilesDirectory,
-      final ImageResizer imageResizer,
-      final ImagePickerCache cache) {
+      final @NonNull Activity activity,
+      final @NonNull ImageResizer imageResizer,
+      final @NonNull ImagePickerCache cache) {
     this(
         activity,
-        externalFilesDirectory,
         imageResizer,
         null,
         null,
@@ -181,12 +178,7 @@ public class ImagePickerDelegate
                 activity,
                 new String[] {(imageUri != null) ? imageUri.getPath() : ""},
                 null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                  @Override
-                  public void onScanCompleted(String path, Uri uri) {
-                    listener.onPathReady(path);
-                  }
-                });
+                (path, uri) -> listener.onPathReady(path));
           }
         },
         new FileUtils(),
@@ -199,19 +191,17 @@ public class ImagePickerDelegate
    */
   @VisibleForTesting
   ImagePickerDelegate(
-      final Activity activity,
-      final File externalFilesDirectory,
-      final ImageResizer imageResizer,
+      final @NonNull Activity activity,
+      final @NonNull ImageResizer imageResizer,
       final @Nullable ImageSelectionOptions pendingImageOptions,
       final @Nullable VideoSelectionOptions pendingVideoOptions,
       final @Nullable Messages.Result<List<String>> result,
-      final ImagePickerCache cache,
+      final @NonNull ImagePickerCache cache,
       final PermissionManager permissionManager,
       final FileUriResolver fileUriResolver,
       final FileUtils fileUtils,
       final ExecutorService executor) {
     this.activity = activity;
-    this.externalFilesDirectory = externalFilesDirectory;
     this.imageResizer = imageResizer;
     this.fileProviderName = activity.getPackageName() + ".flutter.image_provider";
     if (result != null) {
@@ -290,7 +280,9 @@ public class ImagePickerDelegate
   }
 
   public void chooseVideoFromGallery(
-      VideoSelectionOptions options, boolean usePhotoPicker, Messages.Result<List<String>> result) {
+      @NonNull VideoSelectionOptions options,
+      boolean usePhotoPicker,
+      @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(null, options, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -318,7 +310,7 @@ public class ImagePickerDelegate
   }
 
   public void takeVideoWithCamera(
-      VideoSelectionOptions options, Messages.Result<List<String>> result) {
+      @NonNull VideoSelectionOptions options, @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(null, options, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -376,7 +368,7 @@ public class ImagePickerDelegate
   public void chooseImageFromGallery(
       @NonNull ImageSelectionOptions options,
       boolean usePhotoPicker,
-      Messages.Result<List<String>> result) {
+      @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -388,7 +380,7 @@ public class ImagePickerDelegate
   public void chooseMultiImageFromGallery(
       @NonNull ImageSelectionOptions options,
       boolean usePhotoPicker,
-      Messages.Result<List<String>> result) {
+      @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -436,7 +428,7 @@ public class ImagePickerDelegate
   }
 
   public void takeImageWithCamera(
-      @NonNull ImageSelectionOptions options, Messages.Result<List<String>> result) {
+      @NonNull ImageSelectionOptions options, @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -496,6 +488,7 @@ public class ImagePickerDelegate
   private File createTemporaryWritableFile(String suffix) {
     String filename = UUID.randomUUID().toString();
     File image;
+    File externalFilesDirectory = activity.getCacheDir();
 
     try {
       externalFilesDirectory.mkdirs();
@@ -556,7 +549,8 @@ public class ImagePickerDelegate
   }
 
   @Override
-  public boolean onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+  public boolean onActivityResult(
+      final int requestCode, final int resultCode, final @Nullable Intent data) {
     Runnable handlerRunnable;
 
     switch (requestCode) {
@@ -605,7 +599,7 @@ public class ImagePickerDelegate
       } else {
         paths.add(fileUtils.getPathFromUri(activity, intent.getData()));
       }
-      handleMultiImageResult(paths, false);
+      handleMultiImageResult(paths);
       return;
     }
 
@@ -632,12 +626,7 @@ public class ImagePickerDelegate
           localPendingCameraMediaUri != null
               ? localPendingCameraMediaUri
               : Uri.parse(cache.retrievePendingCameraMediaUriPath()),
-          new OnPathReadyListener() {
-            @Override
-            public void onPathReady(String path) {
-              handleImageResult(path, true);
-            }
-          });
+          path -> handleImageResult(path, true));
       return;
     }
 
@@ -652,12 +641,7 @@ public class ImagePickerDelegate
           localPendingCameraMediaUrl != null
               ? localPendingCameraMediaUrl
               : Uri.parse(cache.retrievePendingCameraMediaUriPath()),
-          new OnPathReadyListener() {
-            @Override
-            public void onPathReady(String path) {
-              handleVideoResult(path);
-            }
-          });
+          this::handleVideoResult);
       return;
     }
 
@@ -665,8 +649,7 @@ public class ImagePickerDelegate
     finishWithSuccess(null);
   }
 
-  private void handleMultiImageResult(
-      ArrayList<String> paths, boolean shouldDeleteOriginalIfScaled) {
+  private void handleMultiImageResult(ArrayList<String> paths) {
     ImageSelectionOptions localImageOptions = null;
     synchronized (pendingCallStateLock) {
       if (pendingCallState != null) {
@@ -678,13 +661,6 @@ public class ImagePickerDelegate
       ArrayList<String> finalPath = new ArrayList<>();
       for (int i = 0; i < paths.size(); i++) {
         String finalImagePath = getResizedImagePath(paths.get(i), localImageOptions);
-
-        //delete original file if scaled
-        if (finalImagePath != null
-            && !finalImagePath.equals(paths.get(i))
-            && shouldDeleteOriginalIfScaled) {
-          new File(paths.get(i)).delete();
-        }
         finalPath.add(i, finalImagePath);
       }
       finishWithListSuccess(finalPath);
@@ -693,7 +669,7 @@ public class ImagePickerDelegate
     }
   }
 
-  private void handleImageResult(String path, boolean shouldDeleteOriginalIfScaled) {
+  void handleImageResult(String path, boolean shouldDeleteOriginalIfScaled) {
     ImageSelectionOptions localImageOptions = null;
     synchronized (pendingCallStateLock) {
       if (pendingCallState != null) {
@@ -721,7 +697,7 @@ public class ImagePickerDelegate
         outputOptions.getQuality().intValue());
   }
 
-  private void handleVideoResult(String path) {
+  void handleVideoResult(String path) {
     finishWithSuccess(path);
   }
 

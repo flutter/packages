@@ -293,9 +293,6 @@ class FakePlatformGoogleMap {
   }
 
   void updateTileOverlays(Map<String, dynamic> updateTileOverlayUpdates) {
-    if (updateTileOverlayUpdates == null) {
-      return;
-    }
     final List<Map<dynamic, dynamic>>? tileOverlaysToAddList =
         updateTileOverlayUpdates['tileOverlaysToAdd'] != null
             ? List.castFrom<dynamic, Map<dynamic, dynamic>>(

@@ -1,3 +1,11 @@
+## 3.4.4
+
+* Removes obsolete null checks on non-nullable values.
+
+## 3.4.3
+
+* Replace `describeEnum` with the `name` getter.
+
 ## 3.4.2
 
 * Fixes an exception caused by the `onUrlChange` callback passing a null `NSUrl`.

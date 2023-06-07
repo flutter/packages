@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LifecycleOwner;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -19,11 +20,17 @@ import io.flutter.view.TextureRegistry;
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private InstanceManager instanceManager;
   private FlutterPluginBinding pluginBinding;
+  private PendingRecordingHostApiImpl pendingRecordingHostApiImpl;
+  private RecorderHostApiImpl recorderHostApiImpl;
+  private VideoCaptureHostApiImpl videoCaptureHostApiImpl;
   private ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
   private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
-  public SystemServicesHostApiImpl systemServicesHostApiImpl;
+  public @Nullable SystemServicesHostApiImpl systemServicesHostApiImpl;
 
-  @VisibleForTesting ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
+  @VisibleForTesting
+  public @Nullable ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
+
+  @VisibleForTesting public @Nullable LiveDataHostApiImpl liveDataHostApiImpl;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -60,19 +67,36 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         new ProcessCameraProviderHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ProcessCameraProviderHostApi.setup(
         binaryMessenger, processCameraProviderHostApiImpl);
-    systemServicesHostApiImpl = new SystemServicesHostApiImpl(binaryMessenger, instanceManager);
+    systemServicesHostApiImpl =
+        new SystemServicesHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.SystemServicesHostApi.setup(binaryMessenger, systemServicesHostApiImpl);
     GeneratedCameraXLibrary.PreviewHostApi.setup(
         binaryMessenger, new PreviewHostApiImpl(binaryMessenger, instanceManager, textureRegistry));
     imageCaptureHostApiImpl =
         new ImageCaptureHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApiImpl);
+    GeneratedCameraXLibrary.CameraHostApi.setup(
+        binaryMessenger, new CameraHostApiImpl(binaryMessenger, instanceManager));
+    liveDataHostApiImpl = new LiveDataHostApiImpl(binaryMessenger, instanceManager);
+    GeneratedCameraXLibrary.LiveDataHostApi.setup(binaryMessenger, liveDataHostApiImpl);
+    GeneratedCameraXLibrary.ObserverHostApi.setup(
+        binaryMessenger, new ObserverHostApiImpl(binaryMessenger, instanceManager));
     imageAnalysisHostApiImpl = new ImageAnalysisHostApiImpl(binaryMessenger, instanceManager);
     GeneratedCameraXLibrary.ImageAnalysisHostApi.setup(binaryMessenger, imageAnalysisHostApiImpl);
     GeneratedCameraXLibrary.AnalyzerHostApi.setup(
         binaryMessenger, new AnalyzerHostApiImpl(binaryMessenger, instanceManager));
     GeneratedCameraXLibrary.ImageProxyHostApi.setup(
         binaryMessenger, new ImageProxyHostApiImpl(binaryMessenger, instanceManager));
+    GeneratedCameraXLibrary.RecordingHostApi.setup(
+        binaryMessenger, new RecordingHostApiImpl(binaryMessenger, instanceManager));
+    recorderHostApiImpl = new RecorderHostApiImpl(binaryMessenger, instanceManager, context);
+    GeneratedCameraXLibrary.RecorderHostApi.setup(binaryMessenger, recorderHostApiImpl);
+    pendingRecordingHostApiImpl =
+        new PendingRecordingHostApiImpl(binaryMessenger, instanceManager, context);
+    GeneratedCameraXLibrary.PendingRecordingHostApi.setup(
+        binaryMessenger, pendingRecordingHostApiImpl);
+    videoCaptureHostApiImpl = new VideoCaptureHostApiImpl(binaryMessenger, instanceManager);
+    GeneratedCameraXLibrary.VideoCaptureHostApi.setup(binaryMessenger, videoCaptureHostApiImpl);
   }
 
   @Override
@@ -91,19 +115,18 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding activityPluginBinding) {
-    setUp(
-        pluginBinding.getBinaryMessenger(),
-        pluginBinding.getApplicationContext(),
-        pluginBinding.getTextureRegistry());
-    updateContext(pluginBinding.getApplicationContext());
-
     Activity activity = activityPluginBinding.getActivity();
+
+    setUp(pluginBinding.getBinaryMessenger(), activity, pluginBinding.getTextureRegistry());
+    updateContext(activity);
 
     if (activity instanceof LifecycleOwner) {
       processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+      liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
     } else {
       ProxyLifecycleProvider proxyLifecycleProvider = new ProxyLifecycleProvider(activity);
       processCameraProviderHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
+      liveDataHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
     }
 
     systemServicesHostApiImpl.setActivity(activity);
@@ -134,6 +157,15 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   public void updateContext(@NonNull Context context) {
     if (processCameraProviderHostApiImpl != null) {
       processCameraProviderHostApiImpl.setContext(context);
+    }
+    if (recorderHostApiImpl != null) {
+      recorderHostApiImpl.setContext(context);
+    }
+    if (pendingRecordingHostApiImpl != null) {
+      pendingRecordingHostApiImpl.setContext(context);
+    }
+    if (systemServicesHostApiImpl != null) {
+      systemServicesHostApiImpl.setContext(context);
     }
     if (imageCaptureHostApiImpl != null) {
       imageCaptureHostApiImpl.setContext(context);
