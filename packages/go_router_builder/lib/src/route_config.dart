@@ -369,21 +369,15 @@ GoRouteData.\$route(
 
   String _decodeFor(ParameterElement element) {
     if (element.isRequired) {
-      if (element.type.nullabilitySuffix == NullabilitySuffix.question) {
+      if (element.type.nullabilitySuffix == NullabilitySuffix.question &&
+          _pathParams.contains(element.name)) {
         throw InvalidGenerationSourceError(
-          'Required parameters cannot be nullable.',
-          element: element,
-        );
-      }
-
-      if (!_pathParams.contains(element.name) && !element.isExtraField) {
-        throw InvalidGenerationSourceError(
-          'Missing param `${element.name}` in path.',
+          'Required parameters in the path cannot be nullable.',
           element: element,
         );
       }
     }
-    final String fromStateExpression = decodeParameter(element);
+    final String fromStateExpression = decodeParameter(element, _pathParams);
 
     if (element.isPositional) {
       return '$fromStateExpression,';
