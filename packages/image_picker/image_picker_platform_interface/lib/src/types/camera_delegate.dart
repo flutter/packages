@@ -19,9 +19,13 @@ class ImagePickerCameraDelegateOptions {
   });
 
   /// The camera device to default to, if available.
+  ///
+  /// Defaults to [CameraDevice.rear].
   final CameraDevice preferredCameraDevice;
 
   /// The maximum duration to allow when recording a video.
+  ///
+  /// Defaults to null, meaning no maximum duration.
   final Duration? maxVideoDuration;
 }
 

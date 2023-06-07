@@ -342,12 +342,11 @@ abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
         throw StateError(
             'This implementation of ImagePickerPlatform requires a '
             '"cameraDelegate" in order to use ImageSource.camera');
-      } else {
-        return delegate.takePhoto(
-            options: ImagePickerCameraDelegateOptions(
-          preferredCameraDevice: options.preferredCameraDevice,
-        ));
       }
+      return delegate.takePhoto(
+          options: ImagePickerCameraDelegateOptions(
+        preferredCameraDevice: options.preferredCameraDevice,
+      ));
     }
     return super.getImageFromSource(source: source, options: options);
   }
@@ -364,12 +363,11 @@ abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
         throw StateError(
             'This implementation of ImagePickerPlatform requires a '
             '"cameraDelegate" in order to use ImageSource.camera');
-      } else {
-        return delegate.takeVideo(
-            options: ImagePickerCameraDelegateOptions(
-                preferredCameraDevice: preferredCameraDevice,
-                maxVideoDuration: maxDuration));
       }
+      return delegate.takeVideo(
+          options: ImagePickerCameraDelegateOptions(
+              preferredCameraDevice: preferredCameraDevice,
+              maxVideoDuration: maxDuration));
     }
     return super.getVideo(
         source: source,
