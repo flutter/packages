@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Includes the required/positional parameters in the route location.
+
 ## 2.1.0
 
 * Supports required/positional parameters that are not in the path.
