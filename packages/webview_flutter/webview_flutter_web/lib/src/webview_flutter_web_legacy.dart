@@ -5,6 +5,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
+import 'dart:ui_web' as ui_web;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
@@ -12,7 +14,6 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 import 'http_request_factory.dart';
-import 'shims/dart_ui.dart' as ui;
 
 /// Builds an iframe based WebView.
 ///
@@ -20,7 +21,7 @@ import 'shims/dart_ui.dart' as ui;
 class WebWebViewPlatform implements WebViewPlatform {
   /// Constructs a new instance of [WebWebViewPlatform].
   WebWebViewPlatform() {
-    ui.platformViewRegistry.registerViewFactory(
+    ui_web.platformViewRegistry.registerViewFactory(
         'webview-iframe',
         (int viewId) => IFrameElement()
           ..id = 'webview-$viewId'

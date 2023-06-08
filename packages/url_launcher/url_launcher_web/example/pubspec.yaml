@@ -15,8 +15,6 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  flutter_web_plugins:
-    sdk: flutter
   integration_test:
     sdk: flutter
   mockito: 5.4.1

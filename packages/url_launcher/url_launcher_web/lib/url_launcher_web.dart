@@ -4,14 +4,14 @@
 
 import 'dart:async';
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart' show Registrar;
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 import 'src/link.dart';
-import 'src/shims/dart_ui.dart' as ui;
 import 'src/third_party/platform_detect/browser.dart';
 
 const Set<String> _safariTargetTopSchemes = <String>{
@@ -46,7 +46,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   /// Registers this class as the default instance of [UrlLauncherPlatform].
   static void registerWith(Registrar registrar) {
     UrlLauncherPlatform.instance = UrlLauncherPlugin();
-    ui.platformViewRegistry
+    ui_web.platformViewRegistry
         .registerViewFactory(linkViewType, linkViewFactory, isVisible: false);
   }
 
