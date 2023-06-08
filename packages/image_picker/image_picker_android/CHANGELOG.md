@@ -1,6 +1,6 @@
 ## 0.8.6+20
 
-* Bumps androidx.activity:activity from 1.6.1 to 1.7.1.
+* Bumps androidx.activity:activity from 1.7.0 to 1.7.1.
 
 ## 0.8.6+19
 
