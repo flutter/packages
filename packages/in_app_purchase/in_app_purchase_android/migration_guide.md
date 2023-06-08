@@ -26,8 +26,9 @@ model.
 
 In the next section we will look at how to migrate code that uses the old model
 to the new model. Instead of listing all possible use cases, we will focus on
-two: getting the price of a one time purchase, and handling free trials for
-subscriptions. Other use cases can be migrated in a similar way.
+three: getting the price of a one time purchase, and handling both free trials
+and introductory prices for subscriptions. Other use cases can be migrated in a
+similar way.
 
 ### Use case: getting the price of a one time purchase
 
