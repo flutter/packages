@@ -145,7 +145,7 @@ class _MyAppState extends State<_MyApp> {
             _buildConnectionCheckTile(),
             _buildProductList(),
             _buildConsumableBox(),
-            _FeatureCard(),
+            const _FeatureCard(),
           ],
         ),
       );
@@ -397,7 +397,7 @@ class _MyAppState extends State<_MyApp> {
             purchaseDetails.status == PurchaseStatus.restored) {
           final bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
-            deliverProduct(purchaseDetails);
+            unawaited(deliverProduct(purchaseDetails));
           } else {
             _handleInvalidPurchase(purchaseDetails);
             return;
@@ -444,9 +444,9 @@ class _MyAppState extends State<_MyApp> {
 }
 
 class _FeatureCard extends StatelessWidget {
-  _FeatureCard();
+  const _FeatureCard();
 
-  final InAppPurchaseAndroidPlatformAddition addition =
+  InAppPurchaseAndroidPlatformAddition get addition =>
       InAppPurchasePlatformAddition.instance!
           as InAppPurchaseAndroidPlatformAddition;
 
@@ -458,7 +458,8 @@ class _FeatureCard extends StatelessWidget {
             children: <Widget>[
           const ListTile(title: Text('Available features')),
           const Divider(),
-          for (BillingClientFeature feature in BillingClientFeature.values)
+          for (final BillingClientFeature feature
+              in BillingClientFeature.values)
             _buildFeatureWidget(feature),
         ]));
   }

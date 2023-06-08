@@ -17,11 +17,13 @@ updates:
     schedule:
       interval: "daily"
     reviewers:
-      - "hixie"
-      - "godofredoc"
+      - "keyonghan"
+      - "yusuf-goog"
+      - "ricardoamador"
     labels:
       - "team"
       - "team: infra"
+      - "autosubmit"
 
   - package-ecosystem: "gradle"
     directory: "/packages/animations/example/android/app"

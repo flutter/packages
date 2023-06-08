@@ -1,3 +1,17 @@
+## NEXT
+
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.0
+
+* Endorses [`google_maps_flutter_web`](https://pub.dev/packages/google_maps_flutter_web)
+  as the web implementation of this plugin.
+
+## 2.2.8
+
+* Fixes unawaited_futures violations.
+
 ## 2.2.7
 
 * Removes obsolete null checks on non-nullable values.

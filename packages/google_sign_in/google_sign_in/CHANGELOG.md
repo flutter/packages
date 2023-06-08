@@ -1,3 +1,15 @@
+## 6.1.4
+
+* Adds compatibility with `http` 1.0.
+
+## 6.1.3
+
+* Clarifies `canAccessScopes` method documentation.
+
+## 6.1.2
+
+* Fixes unawaited_futures violations.
+
 ## 6.1.1
 
 * Removes obsolete null checks on non-nullable values.

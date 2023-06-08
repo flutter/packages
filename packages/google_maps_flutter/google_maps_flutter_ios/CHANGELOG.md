@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes unawaited_futures violations.
+
 ## 2.2.3
 
 * Removes obsolete null checks on non-nullable values.
