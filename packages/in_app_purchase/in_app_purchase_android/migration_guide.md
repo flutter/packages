@@ -5,7 +5,7 @@ requiring app developers using the plugin to migrate to 0.3.0.
 Version 0.3.0 introduces breaking changes to the API as a result of changes in
 the underlying Google Play Billing Library.
 For context around the changes see the [recent changes to subscriptions in Play Console][1]
-and the [Android Billing Client V5 migration guide][2].
+and the [Google Play Billing Library migration guide][2].
 
 ## SKUs become Products
 
@@ -143,5 +143,5 @@ information.
 
 <!-- References -->
 [1]: https://support.google.com/googleplay/android-developer/answer/12124625
-[2]: https://developer.android.com/google/play/billing/migrate-gpblv5
+[2]: https://developer.android.com/google/play/billing/migrate-gpblv6#5-or-6
 [3]: https://developer.android.com/google/play/billing/subscriptions#price-change
