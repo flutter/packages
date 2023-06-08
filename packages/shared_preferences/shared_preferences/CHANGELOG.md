@@ -1,5 +1,7 @@
-## NEXT
+## 2.1.2
 
+* Fixes singleton initialization race condition introduced during NNBD
+  transition.
 * Updates minimum supported macOS version to 10.14.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
