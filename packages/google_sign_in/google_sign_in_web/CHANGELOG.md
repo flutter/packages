@@ -1,3 +1,7 @@
+## 0.12.0+2
+
+* Adds compatibility with `http` 1.0.
+
 ## 0.12.0+1
 
 * Fixes unawaited_futures violations.
