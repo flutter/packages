@@ -1,7 +1,3 @@
-## NEXT
-
-* Removes unnecessary_non_null_assertion Scrollable.of
-
 ## 0.1.0+5
 
 * Fixes unawaited_futures violations.
