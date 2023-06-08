@@ -68,6 +68,9 @@ extension $NullableRequiredParamNotInPathExtension
 
   String get location => GoRouteData.$location(
         'bob',
+        queryParams: {
+          if (id != null) 'id': id!.toString(),
+        },
       );
 
   void go(BuildContext context) => context.go(location);
@@ -108,6 +111,9 @@ extension $NonNullableRequiredParamNotInPathExtension
 
   String get location => GoRouteData.$location(
         'bob',
+        queryParams: {
+          'id': id.toString(),
+        },
       );
 
   void go(BuildContext context) => context.go(location);
