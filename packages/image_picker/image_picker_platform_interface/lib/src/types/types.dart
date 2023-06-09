@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+export 'camera_delegate.dart';
 export 'camera_device.dart';
 export 'image_options.dart';
 export 'image_picker_options.dart';

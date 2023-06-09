@@ -11,20 +11,12 @@
 # Unit tests for plugins that support web currently run in
 # Chrome, which isn't currently supported by web infrastructure.
 # TODO(ditman): Fix this in the repo tooling.
-- camera
 - camera_web
-- file_selector
 - file_selector_web
-- google_maps_flutter
 - google_maps_flutter_web
-- google_sign_in
 - google_sign_in_web
-- image_picker
 - image_picker_for_web
-- shared_preferences
 - shared_preferences_web
-- url_launcher
 - url_launcher_web
-- video_player
 - video_player_web
 - webview_flutter_web

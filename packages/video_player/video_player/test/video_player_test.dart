@@ -350,12 +350,12 @@ void main() {
 
       test('file with special characters', () async {
         final VideoPlayerController controller =
-            VideoPlayerController.file(File('A #1 Hit?.avi'));
+            VideoPlayerController.file(File('A #1 Hit.avi'));
         await controller.initialize();
 
         final String uri = fakeVideoPlayerPlatform.dataSources[0].uri!;
         expect(uri.startsWith('file:///'), true, reason: 'Actual string: $uri');
-        expect(uri.endsWith('/A%20%231%20Hit%3F.avi'), true,
+        expect(uri.endsWith('/A%20%231%20Hit.avi'), true,
             reason: 'Actual string: $uri');
       }, skip: kIsWeb /* Web does not support file assets. */);
 

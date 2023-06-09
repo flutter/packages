@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/configuration.dart';
+import 'package:go_router/src/misc/errors.dart';
 
 import 'test_helpers.dart';
 
@@ -120,7 +121,7 @@ void main() {
             },
           );
         },
-        throwsAssertionError,
+        throwsA(isA<GoError>()),
       );
     });
 
@@ -318,7 +319,7 @@ void main() {
             },
           );
         },
-        throwsAssertionError,
+        throwsA(isA<GoError>()),
       );
     });
 
@@ -373,7 +374,7 @@ void main() {
             },
           );
         },
-        throwsAssertionError,
+        throwsA(isA<GoError>()),
       );
     });
 
@@ -749,7 +750,7 @@ void main() {
               return null;
             },
           ),
-          throwsAssertionError,
+          throwsA(isA<GoError>()),
         );
       },
     );
@@ -857,7 +858,7 @@ void main() {
               return null;
             },
           ),
-          throwsAssertionError,
+          throwsA(isA<GoError>()),
         );
       },
     );
