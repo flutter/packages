@@ -1,3 +1,7 @@
+## 0.8.8
+
+* Adds `getMedia` and `getMultipleMedia` methods.
+
 ## 0.8.7+5
 
 * Fixes `BuildContext` handling in example.
