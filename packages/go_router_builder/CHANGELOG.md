@@ -1,6 +1,6 @@
 ## 2.1.1
 
-* Includes the required/positional parameters in the route location.
+* Fixes a bug that the required/positional parameters are not added to query parameters correctly.
 
 ## 2.1.0
 
