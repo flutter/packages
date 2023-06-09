@@ -384,4 +384,38 @@ void main() {
     expect(map.polygonUpdates.last.polygonIdsToRemove.isEmpty, true);
     expect(map.polygonUpdates.last.polygonsToAdd.isEmpty, true);
   });
+
+  testWidgets('multi-update with delays', (WidgetTester tester) async {
+    platform.simulatePlatformDelay = true;
+
+    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const Polygon p2 = Polygon(polygonId: PolygonId('polygon_2'));
+    const Polygon p3 =
+        Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
+    const Polygon p3updated =
+        Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 2);
+
+    // First remove one and add another, then update the new one.
+    await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1, p2}));
+    await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1, p3}));
+    await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1, p3updated}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.polygonUpdates.length, 3);
+
+    expect(map.polygonUpdates[0].polygonsToChange.isEmpty, true);
+    expect(map.polygonUpdates[0].polygonsToAdd, <Polygon>{p1, p2});
+    expect(map.polygonUpdates[0].polygonIdsToRemove.isEmpty, true);
+
+    expect(map.polygonUpdates[1].polygonsToChange.isEmpty, true);
+    expect(map.polygonUpdates[1].polygonsToAdd, <Polygon>{p3});
+    expect(map.polygonUpdates[1].polygonIdsToRemove, <PolygonId>{p2.polygonId});
+
+    expect(map.polygonUpdates[2].polygonsToChange, <Polygon>{p3updated});
+    expect(map.polygonUpdates[2].polygonsToAdd.isEmpty, true);
+    expect(map.polygonUpdates[2].polygonIdsToRemove.isEmpty, true);
+
+    await tester.pumpAndSettle();
+  });
 }

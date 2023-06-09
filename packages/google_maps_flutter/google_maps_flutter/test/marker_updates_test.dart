@@ -183,4 +183,37 @@ void main() {
     expect(map.markerUpdates.last.markerIdsToRemove.isEmpty, true);
     expect(map.markerUpdates.last.markersToAdd.isEmpty, true);
   });
+
+  testWidgets('multi-update with delays', (WidgetTester tester) async {
+    platform.simulatePlatformDelay = true;
+
+    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
+    const Marker m2 = Marker(markerId: MarkerId('marker_2'));
+    const Marker m3 = Marker(markerId: MarkerId('marker_3'));
+    const Marker m3updated =
+        Marker(markerId: MarkerId('marker_3'), draggable: true);
+
+    // First remove one and add another, then update the new one.
+    await tester.pumpWidget(_mapWithMarkers(<Marker>{m1, m2}));
+    await tester.pumpWidget(_mapWithMarkers(<Marker>{m1, m3}));
+    await tester.pumpWidget(_mapWithMarkers(<Marker>{m1, m3updated}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.markerUpdates.length, 3);
+
+    expect(map.markerUpdates[0].markersToChange.isEmpty, true);
+    expect(map.markerUpdates[0].markersToAdd, <Marker>{m1, m2});
+    expect(map.markerUpdates[0].markerIdsToRemove.isEmpty, true);
+
+    expect(map.markerUpdates[1].markersToChange.isEmpty, true);
+    expect(map.markerUpdates[1].markersToAdd, <Marker>{m3});
+    expect(map.markerUpdates[1].markerIdsToRemove, <MarkerId>{m2.markerId});
+
+    expect(map.markerUpdates[2].markersToChange, <Marker>{m3updated});
+    expect(map.markerUpdates[2].markersToAdd.isEmpty, true);
+    expect(map.markerUpdates[2].markerIdsToRemove.isEmpty, true);
+
+    await tester.pumpAndSettle();
+  });
 }

@@ -202,4 +202,39 @@ void main() {
     expect(map.polylineUpdates.last.polylineIdsToRemove.isEmpty, true);
     expect(map.polylineUpdates.last.polylinesToAdd.isEmpty, true);
   });
+
+  testWidgets('multi-update with delays', (WidgetTester tester) async {
+    platform.simulatePlatformDelay = true;
+
+    const Polyline p1 = Polyline(polylineId: PolylineId('polyline_1'));
+    const Polyline p2 = Polyline(polylineId: PolylineId('polyline_2'));
+    const Polyline p3 =
+        Polyline(polylineId: PolylineId('polyline_3'), width: 1);
+    const Polyline p3updated =
+        Polyline(polylineId: PolylineId('polyline_3'), width: 2);
+
+    // First remove one and add another, then update the new one.
+    await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1, p2}));
+    await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1, p3}));
+    await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1, p3updated}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.polylineUpdates.length, 3);
+
+    expect(map.polylineUpdates[0].polylinesToChange.isEmpty, true);
+    expect(map.polylineUpdates[0].polylinesToAdd, <Polyline>{p1, p2});
+    expect(map.polylineUpdates[0].polylineIdsToRemove.isEmpty, true);
+
+    expect(map.polylineUpdates[1].polylinesToChange.isEmpty, true);
+    expect(map.polylineUpdates[1].polylinesToAdd, <Polyline>{p3});
+    expect(map.polylineUpdates[1].polylineIdsToRemove,
+        <PolylineId>{p2.polylineId});
+
+    expect(map.polylineUpdates[2].polylinesToChange, <Polyline>{p3updated});
+    expect(map.polylineUpdates[2].polylinesToAdd.isEmpty, true);
+    expect(map.polylineUpdates[2].polylineIdsToRemove.isEmpty, true);
+
+    await tester.pumpAndSettle();
+  });
 }

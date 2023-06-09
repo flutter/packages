@@ -13,19 +13,27 @@ import 'package:stream_transform/stream_transform.dart';
 class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   FakeGoogleMapsFlutterPlatform();
 
-  // The IDs passed to each call to buildView, in call order.
+  /// The IDs passed to each call to buildView, in call order.
   List<int> createdIds = <int>[];
 
-  // A map of creation IDs to fake map instances.
+  /// A map of creation IDs to fake map instances.
   Map<int, PlatformMapStateRecorder> mapInstances =
       <int, PlatformMapStateRecorder>{};
 
   PlatformMapStateRecorder get lastCreatedMap => mapInstances[createdIds.last]!;
 
-  // Whether `dispose` has been called.
+  /// Whether to add a small delay to async calls to simulate more realistic
+  /// async behavior (simulating the platform channel calls most
+  /// implementations will do).
+  ///
+  /// When true, requires tests to `pumpAndSettle` at the end of the test
+  /// to avoid exceptions.
+  bool simulatePlatformDelay = false;
+
+  /// Whether `dispose` has been called.
   bool disposed = false;
 
-  // Stream controller to inject events for testing.
+  /// Stream controller to inject events for testing.
   final StreamController<MapEvent<dynamic>> mapEventStreamController =
       StreamController<MapEvent<dynamic>>.broadcast();
 
@@ -38,6 +46,7 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) async {
     mapInstances[mapId]?.mapConfiguration = update;
+    await _fakeDelay();
   }
 
   @override
@@ -46,6 +55,7 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) async {
     mapInstances[mapId]?.markerUpdates.add(markerUpdates);
+    await _fakeDelay();
   }
 
   @override
@@ -54,6 +64,7 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) async {
     mapInstances[mapId]?.polygonUpdates.add(polygonUpdates);
+    await _fakeDelay();
   }
 
   @override
@@ -62,6 +73,7 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) async {
     mapInstances[mapId]?.polylineUpdates.add(polylineUpdates);
+    await _fakeDelay();
   }
 
   @override
@@ -70,6 +82,7 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) async {
     mapInstances[mapId]?.circleUpdates.add(circleUpdates);
+    await _fakeDelay();
   }
 
   @override
@@ -78,6 +91,7 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) async {
     mapInstances[mapId]?.tileOverlaySets.add(newTileOverlays);
+    await _fakeDelay();
   }
 
   @override
@@ -250,6 +264,13 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
       onPlatformViewCreated(creationId);
     }
     return Container();
+  }
+
+  Future<void> _fakeDelay() async {
+    if (!simulatePlatformDelay) {
+      return;
+    }
+    return Future<void>.delayed(const Duration(microseconds: 1));
   }
 }
 

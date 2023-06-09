@@ -177,4 +177,36 @@ void main() {
     expect(map.circleUpdates.last.circleIdsToRemove.isEmpty, true);
     expect(map.circleUpdates.last.circlesToAdd.isEmpty, true);
   });
+
+  testWidgets('multi-update with delays', (WidgetTester tester) async {
+    platform.simulatePlatformDelay = true;
+
+    const Circle c1 = Circle(circleId: CircleId('circle_1'));
+    const Circle c2 = Circle(circleId: CircleId('circle_2'));
+    const Circle c3 = Circle(circleId: CircleId('circle_3'), radius: 1);
+    const Circle c3updated = Circle(circleId: CircleId('circle_3'), radius: 10);
+
+    // First remove one and add another, then update the new one.
+    await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c2}));
+    await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c3}));
+    await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c3updated}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.circleUpdates.length, 3);
+
+    expect(map.circleUpdates[0].circlesToChange.isEmpty, true);
+    expect(map.circleUpdates[0].circlesToAdd, <Circle>{c1, c2});
+    expect(map.circleUpdates[0].circleIdsToRemove.isEmpty, true);
+
+    expect(map.circleUpdates[1].circlesToChange.isEmpty, true);
+    expect(map.circleUpdates[1].circlesToAdd, <Circle>{c3});
+    expect(map.circleUpdates[1].circleIdsToRemove, <CircleId>{c2.circleId});
+
+    expect(map.circleUpdates[2].circlesToChange, <Circle>{c3updated});
+    expect(map.circleUpdates[2].circlesToAdd.isEmpty, true);
+    expect(map.circleUpdates[2].circleIdsToRemove.isEmpty, true);
+
+    await tester.pumpAndSettle();
+  });
 }
