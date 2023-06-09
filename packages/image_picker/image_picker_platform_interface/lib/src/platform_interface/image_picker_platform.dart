@@ -213,6 +213,24 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     throw UnimplementedError('getMultiImage() has not been implemented.');
   }
 
+  /// Returns a [List<XFile>] with the images and/or videos that were picked.
+  /// The images and videos come from the gallery.
+  ///
+  /// Where iOS supports HEIC images, Android 8 and below doesn't. Android 9 and
+  /// above only support HEIC images if used in addition to a size modification,
+  /// of which the usage is explained below.
+  ///
+  /// In Android, the MainActivity can be destroyed for various reasons.
+  /// If that happens, the result will be lost in this call. You can then
+  /// call [getLostData] when your app relaunches to retrieve the lost data.
+  ///
+  /// If no images or videos were picked, the return value is an empty list.
+  Future<List<XFile>> getMedia({
+    required MediaOptions options,
+  }) {
+    throw UnimplementedError('getMedia() has not been implemented.');
+  }
+
   /// Returns a [XFile] containing the video that was picked.
   ///
   /// The [source] argument controls where the video comes from. This can
