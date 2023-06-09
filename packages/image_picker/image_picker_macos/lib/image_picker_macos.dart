@@ -24,6 +24,8 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     ImagePickerPlatform.instance = ImagePickerMacOS();
   }
 
+  // This is soft-deprecated in the platform interface, and is only implemented
+  // for compatibility. Callers should be using getImageFromSource.
   @override
   Future<PickedFile?> pickImage({
     required ImageSource source,
@@ -44,6 +46,8 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     return null;
   }
 
+  // This is soft-deprecated in the platform interface, and is only implemented
+  // for compatibility. Callers should be using getVideo.
   @override
   Future<PickedFile?> pickVideo({
     required ImageSource source,
@@ -60,6 +64,8 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     return null;
   }
 
+  // This is soft-deprecated in the platform interface, and is only implemented
+  // for compatibility. Callers should be using getImageFromSource.
   @override
   Future<XFile?> getImage({
     required ImageSource source,
@@ -106,7 +112,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
   }
 
   // `preferredCameraDevice` and `maxDuration` arguments are not currently
-  // supported. If any of these arguments is supplied, they will be silently
+  // supported. If either of these arguments are supplied, they will be silently
   // ignored.
   //
   // If source is `ImageSource.camera`, a `StateError` will be thrown
@@ -136,7 +142,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
   }
 
   // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not currently
-  // supported. If any of these arguments is supplied, they will be silently
+  // supported. If any of these arguments are supplied, they will be silently
   // ignored.
   @override
   Future<List<XFile>> getMultiImage({
