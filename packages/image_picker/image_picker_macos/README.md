@@ -1,6 +1,6 @@
-# image\_picker\_windows
+# image\_picker\_macos
 
-A Windows implementation of [`image_picker`][1].
+A macOS implementation of [`image_picker`][1].
 
 ## Limitations
 
@@ -23,5 +23,16 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
+### Entitlements
+
+This package is currently implemented using [`file_selector`][3], so you will
+need to add a read-only file acces [entitlement][4]:
+```xml
+    <key>com.apple.security.files.user-selected.read-only</key>
+    <true/>
+```
+
 [1]: https://pub.dev/packages/image_picker
 [2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[3]: https://pub.dev/packages/file_selector
+[4]: https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox

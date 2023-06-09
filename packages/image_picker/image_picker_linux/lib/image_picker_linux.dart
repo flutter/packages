@@ -2,55 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
+import 'package:file_selector_linux/file_selector_linux.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:file_selector_windows/file_selector_windows.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
-/// The Windows implementation of [ImagePickerPlatform].
+/// The Linux implementation of [ImagePickerPlatform].
 ///
 /// This class implements the `package:image_picker` functionality for
-/// Windows.
-class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
-  /// Constructs a ImagePickerWindows.
-  ImagePickerWindows();
-
-  /// List of image extensions used when picking images
-  @visibleForTesting
-  static const List<String> imageFormats = <String>[
-    'jpg',
-    'jpeg',
-    'png',
-    'bmp',
-    'webp',
-    'gif',
-    'tif',
-    'tiff',
-    'apng'
-  ];
-
-  /// List of video extensions used when picking videos
-  @visibleForTesting
-  static const List<String> videoFormats = <String>[
-    'mov',
-    'wmv',
-    'mkv',
-    'mp4',
-    'webm',
-    'avi',
-    'mpeg',
-    'mpg'
-  ];
+/// Linux.
+class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
+  /// Constructs a platform implementation.
+  ImagePickerLinux();
 
   /// The file selector used to prompt the user to select images or videos.
   @visibleForTesting
-  static FileSelectorPlatform fileSelector = FileSelectorWindows();
+  static FileSelectorPlatform fileSelector = FileSelectorLinux();
 
   /// Registers this class as the default instance of [ImagePickerPlatform].
   static void registerWith() {
-    ImagePickerPlatform.instance = ImagePickerWindows();
+    ImagePickerPlatform.instance = ImagePickerLinux();
   }
 
   // This is soft-deprecated in the platform interface, and is only implemented
@@ -128,7 +99,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
         const XTypeGroup typeGroup =
-            XTypeGroup(label: 'Images', extensions: imageFormats);
+            XTypeGroup(label: 'Images', mimeTypes: <String>['image/*']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -158,7 +129,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
             maxDuration: maxDuration);
       case ImageSource.gallery:
         const XTypeGroup typeGroup =
-            XTypeGroup(label: 'Videos', extensions: videoFormats);
+            XTypeGroup(label: 'Videos', mimeTypes: <String>['video/*']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -178,33 +149,9 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     int? imageQuality,
   }) async {
     const XTypeGroup typeGroup =
-        XTypeGroup(label: 'Images', extensions: imageFormats);
+        XTypeGroup(label: 'Images', mimeTypes: <String>['image/*']);
     final List<XFile> files = await fileSelector
         .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-    return files;
-  }
-
-  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not
-  // supported on Windows. If any of these arguments is supplied,
-  // they will be silently ignored by the Windows version of the plugin.
-  @override
-  Future<List<XFile>> getMedia({required MediaOptions options}) async {
-    const XTypeGroup typeGroup = XTypeGroup(
-        label: 'images and videos',
-        extensions: <String>[...imageFormats, ...videoFormats]);
-
-    List<XFile> files;
-
-    if (options.allowMultiple) {
-      files = await fileSelector
-          .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-    } else {
-      final XFile? file = await fileSelector
-          .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-      files = <XFile>[
-        if (file != null) file,
-      ];
-    }
     return files;
   }
 }
