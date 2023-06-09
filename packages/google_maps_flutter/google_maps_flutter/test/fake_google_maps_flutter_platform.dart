@@ -20,6 +20,8 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   Map<int, PlatformMapStateRecorder> mapInstances =
       <int, PlatformMapStateRecorder>{};
 
+  PlatformMapStateRecorder get lastCreatedMap => mapInstances[createdIds.last]!;
+
   // Whether `dispose` has been called.
   bool disposed = false;
 
@@ -238,12 +240,15 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     MapObjects mapObjects = const MapObjects(),
     MapConfiguration mapConfiguration = const MapConfiguration(),
   }) {
-    createdIds.add(creationId);
-    mapInstances[creationId] = PlatformMapStateRecorder(
-        widgetConfiguration: widgetConfiguration,
-        mapConfiguration: mapConfiguration,
-        mapObjects: mapObjects);
-    onPlatformViewCreated(creationId);
+    final PlatformMapStateRecorder? instance = mapInstances[creationId];
+    if (instance == null) {
+      createdIds.add(creationId);
+      mapInstances[creationId] = PlatformMapStateRecorder(
+          widgetConfiguration: widgetConfiguration,
+          mapConfiguration: mapConfiguration,
+          mapObjects: mapObjects);
+      onPlatformViewCreated(creationId);
+    }
     return Container();
   }
 }
@@ -255,7 +260,15 @@ class PlatformMapStateRecorder {
     required this.widgetConfiguration,
     this.mapObjects = const MapObjects(),
     this.mapConfiguration = const MapConfiguration(),
-  });
+  }) {
+    markerUpdates.add(MarkerUpdates.from(const <Marker>{}, mapObjects.markers));
+    polygonUpdates
+        .add(PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons));
+    polylineUpdates
+        .add(PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines));
+    circleUpdates.add(CircleUpdates.from(const <Circle>{}, mapObjects.circles));
+    tileOverlaySets.add(mapObjects.tileOverlays);
+  }
 
   MapWidgetConfiguration widgetConfiguration;
   MapObjects mapObjects;
@@ -264,6 +277,6 @@ class PlatformMapStateRecorder {
   final List<MarkerUpdates> markerUpdates = <MarkerUpdates>[];
   final List<PolygonUpdates> polygonUpdates = <PolygonUpdates>[];
   final List<PolylineUpdates> polylineUpdates = <PolylineUpdates>[];
-  final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
   final List<CircleUpdates> circleUpdates = <CircleUpdates>[];
+  final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
 }
