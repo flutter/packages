@@ -1,3 +1,7 @@
+## 8.0.2
+
+- Fixes bug that GoRouterState in top level redirect doesn't contain complete data.
+
 ## 8.0.1
 
 - Fixes a link for an example in `path` documentation.

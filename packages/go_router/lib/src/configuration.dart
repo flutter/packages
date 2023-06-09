@@ -415,9 +415,10 @@ class RouteConfiguration {
         GoRouterState(
           this,
           location: prevLocation,
-          name: null,
           // No name available at the top level trim the query params off the
           // sub-location to match route.redirect
+          fullPath: prevMatchList.fullPath,
+          pathParameters: prevMatchList.pathParameters,
           matchedLocation: prevMatchList.uri.path,
           queryParameters: prevMatchList.uri.queryParameters,
           queryParametersAll: prevMatchList.uri.queryParametersAll,
