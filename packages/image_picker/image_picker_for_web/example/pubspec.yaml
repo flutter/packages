@@ -10,7 +10,7 @@ dependencies:
     sdk: flutter
   image_picker_for_web:
     path: ../
-  image_picker_platform_interface: ^2.2.0
+  image_picker_platform_interface: ^2.8.0
 
 dev_dependencies:
   flutter_driver:
@@ -20,8 +20,3 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   js: ^0.6.3
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {image_picker_for_web: {path: ../../../image_picker/image_picker_for_web}, image_picker_platform_interface: {path: ../../../image_picker/image_picker_platform_interface}}
