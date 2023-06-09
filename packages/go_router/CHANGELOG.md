@@ -1,6 +1,18 @@
+## 8.0.1
+
+- Fixes a link for an example in `path` documentation.
+  documentation.
+
+## 8.0.0
+
+- **BREAKING CHANGE**:
+  - Imperatively pushed GoRoute no longer change URL.
+  - Browser backward and forward button respects imperative route operations.
+- Refactors the route parsing pipeline.
+
 ## 7.1.1
 
-* Removes obsolete null checks on non-nullable values.
+- Removes obsolete null checks on non-nullable values.
 
 ## 7.1.0
 
