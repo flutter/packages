@@ -1,3 +1,7 @@
+## 8.0.2
+
+- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension. 
+
 ## 8.0.1
 
 - Fixes a link for an example in `path` documentation.
