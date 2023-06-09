@@ -26,14 +26,10 @@ void main() {
   ) async {
     // Inject two map widgets...
     await tester.pumpWidget(
-      // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-      // ignore: prefer_const_constructors
-      Directionality(
+      const Directionality(
         textDirection: TextDirection.ltr,
-        // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-        // ignore: prefer_const_constructors
         child: Column(
-          children: const <Widget>[
+          children: <Widget>[
             GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: LatLng(43.362, -5.849),
