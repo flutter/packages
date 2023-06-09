@@ -1,3 +1,7 @@
+## 2.8.0
+
+* Adds `getMedia` and `getMultipleMedia` methods.
+
 ## 2.7.0
 
 * Adds `CameraDelegatingImagePickerPlatform` as a base class for platform
