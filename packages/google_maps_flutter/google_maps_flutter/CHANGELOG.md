@@ -1,3 +1,8 @@
+## 2.3.1
+
+* Fixes a regression from 2.2.8 that could cause incorrect handling of a
+  rapid series of map object updates.
+
 ## 2.3.0
 
 * Endorses [`google_maps_flutter_web`](https://pub.dev/packages/google_maps_flutter_web)
