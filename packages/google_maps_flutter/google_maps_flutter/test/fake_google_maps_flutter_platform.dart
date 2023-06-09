@@ -16,6 +16,10 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   // The IDs passed to each call to buildView, in call order.
   List<int> createdIds = <int>[];
 
+  // A map of creation IDs to fake map instances.
+  Map<int, PlatformMapStateRecorder> mapInstances =
+      <int, PlatformMapStateRecorder>{};
+
   // Whether `dispose` has been called.
   bool disposed = false;
 
@@ -30,37 +34,49 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   Future<void> updateMapConfiguration(
     MapConfiguration update, {
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]?.mapConfiguration = update;
+  }
 
   @override
   Future<void> updateMarkers(
     MarkerUpdates markerUpdates, {
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]?.markerUpdates.add(markerUpdates);
+  }
 
   @override
   Future<void> updatePolygons(
     PolygonUpdates polygonUpdates, {
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]?.polygonUpdates.add(polygonUpdates);
+  }
 
   @override
   Future<void> updatePolylines(
     PolylineUpdates polylineUpdates, {
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]?.polylineUpdates.add(polylineUpdates);
+  }
 
   @override
   Future<void> updateCircles(
     CircleUpdates circleUpdates, {
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]?.circleUpdates.add(circleUpdates);
+  }
 
   @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]?.tileOverlaySets.add(newTileOverlays);
+  }
 
   @override
   Future<void> clearTileCache(
@@ -222,8 +238,32 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     MapObjects mapObjects = const MapObjects(),
     MapConfiguration mapConfiguration = const MapConfiguration(),
   }) {
-    onPlatformViewCreated(0);
     createdIds.add(creationId);
+    mapInstances[creationId] = PlatformMapStateRecorder(
+        widgetConfiguration: widgetConfiguration,
+        mapConfiguration: mapConfiguration,
+        mapObjects: mapObjects);
+    onPlatformViewCreated(creationId);
     return Container();
   }
+}
+
+/// A fake implementation of a native map, which stores all the updates it is
+/// sent for inspection in tests.
+class PlatformMapStateRecorder {
+  PlatformMapStateRecorder({
+    required this.widgetConfiguration,
+    this.mapObjects = const MapObjects(),
+    this.mapConfiguration = const MapConfiguration(),
+  });
+
+  MapWidgetConfiguration widgetConfiguration;
+  MapObjects mapObjects;
+  MapConfiguration mapConfiguration;
+
+  final List<MarkerUpdates> markerUpdates = <MarkerUpdates>[];
+  final List<PolygonUpdates> polygonUpdates = <PolygonUpdates>[];
+  final List<PolylineUpdates> polylineUpdates = <PolylineUpdates>[];
+  final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
+  final List<CircleUpdates> circleUpdates = <CircleUpdates>[];
 }
