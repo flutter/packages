@@ -19,10 +19,16 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry;
+import io.flutter.plugins.imagepicker.Messages.CacheRetrievalResult;
 import io.flutter.plugins.imagepicker.Messages.FlutterError;
+import io.flutter.plugins.imagepicker.Messages.GeneralOptions;
 import io.flutter.plugins.imagepicker.Messages.ImagePickerApi;
+import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
+import io.flutter.plugins.imagepicker.Messages.MediaSelectionOptions;
 import io.flutter.plugins.imagepicker.Messages.Result;
+import io.flutter.plugins.imagepicker.Messages.SourceCamera;
 import io.flutter.plugins.imagepicker.Messages.SourceSpecification;
+import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -279,7 +285,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
   private void setCameraDevice(
       @NonNull ImagePickerDelegate delegate, @NonNull SourceSpecification source) {
-    Messages.SourceCamera camera = source.getCamera();
+    SourceCamera camera = source.getCamera();
     if (camera != null) {
       ImagePickerDelegate.CameraDevice device;
       switch (camera) {
@@ -298,8 +304,8 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   @Override
   public void pickImages(
       @NonNull SourceSpecification source,
-      @NonNull Messages.ImageSelectionOptions options,
-      @NonNull Messages.GeneralOptions generalOptions,
+      @NonNull ImageSelectionOptions options,
+      @NonNull GeneralOptions generalOptions,
       @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
@@ -326,8 +332,8 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
   @Override
   public void pickMedia(
-      @NonNull Messages.MediaSelectionOptions mediaSelectionOptions,
-      @NonNull Messages.GeneralOptions generalOptions,
+      @NonNull MediaSelectionOptions mediaSelectionOptions,
+      @NonNull GeneralOptions generalOptions,
       @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
@@ -342,8 +348,8 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   @Override
   public void pickVideos(
       @NonNull SourceSpecification source,
-      @NonNull Messages.VideoSelectionOptions options,
-      @NonNull Messages.GeneralOptions generalOptions,
+      @NonNull VideoSelectionOptions options,
+      @NonNull GeneralOptions generalOptions,
       @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
@@ -370,7 +376,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
   @Nullable
   @Override
-  public Messages.CacheRetrievalResult retrieveLostResults() {
+  public CacheRetrievalResult retrieveLostResults() {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
       throw new FlutterError(
