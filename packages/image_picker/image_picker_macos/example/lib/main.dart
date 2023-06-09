@@ -37,11 +37,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<XFile>? _imageFileList;
+  List<XFile>? _mediaFileList;
 
   // This must be called from within a setState() callback
   void _setImageFileListFromFile(XFile? value) {
-    _imageFileList = value == null ? null : <XFile>[value];
+    _mediaFileList = value == null ? null : <XFile>[value];
   }
 
   dynamic _pickImageError;
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
           imageQuality: quality,
         );
         setState(() {
-          _imageFileList = pickedFileList;
+          _mediaFileList = pickedFileList;
         });
       } catch (e) {
         setState(() {
@@ -180,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (retrieveError != null) {
       return retrieveError;
     }
-    if (_imageFileList != null) {
+    if (_mediaFileList != null) {
       return Semantics(
         label: 'image_picker_example_picked_images',
         child: ListView.builder(
@@ -188,10 +188,10 @@ class _MyHomePageState extends State<MyHomePage> {
           itemBuilder: (BuildContext context, int index) {
             return Semantics(
               label: 'image_picker_example_picked_image',
-              child: Image.file(File(_imageFileList![index].path)),
+              child: Image.file(File(_mediaFileList![index].path)),
             );
           },
-          itemCount: _imageFileList!.length,
+          itemCount: _mediaFileList!.length,
         ),
       );
     } else if (_pickImageError != null) {
