@@ -2,55 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
+import 'package:file_selector_macos/file_selector_macos.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:file_selector_windows/file_selector_windows.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
-/// The Windows implementation of [ImagePickerPlatform].
+/// The macOS implementation of [ImagePickerPlatform].
 ///
 /// This class implements the `package:image_picker` functionality for
-/// Windows.
-class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
-  /// Constructs a ImagePickerWindows.
-  ImagePickerWindows();
-
-  /// List of image extensions used when picking images
-  @visibleForTesting
-  static const List<String> imageFormats = <String>[
-    'jpg',
-    'jpeg',
-    'png',
-    'bmp',
-    'webp',
-    'gif',
-    'tif',
-    'tiff',
-    'apng'
-  ];
-
-  /// List of video extensions used when picking videos
-  @visibleForTesting
-  static const List<String> videoFormats = <String>[
-    'mov',
-    'wmv',
-    'mkv',
-    'mp4',
-    'webm',
-    'avi',
-    'mpeg',
-    'mpg'
-  ];
+/// macOS.
+class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
+  /// Constructs a platform implementation.
+  ImagePickerMacOS();
 
   /// The file selector used to prompt the user to select images or videos.
   @visibleForTesting
-  static FileSelectorPlatform fileSelector = FileSelectorWindows();
+  static FileSelectorPlatform fileSelector = FileSelectorMacOS();
 
   /// Registers this class as the default instance of [ImagePickerPlatform].
   static void registerWith() {
-    ImagePickerPlatform.instance = ImagePickerWindows();
+    ImagePickerPlatform.instance = ImagePickerMacOS();
   }
 
   // This is soft-deprecated in the platform interface, and is only implemented
@@ -63,13 +34,12 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     int? imageQuality,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) async {
-    final XFile? file = await getImageFromSource(
+    final XFile? file = await getImage(
         source: source,
-        options: ImagePickerOptions(
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            imageQuality: imageQuality,
-            preferredCameraDevice: preferredCameraDevice));
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        preferredCameraDevice: preferredCameraDevice);
     if (file != null) {
       return PickedFile(file.path);
     }
@@ -127,8 +97,11 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
       case ImageSource.camera:
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
+        // TODO(stuartmorgan): Add a native implementation that can use
+        // PHPickerViewController on macOS 13+, with this as a fallback for
+        // older OS versions: https://github.com/flutter/flutter/issues/125829.
         const XTypeGroup typeGroup =
-            XTypeGroup(label: 'Images', extensions: imageFormats);
+            XTypeGroup(uniformTypeIdentifiers: <String>['public.image']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -158,7 +131,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
             maxDuration: maxDuration);
       case ImageSource.gallery:
         const XTypeGroup typeGroup =
-            XTypeGroup(label: 'Videos', extensions: videoFormats);
+            XTypeGroup(uniformTypeIdentifiers: <String>['public.movie']);
         final XFile? file = await fileSelector
             .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
         return file;
@@ -177,8 +150,11 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
+    // TODO(stuartmorgan): Add a native implementation that can use
+    // PHPickerViewController on macOS 13+, with this as a fallback for
+    // older OS versions: https://github.com/flutter/flutter/issues/125829.
     const XTypeGroup typeGroup =
-        XTypeGroup(label: 'Images', extensions: imageFormats);
+        XTypeGroup(uniformTypeIdentifiers: <String>['public.image']);
     final List<XFile> files = await fileSelector
         .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     return files;
