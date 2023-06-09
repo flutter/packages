@@ -43,10 +43,3 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.1
   plugin_platform_interface: ^2.0.0
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   image_picker_linux: {path: ../../image_picker/image_picker_linux}
-   image_picker_macos: {path: ../../image_picker/image_picker_macos}
-   image_picker_windows: {path: ../../image_picker/image_picker_windows}
