@@ -253,6 +253,30 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
   }
 
   @override
+  Future<List<XFile>> getMedia({
+    required MediaOptions options,
+  }) async {
+    final ImageOptions imageOptions = options.imageOptions;
+
+    final Map<String, dynamic> args = <String, dynamic>{
+      'maxImageWidth': imageOptions.maxWidth,
+      'maxImageHeight': imageOptions.maxHeight,
+      'imageQuality': imageOptions.imageQuality,
+      'allowMultiple': options.allowMultiple,
+    };
+
+    final List<XFile>? paths = await _channel
+        .invokeMethod<List<dynamic>?>(
+          'pickMedia',
+          args,
+        )
+        .then((List<dynamic>? paths) =>
+            paths?.map((dynamic path) => XFile(path as String)).toList());
+
+    return paths ?? <XFile>[];
+  }
+
+  @override
   Future<XFile?> getVideo({
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
@@ -280,13 +304,21 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     assert(result.containsKey('path') != result.containsKey('errorCode'));
 
     final String? type = result['type'] as String?;
-    assert(type == kTypeImage || type == kTypeVideo);
+    assert(
+      type == kTypeImage || type == kTypeVideo || type == kTypeMedia,
+    );
 
     RetrieveType? retrieveType;
-    if (type == kTypeImage) {
-      retrieveType = RetrieveType.image;
-    } else if (type == kTypeVideo) {
-      retrieveType = RetrieveType.video;
+    switch (type) {
+      case kTypeImage:
+        retrieveType = RetrieveType.image;
+        break;
+      case kTypeVideo:
+        retrieveType = RetrieveType.video;
+        break;
+      case kTypeMedia:
+        retrieveType = RetrieveType.media;
+        break;
     }
 
     PlatformException? exception;

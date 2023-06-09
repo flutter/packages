@@ -15,7 +15,7 @@ import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  group('$TestCommand', () {
+  group('TestCommand', () {
     late FileSystem fileSystem;
     late Platform mockPlatform;
     late Directory packagesDir;
@@ -235,6 +235,27 @@ void main() {
               getFlutterCommand(mockPlatform),
               const <String>['test', '--color', '--platform=chrome'],
               plugin.path),
+        ]),
+      );
+    });
+
+    test('Does not run on Chrome for web endorsements', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.federated),
+        },
+      );
+
+      await runCapturingPrint(runner, <String>['test']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(getFlutterCommand(mockPlatform),
+              const <String>['test', '--color'], plugin.path),
         ]),
       );
     });

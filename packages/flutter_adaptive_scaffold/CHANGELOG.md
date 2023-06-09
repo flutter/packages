@@ -1,3 +1,8 @@
+## NEXT
+
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 0.1.4
 
 * Use Material 3 NavigationBar instead of BottomNavigationBar

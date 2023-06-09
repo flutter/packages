@@ -8,9 +8,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math' as math;
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:ui' show Color, ImageByteFormat;
 
