@@ -904,12 +904,22 @@ final class GoogleMapController
         permission, android.os.Process.myPid(), android.os.Process.myUid());
   }
 
-  private void destroyMapViewIfNecessary() {
+//   private void destroyMapViewIfNecessary() {
+//     if (mapView == null) {
+//       return;
+//     }
+//     mapView.onDestroy();
+//     mapView = null;
+//   }
+            
+ private void destroyMapViewIfNecessary() {
     if (mapView == null) {
       return;
     }
-    mapView.onDestroy();
-    mapView = null;
+    postFrameCallback(() -> {
+      mapView.onDestroy();
+      mapView = null;
+    });
   }
 
   public void setIndoorEnabled(boolean indoorEnabled) {
