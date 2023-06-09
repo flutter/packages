@@ -55,10 +55,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<XFile>? _imageFileList;
+  List<XFile>? _mediaFileList;
 
   void _setImageFileListFromFile(XFile? value) {
-    _imageFileList = value == null ? null : <XFile>[value];
+    _mediaFileList = value == null ? null : <XFile>[value];
   }
 
   dynamic _pickImageError;
@@ -125,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (pickedFileList != null && context.mounted) {
               _showPickedSnackBar(context, pickedFileList);
             }
-            setState(() => _imageFileList = pickedFileList);
+            setState(() => _mediaFileList = pickedFileList);
           } catch (e) {
             setState(() => _pickImageError = e);
           }
@@ -200,13 +200,13 @@ class _MyHomePageState extends State<MyHomePage> {
     if (retrieveError != null) {
       return retrieveError;
     }
-    if (_imageFileList != null) {
+    if (_mediaFileList != null) {
       return Semantics(
         label: 'image_picker_example_picked_images',
         child: ListView.builder(
           key: UniqueKey(),
           itemBuilder: (BuildContext context, int index) {
-            final XFile image = _imageFileList![index];
+            final XFile image = _mediaFileList![index];
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -223,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             );
           },
-          itemCount: _imageFileList!.length,
+          itemCount: _mediaFileList!.length,
         ),
       );
     } else if (_pickImageError != null) {
@@ -262,7 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if (response.files == null) {
             _setImageFileListFromFile(response.file);
           } else {
-            _imageFileList = response.files;
+            _mediaFileList = response.files;
           }
         });
       }

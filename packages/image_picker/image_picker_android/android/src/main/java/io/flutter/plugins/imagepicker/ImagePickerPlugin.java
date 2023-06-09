@@ -299,8 +299,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   public void pickImages(
       @NonNull SourceSpecification source,
       @NonNull Messages.ImageSelectionOptions options,
-      @NonNull Boolean allowMultiple,
-      @NonNull Boolean usePhotoPicker,
+      @NonNull Messages.GeneralOptions generalOptions,
       @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
@@ -311,12 +310,12 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
     }
 
     setCameraDevice(delegate, source);
-    if (allowMultiple) {
-      delegate.chooseMultiImageFromGallery(options, usePhotoPicker, result);
+    if (generalOptions.getAllowMultiple()) {
+      delegate.chooseMultiImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
     } else {
       switch (source.getType()) {
         case GALLERY:
-          delegate.chooseImageFromGallery(options, usePhotoPicker, result);
+          delegate.chooseImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
           break;
         case CAMERA:
           delegate.takeImageWithCamera(options, result);
@@ -326,11 +325,25 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   }
 
   @Override
+  public void pickMedia(
+      @NonNull Messages.MediaSelectionOptions mediaSelectionOptions,
+      @NonNull Messages.GeneralOptions generalOptions,
+      @NonNull Result<List<String>> result) {
+    ImagePickerDelegate delegate = getImagePickerDelegate();
+    if (delegate == null) {
+      result.error(
+          new FlutterError(
+              "no_activity", "image_picker plugin requires a foreground activity.", null));
+      return;
+    }
+    delegate.chooseMediaFromGallery(mediaSelectionOptions, generalOptions, result);
+  }
+
+  @Override
   public void pickVideos(
       @NonNull SourceSpecification source,
       @NonNull Messages.VideoSelectionOptions options,
-      @NonNull Boolean allowMultiple,
-      @NonNull Boolean usePhotoPicker,
+      @NonNull Messages.GeneralOptions generalOptions,
       @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
@@ -341,12 +354,12 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
     }
 
     setCameraDevice(delegate, source);
-    if (allowMultiple) {
+    if (generalOptions.getAllowMultiple()) {
       result.error(new RuntimeException("Multi-video selection is not implemented"));
     } else {
       switch (source.getType()) {
         case GALLERY:
-          delegate.chooseVideoFromGallery(options, usePhotoPicker, result);
+          delegate.chooseVideoFromGallery(options, generalOptions.getUsePhotoPicker(), result);
           break;
         case CAMERA:
           delegate.takeVideoWithCamera(options, result);

@@ -164,4 +164,28 @@ class ImagePickerWindows extends ImagePickerPlatform {
         .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     return files;
   }
+
+  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not
+  // supported on Windows. If any of these arguments is supplied,
+  // they will be silently ignored by the Windows version of the plugin.
+  @override
+  Future<List<XFile>> getMedia({required MediaOptions options}) async {
+    const XTypeGroup typeGroup = XTypeGroup(
+        label: 'images and videos',
+        extensions: <String>[...imageFormats, ...videoFormats]);
+
+    List<XFile> files;
+
+    if (options.allowMultiple) {
+      files = await fileSelector
+          .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    } else {
+      final XFile? file = await fileSelector
+          .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+      files = <XFile>[
+        if (file != null) file,
+      ];
+    }
+    return files;
+  }
 }

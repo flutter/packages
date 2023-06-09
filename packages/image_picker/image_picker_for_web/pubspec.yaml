@@ -22,7 +22,13 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   image_picker_platform_interface: ^2.2.0
+  mime: ^1.0.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {image_picker_platform_interface: {path: ../../image_picker/image_picker_platform_interface}}
