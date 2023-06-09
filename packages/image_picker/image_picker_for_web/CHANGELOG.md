@@ -1,6 +1,6 @@
 ## 2.2.0
 
-* Adds `getMedia` and `getMultipleMedia` methods.
+* Adds `getMedia` method.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 2.1.12
