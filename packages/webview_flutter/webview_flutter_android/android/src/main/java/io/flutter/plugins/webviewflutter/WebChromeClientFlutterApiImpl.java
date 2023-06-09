@@ -78,7 +78,7 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
       @NonNull WebChromeClient webChromeClient,
       @NonNull String origin,
       @NonNull GeolocationPermissions.Callback callback,
-      WebChromeClientFlutterApi.Reply<Void> replyCallback) {
+      @NonNull WebChromeClientFlutterApi.Reply<Void> replyCallback) {
     new GeolocationPermissionsCallbackFlutterApiImpl(binaryMessenger, instanceManager)
         .create(callback, reply -> {});
     onGeolocationPermissionsShowPrompt(
