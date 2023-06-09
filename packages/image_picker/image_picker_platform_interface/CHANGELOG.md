@@ -1,6 +1,6 @@
 ## 2.8.0
 
-* Adds `getMedia` and `getMultipleMedia` methods.
+* Adds `getMedia` method.
 
 ## 2.7.0
 
