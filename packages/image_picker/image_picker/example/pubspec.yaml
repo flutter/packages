@@ -17,7 +17,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  image_picker_platform_interface: ^2.6.1
+  image_picker_platform_interface: ^2.7.0
   video_player: ^2.1.4
 
 dev_dependencies:
@@ -38,5 +38,4 @@ flutter:
 dependency_overrides:
    image_picker_linux: {path: ../../../image_picker/image_picker_linux}
    image_picker_macos: {path: ../../../image_picker/image_picker_macos}
-   image_picker_platform_interface: {path: ../../../image_picker/image_picker_platform_interface}
    image_picker_windows: {path: ../../../image_picker/image_picker_windows}
