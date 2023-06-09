@@ -8,7 +8,7 @@ and taking new pictures with the camera.
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 21+ | iOS 11+ | Any   | 10.11+ | [See `image_picker_for_web`][1] | Windows 10+ |
+| **Support** | SDK 21+ | iOS 11+ | Any   | 10.14+ | [See `image_picker_for_web`][1] | Windows 10+ |
 
 ## Installation
 
