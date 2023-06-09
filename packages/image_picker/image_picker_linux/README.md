@@ -1,6 +1,6 @@
-# image\_picker\_windows
+# image\_picker\_linux
 
-A Windows implementation of [`image_picker`][1].
+A Linux implementation of [`image_picker`][1].
 
 ## Limitations
 
