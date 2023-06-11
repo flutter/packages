@@ -223,6 +223,10 @@ class NSError {
 
   /// A string containing the localized description of the error.
   final String localizedDescription;
+  @override
+  String toString() {
+    return 'NSError - code: $code, domain: $domain, localizedDescription: $localizedDescription';
+  }
 }
 
 /// A representation of an HTTP cookie.
