@@ -18,6 +18,7 @@
 
 # Dart-owned
 - mockito
+- mime
 
 # Google-owned
 - file_testing
