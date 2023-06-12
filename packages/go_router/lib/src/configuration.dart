@@ -221,7 +221,7 @@ class RouteConfiguration {
           '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
       return true;
     }());
-    final String keyName = name.toLowerCase();
+    final String keyName = name;
     assert(_nameToPath.containsKey(keyName), 'unknown route name: $name');
     final String path = _nameToPath[keyName]!;
     assert(() {
@@ -564,7 +564,7 @@ class RouteConfiguration {
         final String fullPath = concatenatePaths(parentFullPath, route.path);
 
         if (route.name != null) {
-          final String name = route.name!.toLowerCase();
+          final String name = route.name!;
           assert(
               !_nameToPath.containsKey(name),
               'duplication fullpaths for name '
