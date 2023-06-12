@@ -1,7 +1,6 @@
 ## 8.0.2
 
-- Preserves route name case when caching `_nameToPath` by not using `toLowerCase()`.<br>
-this is useful to make route names case sensitive
+- Makes namedLocation and route name related APIs case sensitive.
 
 ## 8.0.1
 
