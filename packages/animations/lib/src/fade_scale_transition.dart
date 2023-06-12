@@ -65,18 +65,12 @@ class FadeScaleTransitionConfiguration extends ModalConfiguration {
   /// a dismissible barrier. [barrierDismissible] cannot be null. If
   /// [barrierDismissible] is true, the [barrierLabel] cannot be null.
   const FadeScaleTransitionConfiguration({
-    Color barrierColor = Colors.black54,
-    bool barrierDismissible = true,
-    Duration transitionDuration = const Duration(milliseconds: 150),
-    Duration reverseTransitionDuration = const Duration(milliseconds: 75),
-    String barrierLabel = 'Dismiss',
-  }) : super(
-          barrierColor: barrierColor,
-          barrierDismissible: barrierDismissible,
-          barrierLabel: barrierLabel,
-          transitionDuration: transitionDuration,
-          reverseTransitionDuration: reverseTransitionDuration,
-        );
+    super.barrierColor = Colors.black54,
+    super.barrierDismissible = true,
+    super.transitionDuration = const Duration(milliseconds: 150),
+    super.reverseTransitionDuration = const Duration(milliseconds: 75),
+    String super.barrierLabel = 'Dismiss',
+  });
 
   @override
   Widget transitionBuilder(
@@ -115,10 +109,10 @@ class FadeScaleTransition extends StatelessWidget {
   /// [animation] is typically an [AnimationController] that drives the transition
   /// animation. [animation] cannot be null.
   const FadeScaleTransition({
-    Key? key,
+    super.key,
     required this.animation,
     this.child,
-  }) : super(key: key);
+  });
 
   /// The animation that drives the [child]'s entrance and exit.
   ///

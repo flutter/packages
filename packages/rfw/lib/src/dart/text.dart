@@ -415,7 +415,6 @@ DynamicMap parseDataFile(String file) {
 /// The syntax for a loop uses the following form:
 ///
 /// <code>...for <i>ident</i> in <i>list</i>: <i>template</i></code>
-/// ```
 ///
 /// ...where _ident_ is the identifier to bind to each value in the list, _list_
 /// is some value that evaluates to a list, and _template_ is a value that is to
@@ -659,7 +658,7 @@ class _StringToken extends _Token {
 }
 
 class _EofToken extends _Token {
-  _EofToken(int line, int column): super(line, column);
+  _EofToken(super.line, super.column);
 
   @override
   String toString() => '<EOF>';

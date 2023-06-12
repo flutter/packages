@@ -94,7 +94,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.newln();
   }
@@ -340,7 +340,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.newln();
   }
@@ -707,7 +707,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   /// ...
   /// @interface FooHostApiCodecReaderWriter : FlutterStandardReaderWriter
   /// ...
-  /// NSObject<FlutterMessageCodec> *FooHostApiCodecGetCodec() {...}
+  /// NSObject<FlutterMessageCodec> *FooHostApiCodecGetCodec(void) {...}
   void _writeCodec(
       Indent indent, String name, ObjcOptions options, Api api, Root root) {
     assert(getCodecClasses(api, root).isNotEmpty);
@@ -779,7 +779,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     final String readerWriterName = '${name}ReaderWriter';
 
     indent.write(
-        'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}() ');
+        'NSObject<FlutterMessageCodec> *${_getCodecGetterName(options.prefix, api.name)}(void) ');
     indent.addScoped('{', '}', () {
       indent
           .writeln('static FlutterStandardMessageCodec *sSharedObject = nil;');
@@ -893,11 +893,11 @@ String _className(String? prefix, String className) {
   }
 }
 
-/// Calculates callback block signature for for async methods.
+/// Calculates callback block signature for async methods.
 String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
   return type.isVoid
       ? 'void (^)(FlutterError *_Nullable)'
-      : 'void (^)(${objcType.ptr.trim()}_Nullable, FlutterError *_Nullable)';
+      : 'void (^)(${objcType.ptr}_Nullable, FlutterError *_Nullable)';
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').

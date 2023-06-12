@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -46,7 +48,7 @@ for the formatted Markdown view in the demo.
 // TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
 // ignore: avoid_implementing_value_types
 class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
-  const BasicMarkdownDemo({Key? key}) : super(key: key);
+  const BasicMarkdownDemo({super.key});
 
   static const String _title = 'Basic Markdown Demo';
 
@@ -125,11 +127,11 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
     String? href,
     String title,
   ) async {
-    showDialog<Widget>(
+    unawaited(showDialog<Widget>(
       context: context,
       builder: (BuildContext context) =>
           _createDialog(context, text, href, title),
-    );
+    ));
   }
 
   Widget _createDialog(

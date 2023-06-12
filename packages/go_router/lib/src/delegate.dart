@@ -10,7 +10,6 @@ import 'package:flutter/widgets.dart';
 import 'builder.dart';
 import 'configuration.dart';
 import 'match.dart';
-import 'matching.dart';
 import 'misc/errors.dart';
 import 'typedefs.dart';
 
@@ -27,41 +26,29 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
-  })  : _configuration = configuration,
-        builder = RouteBuilder(
-          configuration: configuration,
-          builderWithNav: builderWithNav,
-          errorPageBuilder: errorPageBuilder,
-          errorBuilder: errorBuilder,
-          restorationScopeId: restorationScopeId,
-          observers: observers,
-        );
+  }) : _configuration = configuration {
+    builder = RouteBuilder(
+      configuration: configuration,
+      builderWithNav: builderWithNav,
+      errorPageBuilder: errorPageBuilder,
+      errorBuilder: errorBuilder,
+      restorationScopeId: restorationScopeId,
+      observers: observers,
+      onPopPageWithRouteMatch: _handlePopPageWithRouteMatch,
+    );
+  }
 
   /// Builds the top-level Navigator given a configuration and location.
   @visibleForTesting
-  final RouteBuilder builder;
+  late final RouteBuilder builder;
 
   /// Set to true to disable creating history entries on the web.
   final bool routerNeglect;
 
-  RouteMatchList _matchList = RouteMatchList.empty;
-
-  /// Stores the number of times each route route has been pushed.
-  ///
-  /// This is used to generate a unique key for each route.
-  ///
-  /// For example, it would could be equal to:
-  /// ```dart
-  /// {
-  ///   'family': 1,
-  ///   'family/:fid': 2,
-  /// }
-  /// ```
-  final Map<String, int> _pushCounts = <String, int>{};
   final RouteConfiguration _configuration;
 
   _NavigatorStateIterator _createNavigatorStateIterator() =>
-      _NavigatorStateIterator(_matchList, navigatorKey.currentState!);
+      _NavigatorStateIterator(currentConfiguration, navigatorKey.currentState!);
 
   @override
   Future<bool> popRoute() async {
@@ -73,28 +60,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       }
     }
     return false;
-  }
-
-  /// Pushes the given location onto the page stack
-  void push(RouteMatchList matches) {
-    assert(matches.last.route is! ShellRoute);
-
-    // Remap the pageKey to allow any number of the same page on the stack
-    final int count = (_pushCounts[matches.fullpath] ?? 0) + 1;
-    _pushCounts[matches.fullpath] = count;
-    final ValueKey<String> pageKey =
-        ValueKey<String>('${matches.fullpath}-p$count');
-    final ImperativeRouteMatch newPageKeyMatch = ImperativeRouteMatch(
-      route: matches.last.route,
-      subloc: matches.last.subloc,
-      extra: matches.last.extra,
-      error: matches.last.error,
-      pageKey: pageKey,
-      matches: matches,
-    );
-
-    _matchList.push(newPageKeyMatch);
-    notifyListeners();
   }
 
   /// Returns `true` if the active Navigator can pop.
@@ -122,22 +87,22 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   void _debugAssertMatchListNotEmpty() {
     assert(
-      _matchList.isNotEmpty,
+      currentConfiguration.isNotEmpty,
       'You have popped the last page off of the stack,'
       ' there are no pages left to show',
     );
   }
 
-  bool _onPopPage(Route<Object?> route, Object? result) {
+  bool _handlePopPageWithRouteMatch(
+      Route<Object?> route, Object? result, RouteMatch? match) {
     if (!route.didPop(result)) {
       return false;
     }
-    final Page<Object?> page = route.settings as Page<Object?>;
-    final RouteMatch? match = builder.getRouteMatchForPage(page);
-    if (match == null) {
-      return true;
+    assert(match != null);
+    if (match is ImperativeRouteMatch) {
+      match.complete(result);
     }
-    _matchList.remove(match);
+    currentConfiguration = currentConfiguration.remove(match!);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
@@ -146,33 +111,19 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return true;
   }
 
-  /// Replaces the top-most page of the page stack with the given one.
-  ///
-  /// See also:
-  /// * [push] which pushes the given location onto the page stack.
-  void pushReplacement(RouteMatchList matches) {
-    _matchList.remove(_matchList.last);
-    push(matches); // [push] will notify the listeners.
-  }
-
-  /// For internal use; visible for testing only.
-  @visibleForTesting
-  RouteMatchList get matches => _matchList;
-
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
-  RouteMatchList get currentConfiguration => _matchList;
+  RouteMatchList currentConfiguration = RouteMatchList.empty;
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Widget build(BuildContext context) {
     return builder.build(
       context,
-      _matchList,
-      _onPopPage,
+      currentConfiguration,
       routerNeglect,
     );
   }
@@ -180,8 +131,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
-    _matchList = configuration;
-    assert(_matchList.isNotEmpty);
+    currentConfiguration = configuration;
+    assert(currentConfiguration.isNotEmpty || currentConfiguration.isError);
     notifyListeners();
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
@@ -210,6 +161,7 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
     if (index < 0) {
       return false;
     }
+    late RouteBase subRoute;
     for (index -= 1; index >= 0; index -= 1) {
       final RouteMatch match = matchList.matches[index];
       final RouteBase route = match.route;
@@ -247,39 +199,25 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
 
         current = parentNavigatorKey.currentState!;
         return true;
-      } else if (route is ShellRoute) {
+      } else if (route is ShellRouteBase) {
         // Must have a ModalRoute parent because the navigator ShellRoute
         // created must not be the root navigator.
+        final GlobalKey<NavigatorState> navigatorKey =
+            route.navigatorKeyForSubRoute(subRoute);
         final ModalRoute<Object?> parentModalRoute =
-            ModalRoute.of(route.navigatorKey.currentContext!)!;
+            ModalRoute.of(navigatorKey.currentContext!)!;
         // There may be pageless route on top of ModalRoute that the
         // parentNavigatorKey is in. For example an open dialog.
         if (parentModalRoute.isCurrent == false) {
           continue;
         }
-        current = route.navigatorKey.currentState!;
+        current = navigatorKey.currentState!;
         return true;
       }
+      subRoute = route;
     }
     assert(index == -1);
     current = root;
     return true;
   }
-}
-
-/// The route match that represent route pushed through [GoRouter.push].
-// TODO(chunhtai): Removes this once imperative API no longer insert route match.
-class ImperativeRouteMatch extends RouteMatch {
-  /// Constructor for [ImperativeRouteMatch].
-  ImperativeRouteMatch({
-    required super.route,
-    required super.subloc,
-    required super.extra,
-    required super.error,
-    required super.pageKey,
-    required this.matches,
-  });
-
-  /// The matches that produces this route match.
-  final RouteMatchList matches;
 }

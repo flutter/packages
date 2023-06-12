@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:io';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 import 'dart:ui' as ui show Codec, FrameInfo, Image, instantiateImageCodec;
 
 import 'package:flutter/foundation.dart';
@@ -74,7 +71,7 @@ Future<void> main() async {
     // We need to have a testWidgets test in order to initialize the image
     // cache for the other tests, but they timeout if they too are testWidgets
     // tests.
-    tester.pumpWidget(const Placeholder());
+    await tester.pumpWidget(const Placeholder());
   });
 
   test(

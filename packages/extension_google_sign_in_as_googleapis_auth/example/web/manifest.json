@@ -1,11 +1,11 @@
 {
-    "name": "example",
-    "short_name": "example",
+    "name": "Google Sign In + googleapis",
+    "short_name": "gsi+googleapis",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "The Google Sign In example app, using the googleapis package.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

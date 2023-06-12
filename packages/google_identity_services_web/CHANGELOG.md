@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.2.1
+
+* Relaxes the `renderButton` API so any JS-Interop Object can be its `target`.
+* Exposes the `Button*` configuration enums, so the rendered button can be configured.
+
 ## 0.2.0
 
 * Adds `renderButton` API to `id.dart`.

@@ -9,6 +9,7 @@ import 'package:google_identity_services_web/id.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:js/js.dart';
 
+import 'src/dom.dart';
 import 'utils.dart' as utils;
 
 void main() async {
@@ -17,6 +18,17 @@ void main() async {
   setUpAll(() async {
     // Load web/mock-gis.js in the page
     await utils.installGisMock();
+  });
+
+  group('renderButton', () {
+    testWidgets('supports a js-interop target from any library', (_) async {
+      final DomElement target = createDomElement('div');
+
+      id.renderButton(target);
+
+      final DomElement? button = target.querySelector('button');
+      expect(button, isNotNull);
+    });
   });
 
   group('prompt', () {

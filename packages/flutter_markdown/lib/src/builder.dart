@@ -454,7 +454,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         final Widget? child =
             builders[tag]!.visitElementAfter(element, styleSheet.styles[tag]);
         if (child != null) {
-          current.children[0] = child;
+          if (current.children.isEmpty) {
+            current.children.add(child);
+          } else {
+            current.children[0] = child;
+          }
         }
       } else if (tag == 'img') {
         // create an image widget for this image
@@ -470,31 +474,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
         TextAlign? align;
-        // `style` was using in pkg:markdown <= 6.0.1
-        // Can be removed when min pkg:markedwn > 6.0.1
-        final String? style = element.attributes['style'];
-        if (style == null) {
-          // `align` is using in pkg:markdown > 6.0.1
-          final String? alignAttribute = element.attributes['align'];
-          if (alignAttribute == null) {
-            align = tag == 'th' ? styleSheet.tableHeadAlign : TextAlign.left;
-          } else {
-            switch (alignAttribute) {
-              case 'left':
-                align = TextAlign.left;
-                break;
-              case 'center':
-                align = TextAlign.center;
-                break;
-              case 'right':
-                align = TextAlign.right;
-                break;
-            }
-          }
+        final String? alignAttribute = element.attributes['align'];
+        if (alignAttribute == null) {
+          align = tag == 'th' ? styleSheet.tableHeadAlign : TextAlign.left;
         } else {
-          final RegExp regExp = RegExp(r'text-align: (left|center|right)');
-          final Match match = regExp.matchAsPrefix(style)!;
-          switch (match[1]) {
+          switch (alignAttribute) {
             case 'left':
               align = TextAlign.left;
               break;

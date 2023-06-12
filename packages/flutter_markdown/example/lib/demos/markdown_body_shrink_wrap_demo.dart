@@ -32,7 +32,7 @@ This example demonstrates how `MarkdownBody`'s `shrinkWrap` property works.
 
 class MarkdownBodyShrinkWrapDemo extends StatefulWidget
     implements MarkdownDemoWidget {
-  const MarkdownBodyShrinkWrapDemo({Key? key}) : super(key: key);
+  const MarkdownBodyShrinkWrapDemo({super.key});
 
   static const String _title = 'Shrink wrap demo';
 

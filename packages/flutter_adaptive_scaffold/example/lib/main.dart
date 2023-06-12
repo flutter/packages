@@ -54,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   // The index of the selected mail card.
   int? selected;
+
   void selectCard(int? index) {
     setState(() {
       selected = index;
@@ -68,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage>
   late AnimationController _articleIconSlideController;
   late AnimationController _chatIconSlideController;
   late AnimationController _videoIconSlideController;
+
   @override
   void initState() {
     showGridView.addListener(() {
@@ -116,7 +118,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    const Color iconColor = Color.fromARGB(255, 29, 25, 43);
     final Widget trailingNavRail = Column(
       children: <Widget>[
         const Divider(color: Colors.white, thickness: 1.5),
@@ -187,16 +188,21 @@ class _MyHomePageState extends State<MyHomePage>
     // builders.
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
-          label: 'Inbox', icon: Icon(Icons.inbox, color: iconColor)),
+        label: 'Inbox',
+        icon: Icon(Icons.inbox),
+      ),
       NavigationDestination(
-          label: 'Articles',
-          icon: Icon(Icons.article_outlined, color: iconColor)),
+        label: 'Articles',
+        icon: Icon(Icons.article_outlined),
+      ),
       NavigationDestination(
-          label: 'Chat',
-          icon: Icon(Icons.chat_bubble_outline, color: iconColor)),
+        label: 'Chat',
+        icon: Icon(Icons.chat_bubble_outline),
+      ),
       NavigationDestination(
-          label: 'Video',
-          icon: Icon(Icons.video_call_outlined, color: iconColor))
+        label: 'Video',
+        icon: Icon(Icons.video_call_outlined),
+      )
     ];
 
     // Updating the listener value.
@@ -325,11 +331,8 @@ class _MyHomePageState extends State<MyHomePage>
               // You can define inAnimations or outAnimations to override the
               // default offset transition.
               outAnimation: AdaptiveScaffold.topToBottom,
-              builder: (_) => BottomNavigationBarTheme(
-                data: const BottomNavigationBarThemeData(
-                    selectedItemColor: Colors.black),
-                child: AdaptiveScaffold.standardBottomNavigationBar(
-                    destinations: destinations),
+              builder: (_) => AdaptiveScaffold.standardBottomNavigationBar(
+                destinations: destinations,
               ),
             )
           },
@@ -409,11 +412,9 @@ class _LargeComposeIcon extends StatelessWidget {
       child: Column(children: <Widget>[
         Container(
           padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
-          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-          // ignore: prefer_const_constructors
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const <Widget>[
+            children: <Widget>[
               Text(
                 'REPLY',
                 style: TextStyle(color: Colors.deepPurple, fontSize: 15),
@@ -441,14 +442,10 @@ class _LargeComposeIcon extends StatelessWidget {
           ),
           width: 200,
           height: 50,
-          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-          // ignore: prefer_const_constructors
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
-            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-            // ignore: prefer_const_constructors
+          child: const Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 0, 0, 0),
             child: Row(
-              children: const <Widget>[
+              children: <Widget>[
                 Icon(Icons.edit_outlined),
                 SizedBox(width: 20),
                 Center(child: Text('Compose')),
@@ -890,6 +887,7 @@ class _ScreenArguments {
     required this.item,
     required this.selectCard,
   });
+
   final _Item item;
   final _CardSelectedCallback selectCard;
 }

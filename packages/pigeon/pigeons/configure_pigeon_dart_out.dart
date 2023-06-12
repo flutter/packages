@@ -4,7 +4,11 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(dartOut: 'stdout', javaOut: 'stdout'))
+@ConfigurePigeon(PigeonOptions(
+  dartOut: 'stdout',
+  javaOut: 'stdout',
+  dartOptions: DartOptions(),
+))
 @HostApi()
 abstract class ConfigurePigeonApi {
   void ping();

@@ -235,10 +235,12 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Public helper method to be used for creating a [NavigationRailDestination] from
   /// a [NavigationDestination].
   static NavigationRailDestination toRailDestination(
-      NavigationDestination destination) {
+    NavigationDestination destination,
+  ) {
     return NavigationRailDestination(
       label: Text(destination.label),
       icon: destination.icon,
+      selectedIcon: destination.selectedIcon,
     );
   }
 
@@ -253,15 +255,16 @@ class AdaptiveScaffold extends StatefulWidget {
     double width = 72,
     int? selectedIndex,
     bool extended = false,
-    Color backgroundColor = Colors.transparent,
+    Color? backgroundColor,
     EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
     Widget? leading,
     Widget? trailing,
     Function(int)? onDestinationSelected,
-    IconThemeData selectedIconTheme = const IconThemeData(color: Colors.black),
-    IconThemeData unselectedIconTheme =
-        const IconThemeData(color: Colors.black),
-    TextStyle selectedLabelTextStyle = const TextStyle(color: Colors.black),
+    double? groupAlignment,
+    IconThemeData? selectedIconTheme,
+    IconThemeData? unselectedIconTheme,
+    TextStyle? selectedLabelTextStyle,
+    TextStyle? unSelectedLabelTextStyle,
     NavigationRailLabelType labelType = NavigationRailLabelType.none,
   }) {
     if (extended && width == 72) {
@@ -276,24 +279,27 @@ class AdaptiveScaffold extends StatefulWidget {
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return SingleChildScrollView(
-                  child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: NavigationRail(
-                    labelType: labelType,
-                    leading: leading,
-                    trailing: trailing,
-                    onDestinationSelected: onDestinationSelected,
-                    backgroundColor: backgroundColor,
-                    extended: extended,
-                    selectedIndex: selectedIndex,
-                    selectedIconTheme: selectedIconTheme,
-                    unselectedIconTheme: unselectedIconTheme,
-                    selectedLabelTextStyle: selectedLabelTextStyle,
-                    destinations: destinations,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: NavigationRail(
+                      labelType: labelType,
+                      leading: leading,
+                      trailing: trailing,
+                      onDestinationSelected: onDestinationSelected,
+                      groupAlignment: groupAlignment,
+                      backgroundColor: backgroundColor,
+                      extended: extended,
+                      selectedIndex: selectedIndex,
+                      selectedIconTheme: selectedIconTheme,
+                      unselectedIconTheme: unselectedIconTheme,
+                      selectedLabelTextStyle: selectedLabelTextStyle,
+                      unselectedLabelTextStyle: unSelectedLabelTextStyle,
+                      destinations: destinations,
+                    ),
                   ),
                 ),
-              ));
+              );
             },
           ),
         ),
@@ -309,17 +315,25 @@ class AdaptiveScaffold extends StatefulWidget {
     double iconSize = 24,
     ValueChanged<int>? onDestinationSelected,
   }) {
-    currentIndex ??= 0;
     return Builder(
-      builder: (_) {
-        return BottomNavigationBar(
-          currentIndex: currentIndex ?? 0,
-          iconSize: iconSize,
-          items: destinations
-              .map((NavigationDestination e) => _toBottomNavItem(e))
-              .toList(),
-          onTap: onDestinationSelected,
-        );
+      builder: (BuildContext context) {
+        final NavigationBarThemeData currentNavBarTheme =
+            NavigationBarTheme.of(context);
+        return NavigationBarTheme(
+            data: currentNavBarTheme.copyWith(
+              iconTheme: MaterialStateProperty.resolveWith(
+                  (Set<MaterialState> states) {
+                return currentNavBarTheme.iconTheme
+                        ?.resolve(states)
+                        ?.copyWith(size: iconSize) ??
+                    IconTheme.of(context).copyWith(size: iconSize);
+              }),
+            ),
+            child: NavigationBar(
+              selectedIndex: currentIndex ?? 0,
+              destinations: destinations,
+              onDestinationSelected: onDestinationSelected,
+            ));
       },
     );
   }
@@ -471,6 +485,9 @@ class AdaptiveScaffold extends StatefulWidget {
 class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
   @override
   Widget build(BuildContext context) {
+    final NavigationRailThemeData navRailTheme =
+        Theme.of(context).navigationRailTheme;
+
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
@@ -508,6 +525,12 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                       .map((_) => AdaptiveScaffold.toRailDestination(_))
                       .toList(),
                   onDestinationSelected: widget.onSelectedIndexChange,
+                  backgroundColor: navRailTheme.backgroundColor,
+                  selectedIconTheme: navRailTheme.selectedIconTheme,
+                  unselectedIconTheme: navRailTheme.unselectedIconTheme,
+                  selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+                  unSelectedLabelTextStyle:
+                      navRailTheme.unselectedLabelTextStyle,
                 ),
               ),
               widget.largeBreakpoint: SlotLayout.from(
@@ -522,6 +545,12 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                       .map((_) => AdaptiveScaffold.toRailDestination(_))
                       .toList(),
                   onDestinationSelected: widget.onSelectedIndexChange,
+                  backgroundColor: navRailTheme.backgroundColor,
+                  selectedIconTheme: navRailTheme.selectedIconTheme,
+                  unselectedIconTheme: navRailTheme.unselectedIconTheme,
+                  selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+                  unSelectedLabelTextStyle:
+                      navRailTheme.unselectedLabelTextStyle,
                 ),
               ),
             },
@@ -622,13 +651,6 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
       ),
     );
   }
-}
-
-BottomNavigationBarItem _toBottomNavItem(NavigationDestination destination) {
-  return BottomNavigationBarItem(
-    label: destination.label,
-    icon: destination.icon,
-  );
 }
 
 class _BrickLayout extends StatelessWidget {

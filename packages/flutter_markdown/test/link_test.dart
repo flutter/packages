@@ -629,13 +629,7 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        if (!newMarkdown) {
-          // For pkg:markdown <= v6.0.1
-          expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo\bar'));
-        } else {
-          // For pkg:markdown > v6.0.1
-          expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo%08ar'));
-        }
+        expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo%08ar'));
       },
     );
 
@@ -656,15 +650,8 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        if (!newMarkdown) {
-          // For pkg:markdown <= v6.0.1
-          expectLinkTap(
-              linkTapResults, const MarkdownLink('link', 'foo%20b&auml;'));
-        } else {
-          // For pkg:markdown > v6.0.1
-          expectLinkTap(
-              linkTapResults, const MarkdownLink('link', 'foo%20b%C3%A4'));
-        }
+        expectLinkTap(
+            linkTapResults, const MarkdownLink('link', 'foo%20b%C3%A4'));
       },
     );
 
@@ -773,15 +760,8 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        if (!newMarkdown) {
-          // For pkg:markdown <= v6.0.1
-          expectLinkTap(linkTapResults,
-              const MarkdownLink('link', '/url', 'title %22&quot;'));
-        } else {
-          // For pkg:markdown > v6.0.1
-          expectLinkTap(linkTapResults,
-              const MarkdownLink('link', '/url', 'title &quot;&quot;'));
-        }
+        expectLinkTap(linkTapResults,
+            const MarkdownLink('link', '/url', 'title &quot;&quot;'));
       },
     );
 
@@ -802,15 +782,8 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        if (!newMarkdown) {
-          // For pkg:markdown <= v6.0.1
-          expectLinkTap(linkTapResults,
-              const MarkdownLink('link', '/url\u{C2A0}%22title%22'));
-        } else {
-          // For pkg:markdown > v6.0.1
-          expectLinkTap(linkTapResults,
-              const MarkdownLink('link', '/url%EC%8A%A0%22title%22'));
-        }
+        expectLinkTap(linkTapResults,
+            const MarkdownLink('link', '/url%EC%8A%A0%22title%22'));
       },
     );
 
@@ -853,17 +826,10 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        if (!newMarkdown) {
-          // For pkg:markdown <= v6.0.1
-          expectLinkTap(linkTapResults,
-              const MarkdownLink('link', '/url', 'title %22and%22 title'));
-        } else {
-          // For pkg:markdown > v6.0.1
-          expectLinkTap(
-            linkTapResults,
-            const MarkdownLink('link', '/url', 'title &quot;and&quot; title'),
-          );
-        }
+        expectLinkTap(
+          linkTapResults,
+          const MarkdownLink('link', '/url', 'title &quot;and&quot; title'),
+        );
       },
     );
 

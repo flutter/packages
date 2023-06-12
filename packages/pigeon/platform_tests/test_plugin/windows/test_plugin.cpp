@@ -57,8 +57,17 @@ ErrorOr<std::optional<AllNullableTypes>> TestPlugin::EchoAllNullableTypes(
   return *everything;
 }
 
-std::optional<FlutterError> TestPlugin::ThrowError() {
+ErrorOr<std::optional<flutter::EncodableValue>> TestPlugin::ThrowError() {
   return FlutterError("An error");
+}
+
+std::optional<FlutterError> TestPlugin::ThrowErrorFromVoid() {
+  return FlutterError("An error");
+}
+
+ErrorOr<std::optional<flutter::EncodableValue>>
+TestPlugin::ThrowFlutterError() {
+  return FlutterError("code", "message", EncodableValue("details"));
 }
 
 ErrorOr<int64_t> TestPlugin::EchoInt(int64_t an_int) { return an_int; }
@@ -107,8 +116,7 @@ ErrorOr<AllNullableTypesWrapper> TestPlugin::CreateNestedNullableString(
   } else {
     inner_object.set_a_nullable_string(nullptr);
   }
-  AllNullableTypesWrapper wrapper;
-  wrapper.set_values(inner_object);
+  AllNullableTypesWrapper wrapper(inner_object);
   return wrapper;
 }
 
@@ -205,6 +213,11 @@ void TestPlugin::ThrowAsyncError(
 
 void TestPlugin::ThrowAsyncErrorFromVoid(
     std::function<void(std::optional<FlutterError> reply)> result) {
+  result(FlutterError("code", "message", EncodableValue("details")));
+}
+
+void TestPlugin::ThrowAsyncFlutterError(
+    std::function<void(ErrorOr<std::optional<EncodableValue>> reply)> result) {
   result(FlutterError("code", "message", EncodableValue("details")));
 }
 
@@ -320,6 +333,23 @@ void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },
                      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterThrowError(
+    std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
+        result) {
+  flutter_api_->ThrowError(
+      [result](const std::optional<flutter::EncodableValue>& echo) {
+        result(echo);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterThrowErrorFromVoid(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  flutter_api_->ThrowErrorFromVoid(
+      [result]() { result(std::nullopt); },
+      [result](const FlutterError& error) { result(error); });
 }
 
 void TestPlugin::CallFlutterEchoAllTypes(

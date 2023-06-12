@@ -39,8 +39,16 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  override fun throwError() {
+  override fun throwError(): Any? {
     throw Exception("An error");
+  }
+
+  override fun throwErrorFromVoid() {
+    throw Exception("An error");
+  }
+
+  override fun throwFlutterError(): Any? {
+    throw FlutterError("code", "message", "details");
   }
 
   override fun echoInt(anInt: Long): Long {
@@ -123,19 +131,15 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun throwAsyncError(callback: (Result<Any?>) -> Unit) {
-    try {
-      throw Exception("except")
-    } catch (e: Exception) {
-      callback(Result.failure(e))
-    }
+    callback(Result.failure(Exception("except")))
   }
 
   override fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    try {
-      throw Exception("except")
-    } catch (e: Exception) {
-      callback(Result.failure(e))
-    }
+    callback(Result.failure(Exception("except")))
+  }
+
+  override fun throwAsyncFlutterError(callback: (Result<Any?>) -> Unit) {
+    callback(Result.failure(FlutterError("code", "message", "details")))
   }
 
   override fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
@@ -177,7 +181,7 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
     callback(Result.success(aMap))
   }
-  
+
   override fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {
     callback(Result.success(anInt))
   }
@@ -214,14 +218,23 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.noop() { callback(Result.success(Unit)) }
   }
 
+  override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
+    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
+  }
+  override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
+    // See issue https://github.com/flutter/flutter/issues/118243
+  }
+
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
     flutterApi!!.echoAllTypes(everything) { echo -> callback(Result.success(echo)) }
   }
 
   override fun callFlutterSendMultipleNullableTypes(
-    aNullableBool: Boolean?, 
-    aNullableInt: Long?, 
-    aNullableString: String?, 
+    aNullableBool: Boolean?,
+    aNullableInt: Long?,
+    aNullableString: String?,
     callback: (Result<AllNullableTypes>) -> Unit
   ) {
     flutterApi!!.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString) {

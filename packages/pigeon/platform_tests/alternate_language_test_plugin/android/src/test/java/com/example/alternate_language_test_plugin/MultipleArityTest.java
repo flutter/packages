@@ -22,6 +22,7 @@ public class MultipleArityTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
+              @SuppressWarnings("unchecked")
               ArrayList<Object> args =
                   (ArrayList<Object>) MultipleArityFlutterApi.getCodec().decodeMessage(message);
               Long arg0 = (Long) args.get(0);

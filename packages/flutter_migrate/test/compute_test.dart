@@ -251,7 +251,10 @@ void main() {
               .existsSync(),
           false);
     }, timeout: const Timeout(Duration(seconds: 500)));
-  });
+  },
+      // TODO(stuartmorgan): These should not be unit tests, see
+      // https://github.com/flutter/flutter/issues/121257.
+      skip: 'TODO: Speed up, or move to another type of test');
 
   group('MigrateRevisions', () {
     setUp(() async {
@@ -486,7 +489,10 @@ migration:
               .baseRevision,
           '36427af29421f406ac95ff55ea31d1dc49a45b5f');
     });
-  });
+  },
+      // TODO(stuartmorgan): These should not be unit tests, see
+      // https://github.com/flutter/flutter/issues/121257.
+      skip: 'TODO: Speed up, or move to another type of test');
 
   group('project operations', () {
     setUp(() async {
@@ -865,5 +871,8 @@ migration:
       expect(result.mergeResults[10].hasConflict, false);
       expect(result.mergeResults[11].hasConflict, false);
     }, timeout: const Timeout(Duration(seconds: 500)));
-  });
+  },
+      // TODO(stuartmorgan): These should not be unit tests, see
+      // https://github.com/flutter/flutter/issues/121257.
+      skip: 'TODO: Speed up, or move to another type of test');
 }

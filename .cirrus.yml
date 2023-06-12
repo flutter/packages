@@ -1,10 +1,10 @@
-gcp_credentials: ENCRYPTED[!3a93d98d7c95a41f5033834ef30e50928fc5d81239dc632b153c2628200a8187f3811cb01ce338b1ab3b6505a7a65c37!]
+gcp_credentials: ENCRYPTED[!9c8e92e8da192ce2a51b7d4ed9948c4250d0bae3660193d9b901196c9692abbebe784d4a32e9f38b328571d65f6e7aed!]
 
 # Run on PRs and main branch post submit only. Don't run tests when tagging.
 only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
 env:
   CHANNEL: "master" # Default to master when not explicitly set by a task.
-  PLUGIN_TOOL_COMMAND: "dart pub global run flutter_plugin_tools"
+  PLUGIN_TOOL_COMMAND: "dart ./script/tool/bin/flutter_plugin_tools.dart"
 
 install_chrome_linux_template: &INSTALL_CHROME_LINUX
   env:
@@ -76,7 +76,6 @@ task:
     zone: us-central1-a
     namespace: default
   matrix:
-    ### Platform-agnostic tasks ###
     # Repository rules and best-practice enforcement.
     # Only channel-agnostic tests should go here since it is only run once
     # (on Flutter master).
@@ -84,9 +83,9 @@ task:
       always:
         format_script: ./script/tool_runner.sh format --fail-on-change
         license_script: $PLUGIN_TOOL_COMMAND license-check
-        # The major and minor versions here should match the lowest version
+        # The major and minor version here should match the lowest version
         # analyzed in legacy_version_analyze.
-        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.0.0 --min-min-dart-version=2.17.0
+        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.3.0 --allow-dependencies=script/configs/allowed_unpinned_deps.yaml --allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml
         readme_script:
           - ./script/tool_runner.sh readme-check
           # Re-run with --require-excerpts, skipping packages that still need
@@ -95,6 +94,7 @@ task:
           # run with --require-excerpts and no exclusions.
           - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
         dependabot_script: $PLUGIN_TOOL_COMMAND dependabot-check
+        gradle_script: $PLUGIN_TOOL_COMMAND gradle-check
         version_script:
           # For pre-submit, pass the PR labels to the script to allow for
           # check overrides.
@@ -111,16 +111,21 @@ task:
           # This check is only meaningful for PRs, as it validates changes
           # rather than state.
           - if [[ $CIRRUS_PR == "" ]]; then
-          -   ./script/tool_runner.sh federation-safety-check
-          - else
           -   echo "Only run in presubmit"
+          - else
+          -   ./script/tool_runner.sh federation-safety-check
           - fi
     - name: analyze
       env:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+      analyze_tool_script:
+        - cd script/tool
+        - dart analyze --fatal-infos
       analyze_script:
+        # DO NOT change the custom-analysis argument here without changing the Dart repo.
+        # See the comment in script/configs/custom_analysis.yaml for details.
         - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
       pathified_analyze_script:
         # Re-run analysis with path-based dependencies to ensure that publishing
@@ -146,7 +151,7 @@ task:
       matrix:
         # Change the arguments to pubspec-check when changing these values.
         env:
-          CHANNEL: "3.0.5"
+          CHANNEL: "3.7.12"
           DART_VERSION: "2.17.6"
         env:
           CHANNEL: "3.3.10"
@@ -199,7 +204,7 @@ task:
       native_test_script:
         - xvfb-run ./script/tool_runner.sh native-test --linux --no-integration
       drive_script:
-        - xvfb-run ./script/tool_runner.sh drive-examples --linux
+        - xvfb-run ./script/tool_runner.sh drive-examples --linux --exclude=script/configs/exclude_integration_linux.yaml
 
 # Heavy-workload Linux tasks.
 # These use machines with more CPUs and memory, so will reduce parallelization
@@ -219,6 +224,9 @@ task:
     ### Platform-agnostic tasks ###
     - name: dart_unit_tests
       env:
+        matrix:
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 2"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 2"
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
@@ -245,14 +253,19 @@ task:
       skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
       env:
         matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 5"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 5"
-          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 5"
-          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 5"
-          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 5"
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 5 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 6 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 7 --shardCount 8"
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+        MAPS_API_KEY: ENCRYPTED[d6583b08f79f91ea4844c77460f04539965e46ad2fd97fb7c062b4dfe88016228b86ebe8c220ab4187e0c4bd773dc1e7]
+        GCLOUD_FIREBASE_TESTLAB_KEY: ENCRYPTED[1a2eebf9367197bbe812d9a0ea83a53a05aeba4bb5e4964fe6a69727883cd87e51238d39237b1f80b0894c48419ac268]
       build_script:
         - ./script/tool_runner.sh build-examples --apk
       lint_script:
@@ -261,10 +274,14 @@ task:
         # Native integration tests are handled by Firebase Test Lab below, so
         # only run unit tests.
         # Must come after build-examples.
-        - ./script/tool_runner.sh native-test --android --no-integration
-      # TODO(stuartmorgan): Copy firebase_test_lab_script from flutter/plugins
-      # once https://github.com/flutter/flutter/issues/119730 is resolved.
-      # firebase_test_lab_script:
+        - ./script/tool_runner.sh native-test --android --no-integration --exclude script/configs/exclude_native_unit_android.yaml
+      firebase_test_lab_script:
+        - if [[ -n "$GCLOUD_FIREBASE_TESTLAB_KEY" ]]; then
+        -   echo $GCLOUD_FIREBASE_TESTLAB_KEY > ${HOME}/gcloud-service-key.json
+        -   ./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --device model=starqlteue,version=26 --exclude=script/configs/exclude_integration_android.yaml
+        - else
+        -   echo "This user does not have permission to run Firebase Test Lab tests."
+        - fi
       # Upload the full lint results to Cirrus to display in the results UI.
       always:
         android-lint_artifacts:
@@ -278,6 +295,11 @@ task:
           CHANNEL: "master"
           CHANNEL: "stable"
       << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
+      create_all_packages_app_legacy_script:
+        - $PLUGIN_TOOL_COMMAND create-all-packages-app --legacy-source=.ci/legacy_project/all_packages --output-dir=legacy/ --exclude script/configs/exclude_all_packages_app.yaml
+      build_all_packages_legacy_script:
+        - cd legacy/all_packages
+        - flutter build $BUILD_ALL_ARGS --debug
     ### Web tasks ###
     - name: web-platform_tests
       env:
@@ -293,12 +315,12 @@ task:
       build_script:
         - ./script/tool_runner.sh build-examples --web
       drive_script:
-        - ./script/tool_runner.sh drive-examples --web
+        - ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml
     - name: web_benchmarks_test
       env:
         matrix:
-          CHROMIUM_BUILD: "768968" # Chromium 84.0.4147.0
           CHROMIUM_BUILD: "950363" # Chromium 98.0.4758.0
+          CHROMIUM_BUILD: "1097615" # Chromium 111
       << : *INSTALL_CHROME_LINUX
       script:
         - cd packages/web_benchmarks/testing/test_app

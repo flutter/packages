@@ -8,7 +8,8 @@ import 'configuration.dart';
 import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
-import 'matching.dart';
+import 'match.dart';
+import 'misc/errors.dart';
 import 'misc/inherited_router.dart';
 import 'parser.dart';
 import 'typedefs.dart';
@@ -59,35 +60,48 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     int redirectLimit = 5,
     bool routerNeglect = false,
     String? initialLocation,
+    Object? initialExtra,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
-  }) : backButtonDispatcher = RootBackButtonDispatcher() {
+  })  : backButtonDispatcher = RootBackButtonDispatcher(),
+        assert(
+          initialExtra == null || initialLocation != null,
+          'initialLocation must be set in order to use initialExtra',
+        ),
+        assert(_debugCheckPath(routes, true)),
+        assert(
+            _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
+        assert(_debugCheckParentNavigatorKeys(
+            routes,
+            navigatorKey == null
+                ? <GlobalKey<NavigatorState>>[]
+                : <GlobalKey<NavigatorState>>[navigatorKey])) {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
     navigatorKey ??= GlobalKey<NavigatorState>();
 
-    _routeConfiguration = RouteConfiguration(
+    configuration = RouteConfiguration(
       routes: routes,
       topRedirect: redirect ?? (_, __) => null,
       redirectLimit: redirectLimit,
       navigatorKey: navigatorKey,
     );
 
-    _routeInformationParser = GoRouteInformationParser(
-      configuration: _routeConfiguration,
-      debugRequireGoRouteInformationProvider: true,
+    routeInformationParser = GoRouteInformationParser(
+      configuration: configuration,
     );
 
-    _routeInformationProvider = GoRouteInformationProvider(
-        initialRouteInformation: RouteInformation(
-            location: _effectiveInitialLocation(initialLocation)),
-        refreshListenable: refreshListenable);
+    routeInformationProvider = GoRouteInformationProvider(
+      initialLocation: _effectiveInitialLocation(initialLocation),
+      initialExtra: initialExtra,
+      refreshListenable: refreshListenable,
+    );
 
-    _routerDelegate = GoRouterDelegate(
-      configuration: _routeConfiguration,
+    routerDelegate = GoRouterDelegate(
+      configuration: configuration,
       errorPageBuilder: errorPageBuilder,
       errorBuilder: errorBuilder,
       routerNeglect: routerNeglect,
@@ -100,7 +114,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       builderWithNav: (BuildContext context, Widget child) =>
           InheritedGoRouter(goRouter: this, child: child),
     );
-    _routerDelegate.addListener(_handleStateMayChange);
+    routerDelegate.addListener(_handleStateMayChange);
 
     assert(() {
       log.info('setting initial location $initialLocation');
@@ -108,10 +122,125 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     }());
   }
 
-  late final RouteConfiguration _routeConfiguration;
-  late final GoRouteInformationParser _routeInformationParser;
-  late final GoRouterDelegate _routerDelegate;
-  late final GoRouteInformationProvider _routeInformationProvider;
+  static bool _debugCheckPath(List<RouteBase> routes, bool isTopLevel) {
+    for (final RouteBase route in routes) {
+      late bool subRouteIsTopLevel;
+      if (route is GoRoute) {
+        if (isTopLevel) {
+          assert(route.path.startsWith('/'),
+              'top-level path must start with "/": $route');
+        } else {
+          assert(!route.path.startsWith('/') && !route.path.endsWith('/'),
+              'sub-route path may not start or end with /: $route');
+        }
+        subRouteIsTopLevel = false;
+      } else if (route is ShellRouteBase) {
+        subRouteIsTopLevel = isTopLevel;
+      }
+      _debugCheckPath(route.routes, subRouteIsTopLevel);
+    }
+    return true;
+  }
+
+  // Check that each parentNavigatorKey refers to either a ShellRoute's
+  // navigatorKey or the root navigator key.
+  static bool _debugCheckParentNavigatorKeys(
+      List<RouteBase> routes, List<GlobalKey<NavigatorState>> allowedKeys) {
+    for (final RouteBase route in routes) {
+      if (route is GoRoute) {
+        final GlobalKey<NavigatorState>? parentKey = route.parentNavigatorKey;
+        if (parentKey != null) {
+          // Verify that the root navigator or a ShellRoute ancestor has a
+          // matching navigator key.
+          assert(
+              allowedKeys.contains(parentKey),
+              'parentNavigatorKey $parentKey must refer to'
+              " an ancestor ShellRoute's navigatorKey or GoRouter's"
+              ' navigatorKey');
+
+          _debugCheckParentNavigatorKeys(
+            route.routes,
+            <GlobalKey<NavigatorState>>[
+              // Once a parentNavigatorKey is used, only that navigator key
+              // or keys above it can be used.
+              ...allowedKeys.sublist(0, allowedKeys.indexOf(parentKey) + 1),
+            ],
+          );
+        } else {
+          _debugCheckParentNavigatorKeys(
+            route.routes,
+            <GlobalKey<NavigatorState>>[
+              ...allowedKeys,
+            ],
+          );
+        }
+      } else if (route is ShellRoute) {
+        _debugCheckParentNavigatorKeys(
+          route.routes,
+          <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
+        );
+      } else if (route is StatefulShellRoute) {
+        for (final StatefulShellBranch branch in route.branches) {
+          assert(
+              !allowedKeys.contains(branch.navigatorKey),
+              'StatefulShellBranch must not reuse an ancestor navigatorKey '
+              '(${branch.navigatorKey})');
+
+          _debugCheckParentNavigatorKeys(
+            branch.routes,
+            <GlobalKey<NavigatorState>>[
+              ...allowedKeys,
+              branch.navigatorKey,
+            ],
+          );
+        }
+      }
+    }
+    return true;
+  }
+
+  static bool _debugVerifyNoDuplicatePathParameter(
+      List<RouteBase> routes, Map<String, GoRoute> usedPathParams) {
+    for (final RouteBase route in routes) {
+      if (route is! GoRoute) {
+        continue;
+      }
+      for (final String pathParam in route.pathParameters) {
+        if (usedPathParams.containsKey(pathParam)) {
+          final bool sameRoute = usedPathParams[pathParam] == route;
+          throw GoError(
+              "duplicate path parameter, '$pathParam' found in ${sameRoute ? '$route' : '${usedPathParams[pathParam]}, and $route'}");
+        }
+        usedPathParams[pathParam] = route;
+      }
+      _debugVerifyNoDuplicatePathParameter(route.routes, usedPathParams);
+      route.pathParameters.forEach(usedPathParams.remove);
+    }
+    return true;
+  }
+
+  /// Whether the imperative API affects browser URL bar.
+  ///
+  /// The Imperative APIs refer to [push], [pushReplacement], or [Replace].
+  ///
+  /// If this option is set to true. The URL bar reflects the top-most [GoRoute]
+  /// regardless the [RouteBase]s underneath.
+  ///
+  /// If this option is set to false. The URL bar reflects the [RouteBase]s
+  /// in the current state but ignores any [RouteBase]s that are results of
+  /// imperative API calls.
+  ///
+  /// Defaults to false.
+  ///
+  /// This option is for backward compatibility. It is strongly suggested
+  /// against setting this value to true, as the URL of the top-most [GoRoute]
+  /// is not always deeplink-able.
+  ///
+  /// This option only affects web platform.
+  static bool optionURLReflectsImperativeAPIs = false;
+
+  /// The route configuration used in go_router.
+  late final RouteConfiguration configuration;
 
   @override
   final BackButtonDispatcher backButtonDispatcher;
@@ -119,22 +248,15 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// The router delegate. Provide this to the MaterialApp or CupertinoApp's
   /// `.router()` constructor
   @override
-  GoRouterDelegate get routerDelegate => _routerDelegate;
+  late final GoRouterDelegate routerDelegate;
 
   /// The route information provider used by [GoRouter].
   @override
-  GoRouteInformationProvider get routeInformationProvider =>
-      _routeInformationProvider;
+  late final GoRouteInformationProvider routeInformationProvider;
 
   /// The route information parser used by [GoRouter].
   @override
-  GoRouteInformationParser get routeInformationParser =>
-      _routeInformationParser;
-
-  /// The route configuration. Used for testing.
-  // TODO(johnpryan): Remove this, integration tests shouldn't need access
-  @visibleForTesting
-  RouteConfiguration get routeConfiguration => _routeConfiguration;
+  late final GoRouteInformationParser routeInformationParser;
 
   /// Gets the current location.
   // TODO(chunhtai): deprecates this once go_router_builder is migrated to
@@ -143,7 +265,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   String _location = '/';
 
   /// Returns `true` if there is at least two or more route can be pop.
-  bool canPop() => _routerDelegate.canPop();
+  bool canPop() => routerDelegate.canPop();
 
   void _handleStateMayChange() {
     final String newLocation;
@@ -156,7 +278,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
           .uri
           .toString();
     } else {
-      newLocation = _routerDelegate.currentConfiguration.uri.toString();
+      newLocation = routerDelegate.currentConfiguration.uri.toString();
     }
     if (_location != newLocation) {
       _location = newLocation;
@@ -168,69 +290,75 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// This is useful for redirecting to a named location.
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) =>
-      _routeInformationParser.configuration.namedLocation(
+      configuration.namedLocation(
         name,
-        params: params,
-        queryParams: queryParams,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
       );
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
   void go(String location, {Object? extra}) {
-    assert(() {
-      log.info('going to $location');
-      return true;
-    }());
-    _routeInformationProvider.value =
-        RouteInformation(location: location, state: extra);
+    log.info('going to $location');
+    routeInformationProvider.go(location, extra: extra);
+  }
+
+  /// Restore the RouteMatchList
+  void restore(RouteMatchList matchList) {
+    log.info('going to ${matchList.uri}');
+    routeInformationProvider.restore(
+      matchList.uri.toString(),
+      encodedMatchList: RouteMatchListCodec(configuration).encode(matchList),
+    );
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.
-  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
+  /// `name='person', pathParameters={'fid': 'f2', 'pid': 'p1'}`
   /// Navigate to the named route.
   void goNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
       go(
-        namedLocation(name, params: params, queryParams: queryParams),
+        namedLocation(name,
+            pathParameters: pathParameters, queryParameters: queryParameters),
         extra: extra,
       );
 
   /// Push a URI location onto the page stack w/ optional query parameters, e.g.
-  /// `/family/f2/person/p1?color=blue`
-  void push(String location, {Object? extra}) {
-    assert(() {
-      log.info('pushing $location');
-      return true;
-    }());
-    _routeInformationParser
-        .parseRouteInformationWithDependencies(
-      RouteInformation(location: location, state: extra),
-      // TODO(chunhtai): avoid accessing the context directly through global key.
-      // https://github.com/flutter/flutter/issues/99112
-      _routerDelegate.navigatorKey.currentContext!,
-    )
-        .then<void>((RouteMatchList matches) {
-      _routerDelegate.push(matches);
-    });
+  /// `/family/f2/person/p1?color=blue`.
+  ///
+  /// See also:
+  /// * [pushReplacement] which replaces the top-most page of the page stack and
+  ///   always use a new page key.
+  /// * [replace] which replaces the top-most page of the page stack but treats
+  ///   it as the same page. The page key will be reused. This will preserve the
+  ///   state and not run any page animation.
+  Future<T?> push<T extends Object?>(String location, {Object? extra}) async {
+    log.info('pushing $location');
+    return routeInformationProvider.push<T>(
+      location,
+      base: routerDelegate.currentConfiguration,
+      extra: extra,
+    );
   }
 
   /// Push a named route onto the page stack w/ optional parameters, e.g.
-  /// `name='person', params={'fid': 'f2', 'pid': 'p1'}`
-  void pushNamed(
+  /// `name='person', pathParameters={'fid': 'f2', 'pid': 'p1'}`
+  Future<T?> pushNamed<T extends Object?>(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) =>
-      push(
-        namedLocation(name, params: params, queryParams: queryParams),
+      push<T>(
+        namedLocation(name,
+            pathParameters: pathParameters, queryParameters: queryParameters),
         extra: extra,
       );
 
@@ -239,35 +367,79 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///
   /// See also:
   /// * [go] which navigates to the location.
-  /// * [push] which pushes the location onto the page stack.
-  void pushReplacement(String location, {Object? extra}) {
-    routeInformationParser
-        .parseRouteInformationWithDependencies(
-      RouteInformation(location: location, state: extra),
-      // TODO(chunhtai): avoid accessing the context directly through global key.
-      // https://github.com/flutter/flutter/issues/99112
-      _routerDelegate.navigatorKey.currentContext!,
-    )
-        .then<void>((RouteMatchList matchList) {
-      routerDelegate.pushReplacement(matchList);
-    });
+  /// * [push] which pushes the given location onto the page stack.
+  /// * [replace] which replaces the top-most page of the page stack but treats
+  ///   it as the same page. The page key will be reused. This will preserve the
+  ///   state and not run any page animation.
+  Future<T?> pushReplacement<T extends Object?>(String location,
+      {Object? extra}) {
+    log.info('pushReplacement $location');
+    return routeInformationProvider.pushReplacement<T>(
+      location,
+      base: routerDelegate.currentConfiguration,
+      extra: extra,
+    );
   }
 
   /// Replaces the top-most page of the page stack with the named route w/
-  /// optional parameters, e.g. `name='person', params={'fid': 'f2', 'pid':
+  /// optional parameters, e.g. `name='person', pathParameters={'fid': 'f2', 'pid':
   /// 'p1'}`.
   ///
   /// See also:
   /// * [goNamed] which navigates a named route.
   /// * [pushNamed] which pushes a named route onto the page stack.
-  void pushReplacementNamed(
+  Future<T?> pushReplacementNamed<T extends Object?>(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) {
-    pushReplacement(
-      namedLocation(name, params: params, queryParams: queryParams),
+    return pushReplacement<T>(
+      namedLocation(name,
+          pathParameters: pathParameters, queryParameters: queryParameters),
+      extra: extra,
+    );
+  }
+
+  /// Replaces the top-most page of the page stack with the given one but treats
+  /// it as the same page.
+  ///
+  /// The page key will be reused. This will preserve the state and not run any
+  /// page animation.
+  ///
+  /// See also:
+  /// * [push] which pushes the given location onto the page stack.
+  /// * [pushReplacement] which replaces the top-most page of the page stack but
+  ///   always uses a new page key.
+  Future<T?> replace<T>(String location, {Object? extra}) {
+    log.info('replace $location');
+    return routeInformationProvider.replace<T>(
+      location,
+      base: routerDelegate.currentConfiguration,
+      extra: extra,
+    );
+  }
+
+  /// Replaces the top-most page with the named route and optional parameters,
+  /// preserving the page key.
+  ///
+  /// This will preserve the state and not run any page animation. Optional
+  /// parameters can be providded to the named route, e.g. `name='person',
+  /// pathParameters={'fid': 'f2', 'pid': 'p1'}`.
+  ///
+  /// See also:
+  /// * [pushNamed] which pushes the given location onto the page stack.
+  /// * [pushReplacementNamed] which replaces the top-most page of the page
+  ///   stack but always uses a new page key.
+  Future<T?> replaceNamed<T>(
+    String name, {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    Object? extra,
+  }) {
+    return replace(
+      namedLocation(name,
+          pathParameters: pathParameters, queryParameters: queryParameters),
       extra: extra,
     );
   }
@@ -281,7 +453,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       log.info('popping $location');
       return true;
     }());
-    _routerDelegate.pop<T>(result);
+    routerDelegate.pop<T>(result);
   }
 
   /// Refresh the route.
@@ -290,7 +462,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       log.info('refreshing $location');
       return true;
     }());
-    _routeInformationProvider.notifyListeners();
+    routeInformationProvider.notifyListeners();
   }
 
   /// Find the current GoRouter in the widget tree.
@@ -301,11 +473,18 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     return inherited!.goRouter;
   }
 
+  /// The current GoRouter in the widget tree, if any.
+  static GoRouter? maybeOf(BuildContext context) {
+    final InheritedGoRouter? inherited =
+        context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
+    return inherited?.goRouter;
+  }
+
   @override
   void dispose() {
-    _routeInformationProvider.dispose();
-    _routerDelegate.removeListener(_handleStateMayChange);
-    _routerDelegate.dispose();
+    routeInformationProvider.dispose();
+    routerDelegate.removeListener(_handleStateMayChange);
+    routerDelegate.dispose();
     super.dispose();
   }
 

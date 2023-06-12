@@ -151,7 +151,7 @@ class BenchmarkServer {
               'Requested to run benchmark ${benchmarkIterator.current}, but '
               'got results for $benchmarkName.',
             ));
-            server.close();
+            unawaited(server.close());
           }
 
           // Trace data is null when the benchmark is not frame-based, such as RawRecorder.
@@ -180,7 +180,7 @@ class BenchmarkServer {
         } else if (request.requestedUri.path.endsWith('/on-error')) {
           final Map<String, dynamic> errorDetails =
               json.decode(await request.readAsString()) as Map<String, dynamic>;
-          server.close();
+          unawaited(server.close());
           // Keep the stack trace as a string. It's thrown in the browser, not this Dart VM.
           final String errorMessage =
               'Caught browser-side error: ${errorDetails['error']}\n${errorDetails['stackTrace']}';
@@ -278,11 +278,11 @@ class BenchmarkServer {
 
         final List<String> scoreKeys =
             List<String>.from(profile['scoreKeys'] as Iterable<dynamic>);
-        if (scoreKeys == null || scoreKeys.isEmpty) {
+        if (scoreKeys.isEmpty) {
           throw StateError('No score keys in benchmark "$benchmarkName"');
         }
         for (final String scoreKey in scoreKeys) {
-          if (scoreKey == null || scoreKey.isEmpty) {
+          if (scoreKey.isEmpty) {
             throw StateError(
                 'Score key is empty in benchmark "$benchmarkName". '
                 'Received [${scoreKeys.join(', ')}]');
@@ -314,7 +314,7 @@ class BenchmarkServer {
         );
         await chrome?.whenExits;
       }
-      server.close();
+      unawaited(server.close());
     }
   }
 }

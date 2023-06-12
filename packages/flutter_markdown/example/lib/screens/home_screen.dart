@@ -17,7 +17,7 @@ import '../shared/markdown_demo_widget.dart';
 // ignore_for_file: public_member_api_docs
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({super.key});
 
   static const String routeName = '/homeScreen';
 
@@ -44,7 +44,8 @@ class HomeScreen extends StatelessWidget {
           color: Colors.black12,
           child: ListView(
             children: <Widget>[
-              for (MarkdownDemoWidget demo in _demos) DemoCard(widget: demo),
+              for (final MarkdownDemoWidget demo in _demos)
+                DemoCard(widget: demo),
             ],
           ),
         ),

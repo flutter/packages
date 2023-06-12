@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 // ignore_for_file: public_member_api_docs
 
 abstract class MarkdownDemoWidget extends Widget {
-  const MarkdownDemoWidget({Key? key}) : super(key: key);
+  const MarkdownDemoWidget({super.key});
 
   // The title property should be a short name to uniquely identify the example
   // demo. The title will be displayed at the top of the card in the home screen

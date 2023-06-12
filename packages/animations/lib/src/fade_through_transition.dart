@@ -162,12 +162,12 @@ class FadeThroughTransition extends StatelessWidget {
   /// The [animation] and [secondaryAnimation] argument are required and must
   /// not be null.
   const FadeThroughTransition({
-    Key? key,
+    super.key,
     required this.animation,
     required this.secondaryAnimation,
     this.fillColor,
     this.child,
-  }) : super(key: key);
+  });
 
   /// The animation that drives the [child]'s entrance and exit.
   ///
@@ -213,8 +213,7 @@ class FadeThroughTransition extends StatelessWidget {
 }
 
 class _ZoomedFadeInFadeOut extends StatelessWidget {
-  const _ZoomedFadeInFadeOut({Key? key, required this.animation, this.child})
-      : super(key: key);
+  const _ZoomedFadeInFadeOut({required this.animation, this.child});
 
   final Animation<double> animation;
   final Widget? child;
