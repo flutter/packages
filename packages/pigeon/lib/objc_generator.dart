@@ -965,8 +965,8 @@ String _propertyTypeForDartType(NamedType field) {
     'Int32List': 'strong',
     'Int64List': 'strong',
     'Float64List': 'strong',
-    'List': 'strong',
-    'Map': 'strong',
+    'List': 'copy',
+    'Map': 'copy',
   };
 
   final String? result = propertyTypeForDartTypeMap[field.type.baseName];
