@@ -42,7 +42,7 @@ import 'xcode_analyze_command.dart';
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
   final Directory scriptBinDir =
-      fileSystem.file(io.Platform.script.path).parent;
+      fileSystem.file(io.Platform.script.toFilePath()).parent;
   final Directory root = scriptBinDir.parent.parent.parent;
   final Directory packagesDir = root.childDirectory('packages');
 
