@@ -441,7 +441,7 @@ GoRouteData.\$route(
 
   late final List<ParameterElement> _ctorParams =
       _ctor.parameters.where((ParameterElement element) {
-    if (element.isRequired && !element.isExtraField) {
+    if (_pathParams.contains(element.name)) {
       return true;
     }
     return false;
@@ -449,7 +449,7 @@ GoRouteData.\$route(
 
   late final List<ParameterElement> _ctorQueryParams = _ctor.parameters
       .where((ParameterElement element) =>
-          element.isOptional && !element.isExtraField)
+          !_pathParams.contains(element.name) && !element.isExtraField)
       .toList();
 
   ConstructorElement get _ctor {
