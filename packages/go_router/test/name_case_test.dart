@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -7,7 +11,7 @@ void main() {
     'Route names are case sensitive',
     (WidgetTester tester) async {
       // config router with 2 routes with the same name but different case (Name, name)
-      final navKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
       final GoRouter router = GoRouter(
         navigatorKey: navKey,
         routes: <GoRoute>[
