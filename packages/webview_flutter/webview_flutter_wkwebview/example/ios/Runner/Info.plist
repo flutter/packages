@@ -47,5 +47,10 @@
 	<true/>
     <key>NSCameraUsageDescription</key>
     <string>If you want to use the camera, you have to give permission.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+	    <key>NSAllowsArbitraryLoadsInWebContent</key>
+	    <true/>
+	</dict>
 </dict>
 </plist>

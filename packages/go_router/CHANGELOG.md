@@ -1,3 +1,8 @@
+## 8.0.1
+
+- Fixes a link for an example in `path` documentation.
+  documentation.
+
 ## 8.0.0
 
 - **BREAKING CHANGE**:
