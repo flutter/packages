@@ -11,9 +11,7 @@ void main() {
     'Route names are case sensitive',
     (WidgetTester tester) async {
       // config router with 2 routes with the same name but different case (Name, name)
-      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
       final GoRouter router = GoRouter(
-        navigatorKey: navKey,
         routes: <GoRoute>[
           GoRoute(
             path: '/',
@@ -37,12 +35,14 @@ void main() {
       );
 
       // go to ScreenB
-      navKey.currentContext!.goNamed('name');
-      assert(GoRouter.of(navKey.currentContext!).location == '/path');
+      router.goNamed('name');
+      await tester.pumpAndSettle();
+      expect(find.byType(ScreenB), findsOneWidget);
 
       // go to ScreenA
-      navKey.currentContext!.goNamed('Name');
-      assert(GoRouter.of(navKey.currentContext!).location == '/');
+      router.goNamed('Name');
+      await tester.pumpAndSettle();
+      expect(find.byType(ScreenA), findsOneWidget);
     },
   );
 }
