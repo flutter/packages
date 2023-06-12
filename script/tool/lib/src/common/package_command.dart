@@ -581,7 +581,7 @@ abstract class PackageCommand extends Command<void> {
       return null;
     }
     // If the current directory is a direct subdirectory of the packages
-    // diretory, then that's the target.
+    // directory, then that's the target.
     if (currentDir.parent.path == absolutePackagesDir.path) {
       return currentDir.basename;
     }
