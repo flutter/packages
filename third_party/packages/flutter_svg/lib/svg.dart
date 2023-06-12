@@ -496,6 +496,7 @@ class SvgPicture extends StatelessWidget {
       colorFilter: colorFilter,
       placeholderBuilder: placeholderBuilder,
       clipViewbox: !allowDrawingOutsideViewBox,
+      matchTextDirection: matchTextDirection,
     );
   }
 }

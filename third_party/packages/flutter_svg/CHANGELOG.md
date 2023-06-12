@@ -1,5 +1,9 @@
 # CHANGES
 
+## 2.0.7
+
+- Fix broken `matchTextDirection`.
+
 ## 2.0.6
 
 - Fix test-only issues with latest Flutter stable (3.10).
