@@ -42,7 +42,10 @@ The examples below assume they are being run from the repository root, but
 the script works from anywhere. If you develop in flutter/packages frequently,
 it may be useful to make an alias for
 `dart run /absolute/path/to/script/tool/bin/flutter_plugin_tools.dart` so that
-you can easily run commands from within packages.
+you can easily run commands from within packages. For that use case there is
+also a `--current-package` flag as an alternative to `--packages`, to target the
+current working directory's package (or enclosing package; it can be used from
+anywhere within a package).
 
 ### Format Code
 
