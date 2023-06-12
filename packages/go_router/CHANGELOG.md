@@ -1,3 +1,7 @@
+## 8.0.2 
+
+- Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
+
 ## 8.0.1
 
 - Fixes a link for an example in `path` documentation.
