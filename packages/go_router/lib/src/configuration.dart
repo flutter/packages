@@ -552,7 +552,7 @@ class RouteConfiguration {
         final String fullPath = concatenatePaths(parentFullpath, route.path);
         sb.writeln('  => ${''.padLeft(depth * 2)}$fullPath');
         _debugFullPathsFor(route.routes, fullPath, depth + 1, sb);
-      } else if (route is ShellRoute || route is StatefulShellRoute) {
+      } else if (route is ShellRouteBase) {
         _debugFullPathsFor(route.routes, parentFullpath, depth, sb);
       }
     }
