@@ -1,3 +1,8 @@
+## 8.0.2
+
+- Preserves route name case when caching `_nameToPath` by not using `toLowerCase()`.<br>
+this is useful to make route names case sensitive
+
 ## 8.0.1
 
 - Fixes a link for an example in `path` documentation.
