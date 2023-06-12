@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.7
+
+- Support for matching the ambient text direction.
+
 ## 1.1.6
 
 - Fix bug in text position computation when transforms are involved.

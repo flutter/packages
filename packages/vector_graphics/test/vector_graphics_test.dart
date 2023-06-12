@@ -636,6 +636,56 @@ void main() {
     expect((await loader.loadBytes(null)).lengthInBytes, 0);
     expect((await packageLoader.loadBytes(null)).lengthInBytes, 1);
   });
+
+  testWidgets('Respects text direction', (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.rtl,
+        child: DefaultAssetBundle(
+          bundle: testBundle,
+          child: const VectorGraphic(
+            loader: AssetBytesLoader('foo.svg'),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Transform), findsNothing);
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.rtl,
+        child: DefaultAssetBundle(
+          bundle: testBundle,
+          child: const VectorGraphic(
+            loader: AssetBytesLoader('foo.svg'),
+            matchTextDirection: true,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final Matrix4 matrix = Matrix4.identity();
+    final RenderObject transformObject =
+        find.byType(Transform).evaluate().first.renderObject!;
+    bool visited = false;
+    transformObject.visitChildren((RenderObject child) {
+      if (!visited) {
+        transformObject.applyPaintTransform(child, matrix);
+      }
+      visited = true;
+    });
+    expect(visited, true);
+    expect(matrix.getTranslation().x,
+        100); // Width specified in the TestAssetBundle.
+    expect(matrix.getTranslation().y, 0);
+    expect(matrix.row0.x, -1);
+    expect(matrix.row1.y, 1);
+  });
 }
 
 class TestBundle extends Fake implements AssetBundle {

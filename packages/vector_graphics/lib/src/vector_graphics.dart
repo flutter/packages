@@ -67,6 +67,7 @@ VectorGraphic createCompatVectorGraphic({
   Animation<double>? opacity,
   RenderingStrategy strategy = RenderingStrategy.picture,
   bool clipViewbox = true,
+  bool matchTextDirection = false,
 }) {
   return VectorGraphic._(
     key: key,
@@ -84,6 +85,7 @@ VectorGraphic createCompatVectorGraphic({
     opacity: opacity,
     strategy: strategy,
     clipViewbox: clipViewbox,
+    matchTextDirection: matchTextDirection,
   );
 }
 
@@ -96,6 +98,9 @@ VectorGraphic createCompatVectorGraphic({
 class VectorGraphic extends StatefulWidget {
   /// A widget that displays a vector graphics created via a
   /// [VectorGraphicsCodec].
+  ///
+  /// If `matchTextDirection` is set to true, the picture will be flipped
+  /// horizontally in [TextDirection.rtl] contexts.
   ///
   /// The [semanticsLabel] can be used to identify the purpose of this picture for
   /// screen reading software.
@@ -118,6 +123,7 @@ class VectorGraphic extends StatefulWidget {
     this.colorFilter,
     this.opacity,
     this.clipViewbox = true,
+    this.matchTextDirection = false,
   }) : strategy = RenderingStrategy.raster;
 
   /// A specialized constructor for flutter_svg interop.
@@ -137,6 +143,7 @@ class VectorGraphic extends StatefulWidget {
     this.opacity,
     this.strategy = RenderingStrategy.picture,
     this.clipViewbox = true,
+    this.matchTextDirection = false,
   });
 
   /// A delegate for fetching the raw bytes of the vector graphic.
@@ -182,7 +189,10 @@ class VectorGraphic extends StatefulWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
-  /// The [Semantics.label] for this picture.
+  /// If true, will horizontally flip the picture in [TextDirection.rtl] contexts.
+  final bool matchTextDirection;
+
+  /// The [Semantics] label for this picture.
   ///
   /// The value indicates the purpose of the picture, and will be read out by
   /// screen readers.
@@ -440,16 +450,15 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         pictureInfo.size.height / height!,
       );
 
-      final Widget renderWidget;
       if (_webRenderObject) {
-        renderWidget = _RawWebVectorGraphicWidget(
+        child = _RawWebVectorGraphicWidget(
           pictureInfo: pictureInfo,
           assetKey: _pictureInfo!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
         );
       } else if (widget.strategy == RenderingStrategy.raster) {
-        renderWidget = _RawVectorGraphicWidget(
+        child = _RawVectorGraphicWidget(
           pictureInfo: pictureInfo,
           assetKey: _pictureInfo!.key,
           colorFilter: widget.colorFilter,
@@ -457,12 +466,24 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           scale: scale,
         );
       } else {
-        renderWidget = _RawPictureVectorGraphicWidget(
+        child = _RawPictureVectorGraphicWidget(
           pictureInfo: pictureInfo,
           assetKey: _pictureInfo!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
         );
+      }
+
+      if (widget.matchTextDirection) {
+        final TextDirection direction = Directionality.of(context);
+        if (direction == TextDirection.rtl) {
+          child = Transform(
+            transform: Matrix4.identity()
+              ..translate(pictureInfo.size.width)
+              ..scale(-1.0, 1.0),
+            child: child,
+          );
+        }
       }
 
       child = SizedBox(
@@ -474,7 +495,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           clipBehavior: widget.clipBehavior,
           child: SizedBox.fromSize(
             size: pictureInfo.size,
-            child: renderWidget,
+            child: child,
           ),
         ),
       );
