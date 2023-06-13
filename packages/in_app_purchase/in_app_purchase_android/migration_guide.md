@@ -77,17 +77,17 @@ if (sku.type == SkuType.subs) {
 Code after migration:
 
 ```dart
-ProductDetailsWrapper product;
+ProductDetails productDetails;
 
-if (product.productType == ProductType.subs) {
-  List<SubscriptionOfferDetailsWrapper> offers = product.subscriptionOfferDetails!;
-
-  Iterable<SubscriptionOfferDetailsWrapper> freeTrialOffers = offers
-    .where((SubscriptionOfferDetailsWrapper offer) => offer.pricingPhases.first.priceAmountMicros == 0);
-
-  if (freeTrialOffers.isNotEmpty) {
-    SubscriptionOfferDetailsWrapper freeTrialOffer = freeTrialOffers.first;
-    // Free trial period logic.
+if (productDetails is GooglePlayProductDetails) {
+  ProductDetailsWrapper product = productDetails.productDetails;
+  if (product.productType == ProductType.subs) {
+    SubscriptionOfferDetailsWrapper offer =
+        product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
+    List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
+    if (pricingPhases.first.priceAmountMicros == 0) {
+      // Free trial period logic.
+    }
   }
 }
 ```
@@ -113,23 +113,19 @@ if (sku.type == SkuType.subs) {
 Code after migration:
 
 ```dart
-ProductDetailsWrapper product;
+ProductDetails productDetails;
 
-if (product.productType == ProductType.subs) {
-  List<SubscriptionOfferDetailsWrapper> offers = product.subscriptionOfferDetails!;
-
-  Iterable<SubscriptionOfferDetailsWrapper> introductoryOffers = offers
-    .where((SubscriptionOfferDetailsWrapper offer) {
-      List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
-      if (pricingPhases.length < 2) {
-        return false;
-      }
-      return pricingPhases.first.priceAmountMicros < pricingPhases[1].priceAmountMicros;
-    });
-
-  if (introductoryOffers.isNotEmpty) {
-    SubscriptionOfferDetailsWrapper introductoryOffer = introductoryOffers.first;
-    // Introductory price period logic.
+if (productDetails is GooglePlayProductDetails) {
+  ProductDetailsWrapper product = productDetails.productDetails;
+  if (product.productType == ProductType.subs) {
+    SubscriptionOfferDetailsWrapper offer =
+        product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
+    List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
+    if (pricingPhases.length >= 2 &&
+        pricingPhases.first.priceAmountMicros < pricingPhases[1].priceAmountMicros
+    ) {
+      // Introductory pricing period logic.
+    }
   }
 }
 ```
