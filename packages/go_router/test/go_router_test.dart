@@ -1493,7 +1493,7 @@ void main() {
       }, throwsA(isAssertionError));
     });
 
-    testWidgets('match case insensitive w/ params',
+    testWidgets('cannot match case insensitive',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -1524,8 +1524,15 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      router.goNamed('person',
-          pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'});
+      expect(
+        () {
+          router.goNamed(
+            'person',
+            pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'},
+          );
+        },
+        throwsAssertionError,
+      );
     });
 
     testWidgets('too few params', (WidgetTester tester) async {
