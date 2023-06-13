@@ -239,6 +239,8 @@ displayed and the entrance animation and exit animation.
         },
       ),
     );
+  }
+}
 ```
 
 Both of the examples shown here produce the same output:
