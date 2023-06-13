@@ -593,9 +593,13 @@ public class Messages {
     /** Sets up an instance of `ImagePickerApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ImagePickerApi api) {
       {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.ImagePickerApi.pickImages", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.ImagePickerApi.pickImages",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -626,9 +630,13 @@ public class Messages {
         }
       }
       {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.ImagePickerApi.pickVideos", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.ImagePickerApi.pickVideos",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -659,11 +667,13 @@ public class Messages {
         }
       }
       {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
                 "dev.flutter.pigeon.ImagePickerApi.retrieveLostResults",
-                getCodec());
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {

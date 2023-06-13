@@ -1,3 +1,7 @@
+## 10.0.1
+
+* Requires `analyzer 5.13.0` and replaces use of deprecated APIs.
+
 ## 10.0.0
 
 * [swift] Avoids using `Any` to represent `Optional` in Swift.
