@@ -6,7 +6,10 @@ package dev.flutter.packages.file_selector_android_example;
 
 import static androidx.test.espresso.flutter.EspressoFlutter.onFlutterWidget;
 import static androidx.test.espresso.flutter.action.FlutterActions.click;
+import static androidx.test.espresso.flutter.assertion.FlutterAssertions.matches;
 import static androidx.test.espresso.flutter.matcher.FlutterMatchers.withText;
+import static androidx.test.espresso.flutter.matcher.FlutterMatchers.withValueKey;
+import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 
@@ -33,12 +36,13 @@ public class FileSelectorAndroidTest {
   public void imageIsPickedWithOriginalName() {
     final Instrumentation.ActivityResult result =
         new Instrumentation.ActivityResult(
-            Activity.RESULT_OK, new Intent().setData(Uri.parse("content://dummy/dummy.png")));
+            Activity.RESULT_OK,
+            new Intent().setData(Uri.parse("content://file_selector_android_test/dummy.png")));
     intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(result);
     onFlutterWidget(withText("Open an image")).perform(click());
-    //    onFlutterWidget(withText("Press to open an image file(png, jpg)")).perform(click());
-    //    intended(hasAction(Intent.ACTION_OPEN_DOCUMENT));
-    //    onFlutterWidget(withValueKey("image_picker_example_picked_image_name"))
-    //        .check(matches(withText("dummy.png")));
+    onFlutterWidget(withText("Press to open an image file(png, jpg)")).perform(click());
+    intended(hasAction(Intent.ACTION_OPEN_DOCUMENT));
+    onFlutterWidget(withValueKey("result_image_name"))
+        .check(matches(withText("content://file_selector_android_test/dummy.png")));
   }
 }

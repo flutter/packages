@@ -13,5 +13,9 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
         </activity>
+        <provider
+            android:authorities="file_selector_android_test"
+            android:name=".TestContentProvider"
+            android:exported="true"/>
     </application>
 </manifest>

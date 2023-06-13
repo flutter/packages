@@ -74,7 +74,7 @@ class ImageDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(filePath),
+      title: Text(key: const Key('result_image_name'), filePath),
       content: Image.memory(bytes),
       actions: <Widget>[
         TextButton(

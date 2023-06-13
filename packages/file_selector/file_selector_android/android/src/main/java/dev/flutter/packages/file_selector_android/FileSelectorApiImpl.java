@@ -275,7 +275,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   @Nullable
   GeneratedFileSelectorApi.FileResponse toFileResponse(@NonNull Uri uri) {
     if (activityPluginBinding == null) {
-      Log.d(TAG, "Activity is not available");
+      Log.d(TAG, "Activity is not available.");
       return null;
     }
 
