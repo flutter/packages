@@ -55,19 +55,6 @@
 #else
 
 - (nonnull NSView *)createWithViewIdentifier:(int64_t)viewId arguments:(nullable id)args {
-  // TODO(stuartmorgan): Remove this awful hack once the engine isn't unconditionally passing
-  // nil instead of the actual arguments: https://github.com/flutter/flutter/issues/124723
-  // This allows single-instance display to work just to unblock the proof of concept, but is
-  // absolutely not shippable.
-  if (!args) {
-    for (int i = 0; i < 100; i++) {
-      NSObject *instance = [self.instanceManager instanceForIdentifier:i];
-      if ([instance isKindOfClass:[FWFWebView class]]) {
-        NSLog(@"WARNING: Returning the first FWFWebView we could find");
-        return (FWFWebView *)instance;
-      }
-    }
-  }
   NSNumber *identifier = (NSNumber *)args;
   FWFWebView *webView =
       (FWFWebView *)[self.instanceManager instanceForIdentifier:identifier.longValue];
