@@ -110,9 +110,10 @@ class WebKitWebViewControllerCreationParams
   /// Defaults to false.
   final bool allowsInlineMediaPlayback;
 
-  /// Whether to limit navigation to configured domains. (Only available for iOS > 14.0)
-  /// See https://webkit.org/blog/10882/app-bound-domains/
+  /// Whether to limit navigation to configured domains.
   ///
+  /// See https://webkit.org/blog/10882/app-bound-domains/
+  /// (Only available for iOS > 14.0)
   /// Defaults to false.
   final bool limitsNavigationsToAppBoundDomains;
 
