@@ -2,13 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
 import 'dart:async';
-
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -43,9 +37,8 @@ class AndroidWebViewControllerCreationParams
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
-        AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting
-        android_webview.WebStorage? androidWebStorage,
+    AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
+    @visibleForTesting android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -62,6 +55,21 @@ class AndroidWebViewControllerCreationParams
   /// Manages the JavaScript storage APIs provided by the [android_webview.WebView].
   @visibleForTesting
   final android_webview.WebStorage androidWebStorage;
+}
+
+/// Android-specific resources that can require permissions.
+class AndroidWebViewPermissionResourceType
+    extends WebViewPermissionResourceType {
+  const AndroidWebViewPermissionResourceType._(super.name);
+
+  /// A resource that will allow sysex messages to be sent to or received from
+  /// MIDI devices.
+  static const AndroidWebViewPermissionResourceType midiSysex =
+      AndroidWebViewPermissionResourceType._('midiSysex');
+
+  /// A resource that belongs to a protected media identifier.
+  static const AndroidWebViewPermissionResourceType protectedMediaId =
+      AndroidWebViewPermissionResourceType._('protectedMediaId');
 }
 
 /// Implementation of the [PlatformWebViewController] with the Android WebView API.
@@ -102,18 +110,63 @@ class AndroidWebViewController extends PlatformWebViewController {
         }
       };
     }),
-    onShowFileChooser: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
-      return (android_webview.WebView webView,
-          android_webview.FileChooserParams params) async {
-        if (weakReference.target?._onShowFileSelectorCallback != null) {
-          return weakReference.target!._onShowFileSelectorCallback!(
-            FileSelectorParams._fromFileChooserParams(params),
-          );
-        }
-        return <String>[];
-      };
-    }),
+    onShowFileChooser: withWeakReferenceTo(
+      this,
+      (WeakReference<AndroidWebViewController> weakReference) {
+        return (android_webview.WebView webView,
+            android_webview.FileChooserParams params) async {
+          if (weakReference.target?._onShowFileSelectorCallback != null) {
+            return weakReference.target!._onShowFileSelectorCallback!(
+              FileSelectorParams._fromFileChooserParams(params),
+            );
+          }
+          return <String>[];
+        };
+      },
+    ),
+    onPermissionRequest: withWeakReferenceTo(
+      this,
+      (WeakReference<AndroidWebViewController> weakReference) {
+        return (_, android_webview.PermissionRequest request) async {
+          final void Function(PlatformWebViewPermissionRequest)? callback =
+              weakReference.target?._onPermissionRequestCallback;
+          if (callback == null) {
+            return request.deny();
+          } else {
+            final Set<WebViewPermissionResourceType> types = request.resources
+                .map<WebViewPermissionResourceType?>((String type) {
+                  switch (type) {
+                    case android_webview.PermissionRequest.videoCapture:
+                      return WebViewPermissionResourceType.camera;
+                    case android_webview.PermissionRequest.audioCapture:
+                      return WebViewPermissionResourceType.microphone;
+                    case android_webview.PermissionRequest.midiSysex:
+                      return AndroidWebViewPermissionResourceType.midiSysex;
+                    case android_webview.PermissionRequest.protectedMediaId:
+                      return AndroidWebViewPermissionResourceType
+                          .protectedMediaId;
+                  }
+
+                  // Type not supported.
+                  return null;
+                })
+                .whereType<WebViewPermissionResourceType>()
+                .toSet();
+
+            // If the request didn't contain any permissions recognized by the
+            // implementation, deny by default.
+            if (types.isEmpty) {
+              return request.deny();
+            }
+
+            callback(AndroidWebViewPermissionRequest._(
+              types: types,
+              request: request,
+            ));
+          }
+        };
+      },
+    ),
   );
 
   /// The native [android_webview.FlutterAssetManager] allows managing assets.
@@ -127,6 +180,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
+  void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -134,7 +188,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   static Future<void> enableDebugging(
     bool enabled, {
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   }) {
     return webViewProxy.setWebContentsDebuggingEnabled(enabled);
   }
@@ -367,6 +421,55 @@ class AndroidWebViewController extends PlatformWebViewController {
       onShowFileSelector != null,
     );
   }
+
+  /// Sets a callback that notifies the host application that web content is
+  /// requesting permission to access the specified resources.
+  ///
+  /// Only invoked on Android versions 21+.
+  @override
+  Future<void> setOnPlatformPermissionRequest(
+    void Function(
+      PlatformWebViewPermissionRequest request,
+    ) onPermissionRequest,
+  ) async {
+    _onPermissionRequestCallback = onPermissionRequest;
+  }
+}
+
+/// Android implementation of [PlatformWebViewPermissionRequest].
+class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
+  const AndroidWebViewPermissionRequest._({
+    required super.types,
+    required android_webview.PermissionRequest request,
+  }) : _request = request;
+
+  final android_webview.PermissionRequest _request;
+
+  @override
+  Future<void> grant() {
+    return _request
+        .grant(types.map<String>((WebViewPermissionResourceType type) {
+      switch (type) {
+        case WebViewPermissionResourceType.camera:
+          return android_webview.PermissionRequest.videoCapture;
+        case WebViewPermissionResourceType.microphone:
+          return android_webview.PermissionRequest.audioCapture;
+        case AndroidWebViewPermissionResourceType.midiSysex:
+          return android_webview.PermissionRequest.midiSysex;
+        case AndroidWebViewPermissionResourceType.protectedMediaId:
+          return android_webview.PermissionRequest.protectedMediaId;
+      }
+
+      throw UnsupportedError(
+        'Resource of type `${type.name}` is not supported.',
+      );
+    }).toList());
+  }
+
+  @override
+  Future<void> deny() {
+    return _request.deny();
+  }
 }
 
 /// Mode of how to select files for a file chooser.
@@ -440,7 +543,7 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
     required super.name,
     required super.onMessageReceived,
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   })  : assert(name.isNotEmpty),
         _javaScriptChannel = webViewProxy.createJavaScriptChannel(
           name,
@@ -465,7 +568,7 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
   AndroidJavaScriptChannelParams.fromJavaScriptChannelParams(
     JavaScriptChannelParams params, {
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   }) : this(
           name: params.name,
           onMessageReceived: params.onMessageReceived,
@@ -490,10 +593,9 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
+    @visibleForTesting InstanceManager? instanceManager,
     @visibleForTesting
-        InstanceManager? instanceManager,
-    @visibleForTesting
-        this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
+    this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =
             instanceManager ?? android_webview.JavaObject.globalInstanceManager;
 
@@ -691,7 +793,7 @@ class AndroidNavigationDelegateCreationParams
     // ignore: avoid_unused_constructor_parameters
     PlatformNavigationDelegateCreationParams params, {
     @visibleForTesting
-        AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
   }) {
     return AndroidNavigationDelegateCreationParams._(
       androidWebViewProxy: androidWebViewProxy,
@@ -702,6 +804,15 @@ class AndroidNavigationDelegateCreationParams
   /// native library.
   @visibleForTesting
   final AndroidWebViewProxy androidWebViewProxy;
+}
+
+/// Android details of the change to a web view's url.
+class AndroidUrlChange extends UrlChange {
+  /// Constructs an [AndroidUrlChange].
+  const AndroidUrlChange({required super.url, required this.isReload});
+
+  /// Whether the url is being reloaded.
+  final bool isReload;
 }
 
 /// A place to register callback methods responsible to handle navigation events
@@ -720,13 +831,15 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         .androidWebViewProxy
         .createAndroidWebViewClient(
       onPageFinished: (android_webview.WebView webView, String url) {
-        if (weakThis.target?._onPageFinished != null) {
-          weakThis.target!._onPageFinished!(url);
+        final PageEventCallback? callback = weakThis.target?._onPageFinished;
+        if (callback != null) {
+          callback(url);
         }
       },
       onPageStarted: (android_webview.WebView webView, String url) {
-        if (weakThis.target?._onPageStarted != null) {
-          weakThis.target!._onPageStarted!(url);
+        final PageEventCallback? callback = weakThis.target?._onPageStarted;
+        if (callback != null) {
+          callback(url);
         }
       },
       onReceivedRequestError: (
@@ -734,8 +847,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.WebResourceRequest request,
         android_webview.WebResourceError error,
       ) {
-        if (weakThis.target?._onWebResourceError != null) {
-          weakThis.target!._onWebResourceError!(AndroidWebResourceError._(
+        final WebResourceErrorCallback? callback =
+            weakThis.target?._onWebResourceError;
+        if (callback != null) {
+          callback(AndroidWebResourceError._(
             errorCode: error.errorCode,
             description: error.description,
             failingUrl: request.url,
@@ -749,8 +864,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         String description,
         String failingUrl,
       ) {
-        if (weakThis.target?._onWebResourceError != null) {
-          weakThis.target!._onWebResourceError!(AndroidWebResourceError._(
+        final WebResourceErrorCallback? callback =
+            weakThis.target?._onWebResourceError;
+        if (callback != null) {
+          callback(AndroidWebResourceError._(
             errorCode: errorCode,
             description: description,
             failingUrl: failingUrl,
@@ -762,20 +879,23 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.WebView webView,
         android_webview.WebResourceRequest request,
       ) {
-        if (weakThis.target != null) {
-          weakThis.target!._handleNavigation(
-            request.url,
-            headers: request.requestHeaders,
-            isForMainFrame: request.isForMainFrame,
-          );
-        }
+        weakThis.target?._handleNavigation(
+          request.url,
+          headers: request.requestHeaders,
+          isForMainFrame: request.isForMainFrame,
+        );
       },
-      urlLoading: (
+      urlLoading: (android_webview.WebView webView, String url) {
+        weakThis.target?._handleNavigation(url, isForMainFrame: true);
+      },
+      doUpdateVisitedHistory: (
         android_webview.WebView webView,
         String url,
+        bool isReload,
       ) {
-        if (weakThis.target != null) {
-          weakThis.target!._handleNavigation(url, isForMainFrame: true);
+        final UrlChangeCallback? callback = weakThis.target?._onUrlChange;
+        if (callback != null) {
+          callback(AndroidUrlChange(url: url, isReload: isReload));
         }
       },
     );
@@ -833,6 +953,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
+  UrlChangeCallback? _onUrlChange;
 
   void _handleNavigation(
     String url, {
@@ -912,5 +1033,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     WebResourceErrorCallback onWebResourceError,
   ) async {
     _onWebResourceError = onWebResourceError;
+  }
+
+  @override
+  Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
+    _onUrlChange = onUrlChange;
   }
 }

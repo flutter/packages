@@ -60,7 +60,7 @@
   NSNumber *webViewIdentifier =
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   FWFWKNavigationActionData *navigationActionData =
-      FWFWKNavigationActionDataFromNavigationAction(navigationAction);
+      FWFWKNavigationActionDataFromNativeWKNavigationAction(navigationAction);
   [self
       decidePolicyForNavigationActionForDelegateWithIdentifier:@([self
                                                                    identifierForDelegate:instance])
@@ -77,7 +77,7 @@
       @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
   [self didFailNavigationForDelegateWithIdentifier:@([self identifierForDelegate:instance])
                                  webViewIdentifier:webViewIdentifier
-                                             error:FWFNSErrorDataFromNSError(error)
+                                             error:FWFNSErrorDataFromNativeNSError(error)
                                         completion:completion];
 }
 
@@ -90,7 +90,7 @@
   [self
       didFailProvisionalNavigationForDelegateWithIdentifier:@([self identifierForDelegate:instance])
                                           webViewIdentifier:webViewIdentifier
-                                                      error:FWFNSErrorDataFromNSError(error)
+                                                      error:FWFNSErrorDataFromNativeNSError(error)
                                                  completion:completion];
 }
 
@@ -148,7 +148,7 @@
                                                    FlutterError *error) {
                                         NSAssert(!error, @"%@", error);
                                         decisionHandler(
-                                            FWFWKNavigationActionPolicyFromEnumData(policy));
+                                            FWFNativeWKNavigationActionPolicyFromEnumData(policy));
                                       }];
 }
 

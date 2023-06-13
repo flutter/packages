@@ -45,17 +45,20 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+    public void onPageStarted(@NonNull WebView view, @NonNull String url, @NonNull Bitmap favicon) {
       flutterApi.onPageStarted(this, view, url, reply -> {});
     }
 
     @Override
-    public void onPageFinished(WebView view, String url) {
+    public void onPageFinished(@NonNull WebView view, @NonNull String url) {
       flutterApi.onPageFinished(this, view, url, reply -> {});
     }
 
     @Override
-    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+    public void onReceivedError(
+        @NonNull WebView view,
+        @NonNull WebResourceRequest request,
+        @NonNull WebResourceError error) {
       flutterApi.onReceivedRequestError(this, view, request, error, reply -> {});
     }
 
@@ -63,13 +66,17 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @SuppressWarnings("deprecation")
     @Override
     public void onReceivedError(
-        WebView view, int errorCode, String description, String failingUrl) {
+        @NonNull WebView view,
+        int errorCode,
+        @NonNull String description,
+        @NonNull String failingUrl) {
       flutterApi.onReceivedError(
           this, view, (long) errorCode, description, failingUrl, reply -> {});
     }
 
     @Override
-    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+    public boolean shouldOverrideUrlLoading(
+        @NonNull WebView view, @NonNull WebResourceRequest request) {
       flutterApi.requestLoading(this, view, request, reply -> {});
       return returnValueForShouldOverrideUrlLoading;
     }
@@ -77,13 +84,19 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     // Legacy codepath for < 24; newer versions use the variant above.
     @SuppressWarnings("deprecation")
     @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+    public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
       flutterApi.urlLoading(this, view, url, reply -> {});
       return returnValueForShouldOverrideUrlLoading;
     }
 
     @Override
-    public void onUnhandledKeyEvent(WebView view, KeyEvent event) {
+    public void doUpdateVisitedHistory(
+        @NonNull WebView view, @NonNull String url, boolean isReload) {
+      flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
+    }
+
+    @Override
+    public void onUnhandledKeyEvent(@NonNull WebView view, @NonNull KeyEvent event) {
       // Deliberately empty. Occasionally the webview will mark events as having failed to be
       // handled even though they were handled. We don't want to propagate those as they're not
       // truly lost.
@@ -108,12 +121,12 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+    public void onPageStarted(@NonNull WebView view, @NonNull String url, @NonNull Bitmap favicon) {
       flutterApi.onPageStarted(this, view, url, reply -> {});
     }
 
     @Override
-    public void onPageFinished(WebView view, String url) {
+    public void onPageFinished(@NonNull WebView view, @NonNull String url) {
       flutterApi.onPageFinished(this, view, url, reply -> {});
     }
 
@@ -133,7 +146,10 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     @SuppressWarnings("deprecation")
     @Override
     public void onReceivedError(
-        WebView view, int errorCode, String description, String failingUrl) {
+        @NonNull WebView view,
+        int errorCode,
+        @NonNull String description,
+        @NonNull String failingUrl) {
       flutterApi.onReceivedError(
           this, view, (long) errorCode, description, failingUrl, reply -> {});
     }
@@ -149,13 +165,19 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     // Legacy codepath for < Lollipop; newer versions use the variant above.
     @SuppressWarnings("deprecation")
     @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+    public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
       flutterApi.urlLoading(this, view, url, reply -> {});
       return returnValueForShouldOverrideUrlLoading;
     }
 
     @Override
-    public void onUnhandledKeyEvent(WebView view, KeyEvent event) {
+    public void doUpdateVisitedHistory(
+        @NonNull WebView view, @NonNull String url, boolean isReload) {
+      flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
+    }
+
+    @Override
+    public void onUnhandledKeyEvent(@NonNull WebView view, @NonNull KeyEvent event) {
       // Deliberately empty. Occasionally the webview will mark events as having failed to be
       // handled even though they were handled. We don't want to propagate those as they're not
       // truly lost.
@@ -175,7 +197,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
      * @param flutterApi handles sending messages to Dart
      * @return the created {@link WebViewClient}
      */
-    public WebViewClient createWebViewClient(WebViewClientFlutterApiImpl flutterApi) {
+    @NonNull
+    public WebViewClient createWebViewClient(@NonNull WebViewClientFlutterApiImpl flutterApi) {
       // WebViewClientCompat is used to get
       // shouldOverrideUrlLoading(WebView view, WebResourceRequest request)
       // invoked by the webview on older Android devices, without it pages that use iframes will
@@ -200,9 +223,9 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
    * @param flutterApi handles sending messages to Dart
    */
   public WebViewClientHostApiImpl(
-      InstanceManager instanceManager,
-      WebViewClientCreator webViewClientCreator,
-      WebViewClientFlutterApiImpl flutterApi) {
+      @NonNull InstanceManager instanceManager,
+      @NonNull WebViewClientCreator webViewClientCreator,
+      @NonNull WebViewClientFlutterApiImpl flutterApi) {
     this.instanceManager = instanceManager;
     this.webViewClientCreator = webViewClientCreator;
     this.flutterApi = flutterApi;

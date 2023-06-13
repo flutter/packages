@@ -37,7 +37,7 @@
 - (void)setCookieForStoreWithIdentifier:(nonnull NSNumber *)identifier
                                  cookie:(nonnull FWFNSHttpCookieData *)cookie
                              completion:(nonnull void (^)(FlutterError *_Nullable))completion {
-  NSHTTPCookie *nsCookie = FWFNSHTTPCookieFromCookieData(cookie);
+  NSHTTPCookie *nsCookie = FWFNativeNSHTTPCookieFromCookieData(cookie);
 
   [[self HTTPCookieStoreForIdentifier:identifier] setCookie:nsCookie
                                           completionHandler:^{

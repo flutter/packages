@@ -1,5 +1,7 @@
-## NEXT
+## 2.0.10
 
+* Adds compatibility with `http` 1.0.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.0.9

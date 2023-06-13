@@ -46,6 +46,7 @@ class AndroidWebViewFlutterApis {
     JavaScriptChannelFlutterApiImpl? javaScriptChannelFlutterApi,
     FileChooserParamsFlutterApiImpl? fileChooserParamsFlutterApi,
     WebViewFlutterApiImpl? webViewFlutterApi,
+    PermissionRequestFlutterApiImpl? permissionRequestFlutterApi,
   }) {
     this.javaObjectFlutterApi =
         javaObjectFlutterApi ?? JavaObjectFlutterApiImpl();
@@ -60,6 +61,8 @@ class AndroidWebViewFlutterApis {
     this.fileChooserParamsFlutterApi =
         fileChooserParamsFlutterApi ?? FileChooserParamsFlutterApiImpl();
     this.webViewFlutterApi = webViewFlutterApi ?? WebViewFlutterApiImpl();
+    this.permissionRequestFlutterApi =
+        permissionRequestFlutterApi ?? PermissionRequestFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -90,6 +93,9 @@ class AndroidWebViewFlutterApis {
   /// Flutter Api for [WebView].
   late final WebViewFlutterApiImpl webViewFlutterApi;
 
+  /// Flutter Api for [PermissionRequest].
+  late final PermissionRequestFlutterApiImpl permissionRequestFlutterApi;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -100,6 +106,7 @@ class AndroidWebViewFlutterApis {
       JavaScriptChannelFlutterApi.setup(javaScriptChannelFlutterApi);
       FileChooserParamsFlutterApi.setup(fileChooserParamsFlutterApi);
       WebViewFlutterApi.setup(webViewFlutterApi);
+      PermissionRequestFlutterApi.setup(permissionRequestFlutterApi);
       _haveBeenSetUp = true;
     }
   }
@@ -754,6 +761,30 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
       instance.urlLoading!(webViewInstance!, url);
     }
   }
+
+  @override
+  void doUpdateVisitedHistory(
+    int instanceId,
+    int webViewInstanceId,
+    String url,
+    bool isReload,
+  ) {
+    final WebViewClient? instance = instanceManager
+        .getInstanceWithWeakReference(instanceId) as WebViewClient?;
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+    assert(
+      instance != null,
+      'InstanceManager does not contain an WebViewClient with instanceId: $instanceId',
+    );
+    assert(
+      webViewInstance != null,
+      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+    );
+    if (instance!.doUpdateVisitedHistory != null) {
+      instance.doUpdateVisitedHistory!(webViewInstance!, url, isReload);
+    }
+  }
 }
 
 /// Host api implementation for [DownloadListener].
@@ -888,6 +919,28 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
 
     return Future<List<String>>.value(const <String>[]);
   }
+
+  @override
+  void onPermissionRequest(
+    int instanceId,
+    int requestInstanceId,
+  ) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+    if (instance.onPermissionRequest != null) {
+      instance.onPermissionRequest!(
+        instance,
+        instanceManager.getInstanceWithWeakReference(requestInstanceId)!,
+      );
+    } else {
+      // The method requires calling grant or deny if the Java method is
+      // overridden, so this calls deny by default if `onPermissionRequest` is
+      // null.
+      final PermissionRequest request =
+          instanceManager.getInstanceWithWeakReference(requestInstanceId)!;
+      request.deny();
+    }
+  }
 }
 
 /// Host api implementation for [WebStorage].
@@ -950,6 +1003,131 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
         instanceManager: instanceManager,
       ),
       instanceId,
+    );
+  }
+}
+
+/// Host api implementation for [PermissionRequest].
+class PermissionRequestHostApiImpl extends PermissionRequestHostApi {
+  /// Constructs a [PermissionRequestHostApiImpl].
+  PermissionRequestHostApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> grantFromInstances(
+    PermissionRequest instance,
+    List<String> resources,
+  ) {
+    return grant(instanceManager.getIdentifier(instance)!, resources);
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> denyFromInstances(PermissionRequest instance) {
+    return deny(instanceManager.getIdentifier(instance)!);
+  }
+}
+
+/// Flutter API implementation for [PermissionRequest].
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+class PermissionRequestFlutterApiImpl implements PermissionRequestFlutterApi {
+  /// Constructs a [PermissionRequestFlutterApiImpl].
+  PermissionRequestFlutterApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+
+  /// Receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  @override
+  void create(
+    int identifier,
+    List<String?> resources,
+  ) {
+    instanceManager.addHostCreatedInstance(
+      PermissionRequest.detached(
+        resources: resources.cast<String>(),
+        binaryMessenger: binaryMessenger,
+        instanceManager: instanceManager,
+      ),
+      identifier,
+    );
+  }
+}
+
+/// Host api implementation for [CookieManager].
+class CookieManagerHostApiImpl extends CookieManagerHostApi {
+  /// Constructs a [CookieManagerHostApiImpl].
+  CookieManagerHostApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  })  : instanceManager = instanceManager ?? JavaObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  /// Helper method to convert instance ids to objects.
+  CookieManager attachInstanceFromInstances(CookieManager instance) {
+    attachInstance(instanceManager.addDartCreatedInstance(instance));
+    return instance;
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> setCookieFromInstances(
+    CookieManager instance,
+    String url,
+    String value,
+  ) {
+    return setCookie(
+      instanceManager.getIdentifier(instance)!,
+      url,
+      value,
+    );
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<bool> removeAllCookiesFromInstances(CookieManager instance) {
+    return removeAllCookies(instanceManager.getIdentifier(instance)!);
+  }
+
+  /// Helper method to convert instance ids to objects.
+  Future<void> setAcceptThirdPartyCookiesFromInstances(
+    CookieManager instance,
+    WebView webView,
+    bool accept,
+  ) {
+    return setAcceptThirdPartyCookies(
+      instanceManager.getIdentifier(instance)!,
+      instanceManager.getIdentifier(webView)!,
+      accept,
     );
   }
 }

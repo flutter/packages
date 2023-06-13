@@ -8,8 +8,7 @@ import 'dart:async' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart'
     as _i3;
-import 'package:webview_flutter_platform_interface/src/webview_platform.dart'
-    as _i2;
+import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -78,6 +77,16 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         Invocation.method(
           #setOnPageFinished,
           [onPageFinished],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  _i4.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnHttpError,
+          [onHttpError],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),

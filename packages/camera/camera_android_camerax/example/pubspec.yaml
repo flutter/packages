@@ -20,6 +20,7 @@ dependencies:
   video_player: ^2.4.10
 
 dev_dependencies:
+  espresso: ^0.2.0
   flutter_test:
     sdk: flutter
   integration_test:

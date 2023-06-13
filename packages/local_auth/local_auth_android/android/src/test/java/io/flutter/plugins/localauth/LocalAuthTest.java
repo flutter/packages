@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.localauth;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -23,17 +24,19 @@ import android.content.Context;
 import androidx.biometric.BiometricManager;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
-import io.flutter.embedding.engine.FlutterEngine;
-import io.flutter.embedding.engine.dart.DartExecutor;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import io.flutter.plugins.localauth.Messages.AuthClassification;
+import io.flutter.plugins.localauth.Messages.AuthClassificationWrapper;
+import io.flutter.plugins.localauth.Messages.AuthOptions;
+import io.flutter.plugins.localauth.Messages.AuthResult;
+import io.flutter.plugins.localauth.Messages.AuthResultWrapper;
+import io.flutter.plugins.localauth.Messages.AuthStrings;
+import io.flutter.plugins.localauth.Messages.Result;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -42,45 +45,75 @@ import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 public class LocalAuthTest {
+  static final AuthStrings dummyStrings =
+      new AuthStrings.Builder()
+          .setReason("a reason")
+          .setBiometricHint("a hint")
+          .setBiometricNotRecognized("biometric not recognized")
+          .setBiometricRequiredTitle("biometric required")
+          .setCancelButton("cancel")
+          .setDeviceCredentialsRequiredTitle("credentials required")
+          .setDeviceCredentialsSetupDescription("credentials setup description")
+          .setGoToSettingsButton("go")
+          .setGoToSettingsDescription("go to settings description")
+          .setSignInTitle("sign in")
+          .build();
+
+  static final AuthOptions defaultOptions =
+      new AuthOptions.Builder()
+          .setBiometricOnly(false)
+          .setSensitiveTransaction(false)
+          .setSticky(false)
+          .setUseErrorDialgs(false)
+          .build();
+
   @Test
   public void authenticate_returnsErrorWhenAuthInProgress() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     plugin.authInProgress.set(true);
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    plugin.onMethodCall(new MethodCall("authenticate", null), mockResult);
-    verify(mockResult).error("auth_in_progress", "Authentication in progress", null);
+    @SuppressWarnings("unchecked")
+    final Result<AuthResultWrapper> mockResult = mock(Result.class);
+    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
+    ArgumentCaptor<AuthResultWrapper> captor = ArgumentCaptor.forClass(AuthResultWrapper.class);
+    verify(mockResult).success(captor.capture());
+    assertEquals(AuthResult.ERROR_ALREADY_IN_PROGRESS, captor.getValue().getValue());
   }
 
   @Test
   public void authenticate_returnsErrorWithNoForegroundActivity() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    plugin.onMethodCall(new MethodCall("authenticate", null), mockResult);
-    verify(mockResult)
-        .error("no_activity", "local_auth plugin requires a foreground activity", null);
+    @SuppressWarnings("unchecked")
+    final Result<AuthResultWrapper> mockResult = mock(Result.class);
+
+    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
+    ArgumentCaptor<AuthResultWrapper> captor = ArgumentCaptor.forClass(AuthResultWrapper.class);
+    verify(mockResult).success(captor.capture());
+    assertEquals(AuthResult.ERROR_NO_ACTIVITY, captor.getValue().getValue());
   }
 
   @Test
   public void authenticate_returnsErrorWhenActivityNotFragmentActivity() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(NativeActivity.class)));
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    plugin.onMethodCall(new MethodCall("authenticate", null), mockResult);
-    verify(mockResult)
-        .error(
-            "no_fragment_activity",
-            "local_auth plugin requires activity to be a FragmentActivity.",
-            null);
+    @SuppressWarnings("unchecked")
+    final Result<AuthResultWrapper> mockResult = mock(Result.class);
+    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
+    ArgumentCaptor<AuthResultWrapper> captor = ArgumentCaptor.forClass(AuthResultWrapper.class);
+    verify(mockResult).success(captor.capture());
+    assertEquals(AuthResult.ERROR_NOT_FRAGMENT_ACTIVITY, captor.getValue().getValue());
   }
 
   @Test
   public void authenticate_returnsErrorWhenDeviceNotSupported() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     setPluginActivity(plugin, buildMockActivityWithContext(mock(FragmentActivity.class)));
-    plugin.onMethodCall(new MethodCall("authenticate", null), mockResult);
-    assertFalse(plugin.authInProgress.get());
-    verify(mockResult).error("NotAvailable", "Required security features not enabled", null);
+    @SuppressWarnings("unchecked")
+    final Result<AuthResultWrapper> mockResult = mock(Result.class);
+
+    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
+    ArgumentCaptor<AuthResultWrapper> captor = ArgumentCaptor.forClass(AuthResultWrapper.class);
+    verify(mockResult).success(captor.capture());
+    assertEquals(AuthResult.ERROR_NOT_AVAILABLE, captor.getValue().getValue());
   }
 
   @Test
@@ -100,14 +133,21 @@ public class LocalAuthTest {
     doNothing()
         .when(plugin)
         .sendAuthenticationRequest(
-            any(MethodCall.class),
-            any(AuthCompletionHandler.class),
-            allowCredentialsCaptor.capture());
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("biometricOnly", true);
+            any(AuthOptions.class),
+            any(AuthStrings.class),
+            allowCredentialsCaptor.capture(),
+            any(AuthCompletionHandler.class));
+    @SuppressWarnings("unchecked")
+    final Result<AuthResultWrapper> mockResult = mock(Result.class);
 
-    plugin.onMethodCall(new MethodCall("authenticate", arguments), mockResult);
+    final AuthOptions options =
+        new AuthOptions.Builder()
+            .setBiometricOnly(true)
+            .setSensitiveTransaction(false)
+            .setSticky(false)
+            .setUseErrorDialgs(false)
+            .build();
+    plugin.authenticate(options, dummyStrings, mockResult);
     assertFalse(allowCredentialsCaptor.getValue());
   }
 
@@ -127,14 +167,14 @@ public class LocalAuthTest {
     doNothing()
         .when(plugin)
         .sendAuthenticationRequest(
-            any(MethodCall.class),
-            any(AuthCompletionHandler.class),
-            allowCredentialsCaptor.capture());
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("biometricOnly", false);
+            any(AuthOptions.class),
+            any(AuthStrings.class),
+            allowCredentialsCaptor.capture(),
+            any(AuthCompletionHandler.class));
+    @SuppressWarnings("unchecked")
+    final Result<AuthResultWrapper> mockResult = mock(Result.class);
 
-    plugin.onMethodCall(new MethodCall("authenticate", arguments), mockResult);
+    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     assertTrue(allowCredentialsCaptor.getValue());
   }
 
@@ -156,68 +196,62 @@ public class LocalAuthTest {
     doNothing()
         .when(plugin)
         .sendAuthenticationRequest(
-            any(MethodCall.class),
-            any(AuthCompletionHandler.class),
-            allowCredentialsCaptor.capture());
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("biometricOnly", false);
+            any(AuthOptions.class),
+            any(AuthStrings.class),
+            allowCredentialsCaptor.capture(),
+            any(AuthCompletionHandler.class));
+    @SuppressWarnings("unchecked")
+    final Result<AuthResultWrapper> mockResult = mock(Result.class);
 
-    plugin.onMethodCall(new MethodCall("authenticate", arguments), mockResult);
+    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     assertTrue(allowCredentialsCaptor.getValue());
   }
 
   @Test
   public void isDeviceSupportedReturnsFalse() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    plugin.onMethodCall(new MethodCall("isDeviceSupported", null), mockResult);
-    verify(mockResult).success(false);
+    assertFalse(plugin.isDeviceSupported());
   }
 
   @Test
-  public void deviceSupportsBiometrics_returnsTrueForPresentNonEnrolledBiometrics() {
+  public void deviceCanSupportBiometrics_returnsTrueForPresentNonEnrolledBiometrics() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
     when(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED);
     plugin.setBiometricManager(mockBiometricManager);
-    plugin.onMethodCall(new MethodCall("deviceSupportsBiometrics", null), mockResult);
-    verify(mockResult).success(true);
+
+    assertTrue(plugin.deviceCanSupportBiometrics());
   }
 
   @Test
   public void deviceSupportsBiometrics_returnsTrueForPresentEnrolledBiometrics() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
     when(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
         .thenReturn(BiometricManager.BIOMETRIC_SUCCESS);
     plugin.setBiometricManager(mockBiometricManager);
-    plugin.onMethodCall(new MethodCall("deviceSupportsBiometrics", null), mockResult);
-    verify(mockResult).success(true);
+
+    assertTrue(plugin.deviceCanSupportBiometrics());
   }
 
   @Test
   public void deviceSupportsBiometrics_returnsFalseForNoBiometricHardware() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
     when(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE);
     plugin.setBiometricManager(mockBiometricManager);
-    plugin.onMethodCall(new MethodCall("deviceSupportsBiometrics", null), mockResult);
-    verify(mockResult).success(false);
+
+    assertFalse(plugin.deviceCanSupportBiometrics());
   }
 
   @Test
   public void deviceSupportsBiometrics_returnsFalseForNullBiometricManager() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     plugin.setBiometricManager(null);
-    plugin.onMethodCall(new MethodCall("deviceSupportsBiometrics", null), mockResult);
-    verify(mockResult).success(false);
+
+    assertFalse(plugin.deviceCanSupportBiometrics());
   }
 
   @Test
@@ -237,11 +271,8 @@ public class LocalAuthTest {
     when(mockLifecycleReference.getLifecycle()).thenReturn(mockLifecycle);
 
     final FlutterPluginBinding mockPluginBinding = mock(FlutterPluginBinding.class);
-    final FlutterEngine mockFlutterEngine = mock(FlutterEngine.class);
-    mockDeprecatedFlutterEngineGetter(mockPluginBinding, mockFlutterEngine);
-
-    DartExecutor mockDartExecutor = mock(DartExecutor.class);
-    when(mockFlutterEngine.getDartExecutor()).thenReturn(mockDartExecutor);
+    final BinaryMessenger mockMessenger = mock(BinaryMessenger.class);
+    when(mockPluginBinding.getBinaryMessenger()).thenReturn(mockMessenger);
 
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     plugin.onAttachedToEngine(mockPluginBinding);
@@ -253,61 +284,35 @@ public class LocalAuthTest {
   }
 
   @Test
-  public void getEnrolledBiometrics_shouldReturnError_whenNoActivity() {
-    final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-
-    plugin.onMethodCall(new MethodCall("getEnrolledBiometrics", null), mockResult);
-    verify(mockResult)
-        .error("no_activity", "local_auth plugin requires a foreground activity", null);
-  }
-
-  @Test
-  public void getEnrolledBiometrics_shouldReturnError_whenFinishingActivity() {
-    final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    final Activity mockActivity = buildMockActivityWithContext(mock(Activity.class));
-    when(mockActivity.isFinishing()).thenReturn(true);
-    setPluginActivity(plugin, mockActivity);
-
-    plugin.onMethodCall(new MethodCall("getEnrolledBiometrics", null), mockResult);
-    verify(mockResult)
-        .error("no_activity", "local_auth plugin requires a foreground activity", null);
-  }
-
-  @Test
   public void getEnrolledBiometrics_shouldReturnEmptyList_withoutHardwarePresent() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(Activity.class)));
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
     when(mockBiometricManager.canAuthenticate(anyInt()))
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE);
     plugin.setBiometricManager(mockBiometricManager);
 
-    plugin.onMethodCall(new MethodCall("getEnrolledBiometrics", null), mockResult);
-    verify(mockResult).success(Collections.emptyList());
+    final List<AuthClassificationWrapper> enrolled = plugin.getEnrolledBiometrics();
+    assertTrue(enrolled.isEmpty());
   }
 
   @Test
   public void getEnrolledBiometrics_shouldReturnEmptyList_withNoMethodsEnrolled() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(Activity.class)));
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
     when(mockBiometricManager.canAuthenticate(anyInt()))
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED);
     plugin.setBiometricManager(mockBiometricManager);
 
-    plugin.onMethodCall(new MethodCall("getEnrolledBiometrics", null), mockResult);
-    verify(mockResult).success(Collections.emptyList());
+    final List<AuthClassificationWrapper> enrolled = plugin.getEnrolledBiometrics();
+    assertTrue(enrolled.isEmpty());
   }
 
   @Test
   public void getEnrolledBiometrics_shouldOnlyAddEnrolledBiometrics() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(Activity.class)));
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
     when(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
         .thenReturn(BiometricManager.BIOMETRIC_SUCCESS);
@@ -315,21 +320,15 @@ public class LocalAuthTest {
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED);
     plugin.setBiometricManager(mockBiometricManager);
 
-    plugin.onMethodCall(new MethodCall("getEnrolledBiometrics", null), mockResult);
-    verify(mockResult)
-        .success(
-            new ArrayList<String>() {
-              {
-                add("weak");
-              }
-            });
+    final List<AuthClassificationWrapper> enrolled = plugin.getEnrolledBiometrics();
+    assertEquals(1, enrolled.size());
+    assertEquals(AuthClassification.WEAK, enrolled.get(0).getValue());
   }
 
   @Test
   public void getEnrolledBiometrics_shouldAddStrongBiometrics() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(Activity.class)));
-    final MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
     when(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
         .thenReturn(BiometricManager.BIOMETRIC_SUCCESS);
@@ -337,15 +336,10 @@ public class LocalAuthTest {
         .thenReturn(BiometricManager.BIOMETRIC_SUCCESS);
     plugin.setBiometricManager(mockBiometricManager);
 
-    plugin.onMethodCall(new MethodCall("getEnrolledBiometrics", null), mockResult);
-    verify(mockResult)
-        .success(
-            new ArrayList<String>() {
-              {
-                add("weak");
-                add("strong");
-              }
-            });
+    final List<AuthClassificationWrapper> enrolled = plugin.getEnrolledBiometrics();
+    assertEquals(2, enrolled.size());
+    assertEquals(AuthClassification.WEAK, enrolled.get(0).getValue());
+    assertEquals(AuthClassification.STRONG, enrolled.get(1).getValue());
   }
 
   @Test
@@ -397,19 +391,11 @@ public class LocalAuthTest {
     final HiddenLifecycleReference mockLifecycleReference = mock(HiddenLifecycleReference.class);
     final FlutterPluginBinding mockPluginBinding = mock(FlutterPluginBinding.class);
     final ActivityPluginBinding mockActivityBinding = mock(ActivityPluginBinding.class);
-    final FlutterEngine mockFlutterEngine = mock(FlutterEngine.class);
-    final DartExecutor mockDartExecutor = mock(DartExecutor.class);
-    mockDeprecatedFlutterEngineGetter(mockPluginBinding, mockFlutterEngine);
-    when(mockFlutterEngine.getDartExecutor()).thenReturn(mockDartExecutor);
+    final BinaryMessenger mockMessenger = mock(BinaryMessenger.class);
+    when(mockPluginBinding.getBinaryMessenger()).thenReturn(mockMessenger);
     when(mockActivityBinding.getActivity()).thenReturn(activity);
     when(mockActivityBinding.getLifecycle()).thenReturn(mockLifecycleReference);
     plugin.onAttachedToEngine(mockPluginBinding);
     plugin.onAttachedToActivity(mockActivityBinding);
-  }
-
-  @SuppressWarnings("deprecation")
-  private void mockDeprecatedFlutterEngineGetter(
-      FlutterPluginBinding binding, FlutterEngine engine) {
-    when(binding.getFlutterEngine()).thenReturn(engine);
   }
 }

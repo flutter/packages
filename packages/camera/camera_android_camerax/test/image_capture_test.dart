@@ -12,9 +12,12 @@ import 'package:mockito/mockito.dart';
 import 'image_capture_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestImageCaptureHostApi])
+@GenerateMocks(<Type>[TestImageCaptureHostApi, TestInstanceManagerHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ImageCapture', () {
     tearDown(() => TestImageCaptureHostApi.setup(null));
@@ -79,7 +82,7 @@ void main() {
         onCopy: (_) => ImageCapture.detached(instanceManager: instanceManager),
       );
 
-      imageCapture.setFlashMode(flashMode);
+      await imageCapture.setFlashMode(flashMode);
 
       verify(mockApi.setFlashMode(
           instanceManager.getIdentifier(imageCapture), flashMode));

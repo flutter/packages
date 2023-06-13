@@ -29,7 +29,7 @@ public class DownloadListenerTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
 
     final DownloadListenerCreator downloadListenerCreator =
         new DownloadListenerCreator() {
@@ -48,7 +48,7 @@ public class DownloadListenerTest {
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test

@@ -174,7 +174,7 @@ void main() {
 
     await cameraController.initialize();
 
-    cameraController.startVideoRecording(
+    await cameraController.startVideoRecording(
         onAvailable: (CameraImage image) => null);
 
     expect(
@@ -192,7 +192,7 @@ void main() {
 
     await cameraController.initialize();
 
-    cameraController.startVideoRecording();
+    await cameraController.startVideoRecording();
 
     expect(mockPlatform.streamCallLog.contains('startVideoCapturing'), isTrue);
   });

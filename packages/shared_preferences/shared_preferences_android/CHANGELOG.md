@@ -1,3 +1,24 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.1.4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.1.3
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 2.1.2
+
+* Sets the required Java compile version to 1.8 for new features used in 2.1.1.
+
+## 2.1.1
+
+* Updates minimum Flutter version to 3.0.
+* Converts implementation to Pigeon.
+
 ## 2.1.0
 
 * Adds `getAllWithPrefix` and `clearWithPrefix` methods.

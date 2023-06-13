@@ -986,29 +986,41 @@ class _TestWKWebViewHostApiCodec extends StandardMessageCodec {
     } else if (value is NSUrlRequestData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is WKAudiovisualMediaTypeEnumData) {
+    } else if (value is ObjectOrIdentifier) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is WKFrameInfoData) {
+    } else if (value is WKAudiovisualMediaTypeEnumData) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionData) {
+    } else if (value is WKFrameInfoData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is WKNavigationActionPolicyEnumData) {
+    } else if (value is WKMediaCaptureTypeData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WKScriptMessageData) {
+    } else if (value is WKNavigationActionData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptData) {
+    } else if (value is WKNavigationActionPolicyEnumData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is WKUserScriptInjectionTimeEnumData) {
+    } else if (value is WKPermissionDecisionData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is WKWebsiteDataTypeEnumData) {
+    } else if (value is WKScriptMessageData) {
       buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is WKSecurityOriginData) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptData) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is WKUserScriptInjectionTimeEnumData) {
+      buffer.putUint8(144);
+      writeValue(buffer, value.encode());
+    } else if (value is WKWebsiteDataTypeEnumData) {
+      buffer.putUint8(145);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1031,20 +1043,28 @@ class _TestWKWebViewHostApiCodec extends StandardMessageCodec {
       case 133:
         return NSUrlRequestData.decode(readValue(buffer)!);
       case 134:
-        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
+        return ObjectOrIdentifier.decode(readValue(buffer)!);
       case 135:
-        return WKFrameInfoData.decode(readValue(buffer)!);
+        return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
       case 136:
-        return WKNavigationActionData.decode(readValue(buffer)!);
+        return WKFrameInfoData.decode(readValue(buffer)!);
       case 137:
-        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
+        return WKMediaCaptureTypeData.decode(readValue(buffer)!);
       case 138:
-        return WKScriptMessageData.decode(readValue(buffer)!);
+        return WKNavigationActionData.decode(readValue(buffer)!);
       case 139:
-        return WKUserScriptData.decode(readValue(buffer)!);
+        return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       case 140:
-        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+        return WKPermissionDecisionData.decode(readValue(buffer)!);
       case 141:
+        return WKScriptMessageData.decode(readValue(buffer)!);
+      case 142:
+        return WKSecurityOriginData.decode(readValue(buffer)!);
+      case 143:
+        return WKUserScriptData.decode(readValue(buffer)!);
+      case 144:
+        return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
+      case 145:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1659,6 +1679,46 @@ abstract class TestWKHttpCookieStoreHostApi {
               'Argument for dev.flutter.pigeon.WKHttpCookieStoreHostApi.setCookie was null, expected non-null NSHttpCookieData.');
           await api.setCookie(arg_identifier!, arg_cookie!);
           return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `NSUrl`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
+abstract class TestNSUrlHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  String? getAbsoluteString(int identifier);
+
+  static void setup(TestNSUrlHostApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NSUrlHostApi.getAbsoluteString', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.NSUrlHostApi.getAbsoluteString was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.NSUrlHostApi.getAbsoluteString was null, expected non-null int.');
+          final String? output = api.getAbsoluteString(arg_identifier!);
+          return <Object?>[output];
         });
       }
     }

@@ -17,6 +17,7 @@ import 'test_android_webview.g.dart';
   CookieManagerHostApi,
   DownloadListener,
   JavaScriptChannel,
+  TestCookieManagerHostApi,
   TestDownloadListenerHostApi,
   TestInstanceManagerHostApi,
   TestJavaObjectHostApi,
@@ -27,6 +28,7 @@ import 'test_android_webview.g.dart';
   TestWebViewClientHostApi,
   TestWebViewHostApi,
   TestAssetManagerHostApi,
+  TestPermissionRequestHostApi,
   WebChromeClient,
   WebView,
   WebViewClient,
@@ -34,8 +36,9 @@ import 'test_android_webview.g.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // Mocks the call to clear the native InstanceManager.
+  // Mocks the calls to the native InstanceManager.
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+  TestJavaObjectHostApi.setup(MockTestJavaObjectHostApi());
 
   group('Android WebView', () {
     group('JavaObject', () {
@@ -44,10 +47,6 @@ void main() {
       setUp(() {
         mockPlatformHostApi = MockTestJavaObjectHostApi();
         TestJavaObjectHostApi.setup(mockPlatformHostApi);
-      });
-
-      tearDown(() {
-        TestJavaObjectHostApi.setup(null);
       });
 
       test('JavaObject.dispose', () async {
@@ -739,6 +738,33 @@ void main() {
         );
       });
 
+      test('doUpdateVisitedHistory', () {
+        late final List<Object> result;
+        when(mockWebViewClient.doUpdateVisitedHistory).thenReturn(
+          (
+            WebView webView,
+            String url,
+            bool isReload,
+          ) {
+            result = <Object>[webView, url, isReload];
+          },
+        );
+
+        flutterApi.doUpdateVisitedHistory(
+          mockWebViewClientInstanceId,
+          mockWebViewInstanceId,
+          'https://www.google.com',
+          false,
+        );
+
+        expect(
+          result,
+          containsAllInOrder(
+            <Object?>[mockWebView, 'https://www.google.com', false],
+          ),
+        );
+      });
+
       test('copy', () {
         expect(WebViewClient.detached().copy(), isA<WebViewClient>());
       });
@@ -943,6 +969,51 @@ void main() {
         );
       });
 
+      test('onPermissionRequest', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WebChromeClient instance = WebChromeClient.detached(
+          onPermissionRequest: (
+            WebChromeClient instance,
+            PermissionRequest request,
+          ) {
+            callbackParameters = <Object?>[
+              instance,
+              request,
+            ];
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WebChromeClientFlutterApiImpl flutterApi =
+            WebChromeClientFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        final PermissionRequest request = PermissionRequest.detached(
+          resources: <String>[],
+          binaryMessenger: null,
+          instanceManager: instanceManager,
+        );
+        const int requestIdentifier = 32;
+        instanceManager.addHostCreatedInstance(
+          request,
+          requestIdentifier,
+        );
+
+        flutterApi.onPermissionRequest(
+          instanceIdentifier,
+          requestIdentifier,
+        );
+
+        expect(callbackParameters, <Object?>[instance, request]);
+      });
+
       test('copy', () {
         expect(WebChromeClient.detached().copy(), isA<WebChromeClient>());
       });
@@ -978,18 +1049,103 @@ void main() {
   });
 
   group('CookieManager', () {
-    test('setCookie calls setCookie on CookieManagerHostApi', () {
-      CookieManager.api = MockCookieManagerHostApi();
-      CookieManager.instance.setCookie('foo', 'bar');
-      verify(CookieManager.api.setCookie('foo', 'bar'));
+    tearDown(() {
+      TestCookieManagerHostApi.setup(null);
     });
 
-    test('clearCookies calls clearCookies on CookieManagerHostApi', () {
-      CookieManager.api = MockCookieManagerHostApi();
-      when(CookieManager.api.clearCookies())
-          .thenAnswer((_) => Future<bool>.value(true));
-      CookieManager.instance.clearCookies();
-      verify(CookieManager.api.clearCookies());
+    test('instance', () {
+      final MockTestCookieManagerHostApi mockApi =
+          MockTestCookieManagerHostApi();
+      TestCookieManagerHostApi.setup(mockApi);
+
+      final CookieManager instance = CookieManager.instance;
+
+      verify(mockApi.attachInstance(
+        JavaObject.globalInstanceManager.getIdentifier(instance),
+      ));
+    });
+
+    test('setCookie', () async {
+      final MockTestCookieManagerHostApi mockApi =
+          MockTestCookieManagerHostApi();
+      TestCookieManagerHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CookieManager instance = CookieManager.detached(
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      const String url = 'testString';
+      const String value = 'testString2';
+
+      await instance.setCookie(url, value);
+
+      verify(mockApi.setCookie(instanceIdentifier, url, value));
+    });
+
+    test('clearCookies', () async {
+      final MockTestCookieManagerHostApi mockApi =
+          MockTestCookieManagerHostApi();
+      TestCookieManagerHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CookieManager instance = CookieManager.detached(
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      const bool result = true;
+      when(mockApi.removeAllCookies(
+        instanceIdentifier,
+      )).thenAnswer((_) => Future<bool>.value(result));
+
+      expect(await instance.removeAllCookies(), result);
+
+      verify(mockApi.removeAllCookies(instanceIdentifier));
+    });
+
+    test('setAcceptThirdPartyCookies', () async {
+      final MockTestCookieManagerHostApi mockApi =
+          MockTestCookieManagerHostApi();
+      TestCookieManagerHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CookieManager instance = CookieManager.detached(
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      final WebView webView = WebView.detached(
+        instanceManager: instanceManager,
+      );
+      const int webViewIdentifier = 4;
+      instanceManager.addHostCreatedInstance(webView, webViewIdentifier);
+
+      const bool accept = true;
+
+      await instance.setAcceptThirdPartyCookies(
+        webView,
+        accept,
+      );
+
+      verify(mockApi.setAcceptThirdPartyCookies(
+        instanceIdentifier,
+        webViewIdentifier,
+        accept,
+      ));
     });
   });
 
@@ -1019,6 +1175,83 @@ void main() {
 
     test('copy', () {
       expect(WebStorage.detached().copy(), isA<WebStorage>());
+    });
+  });
+
+  group('PermissionRequest', () {
+    setUp(() {});
+
+    tearDown(() {
+      TestPermissionRequestHostApi.setup(null);
+    });
+
+    test('grant', () async {
+      final MockTestPermissionRequestHostApi mockApi =
+          MockTestPermissionRequestHostApi();
+      TestPermissionRequestHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequest instance = PermissionRequest.detached(
+        resources: <String>[],
+        binaryMessenger: null,
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      const List<String> resources = <String>[PermissionRequest.audioCapture];
+
+      await instance.grant(resources);
+
+      verify(mockApi.grant(
+        instanceIdentifier,
+        resources,
+      ));
+    });
+
+    test('deny', () async {
+      final MockTestPermissionRequestHostApi mockApi =
+          MockTestPermissionRequestHostApi();
+      TestPermissionRequestHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequest instance = PermissionRequest.detached(
+        resources: <String>[],
+        binaryMessenger: null,
+        instanceManager: instanceManager,
+      );
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+      await instance.deny();
+
+      verify(mockApi.deny(instanceIdentifier));
+    });
+
+    test('FlutterAPI create', () {
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final PermissionRequestFlutterApiImpl api =
+          PermissionRequestFlutterApiImpl(
+        instanceManager: instanceManager,
+      );
+
+      const int instanceIdentifier = 0;
+
+      api.create(instanceIdentifier, <String?>[]);
+
+      expect(
+        instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+        isA<PermissionRequest>(),
+      );
     });
   });
 }
