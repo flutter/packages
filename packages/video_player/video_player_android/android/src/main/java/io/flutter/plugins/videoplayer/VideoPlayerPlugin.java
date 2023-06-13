@@ -154,6 +154,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               arg.getFormatHint(),
               httpHeaders,
               options);
+      player.setMaxCacheSize(arg.getMaxCacheSize());
+      player.setMaxFileSize(arg.getMaxFileSize());
+        
     }
     videoPlayers.put(handle.id(), player);
 
@@ -170,6 +173,13 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     player.setLooping(arg.getIsLooping());
   }
+
+  public void clearCache(Messages.ClearCacheMessage msg) {
+    VideoPlayer player = videoPlayers.get(msg.getTextureId());
+    Log.d(TAG, "Clear cache: " + msg.getClear());
+    VideoCache.clearVideoCache(flutterState.applicationContext);
+  }
+
 
   public void setVolume(@NonNull VolumeMessage arg) {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());

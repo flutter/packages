@@ -119,9 +119,10 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   void initState() {
     super.initState();
     _controller = MiniController.network(
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-    );
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+        cache: true);
 
+    print("Testing");
     _controller.addListener(() {
       setState(() {});
     });
@@ -155,6 +156,12 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
+          TextButton(
+            onPressed: () {
+              _controller.clearCache();
+            },
+            child: Text('Clear cache'),
+          )
         ],
       ),
     );
@@ -174,9 +181,10 @@ class _BumbleBeeEncryptedLiveStreamState
   @override
   void initState() {
     super.initState();
+
     _controller = MiniController.network(
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/encrypted_bee.m3u8',
-    );
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/encrypted_bee.m3u8',
+        cache: true);
 
     _controller.addListener(() {
       setState(() {});
@@ -208,6 +216,12 @@ class _BumbleBeeEncryptedLiveStreamState
                   )
                 : const Text('loading...'),
           ),
+          TextButton(
+            onPressed: () {
+              _controller.clearCache();
+            },
+            child: Text('Clear cache'),
+          )
         ],
       ),
     );

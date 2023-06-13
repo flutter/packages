@@ -11,6 +11,8 @@
 #import "AVAssetTrackUtils.h"
 #import "messages.g.h"
 
+#import "VIMediaCache.h"
+
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
 #endif
@@ -60,11 +62,13 @@
 @property(nonatomic, readonly) BOOL disposed;
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
+@property(nonatomic, strong) VIResourceLoaderManager *resourceLoaderManager;
 @property(nonatomic, readonly) BOOL isInitialized;
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(id<FVPPlayerFactory>)playerFactory;
+              playerFactory:(id<FVPPlayerFactory>)playerFactory
+                enableCache:(BOOL)cacheEnabled;
 @end
 
 static void *timeRangeContext = &timeRangeContext;
@@ -79,12 +83,15 @@ static void *rateContext = &rateContext;
 @implementation FLTVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FLTFrameUpdater *)frameUpdater
-                playerFactory:(id<FVPPlayerFactory>)playerFactory {
+                playerFactory:(id<FVPPlayerFactory>)playerFactory
+                  enableCache:(bool)enable
+  {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
   return [self initWithURL:[NSURL fileURLWithPath:path]
               frameUpdater:frameUpdater
                httpHeaders:@{}
-             playerFactory:playerFactory];
+             playerFactory:playerFactory
+             enableCache:NO];
 }
 
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
@@ -221,15 +228,51 @@ NS_INLINE UIViewController *rootViewController(void) {
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(id<FVPPlayerFactory>)playerFactory {
+              playerFactory:(id<FVPPlayerFactory>)playerFactory
+                enableCache:(BOOL)cacheEnabled{
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
   }
-  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
-  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
+    AVPlayerItem *item;
+    NSLog(@"init video");
+    if (cacheEnabled) {
+        NSLog(@"cache enabled");
+        VIResourceLoaderManager *resourceLoaderManager = [VIResourceLoaderManager new];
+        self.resourceLoaderManager = resourceLoaderManager;
+        
+        item = [resourceLoaderManager playerItemWithURL:url];
+        
+        NSLog(@"cache 3");
+        VICacheConfiguration *configuration = [VICacheManager cacheConfigurationForURL:url];
+        NSLog(@"cache 4");
+        if (configuration.progress >= 1.0) {
+            NSLog(@"cache completed");
+        }
+     } else {
+         NSLog(@"cache notEnabled");
+        AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
+       item = [AVPlayerItem playerItemWithAsset:urlAsset];
+     }
+
   return [self initWithPlayerItem:item frameUpdater:frameUpdater playerFactory:playerFactory];
 }
+
+//- (AVPlayerItem *)playerItemWithURL:(NSURL *)url options:(nullable NSDictionary<NSString *, id> *)options {
+//    if (self.resourceLoaderManager == nil) {
+//        NSLog(@"Resource loadermanager is null");
+//        VIResourceLoaderManager *resourceLoaderManager = [VIResourceLoaderManager new];
+//        self.resourceLoaderManager = resourceLoaderManager;
+//    }
+//    NSURL *assetURL = [[VIResourceLoaderManager new] assetURLWithURL:url];
+//    AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:assetURL options:options];
+////    [urlAsset.resourceLoader setDelegate:self queue:dispatch_get_main_queue()];
+//    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:urlAsset];
+//    if ([playerItem respondsToSelector:@selector(setCanUseNetworkResourcesForLiveStreamingWhilePaused:)]) {
+//        playerItem.canUseNetworkResourcesForLiveStreamingWhilePaused = YES;
+//    }
+//    return playerItem;
+//}
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FLTFrameUpdater *)frameUpdater
@@ -427,6 +470,17 @@ NS_INLINE UIViewController *rootViewController(void) {
   [self updatePlayingState];
 }
 
+- (void)cleanCache {
+    unsigned long long fileSize = [VICacheManager calculateCachedSizeWithError:nil];
+    NSLog(@"file cache size: %@", @(fileSize));
+    NSError *error;
+    [VICacheManager cleanAllCacheWithError:&error];
+    if (error) {
+        NSLog(@"clean cache failure: %@", error);
+    }
+}
+
+
 - (int64_t)position {
   return FLTCMTimeToMillis([_player currentTime]);
 }
@@ -622,13 +676,15 @@ NS_INLINE UIViewController *rootViewController(void) {
     }
     player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
                                       frameUpdater:frameUpdater
-                                     playerFactory:_playerFactory];
+                                     playerFactory:_playerFactory
+                                    enableCache:false];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else if (input.uri) {
     player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
                                      httpHeaders:input.httpHeaders
-                                   playerFactory:_playerFactory];
+                                   playerFactory:_playerFactory
+                                    enableCache:input.cache.boolValue];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
@@ -661,6 +717,12 @@ NS_INLINE UIViewController *rootViewController(void) {
 - (void)setLooping:(FLTLoopingMessage *)input error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
   player.isLooping = input.isLooping.boolValue;
+}
+
+- (void)clearCache:(FLTClearCacheMessage *)input error:(FlutterError **)error {
+  FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
+  NSLog(@"textureId: %@", input.textureId.stringValue);
+  [player.resourceLoaderManager cleanCache];
 }
 
 - (void)setVolume:(FLTVolumeMessage *)input error:(FlutterError **)error {
