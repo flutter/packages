@@ -1,4 +1,4 @@
-## NEXT
+## 0.1.5
 
 * Added support for Right-to-left (RTL) directionality.
 * Fixes stale ignore: prefer_const_constructors.

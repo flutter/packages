@@ -527,8 +527,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 selectedIconTheme: navRailTheme.selectedIconTheme,
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
-                unSelectedLabelTextStyle:
-                    navRailTheme.unselectedLabelTextStyle,
+                unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
               ),
             ),
             widget.largeBreakpoint: SlotLayout.from(
@@ -547,8 +546,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 selectedIconTheme: navRailTheme.selectedIconTheme,
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
-                unSelectedLabelTextStyle:
-                    navRailTheme.unselectedLabelTextStyle,
+                unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
               ),
             ),
           },
