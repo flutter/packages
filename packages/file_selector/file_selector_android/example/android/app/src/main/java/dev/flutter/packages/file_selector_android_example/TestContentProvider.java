@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.provider.OpenableColumns;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.io.FileNotFoundException;
 
 public class TestContentProvider extends ContentProvider {
   @Override
@@ -27,7 +26,10 @@ public class TestContentProvider extends ContentProvider {
       @Nullable String s1) {
     MatrixCursor cursor =
         new MatrixCursor(new String[] {OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE});
-    cursor.addRow(new Object[] {"dummy.png", 1});
+    cursor.addRow(
+        new Object[] {
+          "dummy.png", getContext().getResources().openRawResourceFd(R.raw.ic_launcher).getLength()
+        });
     return cursor;
   }
 
@@ -39,8 +41,7 @@ public class TestContentProvider extends ContentProvider {
 
   @Nullable
   @Override
-  public AssetFileDescriptor openAssetFile(@NonNull Uri uri, @NonNull String mode)
-      throws FileNotFoundException {
+  public AssetFileDescriptor openAssetFile(@NonNull Uri uri, @NonNull String mode) {
     return getContext().getResources().openRawResourceFd(R.raw.ic_launcher);
   }
 

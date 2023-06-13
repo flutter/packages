@@ -87,9 +87,11 @@ class MultipleImagesDisplay extends StatelessWidget {
       content: Center(
         child: Row(
           children: <Widget>[
-            ...fileBytes.map(
-              (Uint8List bytes) => Flexible(child: Image.memory(bytes)),
-            )
+            for (int i = 0; i < fileBytes.length; i++)
+              Flexible(
+                key: Key('result_image_name$i'),
+                child: Image.memory(fileBytes[i]),
+              )
           ],
         ),
       ),
