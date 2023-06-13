@@ -64,7 +64,7 @@
                                                           type:(WKMediaCaptureType)type
                                                     completion:
                                                         (void (^)(WKPermissionDecision))completion
-    API_AVAILABLE(ios(15.0)) {
+    API_AVAILABLE(ios(15.0), macos(12)) {
   [self
       requestMediaCapturePermissionForDelegateWithIdentifier:@([self
                                                                  identifierForDelegate:instance])
@@ -122,7 +122,7 @@
                           initiatedByFrame:(WKFrameInfo *)frame
                                       type:(WKMediaCaptureType)type
                            decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
-    API_AVAILABLE(ios(15.0)) {
+    API_AVAILABLE(ios(15.0), macos(12)) {
   [self.UIDelegateAPI
       requestMediaCapturePermissionForDelegateWithIdentifier:self
                                                      webView:webView

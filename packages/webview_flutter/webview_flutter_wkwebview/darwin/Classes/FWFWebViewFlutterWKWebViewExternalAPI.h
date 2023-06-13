@@ -36,8 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  * with `identifier` could not be found.
  */
 + (nullable WKWebView *)webViewForIdentifier:(long)identifier
-                          withPluginRegistry:(id<FlutterPluginRegistry>)registry
-    API_AVAILABLE(ios(11));
+                          withPluginRegistry:(id<FlutterPluginRegistry>)registry;
 @end
 
 NS_ASSUME_NONNULL_END
