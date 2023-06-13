@@ -295,12 +295,6 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
     }
 
-    // dispose resources from previous camera description
-    if (_initCalled != null) {
-      await _initCalled;
-      _unawaited(CameraPlatform.instance.dispose(_cameraId));
-    }
-
     try {
       final Completer<CameraInitializedEvent> initializeCompleter =
           Completer<CameraInitializedEvent>();
@@ -409,6 +403,12 @@ class CameraController extends ValueNotifier<CameraValue> {
       await CameraPlatform.instance.setDescriptionWhileRecording(description);
       value = value.copyWith(description: description);
     } else {
+      // dispose resources from previous camera description
+      if (_initCalled != null) {
+        await _initCalled;
+        _unawaited(CameraPlatform.instance.dispose(_cameraId));
+      }
+
       await _initializeWithDescription(description);
     }
   }
