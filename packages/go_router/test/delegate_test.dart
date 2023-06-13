@@ -79,10 +79,13 @@ void main() {
         ..push('/error');
       await tester.pumpAndSettle();
 
-      final RouteMatch last = goRouter.routerDelegate.matches.matches.last;
+      final RouteMatch last =
+          goRouter.routerDelegate.currentConfiguration.matches.last;
       await goRouter.routerDelegate.popRoute();
-      expect(goRouter.routerDelegate.matches.matches.length, 1);
-      expect(goRouter.routerDelegate.matches.matches.contains(last), false);
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
+      expect(
+          goRouter.routerDelegate.currentConfiguration.matches.contains(last),
+          false);
     });
 
     testWidgets('pops more than matches count should return false',
@@ -100,24 +103,19 @@ void main() {
       'It should return different pageKey when push is called',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
-        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
 
         goRouter.push('/a');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
-        expect(
-          goRouter.routerDelegate.matches.matches[1].pageKey,
-          const ValueKey<String>('/a-p0'),
-        );
-
         goRouter.push('/a');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 3);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
         expect(
-          goRouter.routerDelegate.matches.matches[2].pageKey,
-          const ValueKey<String>('/a-p1'),
+          goRouter.routerDelegate.currentConfiguration.matches[1].pageKey,
+          isNot(equals(
+              goRouter.routerDelegate.currentConfiguration.matches[2].pageKey)),
         );
       },
     );
@@ -134,10 +132,11 @@ void main() {
         goRouter.push('/a');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 3);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
         expect(
-          goRouter.routerDelegate.matches.matches[2].pageKey,
-          const Key('/a-p0'),
+          goRouter.routerDelegate.currentConfiguration.matches[1].pageKey,
+          isNot(equals(
+              goRouter.routerDelegate.currentConfiguration.matches[2].pageKey)),
         );
       },
     );
@@ -154,10 +153,11 @@ void main() {
         goRouter.push('/c/c2');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 3);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
         expect(
-          goRouter.routerDelegate.matches.matches[2].pageKey,
-          const Key('/c/c2-p0'),
+          goRouter.routerDelegate.currentConfiguration.matches[1].pageKey,
+          isNot(equals(
+              goRouter.routerDelegate.currentConfiguration.matches[2].pageKey)),
         );
       },
     );
@@ -174,10 +174,11 @@ void main() {
         goRouter.push('/c');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 3);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
         expect(
-          goRouter.routerDelegate.matches.matches[2].pageKey,
-          const Key('/c-p1'),
+          goRouter.routerDelegate.currentConfiguration.matches[1].pageKey,
+          isNot(equals(
+              goRouter.routerDelegate.currentConfiguration.matches[2].pageKey)),
         );
       },
     );
@@ -190,7 +191,7 @@ void main() {
         final GoRouter goRouter = await createGoRouter(tester);
 
         await tester.pumpAndSettle();
-        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
         expect(goRouter.routerDelegate.canPop(), false);
       },
     );
@@ -201,7 +202,7 @@ void main() {
           ..push('/a');
 
         await tester.pumpAndSettle();
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
         expect(goRouter.routerDelegate.canPop(), true);
       },
     );
@@ -227,22 +228,24 @@ void main() {
       goRouter.push('/page-0');
 
       goRouter.routerDelegate.addListener(expectAsync0(() {}));
-      final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
-      final RouteMatch last = goRouter.routerDelegate.matches.last;
+      final RouteMatch first =
+          goRouter.routerDelegate.currentConfiguration.matches.first;
+      final RouteMatch last = goRouter.routerDelegate.currentConfiguration.last;
       goRouter.pushReplacement('/page-1');
-      expect(goRouter.routerDelegate.matches.matches.length, 2);
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
       expect(
-        goRouter.routerDelegate.matches.matches.first,
+        goRouter.routerDelegate.currentConfiguration.matches.first,
         first,
         reason: 'The first match should still be in the list of matches',
       );
       expect(
-        goRouter.routerDelegate.matches.last,
+        goRouter.routerDelegate.currentConfiguration.last,
         isNot(last),
         reason: 'The last match should have been removed',
       );
       expect(
-        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch<Object?>)
+        (goRouter.routerDelegate.currentConfiguration.last
+                as ImperativeRouteMatch)
             .matches
             .uri
             .toString(),
@@ -255,28 +258,26 @@ void main() {
       'It should return different pageKey when pushReplacement is called',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
-        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
         expect(
-          goRouter.routerDelegate.matches.matches[0].pageKey,
+          goRouter.routerDelegate.currentConfiguration.matches[0].pageKey,
           isNotNull,
         );
 
         goRouter.push('/a');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
-        expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/a-p0'),
-        );
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
+        final ValueKey<String> prev =
+            goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
         goRouter.pushReplacement('/a');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
         expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/a-p1'),
+          goRouter.routerDelegate.currentConfiguration.matches.last.pageKey,
+          isNot(equals(prev)),
         );
       },
     );
@@ -309,22 +310,24 @@ void main() {
         goRouter.pushNamed('page0');
 
         goRouter.routerDelegate.addListener(expectAsync0(() {}));
-        final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
-        final RouteMatch last = goRouter.routerDelegate.matches.last;
+        final RouteMatch first =
+            goRouter.routerDelegate.currentConfiguration.matches.first;
+        final RouteMatch last =
+            goRouter.routerDelegate.currentConfiguration.last;
         goRouter.pushReplacementNamed('page1');
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
         expect(
-          goRouter.routerDelegate.matches.matches.first,
+          goRouter.routerDelegate.currentConfiguration.matches.first,
           first,
           reason: 'The first match should still be in the list of matches',
         );
         expect(
-          goRouter.routerDelegate.matches.last,
+          goRouter.routerDelegate.currentConfiguration.last,
           isNot(last),
           reason: 'The last match should have been removed',
         );
         expect(
-          goRouter.routerDelegate.matches.last,
+          goRouter.routerDelegate.currentConfiguration.last,
           isA<RouteMatch>().having(
             (RouteMatch match) => (match.route as GoRoute).name,
             'match.route.name',
@@ -356,22 +359,24 @@ void main() {
       goRouter.push('/page-0');
 
       goRouter.routerDelegate.addListener(expectAsync0(() {}));
-      final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
-      final RouteMatch last = goRouter.routerDelegate.matches.last;
+      final RouteMatch first =
+          goRouter.routerDelegate.currentConfiguration.matches.first;
+      final RouteMatch last = goRouter.routerDelegate.currentConfiguration.last;
       goRouter.replace('/page-1');
-      expect(goRouter.routerDelegate.matches.matches.length, 2);
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
       expect(
-        goRouter.routerDelegate.matches.matches.first,
+        goRouter.routerDelegate.currentConfiguration.matches.first,
         first,
         reason: 'The first match should still be in the list of matches',
       );
       expect(
-        goRouter.routerDelegate.matches.last,
+        goRouter.routerDelegate.currentConfiguration.last,
         isNot(last),
         reason: 'The last match should have been removed',
       );
       expect(
-        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch<Object?>)
+        (goRouter.routerDelegate.currentConfiguration.last
+                as ImperativeRouteMatch)
             .matches
             .uri
             .toString(),
@@ -384,28 +389,26 @@ void main() {
       'It should use the same pageKey when replace is called (with the same path)',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
-        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
         expect(
-          goRouter.routerDelegate.matches.matches[0].pageKey,
+          goRouter.routerDelegate.currentConfiguration.matches[0].pageKey,
           isNotNull,
         );
 
         goRouter.push('/a');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
-        expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/a-p0'),
-        );
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
+        final ValueKey<String> prev =
+            goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
         goRouter.replace('/a');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
         expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/a-p0'),
+          goRouter.routerDelegate.currentConfiguration.matches.last.pageKey,
+          prev,
         );
       },
     );
@@ -414,28 +417,26 @@ void main() {
       'It should use the same pageKey when replace is called (with a different path)',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
-        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
         expect(
-          goRouter.routerDelegate.matches.matches[0].pageKey,
+          goRouter.routerDelegate.currentConfiguration.matches[0].pageKey,
           isNotNull,
         );
 
         goRouter.push('/a');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
-        expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/a-p0'),
-        );
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
+        final ValueKey<String> prev =
+            goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
         goRouter.replace('/');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
         expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/a-p0'),
+          goRouter.routerDelegate.currentConfiguration.matches.last.pageKey,
+          prev,
         );
       },
     );
@@ -479,22 +480,24 @@ void main() {
       goRouter.pushNamed('page0');
 
       goRouter.routerDelegate.addListener(expectAsync0(() {}));
-      final RouteMatch first = goRouter.routerDelegate.matches.matches.first;
-      final RouteMatch last = goRouter.routerDelegate.matches.last;
+      final RouteMatch first =
+          goRouter.routerDelegate.currentConfiguration.matches.first;
+      final RouteMatch last = goRouter.routerDelegate.currentConfiguration.last;
       goRouter.replaceNamed('page1');
-      expect(goRouter.routerDelegate.matches.matches.length, 2);
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
       expect(
-        goRouter.routerDelegate.matches.matches.first,
+        goRouter.routerDelegate.currentConfiguration.matches.first,
         first,
         reason: 'The first match should still be in the list of matches',
       );
       expect(
-        goRouter.routerDelegate.matches.last,
+        goRouter.routerDelegate.currentConfiguration.last,
         isNot(last),
         reason: 'The last match should have been removed',
       );
       expect(
-        (goRouter.routerDelegate.matches.last as ImperativeRouteMatch<Object?>)
+        (goRouter.routerDelegate.currentConfiguration.last
+                as ImperativeRouteMatch)
             .matches
             .uri
             .toString(),
@@ -507,28 +510,26 @@ void main() {
       'It should use the same pageKey when replace is called with the same path',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
-        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
         expect(
-          goRouter.routerDelegate.matches.matches.first.pageKey,
+          goRouter.routerDelegate.currentConfiguration.matches.first.pageKey,
           isNotNull,
         );
 
         goRouter.pushNamed('page0');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
-        expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/page-0-p0'),
-        );
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
+        final ValueKey<String> prev =
+            goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
         goRouter.replaceNamed('page0');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
         expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/page-0-p0'),
+          goRouter.routerDelegate.currentConfiguration.matches.last.pageKey,
+          prev,
         );
       },
     );
@@ -537,28 +538,26 @@ void main() {
       'It should use a new pageKey when replace is called with a different path',
       (WidgetTester tester) async {
         final GoRouter goRouter = await createGoRouter(tester);
-        expect(goRouter.routerDelegate.matches.matches.length, 1);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
         expect(
-          goRouter.routerDelegate.matches.matches.first.pageKey,
+          goRouter.routerDelegate.currentConfiguration.matches.first.pageKey,
           isNotNull,
         );
 
         goRouter.pushNamed('page0');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
-        expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/page-0-p0'),
-        );
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
+        final ValueKey<String> prev =
+            goRouter.routerDelegate.currentConfiguration.matches.last.pageKey;
 
         goRouter.replaceNamed('home');
         await tester.pumpAndSettle();
 
-        expect(goRouter.routerDelegate.matches.matches.length, 2);
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
         expect(
-          goRouter.routerDelegate.matches.matches.last.pageKey,
-          const ValueKey<String>('/page-0-p0'),
+          goRouter.routerDelegate.currentConfiguration.matches.last.pageKey,
+          prev,
         );
       },
     );

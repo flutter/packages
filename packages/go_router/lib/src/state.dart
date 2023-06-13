@@ -27,9 +27,6 @@ class GoRouterState {
     this.error,
     required this.pageKey,
   });
-
-  // TODO(johnpryan): remove once namedLocation is removed from go_router.
-  // See https://github.com/flutter/flutter/issues/107729
   final RouteConfiguration _configuration;
 
   /// The full location of the route, e.g. /family/f2/person/p1
