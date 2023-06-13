@@ -5,11 +5,18 @@
 import 'package:file_selector_android/file_selector_android.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_driver/driver_extension.dart';
 
 import 'home_page.dart';
 import 'open_image_page.dart';
 import 'open_multiple_images_page.dart';
 import 'open_text_page.dart';
+
+/// Entry point for integration tests that require espresso.
+void integrationTestMain() {
+  enableFlutterDriverExtension();
+  main();
+}
 
 void main() {
   FileSelectorPlatform.instance = FileSelectorAndroid();

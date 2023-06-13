@@ -4,14 +4,17 @@
 
 package dev.flutter.packages.file_selector_android_example;
 
-import androidx.test.rule.ActivityTestRule;
-import dev.flutter.packages.DartIntegrationTest;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import io.flutter.plugins.DartIntegrationTest;
 import dev.flutter.plugins.integration_test.FlutterTestRunner;
+
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 @DartIntegrationTest
 @RunWith(FlutterTestRunner.class)
 public class MainActivityTest {
-  @Rule public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+  @Rule
+  public ActivityScenarioRule<MainActivity> myActivityTestRule =
+      new ActivityScenarioRule<>(MainActivity.class);
 }
