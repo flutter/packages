@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Fixes a bug that the required/positional parameters are not added to query parameters correctly.
+
 ## 2.1.0
 
 * Supports required/positional parameters that are not in the path.
