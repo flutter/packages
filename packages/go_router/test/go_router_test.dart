@@ -1493,8 +1493,7 @@ void main() {
       }, throwsA(isAssertionError));
     });
 
-    testWidgets('cannot match case insensitive',
-        (WidgetTester tester) async {
+    testWidgets('cannot match case insensitive', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
