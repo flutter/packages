@@ -119,10 +119,7 @@ Future<void> main(List<String> args) async {
     // androidJavaIntegrationTests,
     // androidKotlinIntegrationTests,
   ];
-  // Run macOS and iOS tests on macOS, since that's the only place they can run.
-  // TODO(stuartmorgan): Move everything to LUCI, and eliminate the LUCI/Cirrus
-  // separation. See https://github.com/flutter/flutter/issues/120231.
-  const List<String> macOSHostLuciTests = <String>[
+  const List<String> macOSHostTests = <String>[
     iOSObjCUnitTests,
     // TODO(stuartmorgan): Enable by default once CI issues are solved; see
     // https://github.com/flutter/packages/pull/2816.
@@ -132,8 +129,6 @@ Future<void> main(List<String> args) async {
     // should be enabled if any iOS-only tests are added (e.g., for a feature
     // not supported by macOS).
     // iOSSwiftIntegrationTests,
-  ];
-  const List<String> macOSHostCirrusTests = <String>[
     iOSSwiftUnitTests,
     macOSSwiftUnitTests,
     macOSSwiftIntegrationTests,
@@ -146,8 +141,7 @@ Future<void> main(List<String> args) async {
 
   _validateTestCoverage(<List<String>>[
     linuxHostTests,
-    macOSHostLuciTests,
-    macOSHostCirrusTests,
+    macOSHostTests,
     windowsHostTests,
     // Tests that are deliberately not included in CI:
     <String>[
@@ -177,11 +171,7 @@ Future<void> main(List<String> args) async {
 
   final List<String> testsToRun;
   if (Platform.isMacOS) {
-    if (Platform.environment['LUCI_CI'] != null) {
-      testsToRun = macOSHostLuciTests;
-    } else {
-      testsToRun = macOSHostCirrusTests;
-    }
+    testsToRun = macOSHostTests;
   } else if (Platform.isWindows) {
     testsToRun = windowsHostTests;
   } else if (Platform.isLinux) {

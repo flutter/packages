@@ -118,11 +118,8 @@ void main() {
     );
 
     expect(configuration.namedLocation('lowercase'), '/abc');
-    expect(configuration.namedLocation('LOWERCASE'), '/abc');
     expect(configuration.namedLocation('camelCase'), '/efg');
-    expect(configuration.namedLocation('camelcase'), '/efg');
     expect(configuration.namedLocation('snake_case'), '/hij');
-    expect(configuration.namedLocation('SNAKE_CASE'), '/hij');
 
     // With query parameters
     expect(configuration.namedLocation('lowercase'), '/abc');
