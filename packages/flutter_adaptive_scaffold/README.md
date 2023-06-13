@@ -177,9 +177,9 @@ displayed and the entrance animation and exit animation.
                 });
               },
               extended: true,
-              leading: Row(
+              leading: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const <Widget>[
+                children: <Widget>[
                   Text(
                     'REPLY',
                     style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
@@ -239,8 +239,6 @@ displayed and the entrance animation and exit animation.
         },
       ),
     );
-  }
-}
 ```
 
 Both of the examples shown here produce the same output:
