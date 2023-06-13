@@ -24,6 +24,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
   final String name = 'gradle-check';
 
   @override
+  List<String> get aliases => <String>['check-gradle'];
+
+  @override
   final String description =
       'Checks that gradle files follow repository conventions.';
 
