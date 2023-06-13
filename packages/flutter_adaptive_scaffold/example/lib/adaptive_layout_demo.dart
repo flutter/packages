@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(goderbauer): Remove this ignore when this package requires Flutter 3.8 or later.
-// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
@@ -58,8 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         const Divider(color: Colors.black),
         const SizedBox(height: 10),
-        Row(
-          children: const <Widget>[
+        const Row(
+          children: <Widget>[
             SizedBox(width: 27),
             Text('Folders', style: TextStyle(fontSize: 16)),
           ],
@@ -74,8 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
               iconSize: 21,
             ),
             const SizedBox(width: 21),
-            Flexible(
-              child: const Text(
+            const Flexible(
+              child: Text(
                 'Freelance',
                 overflow: TextOverflow.ellipsis,
               ),
@@ -92,8 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
               iconSize: 21,
             ),
             const SizedBox(width: 21),
-            Flexible(
-              child: const Text(
+            const Flexible(
+              child: Text(
                 'Mortgage',
                 overflow: TextOverflow.ellipsis,
               ),
@@ -198,9 +196,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
               extended: true,
-              leading: Row(
+              leading: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const <Widget>[
+                children: <Widget>[
                   Text(
                     'REPLY',
                     style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
