@@ -19,6 +19,11 @@ class TextureMessage {
   int textureId;
 }
 
+class CacheMessage {
+  CacheMessage(this.can);
+  bool can;
+}
+
 class LoopingMessage {
   LoopingMessage(this.textureId, this.isLooping);
   int textureId;
