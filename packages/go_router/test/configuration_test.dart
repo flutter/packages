@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/configuration.dart';
+import 'package:go_router/src/misc/errors.dart';
 
 import 'test_helpers.dart';
 
@@ -120,7 +121,7 @@ void main() {
             },
           );
         },
-        throwsAssertionError,
+        throwsA(isA<GoError>()),
       );
     });
 
@@ -318,7 +319,7 @@ void main() {
             },
           );
         },
-        throwsAssertionError,
+        throwsA(isA<GoError>()),
       );
     });
 
@@ -373,7 +374,7 @@ void main() {
             },
           );
         },
-        throwsAssertionError,
+        throwsA(isA<GoError>()),
       );
     });
 
@@ -749,7 +750,7 @@ void main() {
               return null;
             },
           ),
-          throwsAssertionError,
+          throwsA(isA<GoError>()),
         );
       },
     );
@@ -857,7 +858,7 @@ void main() {
               return null;
             },
           ),
-          throwsAssertionError,
+          throwsA(isA<GoError>()),
         );
       },
     );
@@ -1036,6 +1037,33 @@ void main() {
                   ),
                 ],
               ),
+              GoRoute(
+                path: '/g',
+                builder: _mockScreenBuilder,
+                routes: <RouteBase>[
+                  StatefulShellRoute.indexedStack(
+                    builder: _mockIndexedStackShellBuilder,
+                    branches: <StatefulShellBranch>[
+                      StatefulShellBranch(
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'h',
+                            builder: _mockScreenBuilder,
+                          ),
+                        ],
+                      ),
+                      StatefulShellBranch(
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'i',
+                            builder: _mockScreenBuilder,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ],
             redirectLimit: 10,
             topRedirect: (BuildContext context, GoRouterState state) {
@@ -1048,7 +1076,10 @@ void main() {
           '  =>   /a/c\n'
           '  => /d\n'
           '  =>   /d/e\n'
-          '  =>     /d/e/f\n',
+          '  =>     /d/e/f\n'
+          '  => /g\n'
+          '  =>   /g/h\n'
+          '  =>   /g/i\n',
         );
       },
     );
@@ -1068,3 +1099,7 @@ Widget _mockScreenBuilder(BuildContext context, GoRouterState state) =>
 Widget _mockShellBuilder(
         BuildContext context, GoRouterState state, Widget child) =>
     child;
+
+Widget _mockIndexedStackShellBuilder(BuildContext context, GoRouterState state,
+        StatefulNavigationShell shell) =>
+    shell;
