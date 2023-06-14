@@ -13,6 +13,5 @@ import org.junit.runner.RunWith;
 @DartIntegrationTest
 @RunWith(FlutterTestRunner.class)
 public class MainActivityTest {
-  @Rule
-  public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+  @Rule public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
 }
