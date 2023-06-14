@@ -41,9 +41,13 @@ import 'xcode_analyze_command.dart';
 
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
-  final Directory scriptBinDir =
+  final Directory scriptDir =
       fileSystem.file(io.Platform.script.toFilePath()).parent;
-  final Directory root = scriptBinDir.parent.parent.parent;
+  // Support running either via directly invoking main.dart, or the wrapper in
+  // bin/.
+  final Directory toolsDir =
+      scriptDir.basename == 'bin' ? scriptDir.parent : scriptDir.parent.parent;
+  final Directory root = toolsDir.parent.parent;
   final Directory packagesDir = root.childDirectory('packages');
 
   if (!packagesDir.existsSync()) {
