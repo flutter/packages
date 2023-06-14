@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -99,10 +101,14 @@ import 'typedefs.dart';
 abstract class RouteBase {
   const RouteBase._({
     this.routes = const <RouteBase>[],
+    this.onExit,
   });
 
   /// The list of child routes associated with this route.
   final List<RouteBase> routes;
+
+  /// Return false to prevent the route from being popped.
+  final FutureOr<bool> Function(BuildContext context)? onExit;
 
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
@@ -140,6 +146,7 @@ class GoRoute extends RouteBase {
     this.parentNavigatorKey,
     this.redirect,
     super.routes = const <RouteBase>[],
+    super.onExit,
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
         assert(pageBuilder != null || builder != null || redirect != null,
@@ -333,7 +340,7 @@ class GoRoute extends RouteBase {
 /// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   /// Constructs a [ShellRouteBase].
-  const ShellRouteBase._({super.routes}) : super._();
+  const ShellRouteBase._({super.routes, super.onExit}) : super._();
 
   /// Attempts to build the Widget representing this shell route.
   ///
@@ -497,6 +504,7 @@ class ShellRoute extends ShellRouteBase {
     this.pageBuilder,
     this.observers,
     super.routes,
+    super.onExit,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
   })  : assert(routes.isNotEmpty),

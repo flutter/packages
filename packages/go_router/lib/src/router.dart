@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -302,8 +305,46 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
   void go(String location, {Object? extra}) {
-    log.info('going to $location');
-    routeInformationProvider.go(location, extra: extra);
+    final RouteInformation routeInformation = RouteInformation(
+      location: location,
+      state: RouteInformationState<void>(
+        extra: extra,
+        type: NavigatingType.go,
+      ),
+    );
+    final BuildContext context = configuration.navigatorKey.currentContext!;
+    routeInformationParser
+        .parseRouteInformationWithDependencies(routeInformation, context)
+        .then((RouteMatchList newMatchList) async {
+      final RouteMatchList oldMatchList = routerDelegate.currentConfiguration;
+      final int compareUntil = min(
+        oldMatchList.matches.length,
+        newMatchList.matches.length,
+      );
+      int indexOfFirstDiff = -1;
+      for (int i = 0; i < compareUntil; i++) {
+        final RouteMatch newMatch = newMatchList.matches[i];
+        final RouteMatch oldMatch = oldMatchList.matches[i];
+        if (newMatch != oldMatch) {
+          indexOfFirstDiff = i;
+        }
+      }
+      if (indexOfFirstDiff > -1) {
+        final List<RouteMatch> exitingMatches =
+            oldMatchList.matches.sublist(indexOfFirstDiff);
+        for (int i = exitingMatches.length - 1; i >= 0; i--) {
+          final RouteMatch match = exitingMatches[i];
+          if (match.route.onExit != null) {
+            final bool result = await match.route.onExit!(context);
+            if (!result) {
+              return;
+            }
+          }
+        }
+      }
+      log.info('going to $location');
+      routeInformationProvider.go(location, extra: extra);
+    });
   }
 
   /// Restore the RouteMatchList
@@ -372,8 +413,32 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
   Future<T?> pushReplacement<T extends Object?>(String location,
-      {Object? extra}) {
+      {Object? extra}) async {
     log.info('pushReplacement $location');
+
+    if (routerDelegate.currentConfiguration.last.route.onExit != null) {
+      final FutureOr<bool> shouldPop = routerDelegate.currentConfiguration.last
+          .route.onExit!(configuration.navigatorKey.currentContext!);
+      if (shouldPop == false) {
+        return null;
+      } else if (shouldPop is Future<bool>) {
+        final Completer<T?> completer = Completer<T?>();
+        await shouldPop.then((bool shouldPop) async {
+          if (shouldPop) {
+            final T? result = await routeInformationProvider.pushReplacement<T>(
+              location,
+              base: routerDelegate.currentConfiguration,
+              extra: extra,
+            );
+            completer.complete(result);
+          } else {
+            completer.complete(null);
+          }
+        });
+        return completer.future;
+      }
+    }
+
     return routeInformationProvider.pushReplacement<T>(
       location,
       base: routerDelegate.currentConfiguration,
@@ -424,7 +489,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// preserving the page key.
   ///
   /// This will preserve the state and not run any page animation. Optional
-  /// parameters can be providded to the named route, e.g. `name='person',
+  /// parameters can be provided to the named route, e.g. `name='person',
   /// pathParameters={'fid': 'f2', 'pid': 'p1'}`.
   ///
   /// See also:

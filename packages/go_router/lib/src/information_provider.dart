@@ -36,13 +36,12 @@ enum NavigatingType {
 }
 
 /// The data class to be stored in [RouteInformation.state] to be used by
-/// [GoRouteInformationPrarser].
+/// [GoRouteInformationParser].
 ///
 /// This state class is used internally in go_router and will not be send to
 /// the engine.
 class RouteInformationState<T> {
   /// Creates an InternalRouteInformationState.
-  @visibleForTesting
   RouteInformationState({
     this.extra,
     this.completer,

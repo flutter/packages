@@ -130,7 +130,9 @@ class ImperativeRouteMatch extends RouteMatch {
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
   void complete([dynamic value]) {
-    completer.complete(value);
+    if (!completer.isCompleted) {
+      completer.complete(value);
+    }
   }
 
   // An ImperativeRouteMatch has its own life cycle due the the _completer.
