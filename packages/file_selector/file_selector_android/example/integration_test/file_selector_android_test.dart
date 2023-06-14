@@ -7,7 +7,7 @@ import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-@pragma('vm:entry-point')
+/// Entry point for integration tests that require espresso.
 void integrationTestMain() {
   enableFlutterDriverExtension();
   app.main();
