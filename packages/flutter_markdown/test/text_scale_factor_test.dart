@@ -25,7 +25,7 @@ void defineTests() {
         );
 
         final RichText richText = tester.widget(find.byType(RichText));
-        expect(richText.textScaleFactor, 2.0);
+        expect(richText.textScaleFactor, 2.0);  // ignore: deprecated_member_use
       },
     );
 
@@ -36,7 +36,7 @@ void defineTests() {
         await tester.pumpWidget(
           boilerplate(
             const MediaQuery(
-              data: MediaQueryData(textScaleFactor: 2.0),
+              data: MediaQueryData(textScaleFactor: 2.0),  // ignore: deprecated_member_use
               child: MarkdownBody(
                 data: data,
               ),
@@ -45,7 +45,7 @@ void defineTests() {
         );
 
         final RichText richText = tester.widget(find.byType(RichText));
-        expect(richText.textScaleFactor, 2.0);
+        expect(richText.textScaleFactor, 2.0);  // ignore: deprecated_member_use
       },
     );
 
@@ -56,7 +56,7 @@ void defineTests() {
         await tester.pumpWidget(
           boilerplate(
             const MediaQuery(
-              data: MediaQueryData(textScaleFactor: 2.0),
+              data: MediaQueryData(textScaleFactor: 2.0),  // ignore: deprecated_member_use
               child: MarkdownBody(
                 data: data,
                 selectable: true,
@@ -67,7 +67,7 @@ void defineTests() {
 
         final SelectableText selectableText =
             tester.widget(find.byType(SelectableText));
-        expect(selectableText.textScaleFactor, 2.0);
+        expect(selectableText.textScaleFactor, 2.0);  // ignore: deprecated_member_use
       },
     );
   });
