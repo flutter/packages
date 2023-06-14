@@ -533,6 +533,8 @@ NS_INLINE UIViewController *rootViewController(void) {
   [self.player removeObserver:self forKeyPath:@"rate"];
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
+  _player = nil;
+
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
