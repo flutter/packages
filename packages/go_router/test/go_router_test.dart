@@ -127,7 +127,12 @@ void main() {
         GoRoute(path: '/', builder: dummy),
       ];
 
-      final GoRouter router = await createRouter(routes, tester);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
+      );
       router.go('/foo');
       await tester.pumpAndSettle();
       final List<RouteMatch> matches =
@@ -1889,14 +1894,18 @@ void main() {
     });
 
     testWidgets('top-level redirect loop', (WidgetTester tester) async {
-      final GoRouter router = await createRouter(<GoRoute>[], tester,
-          redirect: (BuildContext context, GoRouterState state) =>
-              state.matchedLocation == '/'
-                  ? '/login'
-                  : state.matchedLocation == '/login'
-                      ? '/'
-                      : null);
-
+      final GoRouter router = await createRouter(
+        <GoRoute>[],
+        tester,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.matchedLocation == '/'
+                ? '/login'
+                : state.matchedLocation == '/login'
+                    ? '/'
+                    : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
+      );
       final List<RouteMatch> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
@@ -1921,6 +1930,8 @@ void main() {
           ),
         ],
         tester,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatch> matches =
@@ -1944,6 +1955,8 @@ void main() {
         tester,
         redirect: (BuildContext context, GoRouterState state) =>
             state.matchedLocation == '/' ? '/login' : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatch> matches =
@@ -1966,6 +1979,8 @@ void main() {
                 : state.matchedLocation == '/login'
                     ? '/'
                     : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatch> matches =
@@ -2153,6 +2168,8 @@ void main() {
         tester,
         redirect: (BuildContext context, GoRouterState state) =>
             '/${state.location}+',
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
         redirectLimit: 10,
       );
 

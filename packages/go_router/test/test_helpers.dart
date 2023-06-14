@@ -149,16 +149,18 @@ Future<GoRouter> createRouter(
   GlobalKey<NavigatorState>? navigatorKey,
   GoRouterWidgetBuilder? errorBuilder,
   String? restorationScopeId,
+  GoExceptionHandler? onException,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
     redirect: redirect,
     initialLocation: initialLocation,
+    onException: onException,
     initialExtra: initialExtra,
     redirectLimit: redirectLimit,
-    errorBuilder: errorBuilder ??
-        (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+    errorBuilder: errorBuilder, //??
+    // (BuildContext context, GoRouterState state) =>
+    //     TestErrorScreen(state.error!),
     navigatorKey: navigatorKey,
     restorationScopeId: restorationScopeId,
   );
