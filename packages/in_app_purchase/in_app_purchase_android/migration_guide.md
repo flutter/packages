@@ -51,6 +51,7 @@ Code after migration:
 ProductDetailsWrapper product;
 
 if (product.productType == ProductType.inapp) {
+  // Unwrapping is safe because the product is a one time purchase.
   OneTimePurchaseOfferDetailsWrapper offer = product.oneTimePurchaseOfferDetails!;
   String price = offer.formattedPrice;
 }
@@ -82,6 +83,7 @@ ProductDetails productDetails;
 if (productDetails is GooglePlayProductDetails) {
   ProductDetailsWrapper product = productDetails.productDetails;
   if (product.productType == ProductType.subs) {
+    // Unwrapping is safe because the product is a subscription.
     SubscriptionOfferDetailsWrapper offer =
         product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
     List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
@@ -118,6 +120,7 @@ ProductDetails productDetails;
 if (productDetails is GooglePlayProductDetails) {
   ProductDetailsWrapper product = productDetails.productDetails;
   if (product.productType == ProductType.subs) {
+    // Unwrapping is safe because the product is a subscription.
     SubscriptionOfferDetailsWrapper offer =
         product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
     List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
