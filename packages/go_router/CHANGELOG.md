@@ -1,3 +1,7 @@
+## 8.0.3
+
+- Makes namedLocation and route name related APIs case sensitive.
+
 ## 8.0.2 
 
 - Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
