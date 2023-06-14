@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage>
   // the navigation elements.
   ValueNotifier<bool?> showGridView = ValueNotifier<bool?>(false);
 
-  // Override the application's directionality
+  // Override the application's directionality.
   TextDirection directionalityOverride = TextDirection.ltr;
 
   // The index of the selected mail card.
