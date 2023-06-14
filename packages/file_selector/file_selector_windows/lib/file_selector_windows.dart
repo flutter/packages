@@ -21,7 +21,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> paths = await _hostApi.showOpenDialog(
+    final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: false,
           selectFolders: false,
@@ -29,7 +29,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ),
         initialDirectory,
         confirmButtonText);
-    return paths.isEmpty ? null : XFile(paths.first!);
+    return result.paths.isEmpty ? null : XFile(result.paths.first!);
   }
 
   @override
@@ -38,7 +38,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> paths = await _hostApi.showOpenDialog(
+    final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: true,
           selectFolders: false,
@@ -46,7 +46,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ),
         initialDirectory,
         confirmButtonText);
-    return paths.map((String? path) => XFile(path!)).toList();
+    return result.paths.map((String? path) => XFile(path!)).toList();
   }
 
   @override
@@ -71,7 +71,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     List<XTypeGroup>? acceptedTypeGroups,
     SaveDialogOptions options = const SaveDialogOptions(),
   }) async {
-    final List<String?> paths = await _hostApi.showSaveDialog(
+    final FileDialogResult result = await _hostApi.showSaveDialog(
         SelectionOptions(
           allowMultiple: false,
           selectFolders: false,
@@ -80,7 +80,12 @@ class FileSelectorWindows extends FileSelectorPlatform {
         options.initialDirectory,
         options.suggestedName,
         options.confirmButtonText);
-    return paths.isEmpty ? null : FileSaveLocationResult(paths.first!);
+    final int? groupIndex = result.typeGroupIndex;
+    return result.paths.isEmpty
+        ? null
+        : FileSaveLocationResult(result.paths.first!,
+            activeFilter:
+                groupIndex == null ? null : acceptedTypeGroups?[groupIndex]);
   }
 
   @override
@@ -88,7 +93,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> paths = await _hostApi.showOpenDialog(
+    final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: false,
           selectFolders: true,
@@ -96,7 +101,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ),
         initialDirectory,
         confirmButtonText);
-    return paths.isEmpty ? null : paths.first!;
+    return result.paths.isEmpty ? null : result.paths.first!;
   }
 
   @override
@@ -104,7 +109,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> paths = await _hostApi.showOpenDialog(
+    final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: true,
           selectFolders: true,
@@ -112,7 +117,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ),
         initialDirectory,
         confirmButtonText);
-    return paths.isEmpty ? <String>[] : List<String>.from(paths);
+    return result.paths.isEmpty ? <String>[] : List<String>.from(result.paths);
   }
 }
 
