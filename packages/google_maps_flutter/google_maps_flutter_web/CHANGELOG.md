@@ -1,3 +1,8 @@
+## 0.5.0+1
+
+* Updates the README to mention that this package is the endorsed implementation
+  of `google_maps_flutter` for the web platform.
+
 ## 0.5.0
 
 * **BREAKING CHANGE:** Fires a `MapStyleException` when an invalid JSON is used

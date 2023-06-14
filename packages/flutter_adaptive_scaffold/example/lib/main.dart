@@ -412,11 +412,9 @@ class _LargeComposeIcon extends StatelessWidget {
       child: Column(children: <Widget>[
         Container(
           padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
-          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-          // ignore: prefer_const_constructors
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const <Widget>[
+            children: <Widget>[
               Text(
                 'REPLY',
                 style: TextStyle(color: Colors.deepPurple, fontSize: 15),
@@ -444,14 +442,10 @@ class _LargeComposeIcon extends StatelessWidget {
           ),
           width: 200,
           height: 50,
-          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-          // ignore: prefer_const_constructors
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 0, 0),
-            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-            // ignore: prefer_const_constructors
+          child: const Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 0, 0, 0),
             child: Row(
-              children: const <Widget>[
+              children: <Widget>[
                 Icon(Icons.edit_outlined),
                 SizedBox(width: 20),
                 Center(child: Text('Compose')),
