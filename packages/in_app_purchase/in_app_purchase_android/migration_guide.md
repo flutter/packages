@@ -1,3 +1,4 @@
+<?code-excerpt path-base="excerpts/packages/in_app_purchase_android"?>
 # Migration Guide from 0.2.x to 0.3.0
 
 Starting November 2023, Android Billing Client V4 is no longer supported,
@@ -47,14 +48,8 @@ if (sku.type == SkuType.inapp) {
 
 Code after migration:
 
+<?code-excerpt "migration_guide_examples.dart (one-time-purchase-price)"?>
 ```dart
-ProductDetailsWrapper product;
-
-if (product.productType == ProductType.inapp) {
-  // Unwrapping is safe because the product is a one time purchase.
-  OneTimePurchaseOfferDetailsWrapper offer = product.oneTimePurchaseOfferDetails!;
-  String price = offer.formattedPrice;
-}
 ```
 
 ### Use case: free trials
@@ -77,21 +72,8 @@ if (sku.type == SkuType.subs) {
 
 Code after migration:
 
+<?code-excerpt "migration_guide_examples.dart (subscription-free-trial)"?>
 ```dart
-ProductDetails productDetails;
-
-if (productDetails is GooglePlayProductDetails) {
-  ProductDetailsWrapper product = productDetails.productDetails;
-  if (product.productType == ProductType.subs) {
-    // Unwrapping is safe because the product is a subscription.
-    SubscriptionOfferDetailsWrapper offer =
-        product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
-    List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
-    if (pricingPhases.first.priceAmountMicros == 0) {
-      // Free trial period logic.
-    }
-  }
-}
 ```
 
 ### Use case: introductory prices
@@ -114,23 +96,8 @@ if (sku.type == SkuType.subs) {
 
 Code after migration:
 
+<?code-excerpt "migration_guide_examples.dart (subscription-introductory-price)"?>
 ```dart
-ProductDetails productDetails;
-
-if (productDetails is GooglePlayProductDetails) {
-  ProductDetailsWrapper product = productDetails.productDetails;
-  if (product.productType == ProductType.subs) {
-    // Unwrapping is safe because the product is a subscription.
-    SubscriptionOfferDetailsWrapper offer =
-        product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
-    List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
-    if (pricingPhases.length >= 2 &&
-        pricingPhases.first.priceAmountMicros < pricingPhases[1].priceAmountMicros
-    ) {
-      // Introductory pricing period logic.
-    }
-  }
-}
 ```
 
 ## Removal of `launchPriceChangeConfirmationFlow`
