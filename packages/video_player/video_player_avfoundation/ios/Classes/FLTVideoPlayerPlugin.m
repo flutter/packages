@@ -337,6 +337,12 @@ NS_INLINE UIViewController *rootViewController(void) {
       }
     }
   } else if (context == playbackBufferEmptyContext) {
+    // There's a bug in AVFoundation, KVO for `playbackBufferEmpty` when playing HLS content. The
+    // expected behavior of the value change for `playbackBufferEmpty` is not triggered. This
+    // issue has been confirmed in iOS 16.5. Refer:
+    // https://github.com/flutter/packages/pull/3826#discussion_r1204985454 Fortunately, the KVO
+    // for `playbackBufferFull` is working correctly, so the bug won't affect the event passing
+    // responsible for `bufferingEnd` or `bufferingStart` events.
     if (_eventSink != nil) {
       if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
         _eventSink(@{@"event" : @"bufferingEnd"});
