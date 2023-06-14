@@ -13,6 +13,7 @@ import 'open_multiple_images_page.dart';
 import 'open_text_page.dart';
 
 /// Entry point for integration tests that require espresso.
+@pragma('vm:entry-point')
 void integrationTestMain() {
   enableFlutterDriverExtension();
   main();
