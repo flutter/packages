@@ -641,7 +641,7 @@ class WebKitWebResourceError extends WebResourceError {
   WebKitWebResourceError._(
     this._nsError, {
     required bool isForMainFrame,
-    required super.failingUrl,
+    required super.url,
   }) : super(
           errorCode: _nsError.code,
           description: _nsError.localizedDescription ?? '',
@@ -745,7 +745,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
             WebKitWebResourceError._(
               error,
               isForMainFrame: true,
-              failingUrl: error.userInfo[NSErrorUserInfoKey
+              url: error.userInfo[NSErrorUserInfoKey
                   .NSURLErrorFailingURLStringError] as String?,
             ),
           );
@@ -757,7 +757,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
             WebKitWebResourceError._(
               error,
               isForMainFrame: true,
-              failingUrl: error.userInfo[NSErrorUserInfoKey
+              url: error.userInfo[NSErrorUserInfoKey
                   .NSURLErrorFailingURLStringError] as String?,
             ),
           );
@@ -773,7 +773,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 domain: 'WKErrorDomain',
               ),
               isForMainFrame: true,
-              failingUrl: null,
+              url: null,
             ),
           );
         }

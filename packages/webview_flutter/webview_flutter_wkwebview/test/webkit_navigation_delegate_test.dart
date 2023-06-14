@@ -102,7 +102,7 @@ void main() {
 
       expect(callbackError.description, 'my desc');
       expect(callbackError.errorCode, WKErrorCode.webViewInvalidated);
-      expect(callbackError.failingUrl, 'www.flutter.dev');
+      expect(callbackError.url, 'www.flutter.dev');
       expect(callbackError.domain, 'domain');
       expect(callbackError.errorType, WebResourceErrorType.webViewInvalidated);
       expect(callbackError.isForMainFrame, true);
@@ -140,7 +140,7 @@ void main() {
       );
 
       expect(callbackError.description, 'my desc');
-      expect(callbackError.failingUrl, 'www.flutter.dev');
+      expect(callbackError.url, 'www.flutter.dev');
       expect(callbackError.errorCode, WKErrorCode.webViewInvalidated);
       expect(callbackError.domain, 'domain');
       expect(callbackError.errorType, WebResourceErrorType.webViewInvalidated);

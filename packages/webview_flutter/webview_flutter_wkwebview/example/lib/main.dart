@@ -115,7 +115,7 @@ Page resource error:
   description: ${error.description}
   errorType: ${error.errorType}
   isForMainFrame: ${error.isForMainFrame}
-  failingUrl: ${error.failingUrl}
+  failingUrl: ${error.url}
           ''');
           })
           ..setOnNavigationRequest((NavigationRequest request) {

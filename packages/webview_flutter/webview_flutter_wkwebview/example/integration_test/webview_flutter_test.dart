@@ -819,7 +819,7 @@ Future<void> main() async {
       final WebResourceError error = await errorCompleter.future;
       expect(error, isNotNull);
       expect(
-        error.failingUrl?.startsWith('https://www.notawebsite..com'),
+        error.url?.startsWith('https://www.notawebsite..com'),
         isTrue,
       );
 
