@@ -1004,10 +1004,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final dart_ast.NamedType? namedType =
         getFirstChildOfType<dart_ast.NamedType>(parameter);
     if (namedType != null) {
-      // TODO(stuartmorgan): Replace `name` when adopting the next version of
-      // analyzer.
-      // ignore: deprecated_member_use
-      final String argTypeBaseName = namedType.name.name;
+      final String argTypeBaseName = _getNamedTypeQualifiedName(namedType);
       final bool isNullable = namedType.question != null;
       final List<TypeDeclaration> argTypeArguments =
           typeAnnotationsToTypeArguments(namedType.typeArguments);
@@ -1089,10 +1086,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         Method(
           name: node.name.lexeme,
           returnType: TypeDeclaration(
-              // TODO(stuartmorgan): Replace `name` when adopting the next
-              // version of analyzer.
-              // ignore: deprecated_member_use
-              baseName: returnType.name.name,
+              baseName: _getNamedTypeQualifiedName(returnType),
               typeArguments:
                   typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
@@ -1141,10 +1135,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       for (final Object x in typeArguments.childEntities) {
         if (x is dart_ast.NamedType) {
           result.add(TypeDeclaration(
-              // TODO(stuartmorgan): Replace `name` when adopting the next
-              // version of analyzer.
-              // ignore: deprecated_member_use
-              baseName: x.name.name,
+              baseName: _getNamedTypeQualifiedName(x),
               isNullable: x.question != null,
               typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
         }
@@ -1174,10 +1165,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           _currentClass!.fields.add(NamedType(
             type: TypeDeclaration(
-              // TODO(stuartmorgan): Replace `name` when adopting the next
-              // version of analyzer.
-              // ignore: deprecated_member_use
-              baseName: type.name.name,
+              baseName: _getNamedTypeQualifiedName(type),
               isNullable: type.question != null,
               typeArguments: typeAnnotationsToTypeArguments(typeArguments),
             ),
@@ -1222,6 +1210,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
     node.visitChildren(this);
     return null;
+  }
+
+  static String _getNamedTypeQualifiedName(dart_ast.NamedType node) {
+    final dart_ast.ImportPrefixReference? importPrefix = node.importPrefix;
+    if (importPrefix != null) {
+      return '${importPrefix.name.lexeme}.${node.name2.lexeme}';
+    }
+    return node.name2.lexeme;
   }
 }
 

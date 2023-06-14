@@ -10,7 +10,6 @@ import 'package:flutter/widgets.dart';
 import 'builder.dart';
 import 'configuration.dart';
 import 'match.dart';
-import 'matching.dart';
 import 'misc/errors.dart';
 import 'typedefs.dart';
 
@@ -46,25 +45,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Set to true to disable creating history entries on the web.
   final bool routerNeglect;
 
-  RouteMatchList _matchList = RouteMatchList.empty;
-
   final RouteConfiguration _configuration;
 
-  /// Stores the number of times each route route has been pushed.
-  ///
-  /// This is used to generate a unique key for each route.
-  ///
-  /// For example, it could be equal to:
-  /// ```dart
-  /// {
-  ///   'family': 1,
-  ///   'family/:fid': 2,
-  /// }
-  /// ```
-  final Map<String, int> _pushCounts = <String, int>{};
-
   _NavigatorStateIterator _createNavigatorStateIterator() =>
-      _NavigatorStateIterator(_matchList, navigatorKey.currentState!);
+      _NavigatorStateIterator(currentConfiguration, navigatorKey.currentState!);
 
   @override
   Future<bool> popRoute() async {
@@ -76,45 +60,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       }
     }
     return false;
-  }
-
-  ValueKey<String> _getNewKeyForPath(String path) {
-    // Remap the pageKey to allow any number of the same page on the stack
-    final int count = (_pushCounts[path] ?? -1) + 1;
-    _pushCounts[path] = count;
-    return ValueKey<String>('$path-p$count');
-  }
-
-  Future<T?> _push<T extends Object?>(
-      RouteMatchList matches, ValueKey<String> pageKey) async {
-    final ImperativeRouteMatch<T> newPageKeyMatch = ImperativeRouteMatch<T>(
-      pageKey: pageKey,
-      matches: matches,
-    );
-
-    _matchList = _matchList.push(newPageKeyMatch);
-    return newPageKeyMatch.future;
-  }
-
-  void _remove(RouteMatch match) {
-    _matchList = _matchList.remove(match);
-  }
-
-  /// Pushes the given location onto the page stack.
-  ///
-  /// See also:
-  /// * [pushReplacement] which replaces the top-most page of the page stack and
-  ///   always use a new page key.
-  /// * [replace] which replaces the top-most page of the page stack but treats
-  ///   it as the same page. The page key will be reused. This will preserve the
-  ///   state and not run any page animation.
-  Future<T?> push<T extends Object?>(RouteMatchList matches) async {
-    assert(matches.last.route is! ShellRoute);
-
-    final ValueKey<String> pageKey = _getNewKeyForPath(matches.fullPath);
-    final Future<T?> future = _push(matches, pageKey);
-    notifyListeners();
-    return future;
   }
 
   /// Returns `true` if the active Navigator can pop.
@@ -142,7 +87,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   void _debugAssertMatchListNotEmpty() {
     assert(
-      _matchList.isNotEmpty,
+      currentConfiguration.isNotEmpty,
       'You have popped the last page off of the stack,'
       ' there are no pages left to show',
     );
@@ -157,7 +102,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (match is ImperativeRouteMatch) {
       match.complete(result);
     }
-    _remove(match!);
+    currentConfiguration = currentConfiguration.remove(match!);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
@@ -166,57 +111,19 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return true;
   }
 
-  /// Replaces the top-most page of the page stack with the given one.
-  ///
-  /// The page key of the new page will always be different from the old one.
-  ///
-  /// See also:
-  /// * [push] which pushes the given location onto the page stack.
-  /// * [replace] which replaces the top-most page of the page stack but treats
-  ///   it as the same page. The page key will be reused. This will preserve the
-  ///   state and not run any page animation.
-  void pushReplacement(RouteMatchList matches) {
-    assert(matches.last.route is! ShellRoute);
-    _remove(_matchList.last);
-    push(matches); // [push] will notify the listeners.
-  }
-
-  /// Replaces the top-most page of the page stack with the given one but treats
-  /// it as the same page.
-  ///
-  /// The page key will be reused. This will preserve the state and not run any
-  /// page animation.
-  ///
-  /// See also:
-  /// * [push] which pushes the given location onto the page stack.
-  /// * [pushReplacement] which replaces the top-most page of the page stack but
-  ///   always uses a new page key.
-  void replace(RouteMatchList matches) {
-    assert(matches.last.route is! ShellRoute);
-    final RouteMatch routeMatch = _matchList.last;
-    final ValueKey<String> pageKey = routeMatch.pageKey;
-    _remove(routeMatch);
-    _push(matches, pageKey);
-    notifyListeners();
-  }
-
-  /// For internal use; visible for testing only.
-  @visibleForTesting
-  RouteMatchList get matches => _matchList;
-
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
-  RouteMatchList get currentConfiguration => _matchList;
+  RouteMatchList currentConfiguration = RouteMatchList.empty;
 
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Widget build(BuildContext context) {
     return builder.build(
       context,
-      _matchList,
+      currentConfiguration,
       routerNeglect,
     );
   }
@@ -224,8 +131,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
-    _matchList = configuration;
-    assert(_matchList.isNotEmpty);
+    currentConfiguration = configuration;
+    assert(currentConfiguration.isNotEmpty || currentConfiguration.isError);
     notifyListeners();
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
