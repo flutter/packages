@@ -20,9 +20,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   google_maps: ^6.1.0
-  google_maps_flutter: # Used for projection_test.dart
-    path: ../../google_maps_flutter
-  http: ^1.0.0
+  google_maps_flutter: ^2.2.0 # Needed for projection_test.dart
+  http: ">=0.13.0 <2.0.0"
   integration_test:
     sdk: flutter
   mockito: 5.4.1
