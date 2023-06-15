@@ -22,7 +22,6 @@ import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingFlowParams.ProrationMode;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
@@ -50,17 +49,20 @@ class MethodCallHandlerImpl
     static final String END_CONNECTION = "BillingClient#endConnection()";
     static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
     static final String QUERY_PRODUCT_DETAILS =
-        "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
+        "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams,"
+            + " ProductDetailsResponseListener)";
     static final String LAUNCH_BILLING_FLOW =
         "BillingClient#launchBillingFlow(Activity, BillingFlowParams)";
     static final String QUERY_PURCHASES_ASYNC =
         "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
     static final String QUERY_PURCHASE_HISTORY_ASYNC =
-        "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
+        "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams,"
+            + " PurchaseHistoryResponseListener)";
     static final String CONSUME_PURCHASE_ASYNC =
         "BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)";
     static final String ACKNOWLEDGE_PURCHASE =
-        "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
+        "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams,"
+            + " AcknowledgePurchaseResponseListener)";
     static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
     static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
 
@@ -131,6 +133,7 @@ class MethodCallHandlerImpl
   }
 
   @Override
+  @SuppressWarnings(value = "deprecation")
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
       case MethodNames.IS_READY:
@@ -156,7 +159,8 @@ class MethodCallHandlerImpl
             (String) call.argument("purchaseToken"),
             call.hasArgument("prorationMode")
                 ? (int) call.argument("prorationMode")
-                : ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+                : com.android.billingclient.api.BillingFlowParams.ProrationMode
+                    .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
             result);
         break;
       case MethodNames.QUERY_PURCHASES_ASYNC:
@@ -222,6 +226,7 @@ class MethodCallHandlerImpl
         });
   }
 
+  @SuppressWarnings(value = "deprecation")
   private void launchBillingFlow(
       String product,
       @Nullable String offerToken,
@@ -241,7 +246,9 @@ class MethodCallHandlerImpl
           "NOT_FOUND",
           "Details for product "
               + product
-              + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
+              + " are not available. It might because products were not fetched prior to the call."
+              + " Please fetch the products first. An example of how to fetch the products could be"
+              + " found here: "
               + LOAD_PRODUCT_DOC_URL,
           null);
       return;
@@ -265,7 +272,9 @@ class MethodCallHandlerImpl
                 + offerToken
                 + " for product "
                 + product
-                + " is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: "
+                + " is not valid. Make sure to only pass offer tokens that belong to the product."
+                + " To obtain offer tokens for a product, fetch the products. An example of how to"
+                + " fetch the products could be found here: "
                 + LOAD_PRODUCT_DOC_URL,
             null);
         return;
@@ -273,10 +282,13 @@ class MethodCallHandlerImpl
     }
 
     if (oldProduct == null
-        && prorationMode != ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+        && prorationMode
+            != com.android.billingclient.api.BillingFlowParams.ProrationMode
+                .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
       result.error(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
-          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
+          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct"
+              + " in order to use a proration mode.",
           null);
       return;
     } else if (oldProduct != null && !cachedProducts.containsKey(oldProduct)) {
@@ -284,7 +296,9 @@ class MethodCallHandlerImpl
           "IN_APP_PURCHASE_INVALID_OLD_PRODUCT",
           "Details for product "
               + oldProduct
-              + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
+              + " are not available. It might because products were not fetched prior to the call."
+              + " Please fetch the products first. An example of how to fetch the products could be"
+              + " found here: "
               + LOAD_PRODUCT_DOC_URL,
           null);
       return;
