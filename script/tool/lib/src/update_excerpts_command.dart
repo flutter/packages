@@ -141,7 +141,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
     return exitCode == 0;
   }
 
-  /// Runs the injection step to update [targetPackage]'s top-level md files
+  /// Runs the injection step to update [targetPackage]'s top-level .md files
   /// with the latest excerpts from [example], returning true on success.
   Future<bool> _injectSnippets(
     RepositoryPackage example, {
