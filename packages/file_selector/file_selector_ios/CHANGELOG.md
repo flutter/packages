@@ -1,3 +1,7 @@
+## 0.5.2
+
+* Adds `getSaveLocation` and deprecates `getSavePath`.
+
 ## 0.5.1+4
 
 * Updates references to the deprecated `macUTIs`.
