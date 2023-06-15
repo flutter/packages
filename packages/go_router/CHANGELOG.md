@@ -1,3 +1,8 @@
+## 8.0.4
+
+- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension. 
+
+
 ## 8.0.3
 
 - Makes namedLocation and route name related APIs case sensitive.
