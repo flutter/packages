@@ -119,7 +119,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   void initState() {
     super.initState();
     _controller = MiniController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+        'https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv',
         cache: true);
 
     print("Testing");
@@ -183,7 +183,7 @@ class _BumbleBeeEncryptedLiveStreamState
     super.initState();
 
     _controller = MiniController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/encrypted_bee.m3u8',
+        'https://storage.googleapis.com/exoplayer-test-media-1/flac/play.flac',
         cache: true);
 
     _controller.addListener(() {

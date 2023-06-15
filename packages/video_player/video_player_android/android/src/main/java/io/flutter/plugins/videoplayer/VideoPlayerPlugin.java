@@ -4,9 +4,13 @@
 
 package io.flutter.plugins.videoplayer;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.util.LongSparseArray;
+import android.webkit.MimeTypeMap;
+
 import androidx.annotation.NonNull;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
@@ -154,9 +158,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               arg.getFormatHint(),
               httpHeaders,
               options);
-      player.setMaxCacheSize(arg.getMaxCacheSize());
-      player.setMaxFileSize(arg.getMaxFileSize());
-        
+      boolean videoCanCache = canCache(Uri.parse(arg.getUri()));
+      if (!videoCanCache) {
+        player.setMaxCacheSize(arg.getMaxCacheSize());
+        player.setMaxFileSize(arg.getMaxFileSize());
+      }
     }
     videoPlayers.put(handle.id(), player);
 
@@ -257,5 +263,30 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     void stopListening(BinaryMessenger messenger) {
       AndroidVideoPlayerApi.setup(messenger, null);
     }
+  }
+
+  public boolean canCache(Uri uri) {
+    String mimeType = getMimeType(uri);
+    Log.d(TAG,mimeType);
+     switch(mimeType) {
+         case "video/mp4":
+             return true;
+         default:
+             return false;
+     }
+  }
+
+  private String getMimeType(Uri uri) {
+    String mimeType = null;
+    if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+      ContentResolver cr = flutterState.applicationContext.getContentResolver();
+      mimeType = cr.getType(uri);
+    } else {
+      String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+              .toString());
+      mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+              fileExtension.toLowerCase());
+    }
+    return mimeType;
   }
 }
