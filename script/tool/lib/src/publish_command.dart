@@ -388,7 +388,6 @@ Safe to ignore if the package is deleted in this commit.
     required String tag,
     required _RemoteInfo remote,
   }) async {
-    assert(remote != null && tag != null);
     if (!getBoolArg(_dryRunFlag)) {
       final io.ProcessResult result = await (await gitDir).runCommand(
         <String>['push', remote.name, tag],

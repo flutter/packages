@@ -401,7 +401,7 @@ void main() {
 
   group('queryPurchases', () {
     const String queryPurchasesMethodName =
-        'BillingClient#queryPurchases(String)';
+        'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)';
 
     test('serializes and deserializes data', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
@@ -467,7 +467,7 @@ void main() {
 
   group('queryPurchaseHistory', () {
     const String queryPurchaseHistoryMethodName =
-        'BillingClient#queryPurchaseHistoryAsync(String)';
+        'BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)';
 
     test('serializes and deserializes data', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
@@ -531,7 +531,7 @@ void main() {
 
   group('consume purchases', () {
     const String consumeMethodName =
-        'BillingClient#consumeAsync(String, ConsumeResponseListener)';
+        'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)';
     test('consume purchase async success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';
@@ -564,7 +564,7 @@ void main() {
 
   group('acknowledge purchases', () {
     const String acknowledgeMethodName =
-        'BillingClient#(AcknowledgePurchaseParams params, (AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
+        'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)';
     test('acknowledge purchase success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
       const String debugMessage = 'dummy message';
@@ -579,6 +579,7 @@ void main() {
 
       expect(billingResult, equals(expectedBillingResult));
     });
+
     test('handles method channel returning null', () async {
       stubPlatform.addResponse(
         name: acknowledgeMethodName,

@@ -48,6 +48,7 @@ class WebKitWebViewControllerCreationParams
       PlaybackMediaTypes.video,
     },
     this.allowsInlineMediaPlayback = false,
+    this.limitsNavigationsToAppBoundDomains = false,
     @visibleForTesting InstanceManager? instanceManager,
   }) : _instanceManager = instanceManager ?? NSObject.globalInstanceManager {
     _configuration = webKitProxy.createWebViewConfiguration(
@@ -68,6 +69,8 @@ class WebKitWebViewControllerCreationParams
       );
     }
     _configuration.setAllowsInlineMediaPlayback(allowsInlineMediaPlayback);
+    _configuration.setLimitsNavigationsToAppBoundDomains(
+        limitsNavigationsToAppBoundDomains);
   }
 
   /// Constructs a [WebKitWebViewControllerCreationParams] using a
@@ -83,11 +86,14 @@ class WebKitWebViewControllerCreationParams
       PlaybackMediaTypes.video,
     },
     bool allowsInlineMediaPlayback = false,
+    bool limitsNavigationsToAppBoundDomains = false,
     @visibleForTesting InstanceManager? instanceManager,
   }) : this(
           webKitProxy: webKitProxy,
           mediaTypesRequiringUserAction: mediaTypesRequiringUserAction,
           allowsInlineMediaPlayback: allowsInlineMediaPlayback,
+          limitsNavigationsToAppBoundDomains:
+              limitsNavigationsToAppBoundDomains,
           instanceManager: instanceManager,
         );
 
@@ -103,6 +109,13 @@ class WebKitWebViewControllerCreationParams
   ///
   /// Defaults to false.
   final bool allowsInlineMediaPlayback;
+
+  /// Whether to limit navigation to configured domains.
+  ///
+  /// See https://webkit.org/blog/10882/app-bound-domains/
+  /// (Only available for iOS > 14.0)
+  /// Defaults to false.
+  final bool limitsNavigationsToAppBoundDomains;
 
   /// Handles constructing objects and calling static methods for the WebKit
   /// native library.
@@ -516,7 +529,8 @@ class WebKitWebViewController extends PlatformWebViewController {
     _javaScriptChannelParams.remove(removedJavaScriptChannel);
 
     await Future.wait(<Future<void>>[
-      for (JavaScriptChannelParams params in _javaScriptChannelParams.values)
+      for (final JavaScriptChannelParams params
+          in _javaScriptChannelParams.values)
         addJavaScriptChannel(params),
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.

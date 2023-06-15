@@ -333,6 +333,36 @@ class MockTestDownloadListenerHostApi extends _i1.Mock
       );
 }
 
+/// A class which mocks [TestGeolocationPermissionsCallbackHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestGeolocationPermissionsCallbackHostApi extends _i1.Mock
+    implements _i6.TestGeolocationPermissionsCallbackHostApi {
+  MockTestGeolocationPermissionsCallbackHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void invoke(
+    int? instanceId,
+    String? origin,
+    bool? allow,
+    bool? retain,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #invoke,
+          [
+            instanceId,
+            origin,
+            allow,
+            retain,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [TestInstanceManagerHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.

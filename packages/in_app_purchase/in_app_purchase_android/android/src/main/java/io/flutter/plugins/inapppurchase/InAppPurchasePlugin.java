@@ -4,9 +4,9 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.android.billingclient.api.BillingClient;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -25,39 +25,13 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
   // code owner of this package.
   static final String PROXY_VALUE = "io.flutter.plugins.inapppurchase";
 
-  @VisibleForTesting
-  static final class MethodNames {
-    static final String IS_READY = "BillingClient#isReady()";
-    static final String START_CONNECTION =
-        "BillingClient#startConnection(BillingClientStateListener)";
-    static final String END_CONNECTION = "BillingClient#endConnection()";
-    static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
-    static final String QUERY_PRODUCT_DETAILS =
-        "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
-    static final String LAUNCH_BILLING_FLOW =
-        "BillingClient#launchBillingFlow(Activity, BillingFlowParams)";
-    static final String ON_PURCHASES_UPDATED =
-        "PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)";
-    static final String QUERY_PURCHASES_ASYNC =
-        "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
-    static final String QUERY_PURCHASE_HISTORY_ASYNC =
-        "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
-    static final String CONSUME_PURCHASE_ASYNC =
-        "BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)";
-    static final String ACKNOWLEDGE_PURCHASE =
-        "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
-    static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
-    static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
-
-    private MethodNames() {};
-  }
-
   private MethodChannel methodChannel;
   private MethodCallHandlerImpl methodCallHandler;
 
   /** Plugin registration. */
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     InAppPurchasePlugin plugin = new InAppPurchasePlugin();
     registrar.activity().getIntent().putExtra(PROXY_PACKAGE_KEY, PROXY_VALUE);
     ((Application) registrar.context().getApplicationContext())
@@ -65,18 +39,17 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
   }
 
   @Override
-  public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding binding) {
-    setupMethodChannel(
-        /*activity=*/ null, binding.getBinaryMessenger(), binding.getApplicationContext());
+  public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
+    setUpMethodChannel(binding.getBinaryMessenger(), binding.getApplicationContext());
   }
 
   @Override
-  public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
+  public void onDetachedFromEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
     teardownMethodChannel();
   }
 
   @Override
-  public void onAttachedToActivity(ActivityPluginBinding binding) {
+  public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
     binding.getActivity().getIntent().putExtra(PROXY_PACKAGE_KEY, PROXY_VALUE);
     methodCallHandler.setActivity(binding.getActivity());
   }
@@ -88,7 +61,7 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
   }
 
   @Override
-  public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
+  public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
     onAttachedToActivity(binding);
   }
 
@@ -97,10 +70,11 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
     methodCallHandler.setActivity(null);
   }
 
-  private void setupMethodChannel(Activity activity, BinaryMessenger messenger, Context context) {
+  private void setUpMethodChannel(BinaryMessenger messenger, Context context) {
     methodChannel = new MethodChannel(messenger, "plugins.flutter.io/in_app_purchase");
     methodCallHandler =
-        new MethodCallHandlerImpl(activity, context, methodChannel, new BillingClientFactoryImpl());
+        new MethodCallHandlerImpl(
+            /*activity=*/ null, context, methodChannel, new BillingClientFactoryImpl());
     methodChannel.setMethodCallHandler(methodCallHandler);
   }
 

@@ -27,7 +27,7 @@ class ImagePicker {
 
   /// Returns a [PickedFile] object wrapping the image that was picked.
   ///
-  /// The returned [PickedFile] is intended to be used within a single APP session. Do not save the file path and use it across sessions.
+  /// The returned [PickedFile] is intended to be used within a single app session. Do not save the file path and use it across sessions.
   ///
   /// The `source` argument controls where the image comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
@@ -78,7 +78,7 @@ class ImagePicker {
 
   /// Returns a [List<PickedFile>] object wrapping the images that were picked.
   ///
-  /// The returned [List<PickedFile>] is intended to be used within a single APP session. Do not save the file path and use it across sessions.
+  /// The returned [List<PickedFile>] is intended to be used within a single app session. Do not save the file path and use it across sessions.
   ///
   /// Where iOS supports HEIC images, Android 8 and below doesn't. Android 9 and above only support HEIC images if used
   /// in addition to a size modification, of which the usage is explained below.
@@ -115,7 +115,7 @@ class ImagePicker {
 
   /// Returns a [PickedFile] object wrapping the video that was picked.
   ///
-  /// The returned [PickedFile] is intended to be used within a single APP session. Do not save the file path and use it across sessions.
+  /// The returned [PickedFile] is intended to be used within a single app session. Do not save the file path and use it across sessions.
   ///
   /// The [source] argument controls where the video comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
@@ -151,7 +151,7 @@ class ImagePicker {
   /// Retrieve the lost [PickedFile] when [selectImage] or [selectVideo] failed because the  MainActivity is destroyed. (Android only)
   ///
   /// Image or video can be lost if the MainActivity is destroyed. And there is no guarantee that the MainActivity is always alive.
-  /// Call this method to retrieve the lost data and process the data according to your APP's business logic.
+  /// Call this method to retrieve the lost data and process the data according to your app's business logic.
   ///
   /// Returns a [LostData] object if successfully retrieved the lost data. The [LostData] object can represent either a
   /// successful image/video selection, or a failure.
@@ -168,7 +168,7 @@ class ImagePicker {
 
   /// Returns an [XFile] object wrapping the image that was picked.
   ///
-  /// The returned [XFile] is intended to be used within a single APP session. Do not save the file path and use it across sessions.
+  /// The returned [XFile] is intended to be used within a single app session. Do not save the file path and use it across sessions.
   ///
   /// The `source` argument controls where the image comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
@@ -217,32 +217,24 @@ class ImagePicker {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     bool requestFullMetadata = true,
   }) {
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(
-          imageQuality, 'imageQuality', 'must be between 0 and 100');
-    }
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
-    }
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
-    }
+    final ImagePickerOptions imagePickerOptions =
+        ImagePickerOptions.createAndValidate(
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+      imageQuality: imageQuality,
+      preferredCameraDevice: preferredCameraDevice,
+      requestFullMetadata: requestFullMetadata,
+    );
 
     return platform.getImageFromSource(
       source: source,
-      options: ImagePickerOptions(
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        imageQuality: imageQuality,
-        preferredCameraDevice: preferredCameraDevice,
-        requestFullMetadata: requestFullMetadata,
-      ),
+      options: imagePickerOptions,
     );
   }
 
   /// Returns a [List<XFile>] object wrapping the images that were picked.
   ///
-  /// The returned [List<XFile>] is intended to be used within a single APP session. Do not save the file path and use it across sessions.
+  /// The returned [List<XFile>] is intended to be used within a single app session. Do not save the file path and use it across sessions.
   ///
   /// Where iOS supports HEIC images, Android 8 and below doesn't. Android 9 and above only support HEIC images if used
   /// in addition to a size modification, of which the usage is explained below.
@@ -277,22 +269,121 @@ class ImagePicker {
     int? imageQuality,
     bool requestFullMetadata = true,
   }) {
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(
-          imageQuality, 'imageQuality', 'must be between 0 and 100');
-    }
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
-    }
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
-    }
+    final ImageOptions imageOptions = ImageOptions.createAndValidate(
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+      imageQuality: imageQuality,
+      requestFullMetadata: requestFullMetadata,
+    );
 
     return platform.getMultiImageWithOptions(
       options: MultiImagePickerOptions(
-        imageOptions: ImageOptions(
-          maxWidth: maxWidth,
+        imageOptions: imageOptions,
+      ),
+    );
+  }
+
+  /// Returns an [XFile] of the image or video that was picked.
+  /// The image or videos can only come from the gallery.
+  ///
+  /// The returned [XFile] is intended to be used within a single app session.
+  /// Do not save the file path and use it across sessions.
+  ///
+  /// Where iOS supports HEIC images, Android 8 and below doesn't. Android 9 and
+  /// above only support HEIC images if used in addition to a size modification,
+  /// of which the usage is explained below.
+  ///
+  /// This method is not supported in iOS versions lower than 14.
+  ///
+  /// If specified, the image will be at most `maxWidth` wide and
+  /// `maxHeight` tall. Otherwise the image will be returned at it's
+  /// original width and height.
+  ///
+  /// The `imageQuality` argument modifies the quality of the image, ranging from 0-100
+  /// where 100 is the original/max quality. If `imageQuality` is null, the image with
+  /// the original quality will be returned. Compression is only supported for certain
+  /// image types such as JPEG and on Android PNG and WebP, too. If compression is not
+  /// supported for the image that is picked, a warning message will be logged.
+  ///
+  /// Use `requestFullMetadata` (defaults to `true`) to control how much additional
+  /// information the plugin tries to get.
+  /// If `requestFullMetadata` is set to `true`, the plugin tries to get the full
+  /// image metadata which may require extra permission requests on some platforms,
+  /// such as `Photo Library Usage` permission on iOS.
+  ///
+  /// The method could throw [PlatformException] if the app does not have permission to access
+  /// the photos gallery, plugin is already in use, temporary file could not be
+  /// created (iOS only), plugin activity could not be allocated (Android only)
+  /// or due to an unknown error.
+  ///
+  /// If no image or video was picked, the return value is null.
+  Future<XFile?> pickMedia({
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+    bool requestFullMetadata = true,
+  }) async {
+    final List<XFile> listMedia = await platform.getMedia(
+      options: MediaOptions(
+        imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
+          maxWidth: maxWidth,
+          imageQuality: imageQuality,
+          requestFullMetadata: requestFullMetadata,
+        ),
+        allowMultiple: false,
+      ),
+    );
+
+    return listMedia.isNotEmpty ? listMedia.first : null;
+  }
+
+  /// Returns a [List<XFile>] with the images and/or videos that were picked.
+  /// The images and videos come from the gallery.
+  ///
+  /// The returned [List<XFile>] is intended to be used within a single app session.
+  /// Do not save the file paths and use them across sessions.
+  ///
+  /// Where iOS supports HEIC images, Android 8 and below doesn't. Android 9 and
+  /// above only support HEIC images if used in addition to a size modification,
+  /// of which the usage is explained below.
+  ///
+  /// This method is not supported in iOS versions lower than 14.
+  ///
+  /// If specified, the images will be at most `maxWidth` wide and
+  /// `maxHeight` tall. Otherwise the images will be returned at their
+  /// original width and height.
+  ///
+  /// The `imageQuality` argument modifies the quality of the images, ranging from 0-100
+  /// where 100 is the original/max quality. If `imageQuality` is null, the images with
+  /// the original quality will be returned. Compression is only supported for certain
+  /// image types such as JPEG and on Android PNG and WebP, too. If compression is not
+  /// supported for the image that is picked, a warning message will be logged.
+  ///
+  /// Use `requestFullMetadata` (defaults to `true`) to control how much additional
+  /// information the plugin tries to get.
+  /// If `requestFullMetadata` is set to `true`, the plugin tries to get the full
+  /// image metadata which may require extra permission requests on some platforms,
+  /// such as `Photo Library Usage` permission on iOS.
+  ///
+  /// The method could throw [PlatformException] if the app does not have permission to access
+  /// the photos gallery, plugin is already in use, temporary file could not be
+  /// created (iOS only), plugin activity could not be allocated (Android only)
+  /// or due to an unknown error.
+  ///
+  /// If no images or videos were picked, the return value is an empty list.
+  Future<List<XFile>> pickMultipleMedia({
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+    bool requestFullMetadata = true,
+  }) {
+    return platform.getMedia(
+      options: MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions.createAndValidate(
+          maxHeight: maxHeight,
+          maxWidth: maxWidth,
           imageQuality: imageQuality,
           requestFullMetadata: requestFullMetadata,
         ),
@@ -302,7 +393,7 @@ class ImagePicker {
 
   /// Returns an [XFile] object wrapping the video that was picked.
   ///
-  /// The returned [XFile] is intended to be used within a single APP session. Do not save the file path and use it across sessions.
+  /// The returned [XFile] is intended to be used within a single app session. Do not save the file path and use it across sessions.
   ///
   /// The [source] argument controls where the video comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
@@ -338,7 +429,7 @@ class ImagePicker {
   /// is destroyed. (Android only)
   ///
   /// Image or video can be lost if the MainActivity is destroyed. And there is no guarantee that the MainActivity is always alive.
-  /// Call this method to retrieve the lost data and process the data according to your APP's business logic.
+  /// Call this method to retrieve the lost data and process the data according to your app's business logic.
   ///
   /// Returns a [LostDataResponse] object if successfully retrieved the lost data. The [LostDataResponse] object can \
   /// represent either a successful image/video selection, or a failure.
@@ -350,5 +441,13 @@ class ImagePicker {
   /// * [Android Activity Lifecycle](https://developer.android.com/reference/android/app/Activity.html), for more information on MainActivity destruction.
   Future<LostDataResponse> retrieveLostData() {
     return platform.getLostData();
+  }
+
+  /// Returns true if the current platform implementation supports [source].
+  ///
+  /// Calling a `pick*` method with a source for which this method
+  /// returns `false` will throw an error.
+  bool supportsImageSource(ImageSource source) {
+    return platform.supportsImageSource(source);
   }
 }

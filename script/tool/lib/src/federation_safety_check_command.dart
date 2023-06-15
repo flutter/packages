@@ -200,9 +200,6 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
 
   Future<bool> _changeIsCommentOnly(
       GitVersionFinder git, String repoPath) async {
-    if (git == null) {
-      return false;
-    }
     final List<String> diff = await git.getDiffContents(targetPath: repoPath);
     final RegExp changeLine = RegExp(r'^[+-] ');
     // This will not catch /**/-style comments, but false negatives are fine

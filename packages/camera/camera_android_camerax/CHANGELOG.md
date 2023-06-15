@@ -1,3 +1,19 @@
+## 0.5.0+7
+
+* Updates Guava version to 32.0.1.
+
+## 0.5.0+6
+
+* Updates Guava version to 32.0.0.
+
+## 0.5.0+5
+
+* Updates `README.md` to fully cover unimplemented functionality.
+
+## 0.5.0+4
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 0.5.0+3
 
 * Fixes Java lints.

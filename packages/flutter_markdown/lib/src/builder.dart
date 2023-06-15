@@ -454,7 +454,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         final Widget? child =
             builders[tag]!.visitElementAfter(element, styleSheet.styles[tag]);
         if (child != null) {
-          current.children[0] = child;
+          if (current.children.isEmpty) {
+            current.children.add(child);
+          } else {
+            current.children[0] = child;
+          }
         }
       } else if (tag == 'img') {
         // create an image widget for this image
@@ -825,7 +829,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (selectable) {
       return SelectableText.rich(
         text!,
-        textScaleFactor: styleSheet.textScaleFactor,
+        textScaleFactor:
+            styleSheet.textScaleFactor, // ignore: deprecated_member_use
         textAlign: textAlign ?? TextAlign.start,
         onTap: onTapText,
         key: k,
@@ -833,7 +838,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       return RichText(
         text: text!,
-        textScaleFactor: styleSheet.textScaleFactor!,
+        textScaleFactor:
+            styleSheet.textScaleFactor!, // ignore: deprecated_member_use
         textAlign: textAlign ?? TextAlign.start,
         key: k,
       );
