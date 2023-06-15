@@ -172,6 +172,17 @@ void main() {
   test('Point conversion', () {
     expect(parseDoubleWithUnits('1pt', theme: const SvgTheme()), 1 + 1 / 3);
   });
+
+  test('Parse a transform with a missing space', () {
+    expect(
+      parseTransform('translate(0-70)'),
+      AffineMatrix.identity.translated(0, -70),
+    );
+  });
+
+  test('Parse a transform with doubled periods', () {
+    print(parseTransform('matrix(.70711-.70711.70711.70711-640.89 452.68)'));
+  });
 }
 
 class TestColorMapper extends ColorMapper {

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.8
+
+-  Fix bugs in transform parsing.
+
 ## 1.1.7
 
 - Support for matching the ambient text direction.

@@ -14,7 +14,7 @@ final RegExp _transformValidator = RegExp('^($_transformCommandAtom)*\$');
 final RegExp _transformCommand = RegExp(_transformCommandAtom);
 
 typedef _MatrixParser = AffineMatrix Function(
-    String? paramsStr, AffineMatrix current);
+    List<double> params, AffineMatrix current);
 
 const Map<String, _MatrixParser> _matrixParsers = <String, _MatrixParser>{
   'matrix': _parseSvgMatrix,
@@ -24,6 +24,35 @@ const Map<String, _MatrixParser> _matrixParsers = <String, _MatrixParser>{
   'skewX': _parseSvgSkewX,
   'skewY': _parseSvgSkewY,
 };
+
+List<double> _parseTransformParams(String params) {
+  final List<double> result = <double>[];
+  String current = '';
+  for (int i = 0; i < params.length; i += 1) {
+    if (params[i] == ' ' || params[i] == '-' || params[i] == ',') {
+      if (current != '') {
+        result.add(parseDouble(current)!);
+      }
+      if (params[i] == '-') {
+        current = '-';
+      } else {
+        current = '';
+      }
+    } else {
+      if (params[i] == '.') {
+        if (current.contains('.')) {
+          result.add(parseDouble(current)!);
+          current = '';
+        }
+      }
+      current += params[i];
+    }
+  }
+  if (current.isNotEmpty) {
+    result.add(parseDouble(current)!);
+  }
+  return result;
+}
 
 /// Parses a SVG transform attribute into a [AffineMatrix].
 AffineMatrix? parseTransform(String? transform) {
@@ -39,7 +68,7 @@ AffineMatrix? parseTransform(String? transform) {
   AffineMatrix result = AffineMatrix.identity;
   for (Match m in matches) {
     final String command = m.group(1)!.trim();
-    final String? params = m.group(2)!.trim();
+    final List<double> params = _parseTransformParams(m.group(2)!.trim());
 
     final _MatrixParser? transformer = _matrixParsers[command];
     if (transformer == null) {
@@ -51,60 +80,55 @@ AffineMatrix? parseTransform(String? transform) {
   return result;
 }
 
-final RegExp _valueSeparator = RegExp('( *, *| +)');
-
-AffineMatrix _parseSvgMatrix(String? paramsStr, AffineMatrix current) {
-  final List<String> params = paramsStr!.trim().split(_valueSeparator);
+AffineMatrix _parseSvgMatrix(List<double> params, AffineMatrix current) {
   assert(params.isNotEmpty);
   assert(params.length == 6);
-  final double a = parseDouble(params[0])!;
-  final double b = parseDouble(params[1])!;
-  final double c = parseDouble(params[2])!;
-  final double d = parseDouble(params[3])!;
-  final double e = parseDouble(params[4])!;
-  final double f = parseDouble(params[5])!;
+  final double a = params[0];
+  final double b = params[1];
+  final double c = params[2];
+  final double d = params[3];
+  final double e = params[4];
+  final double f = params[5];
 
   return AffineMatrix(a, b, c, d, e, f).multiplied(current);
 }
 
-AffineMatrix _parseSvgSkewX(String? paramsStr, AffineMatrix current) {
-  final double x = parseDouble(paramsStr)!;
-  return AffineMatrix(1.0, 0.0, tan(x), 1.0, 0.0, 0.0).multiplied(current);
+AffineMatrix _parseSvgSkewX(List<double> params, AffineMatrix current) {
+  assert(params.isNotEmpty);
+  return AffineMatrix(1.0, 0.0, tan(params.first), 1.0, 0.0, 0.0)
+      .multiplied(current);
 }
 
-AffineMatrix _parseSvgSkewY(String? paramsStr, AffineMatrix current) {
-  final double y = parseDouble(paramsStr)!;
-  return AffineMatrix(1.0, tan(y), 0.0, 1.0, 0.0, 0.0).multiplied(current);
+AffineMatrix _parseSvgSkewY(List<double> params, AffineMatrix current) {
+  assert(params.isNotEmpty);
+  return AffineMatrix(1.0, tan(params.first), 0.0, 1.0, 0.0, 0.0)
+      .multiplied(current);
 }
 
-AffineMatrix _parseSvgTranslate(String? paramsStr, AffineMatrix current) {
-  final List<String> params = paramsStr!.split(_valueSeparator);
+AffineMatrix _parseSvgTranslate(List<double> params, AffineMatrix current) {
   assert(params.isNotEmpty);
   assert(params.length <= 2);
-  final double x = parseDouble(params[0])!;
-  final double y = params.length < 2 ? 0.0 : parseDouble(params[1])!;
-  return AffineMatrix(1.0, 0.0, 0.0, 1.0, x, y).multiplied(current);
+  final double y = params.length < 2 ? 0.0 : params[1];
+  return AffineMatrix(1.0, 0.0, 0.0, 1.0, params.first, y).multiplied(current);
 }
 
-AffineMatrix _parseSvgScale(String? paramsStr, AffineMatrix current) {
-  final List<String> params = paramsStr!.split(_valueSeparator);
+AffineMatrix _parseSvgScale(List<double> params, AffineMatrix current) {
   assert(params.isNotEmpty);
   assert(params.length <= 2);
-  final double x = parseDouble(params[0])!;
-  final double y = params.length < 2 ? x : parseDouble(params[1])!;
+  final double x = params[0];
+  final double y = params.length < 2 ? x : params[1];
   return AffineMatrix(x, 0.0, 0.0, y, 0.0, 0.0).multiplied(current);
 }
 
-AffineMatrix _parseSvgRotate(String? paramsStr, AffineMatrix current) {
-  final List<String> params = paramsStr!.split(_valueSeparator);
+AffineMatrix _parseSvgRotate(List<double> params, AffineMatrix current) {
   assert(params.length <= 3);
-  final double a = radians(parseDouble(params[0])!);
+  final double a = radians(params[0]);
 
   final AffineMatrix rotate = AffineMatrix.identity.rotated(a);
 
   if (params.length > 1) {
-    final double x = parseDouble(params[1])!;
-    final double y = params.length == 3 ? parseDouble(params[2])! : x;
+    final double x = params[1];
+    final double y = params.length == 3 ? params[2] : x;
     return AffineMatrix(1.0, 0.0, 0.0, 1.0, x, y)
         .multiplied(rotate)
         .translated(-x, -y)
