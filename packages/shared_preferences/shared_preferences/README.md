@@ -101,6 +101,8 @@ If the prefix is set to a value such as `''` that causes it to read values that 
 not originally stored by the `SharedPreferences`, initializing `SharedPreferences` 
 may fail if any of the values are of types that are not supported by `SharedPreferences`.
 
+On iOS/macOS if UserDefaults include Date type objects, they are converted into timestamps.
+
 If you decide to remove the prefix entirely, you can still access previously created
 preferences by manually adding the previous prefix `flutter.` to the beginning of 
 the preference key.
