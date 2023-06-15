@@ -50,6 +50,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   _NavigatorStateIterator _createNavigatorStateIterator() =>
       _NavigatorStateIterator(currentConfiguration, navigatorKey.currentState!);
 
+  /// When a route's onExit is being called, we should not accept new navigation
+  /// calls.
+  bool isOnExitBeingCalled = false;
+
   @override
   Future<bool> popRoute() async {
     final _NavigatorStateIterator iterator = _createNavigatorStateIterator();
@@ -95,6 +99,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   bool _handlePopPageWithRouteMatch(
       Route<Object?> route, Object? result, RouteMatch? match) {
+    if (isOnExitBeingCalled) {
+      return false;
+    }
     if (route.willHandlePopInternally) {
       final bool popped = route.didPop(result);
       assert(!popped);
@@ -103,12 +110,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     assert(match != null);
 
     if (match!.route.onExit != null) {
+      isOnExitBeingCalled = true;
       // The `onExit` may perform updates to the navigator, such as popping up a
       // dialog. Use a microtask to ensure the navigator finishes the current
       // update before calling the `onExit`.
       scheduleMicrotask(() async {
         final bool onExitResult =
             await match.route.onExit!(navigatorKey.currentContext!);
+        isOnExitBeingCalled = false;
         if (onExitResult) {
           _completeAndRemoveFromMatchList(match, result);
         }

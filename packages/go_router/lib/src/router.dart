@@ -305,6 +305,11 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
   void go(String location, {Object? extra}) {
+    if (routerDelegate.isOnExitBeingCalled) {
+      log.info('ignore go as onExit is being called');
+      return;
+    }
+    routerDelegate.isOnExitBeingCalled = true;
     final RouteInformation routeInformation = RouteInformation(
       location: location,
       state: RouteInformationState<void>(
@@ -337,11 +342,13 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
           if (match.route.onExit != null) {
             final bool result = await match.route.onExit!(context);
             if (!result) {
+              routerDelegate.isOnExitBeingCalled = false;
               return;
             }
           }
         }
       }
+      routerDelegate.isOnExitBeingCalled = false;
       log.info('going to $location');
       routeInformationProvider.go(location, extra: extra);
     });
@@ -349,6 +356,10 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
 
   /// Restore the RouteMatchList
   void restore(RouteMatchList matchList) {
+    if (routerDelegate.isOnExitBeingCalled) {
+      log.info('ignore restore as onExit is being called');
+      return;
+    }
     log.info('going to ${matchList.uri}');
     routeInformationProvider.restore(
       matchList.uri.toString(),
@@ -381,6 +392,10 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
   Future<T?> push<T extends Object?>(String location, {Object? extra}) async {
+    if (routerDelegate.isOnExitBeingCalled) {
+      log.info('ignore push as onExit is being called');
+      return null;
+    }
     log.info('pushing $location');
     return routeInformationProvider.push<T>(
       location,
@@ -414,6 +429,10 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///   state and not run any page animation.
   Future<T?> pushReplacement<T extends Object?>(String location,
       {Object? extra}) async {
+    if (routerDelegate.isOnExitBeingCalled) {
+      log.info('ignore pushReplacement as onExit is being called');
+      return null;
+    }
     log.info('pushReplacement $location');
 
     if (routerDelegate.currentConfiguration.last.route.onExit != null) {
@@ -476,7 +495,11 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// * [push] which pushes the given location onto the page stack.
   /// * [pushReplacement] which replaces the top-most page of the page stack but
   ///   always uses a new page key.
-  Future<T?> replace<T>(String location, {Object? extra}) {
+  Future<T?> replace<T>(String location, {Object? extra}) async {
+    if (routerDelegate.isOnExitBeingCalled) {
+      log.info('ignore replace as onExit is being called');
+      return null;
+    }
     log.info('replace $location');
     return routeInformationProvider.replace<T>(
       location,
@@ -514,6 +537,10 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// If the top-most route is a pop up or dialog, this method pops it instead
   /// of any GoRoute under it.
   void pop<T extends Object?>([T? result]) {
+    if (routerDelegate.isOnExitBeingCalled) {
+      log.info('ignore pop as onExit is being called');
+      return;
+    }
     assert(() {
       log.info('popping $location');
       return true;
