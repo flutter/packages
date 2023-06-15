@@ -644,7 +644,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       locale: ArgumentDecoders.locale(source, ['locale']),
       softWrap: source.v<bool>(['softWrap']),
       overflow: ArgumentDecoders.enumValue<TextOverflow>(TextOverflow.values, source, ['overflow']),
-      textScaleFactor: source.v<double>(['textScaleFactor']),
+      textScaleFactor: source.v<double>(['textScaleFactor']),  // ignore: deprecated_member_use
       maxLines: source.v<int>(['maxLines']),
       semanticsLabel: source.v<String>(['semanticsLabel']),
       textWidthBasis: ArgumentDecoders.enumValue<TextWidthBasis>(TextWidthBasis.values, source, ['textWidthBasis']),
