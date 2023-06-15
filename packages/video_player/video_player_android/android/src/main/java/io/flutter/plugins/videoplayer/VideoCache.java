@@ -1,5 +1,6 @@
 package io.flutter.plugins.videoplayer;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import com.google.android.exoplayer2.database.DatabaseProvider;
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
