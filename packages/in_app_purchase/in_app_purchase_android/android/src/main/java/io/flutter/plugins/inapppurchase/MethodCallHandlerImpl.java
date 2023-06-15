@@ -22,7 +22,6 @@ import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingFlowParams.ProrationMode;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
@@ -131,6 +130,7 @@ class MethodCallHandlerImpl
   }
 
   @Override
+  @SuppressWarnings(value = "deprecation")
   public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
       case MethodNames.IS_READY:
@@ -156,7 +156,8 @@ class MethodCallHandlerImpl
             (String) call.argument("purchaseToken"),
             call.hasArgument("prorationMode")
                 ? (int) call.argument("prorationMode")
-                : ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+                : com.android.billingclient.api.BillingFlowParams.ProrationMode
+                    .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
             result);
         break;
       case MethodNames.QUERY_PURCHASES_ASYNC:
@@ -222,6 +223,7 @@ class MethodCallHandlerImpl
         });
   }
 
+  @SuppressWarnings(value = "deprecation")
   private void launchBillingFlow(
       String product,
       @Nullable String offerToken,
@@ -273,7 +275,9 @@ class MethodCallHandlerImpl
     }
 
     if (oldProduct == null
-        && prorationMode != ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+        && prorationMode
+            != com.android.billingclient.api.BillingFlowParams.ProrationMode
+                .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
       result.error(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
           "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
