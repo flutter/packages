@@ -1,6 +1,11 @@
-## 3.4.5
+## 3.6.0
 
-* Adds support for `WebResouceError.failingUrl`.
+* Adds support for `WebResouceError.url`.
+
+## 3.5.0
+
+* Adds support to limit navigation to pages within the app’s domain. See
+  `WebKitWebViewControllerCreationParams.limitsNavigationsToAppBoundDomains`.
 
 ## 3.4.4
 

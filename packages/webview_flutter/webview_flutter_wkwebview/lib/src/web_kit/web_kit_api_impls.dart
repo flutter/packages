@@ -629,6 +629,17 @@ class WKWebViewConfigurationHostApiImpl extends WKWebViewConfigurationHostApi {
     );
   }
 
+  /// Calls [setLimitsNavigationsToAppBoundDomains] with the ids of the provided object instances.
+  Future<void> setLimitsNavigationsToAppBoundDomainsForInstances(
+    WKWebViewConfiguration instance,
+    bool limit,
+  ) {
+    return setLimitsNavigationsToAppBoundDomains(
+      instanceManager.getIdentifier(instance)!,
+      limit,
+    );
+  }
+
   /// Calls [setMediaTypesRequiringUserActionForPlayback] with the ids of the provided object instances.
   Future<void> setMediaTypesRequiringUserActionForPlaybackForInstances(
     WKWebViewConfiguration instance,

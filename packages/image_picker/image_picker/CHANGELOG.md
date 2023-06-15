@@ -1,3 +1,7 @@
+## 0.8.9
+
+* Adds `getMedia` and `getMultipleMedia` methods.
+
 ## 0.8.8
 
 * Adds initial support for Windows, macOS, and Linux.
