@@ -1,3 +1,12 @@
+## 9.0.0
+
+- **BREAKING CHANGE**:
+  - Removes GoRouter.location and GoRouter.canPop. Use GoRouterState.of().location and
+    Navigator.of().canPop instead.
+  - GoRouter does not `extends` ChangeNotifier.
+  - [Migration guide](https://flutter.dev/go/go-router-v9-breaking-changes)
+- Reduces excessive rebuilds due to inherited look up.
+
 ## 8.2.0
 
 - Adds onException to GoRouter constructor.
