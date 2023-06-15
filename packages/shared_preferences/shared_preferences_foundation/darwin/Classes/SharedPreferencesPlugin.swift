@@ -23,7 +23,8 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   }
 
   func getAllWithPrefix(prefix: String) -> [String? : Any?] {
-    return getAllPrefs(prefix: prefix)
+    let prefs = getAllPrefs(prefix: prefix)
+    return convertDates(prefs)
   }
 
   func setBool(key: String, value: Bool) {
@@ -60,5 +61,30 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
       }
     }
     return filteredPrefs
+  }
+
+  /// Recursively convert all Date type objects into timestamp.
+  private func convertDates<T>(_ value: T) -> T {
+    var result: Any
+    if (value is Date) {
+      result = Int((value as! Date).timeIntervalSince1970)
+    } else if(value is Dictionary<String, Any>) {
+      var dict: Dictionary<String, Any> = [:]
+      for (k, v) in value as! Dictionary<String, Any> {
+        dict[k] = convertDates(v) as Any
+      }
+      result = dict
+    }
+    else if(value is Array<Any>) {
+      var list: Array<Any> = []
+      for v in value as! Array<Any> {
+        list.append(convertDates(v))
+      }
+      result = list
+    }
+    else {
+      result = value
+    }
+    return result as! T
   }
 }
