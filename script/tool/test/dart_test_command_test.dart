@@ -37,7 +37,7 @@ void main() {
       runner.addCommand(command);
     });
 
-    test('legacy name still works', () async {
+    test('legacy "test" name still works', () async {
       final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir,
           extraFiles: <String>['test/a_test.dart']);
 
