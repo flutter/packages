@@ -942,6 +942,15 @@ void main() {
           ));
         });
       });
+      test('supportsImageSource calls through to platform', () async {
+        final ImagePicker picker = ImagePicker();
+        when(mockPlatform.supportsImageSource(any)).thenReturn(true);
+
+        final bool supported = picker.supportsImageSource(ImageSource.camera);
+
+        expect(supported, true);
+        verify(mockPlatform.supportsImageSource(ImageSource.camera));
+      });
     });
   });
 }

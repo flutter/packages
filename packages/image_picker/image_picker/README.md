@@ -6,9 +6,9 @@
 A Flutter plugin for iOS and Android for picking images from the image library,
 and taking new pictures with the camera.
 
-|             | Android | iOS     | Web                             |
-|-------------|---------|---------|---------------------------------|
-| **Support** | SDK 21+ | iOS 11+ | [See `image_picker_for_web`][1] |
+|             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
+|-------------|---------|---------|-------|--------|---------------------------------|-------------|
+| **Support** | SDK 21+ | iOS 11+ | Any   | 10.14+ | [See `image_picker_for_web`][1] | Windows 10+ |
 
 ## Installation
 
@@ -108,6 +108,61 @@ In this launch mode, new activities are created in a separate [Task][2].
 As activities cannot communicate between tasks, the image picker activity cannot
 send back its eventual result to the calling activity.
 To work around this problem, consider using `launchMode: singleTask` instead.
+
+### Windows, macOS, and Linux
+
+This plugin currently has limited support for the three desktop platforms,
+serving as a wrapper around the [`file_selector`](https://pub.dev/packages/file_selector)
+plugin with appropriate file type filters set. Selection modification options,
+such as max width and height, are not yet supported.
+
+By default, `ImageSource.camera` is not supported, since unlike on Android and
+iOS there is no system-provided UI for taking photos. However, the desktop
+implementations allow delegating to a camera handler by setting a
+`cameraDelegate` before using `image_picker`, such as in `main()`:
+
+<?code-excerpt "readme_excerpts.dart (CameraDelegate)"?>
+``` dart
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+// ···
+class MyCameraDelegate extends ImagePickerCameraDelegate {
+  @override
+  Future<XFile?> takePhoto(
+      {ImagePickerCameraDelegateOptions options =
+          const ImagePickerCameraDelegateOptions()}) async {
+    return _takeAPhoto(options.preferredCameraDevice);
+  }
+
+  @override
+  Future<XFile?> takeVideo(
+      {ImagePickerCameraDelegateOptions options =
+          const ImagePickerCameraDelegateOptions()}) async {
+    return _takeAVideo(options.preferredCameraDevice);
+  }
+}
+// ···
+void setUpCameraDelegate() {
+  final ImagePickerPlatform instance = ImagePickerPlatform.instance;
+  if (instance is CameraDelegatingImagePickerPlatform) {
+    instance.cameraDelegate = MyCameraDelegate();
+  }
+}
+```
+
+Once you have set a `cameraDelegate`, `image_picker` calls with
+`ImageSource.camera` will work as normal, calling your provided delegate. We
+encourage the community to build packages that implement
+`ImagePickerCameraDelegate`, to provide options for desktop camera UI.
+
+#### macOS installation
+
+Since the macOS implementation uses `file_selector`, you will need to
+add a filesystem access
+[entitlement][https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox]:
+```xml
+  <key>com.apple.security.files.user-selected.read-only</key>
+  <true/>
+```
 
 ### Example
 

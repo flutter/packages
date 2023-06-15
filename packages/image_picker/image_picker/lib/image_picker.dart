@@ -442,4 +442,12 @@ class ImagePicker {
   Future<LostDataResponse> retrieveLostData() {
     return platform.getLostData();
   }
+
+  /// Returns true if the current platform implementation supports [source].
+  ///
+  /// Calling a `pick*` method with a source for which this method
+  /// returns `false` will throw an error.
+  bool supportsImageSource(ImageSource source) {
+    return platform.supportsImageSource(source);
+  }
 }

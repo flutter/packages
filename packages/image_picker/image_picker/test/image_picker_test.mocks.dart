@@ -235,4 +235,12 @@ class MockImagePickerPlatform extends _i1.Mock
         ),
         returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
       ) as _i4.Future<List<_i5.XFile>>);
+  @override
+  bool supportsImageSource(_i2.ImageSource? source) => (super.noSuchMethod(
+        Invocation.method(
+          #supportsImageSource,
+          [source],
+        ),
+        returnValue: false,
+      ) as bool);
 }
