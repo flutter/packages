@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/in_app_purchase_android"?>
+<?code-excerpt path-base="excerpts/packages/in_app_purchase_android_example"?>
 # Migration Guide from 0.2.x to 0.3.0
 
 Starting November 2023, Android Billing Client V4 is no longer supported,
@@ -50,6 +50,18 @@ Code after migration:
 
 <?code-excerpt "migration_guide_examples.dart (one-time-purchase-price)"?>
 ```dart
+/// Handles the one time purchase price of a product.
+void handleOneTimePurchasePrice(ProductDetails productDetails) {
+  if (productDetails is GooglePlayProductDetails) {
+    final ProductDetailsWrapper product = productDetails.productDetails;
+    if (product.productType == ProductType.inapp) {
+      // Unwrapping is safe because the product is a one time purchase.
+      final OneTimePurchaseOfferDetailsWrapper offer =
+          product.oneTimePurchaseOfferDetails!;
+      final String price = offer.formattedPrice;
+    }
+  }
+}
 ```
 
 ### Use case: free trials
@@ -74,6 +86,21 @@ Code after migration:
 
 <?code-excerpt "migration_guide_examples.dart (subscription-free-trial)"?>
 ```dart
+/// Handles the free trial period of a subscription.
+void handleFreeTrialPeriod(ProductDetails productDetails) {
+  if (productDetails is GooglePlayProductDetails) {
+    final ProductDetailsWrapper product = productDetails.productDetails;
+    if (product.productType == ProductType.subs) {
+      // Unwrapping is safe because the product is a subscription.
+      final SubscriptionOfferDetailsWrapper offer =
+          product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
+      final List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
+      if (pricingPhases.first.priceAmountMicros == 0) {
+        // Free trial period logic.
+      }
+    }
+  }
+}
 ```
 
 ### Use case: introductory prices
@@ -98,6 +125,23 @@ Code after migration:
 
 <?code-excerpt "migration_guide_examples.dart (subscription-introductory-price)"?>
 ```dart
+/// Handles the introductory price period of a subscription.
+void handleIntroductoryPricePeriod(ProductDetails productDetails) {
+  if (productDetails is GooglePlayProductDetails) {
+    final ProductDetailsWrapper product = productDetails.productDetails;
+    if (product.productType == ProductType.subs) {
+      // Unwrapping is safe because the product is a subscription.
+      final SubscriptionOfferDetailsWrapper offer =
+          product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
+      final List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
+      if (pricingPhases.length >= 2 &&
+          pricingPhases.first.priceAmountMicros <
+              pricingPhases[1].priceAmountMicros) {
+        // Introductory pricing period logic.
+      }
+    }
+  }
+}
 ```
 
 ## Removal of `launchPriceChangeConfirmationFlow`
