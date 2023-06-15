@@ -182,6 +182,32 @@
             [mockUIImagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary]);
 }
 
+- (void)testPickMediaShouldUseUIImagePickerControllerOnPreiOS14 {
+  if (@available(iOS 14, *)) {
+    return;
+  }
+
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusAuthorized);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
+  FLTMediaSelectionOptions *mediaSelectionOptions =
+      [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
+                                   imageQuality:@(50)
+                            requestFullMetadata:@YES
+                                  allowMultiple:@YES];
+
+  [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
+                                  completion:^(NSArray<NSString *> *_Nullable result,
+                                               FlutterError *_Nullable error){
+                                  }];
+  OCMVerify(times(1),
+            [mockUIImagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary]);
+}
+
 - (void)testPickImageWithoutFullMetadata {
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
   id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
@@ -213,6 +239,28 @@
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
+
+  OCMVerify(times(0), [photoLibrary authorizationStatus]);
+}
+
+- (void)testPickMediaWithoutFullMetadata {
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
+
+  FLTMediaSelectionOptions *mediaSelectionOptions =
+      [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
+                                   imageQuality:@(50)
+                            requestFullMetadata:@YES
+                                  allowMultiple:@YES];
+
+  [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
+
+                                  completion:^(NSArray<NSString *> *_Nullable result,
+                                               FlutterError *_Nullable error){
+                                  }];
 
   OCMVerify(times(0), [photoLibrary authorizationStatus]);
 }
@@ -283,6 +331,36 @@
 }
 
 - (void)testPluginMultiImagePathHasItem {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  NSArray *pathList = @[ @"test" ];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
+
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *_Nullable result, FlutterError *_Nullable error) {
+        XCTAssertEqualObjects(result, pathList);
+        [resultExpectation fulfill];
+      }];
+  [plugin sendCallResultWithSavedPathList:pathList];
+
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPluginMediaPathHasNoItem {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *_Nullable result, FlutterError *_Nullable error) {
+        XCTAssertEqualObjects(result, @[]);
+        [resultExpectation fulfill];
+      }];
+  [plugin sendCallResultWithSavedPathList:@[]];
+
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPluginMediaPathHasItem {
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
   NSArray *pathList = @[ @"test" ];
 
