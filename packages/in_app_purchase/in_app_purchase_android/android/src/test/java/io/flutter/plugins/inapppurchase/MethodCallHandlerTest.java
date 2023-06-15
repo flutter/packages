@@ -695,6 +695,7 @@ public class MethodCallHandlerTest {
   @Test
   public void onPurchasesUpdatedListener() {
     PluginPurchaseListener listener = new PluginPurchaseListener(mockMethodChannel);
+
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
