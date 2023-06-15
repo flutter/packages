@@ -48,6 +48,7 @@
 - logging
 - markdown
 - meta
+- mime
 - path
 - shelf
 - shelf_static
