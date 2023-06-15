@@ -249,22 +249,6 @@ NS_INLINE UIViewController *rootViewController(void) {
   return [self initWithPlayerItem:item frameUpdater:frameUpdater playerFactory:playerFactory];
 }
 
-//- (AVPlayerItem *)playerItemWithURL:(NSURL *)url options:(nullable NSDictionary<NSString *, id> *)options {
-//    if (self.resourceLoaderManager == nil) {
-//        NSLog(@"Resource loadermanager is null");
-//        VIResourceLoaderManager *resourceLoaderManager = [VIResourceLoaderManager new];
-//        self.resourceLoaderManager = resourceLoaderManager;
-//    }
-//    NSURL *assetURL = [[VIResourceLoaderManager new] assetURLWithURL:url];
-//    AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:assetURL options:options];
-////    [urlAsset.resourceLoader setDelegate:self queue:dispatch_get_main_queue()];
-//    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:urlAsset];
-//    if ([playerItem respondsToSelector:@selector(setCanUseNetworkResourcesForLiveStreamingWhilePaused:)]) {
-//        playerItem.canUseNetworkResourcesForLiveStreamingWhilePaused = YES;
-//    }
-//    return playerItem;
-//}
-
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FLTFrameUpdater *)frameUpdater
                      playerFactory:(id<FVPPlayerFactory>)playerFactory {
@@ -460,17 +444,6 @@ NS_INLINE UIViewController *rootViewController(void) {
   _isPlaying = NO;
   [self updatePlayingState];
 }
-
-- (void)cleanCache {
-    unsigned long long fileSize = [VICacheManager calculateCachedSizeWithError:nil];
-    NSLog(@"file cache size: %@", @(fileSize));
-    NSError *error;
-    [VICacheManager cleanAllCacheWithError:&error];
-    if (error) {
-        NSLog(@"clean cache failure: %@", error);
-    }
-}
-
 
 - (int64_t)position {
   return FLTCMTimeToMillis([_player currentTime]);
