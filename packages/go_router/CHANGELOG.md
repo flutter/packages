@@ -1,6 +1,18 @@
-## 8.0.2
+## 8.0.5
 
 - Fixes bug that GoRouterState in top level redirect doesn't contain complete data.
+
+## 8.0.4
+
+- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension. 
+
+## 8.0.3
+
+- Makes namedLocation and route name related APIs case sensitive.
+
+## 8.0.2 
+
+- Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
 
 ## 8.0.1
 
