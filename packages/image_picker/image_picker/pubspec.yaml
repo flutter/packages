@@ -31,9 +31,9 @@ dependencies:
   image_picker_android: ^0.8.4+11
   image_picker_for_web: ^2.1.0
   image_picker_ios: ^0.8.6+1
-  image_picker_platform_interface: ^2.8.0
   image_picker_linux: ^0.2.0
   image_picker_macos: ^0.2.0
+  image_picker_platform_interface: ^2.8.0
   image_picker_windows: ^0.2.0
 
 dev_dependencies:
