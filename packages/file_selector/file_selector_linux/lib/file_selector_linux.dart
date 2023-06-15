@@ -100,6 +100,8 @@ class FileSelectorLinux extends FileSelectorPlatform {
   }) async {
     final List<Map<String, Object>> serializedTypeGroups =
         _serializeTypeGroups(acceptedTypeGroups);
+    // TODO(stuartmorgan): Add the selected type group here and return it. See
+    // https://github.com/flutter/flutter/issues/107093
     final String? path = await _channel.invokeMethod<String>(
       _getSavePathMethod,
       <String, dynamic>{
