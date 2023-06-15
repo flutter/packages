@@ -1,3 +1,7 @@
+## 0.3.0+6
+
+* Bumps com.android.billingclient:billing from 5.2.0 to 6.0.0.
+
 ## 0.3.0+5
 
 * Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.0 to 1.8.21.
