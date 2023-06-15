@@ -1,3 +1,21 @@
+## 8.0.4
+
+- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension. 
+
+
+## 8.0.3
+
+- Makes namedLocation and route name related APIs case sensitive.
+
+## 8.0.2 
+
+- Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
+
+## 8.0.1
+
+- Fixes a link for an example in `path` documentation.
+  documentation.
+
 ## 8.0.0
 
 - **BREAKING CHANGE**:
