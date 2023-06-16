@@ -1,3 +1,7 @@
+## 2.1.3
+
+* Added handling of Date type objects on iOS in UserDefaults.
+
 ## 2.1.2
 
 * Fixes singleton initialization race condition introduced during NNBD
