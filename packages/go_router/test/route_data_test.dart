@@ -89,6 +89,7 @@ final ShellRoute _shellRouteDataPageBuilder = ShellRouteData.$route(
 class _StatefulShellBranchDataBuilder extends StatefulShellBranchData {
   const _StatefulShellBranchDataBuilder();
 }
+
 class _StatefulShellRouteDataBuilder extends StatefulShellRouteData {
   const _StatefulShellRouteDataBuilder();
 
@@ -103,6 +104,7 @@ class _StatefulShellRouteDataBuilder extends StatefulShellRouteData {
         child: navigator,
       );
 }
+
 final StatefulShellRoute _statefulShellRouteDataBuilder =
     StatefulShellRouteData.$route(
   factory: (GoRouterState state) => const _StatefulShellRouteDataBuilder(),
@@ -136,7 +138,8 @@ class _StatefulShellRouteDataPageBuilder extends StatefulShellRouteData {
       );
 }
 
-final StatefulShellRoute _statefulShellRouteDataPageBuilder = StatefulShellRouteData.$route(
+final StatefulShellRoute _statefulShellRouteDataPageBuilder =
+    StatefulShellRouteData.$route(
   factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
   branches: <StatefulShellBranch>[
     StatefulShellBranchData.$route(
@@ -266,7 +269,7 @@ void main() {
       },
     );
 
-        testWidgets(
+    testWidgets(
       'It should build the page from the overridden buildPage method',
       (WidgetTester tester) async {
         final GoRouter goRouter = GoRouter(
