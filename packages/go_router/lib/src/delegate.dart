@@ -159,9 +159,6 @@ class _NavigatorStateIterator extends Iterator<NavigatorState> {
 
   RouteBase _getRouteAtIndex(int index) => matchList.matches[index].route;
 
-  /// Update [index] to point to the ShellRouteBase that uses the navigator key.
-  ///
-  /// The [index] will be -1 if navigator key points to root.
   void _findsNextIndex() {
     final GlobalKey<NavigatorState>? parentNavigatorKey =
         _getRouteAtIndex(index).parentNavigatorKey;
