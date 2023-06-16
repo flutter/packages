@@ -12,6 +12,18 @@ platform_properties:
   linux:
     properties:
       os: Linux
+  linux_desktop:
+    properties:
+      os: Ubuntu
+      cores: "8"
+      device_type: none
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"},
+          {"dependency": "curl", "version": "version:7.64.0"}
+        ]
   windows:
     properties:
       dependencies: >
@@ -48,7 +60,7 @@ platform_properties:
         }
 
 targets:
-  ### Linux tasks ###
+  ### Linux-host tasks ###
   - name: Linux repo_tools_tests
     recipe: packages/packages
     timeout: 30
@@ -57,6 +69,25 @@ targets:
       target_file: repo_tools_tests.yaml
       channel: master
       version_file: flutter_master.version
+
+  ### Linux desktop tasks
+  - name: Linux_desktop build_all_packages master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_master.version
+      target_file: linux_build_all_packages.yaml
+      channel: master
+
+  - name: Linux_desktop build_all_packages stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      target_file: linux_build_all_packages.yaml
+      channel: stable
 
   ### iOS+macOS tasks ###
   # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
