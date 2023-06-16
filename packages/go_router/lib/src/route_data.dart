@@ -205,14 +205,11 @@ abstract class ShellRouteData extends RouteData {
   );
 }
 
-
-
 /// Base class for supporting
 /// [StatefulShellRoute](https://pub.dev/documentation/go_router/latest/go_router/StatefulShellRoute-class.html)
 abstract class StatefulShellRouteData extends RouteData {
   /// Default const constructor
   const StatefulShellRouteData();
-
 
   /// [pageBuilder] is used to build the page
   Page<void> pageBuilder(
