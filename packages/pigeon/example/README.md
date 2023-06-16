@@ -1,38 +1,16 @@
+<?code-excerpt path-base="excerpts/packages/pigeon_example"?>
 # Pigeon Examples
 
-## HostApi Example
+The examples here will cover basic usage. For a more thorough set of examples,
+check the [core_tests pigeon file](../pigeons/core_tests.dart) and 
+[platform test folder](../platform_tests/) ([shared_test_plugin_code](../platform_tests/shared_test_plugin_code/) and [alternate_language_test_plugin](../platform_tests/alternate_language_test_plugin/) especially).
 
-This example gives an overview of how to use Pigeon to call into the
-host-platform from Flutter.
+## Invocation
 
-For instructions to set up your own Pigeon usage see these [steps](https://pub.dev/packages/pigeon#usage).
-
-### message.dart
-
-This is the Pigeon file that describes the interface that will be used to call
-from Flutter to the host-platform.
-
-```dart
-import 'package:pigeon/pigeon.dart';
-
-class Book {
-  String? title;
-  String? author;
-}
-
-@HostApi()
-abstract class BookApi {
-  List<Book?> search(String keyword);
-}
-```
-
-### invocation
-
-This an example call to Pigeon that would ingest a defintion file
+This is an example call to Pigeon that would ingest a definition file
 `pigeons/message.dart` and generate corresponding output code for each
-supported language. (In actual use, you would not normally use both Objective-C
-and Swift, or both Java and Kotlin, but instead use just the languages matching
-your project.)
+supported language. In actual use, you would use just the languages matching
+your project.
 
 ```sh
 flutter pub run pigeon \
@@ -50,37 +28,102 @@ flutter pub run pigeon \
   --cpp_namespace pigeon
 ```
 
+It is usually preferable to add a config into the pigeon input
+file directly. 
+
+<?code-excerpt "../../pigeons/message.dart (config)"?>
+```dart
+@ConfigurePigeon(PigeonOptions(
+  dartOut: 'lib/src/message.g.dart',
+  dartOptions: DartOptions(),
+  copyrightHeader: 'pigeons/copyright.txt',
+  javaOut: 'platforms_pigeon_out/message_java.java',
+  javaOptions: JavaOptions(),
+  objcHeaderOut: 'platforms_pigeon_out/message_objc.h',
+  objcSourceOut: 'platforms_pigeon_out/message_objc.m',
+  objcOptions: ObjcOptions(),
+  swiftOut: 'platforms_pigeon_out/message_swift.swift',
+  swiftOptions: SwiftOptions(),
+  kotlinOut: 'platforms_pigeon_out/message_kt.kt',
+  kotlinOptions: KotlinOptions(),
+  cppHeaderOut: 'platforms_pigeon_out/message_cpp.h',
+  cppSourceOut: 'platforms_pigeon_out/message_cpp.cpp',
+  cppOptions: CppOptions(),
+))
+```
+
+## HostApi Example
+
+This example gives an overview of how to use Pigeon to call into the
+host-platform from Flutter.
+
+For instructions to set up your own Pigeon usage see these [steps](../README.md#usage).
+
+### Dart input (message.dart)
+
+This is the Pigeon file that describes the interface that will be used to call
+from Flutter to the host-platform.
+
+<?code-excerpt "../../pigeons/message.dart (host-definitions)"?>
+```dart
+class CreateMessage {
+  CreateMessage({required this.code, required this.httpHeaders});
+  String? asset;
+  String? uri;
+  int code;
+  Map<String?, String?> httpHeaders;
+}
+
+@HostApi()
+abstract class MessageHostApi {
+  void initialize();
+  bool sendMessage(CreateMessage message);
+  int add(int a, int b);
+}
+```
+
+### main.dart
+
+This is the code that will use the generated dart code to make calls from flutter to 
+the host platform.
+
+<?code-excerpt "main.dart (main-dart)"?>
+```dart 
+import 'src/message.g.dart';
+
+/// Example plugin for pigeon code excerpts and examples.
+class ExamplePluginClass {
+  /// Creates a new plugin implementation instance.
+  ExamplePluginClass();
+
+  final MessageHostApi _api = MessageHostApi();
+
+  /// Calls host method `add` with provided arguments.
+  Future<int> callAddPlusOne(int a, int b) async {
+    final int resultOfAdd = await _api.add(a, b);
+    return resultOfAdd + 1;
+  }
+
+  /// Sends message through host api using `CreateMessage` class
+  /// and api `sendMessage` method.
+  Future<bool> sendMessage(String messageText) {
+    final CreateMessage message = CreateMessage(
+      code: 42,
+      httpHeaders: <String?, String?>{'header': 'this is a header'},
+      uri: 'uri text',
+    );
+    return _api.sendMessage(message);
+  }
+}
+```
+
 ### AppDelegate.m
 
 This is the code that will use the generated Objective-C code to receive calls
 from Flutter.
 
 ```objc
-#import "AppDelegate.h"
-#import <Flutter/Flutter.h>
-#import "pigeon.h"
 
-@interface MyApi : NSObject <BookApi>
-@end
-
-@implementation MyApi
--(NSArray<Book *> *)searchKeyword:(NSString *)keyword error:(FlutterError **)error {
-  Book *result = [[Book alloc] init];
-  result.title =
-      [NSString stringWithFormat:@"%@'s Life", request.query];
-  result.author = keyword;
-  return @[ result ];
-}
-@end
-
-@implementation AppDelegate
-- (BOOL)application:(UIApplication *)application
-didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions {
-  MyApi *api = [[MyApi alloc] init];
-  BookApiSetup(getFlutterEngine().binaryMessenger, api);
-  return YES;
-}
-@end
 ```
 
 ### AppDelegate.swift
@@ -88,25 +131,7 @@ didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> *
 This is the code that will use the generated Swift code to receive calls from Flutter.
 
 ```swift
-import Flutter
 
-class MyApi: NSObject, BookApi {
-  func search(keyword: String) -> [Book] {
-    let result = Book(title: "\(keyword)'s Life", author: keyword)
-    return [result]
-  }
-}
-
-class AppDelegate {
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
-  ) -> Bool {
-    let api = MyApi()
-    BookApiSetup.setUp(getFlutterEngine().binaryMessenger, api)
-    return true
-  }
-}
 ```
 
 ### StartActivity.java
@@ -114,24 +139,16 @@ class AppDelegate {
 This is the code that will use the generated Java code to receive calls from Flutter.
 
 ```java
-import dev.flutter.pigeon.Pigeon.*;
-import java.util.Collections;
 
-public class StartActivity extends Activity {
-  private class MyApi implements BookApi {
-    List<Book> search(String keyword) {
-      Book result = new Book();
-      result.author = keyword;
-      result.title = String.format("%s's Life", keyword);
-      return Collections.singletonList(result)
-    }
-  }
+```
 
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    BookApi.setup(getBinaryMessenger(), new MyApi());
-  }
-}
+### kotlin
+``` 
+
+```
+### c++
+```
+
 ```
 
 ### test.dart
@@ -140,16 +157,14 @@ This is the Dart code that will call into the host-platform using the generated
 Dart code.
 
 ```dart
-import 'pigeon.dart';
 
-void main() {
-  testWidgets("test pigeon", (WidgetTester tester) async {
-    Api api = Api();
-    List<Book?> reply = await api.search("Aaron");
-    expect(reply[0].title, equals("Aaron's Life"));
-  });
-}
+```
 
+## FlutterApi Example
+lorem
+
+```
+ipsum
 ```
 
 ## Swift / Kotlin Plugin Example

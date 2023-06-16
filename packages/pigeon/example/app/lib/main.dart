@@ -42,6 +42,25 @@ class _MyHomePageState extends State<MyHomePage> {
   final ExampleHostApi _hostApi = ExampleHostApi();
   String? _hostCallResult;
 
+  final MessageHostApi _api = MessageHostApi();
+
+  /// Calls host method `add` with provided arguments.
+  Future<int> callAddPlusOne(int a, int b) async {
+    final int resultOfAdd = await _api.add(a, b);
+    return resultOfAdd + 1;
+  }
+
+  /// Sends message through host api using `CreateMessage` class
+  /// and api `sendMessage` method.
+  Future<bool> sendMessage(String messageText) {
+    final CreateMessage message = CreateMessage(
+      code: 42,
+      httpHeaders: <String?, String?>{'header': 'this is a header'},
+      uri: 'uri text',
+    );
+    return _api.sendMessage(message);
+  }
+
   @override
   void initState() {
     super.initState();
