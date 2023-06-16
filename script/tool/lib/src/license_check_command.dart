@@ -115,6 +115,9 @@ class LicenseCheckCommand extends PackageCommand {
   final String name = 'license-check';
 
   @override
+  List<String> get aliases => <String>['check-license'];
+
+  @override
   final String description =
       'Ensures that all code files have copyright/license blocks.';
 
