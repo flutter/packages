@@ -5,24 +5,24 @@
 import Foundation
 
 #if os(iOS)
-import Flutter
+  import Flutter
 #elseif os(macOS)
-import FlutterMacOS
+  import FlutterMacOS
 #endif
 
 public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = SharedPreferencesPlugin()
     // Workaround for https://github.com/flutter/flutter/issues/118103.
-#if os(iOS)
-    let messenger = registrar.messenger()
-#else
-    let messenger = registrar.messenger
-#endif
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #else
+      let messenger = registrar.messenger
+    #endif
     UserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
-  func getAllWithPrefix(prefix: String) -> [String? : Any?] {
+  func getAllWithPrefix(prefix: String) -> [String?: Any?] {
     let prefs = getAllPrefs(prefix: prefix)
     return convertDates(prefs)
   }
@@ -66,23 +66,21 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   /// Recursively convert all Date type objects into timestamp.
   private func convertDates<T>(_ value: T) -> T {
     var result: Any
-    if (value is Date) {
+    if value is Date {
       result = Int((value as! Date).timeIntervalSince1970)
-    } else if(value is Dictionary<String, Any>) {
-      var dict: Dictionary<String, Any> = [:]
-      for (k, v) in value as! Dictionary<String, Any> {
+    } else if value is [String: Any] {
+      var dict: [String: Any] = [:]
+      for (k, v) in value as! [String: Any] {
         dict[k] = convertDates(v) as Any
       }
       result = dict
-    }
-    else if(value is Array<Any>) {
-      var list: Array<Any> = []
-      for v in value as! Array<Any> {
+    } else if value is [Any] {
+      var list: [Any] = []
+      for v in value as! [Any] {
         list.append(convertDates(v))
       }
       result = list
-    }
-    else {
+    } else {
       result = value
     }
     return result as! T
