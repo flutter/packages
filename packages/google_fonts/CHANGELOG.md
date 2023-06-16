@@ -2,6 +2,9 @@
 ### Added
 - Add ability to wait for fonts to load with `GoogleFonts.pendingFonts`
 
+### Changed
+- Split `google_fonts.dart` into multiple files
+
 ## 5.0.0 - 2023-06-01
 ### Added
 - `Alkatra`
