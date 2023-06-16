@@ -441,6 +441,14 @@ void main() {
         ));
       });
 
+      test('limitsNavigationsToAppBoundDomains', () {
+        webViewConfiguration.setLimitsNavigationsToAppBoundDomains(true);
+        verify(mockPlatformHostApi.setLimitsNavigationsToAppBoundDomains(
+          instanceManager.getIdentifier(webViewConfiguration),
+          true,
+        ));
+      });
+
       test('mediaTypesRequiringUserActionForPlayback', () {
         webViewConfiguration.setMediaTypesRequiringUserActionForPlayback(
           <WKAudiovisualMediaType>{

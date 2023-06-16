@@ -154,4 +154,27 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
         .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     return files;
   }
+
+  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not currently
+  // supported. If any of these arguments are supplied, they will be silently
+  // ignored.
+  @override
+  Future<List<XFile>> getMedia({required MediaOptions options}) async {
+    const XTypeGroup typeGroup = XTypeGroup(
+        label: 'images and videos', extensions: <String>['image/*', 'video/*']);
+
+    List<XFile> files;
+
+    if (options.allowMultiple) {
+      files = await fileSelector
+          .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    } else {
+      final XFile? file = await fileSelector
+          .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+      files = <XFile>[
+        if (file != null) file,
+      ];
+    }
+    return files;
+  }
 }
