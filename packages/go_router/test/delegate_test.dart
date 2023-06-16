@@ -134,6 +134,35 @@ void main() {
       }
       expect(message, 'There is nothing to pop');
     });
+
+    testWidgets('poproute return false if nothing to pop', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final GoRouter goRouter = await createRouter(
+        <RouteBase>[
+          ShellRoute(
+            navigatorKey: rootKey,
+            builder: (_, __, Widget child) => child,
+            routes: <RouteBase>[
+              ShellRoute(
+                parentNavigatorKey: rootKey,
+                navigatorKey: navKey,
+                builder: (_, __, Widget child) => child,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/',
+                    parentNavigatorKey: navKey,
+                    builder: (_, __) => const Text('Home'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+        tester,
+      );
+      expect(await goRouter.routerDelegate.popRoute(), isFalse);
+    });
   });
 
   group('push', () {
