@@ -1,3 +1,7 @@
+## 0.8.8
+
+* Fixes a crash case when picking an image with a display name that does not contain a period.
+
 ## 0.8.7
 
 * Adds `getMedia` method.
