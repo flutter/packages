@@ -135,7 +135,8 @@ void main() {
       expect(message, 'There is nothing to pop');
     });
 
-    testWidgets('poproute return false if nothing to pop', (WidgetTester tester) async {
+    testWidgets('poproute return false if nothing to pop',
+        (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
       final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
       final GoRouter goRouter = await createRouter(
