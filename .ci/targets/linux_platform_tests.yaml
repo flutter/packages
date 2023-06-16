@@ -5,8 +5,8 @@ tasks:
     script: script/tool_runner.sh
     args: ["build-examples", "--linux"]
   - name: native test
-    script: script/tool_runner.sh
+    script: .ci/scripts/xvfb_tool_runner.sh
     args: ["native-test", "--linux"]
   - name: drive examples
-    script: script/tool_runner.sh
+    script: .ci/scripts/xvfb_tool_runner.sh
     args: ["drive-examples", "--linux", "--exclude=script/configs/exclude_integration_linux.yaml"]
