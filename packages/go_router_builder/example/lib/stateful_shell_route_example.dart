@@ -9,6 +9,8 @@ import 'package:go_router/go_router.dart';
 
 part 'stateful_shell_route_example.g.dart';
 
+final GlobalKey<NavigatorState> _sectionANavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
 void main() => runApp(App());
 
 class App extends StatelessWidget {
@@ -21,7 +23,7 @@ class App extends StatelessWidget {
 
   final GoRouter _router = GoRouter(
     routes: $appRoutes,
-    initialLocation: '/foo',
+    initialLocation: '/detailsA',
   );
 }
 
@@ -34,120 +36,158 @@ class HomeScreen extends StatelessWidget {
       );
 }
 
-@TypedShellRoute<MyShellRouteData>(
+@TypedStatefulShellRoute<MyShellRouteData>(
   routes: <TypedRoute<RouteData>>[
-    TypedGoRoute<FooRouteData>(path: '/foo'),
-    TypedGoRoute<BarRouteData>(path: '/bar'),
+    TypedStatefulShellBranch<BranchAData>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<DetailsARouteData>(path: '/detailsA'),
+      ],
+    ),
+    TypedStatefulShellBranch<BranchBData>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<DetailsBRouteData>(path: '/detailsB'),
+      ],
+    ),
   ],
 )
-class MyShellRouteData extends ShellRouteData {
+class MyShellRouteData extends StatefulShellRouteData {
   const MyShellRouteData();
 
   @override
   Widget builder(
     BuildContext context,
     GoRouterState state,
-    Widget navigator,
+    StatefulNavigationShell navigationShell,
   ) {
-    return MyShellRouteScreen(child: navigator);
+    return ScaffoldWithNavBar(navigationShell: navigationShell);
   }
 }
 
-class FooRouteData extends GoRouteData {
-  const FooRouteData();
+class BranchAData extends StatefulShellBranchData {
+  const BranchAData();
+}
+
+class BranchBData extends StatefulShellBranchData {
+  const BranchBData();
+
+  static final GlobalKey<NavigatorState> $navigatorKey = _sectionANavigatorKey;
+}
+
+class DetailsARouteData extends GoRouteData {
+  const DetailsARouteData();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const FooScreen();
+    return const DetailsScreen(label: 'A');
   }
 }
 
-class BarRouteData extends GoRouteData {
-  const BarRouteData();
+class DetailsBRouteData extends GoRouteData {
+  const DetailsBRouteData();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const BarScreen();
+    return const DetailsScreen(label: 'B');
   }
 }
 
-class MyShellRouteScreen extends StatelessWidget {
-  const MyShellRouteScreen({required this.child, super.key});
+/// Builds the "shell" for the app by building a Scaffold with a
+/// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
+class ScaffoldWithNavBar extends StatelessWidget {
+  /// Constructs an [ScaffoldWithNavBar].
+  const ScaffoldWithNavBar({
+    required this.navigationShell,
+    Key? key,
+  }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
-  final Widget child;
-
-  int getCurrentIndex(BuildContext context) {
-    final String location = GoRouter.of(context).location;
-    if (location == '/bar') {
-      return 1;
-    }
-    return 0;
-  }
+  /// The navigation shell and container for the branch Navigators.
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
-    final int currentIndex = getCurrentIndex(context);
     return Scaffold(
-      body: child,
+      body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Foo',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Bar',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
+          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
         ],
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              const FooRouteData().go(context);
-              break;
-            case 1:
-              const BarRouteData().go(context);
-              break;
-          }
-        },
+        currentIndex: navigationShell.currentIndex,
+        onTap: (int index) => _onTap(context, index),
       ),
+    );
+  }
+
+  void _onTap(BuildContext context, int index) {
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
     );
   }
 }
 
-class FooScreen extends StatelessWidget {
-  const FooScreen({super.key});
+/// The details screen for either the A or B screen.
+class DetailsScreen extends StatefulWidget {
+  /// Constructs a [DetailsScreen].
+  const DetailsScreen({
+    required this.label,
+    this.param,
+    this.extra,
+    super.key,
+  });
+
+  /// The label to display in the center of the screen.
+  final String label;
+
+  /// Optional param
+  final String? param;
+
+  /// Optional extra object
+  final Object? extra;
+  @override
+  State<StatefulWidget> createState() => DetailsScreenState();
+}
+
+/// The state for DetailsScreen
+class DetailsScreenState extends State<DetailsScreen> {
+  int _counter = 0;
 
   @override
   Widget build(BuildContext context) {
-    return const Text('Foo');
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Details Screen - ${widget.label}'),
+      ),
+      body: _build(context),
+    );
   }
-}
 
-class BarScreen extends StatelessWidget {
-  const BarScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text('Bar');
-  }
-}
-
-@TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData {
-  const LoginRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const LoginScreen();
-}
-
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text('Login');
+  Widget _build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text('Details for ${widget.label} - Counter: $_counter',
+              style: Theme.of(context).textTheme.titleLarge),
+          const Padding(padding: EdgeInsets.all(4)),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _counter++;
+              });
+            },
+            child: const Text('Increment counter'),
+          ),
+          const Padding(padding: EdgeInsets.all(8)),
+          if (widget.param != null)
+            Text('Parameter: ${widget.param!}',
+                style: Theme.of(context).textTheme.titleMedium),
+          const Padding(padding: EdgeInsets.all(8)),
+          if (widget.extra != null)
+            Text('Extra: ${widget.extra!}',
+                style: Theme.of(context).textTheme.titleMedium),
+        ],
+      ),
+    );
   }
 }
