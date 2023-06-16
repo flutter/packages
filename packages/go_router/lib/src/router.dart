@@ -311,6 +311,9 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
     }
     routerDelegate.isOnExitBeingCalled = true;
     final RouteInformation routeInformation = RouteInformation(
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
       location: location,
       state: RouteInformationState<void>(
         extra: extra,
