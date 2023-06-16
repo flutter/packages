@@ -59,6 +59,57 @@ class JavaObject with Copyable {
   }
 }
 
+/// A callback interface used by the host application to set the Geolocation
+/// permission state for an origin.
+///
+/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+@immutable
+class GeolocationPermissionsCallback extends JavaObject {
+  /// Instantiates a [GeolocationPermissionsCallback] without creating and
+  /// attaching to an instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy.
+  @protected
+  GeolocationPermissionsCallback.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _geolocationPermissionsCallbackApi =
+            GeolocationPermissionsCallbackHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  final GeolocationPermissionsCallbackHostApiImpl
+      _geolocationPermissionsCallbackApi;
+
+  /// Sets the Geolocation permission state for the supplied origin.
+  ///
+  /// [origin]: The origin for which permissions are set.
+  ///
+  /// [allow]: Whether or not the origin should be allowed to use the Geolocation API.
+  ///
+  /// [retain]: Whether the permission should be retained beyond the lifetime of
+  /// a page currently being displayed by a WebView.
+  Future<void> invoke(String origin, bool allow, bool retain) {
+    return _geolocationPermissionsCallbackApi.invokeFromInstances(
+      this,
+      origin,
+      allow,
+      retain,
+    );
+  }
+
+  @override
+  GeolocationPermissionsCallback copy() {
+    return GeolocationPermissionsCallback.detached(
+      binaryMessenger: _geolocationPermissionsCallbackApi.binaryMessenger,
+      instanceManager: _geolocationPermissionsCallbackApi.instanceManager,
+    );
+  }
+}
+
 /// An Android View that displays web pages.
 ///
 /// **Basic usage**
@@ -962,6 +1013,17 @@ class DownloadListener extends JavaObject {
   }
 }
 
+/// Responsible for request the Geolocation API.
+typedef GeolocationPermissionsShowPrompt = Future<void> Function(
+  String origin,
+  GeolocationPermissionsCallback callback,
+);
+
+/// Responsible for request the Geolocation API is Cancel.
+typedef GeolocationPermissionsHidePrompt = void Function(
+  WebChromeClient instance,
+);
+
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
@@ -969,6 +1031,8 @@ class WebChromeClient extends JavaObject {
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onPermissionRequest,
+    this.onGeolocationPermissionsShowPrompt,
+    this.onGeolocationPermissionsHidePrompt,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -986,6 +1050,8 @@ class WebChromeClient extends JavaObject {
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onPermissionRequest,
+    this.onGeolocationPermissionsShowPrompt,
+    this.onGeolocationPermissionsHidePrompt,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -1019,6 +1085,16 @@ class WebChromeClient extends JavaObject {
     WebChromeClient instance,
     PermissionRequest request,
   )? onPermissionRequest;
+
+  /// Indicates the client should handle geolocation permissions.
+  final GeolocationPermissionsShowPrompt? onGeolocationPermissionsShowPrompt;
+
+  /// Notify the host application that a request for Geolocation permissions,
+  /// made with a previous call to [onGeolocationPermissionsShowPrompt] has been
+  /// canceled.
+  final void Function(
+    WebChromeClient instance,
+  )? onGeolocationPermissionsHidePrompt;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -1054,6 +1130,8 @@ class WebChromeClient extends JavaObject {
     return WebChromeClient.detached(
       onProgressChanged: onProgressChanged,
       onShowFileChooser: onShowFileChooser,
+      onGeolocationPermissionsShowPrompt: onGeolocationPermissionsShowPrompt,
+      onGeolocationPermissionsHidePrompt: onGeolocationPermissionsHidePrompt,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );

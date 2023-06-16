@@ -90,6 +90,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   final String name = 'pubspec-check';
 
   @override
+  List<String> get aliases => <String>['check-pubspec'];
+
+  @override
   final String description =
       'Checks that pubspecs follow repository conventions.';
 
@@ -104,8 +107,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   Future<void> initializeRun() async {
     // Find all local, published packages.
     for (final File pubspecFile in (await packagesDir.parent
-        .list(recursive: true, followLinks: false)
-        .toList())
+            .list(recursive: true, followLinks: false)
+            .toList())
         .whereType<File>()
         .where((File entity) => p.basename(entity.path) == 'pubspec.yaml')) {
       final Pubspec? pubspec = _tryParsePubspec(pubspecFile.readAsStringSync());

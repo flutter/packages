@@ -74,6 +74,9 @@ class NativeTestCommand extends PackageLoopingCommand {
   final String name = 'native-test';
 
   @override
+  List<String> get aliases => <String>['test-native'];
+
+  @override
   final String description = '''
 Runs native unit tests and native integration tests.
 
