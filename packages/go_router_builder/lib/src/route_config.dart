@@ -41,7 +41,7 @@ class RouteConfig {
     this._routeDataClass,
     this._parent,
     this._key,
-    this._isShellRoute,
+    this._typeName,
   );
 
   /// Creates a new [RouteConfig] represented the annotation data in [reader].
@@ -73,12 +73,13 @@ class RouteConfig {
     // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
     // 5.2+ (when Flutter 3.4+ is on stable).
     // ignore: deprecated_member_use
-    final bool isShellRoute = type.element.name == 'TypedShellRoute';
+
+    final String typeName = type.element.name;
 
     String? path;
     String? name;
 
-    if (!isShellRoute) {
+    if (!typeName.contains('Shell')) {
       final ConstantReader pathValue = reader.read('path');
       if (pathValue.isNull) {
         throw InvalidGenerationSourceError(
@@ -114,9 +115,9 @@ class RouteConfig {
       parent,
       _generateNavigatorKeyGetterCode(
         classElement,
-        keyName: isShellRoute ? r'$navigatorKey' : r'$parentNavigatorKey',
+        keyName: typeName.contains('Shell') ? r'$navigatorKey' : r'$parentNavigatorKey',
       ),
-      isShellRoute,
+      typeName,
     );
 
     value._children.addAll(reader.read('routes').listValue.map((DartObject e) =>
@@ -131,7 +132,7 @@ class RouteConfig {
   final InterfaceElement _routeDataClass;
   final RouteConfig? _parent;
   final String? _key;
-  final bool _isShellRoute;
+  final String _typeName;
 
   static String? _generateNavigatorKeyGetterCode(
     InterfaceElement classElement, {
@@ -196,7 +197,7 @@ class RouteConfig {
 
   /// Returns `extension` code.
   String _extensionDefinition() {
-    if (_isShellRoute) {
+    if (_typeName.contains('Shell')) {
       return '''
 extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) $_newFromState
@@ -340,14 +341,32 @@ RouteBase get $_routeGetterName => ${_routeDefinition()};
     final String routesBit = _children.isEmpty
         ? ''
         : '''
-routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
+${_typeName=='TypedStatefulShellRoute'?"branches:":"routes:"} [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
     final String navigatorKeyParameterName =
-        _isShellRoute ? 'navigatorKey' : 'parentNavigatorKey';
+        _typeName.contains('Shell') ? 'navigatorKey' : 'parentNavigatorKey';
     final String navigatorKey = _key == null || _key!.isEmpty
         ? ''
         : '$navigatorKeyParameterName: $_key,';
-    if (_isShellRoute) {
+    if (_typeName=='TypedStatefulShellRoute') {
+      return '''
+  StatefulShellRouteData.\$route(
+    factory: $_extensionName._fromState,
+    $navigatorKey
+    $routesBit
+  )
+''';
+    }
+    if (_typeName=='TypedStatefulShellBranch') {
+      return '''
+  StatefulShellBranchData.\$route(
+    factory: $_extensionName._fromState,
+    $navigatorKey
+    $routesBit
+  )
+''';
+    }
+     if (_typeName=='TypedShellRoute') {
       return '''
   ShellRouteData.\$route(
     factory: $_extensionName._fromState,

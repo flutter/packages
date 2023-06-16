@@ -9,42 +9,49 @@ part of 'main.dart';
 // **************************************************************************
 
 List<RouteBase> get $appRoutes => [
-      $homeRoute,
-      $loginRoute,
+      $myShellRouteData,
     ];
 
-RouteBase get $homeRoute => GoRouteData.$route(
-      path: '/',
-      factory: $HomeRouteExtension._fromState,
-      routes: [
-        GoRouteData.$route(
-          path: 'family/:fid',
-          factory: $FamilyRouteExtension._fromState,
+RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
+      factory: $MyShellRouteDataExtension._fromState,
+      branches: [
+        StatefulShellBranchData.$route(
+          factory: $BranchADataExtension._fromState,
           routes: [
             GoRouteData.$route(
-              path: 'person/:pid',
-              factory: $PersonRouteExtension._fromState,
-              routes: [
-                GoRouteData.$route(
-                  path: 'details/:details',
-                  factory: $PersonDetailsRouteExtension._fromState,
-                ),
-              ],
+              path: '/detailsA',
+              factory: $DetailsARouteDataExtension._fromState,
             ),
           ],
         ),
-        GoRouteData.$route(
-          path: 'family-count/:count',
-          factory: $FamilyCountRouteExtension._fromState,
+        StatefulShellBranchData.$route(
+          factory: $BranchBDataExtension._fromState,
+          navigatorKey: BranchBData.$navigatorKey,
+          routes: [
+            GoRouteData.$route(
+              path: '/detailsB',
+              factory: $DetailsBRouteDataExtension._fromState,
+            ),
+          ],
         ),
       ],
     );
 
-extension $HomeRouteExtension on HomeRoute {
-  static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
+extension $MyShellRouteDataExtension on MyShellRouteData {
+  static MyShellRouteData _fromState(GoRouterState state) =>
+      const MyShellRouteData();
+}
+
+extension $BranchADataExtension on BranchAData {
+  static BranchAData _fromState(GoRouterState state) => const BranchAData();
+}
+
+extension $DetailsARouteDataExtension on DetailsARouteData {
+  static DetailsARouteData _fromState(GoRouterState state) =>
+      const DetailsARouteData();
 
   String get location => GoRouteData.$location(
-        '/',
+        '/detailsA',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -55,106 +62,16 @@ extension $HomeRouteExtension on HomeRoute {
       context.pushReplacement(location);
 }
 
-extension $FamilyRouteExtension on FamilyRoute {
-  static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        state.pathParameters['fid']!,
-      );
-
-  String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(fid)}',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+extension $BranchBDataExtension on BranchBData {
+  static BranchBData _fromState(GoRouterState state) => const BranchBData();
 }
 
-extension $PersonRouteExtension on PersonRoute {
-  static PersonRoute _fromState(GoRouterState state) => PersonRoute(
-        state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!),
-      );
+extension $DetailsBRouteDataExtension on DetailsBRouteData {
+  static DetailsBRouteData _fromState(GoRouterState state) =>
+      const DetailsBRouteData();
 
   String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(fid)}/person/${Uri.encodeComponent(pid.toString())}',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-}
-
-extension $PersonDetailsRouteExtension on PersonDetailsRoute {
-  static PersonDetailsRoute _fromState(GoRouterState state) =>
-      PersonDetailsRoute(
-        state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!),
-        _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!),
-        $extra: state.extra as int?,
-      );
-
-  String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(fid)}/person/${Uri.encodeComponent(pid.toString())}/details/${Uri.encodeComponent(_$PersonDetailsEnumMap[details]!)}',
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-}
-
-extension $FamilyCountRouteExtension on FamilyCountRoute {
-  static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
-        int.parse(state.pathParameters['count']!),
-      );
-
-  String get location => GoRouteData.$location(
-        '/family-count/${Uri.encodeComponent(count.toString())}',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-}
-
-const _$PersonDetailsEnumMap = {
-  PersonDetails.hobbies: 'hobbies',
-  PersonDetails.favoriteFood: 'favorite-food',
-  PersonDetails.favoriteSport: 'favorite-sport',
-};
-
-extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
-}
-
-RouteBase get $loginRoute => GoRouteData.$route(
-      path: '/login',
-      factory: $LoginRouteExtension._fromState,
-    );
-
-extension $LoginRouteExtension on LoginRoute {
-  static LoginRoute _fromState(GoRouterState state) => LoginRoute(
-        fromPage: state.queryParameters['from-page'],
-      );
-
-  String get location => GoRouteData.$location(
-        '/login',
-        queryParams: {
-          if (fromPage != null) 'from-page': fromPage,
-        },
+        '/detailsB',
       );
 
   void go(BuildContext context) => context.go(location);
