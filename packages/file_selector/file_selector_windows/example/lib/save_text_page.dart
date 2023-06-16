@@ -18,7 +18,7 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final FileSaveLocationResult? result =
+    final FileSaveLocation? result =
         await FileSelectorPlatform.instance.getSaveLocation(
       options: SaveDialogOptions(suggestedName: fileName),
       acceptedTypeGroups: const <XTypeGroup>[
@@ -42,6 +42,8 @@ class SaveTextPage extends StatelessWidget {
     if (!path.split(Platform.pathSeparator).last.contains('.')) {
       final XTypeGroup? activeGroup = result.activeFilter;
       if (activeGroup != null) {
+        // The group is one of the groups passed in above, each of which has
+        // exactly one `extensions` entry.
         path = '$path.${activeGroup.extensions!.first}';
       }
     }

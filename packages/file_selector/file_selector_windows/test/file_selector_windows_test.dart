@@ -251,7 +251,7 @@ void main() {
     });
 
     test('simple call works', () async {
-      final FileSaveLocationResult? location = await plugin.getSaveLocation();
+      final FileSaveLocation? location = await plugin.getSaveLocation();
 
       expect(location?.path, 'foo');
       expect(location?.activeFilter, null);
@@ -304,7 +304,7 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      final FileSaveLocationResult? result = await plugin
+      final FileSaveLocation? result = await plugin
           .getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
       verify(mockApi.showSaveDialog(captureAny, null, null, null));

@@ -67,7 +67,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<FileSaveLocationResult?> getSaveLocation({
+  Future<FileSaveLocation?> getSaveLocation({
     List<XTypeGroup>? acceptedTypeGroups,
     SaveDialogOptions options = const SaveDialogOptions(),
   }) async {
@@ -83,7 +83,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     final int? groupIndex = result.typeGroupIndex;
     return result.paths.isEmpty
         ? null
-        : FileSaveLocationResult(result.paths.first!,
+        : FileSaveLocation(result.paths.first!,
             activeFilter:
                 groupIndex == null ? null : acceptedTypeGroups?[groupIndex]);
   }

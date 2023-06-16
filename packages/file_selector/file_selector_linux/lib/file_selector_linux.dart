@@ -94,7 +94,7 @@ class FileSelectorLinux extends FileSelectorPlatform {
   }
 
   @override
-  Future<FileSaveLocationResult?> getSaveLocation({
+  Future<FileSaveLocation?> getSaveLocation({
     List<XTypeGroup>? acceptedTypeGroups,
     SaveDialogOptions options = const SaveDialogOptions(),
   }) async {
@@ -112,7 +112,7 @@ class FileSelectorLinux extends FileSelectorPlatform {
         _confirmButtonTextKey: options.confirmButtonText,
       },
     );
-    return path == null ? null : FileSaveLocationResult(path);
+    return path == null ? null : FileSaveLocation(path);
   }
 
   @override

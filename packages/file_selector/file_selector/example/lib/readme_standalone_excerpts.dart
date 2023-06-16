@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> saveFile() async {
     // #docregion Save
     const String fileName = 'suggested_name.txt';
-    final FileSaveLocationResult? result =
+    final FileSaveLocation? result =
         await getSaveLocation(suggestedName: fileName);
     if (result == null) {
       // Operation was canceled by the user.

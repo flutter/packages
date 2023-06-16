@@ -24,7 +24,7 @@ class SaveTextPage extends StatelessWidget {
     // file will be saved. In most cases, this parameter should not be provided.
     final String initialDirectory =
         (await getApplicationDocumentsDirectory()).path;
-    final FileSaveLocationResult? result = await getSaveLocation(
+    final FileSaveLocation? result = await getSaveLocation(
       initialDirectory: initialDirectory,
       suggestedName: fileName,
     );

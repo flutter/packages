@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 
 export 'package:file_selector_platform_interface/file_selector_platform_interface.dart'
-    show FileSaveLocationResult, XFile, XTypeGroup;
+    show FileSaveLocation, XFile, XTypeGroup;
 
 /// Opens a file selection dialog and returns the path chosen by the user.
 ///
@@ -128,7 +128,7 @@ Future<String?> getSavePath({
 /// When not provided, the default OS label is used (for example, "Save").
 ///
 /// Returns `null` if the user cancels the operation.
-Future<FileSaveLocationResult?> getSaveLocation({
+Future<FileSaveLocation?> getSaveLocation({
   List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
   String? initialDirectory,
   String? suggestedName,

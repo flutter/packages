@@ -34,7 +34,7 @@ void main() {
     final FileSelectorPlatform fileSelector =
         OldFileSelectorPlatformImplementation();
 
-    final FileSaveLocationResult? result = await fileSelector.getSaveLocation();
+    final FileSaveLocation? result = await fileSelector.getSaveLocation();
 
     expect(result?.path, OldFileSelectorPlatformImplementation.savePath);
     expect(result?.activeFilter, null);
@@ -45,7 +45,7 @@ class ExtendsFileSelectorPlatform extends FileSelectorPlatform {}
 
 class OldFileSelectorPlatformImplementation extends FileSelectorPlatform {
   static const String savePath = '/a/path';
-// Only implement the deprecated getSavePath.
+  // Only implement the deprecated getSavePath.
   @override
   Future<String?> getSavePath({
     List<XTypeGroup>? acceptedTypeGroups,

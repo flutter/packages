@@ -71,7 +71,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<FileSaveLocationResult?> getSaveLocation({
+  Future<FileSaveLocation?> getSaveLocation({
     List<XTypeGroup>? acceptedTypeGroups,
     SaveDialogOptions options = const SaveDialogOptions(),
   }) async {
@@ -81,7 +81,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
       nameFieldStringValue: options.suggestedName,
       prompt: options.confirmButtonText,
     ));
-    return path == null ? null : FileSaveLocationResult(path);
+    return path == null ? null : FileSaveLocation(path);
   }
 
   @override

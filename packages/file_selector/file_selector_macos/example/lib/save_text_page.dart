@@ -17,7 +17,7 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final FileSaveLocationResult? result =
+    final FileSaveLocation? result =
         await FileSelectorPlatform.instance.getSaveLocation(
       options: SaveDialogOptions(suggestedName: fileName),
     );

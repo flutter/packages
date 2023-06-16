@@ -348,7 +348,7 @@ void main() {
     test('works as expected with no arguments', () async {
       when(mockApi.displaySavePanel(any)).thenAnswer((_) async => 'foo');
 
-      final FileSaveLocationResult? location = await plugin.getSaveLocation();
+      final FileSaveLocation? location = await plugin.getSaveLocation();
 
       expect(location?.path, 'foo');
       final VerificationResult result =
@@ -363,7 +363,7 @@ void main() {
     test('handles cancel', () async {
       when(mockApi.displaySavePanel(any)).thenAnswer((_) async => null);
 
-      final FileSaveLocationResult? location = await plugin.getSaveLocation();
+      final FileSaveLocation? location = await plugin.getSaveLocation();
 
       expect(location, null);
     });

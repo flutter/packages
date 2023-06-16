@@ -66,7 +66,7 @@ TEST(FileSelectorPlugin, TestOpenSimple) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 1);
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
   EXPECT_EQ(result.value().type_group_index(), nullptr);
@@ -109,7 +109,7 @@ TEST(FileSelectorPlugin, TestOpenWithArguments) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 1);
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
   EXPECT_EQ(result.value().type_group_index(), nullptr);
@@ -154,7 +154,7 @@ TEST(FileSelectorPlugin, TestOpenMultiple) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 2);
+  ASSERT_EQ(paths.size(), 2);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file_1.path()));
   EXPECT_EQ(std::get<std::string>(paths[1]),
@@ -221,7 +221,7 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 1);
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
   // The test dialog controller always reports the last group as
@@ -287,7 +287,7 @@ TEST(FileSelectorPlugin, TestSaveSimple) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 1);
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
   EXPECT_EQ(result.value().type_group_index(), nullptr);
@@ -330,7 +330,7 @@ TEST(FileSelectorPlugin, TestSaveWithArguments) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 1);
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
   EXPECT_EQ(result.value().type_group_index(), nullptr);
@@ -387,7 +387,7 @@ TEST(FileSelectorPlugin, TestSaveWithFilter) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 1);
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
   // The test dialog controller always reports the last group as
@@ -459,7 +459,7 @@ TEST(FileSelectorPlugin, TestGetDirectorySimple) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 1);
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]), "C:\\Program Files");
   EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
@@ -506,7 +506,7 @@ TEST(FileSelectorPlugin, TestGetDirectoryMultiple) {
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
   const EncodableList& paths = result.value().paths();
-  EXPECT_EQ(paths.size(), 2);
+  ASSERT_EQ(paths.size(), 2);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_dir_1.path()));
   EXPECT_EQ(std::get<std::string>(paths[1]),

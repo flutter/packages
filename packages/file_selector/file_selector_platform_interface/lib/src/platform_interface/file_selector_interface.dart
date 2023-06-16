@@ -80,7 +80,7 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   /// to save.
   ///
   /// Returns `null` if the user cancels the operation.
-  Future<FileSaveLocationResult?> getSaveLocation({
+  Future<FileSaveLocation?> getSaveLocation({
     List<XTypeGroup>? acceptedTypeGroups,
     SaveDialogOptions options = const SaveDialogOptions(),
   }) async {
@@ -90,7 +90,7 @@ abstract class FileSelectorPlatform extends PlatformInterface {
       suggestedName: options.suggestedName,
       confirmButtonText: options.confirmButtonText,
     );
-    return path == null ? null : FileSaveLocationResult(path);
+    return path == null ? null : FileSaveLocation(path);
   }
 
   /// Opens a file dialog for loading directories and returns a directory path.
