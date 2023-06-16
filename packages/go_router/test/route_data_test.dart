@@ -44,6 +44,7 @@ final ShellRoute _shellRouteDataBuilder = ShellRouteData.$route(
     ),
   ],
 );
+
 class _GoRouteDataBuildPage extends GoRouteData {
   const _GoRouteDataBuildPage();
   @override
