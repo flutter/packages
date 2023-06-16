@@ -41,17 +41,14 @@ import 'xcode_analyze_command.dart';
 
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
-
-  Directory packagesDir =
-      fileSystem.currentDirectory.childDirectory('packages');
+  final Directory scriptBinDir =
+      fileSystem.file(io.Platform.script.toFilePath()).parent;
+  final Directory root = scriptBinDir.parent.parent.parent;
+  final Directory packagesDir = root.childDirectory('packages');
 
   if (!packagesDir.existsSync()) {
-    if (fileSystem.currentDirectory.basename == 'packages') {
-      packagesDir = fileSystem.currentDirectory;
-    } else {
-      print('Error: Cannot find a "packages" sub-directory');
-      io.exit(1);
-    }
+    print('Error: Cannot find a "packages" sub-directory');
+    io.exit(1);
   }
 
   final CommandRunner<void> commandRunner = CommandRunner<void>(

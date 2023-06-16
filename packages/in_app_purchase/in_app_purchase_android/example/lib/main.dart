@@ -145,7 +145,7 @@ class _MyAppState extends State<_MyApp> {
             _buildConnectionCheckTile(),
             _buildProductList(),
             _buildConsumableBox(),
-            _FeatureCard(),
+            const _FeatureCard(),
           ],
         ),
       );
@@ -444,9 +444,9 @@ class _MyAppState extends State<_MyApp> {
 }
 
 class _FeatureCard extends StatelessWidget {
-  _FeatureCard();
+  const _FeatureCard();
 
-  final InAppPurchaseAndroidPlatformAddition addition =
+  InAppPurchaseAndroidPlatformAddition get addition =>
       InAppPurchasePlatformAddition.instance!
           as InAppPurchaseAndroidPlatformAddition;
 

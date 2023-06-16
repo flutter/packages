@@ -301,8 +301,6 @@ RouteMatch createRouteMatch(RouteBase route, String location) {
   return RouteMatch(
     route: route,
     matchedLocation: location,
-    extra: null,
-    error: null,
     pageKey: ValueKey<String>(location),
   );
 }
