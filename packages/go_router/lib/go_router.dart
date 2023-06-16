@@ -25,9 +25,13 @@ export 'src/route_data.dart'
         RouteData,
         GoRouteData,
         ShellRouteData,
+        StatefulShellBranchData,
+        StatefulShellRouteData,
         TypedRoute,
         TypedGoRoute,
-        TypedShellRoute;
+        TypedShellRoute,
+        TypedStatefulShellBranch,
+        TypedStatefulShellRoute;
 export 'src/router.dart';
 export 'src/typedefs.dart'
     show

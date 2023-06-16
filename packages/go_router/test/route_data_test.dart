@@ -44,7 +44,6 @@ final ShellRoute _shellRouteDataBuilder = ShellRouteData.$route(
     ),
   ],
 );
-
 class _GoRouteDataBuildPage extends GoRouteData {
   const _GoRouteDataBuildPage();
   @override
@@ -82,6 +81,71 @@ final ShellRoute _shellRouteDataPageBuilder = ShellRouteData.$route(
     GoRouteData.$route(
       path: '/child',
       factory: (GoRouterState state) => const _GoRouteDataBuild(),
+    ),
+  ],
+);
+
+class _StatefulShellBranchDataBuilder extends StatefulShellBranchData {
+  const _StatefulShellBranchDataBuilder();
+}
+class _StatefulShellRouteDataBuilder extends StatefulShellRouteData {
+  const _StatefulShellRouteDataBuilder();
+
+  @override
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) =>
+      SizedBox(
+        key: const Key('builder'),
+        child: navigator,
+      );
+}
+final StatefulShellRoute _statefulShellRouteDataBuilder =
+    StatefulShellRouteData.$route(
+  factory: (GoRouterState state) => const _StatefulShellRouteDataBuilder(),
+  branches: <StatefulShellBranch>[
+    StatefulShellBranchData.$route(
+      factory: (GoRouterState state) => const _StatefulShellBranchDataBuilder(),
+      routes: <RouteBase>[
+        GoRouteData.$route(
+          path: '/child',
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
+        ),
+      ],
+    ),
+  ],
+);
+
+class _StatefulShellRouteDataPageBuilder extends StatefulShellRouteData {
+  const _StatefulShellRouteDataPageBuilder();
+
+  @override
+  Page<void> pageBuilder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) =>
+      MaterialPage<void>(
+        child: SizedBox(
+          key: const Key('page-builder'),
+          child: navigator,
+        ),
+      );
+}
+
+final StatefulShellRoute _statefulShellRouteDataPageBuilder = StatefulShellRouteData.$route(
+  factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+  branches: <StatefulShellBranch>[
+    StatefulShellBranchData.$route(
+      factory: (GoRouterState state) => const _StatefulShellBranchDataBuilder(),
+      routes: <RouteBase>[
+        GoRouteData.$route(
+          path: '/child',
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
+        ),
+      ],
     ),
   ],
 );
@@ -168,6 +232,46 @@ void main() {
           initialLocation: '/child',
           routes: <RouteBase>[
             _shellRouteDataPageBuilder,
+          ],
+        );
+        await tester.pumpWidget(MaterialApp.router(
+          routeInformationProvider: goRouter.routeInformationProvider,
+          routeInformationParser: goRouter.routeInformationParser,
+          routerDelegate: goRouter.routerDelegate,
+        ));
+        expect(find.byKey(const Key('builder')), findsNothing);
+        expect(find.byKey(const Key('page-builder')), findsOneWidget);
+      },
+    );
+  });
+
+  group('StatefulShellRouteData', () {
+    testWidgets(
+      'It should build the page from the overridden build method',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = GoRouter(
+          initialLocation: '/child',
+          routes: <RouteBase>[
+            _statefulShellRouteDataBuilder,
+          ],
+        );
+        await tester.pumpWidget(MaterialApp.router(
+          routeInformationProvider: goRouter.routeInformationProvider,
+          routeInformationParser: goRouter.routeInformationParser,
+          routerDelegate: goRouter.routerDelegate,
+        ));
+        expect(find.byKey(const Key('builder')), findsOneWidget);
+        expect(find.byKey(const Key('page-builder')), findsNothing);
+      },
+    );
+
+        testWidgets(
+      'It should build the page from the overridden buildPage method',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = GoRouter(
+          initialLocation: '/child',
+          routes: <RouteBase>[
+            _statefulShellRouteDataPageBuilder,
           ],
         );
         await tester.pumpWidget(MaterialApp.router(

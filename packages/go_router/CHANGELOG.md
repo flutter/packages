@@ -1,3 +1,7 @@
+## 8.0.3 
+
+- Adds helpers for go_router_builder for StatefulShellRoute support
+
 ## 8.0.2 
 
 - Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
