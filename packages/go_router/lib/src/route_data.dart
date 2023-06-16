@@ -304,30 +304,11 @@ abstract class StatefulShellBranchData extends RouteData {
     GlobalKey<NavigatorState>? navigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
   }) {
-    T factoryImpl(GoRouterState state) {
-      final Object? extra = state.extra;
-
-      // If the "extra" value is of type `T` then we know it's the source
-      // instance of `StatefulShellBranchData`, so it doesn't need to be recreated.
-      if (extra is T) {
-        return extra;
-      }
-
-      return (_stateObjectExpando[state] ??= factory(state)) as T;
-    }
-
     return StatefulShellBranch(
       routes: routes,
       navigatorKey: navigatorKey,
     );
   }
-
-  /// Used to cache [StatefulShellBranchData] that corresponds to a given [GoRouterState]
-  /// to minimize the number of times it has to be deserialized.
-  static final Expando<StatefulShellBranchData> _stateObjectExpando =
-      Expando<StatefulShellBranchData>(
-    'GoRouteState to StatefulShellBranchData expando',
-  );
 }
 
 /// A superclass for each typed route descendant
