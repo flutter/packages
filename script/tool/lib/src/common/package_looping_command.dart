@@ -324,7 +324,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
     }
     _currentPackageEntry = null;
 
-    completeRun();
+    await completeRun();
 
     print('\n');
     // If there were any errors reported, summarize them and exit.

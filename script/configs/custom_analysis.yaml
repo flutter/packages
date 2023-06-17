@@ -11,17 +11,24 @@
 # which references this file from source, but out-of-repo.
 # Contact stuartmorgan or devoncarew for assistance if necessary.
 
+# Temporary opt-outs of unawaited_futures; see
+# https://github.com/flutter/flutter/issues/127323
+- camera/camera_android_camerax
+- webview_flutter/webview_flutter
+- webview_flutter/webview_flutter_android
+- webview_flutter/webview_flutter_wkwebview
+# Opts out of unawaited_futures, matching flutter/flutter's disabling due
+# to interactions with animation.
+- animations
 # Deliberately uses flutter_lints, as that's what it is demonstrating.
 - flutter_lints/example
 # Adopts some flutter_tools rules regarding public api docs due to being an
 # extension of the tool and using tools base code.
 - flutter_migrate
-# Adds unawaited_futures. We should investigating adding this to the root
-# options instead.
-- metrics_center
+# Has some test files that are intentionally broken to conduct dart fix tests.
+# Also opts out of unawaited_futures, matching flutter/flutter.
+- go_router
 # Has some constructions that are currently handled poorly by dart format.
 - rfw/example
 # Disables docs requirements, as it is test code.
 - web_benchmarks/testing/test_app
-# Has some test files that are intentionally broken to conduct dart fix tests.
-- go_router

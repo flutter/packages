@@ -2,13 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
 import 'dart:async';
-
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -43,9 +37,8 @@ class AndroidWebViewControllerCreationParams
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
     @visibleForTesting
-        AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-    @visibleForTesting
-        android_webview.WebStorage? androidWebStorage,
+    AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
+    @visibleForTesting android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
       androidWebViewProxy: androidWebViewProxy,
@@ -114,6 +107,33 @@ class AndroidWebViewController extends PlatformWebViewController {
             null) {
           weakReference
               .target!._currentNavigationDelegate!._onProgress!(progress);
+        }
+      };
+    }),
+    onGeolocationPermissionsShowPrompt: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String origin,
+          android_webview.GeolocationPermissionsCallback callback) async {
+        final OnGeolocationPermissionsShowPrompt? onShowPrompt =
+            weakReference.target?._onGeolocationPermissionsShowPrompt;
+        if (onShowPrompt != null) {
+          final GeolocationPermissionsResponse response = await onShowPrompt(
+            GeolocationPermissionsRequestParams(origin: origin),
+          );
+          callback.invoke(origin, response.allow, response.retain);
+        } else {
+          // default don't allow
+          callback.invoke(origin, false, false);
+        }
+      };
+    }),
+    onGeolocationPermissionsHidePrompt: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (android_webview.WebChromeClient instance) {
+        final OnGeolocationPermissionsHidePrompt? onHidePrompt =
+            weakReference.target?._onGeolocationPermissionsHidePrompt;
+        if (onHidePrompt != null) {
+          onHidePrompt();
         }
       };
     }),
@@ -187,6 +207,11 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
+
+  OnGeolocationPermissionsShowPrompt? _onGeolocationPermissionsShowPrompt;
+
+  OnGeolocationPermissionsHidePrompt? _onGeolocationPermissionsHidePrompt;
+
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
@@ -195,7 +220,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   static Future<void> enableDebugging(
     bool enabled, {
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   }) {
     return webViewProxy.setWebContentsDebuggingEnabled(enabled);
   }
@@ -441,6 +466,33 @@ class AndroidWebViewController extends PlatformWebViewController {
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
   }
+
+  /// Sets the callback that is invoked when the client request handle geolocation permissions.
+  ///
+  /// Param [onShowPrompt] notifies the host application that web content from the specified origin is attempting to use the Geolocation API,
+  /// but no permission state is currently set for that origin.
+  ///
+  /// The host application should invoke the specified callback with the desired permission state.
+  /// See GeolocationPermissions for details.
+  ///
+  /// Note that for applications targeting Android N and later SDKs (API level > Build.VERSION_CODES.M)
+  /// this method is only called for requests originating from secure origins such as https.
+  /// On non-secure origins geolocation requests are automatically denied.
+  ///
+  /// Param [onHidePrompt] notifies the host application that a request for Geolocation permissions,
+  /// made with a previous call to onGeolocationPermissionsShowPrompt() has been canceled.
+  /// Any related UI should therefore be hidden.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsShowPrompt(java.lang.String,%20android.webkit.GeolocationPermissions.Callback)
+  ///
+  /// See https://developer.android.com/reference/android/webkit/WebChromeClient#onGeolocationPermissionsHidePrompt()
+  Future<void> setGeolocationPermissionsPromptCallbacks({
+    OnGeolocationPermissionsShowPrompt? onShowPrompt,
+    OnGeolocationPermissionsHidePrompt? onHidePrompt,
+  }) async {
+    _onGeolocationPermissionsShowPrompt = onShowPrompt;
+    _onGeolocationPermissionsHidePrompt = onHidePrompt;
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
@@ -477,6 +529,46 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   Future<void> deny() {
     return _request.deny();
   }
+}
+
+/// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API.
+typedef OnGeolocationPermissionsShowPrompt
+    = Future<GeolocationPermissionsResponse> Function(
+        GeolocationPermissionsRequestParams request);
+
+/// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API is cancel.
+typedef OnGeolocationPermissionsHidePrompt = void Function();
+
+/// A request params used by the host application to set the Geolocation permission state for an origin.
+@immutable
+class GeolocationPermissionsRequestParams {
+  /// [origin]: The origin for which permissions are set.
+  const GeolocationPermissionsRequestParams({
+    required this.origin,
+  });
+
+  /// [origin]: The origin for which permissions are set.
+  final String origin;
+}
+
+/// A response used by the host application to set the Geolocation permission state for an origin.
+@immutable
+class GeolocationPermissionsResponse {
+  /// [allow]: Whether or not the origin should be allowed to use the Geolocation API.
+  ///
+  /// [retain]: Whether the permission should be retained beyond the lifetime of
+  /// a page currently being displayed by a WebView.
+  const GeolocationPermissionsResponse({
+    required this.allow,
+    required this.retain,
+  });
+
+  /// Whether or not the origin should be allowed to use the Geolocation API.
+  final bool allow;
+
+  /// Whether the permission should be retained beyond the lifetime of
+  /// a page currently being displayed by a WebView.
+  final bool retain;
 }
 
 /// Mode of how to select files for a file chooser.
@@ -550,7 +642,7 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
     required super.name,
     required super.onMessageReceived,
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   })  : assert(name.isNotEmpty),
         _javaScriptChannel = webViewProxy.createJavaScriptChannel(
           name,
@@ -575,7 +667,7 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
   AndroidJavaScriptChannelParams.fromJavaScriptChannelParams(
     JavaScriptChannelParams params, {
     @visibleForTesting
-        AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
   }) : this(
           name: params.name,
           onMessageReceived: params.onMessageReceived,
@@ -600,10 +692,9 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
+    @visibleForTesting InstanceManager? instanceManager,
     @visibleForTesting
-        InstanceManager? instanceManager,
-    @visibleForTesting
-        this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
+    this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager =
             instanceManager ?? android_webview.JavaObject.globalInstanceManager;
 
@@ -801,7 +892,7 @@ class AndroidNavigationDelegateCreationParams
     // ignore: avoid_unused_constructor_parameters
     PlatformNavigationDelegateCreationParams params, {
     @visibleForTesting
-        AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
+    AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
   }) {
     return AndroidNavigationDelegateCreationParams._(
       androidWebViewProxy: androidWebViewProxy,

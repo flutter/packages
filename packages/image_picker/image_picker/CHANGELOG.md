@@ -1,3 +1,14 @@
+## 0.8.9
+
+* Adds `getMedia` and `getMultipleMedia` methods.
+
+## 0.8.8
+
+* Adds initial support for Windows, macOS, and Linux.
+    * See README for current desktop limitations.
+* Adds `supportsImageSource` to allow runtime checks for whether a given source
+  is supported by the current platform's implementation.
+
 ## 0.8.7+5
 
 * Fixes `BuildContext` handling in example.
