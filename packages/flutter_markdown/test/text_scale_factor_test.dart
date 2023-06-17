@@ -67,7 +67,8 @@ void defineTests() {
           ),
         );
 
-        final SelectableText selectableText = tester.widget(find.byType(SelectableText));
+        final SelectableText selectableText =
+            tester.widget(find.byType(SelectableText));
         // ignore: deprecated_member_use
         expect(selectableText.textScaleFactor, 2.0);
       },
