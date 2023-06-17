@@ -24,6 +24,15 @@ platform_properties:
           {"dependency": "ninja", "version": "version:1.9.0"},
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
+  linux_web:
+    properties:
+      os: Ubuntu
+      cores: "8"
+      device_type: none
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+        ]
   windows:
     properties:
       dependencies: >
@@ -69,6 +78,25 @@ targets:
       target_file: repo_tools_tests.yaml
       channel: master
       version_file: flutter_master.version
+
+  ### Web tasks ###
+  - name: Linux_web web_build_all_packages master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_master.version
+      target_file: web_build_all_packages.yaml
+      channel: master
+
+  - name: Linux_web web_build_all_packages stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      target_file: web_build_all_packages.yaml
+      channel: stable
 
   ### Linux desktop tasks
   - name: Linux_desktop build_all_packages master
