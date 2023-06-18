@@ -371,6 +371,8 @@ abstract class TestWKWebViewConfigurationHostApi {
 
   void setAllowsInlineMediaPlayback(int identifier, bool allow);
 
+  void setLimitsNavigationsToAppBoundDomains(int identifier, bool limit);
+
   void setMediaTypesRequiringUserActionForPlayback(
       int identifier, List<WKAudiovisualMediaTypeEnumData?> types);
 
@@ -446,6 +448,33 @@ abstract class TestWKWebViewConfigurationHostApi {
           assert(arg_allow != null,
               'Argument for dev.flutter.pigeon.WKWebViewConfigurationHostApi.setAllowsInlineMediaPlayback was null, expected non-null bool.');
           api.setAllowsInlineMediaPlayback(arg_identifier!, arg_allow!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains was null, expected non-null int.');
+          final bool? arg_limit = (args[1] as bool?);
+          assert(arg_limit != null,
+              'Argument for dev.flutter.pigeon.WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains was null, expected non-null bool.');
+          api.setLimitsNavigationsToAppBoundDomains(
+              arg_identifier!, arg_limit!);
           return <Object?>[];
         });
       }

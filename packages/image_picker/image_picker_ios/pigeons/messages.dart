@@ -20,6 +20,20 @@ class MaxSize {
   double? height;
 }
 
+class MediaSelectionOptions {
+  MediaSelectionOptions({
+    required this.maxSize,
+    this.imageQuality,
+    required this.requestFullMetadata,
+    required this.allowMultiple,
+  });
+
+  MaxSize maxSize;
+  int? imageQuality;
+  bool requestFullMetadata;
+  bool allowMultiple;
+}
+
 // Corresponds to `CameraDevice` from the platform interface package.
 enum SourceCamera { rear, front }
 
@@ -45,4 +59,9 @@ abstract class ImagePickerApi {
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);
+
+  /// Selects images and videos and returns their paths.
+  @async
+  @ObjCSelector('pickMediaWithMediaSelectionOptions:')
+  List<String?> pickMedia(MediaSelectionOptions mediaSelectionOptions);
 }

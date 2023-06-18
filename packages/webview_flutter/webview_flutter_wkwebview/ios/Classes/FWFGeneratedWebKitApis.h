@@ -480,6 +480,10 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewConfigurationHostApiGetCodec(void);
                                                              error:
                                                                  (FlutterError *_Nullable *_Nonnull)
                                                                      error;
+- (void)setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:(NSNumber *)identifier
+                                                                  isLimited:(NSNumber *)limit
+                                                                      error:(FlutterError *_Nullable
+                                                                                 *_Nonnull)error;
 - (void)
     setMediaTypesRequiresUserActionForConfigurationWithIdentifier:(NSNumber *)identifier
                                                          forTypes:

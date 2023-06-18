@@ -1,3 +1,7 @@
+## 0.8.7
+
+* Adds `getMedia` method.
+
 ## 0.8.6+20
 
 * Bumps androidx.activity:activity from 1.7.0 to 1.7.1.

@@ -1069,6 +1069,30 @@ class WKWebViewConfigurationHostApi {
     }
   }
 
+  Future<void> setLimitsNavigationsToAppBoundDomains(
+      int arg_identifier, bool arg_limit) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_limit]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   Future<void> setMediaTypesRequiringUserActionForPlayback(int arg_identifier,
       List<WKAudiovisualMediaTypeEnumData?> arg_types) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
