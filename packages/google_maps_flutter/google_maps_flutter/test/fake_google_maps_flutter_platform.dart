@@ -242,8 +242,8 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
-  Stream<MapPoiClickEvent> onPoiClick({required int mapId}) {
-    return mapEventStreamController.stream.whereType<MapPoiClickEvent>();
+  Stream<MapPointOfInterestTapEvent> onPoiClick({required int mapId}) {
+    return mapEventStreamController.stream.whereType<MapPointOfInterestTapEvent>();
   }
 
   @override

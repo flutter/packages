@@ -359,7 +359,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
 
   /// A Map has been tapped on a POI with a position, place name and place id
   /// [LatLng, String, String].
-  Stream<MapPoiClickEvent> onPoiClick({required int mapId}) {
+  Stream<MapPointOfInterestTapEvent> onPoiClick({required int mapId}) {
     throw UnimplementedError('onPoiClick() has not been implemented.');
   }
 

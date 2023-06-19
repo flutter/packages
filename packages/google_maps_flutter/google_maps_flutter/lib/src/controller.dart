@@ -76,7 +76,7 @@ class GoogleMapController {
         .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value));
     GoogleMapsFlutterPlatform.instance
         .onPoiClick(mapId: mapId)
-        .listen((MapPoiClickEvent e) => _googleMapState.onPoiClick(e.value));
+        .listen((MapPointOfInterestTapEvent e) => _googleMapState.onPoiClick(e.value));
     GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));

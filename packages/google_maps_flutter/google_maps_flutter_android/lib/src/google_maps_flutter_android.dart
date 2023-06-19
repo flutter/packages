@@ -182,8 +182,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   @override
-  Stream<MapPoiClickEvent> onPoiClick({required int mapId}) {
-    return _events(mapId).whereType<MapPoiClickEvent>();
+  Stream<MapPointOfInterestTapEvent> onPoiClick({required int mapId}) {
+    return _events(mapId).whereType<MapPointOfInterestTapEvent>();
   }
 
   Future<dynamic> _handleMethodCall(MethodCall call, int mapId) async {
@@ -276,7 +276,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         break;
       case 'map#onPoiClick':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        _mapEventStreamController.add(MapPoiClickEvent(
+        _mapEventStreamController.add(MapPointOfInterestTapEvent(
           mapId,
           PointOfInterest(
             LatLng.fromJson(arguments['position'])!,
