@@ -86,7 +86,9 @@ class MethodChannelCamera extends CameraPlatform {
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
+    ResolutionPreset? resolutionPreset,
+    CaptureMode? captureMode,
+    AspectRatioPreset? aspectRatioPreset, {
     bool enableAudio = false,
   }) async =>
       createCameraWithSettings(
@@ -110,6 +112,11 @@ class MethodChannelCamera extends CameraPlatform {
         'fps': mediaSettings.fps,
         'videoBitrate': mediaSettings.videoBitrate,
         'audioBitrate': mediaSettings.audioBitrate,
+        'captureMode':
+            captureMode != null ? serializeCaptureMode(captureMode) : null,
+        'aspectRatioPreset': aspectRatioPreset != null
+            ? serializeAspectRatioPreset(aspectRatioPreset)
+            : null,
         'enableAudio': mediaSettings.enableAudio,
       });
 

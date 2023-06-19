@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) void (^onFrameAvailable)(void);
 @property(nonatomic) FLTThreadSafeMethodChannel *methodChannel;
 @property(assign, nonatomic) FLTResolutionPreset resolutionPreset;
+@property(assign, nonatomic) FLTCaptureMode captureMode;
+@property(assign, nonatomic) FLTAspectRatioPreset aspectRatioPreset;
 @property(assign, nonatomic) FLTExposureMode exposureMode;
 @property(assign, nonatomic) FLTFocusMode focusMode;
 @property(assign, nonatomic) FLTFlashMode flashMode;
@@ -40,6 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
+                  captureMode:(NSString *)captureMode
+                  aspectRatioPreset:(NSString *)aspectRatioPreset
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue

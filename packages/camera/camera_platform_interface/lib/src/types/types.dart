@@ -2,9 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+export 'aspect_ratio_preset.dart';
 export 'camera_description.dart';
 export 'camera_exception.dart';
 export 'camera_image_data.dart';
+export 'capture_mode.dart';
 export 'exposure_mode.dart';
 export 'flash_mode.dart';
 export 'focus_mode.dart';

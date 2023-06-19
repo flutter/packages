@@ -49,7 +49,9 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Creates an uninitialized camera instance and returns the cameraId.
   Future<int> createCamera(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
+    ResolutionPreset? resolutionPreset,
+    CaptureMode? captureMode,
+    AspectRatioPreset? aspectRatioPreset, {
     bool enableAudio = false,
   }) {
     throw UnimplementedError('createCamera() is not implemented.');
@@ -271,6 +273,10 @@ abstract class CameraPlatform extends PlatformInterface {
   /// when an illegal zoom level is supplied.
   Future<void> setZoomLevel(int cameraId, double zoom) {
     throw UnimplementedError('setZoomLevel() is not implemented.');
+  }
+
+  Future<void> setCaptureMode(int cameraId, CaptureMode mode) {
+    throw UnimplementedError('setCaptureMode() is not implemented.');
   }
 
   /// Pause the active preview on the current frame for the selected camera.

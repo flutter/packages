@@ -234,13 +234,18 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   CameraController(
     CameraDescription description,
-    this.resolutionPreset, {
+    this.resolutionPreset,
+    this.captureMode,
+    this.aspectRatioPreset, {
     this.enableAudio = true,
     this.imageFormatGroup,
   }) : super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
+
+  /// The capture mode this controller should be using.
+  final CaptureMode captureMode;
 
   /// The resolution this controller is targeting.
   ///
@@ -249,6 +254,15 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// See also: [ResolutionPreset].
   final ResolutionPreset resolutionPreset;
+
+  /// The aspect ratio this controller is targeting.
+  ///
+  /// This aspect ratio preset is not guaranteed to be available on the device
+  /// for the selected resolution or capture mode.
+  /// if unavailable a different aspect ratio will be used.
+  ///
+  /// See also: [AspectRatioPreset].
+  final AspectRatioPreset aspectRatioPreset;
 
   /// Whether to include audio when recording a video.
   final bool enableAudio;
@@ -316,6 +330,8 @@ class CameraController extends ValueNotifier<CameraValue> {
       _cameraId = await CameraPlatform.instance.createCamera(
         description,
         resolutionPreset,
+        captureMode,
+        aspectRatioPreset,
         enableAudio: enableAudio,
       );
 
@@ -529,6 +545,12 @@ class CameraController extends ValueNotifier<CameraValue> {
         'startVideoRecording was called when a recording is already started.',
       );
     }
+    if (captureMode == CaptureMode.photo) {
+      throw CameraException(
+        'The camera is configured for still images.',
+        'startVideoRecording was called when the camera was configured for still images.',
+      );
+    }
 
     Function(CameraImageData image)? streamCallback;
     if (onAvailable != null) {
@@ -610,6 +632,13 @@ class CameraController extends ValueNotifier<CameraValue> {
         'resumeVideoRecording was called when no video is recording.',
       );
     }
+    if (captureMode == CaptureMode.photo) {
+      throw CameraException(
+        'The camera is configured for still images.',
+        'resumeVideoRecording was called when the camera was configured for still images.',
+      );
+    }
+
     try {
       await CameraPlatform.instance.resumeVideoRecording(_cameraId);
       value = value.copyWith(isRecordingPaused: false);
