@@ -19,6 +19,7 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
 import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
 import java.util.Map;
+import io.flutter.plugins.urllauncher.BuildConfig;
 
 /** Implements the Pigeon-defined interface for calls from Dart. */
 final class UrlLauncher implements UrlLauncherApi {
