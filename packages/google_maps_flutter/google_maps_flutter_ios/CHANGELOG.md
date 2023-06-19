@@ -1,6 +1,9 @@
+## 2.3.0
+
+* Adds point of interest tap event handler.
+
 ## 2.2.4
 
-* Adds point of interest clicked event handler.
 * Fixes unawaited_futures violations.
 
 ## 2.2.3

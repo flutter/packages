@@ -1,6 +1,6 @@
-## 2.2.8
+## 2.3.0
 
-* Adds point of interest clicked event handler interface.
+* Adds point of interest tap event handler.
 
 ## 2.2.7
 
