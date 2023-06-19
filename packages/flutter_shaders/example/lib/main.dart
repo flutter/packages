@@ -33,14 +33,11 @@ class MyApp extends StatelessWidget {
             required double targetRadius,
             required TextDirection textDirection,
           }) {
-            shader.setFloat(0, animation);
-            shader.setFloat(1, color.red / 255.0 * color.opacity);
-            shader.setFloat(2, color.green / 255.0 * color.opacity);
-            shader.setFloat(3, color.blue / 255.0 * color.opacity);
-            shader.setFloat(4, color.opacity);
-            shader.setFloat(5, targetRadius);
-            shader.setFloat(6, position.dx);
-            shader.setFloat(7, position.dy);
+            shader.setFloatUniforms((uniforms) => uniforms
+              ..setFloat(animation)
+              ..setColor(color)
+              ..setFloat(targetRadius)
+              ..setOffset(position));
           })),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );

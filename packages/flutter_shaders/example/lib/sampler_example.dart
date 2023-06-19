@@ -50,10 +50,13 @@ class SampledText extends StatelessWidget {
   Widget build(BuildContext context) {
     return ShaderBuilder((context, shader, child) {
       return AnimatedSampler((image, size, canvas) {
-        shader.setFloat(0, value);
-        shader.setFloat(1, value);
-        shader.setFloat(2, size.width);
-        shader.setFloat(3, size.height);
+        shader.setFloatUniforms((uniforms) {
+          uniforms
+            ..setFloat(value)
+            ..setFloat(value)
+            ..setSize(size);
+        });
+
         shader.setImageSampler(0, image);
 
         canvas.drawRect(
