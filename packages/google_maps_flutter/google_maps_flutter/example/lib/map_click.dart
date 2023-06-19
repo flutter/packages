@@ -51,7 +51,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
           _lastLongPress = pos;
         });
       },
-      onPoiClick: (PointOfInterest poi) {
+      onPointOfInterestTap: (PointOfInterest poi) {
         setState(() {
           _lastPointOfInterestTap = poi;
         });

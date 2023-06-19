@@ -515,7 +515,7 @@ final class GoogleMapController
     arguments.put("position", Convert.latLngToJson(poi.latLng));
     arguments.put("name", poi.name);
     arguments.put("placeId", poi.placeId);
-    methodChannel.invokeMethod("map#onPoiClick", arguments);
+    methodChannel.invokeMethod("map#onPointOfInterestTap", arguments);
   }
 
   @Override
