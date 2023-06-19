@@ -1,5 +1,18 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
-  - name: tool unit tests
-    script: .ci/scripts/plugin_tools_tests.sh
+# Not for landing: pre-testing adding analyze.
+  - name: analyze repo tools
+    script: script/analyze_repo_tools.sh
+  - name: analyze
+    script: script/tool_runner.sh
+    # DO NOT change the custom-analysis argument here without changing the Dart repo.
+    # See the comment in script/configs/custom_analysis.yaml for details.
+    args: ["analyze", "--custom-analysis=script/configs/custom_analysis.yaml"]
+    # Re-run analysis with path-based dependencies to ensure that publishing
+    # the changes won't break analysis of other packages in the respository
+    # that depend on it.
+  - name: analyze - pathified
+    script: script/pathified_analyze.sh
+#  - name: tool unit tests
+#    script: .ci/scripts/plugin_tools_tests.sh

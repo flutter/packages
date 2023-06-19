@@ -69,7 +69,7 @@ platform_properties:
         }
 
 targets:
-  ### Linux-host tasks ###
+  ### Linux-host general tasks ###
   - name: Linux repo_tools_tests
     recipe: packages/packages
     timeout: 30
