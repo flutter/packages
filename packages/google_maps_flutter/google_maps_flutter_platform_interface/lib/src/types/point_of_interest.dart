@@ -12,7 +12,7 @@ class PointOfInterest {
   /// The LatLng of the POI.
   final LatLng position;
 
-  /// The name of the POI.
+  /// The human-readable name of the POI as displayed on the map.
   String? name;
 
   /// The placeId of the POI.
