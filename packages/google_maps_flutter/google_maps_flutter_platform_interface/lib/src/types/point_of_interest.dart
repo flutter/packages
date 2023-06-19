@@ -9,7 +9,7 @@ class PointOfInterest {
   /// Creates a PointOfInterest.
   PointOfInterest(this.position, this.name, this.placeId);
 
-  /// The LatLng of the POI.
+  /// The location of the POI.
   final LatLng position;
 
   /// The human-readable name of the POI as displayed on the map.
