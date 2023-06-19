@@ -1,4 +1,4 @@
-## Unreleased
+## 5.1.0 - 2023-06-19
 ### Added
 - Add ability to wait for fonts to load with `GoogleFonts.pendingFonts`
 
