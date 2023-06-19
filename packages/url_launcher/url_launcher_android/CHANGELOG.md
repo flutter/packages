@@ -1,3 +1,7 @@
+## 6.0.36
+
+* Adds BuildConfig import to UrlLauncher.java, fixing compatibility with AGP 8.x
+
 ## 6.0.35
 
 * Converts method channels to Pigeon.
