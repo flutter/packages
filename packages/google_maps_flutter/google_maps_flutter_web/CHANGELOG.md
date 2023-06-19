@@ -1,7 +1,3 @@
-## 0.5.1
-
-* Adds point of interest tap event handler.
-
 ## 0.5.0+1
 
 * Updates the README to mention that this package is the endorsed implementation
