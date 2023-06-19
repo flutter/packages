@@ -6,7 +6,7 @@ import 'types.dart';
 
 /// A pair of latitude and longitude coordinates, stored as degrees.
 class PointOfInterest {
-  /// Creates a PointOfInterest
+  /// Creates a PointOfInterest.
   PointOfInterest(this.position, this.name, this.placeId);
 
   /// The LatLng of the POI.
