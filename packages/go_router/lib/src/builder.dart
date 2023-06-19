@@ -243,19 +243,35 @@ class RouteBuilder {
       _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
           routerNeglect, keyToPages, shellNavigatorKey, registry);
 
-      final HeroController heroController = _goHeroCache.putIfAbsent(
+      _goHeroCache.putIfAbsent(
           shellNavigatorKey, () => _getHeroController(context));
 
+      // Build pages for preloadable navigators
+      final Map<NavigatorKey, RouteMatchList> preloadableNavigators =
+          route.preloadableNavigators(configuration);
+      for (final MapEntry<NavigatorKey, RouteMatchList> entry
+          in preloadableNavigators.entries) {
+        if (entry.key == shellNavigatorKey) {
+          // Skip the current navigator
+          continue;
+        }
+        // TODO: More assertion?
+        assert(entry.value.matches[startIndex].route == route);
+        _buildRecursive(context, entry.value, startIndex + 1, pagePopContext,
+            routerNeglect, keyToPages, entry.key, registry);
+        _goHeroCache.putIfAbsent(entry.key, () => _getHeroController(context));
+      }
+
       // Build the Navigator for this shell route
-      Widget buildShellNavigator(
+      Widget buildShellNavigator(NavigatorKey navigatorKey,
           List<NavigatorObserver>? observers, String? restorationScopeId) {
         return _buildNavigator(
           pagePopContext.onPopPage,
-          keyToPages[shellNavigatorKey]!,
-          shellNavigatorKey,
+          keyToPages[navigatorKey]!,
+          navigatorKey,
           observers: observers ?? const <NavigatorObserver>[],
           restorationScopeId: restorationScopeId,
-          heroController: heroController,
+          heroController: _goHeroCache[navigatorKey],
         );
       }
 
@@ -265,6 +281,7 @@ class RouteBuilder {
         routerState: state,
         navigatorKey: shellNavigatorKey,
         routeMatchList: matchList,
+        preloadedMatchLists: preloadableNavigators,
         navigatorBuilder: buildShellNavigator,
       );
 
