@@ -21,25 +21,5 @@ void main() {
       expect(poi.name, equals('name'));
       expect(poi.placeId, equals('placeId'));
     });
-    test('toJson / fromJson', () {
-      final PointOfInterest poi = PointOfInterest(
-        const LatLng(50, 50),
-        'name',
-        'placeId',
-      );
-
-      final Map<String, Object> json = poi.toJson() as Map<String, Object>;
-      final PointOfInterest poiFromJson = PointOfInterest.fromJson(json)!;
-
-      expect(json, <String, Object>{
-        'position': <double>[50, 50],
-        'name': 'name',
-        'placeId': 'placeId',
-      });
-
-      expect(poiFromJson.position, equals(const LatLng(50.0, 50.0)));
-      expect(poiFromJson.name, equals('name'));
-      expect(poiFromJson.placeId, equals('placeId'));
-    });
   });
 }

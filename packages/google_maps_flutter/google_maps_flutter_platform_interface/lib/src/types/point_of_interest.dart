@@ -18,23 +18,6 @@ class PointOfInterest {
   /// The placeId of the POI.
   final String placeId;
 
-  /// Converts this object to something serializable in JSON.
-  Object toJson() {
-    final Map<String, Object> json = <String, Object>{};
-
-    void addIfPresent(String fieldName, Object? value) {
-      if (value != null) {
-        json[fieldName] = value;
-      }
-    }
-
-    addIfPresent('position', position.toJson());
-    addIfPresent('name', name);
-    addIfPresent('placeId', placeId);
-
-    return json;
-  }
-
   /// Initialize a LatLng from an \[lat, lng\] array.
   static PointOfInterest? fromJson(Object? json) {
     if (json == null) {
