@@ -13,6 +13,11 @@ import 'package:pigeon/pigeon.dart';
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+class GeneralOptions {
+  GeneralOptions(this.allowMultiple, this.usePhotoPicker);
+  bool allowMultiple;
+  bool usePhotoPicker;
+}
 
 /// Options for image selection and output.
 class ImageSelectionOptions {
@@ -28,6 +33,14 @@ class ImageSelectionOptions {
   ///
   /// 100 indicates original quality.
   int quality;
+}
+
+class MediaSelectionOptions {
+  MediaSelectionOptions({
+    required this.imageSelectionOptions,
+  });
+
+  ImageSelectionOptions imageSelectionOptions;
 }
 
 /// Options for image selection and output.
@@ -87,18 +100,37 @@ abstract class ImagePickerApi {
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   @async
-  List<String?> pickImages(SourceSpecification source,
-      ImageSelectionOptions options, bool allowMultiple, bool usePhotoPicker);
+  List<String?> pickImages(
+    SourceSpecification source,
+    ImageSelectionOptions options,
+    GeneralOptions generalOptions,
+  );
 
   /// Selects video and returns their paths.
   ///
   /// Elements must not be null, by convention. See
   /// https://github.com/flutter/flutter/issues/97848
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   @async
-  List<String?> pickVideos(SourceSpecification source,
-      VideoSelectionOptions options, bool allowMultiple, bool usePhotoPicker);
+  List<String?> pickVideos(
+    SourceSpecification source,
+    VideoSelectionOptions options,
+    GeneralOptions generalOptions,
+  );
+
+  /// Selects images and videos and returns their paths.
+  ///
+  /// Elements must not be null, by convention. See
+  /// https://github.com/flutter/flutter/issues/97848
+  @async
+  List<String?> pickMedia(
+    MediaSelectionOptions mediaSelectionOptions,
+    GeneralOptions generalOptions,
+  );
 
   /// Returns results from a previous app session, if any.
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   CacheRetrievalResult? retrieveLostResults();
 }

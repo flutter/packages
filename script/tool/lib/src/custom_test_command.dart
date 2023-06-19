@@ -29,6 +29,9 @@ class CustomTestCommand extends PackageLoopingCommand {
   final String name = 'custom-test';
 
   @override
+  List<String> get aliases => <String>['test-custom'];
+
+  @override
   final String description = 'Runs package-specific custom tests defined in '
       "a package's tool/$_scriptName file.\n\n"
       'This command requires "dart" to be in your path.';

@@ -107,9 +107,15 @@ API_AVAILABLE(ios(14))
                                     [self completeOperationWithPath:nil error:flutterError];
                                   }
                                 }];
+    } else if ([self.result.itemProvider
+                   // This supports uniform types that conform to UTTypeMovie.
+                   // This includes kUTTypeVideo, kUTTypeMPEG4, public.3gpp, kUTTypeMPEG,
+                   // public.3gpp2, public.avi, kUTTypeQuickTimeMovie.
+                   hasItemConformingToTypeIdentifier:UTTypeMovie.identifier]) {
+      [self processVideo];
     } else {
       FlutterError *flutterError = [FlutterError errorWithCode:@"invalid_source"
-                                                       message:@"Invalid image source."
+                                                       message:@"Invalid media source."
                                                        details:nil];
       [self completeOperationWithPath:nil error:flutterError];
     }
@@ -182,6 +188,43 @@ API_AVAILABLE(ios(14))
                                                         imageQuality:self.desiredImageQuality];
     [self completeOperationWithPath:savedPath error:nil];
   }
+}
+
+/**
+ * Processes the video.
+ */
+- (void)processVideo API_AVAILABLE(ios(14)) {
+  NSString *typeIdentifier = self.result.itemProvider.registeredTypeIdentifiers.firstObject;
+  [self.result.itemProvider
+      loadFileRepresentationForTypeIdentifier:typeIdentifier
+                            completionHandler:^(NSURL *_Nullable videoURL,
+                                                NSError *_Nullable error) {
+                              if (error != nil) {
+                                FlutterError *flutterError =
+                                    [FlutterError errorWithCode:@"invalid_image"
+                                                        message:error.localizedDescription
+                                                        details:error.domain];
+                                [self completeOperationWithPath:nil error:flutterError];
+                                return;
+                              }
+
+                              NSURL *destination =
+                                  [FLTImagePickerPhotoAssetUtil saveVideoFromURL:videoURL];
+                              if (destination == nil) {
+                                [self
+                                    completeOperationWithPath:nil
+                                                        error:[FlutterError
+                                                                  errorWithCode:
+                                                                      @"flutter_image_picker_copy_"
+                                                                      @"video_error"
+                                                                        message:@"Could not cache "
+                                                                                @"the video file."
+                                                                        details:nil]];
+                                return;
+                              }
+
+                              [self completeOperationWithPath:[destination path] error:nil];
+                            }];
 }
 
 @end
