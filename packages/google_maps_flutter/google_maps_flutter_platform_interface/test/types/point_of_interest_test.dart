@@ -9,7 +9,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$PointOfInterest', () {
+  group('PointOfInterest constructor', () {
     test('constructor defaults', () {
       const LatLng position = LatLng(0, 0);
       const String name = 'name';
