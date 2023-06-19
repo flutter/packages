@@ -4,6 +4,44 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vector_math/vector_math.dart';
 
+
+/// A helper extension on [ui.FragmentShader] that allows you to set uniforms
+/// in a more convenient way. Withotu having to manage indices.
+///
+/// Example:
+/// ```dart
+/// shader.setFloatUniforms((setter) {
+///  setter.setFloat(1.0);
+///  setter.setFloats([1.0, 2.0, 3.0]);
+///  setter.setSize(const Size(1.0, 2.0));
+///  setter.setSizes([const Size(1.0, 2.0), const Size(3.0, 4.0)]);
+///  setter.setOffset(const Offset(1.0, 2.0));
+///  setter.setOffsets([const Offset(1.0, 2.0), const Offset(3.0, 4.0)]);
+///  setter.setMatrix(Matrix4.identity());
+///  setter.setMatrices([Matrix4.identity(), Matrix4.identity()]);
+///  setter.setColor(Colors.red);
+///  setter.setColors([Colors.red, Colors.green]);
+/// });
+/// ```
+///
+/// The receiving end of this script should be:
+/// ```glsl
+/// uniform float u0; // 1.0
+/// uniform float[3] uFloats; // float[3](1.0, 2.0, 3.0)
+/// uniform vec2 size; // vec2(1.0, 2.0)
+/// uniform vec2[2] sizes; // vec2[2](vec2(1.0, 2.0), vec2(3.0, 4.0))
+/// uniform vec2 offset; // vec2(1.0, 2.0)
+/// uniform vec2[2] offsets; // vec2[2](vec2(1.0, 2.0), vec2(3.0, 4.0))
+/// uniform mat4 matrix; // mat4(1.0)
+/// uniform mat4[2] matrices; // mat4[2](mat4(1.0), mat4(1.0))
+/// uniform vec4 color; // vec4(1.0, 0.0, 0.0, 1.0)
+/// uniform vec4[2] colors; // vec4[2](vec4(1.0, 0.0, 0.0, 1.0), vec4(0.0, 1.0, 0.0, 1.0))
+/// ```
+///
+/// The [initialIndex] parameter allows you to set the index of the first
+/// uniform. Defaults to 0.
+///
+/// Returns the index of the last uniform that was set.
 extension SetUniforms on ui.FragmentShader {
   int setFloatUniforms(
     ValueSetter<UniformsSetter> callback, {
