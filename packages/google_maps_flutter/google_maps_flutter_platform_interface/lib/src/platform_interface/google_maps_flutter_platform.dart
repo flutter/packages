@@ -357,7 +357,8 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onLongPress() has not been implemented.');
   }
 
-  /// A Map has been tapped on a POI [LatLng, String, String].
+  /// A Map has been tapped on a POI with a position, place name and place id
+  /// [LatLng, String, String].
   Stream<MapPoiClickEvent> onPoiClick({required int mapId}) {
     throw UnimplementedError('onPoiClick() has not been implemented.');
   }
