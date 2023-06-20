@@ -81,16 +81,15 @@ targets:
 
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
+      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: web_build_all_packages.yaml
       channel: master
 
   - name: Linux_web web_build_all_packages stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -100,16 +99,15 @@ targets:
 
   ### Linux desktop tasks
   - name: Linux_desktop build_all_packages master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
+      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: linux_build_all_packages.yaml
       channel: master
 
   - name: Linux_desktop build_all_packages stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -203,7 +201,6 @@ targets:
       target_file: ios_build_all_packages.yaml
 
   - name: Mac_x64 ios_build_all_packages stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
