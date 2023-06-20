@@ -1,6 +1,7 @@
 ## NEXT
 
 * Fixes unawaited_futures violations.
+* Removes duplicate line in `MediaRecorderBuilder.java`.
 
 ## 0.10.8+2
 
