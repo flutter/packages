@@ -1,7 +1,8 @@
-## NEXT
+## 1.0.32
 
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates androidx.fragment version to 1.6.0.
 
 ## 1.0.31
 
