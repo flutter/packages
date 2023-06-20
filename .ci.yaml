@@ -97,6 +97,24 @@ targets:
       channel: stable
       version_file: flutter_stable.version
 
+  - name: Linux analyze_downgraded master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_downgraded.yaml
+      channel: master
+      version_file: flutter_master.version
+
+  - name: Linux analyze_downgraded stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_downgraded.yaml
+      channel: stable
+      version_file: flutter_stable.version
+
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
     bringup: true # New target
