@@ -1,6 +1,10 @@
-## 0.8.6+21
+## 0.8.7+1
 
 * Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.21 to 1.8.22.
+
+## 0.8.7
+
+* Adds `getMedia` method.
 
 ## 0.8.6+20
 

@@ -12,9 +12,9 @@ import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// A command to run Dart unit tests for packages.
-class TestCommand extends PackageLoopingCommand {
+class DartTestCommand extends PackageLoopingCommand {
   /// Creates an instance of the test command.
-  TestCommand(
+  DartTestCommand(
     Directory packagesDir, {
     ProcessRunner processRunner = const ProcessRunner(),
     Platform platform = const LocalPlatform(),
@@ -30,7 +30,13 @@ class TestCommand extends PackageLoopingCommand {
   }
 
   @override
-  final String name = 'test';
+  final String name = 'dart-test';
+
+  // TODO(stuartmorgan): Eventually remove 'test', which is a legacy name from
+  // before there were other test commands that made it ambiguous. For now it's
+  // an alias to avoid breaking people's workflows.
+  @override
+  List<String> get aliases => <String>['test', 'test-dart'];
 
   @override
   final String description = 'Runs the Dart tests for all packages.\n\n'

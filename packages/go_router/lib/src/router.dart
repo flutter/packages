@@ -466,6 +466,8 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// Find the current GoRouter in the widget tree.
+  ///
+  /// This method throws when it is called during redirects.
   static GoRouter of(BuildContext context) {
     final InheritedGoRouter? inherited =
         context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
@@ -474,6 +476,8 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   }
 
   /// The current GoRouter in the widget tree, if any.
+  ///
+  /// This method returns null when it is called during redirects.
   static GoRouter? maybeOf(BuildContext context) {
     final InheritedGoRouter? inherited =
         context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
