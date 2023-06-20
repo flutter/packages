@@ -145,8 +145,7 @@ class RouteBuilder {
     if (matchList.isError) {
       keyToPage = <GlobalKey<NavigatorState>, List<Page<Object?>>>{
         navigatorKey: <Page<Object?>>[
-          _buildErrorPage(
-              context, _buildErrorState(matchList.error!, matchList.uri)),
+          _buildErrorPage(context, _buildErrorState(matchList)),
         ]
       };
     } else {
@@ -325,8 +324,7 @@ class RouteBuilder {
     if (match is ImperativeRouteMatch) {
       effectiveMatchList = match.matches;
       if (effectiveMatchList.isError) {
-        return _buildErrorState(
-            effectiveMatchList.error!, effectiveMatchList.uri);
+        return _buildErrorState(effectiveMatchList);
       }
     } else {
       effectiveMatchList = matchList;
@@ -491,19 +489,18 @@ class RouteBuilder {
         child: child,
       );
 
-  GoRouterState _buildErrorState(
-    Exception error,
-    Uri uri,
-  ) {
-    final String location = uri.toString();
+  GoRouterState _buildErrorState(RouteMatchList matchList) {
+    final String location = matchList.uri.toString();
+    assert(matchList.isError);
     return GoRouterState(
       configuration,
       location: location,
-      matchedLocation: uri.path,
-      name: null,
-      queryParameters: uri.queryParameters,
-      queryParametersAll: uri.queryParametersAll,
-      error: error,
+      matchedLocation: matchList.uri.path,
+      fullPath: matchList.fullPath,
+      pathParameters: matchList.pathParameters,
+      queryParameters: matchList.uri.queryParameters,
+      queryParametersAll: matchList.uri.queryParametersAll,
+      error: matchList.error,
       pageKey: ValueKey<String>('$location(error)'),
     );
   }

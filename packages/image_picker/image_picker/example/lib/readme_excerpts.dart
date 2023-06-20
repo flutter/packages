@@ -42,6 +42,10 @@ Future<List<XFile?>> readmePickExample() async {
   final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
   // Pick multiple images.
   final List<XFile> images = await picker.pickMultiImage();
+  // Pick singe image or video.
+  final XFile? media = await picker.pickMedia();
+  // Pick multiple images and videos.
+  final List<XFile> medias = await picker.pickMultipleMedia();
   // #enddocregion Pick
 
   // Return everything for the sanity check test.
@@ -50,7 +54,9 @@ Future<List<XFile?>> readmePickExample() async {
     photo,
     galleryVideo,
     cameraVideo,
-    if (images.isEmpty) null else images.first
+    if (images.isEmpty) null else images.first,
+    media,
+    if (medias.isEmpty) null else medias.first,
   ];
 }
 

@@ -1493,8 +1493,7 @@ void main() {
       }, throwsA(isAssertionError));
     });
 
-    testWidgets('match case insensitive w/ params',
-        (WidgetTester tester) async {
+    testWidgets('cannot match case insensitive', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           name: 'home',
@@ -1524,8 +1523,15 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      router.goNamed('person',
-          pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'});
+      expect(
+        () {
+          router.goNamed(
+            'person',
+            pathParameters: <String, String>{'fid': 'f2', 'pid': 'p1'},
+          );
+        },
+        throwsAssertionError,
+      );
     });
 
     testWidgets('too few params', (WidgetTester tester) async {
@@ -2016,7 +2022,7 @@ void main() {
           expect(Uri.parse(state.location).queryParameters, isNotEmpty);
           expect(Uri.parse(state.matchedLocation).queryParameters, isEmpty);
           expect(state.path, isNull);
-          expect(state.fullPath, isNull);
+          expect(state.fullPath, '/login');
           expect(state.pathParameters.length, 0);
           expect(state.queryParameters.length, 1);
           expect(state.queryParameters['from'], '/');
@@ -2028,6 +2034,40 @@ void main() {
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(1));
       expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
+    testWidgets('top-level redirect state contains path parameters',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                const DummyScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: ':id',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen(),
+              ),
+            ]),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/123',
+        redirect: (BuildContext context, GoRouterState state) {
+          expect(state.path, isNull);
+          expect(state.fullPath, '/:id');
+          expect(state.pathParameters.length, 1);
+          expect(state.pathParameters['id'], '123');
+          return null;
+        },
+      );
+
+      final List<RouteMatch> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(2));
     });
 
     testWidgets('route-level redirect state', (WidgetTester tester) async {
