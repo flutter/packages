@@ -3,7 +3,7 @@ tasks:
     script: .ci/scripts/prepare_tool.sh
 # Not for landing: pre-testing adding analyze.
   - name: analyze repo tools
-    script: script/analyze_repo_tools.sh
+    script: .ci/script/analyze_repo_tools.sh
   - name: analyze
     script: script/tool_runner.sh
     # DO NOT change the custom-analysis argument here without changing the Dart repo.
@@ -13,6 +13,6 @@ tasks:
     # the changes won't break analysis of other packages in the respository
     # that depend on it.
   - name: analyze - pathified
-    script: script/pathified_analyze.sh
+    script: .ci/script/pathified_analyze.sh
 #  - name: tool unit tests
 #    script: .ci/scripts/plugin_tools_tests.sh
