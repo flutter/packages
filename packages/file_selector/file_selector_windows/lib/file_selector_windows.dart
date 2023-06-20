@@ -21,7 +21,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final FileDialogResult result = await _hostApi.showOpenDialog(
+    final List<String?> paths = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: false,
           selectFolders: false,
@@ -29,7 +29,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ),
         initialDirectory,
         confirmButtonText);
-    return result.paths.isEmpty ? null : XFile(result.paths.first!);
+    return paths.isEmpty ? null : XFile(paths.first!);
   }
 
   @override
@@ -38,7 +38,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final FileDialogResult result = await _hostApi.showOpenDialog(
+    final List<String?> paths = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: true,
           selectFolders: false,
@@ -46,7 +46,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ),
         initialDirectory,
         confirmButtonText);
-    return result.paths.map((String? path) => XFile(path!)).toList();
+    return paths.map((String? path) => XFile(path!)).toList();
   }
 
   @override
@@ -56,36 +56,16 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? suggestedName,
     String? confirmButtonText,
   }) async {
-    return (await getSaveLocation(
-            acceptedTypeGroups: acceptedTypeGroups,
-            options: SaveDialogOptions(
-              initialDirectory: initialDirectory,
-              suggestedName: suggestedName,
-              confirmButtonText: confirmButtonText,
-            )))
-        ?.path;
-  }
-
-  @override
-  Future<FileSaveLocation?> getSaveLocation({
-    List<XTypeGroup>? acceptedTypeGroups,
-    SaveDialogOptions options = const SaveDialogOptions(),
-  }) async {
-    final FileDialogResult result = await _hostApi.showSaveDialog(
+    final List<String?> paths = await _hostApi.showSaveDialog(
         SelectionOptions(
           allowMultiple: false,
           selectFolders: false,
           allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
         ),
-        options.initialDirectory,
-        options.suggestedName,
-        options.confirmButtonText);
-    final int? groupIndex = result.typeGroupIndex;
-    return result.paths.isEmpty
-        ? null
-        : FileSaveLocation(result.paths.first!,
-            activeFilter:
-                groupIndex == null ? null : acceptedTypeGroups?[groupIndex]);
+        initialDirectory,
+        suggestedName,
+        confirmButtonText);
+    return paths.isEmpty ? null : paths.first!;
   }
 
   @override
@@ -93,7 +73,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final FileDialogResult result = await _hostApi.showOpenDialog(
+    final List<String?> paths = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: false,
           selectFolders: true,
@@ -101,7 +81,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ),
         initialDirectory,
         confirmButtonText);
-    return result.paths.isEmpty ? null : result.paths.first!;
+    return paths.isEmpty ? null : paths.first!;
   }
 
   @override
@@ -109,7 +89,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final FileDialogResult result = await _hostApi.showOpenDialog(
+    final List<String?> paths = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: true,
           selectFolders: true,
@@ -117,7 +97,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ),
         initialDirectory,
         confirmButtonText);
-    return result.paths.isEmpty ? <String>[] : List<String>.from(result.paths);
+    return paths.isEmpty ? <String>[] : List<String>.from(paths);
   }
 }
 

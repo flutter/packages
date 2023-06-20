@@ -24,11 +24,11 @@ class SaveTextPage extends StatelessWidget {
     // file will be saved. In most cases, this parameter should not be provided.
     final String initialDirectory =
         (await getApplicationDocumentsDirectory()).path;
-    final FileSaveLocation? result = await getSaveLocation(
+    final String? path = await getSavePath(
       initialDirectory: initialDirectory,
       suggestedName: fileName,
     );
-    if (result == null) {
+    if (path == null) {
       // Operation was canceled by the user.
       return;
     }
@@ -39,7 +39,7 @@ class SaveTextPage extends StatelessWidget {
     final XFile textFile =
         XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
 
-    await textFile.saveTo(result.path);
+    await textFile.saveTo(path);
   }
 
   @override

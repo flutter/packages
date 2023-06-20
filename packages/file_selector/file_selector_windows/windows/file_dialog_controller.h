@@ -38,7 +38,6 @@ class FileDialogController {
   virtual HRESULT SetOptions(FILEOPENDIALOGOPTIONS options);
   virtual HRESULT Show(HWND parent);
   virtual HRESULT GetResult(IShellItem** out_item) const;
-  virtual HRESULT GetFileTypeIndex(UINT* out_index) const;
 
   // IFileOpenDialog wrapper. This will fail if the IFileDialog* provided to the
   // constructor was not an IFileOpenDialog instance.

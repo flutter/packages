@@ -17,11 +17,10 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final FileSaveLocation? result =
-        await FileSelectorPlatform.instance.getSaveLocation(
-      options: SaveDialogOptions(suggestedName: fileName),
+    final String? path = await FileSelectorPlatform.instance.getSavePath(
+      suggestedName: fileName,
     );
-    if (result == null) {
+    if (path == null) {
       // Operation was canceled by the user.
       return;
     }
@@ -30,7 +29,7 @@ class SaveTextPage extends StatelessWidget {
     const String fileMimeType = 'text/plain';
     final XFile textFile =
         XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
-    await textFile.saveTo(result.path);
+    await textFile.saveTo(path);
   }
 
   @override

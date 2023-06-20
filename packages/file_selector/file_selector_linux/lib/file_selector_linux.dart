@@ -83,36 +83,18 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? suggestedName,
     String? confirmButtonText,
   }) async {
-    return (await getSaveLocation(
-            acceptedTypeGroups: acceptedTypeGroups,
-            options: SaveDialogOptions(
-              initialDirectory: initialDirectory,
-              suggestedName: suggestedName,
-              confirmButtonText: confirmButtonText,
-            )))
-        ?.path;
-  }
-
-  @override
-  Future<FileSaveLocation?> getSaveLocation({
-    List<XTypeGroup>? acceptedTypeGroups,
-    SaveDialogOptions options = const SaveDialogOptions(),
-  }) async {
     final List<Map<String, Object>> serializedTypeGroups =
         _serializeTypeGroups(acceptedTypeGroups);
-    // TODO(stuartmorgan): Add the selected type group here and return it. See
-    // https://github.com/flutter/flutter/issues/107093
-    final String? path = await _channel.invokeMethod<String>(
+    return _channel.invokeMethod<String>(
       _getSavePathMethod,
       <String, dynamic>{
         if (serializedTypeGroups.isNotEmpty)
           _acceptedTypeGroupsKey: serializedTypeGroups,
-        _initialDirectoryKey: options.initialDirectory,
-        _suggestedNameKey: options.suggestedName,
-        _confirmButtonTextKey: options.confirmButtonText,
+        _initialDirectoryKey: initialDirectory,
+        _suggestedNameKey: suggestedName,
+        _confirmButtonTextKey: confirmButtonText,
       },
     );
-    return path == null ? null : FileSaveLocation(path);
   }
 
   @override
