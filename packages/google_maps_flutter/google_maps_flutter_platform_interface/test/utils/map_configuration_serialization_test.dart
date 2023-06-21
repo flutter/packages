@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_platform_interface/src/types/utils/map_configuration_serialization.dart';
 
+const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+
 void main() {
   test('empty serialization', () async {
     const MapConfiguration config = MapConfiguration();
@@ -37,6 +39,7 @@ void main() {
       indoorViewEnabled: false,
       trafficEnabled: false,
       buildingsEnabled: false,
+      cloudMapId: _kCloudMapId
     );
 
     final Map<String, Object> json = jsonForMapConfiguration(config);
@@ -69,7 +72,8 @@ void main() {
       'padding': <double>[5.0, 5.0, 5.0, 5.0],
       'indoorEnabled': false,
       'trafficEnabled': false,
-      'buildingsEnabled': false
+      'buildingsEnabled': false,
+      'cloudMapId': _kCloudMapId
     });
   });
 }
