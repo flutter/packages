@@ -848,6 +848,16 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
   @override
+  _i6.Future<void> setLimitsNavigationsToAppBoundDomains(bool? limit) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLimitsNavigationsToAppBoundDomains,
+          [limit],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+  @override
   _i6.Future<void> setMediaTypesRequiringUserActionForPlayback(
           Set<_i5.WKAudiovisualMediaType>? types) =>
       (super.noSuchMethod(

@@ -1,6 +1,10 @@
+## 0.5.0+8
+
+* Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+ 
 ## 0.5.0+7
 
-* CameraPlatform.createCameraWithSettings to allow recorded video fps and bitrate control.
+* Updates Guava version to 32.0.1.
 
 ## 0.5.0+5
 

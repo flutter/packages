@@ -4,6 +4,6 @@
 # found in the LICENSE file.
 set -e
 
-dart ./script/tool/bin/flutter_plugin_tools.dart test \
+dart ./script/tool/bin/flutter_plugin_tools.dart dart-test \
   --exclude=script/configs/windows_unit_tests_exceptions.yaml \
   --packages-for-branch --log-timing

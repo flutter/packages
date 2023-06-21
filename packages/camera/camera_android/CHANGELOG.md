@@ -2,6 +2,7 @@
 
 * CameraPlatform.createCameraWithSettings to allow recorded video fps and bitrate control.
 * Fixes unawaited_futures violations.
+* Removes duplicate line in `MediaRecorderBuilder.java`.
 
 ## 0.10.8+2
 

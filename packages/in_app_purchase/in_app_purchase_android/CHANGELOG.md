@@ -1,3 +1,11 @@
+## 0.3.0+6
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.21 to 1.8.22.
+
+## 0.3.0+5
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.0 to 1.8.21.
+
 ## 0.3.0+4
 
 * Fixes unawaited_futures violations.

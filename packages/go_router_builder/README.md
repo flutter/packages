@@ -89,9 +89,6 @@ class HomeRoute extends GoRouteData {
 }
 ```
 
-Required parameters are pulled from the route's `path` defined in the route
-tree.
-
 ## Route tree
 
 The tree of routes is defined as an attribute on each of the top-level routes:
@@ -178,9 +175,10 @@ void _tap() async {
 
 ## Query parameters
 
-Optional parameters (named or positional) indicate query parameters:
+Parameters (named or positional) not listed in the path of `TypedGoRoute` indicate query parameters:
 
 ```dart
+@TypedGoRoute(path: '/login')
 class LoginRoute extends GoRouteData {
   LoginRoute({this.from});
   final String? from;
@@ -195,6 +193,7 @@ class LoginRoute extends GoRouteData {
 For query parameters with a **non-nullable** type, you can define a default value:
 
 ```dart
+@TypedGoRoute(path: '/my-route')
 class MyRoute extends GoRouteData {
   MyRoute({this.queryParameter = 'defaultValue'});
   final String queryParameter;
@@ -237,6 +236,7 @@ recommended when targeting Flutter web.
 You can, of course, combine the use of path, query and $extra parameters:
 
 ```dart
+@TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
 class HotdogRouteWithEverything extends GoRouteData {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // required path parameter

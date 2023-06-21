@@ -1,3 +1,8 @@
+## 3.8.0
+
+* Adds support for handling geolocation permissions. See
+  `AndroidWebViewController.setGeolocationPermissionsPromptCallbacks`.
+
 ## 3.7.1
 
 * Removes obsolete null checks on non-nullable values.

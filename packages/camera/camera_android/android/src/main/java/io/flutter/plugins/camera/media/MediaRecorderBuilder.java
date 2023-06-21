@@ -129,7 +129,6 @@ public class MediaRecorderBuilder {
           (null != videoBitrate && 0 < videoBitrate) ? videoBitrate : videoProfile.getBitrate());
       mediaRecorder.setVideoFrameRate((null != fps && 0 < fps) ? fps : videoProfile.getFrameRate());
       mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
-      mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
     } else if (camcorderProfile != null) {
       mediaRecorder.setOutputFormat(camcorderProfile.fileFormat);
       if (enableAudio) {
