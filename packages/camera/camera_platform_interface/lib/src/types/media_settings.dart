@@ -26,7 +26,7 @@ class MediaSettings {
   /// Rate at which frames should be captured by the camera in frames per second.
   final int? fps;
 
-  /// Sets the video encoding bit rate for recording.
+  /// The video encoding bit rate for recording.
   final int? videoBitrate;
 
   /// The audio encoding bit rate for recording.
