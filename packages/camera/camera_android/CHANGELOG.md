@@ -1,6 +1,6 @@
 ## 0.10.8+3
 
-* CameraPlatform.createCameraWithSettings to allow recorded video fps and bitrate control.
+* Adds support to control video fps and bitrate. See `CameraController.withSettings`.
 * Fixes unawaited_futures violations.
 * Removes duplicate line in `MediaRecorderBuilder.java`.
 
@@ -29,7 +29,6 @@
 ## 0.10.6+1
 
 * Adds a namespace for compatibility with AGP 8.0.
-* Adds `CameraPlatform.createCameraWithSettings` to allow recorded video fps and bitrate control.
 * Bump: `com.android.tools.build:gradle:7.2.0`
 
 ## 0.10.6

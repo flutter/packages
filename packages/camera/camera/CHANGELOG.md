@@ -1,6 +1,6 @@
 ## 0.10.5+3
 
-* CameraPlatform.createCameraWithSettings to allow recorded video fps and bitrate control.
+* Adds support to control video fps and bitrate. See `CameraController.withSettings`.
 
 ## 0.10.5+2
 
@@ -16,7 +16,6 @@
 
 ## 0.10.4
 
-* Adds support to control video fps and bitrate.
 * Allows camera to be switched while video recording.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
