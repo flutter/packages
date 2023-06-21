@@ -29,7 +29,7 @@ class MediaSettings {
   /// Sets the video encoding bit rate for recording.
   final int? videoBitrate;
 
-  /// Sets the audio encoding bit rate for recording.
+  /// The audio encoding bit rate for recording.
   final int? audioBitrate;
 
   /// Controls audio presence in recorded video.
