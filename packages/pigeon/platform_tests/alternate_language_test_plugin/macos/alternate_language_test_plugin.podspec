@@ -1,13 +1,13 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint test_plugin.podspec` to validate before publishing.
+# Run `pod lib lint alternate_language_test_plugin.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'test_plugin'
+  s.name             = 'alternate_language_test_plugin'
   s.version          = '0.0.1'
-  s.summary          = 'Pigeon test plugin'
+  s.summary          = 'Alternate-language Pigeon test plugin'
   s.description      = <<-DESC
-  A plugin to test Pigeon generation for primary languages.
+A plugin to test Pigeon generation for secondary languages (e.g., Java, Objective-C).
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :type => 'BSD', :file => '../../../LICENSE' }
