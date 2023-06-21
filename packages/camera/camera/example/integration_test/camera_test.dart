@@ -7,7 +7,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
-import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -28,12 +27,9 @@ void main() {
     await testDir.delete(recursive: true);
   });
 
-  final Map<ResolutionPreset, Size> presetExpectedSizes =
-      <ResolutionPreset, Size>{
-    ResolutionPreset.low:
-        Platform.isAndroid ? const Size(240, 320) : const Size(288, 352),
-    ResolutionPreset.medium:
-        Platform.isAndroid ? const Size(480, 720) : const Size(480, 640),
+  final Map<ResolutionPreset, Size> presetExpectedSizes = <ResolutionPreset, Size>{
+    ResolutionPreset.low: Platform.isAndroid ? const Size(240, 320) : const Size(288, 352),
+    ResolutionPreset.medium: Platform.isAndroid ? const Size(480, 720) : const Size(480, 640),
     ResolutionPreset.high: const Size(720, 1280),
     ResolutionPreset.veryHigh: const Size(1080, 1920),
     ResolutionPreset.ultraHigh: const Size(2160, 3840),
@@ -79,8 +75,7 @@ void main() {
       }
       for (final CameraDescription cameraDescription in cameras) {
         bool previousPresetExactlySupported = true;
-        for (final MapEntry<ResolutionPreset, Size> preset
-            in presetExpectedSizes.entries) {
+        for (final MapEntry<ResolutionPreset, Size> preset in presetExpectedSizes.entries) {
           final CameraController controller = CameraController.withSettings(
             cameraDescription,
             mediaSettings: MediaSettings(
@@ -115,15 +110,13 @@ void main() {
 
     // Load video metadata
     final File videoFile = File(file.path);
-    final VideoPlayerController videoController =
-        VideoPlayerController.file(videoFile);
+    final VideoPlayerController videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final Size video = videoController.value.size;
 
     // Verify image dimensions are as expected
     expect(video, isNotNull);
-    return assertExpectedDimensions(
-        expectedSize, Size(video.height, video.width));
+    return assertExpectedDimensions(expectedSize, Size(video.height, video.width));
   }
 
   testWidgets(
@@ -135,8 +128,7 @@ void main() {
       }
       for (final CameraDescription cameraDescription in cameras) {
         bool previousPresetExactlySupported = true;
-        for (final MapEntry<ResolutionPreset, Size> preset
-            in presetExpectedSizes.entries) {
+        for (final MapEntry<ResolutionPreset, Size> preset in presetExpectedSizes.entries) {
           final CameraController controller = CameraController.withSettings(
             cameraDescription,
             mediaSettings: MediaSettings(
@@ -201,8 +193,7 @@ void main() {
     sleep(const Duration(milliseconds: 500));
 
     final XFile file = await controller.stopVideoRecording();
-    final int recordingTime =
-        DateTime.now().millisecondsSinceEpoch - recordingStart;
+    final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
     final File videoFile = File(file.path);
     final VideoPlayerController videoController = VideoPlayerController.file(
@@ -257,8 +248,8 @@ void main() {
   );
 
   /// Start streaming with specifying the ImageFormatGroup.
-  Future<CameraImage> startStreaming(List<CameraDescription> cameras,
-      ImageFormatGroup? imageFormatGroup) async {
+  Future<CameraImage> startStreaming(
+      List<CameraDescription> cameras, ImageFormatGroup? imageFormatGroup) async {
     final CameraController controller = CameraController.withSettings(
       cameras.first,
       mediaSettings: const MediaSettings(

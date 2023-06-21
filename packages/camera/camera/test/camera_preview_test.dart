@@ -3,19 +3,17 @@
 // found in the LICENSE file.
 
 import 'package:camera/camera.dart';
-import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class FakeController extends ValueNotifier<CameraValue>
-    implements CameraController {
+class FakeController extends ValueNotifier<CameraValue> implements CameraController {
   FakeController() : super(const CameraValue.uninitialized(fakeDescription));
 
-  static const CameraDescription fakeDescription = CameraDescription(
-      name: '', lensDirection: CameraLensDirection.back, sensorOrientation: 0);
+  static const CameraDescription fakeDescription =
+      CameraDescription(name: '', lensDirection: CameraLensDirection.back, sensorOrientation: 0);
 
   @override
   Future<void> dispose() async {
@@ -100,8 +98,7 @@ class FakeController extends ValueNotifier<CameraValue>
   Future<void> startImageStream(onLatestImageAvailable onAvailable) async {}
 
   @override
-  Future<void> startVideoRecording(
-      {onLatestImageAvailable? onAvailable}) async {}
+  Future<void> startVideoRecording({onLatestImageAvailable? onAvailable}) async {}
 
   @override
   Future<void> stopImageStream() async {}
@@ -130,9 +127,7 @@ class FakeController extends ValueNotifier<CameraValue>
 
 void main() {
   group('RotatedBox (Android only)', () {
-    testWidgets(
-        'when recording rotatedBox should turn according to recording orientation',
-        (
+    testWidgets('when recording rotatedBox should turn according to recording orientation', (
       WidgetTester tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
@@ -143,10 +138,9 @@ void main() {
         isRecordingVideo: true,
         deviceOrientation: DeviceOrientation.portraitUp,
         lockedCaptureOrientation:
-            const Optional<DeviceOrientation>.fromNullable(
-                DeviceOrientation.landscapeRight),
-        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
-            DeviceOrientation.landscapeLeft),
+            const Optional<DeviceOrientation>.fromNullable(DeviceOrientation.landscapeRight),
+        recordingOrientation:
+            const Optional<DeviceOrientation>.fromNullable(DeviceOrientation.landscapeLeft),
         previewSize: const Size(480, 640),
       );
 
@@ -158,16 +152,13 @@ void main() {
       );
       expect(find.byType(RotatedBox), findsOneWidget);
 
-      final RotatedBox rotatedBox =
-          tester.widget<RotatedBox>(find.byType(RotatedBox));
+      final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
       expect(rotatedBox.quarterTurns, 3);
 
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets(
-        'when orientation locked rotatedBox should turn according to locked orientation',
-        (
+    testWidgets('when orientation locked rotatedBox should turn according to locked orientation', (
       WidgetTester tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
@@ -177,10 +168,9 @@ void main() {
         isInitialized: true,
         deviceOrientation: DeviceOrientation.portraitUp,
         lockedCaptureOrientation:
-            const Optional<DeviceOrientation>.fromNullable(
-                DeviceOrientation.landscapeRight),
-        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
-            DeviceOrientation.landscapeLeft),
+            const Optional<DeviceOrientation>.fromNullable(DeviceOrientation.landscapeRight),
+        recordingOrientation:
+            const Optional<DeviceOrientation>.fromNullable(DeviceOrientation.landscapeLeft),
         previewSize: const Size(480, 640),
       );
 
@@ -192,8 +182,7 @@ void main() {
       );
       expect(find.byType(RotatedBox), findsOneWidget);
 
-      final RotatedBox rotatedBox =
-          tester.widget<RotatedBox>(find.byType(RotatedBox));
+      final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
       expect(rotatedBox.quarterTurns, 1);
 
       debugDefaultTargetPlatformOverride = null;
@@ -210,8 +199,8 @@ void main() {
       controller.value = controller.value.copyWith(
         isInitialized: true,
         deviceOrientation: DeviceOrientation.portraitUp,
-        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
-            DeviceOrientation.landscapeLeft),
+        recordingOrientation:
+            const Optional<DeviceOrientation>.fromNullable(DeviceOrientation.landscapeLeft),
         previewSize: const Size(480, 640),
       );
 
@@ -223,16 +212,14 @@ void main() {
       );
       expect(find.byType(RotatedBox), findsOneWidget);
 
-      final RotatedBox rotatedBox =
-          tester.widget<RotatedBox>(find.byType(RotatedBox));
+      final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
       expect(rotatedBox.quarterTurns, 0);
 
       debugDefaultTargetPlatformOverride = null;
     });
   }, skip: kIsWeb);
 
-  testWidgets('when not on Android there should not be a rotated box',
-      (WidgetTester tester) async {
+  testWidgets('when not on Android there should not be a rotated box', (WidgetTester tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final FakeController controller = FakeController();
     controller.value = controller.value.copyWith(
