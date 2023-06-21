@@ -4,7 +4,6 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vector_math/vector_math.dart';
 
-
 /// A helper extension on [ui.FragmentShader] that allows you to set uniforms
 /// in a more convenient way. Withotu having to manage indices.
 ///
@@ -116,6 +115,7 @@ class UniformsSetter {
       setVector(vector);
     }
   }
+
   void setMatrix2(Matrix2 matrix2) {
     setFloats(matrix2.storage);
   }
