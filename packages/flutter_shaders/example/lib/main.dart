@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           }) {
             shader.setFloatUniforms((uniforms) => uniforms
               ..setFloat(animation)
-              ..setColor(color)
+              ..setColor(color, premultiply: true)
               ..setFloat(targetRadius)
               ..setOffset(position));
           })),
