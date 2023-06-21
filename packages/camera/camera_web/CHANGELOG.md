@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Adds support for the `enableAudio` parameter in `availableCameras` method.
+
 ## 0.3.1+4
 
 * Removes obsolete null checks on non-nullable values.
