@@ -158,9 +158,7 @@ Future<GoRouter> createRouter(
     onException: onException,
     initialExtra: initialExtra,
     redirectLimit: redirectLimit,
-    errorBuilder: errorBuilder, //??
-    // (BuildContext context, GoRouterState state) =>
-    //     TestErrorScreen(state.error!),
+    errorBuilder: errorBuilder,
     navigatorKey: navigatorKey,
     restorationScopeId: restorationScopeId,
   );

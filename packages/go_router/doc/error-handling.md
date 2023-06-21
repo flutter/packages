@@ -2,7 +2,7 @@ There are several kinds of errors or exceptions in go_router.
 
 * GoError and AssertionError 
 
-This kind of errors are thrown when go_router is using incorrectly, for example, if the root
+This kind of errors are thrown when go_router is used incorrectly, for example, if the root
 [GoRoute.path](https://pub.dev/documentation/go_router/latest/go_router/GoRoute/path.html) does
 not start with `/` or a builder in GoRoute is not provided. These errors should not be caught and
 must be fixed in code in order to use go_router.
