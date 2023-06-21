@@ -66,17 +66,57 @@ struct CreateMessage {
     ]
   }
 }
+
+private class ExampleHostApiCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+      case 128:
+        return CreateMessage.fromList(self.readValue() as! [Any?])
+      default:
+        return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class ExampleHostApiCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? CreateMessage {
+      super.writeByte(128)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class ExampleHostApiCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return ExampleHostApiCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return ExampleHostApiCodecWriter(data: data)
+  }
+}
+
+class ExampleHostApiCodec: FlutterStandardMessageCodec {
+  static let shared = ExampleHostApiCodec(readerWriter: ExampleHostApiCodecReaderWriter())
+}
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol ExampleHostApi {
   func getHostLanguage() throws -> String
+  func add(a: Int64, b: Int64) throws -> Int64
+  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class ExampleHostApiSetup {
   /// The codec used by ExampleHostApi.
+  static var codec: FlutterStandardMessageCodec { ExampleHostApiCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?) {
-    let getHostLanguageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ExampleHostApi.getHostLanguage", binaryMessenger: binaryMessenger)
+    let getHostLanguageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ExampleHostApi.getHostLanguage", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHostLanguageChannel.setMessageHandler { _, reply in
         do {
@@ -89,86 +129,7 @@ class ExampleHostApiSetup {
     } else {
       getHostLanguageChannel.setMessageHandler(nil)
     }
-  }
-}
-private class MessageHostApiCodecReader: FlutterStandardReader {
-  override func readValue(ofType type: UInt8) -> Any? {
-    switch type {
-      case 128:
-        return CreateMessage.fromList(self.readValue() as! [Any?])
-      default:
-        return super.readValue(ofType: type)
-    }
-  }
-}
-
-private class MessageHostApiCodecWriter: FlutterStandardWriter {
-  override func writeValue(_ value: Any) {
-    if let value = value as? CreateMessage {
-      super.writeByte(128)
-      super.writeValue(value.toList())
-    } else {
-      super.writeValue(value)
-    }
-  }
-}
-
-private class MessageHostApiCodecReaderWriter: FlutterStandardReaderWriter {
-  override func reader(with data: Data) -> FlutterStandardReader {
-    return MessageHostApiCodecReader(data: data)
-  }
-
-  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return MessageHostApiCodecWriter(data: data)
-  }
-}
-
-class MessageHostApiCodec: FlutterStandardMessageCodec {
-  static let shared = MessageHostApiCodec(readerWriter: MessageHostApiCodecReaderWriter())
-}
-
-/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol MessageHostApi {
-  func initialize() throws
-  func sendMessage(message: CreateMessage) throws -> Bool
-  func add(a: Int64, b: Int64) throws -> Int64
-}
-
-/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
-class MessageHostApiSetup {
-  /// The codec used by MessageHostApi.
-  static var codec: FlutterStandardMessageCodec { MessageHostApiCodec.shared }
-  /// Sets up an instance of `MessageHostApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: MessageHostApi?) {
-    let initializeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.MessageHostApi.initialize", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      initializeChannel.setMessageHandler { _, reply in
-        do {
-          try api.initialize()
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      initializeChannel.setMessageHandler(nil)
-    }
-    let sendMessageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.MessageHostApi.sendMessage", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      sendMessageChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let messageArg = args[0] as! CreateMessage
-        do {
-          let result = try api.sendMessage(message: messageArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      sendMessageChannel.setMessageHandler(nil)
-    }
-    let addChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.MessageHostApi.add", binaryMessenger: binaryMessenger, codec: codec)
+    let addChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ExampleHostApi.add", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -183,6 +144,23 @@ class MessageHostApiSetup {
       }
     } else {
       addChannel.setMessageHandler(nil)
+    }
+    let sendMessageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ExampleHostApi.sendMessage", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      sendMessageChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let messageArg = args[0] as! CreateMessage
+        api.sendMessage(message: messageArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      sendMessageChannel.setMessageHandler(nil)
     }
   }
 }

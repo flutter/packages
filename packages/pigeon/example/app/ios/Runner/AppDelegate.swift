@@ -5,11 +5,21 @@
 import Flutter
 import UIKit
 
+// #docregion swift-class
 private class PigeonApiImplementation: ExampleHostApi {
   func getHostLanguage() throws -> String {
     return "Swift"
   }
+
+  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
+    completion(Result(true, nil))
+  }
+
+  func add(a: Int64, b: Int64) throws -> Int64 {
+    return a + b
+  }
 }
+// #enddocregion swift-class
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {

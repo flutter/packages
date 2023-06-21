@@ -24,11 +24,6 @@ import 'package:pigeon/pigeon.dart';
 ))
 // #enddocregion config
 
-@HostApi()
-abstract class ExampleHostApi {
-  String getHostLanguage();
-}
-
 // #docregion host-definitions
 class CreateMessage {
   CreateMessage({required this.code, required this.httpHeaders});
@@ -39,10 +34,11 @@ class CreateMessage {
 }
 
 @HostApi()
-abstract class MessageHostApi {
-  void initialize();
-  bool sendMessage(CreateMessage message);
+abstract class ExampleHostApi {
+  String getHostLanguage();
   int add(int a, int b);
+  @async
+  bool sendMessage(CreateMessage message);
 }
 // #enddocregion host-definitions
 

@@ -52,7 +52,6 @@ template<class T> class ErrorOr {
 
  private:
   friend class ExampleHostApi;
-  friend class MessageHostApi;
   friend class MessageFlutterApi;
   ErrorOr() = default;
   T TakeValue() && { return std::get<T>(std::move(v_)); }
@@ -96,8 +95,6 @@ class CreateMessage {
   flutter::EncodableList ToEncodableList() const;
   friend class ExampleHostApi;
   friend class ExampleHostApiCodecSerializer;
-  friend class MessageHostApi;
-  friend class MessageHostApiCodecSerializer;
   friend class MessageFlutterApi;
   friend class MessageFlutterApiCodecSerializer;
   std::optional<std::string> asset_;
@@ -107,32 +104,11 @@ class CreateMessage {
 
 };
 
-// Generated interface from Pigeon that represents a handler of messages from Flutter.
-class ExampleHostApi {
+class ExampleHostApiCodecSerializer : public flutter::StandardCodecSerializer {
  public:
-  ExampleHostApi(const ExampleHostApi&) = delete;
-  ExampleHostApi& operator=(const ExampleHostApi&) = delete;
-  virtual ~ExampleHostApi() {}
-  virtual ErrorOr<std::string> GetHostLanguage() = 0;
-
-  // The codec used by ExampleHostApi.
-  static const flutter::StandardMessageCodec& GetCodec();
-  // Sets up an instance of `ExampleHostApi` to handle messages through the `binary_messenger`.
-  static void SetUp(
-    flutter::BinaryMessenger* binary_messenger,
-    ExampleHostApi* api);
-  static flutter::EncodableValue WrapError(std::string_view error_message);
-  static flutter::EncodableValue WrapError(const FlutterError& error);
-
- protected:
-  ExampleHostApi() = default;
-
-};
-class MessageHostApiCodecSerializer : public flutter::StandardCodecSerializer {
- public:
-  MessageHostApiCodecSerializer();
-  inline static MessageHostApiCodecSerializer& GetInstance() {
-    static MessageHostApiCodecSerializer sInstance;
+  ExampleHostApiCodecSerializer();
+  inline static ExampleHostApiCodecSerializer& GetInstance() {
+    static ExampleHostApiCodecSerializer sInstance;
     return sInstance;
   }
 
@@ -148,28 +124,30 @@ class MessageHostApiCodecSerializer : public flutter::StandardCodecSerializer {
 };
 
 // Generated interface from Pigeon that represents a handler of messages from Flutter.
-class MessageHostApi {
+class ExampleHostApi {
  public:
-  MessageHostApi(const MessageHostApi&) = delete;
-  MessageHostApi& operator=(const MessageHostApi&) = delete;
-  virtual ~MessageHostApi() {}
-  virtual std::optional<FlutterError> Initialize() = 0;
-  virtual ErrorOr<bool> SendMessage(const CreateMessage& message) = 0;
+  ExampleHostApi(const ExampleHostApi&) = delete;
+  ExampleHostApi& operator=(const ExampleHostApi&) = delete;
+  virtual ~ExampleHostApi() {}
+  virtual ErrorOr<std::string> GetHostLanguage() = 0;
   virtual ErrorOr<int64_t> Add(
     int64_t a,
     int64_t b) = 0;
+  virtual void SendMessage(
+    const CreateMessage& message,
+    std::function<void(ErrorOr<bool> reply)> result) = 0;
 
-  // The codec used by MessageHostApi.
+  // The codec used by ExampleHostApi.
   static const flutter::StandardMessageCodec& GetCodec();
-  // Sets up an instance of `MessageHostApi` to handle messages through the `binary_messenger`.
+  // Sets up an instance of `ExampleHostApi` to handle messages through the `binary_messenger`.
   static void SetUp(
     flutter::BinaryMessenger* binary_messenger,
-    MessageHostApi* api);
+    ExampleHostApi* api);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
  protected:
-  MessageHostApi() = default;
+  ExampleHostApi() = default;
 
 };
 // Generated class from Pigeon that represents Flutter messages that can be called from C++.

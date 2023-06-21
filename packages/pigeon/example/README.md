@@ -31,7 +31,7 @@ flutter pub run pigeon \
 It is usually preferable to add a config into the pigeon input
 file directly. 
 
-<?code-excerpt "../../pigeons/message.dart (config)"?>
+<?code-excerpt "../../app/pigeons/messages.dart (config)"?>
 ```dart
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/message.g.dart',
@@ -64,7 +64,7 @@ For instructions to set up your own Pigeon usage see these [steps](../README.md#
 This is the Pigeon file that describes the interface that will be used to call
 from Flutter to the host-platform.
 
-<?code-excerpt "../../pigeons/message.dart (host-definitions)"?>
+<?code-excerpt "../../app/pigeons/messages.dart (host-definitions)"?>
 ```dart
 class CreateMessage {
   CreateMessage({required this.code, required this.httpHeaders});
@@ -87,7 +87,7 @@ abstract class MessageHostApi {
 This is the code that will use the generated dart code to make calls from flutter to 
 the host platform.
 
-<?code-excerpt "main.dart (main-dart)"?>
+<?code-excerpt "../../app/lib/main.dart (main-dart)"?>
 ```dart 
 import 'src/message.g.dart';
 
@@ -130,8 +130,8 @@ from Flutter.
 
 This is the code that will use the generated Swift code to receive calls from Flutter.
 
-```swift
-
+<?code-excerpt ../../app/ios/Runner/AppDelegate.swift " (swift-class)"?>
+```swift 
 ```
 
 ### StartActivity.java

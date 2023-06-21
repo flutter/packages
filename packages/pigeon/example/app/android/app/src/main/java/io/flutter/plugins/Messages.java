@@ -172,15 +172,54 @@ public class Messages {
       return pigeonResult;
     }
   }
+
+  public interface Result<T> {
+    @SuppressWarnings("UnknownNullness")
+    void success(T result);
+
+    void error(@NonNull Throwable error);
+  }
+
+  private static class ExampleHostApiCodec extends StandardMessageCodec {
+    public static final ExampleHostApiCodec INSTANCE = new ExampleHostApiCodec();
+
+    private ExampleHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof CreateMessage) {
+        stream.write(128);
+        writeValue(stream, ((CreateMessage) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ExampleHostApi {
 
     @NonNull 
     String getHostLanguage();
 
+    @NonNull 
+    Long add(@NonNull Long a, @NonNull Long b);
+
+    void sendMessage(@NonNull CreateMessage message, @NonNull Result<Boolean> result);
+
     /** The codec used by ExampleHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return ExampleHostApiCodec.INSTANCE;
     }
     /**Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
@@ -206,102 +245,10 @@ public class Messages {
           channel.setMessageHandler(null);
         }
       }
-    }
-  }
-
-  private static class MessageHostApiCodec extends StandardMessageCodec {
-    public static final MessageHostApiCodec INSTANCE = new MessageHostApiCodec();
-
-    private MessageHostApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof CreateMessage) {
-        stream.write(128);
-        writeValue(stream, ((CreateMessage) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
-  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-  public interface MessageHostApi {
-
-    void initialize();
-
-    @NonNull 
-    Boolean sendMessage(@NonNull CreateMessage message);
-
-    @NonNull 
-    Long add(@NonNull Long a, @NonNull Long b);
-
-    /** The codec used by MessageHostApi. */
-    static @NonNull MessageCodec<Object> getCodec() {
-      return MessageHostApiCodec.INSTANCE;
-    }
-    /**Sets up an instance of `MessageHostApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable MessageHostApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.MessageHostApi.initialize", getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                try {
-                  api.initialize();
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.MessageHostApi.sendMessage", getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                ArrayList<Object> args = (ArrayList<Object>) message;
-                CreateMessage messageArg = (CreateMessage) args.get(0);
-                try {
-                  Boolean output = api.sendMessage(messageArg);
-                  wrapped.add(0, output);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.MessageHostApi.add", getCodec());
+                binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.add", getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -318,6 +265,35 @@ public class Messages {
                   wrapped = wrappedError;
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.sendMessage", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                CreateMessage messageArg = (CreateMessage) args.get(0);
+                Result<Boolean> resultCallback =
+                    new Result<Boolean>() {
+                      public void success(Boolean result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.sendMessage(messageArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

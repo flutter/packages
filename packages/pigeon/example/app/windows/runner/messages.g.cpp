@@ -111,9 +111,36 @@ CreateMessage CreateMessage::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
+
+ExampleHostApiCodecSerializer::ExampleHostApiCodecSerializer() {}
+
+EncodableValue ExampleHostApiCodecSerializer::ReadValueOfType(
+  uint8_t type,
+  flutter::ByteStreamReader* stream) const {
+  switch (type) {
+    case 128:
+      return CustomEncodableValue(CreateMessage::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
+    default:
+      return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
+  }
+}
+
+void ExampleHostApiCodecSerializer::WriteValue(
+  const EncodableValue& value,
+  flutter::ByteStreamWriter* stream) const {
+  if (const CustomEncodableValue* custom_value = std::get_if<CustomEncodableValue>(&value)) {
+    if (custom_value->type() == typeid(CreateMessage)) {
+      stream->WriteByte(128);
+      WriteValue(EncodableValue(std::any_cast<CreateMessage>(*custom_value).ToEncodableList()), stream);
+      return;
+    }
+  }
+  flutter::StandardCodecSerializer::WriteValue(value, stream);
+}
+
 /// The codec used by ExampleHostApi.
 const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
-  return flutter::StandardMessageCodec::GetInstance(&flutter::StandardCodecSerializer::GetInstance());
+  return flutter::StandardMessageCodec::GetInstance(&ExampleHostApiCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `ExampleHostApi` to handle messages through the `binary_messenger`.
@@ -141,111 +168,8 @@ void ExampleHostApi::SetUp(
       channel->SetMessageHandler(nullptr);
     }
   }
-}
-
-EncodableValue ExampleHostApi::WrapError(std::string_view error_message) {
-  return EncodableValue(EncodableList{
-    EncodableValue(std::string(error_message)),
-    EncodableValue("Error"),
-    EncodableValue()
-  });
-}
-
-EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{
-    EncodableValue(error.code()),
-    EncodableValue(error.message()),
-    error.details()
-  });
-}
-
-
-MessageHostApiCodecSerializer::MessageHostApiCodecSerializer() {}
-
-EncodableValue MessageHostApiCodecSerializer::ReadValueOfType(
-  uint8_t type,
-  flutter::ByteStreamReader* stream) const {
-  switch (type) {
-    case 128:
-      return CustomEncodableValue(CreateMessage::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
-    default:
-      return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
-  }
-}
-
-void MessageHostApiCodecSerializer::WriteValue(
-  const EncodableValue& value,
-  flutter::ByteStreamWriter* stream) const {
-  if (const CustomEncodableValue* custom_value = std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(CreateMessage)) {
-      stream->WriteByte(128);
-      WriteValue(EncodableValue(std::any_cast<CreateMessage>(*custom_value).ToEncodableList()), stream);
-      return;
-    }
-  }
-  flutter::StandardCodecSerializer::WriteValue(value, stream);
-}
-
-/// The codec used by MessageHostApi.
-const flutter::StandardMessageCodec& MessageHostApi::GetCodec() {
-  return flutter::StandardMessageCodec::GetInstance(&MessageHostApiCodecSerializer::GetInstance());
-}
-
-// Sets up an instance of `MessageHostApi` to handle messages through the `binary_messenger`.
-void MessageHostApi::SetUp(
-  flutter::BinaryMessenger* binary_messenger,
-  MessageHostApi* api) {
   {
-    auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, "dev.flutter.pigeon.MessageHostApi.initialize", &GetCodec());
-    if (api != nullptr) {
-      channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          std::optional<FlutterError> output = api->Initialize();
-          if (output.has_value()) {
-            reply(WrapError(output.value()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(EncodableValue());
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
-    } else {
-      channel->SetMessageHandler(nullptr);
-    }
-  }
-  {
-    auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, "dev.flutter.pigeon.MessageHostApi.sendMessage", &GetCodec());
-    if (api != nullptr) {
-      channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_message_arg = args.at(0);
-          if (encodable_message_arg.IsNull()) {
-            reply(WrapError("message_arg unexpectedly null."));
-            return;
-          }
-          const auto& message_arg = std::any_cast<const CreateMessage&>(std::get<CustomEncodableValue>(encodable_message_arg));
-          ErrorOr<bool> output = api->SendMessage(message_arg);
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
-    } else {
-      channel->SetMessageHandler(nullptr);
-    }
-  }
-  {
-    auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, "dev.flutter.pigeon.MessageHostApi.add", &GetCodec());
+    auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, "dev.flutter.pigeon.ExampleHostApi.add", &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
         try {
@@ -278,9 +202,38 @@ void MessageHostApi::SetUp(
       channel->SetMessageHandler(nullptr);
     }
   }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, "dev.flutter.pigeon.ExampleHostApi.sendMessage", &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
+        try {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_message_arg = args.at(0);
+          if (encodable_message_arg.IsNull()) {
+            reply(WrapError("message_arg unexpectedly null."));
+            return;
+          }
+          const auto& message_arg = std::any_cast<const CreateMessage&>(std::get<CustomEncodableValue>(encodable_message_arg));
+          api->SendMessage(message_arg, [reply](ErrorOr<bool>&& output) {
+            if (output.has_error()) {
+              reply(WrapError(output.error()));
+              return;
+            }
+            EncodableList wrapped;
+            wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+            reply(EncodableValue(std::move(wrapped)));
+          });
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
 }
 
-EncodableValue MessageHostApi::WrapError(std::string_view error_message) {
+EncodableValue ExampleHostApi::WrapError(std::string_view error_message) {
   return EncodableValue(EncodableList{
     EncodableValue(std::string(error_message)),
     EncodableValue("Error"),
@@ -288,7 +241,7 @@ EncodableValue MessageHostApi::WrapError(std::string_view error_message) {
   });
 }
 
-EncodableValue MessageHostApi::WrapError(const FlutterError& error) {
+EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
   return EncodableValue(EncodableList{
     EncodableValue(error.code()),
     EncodableValue(error.message()),

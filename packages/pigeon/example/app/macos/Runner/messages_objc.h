@@ -34,22 +34,12 @@ NSObject<FlutterMessageCodec> *ExampleHostApiGetCodec(void);
 @protocol ExampleHostApi
 /// @return `nil` only when `error != nil`.
 - (nullable NSString *)getHostLanguageWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)addA:(NSNumber *)a b:(NSNumber *)b error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)sendMessageMessage:(CreateMessage *)message completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void ExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ExampleHostApi> *_Nullable api);
-
-/// The codec used by MessageHostApi.
-NSObject<FlutterMessageCodec> *MessageHostApiGetCodec(void);
-
-@protocol MessageHostApi
-- (void)initializeWithError:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)sendMessageMessage:(CreateMessage *)message error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)addA:(NSNumber *)a b:(NSNumber *)b error:(FlutterError *_Nullable *_Nonnull)error;
-@end
-
-extern void MessageHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<MessageHostApi> *_Nullable api);
 
 /// The codec used by MessageFlutterApi.
 NSObject<FlutterMessageCodec> *MessageFlutterApiGetCodec(void);

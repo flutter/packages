@@ -72,39 +72,9 @@ data class CreateMessage (
     )
   }
 }
-/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface ExampleHostApi {
-  fun getHostLanguage(): String
 
-  companion object {
-    /** The codec used by ExampleHostApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      StandardMessageCodec()
-    }
-    /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
-    @Suppress("UNCHECKED_CAST")
-    fun setUp(binaryMessenger: BinaryMessenger, api: ExampleHostApi?) {
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.getHostLanguage", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.getHostLanguage())
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-    }
-  }
-}
 @Suppress("UNCHECKED_CAST")
-private object MessageHostApiCodec : StandardMessageCodec() {
+private object ExampleHostApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
@@ -127,27 +97,26 @@ private object MessageHostApiCodec : StandardMessageCodec() {
 }
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface MessageHostApi {
-  fun initialize()
-  fun sendMessage(message: CreateMessage): Boolean
+interface ExampleHostApi {
+  fun getHostLanguage(): String
   fun add(a: Long, b: Long): Long
+  fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit)
 
   companion object {
-    /** The codec used by MessageHostApi. */
+    /** The codec used by ExampleHostApi. */
     val codec: MessageCodec<Any?> by lazy {
-      MessageHostApiCodec
+      ExampleHostApiCodec
     }
-    /** Sets up an instance of `MessageHostApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     @Suppress("UNCHECKED_CAST")
-    fun setUp(binaryMessenger: BinaryMessenger, api: MessageHostApi?) {
+    fun setUp(binaryMessenger: BinaryMessenger, api: ExampleHostApi?) {
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.MessageHostApi.initialize", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.getHostLanguage", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             var wrapped: List<Any?>
             try {
-              api.initialize()
-              wrapped = listOf<Any?>(null)
+              wrapped = listOf<Any?>(api.getHostLanguage())
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -158,25 +127,7 @@ interface MessageHostApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.MessageHostApi.sendMessage", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val messageArg = args[0] as CreateMessage
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.sendMessage(messageArg))
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.MessageHostApi.add", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.add", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -189,6 +140,26 @@ interface MessageHostApi {
               wrapped = wrapError(exception)
             }
             reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.sendMessage", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val messageArg = args[0] as CreateMessage
+            api.sendMessage(messageArg) { result: Result<Boolean> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
           }
         } else {
           channel.setMessageHandler(null)

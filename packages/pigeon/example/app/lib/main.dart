@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final ExampleHostApi _hostApi = ExampleHostApi();
   String? _hostCallResult;
 
-  final MessageHostApi _api = MessageHostApi();
+  final ExampleHostApi _api = ExampleHostApi();
 
   /// Calls host method `add` with provided arguments.
   Future<int> callAddPlusOne(int a, int b) async {
