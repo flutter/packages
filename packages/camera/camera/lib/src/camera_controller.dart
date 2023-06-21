@@ -232,7 +232,8 @@ class CameraValue {
 /// To show the camera preview on the screen use a [CameraPreview] widget.
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
-  /// Deprecated, use [withSettings].
+  ///
+  /// Deprecated. Please use [withSettings].
   CameraController(
     CameraDescription description,
     ResolutionPreset resolutionPreset, {
