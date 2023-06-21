@@ -102,6 +102,13 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<bool?> isCacheSupportedForNetworkMedia(String url) async {
+    final IsSupportedMessage response = await _api
+        .isCacheSupportedForNetworkMedia(IsCachingSupportedMessage(url: url));
+    return response.isSupported;
+  }
+
+  @override
   Future<void> play(int textureId) {
     return _api.play(TextureMessage(textureId: textureId));
   }
