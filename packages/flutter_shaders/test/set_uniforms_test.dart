@@ -96,6 +96,21 @@ void main() {
       });
     });
 
+    test('setColor w/ premultiply', () {
+      final shader = _MockFragmentShader();
+
+      shader.setFloatUniforms((setter) {
+        setter.setColor(const Color(0x00006600), premultiply: true);
+      });
+
+      expect(shader.floats, {
+        0: 0.0,
+        1: 0.0,
+        2: 0.0,
+        3: 0.0,
+      });
+    });
+
     test('setColors', () {
       final shader = _MockFragmentShader();
 
@@ -119,6 +134,36 @@ void main() {
         8: 0.0,
         9: 0.0,
         10: 0.4,
+        11: 0.4
+      });
+    });
+
+    test('setColors w/ premultiply', () {
+      final shader = _MockFragmentShader();
+
+      shader.setFloatUniforms((setter) {
+        setter.setColors(
+          premultiply: true,
+          const [
+            Color(0xFF006600),
+            Color(0xFF660000),
+            Color(0x00000066),
+          ],
+        );
+      });
+
+      expect(shader.floats, {
+        0: 0.0,
+        1: 0.4,
+        2: 0.0,
+        3: 1.0,
+        4: 0.4,
+        5: 0.0,
+        6: 0.0,
+        7: 1.0,
+        8: 0.0,
+        9: 0.0,
+        10: 0.0,
         11: 0.4
       });
     });
