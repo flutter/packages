@@ -110,14 +110,16 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late MiniController _controller;
 
+  final String supportedNetworkMediaUrl =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
+  final String noSupportedNetworkMediaUrl =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.m3u8';
+
   @override
   void initState() {
     super.initState();
-    _controller = MiniController.network(
-        'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/prog_index.m3u8',
-        maxCacheSize: 100000 * 1024 * 1024, //100mb
-        maxFileSize: 100000 * 1024 * 1024 //10mb
-        );
+
+    _controller = MiniController.network(supportedNetworkMediaUrl);
 
     _controller.addListener(() {
       setState(() {});
@@ -157,6 +159,18 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               _controller.clearCache();
             },
             child: Text('Clear cache'),
+          ),
+          TextButton(
+            onPressed: () {
+              _controller
+                  .isCachingSupportedForNetworkMedia(noSupportedNetworkMediaUrl)
+                  .then((bool? value) => {
+                        print(value ?? false
+                            ? 'Caching is supported for mime type'
+                            : 'Caching is not supported for mime type')
+                      });
+            },
+            child: Text('Can cache'),
           )
         ],
       ),

@@ -685,8 +685,7 @@ NS_INLINE UIViewController *rootViewController(void) {
     if ([supportedMimetypes containsObject:mimeType]) {
         return YES;
     } else {
-        //for debugging and testing purposes this is switched on.
-        return YES;
+        return false;
     }
 }
 
@@ -742,6 +741,13 @@ NS_INLINE UIViewController *rootViewController(void) {
   FLTPositionMessage *result = [FLTPositionMessage makeWithTextureId:input.textureId
                                                             position:@([player position])];
   return result;
+}
+
+- (FLTIsSupportedMessage *)isCacheSupportedForNetworkMedia:(FLTIsCachingSupportedMessage *)msg
+                                                     error:(FlutterError **)error {
+    BOOL isSupported = [self canCache:msg.url];
+    FLTIsSupportedMessage *result = [FLTIsSupportedMessage makeWithIsSupported:[NSNumber numberWithBool:isSupported]];
+    return result;
 }
 
 - (void)seekTo:(FLTPositionMessage *)input

@@ -24,6 +24,16 @@ class LoopingMessage {
   bool isLooping;
 }
 
+class IsSupportedMessage {
+  IsSupportedMessage(this.isSupported);
+  bool isSupported;
+}
+
+class IsCachingSupportedMessage {
+  IsCachingSupportedMessage(this.url);
+  String url;
+}
+
 class ClearCacheMessage {
   ClearCacheMessage(this.textureId, this.clear);
   int textureId;
@@ -71,6 +81,8 @@ abstract class AndroidVideoPlayerApi {
   void dispose(TextureMessage msg);
   void setLooping(LoopingMessage msg);
   void setVolume(VolumeMessage msg);
+  IsSupportedMessage isCacheSupportedForNetworkMedia(
+      IsCachingSupportedMessage msg);
   void clearCache(ClearCacheMessage msg);
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
   void play(TextureMessage msg);

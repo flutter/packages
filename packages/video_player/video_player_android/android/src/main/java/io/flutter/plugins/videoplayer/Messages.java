@@ -183,6 +183,104 @@ public class Messages {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class IsSupportedMessage {
+    private @NonNull Boolean isSupported;
+
+    public @NonNull Boolean getIsSupported() {
+      return isSupported;
+    }
+
+    public void setIsSupported(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isSupported\" is null.");
+      }
+      this.isSupported = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    IsSupportedMessage() {}
+
+    public static final class Builder {
+
+      private @Nullable Boolean isSupported;
+
+      public @NonNull Builder setIsSupported(@NonNull Boolean setterArg) {
+        this.isSupported = setterArg;
+        return this;
+      }
+
+      public @NonNull IsSupportedMessage build() {
+        IsSupportedMessage pigeonReturn = new IsSupportedMessage();
+        pigeonReturn.setIsSupported(isSupported);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(isSupported);
+      return toListResult;
+    }
+
+    static @NonNull IsSupportedMessage fromList(@NonNull ArrayList<Object> list) {
+      IsSupportedMessage pigeonResult = new IsSupportedMessage();
+      Object isSupported = list.get(0);
+      pigeonResult.setIsSupported((Boolean) isSupported);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class IsCachingSupportedMessage {
+    private @NonNull String url;
+
+    public @NonNull String getUrl() {
+      return url;
+    }
+
+    public void setUrl(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"url\" is null.");
+      }
+      this.url = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    IsCachingSupportedMessage() {}
+
+    public static final class Builder {
+
+      private @Nullable String url;
+
+      public @NonNull Builder setUrl(@NonNull String setterArg) {
+        this.url = setterArg;
+        return this;
+      }
+
+      public @NonNull IsCachingSupportedMessage build() {
+        IsCachingSupportedMessage pigeonReturn = new IsCachingSupportedMessage();
+        pigeonReturn.setUrl(url);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(url);
+      return toListResult;
+    }
+
+    static @NonNull IsCachingSupportedMessage fromList(@NonNull ArrayList<Object> list) {
+      IsCachingSupportedMessage pigeonResult = new IsCachingSupportedMessage();
+      Object url = list.get(0);
+      pigeonResult.setUrl((String) url);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
   public static final class ClearCacheMessage {
     private @NonNull Long textureId;
 
@@ -711,16 +809,20 @@ public class Messages {
         case (byte) 129:
           return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return LoopingMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return IsCachingSupportedMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return MixWithOthersMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return IsSupportedMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return PlaybackSpeedMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return LoopingMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PositionMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return MixWithOthersMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return TextureMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return PlaybackSpeedMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
+          return PositionMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
+          return TextureMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
           return VolumeMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -735,23 +837,29 @@ public class Messages {
       } else if (value instanceof CreateMessage) {
         stream.write(129);
         writeValue(stream, ((CreateMessage) value).toList());
-      } else if (value instanceof LoopingMessage) {
+      } else if (value instanceof IsCachingSupportedMessage) {
         stream.write(130);
+        writeValue(stream, ((IsCachingSupportedMessage) value).toList());
+      } else if (value instanceof IsSupportedMessage) {
+        stream.write(131);
+        writeValue(stream, ((IsSupportedMessage) value).toList());
+      } else if (value instanceof LoopingMessage) {
+        stream.write(132);
         writeValue(stream, ((LoopingMessage) value).toList());
       } else if (value instanceof MixWithOthersMessage) {
-        stream.write(131);
+        stream.write(133);
         writeValue(stream, ((MixWithOthersMessage) value).toList());
       } else if (value instanceof PlaybackSpeedMessage) {
-        stream.write(132);
+        stream.write(134);
         writeValue(stream, ((PlaybackSpeedMessage) value).toList());
       } else if (value instanceof PositionMessage) {
-        stream.write(133);
+        stream.write(135);
         writeValue(stream, ((PositionMessage) value).toList());
       } else if (value instanceof TextureMessage) {
-        stream.write(134);
+        stream.write(136);
         writeValue(stream, ((TextureMessage) value).toList());
       } else if (value instanceof VolumeMessage) {
-        stream.write(135);
+        stream.write(137);
         writeValue(stream, ((VolumeMessage) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -772,6 +880,9 @@ public class Messages {
     void setLooping(@NonNull LoopingMessage msg);
 
     void setVolume(@NonNull VolumeMessage msg);
+
+    @NonNull 
+    IsSupportedMessage isCacheSupportedForNetworkMedia(@NonNull IsCachingSupportedMessage msg);
 
     void clearCache(@NonNull ClearCacheMessage msg);
 
@@ -901,6 +1012,30 @@ public class Messages {
                 try {
                   api.setVolume(msgArg);
                   wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.AndroidVideoPlayerApi.isCacheSupportedForNetworkMedia", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                IsCachingSupportedMessage msgArg = (IsCachingSupportedMessage) args.get(0);
+                try {
+                  IsSupportedMessage output = api.isCacheSupportedForNetworkMedia(msgArg);
+                  wrapped.add(0, output);
                 }
  catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
