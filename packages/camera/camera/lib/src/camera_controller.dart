@@ -245,12 +245,30 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
   CameraController.withSettings(
     CameraDescription description, {
-    this.mediaSettings,
+    MediaSettings? mediaSettings,
     this.imageFormatGroup,
-  }) : super(CameraValue.uninitialized(description));
+  })  : mediaSettings = mediaSettings ??
+            const MediaSettings(
+                resolutionPreset:
+                    kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
+                enableAudio: true),
+        super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
+
+  /// The resolution this controller is targeting.
+  ///
+  /// This resolution preset is not guaranteed to be available on the device,
+  /// if unavailable a lower resolution will be used.
+  ///
+  /// See also: [ResolutionPreset].
+  ResolutionPreset get resolutionPreset =>
+      mediaSettings.resolutionPreset ??
+      (kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium);
+
+  /// Whether to include audio when recording a video.
+  bool get enableAudio => mediaSettings.enableAudio;
 
   /// The media settings this controller is targeting.
   ///
@@ -258,7 +276,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// if unavailable a lower resolution will be used.
   ///
   /// See also: [MediaSettings].
-  final MediaSettings? mediaSettings;
+  final MediaSettings mediaSettings;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
