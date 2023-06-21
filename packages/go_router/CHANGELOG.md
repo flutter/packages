@@ -1,3 +1,7 @@
+## 8.1.0
+
+- Adds parent navigator key to ShellRoute and StatefulShellRoute.
+
 ## 8.0.5
 
 - Fixes a bug that GoRouterState in top level redirect doesn't contain complete data.
