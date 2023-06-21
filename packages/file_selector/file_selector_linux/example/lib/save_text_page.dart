@@ -17,6 +17,9 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
+    // TODO(stuartmorgan): Update this to getSaveLocation in the next federated
+    // change PR.
+    // ignore: deprecated_member_use
     final String? path = await FileSelectorPlatform.instance.getSavePath(
       // Operation was canceled by the user.
       suggestedName: fileName,
