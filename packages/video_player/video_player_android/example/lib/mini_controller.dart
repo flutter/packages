@@ -334,6 +334,15 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// Returns if caching is supported for network media.
+  Future<bool?> isCachingSupportedForNetworkMedia(String url) async {
+    return _applyIsCachingSupported(url);
+  }
+
+  Future<bool?> _applyIsCachingSupported(String url) async {
+    return _platform.isCacheSupportedForNetworkMedia(url);
+  }
+
   Future<void> _applyPlayPause() async {
     _timer?.cancel();
     if (value.isPlaying) {
