@@ -1,6 +1,6 @@
-## 0.3.2
+## 0.4.0
 
-* Adds support for the `enableAudio` parameter in `availableCameras` method.
+* **BREAKING CHANGE**: Changes behavior of the availableCameras method to not ask for the microphone permission anymore
 
 ## 0.3.1+4
 
