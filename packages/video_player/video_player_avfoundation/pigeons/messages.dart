@@ -30,6 +30,16 @@ class LoopingMessage {
   bool isLooping;
 }
 
+class IsSupportedMessage {
+  IsSupportedMessage(this.isSupported);
+  bool isSupported;
+}
+
+class IsCachingSupportedMessage {
+  IsCachingSupportedMessage(this.url);
+  String url;
+}
+
 class VolumeMessage {
   VolumeMessage(this.textureId, this.volume);
   int textureId;
@@ -83,6 +93,9 @@ abstract class AVFoundationVideoPlayerApi {
   void clearCache(ClearCacheMessage msg);
   @ObjCSelector('setVolume:')
   void setVolume(VolumeMessage msg);
+  @ObjCSelector('isCacheSupportedForNetworkMedia:')
+  IsSupportedMessage isCacheSupportedForNetworkMedia(
+      IsCachingSupportedMessage msg);
   @ObjCSelector('setPlaybackSpeed:')
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
   @ObjCSelector('play:')

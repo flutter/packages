@@ -109,15 +109,12 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late MiniController _controller;
-
   @override
   void initState() {
     super.initState();
+
     _controller = MiniController.network(
-        'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/prog_index.m3u8',
-        maxCacheSize: 100000 * 1024 * 1024, //100mb
-        maxFileSize: 100000 * 1024 * 1024 //10mb
-        );
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
 
     _controller.addListener(() {
       setState(() {});
@@ -152,12 +149,6 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
-          TextButton(
-            onPressed: () {
-              _controller.clearCache();
-            },
-            child: Text('Clear cache'),
-          )
         ],
       ),
     );
