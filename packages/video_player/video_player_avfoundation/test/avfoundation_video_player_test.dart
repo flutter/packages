@@ -24,6 +24,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
   ClearCacheMessage? clearCacheMessage;
+  IsCachingSupportedMessage? isCachingSupportedMessage;
 
   @override
   TextureMessage create(CreateMessage arg) {
@@ -66,6 +67,13 @@ class _ApiLogger implements TestHostVideoPlayerApi {
     log.add('position');
     textureMessage = arg;
     return PositionMessage(textureId: arg.textureId, position: 234);
+  }
+
+  @override
+  IsSupportedMessage isCacheSupportedForNetworkMedia(
+      IsCachingSupportedMessage msg) {
+    log.add('isCacheSupportedForNetworkMedia');
+    return IsSupportedMessage(isSupported: true);
   }
 
   @override
@@ -128,6 +136,13 @@ void main() {
       await player.dispose(1);
       expect(log.log.last, 'dispose');
       expect(log.textureMessage?.textureId, 1);
+    });
+
+    test('can cache .mp4', () async {
+      final bool? isSupported =
+          await player.isCacheSupportedForNetworkMedia('www.video.mp4');
+      expect(log.log.last, 'isCacheSupportedForNetworkMedia');
+      expect(isSupported, true);
     });
 
     test('create with asset', () async {

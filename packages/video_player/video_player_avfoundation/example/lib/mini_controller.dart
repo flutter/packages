@@ -358,6 +358,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     }
   }
 
+  // Clears the media cache
   void _applyClearCache() {
     _platform.clearCache(textureId, true);
   }
@@ -365,6 +366,15 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The position in the current video.
   Future<Duration?> get position async {
     return _platform.getPosition(_textureId);
+  }
+
+  /// Returns if caching is supported for network media.
+  Future<bool?> isCachingSupportedForNetworkMedia(String url) async {
+    return _applyIsCachingSupported(url);
+  }
+
+  Future<bool?> _applyIsCachingSupported(String url) async {
+    return _platform.isCacheSupportedForNetworkMedia(url);
   }
 
   /// Sets the video's current timestamp to be at [position].

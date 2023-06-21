@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class FLTTextureMessage;
 @class FLTLoopingMessage;
+@class FLTIsSupportedMessage;
+@class FLTIsCachingSupportedMessage;
 @class FLTVolumeMessage;
 @class FLTClearCacheMessage;
 @class FLTPlaybackSpeedMessage;
@@ -36,6 +38,20 @@ NS_ASSUME_NONNULL_BEGIN
     isLooping:(NSNumber *)isLooping;
 @property(nonatomic, strong) NSNumber * textureId;
 @property(nonatomic, strong) NSNumber * isLooping;
+@end
+
+@interface FLTIsSupportedMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithIsSupported:(NSNumber *)isSupported;
+@property(nonatomic, strong) NSNumber * isSupported;
+@end
+
+@interface FLTIsCachingSupportedMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithUrl:(NSString *)url;
+@property(nonatomic, copy) NSString * url;
 @end
 
 @interface FLTVolumeMessage : NSObject
@@ -109,6 +125,8 @@ NSObject<FlutterMessageCodec> *FLTAVFoundationVideoPlayerApiGetCodec(void);
 - (void)setLooping:(FLTLoopingMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)clearCache:(FLTClearCacheMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setVolume:(FLTVolumeMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable FLTIsSupportedMessage *)isCacheSupportedForNetworkMedia:(FLTIsCachingSupportedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setPlaybackSpeed:(FLTPlaybackSpeedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)play:(FLTTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.

@@ -78,6 +78,12 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setVolume() has not been implemented.');
   }
 
+  /// Returns true if caching is supported for the mimetype of the network video url.
+  Future<bool?> isCacheSupportedForNetworkMedia(String url) {
+    throw UnimplementedError(
+        'isCacheSupportedForNetworkMedia() has not been implemented.');
+  }
+
   /// Clears the cached videos.
   Future<void> clearCache(int textureId, bool clear) {
     throw UnimplementedError('clearCache() has not been implemented.');
