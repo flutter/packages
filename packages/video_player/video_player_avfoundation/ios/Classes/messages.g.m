@@ -36,6 +36,18 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
+@interface FLTIsSupportedMessage ()
++ (FLTIsSupportedMessage *)fromList:(NSArray *)list;
++ (nullable FLTIsSupportedMessage *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface FLTIsCachingSupportedMessage ()
++ (FLTIsCachingSupportedMessage *)fromList:(NSArray *)list;
++ (nullable FLTIsCachingSupportedMessage *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @interface FLTVolumeMessage ()
 + (FLTVolumeMessage *)fromList:(NSArray *)list;
 + (nullable FLTVolumeMessage *)nullableFromList:(NSArray *)list;
@@ -117,6 +129,50 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     (self.textureId ?: [NSNull null]),
     (self.isLooping ?: [NSNull null]),
+  ];
+}
+@end
+
+@implementation FLTIsSupportedMessage
++ (instancetype)makeWithIsSupported:(NSNumber *)isSupported {
+  FLTIsSupportedMessage* pigeonResult = [[FLTIsSupportedMessage alloc] init];
+  pigeonResult.isSupported = isSupported;
+  return pigeonResult;
+}
++ (FLTIsSupportedMessage *)fromList:(NSArray *)list {
+  FLTIsSupportedMessage *pigeonResult = [[FLTIsSupportedMessage alloc] init];
+  pigeonResult.isSupported = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.isSupported != nil, @"");
+  return pigeonResult;
+}
++ (nullable FLTIsSupportedMessage *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLTIsSupportedMessage fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.isSupported ?: [NSNull null]),
+  ];
+}
+@end
+
+@implementation FLTIsCachingSupportedMessage
++ (instancetype)makeWithUrl:(NSString *)url {
+  FLTIsCachingSupportedMessage* pigeonResult = [[FLTIsCachingSupportedMessage alloc] init];
+  pigeonResult.url = url;
+  return pigeonResult;
+}
++ (FLTIsCachingSupportedMessage *)fromList:(NSArray *)list {
+  FLTIsCachingSupportedMessage *pigeonResult = [[FLTIsCachingSupportedMessage alloc] init];
+  pigeonResult.url = GetNullableObjectAtIndex(list, 0);
+  NSAssert(pigeonResult.url != nil, @"");
+  return pigeonResult;
+}
++ (nullable FLTIsCachingSupportedMessage *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLTIsCachingSupportedMessage fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.url ?: [NSNull null]),
   ];
 }
 @end
@@ -304,16 +360,20 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     case 129: 
       return [FLTCreateMessage fromList:[self readValue]];
     case 130: 
-      return [FLTLoopingMessage fromList:[self readValue]];
+      return [FLTIsCachingSupportedMessage fromList:[self readValue]];
     case 131: 
-      return [FLTMixWithOthersMessage fromList:[self readValue]];
+      return [FLTIsSupportedMessage fromList:[self readValue]];
     case 132: 
-      return [FLTPlaybackSpeedMessage fromList:[self readValue]];
+      return [FLTLoopingMessage fromList:[self readValue]];
     case 133: 
-      return [FLTPositionMessage fromList:[self readValue]];
+      return [FLTMixWithOthersMessage fromList:[self readValue]];
     case 134: 
-      return [FLTTextureMessage fromList:[self readValue]];
+      return [FLTPlaybackSpeedMessage fromList:[self readValue]];
     case 135: 
+      return [FLTPositionMessage fromList:[self readValue]];
+    case 136: 
+      return [FLTTextureMessage fromList:[self readValue]];
+    case 137: 
       return [FLTVolumeMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -331,23 +391,29 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTCreateMessage class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTLoopingMessage class]]) {
+  } else if ([value isKindOfClass:[FLTIsCachingSupportedMessage class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTMixWithOthersMessage class]]) {
+  } else if ([value isKindOfClass:[FLTIsSupportedMessage class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTPlaybackSpeedMessage class]]) {
+  } else if ([value isKindOfClass:[FLTLoopingMessage class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTPositionMessage class]]) {
+  } else if ([value isKindOfClass:[FLTMixWithOthersMessage class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTextureMessage class]]) {
+  } else if ([value isKindOfClass:[FLTPlaybackSpeedMessage class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTVolumeMessage class]]) {
+  } else if ([value isKindOfClass:[FLTPositionMessage class]]) {
     [self writeByte:135];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTextureMessage class]]) {
+    [self writeByte:136];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTVolumeMessage class]]) {
+    [self writeByte:137];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -484,6 +550,25 @@ void FLTAVFoundationVideoPlayerApiSetup(id<FlutterBinaryMessenger> binaryMesseng
         FlutterError *error;
         [api setVolume:arg_msg error:&error];
         callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia"
+        binaryMessenger:binaryMessenger
+        codec:FLTAVFoundationVideoPlayerApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(isCacheSupportedForNetworkMedia:error:)], @"FLTAVFoundationVideoPlayerApi api (%@) doesn't respond to @selector(isCacheSupportedForNetworkMedia:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        FLTIsCachingSupportedMessage *arg_msg = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FLTIsSupportedMessage *output = [api isCacheSupportedForNetworkMedia:arg_msg error:&error];
+        callback(wrapResult(output, error));
       }];
     } else {
       [channel setMessageHandler:nil];
