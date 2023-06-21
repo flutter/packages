@@ -19,6 +19,7 @@ import 'package:pigeon/pigeon.dart';
   swiftOut: 'ios/Runner/Messages.g.swift',
   swiftOptions: SwiftOptions(),
   objcHeaderOut: 'macos/runner/messages_objc.h',
+  objcSourceOut: 'macos/runner/message_objc.m',
   objcOptions: ObjcOptions(),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
