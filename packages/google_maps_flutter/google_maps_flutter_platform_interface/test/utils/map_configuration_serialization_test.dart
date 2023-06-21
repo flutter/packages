@@ -20,27 +20,26 @@ void main() {
 
   test('complete serialization', () async {
     final MapConfiguration config = MapConfiguration(
-      compassEnabled: false,
-      mapToolbarEnabled: false,
-      cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-          northeast: const LatLng(30, 20), southwest: const LatLng(10, 40))),
-      mapType: MapType.normal,
-      minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
-      rotateGesturesEnabled: false,
-      scrollGesturesEnabled: false,
-      tiltGesturesEnabled: false,
-      trackCameraPosition: false,
-      zoomControlsEnabled: false,
-      zoomGesturesEnabled: false,
-      liteModeEnabled: false,
-      myLocationEnabled: false,
-      myLocationButtonEnabled: false,
-      padding: const EdgeInsets.all(5.0),
-      indoorViewEnabled: false,
-      trafficEnabled: false,
-      buildingsEnabled: false,
-      cloudMapId: _kCloudMapId
-    );
+        compassEnabled: false,
+        mapToolbarEnabled: false,
+        cameraTargetBounds: CameraTargetBounds(LatLngBounds(
+            northeast: const LatLng(30, 20), southwest: const LatLng(10, 40))),
+        mapType: MapType.normal,
+        minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
+        rotateGesturesEnabled: false,
+        scrollGesturesEnabled: false,
+        tiltGesturesEnabled: false,
+        trackCameraPosition: false,
+        zoomControlsEnabled: false,
+        zoomGesturesEnabled: false,
+        liteModeEnabled: false,
+        myLocationEnabled: false,
+        myLocationButtonEnabled: false,
+        padding: const EdgeInsets.all(5.0),
+        indoorViewEnabled: false,
+        trafficEnabled: false,
+        buildingsEnabled: false,
+        cloudMapId: _kCloudMapId);
 
     final Map<String, Object> json = jsonForMapConfiguration(config);
 
