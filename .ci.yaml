@@ -87,7 +87,8 @@ targets:
       target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 3"
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux dart_unit_test_shard_2 master
     bringup: true # New target
@@ -97,17 +98,8 @@ targets:
       target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 3"
-
-  - name: Linux dart_unit_test_shard_3 master
-    bringup: true # New target
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: dart_unit_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 2 --shardCount 3"
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux dart_unit_test_shard_1 stable
     bringup: true # New target
@@ -117,7 +109,8 @@ targets:
       target_file: dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 3"
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux dart_unit_test_shard_2 stable
     bringup: true # New target
@@ -127,17 +120,8 @@ targets:
       target_file: dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 3"
-
-  - name: Linux dart_unit_test_shard_3 stable
-    bringup: true # New target
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: dart_unit_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 2 --shardCount 3"
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux analyze master
     bringup: true # New target
