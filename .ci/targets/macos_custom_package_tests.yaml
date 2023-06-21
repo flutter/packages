@@ -7,3 +7,4 @@ tasks:
     script: .ci/scripts/custom_package_tests.sh
   - name: remove simulator
     script: .ci/scripts/remove_simulator.sh
+    always: true
