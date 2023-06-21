@@ -121,9 +121,7 @@ Future<void> main(List<String> args) async {
   ];
   const List<String> macOSHostTests = <String>[
     iOSObjCUnitTests,
-    // TODO(stuartmorgan): Enable by default once CI issues are solved; see
-    // https://github.com/flutter/packages/pull/2816.
-    //iOSObjCIntegrationTests,
+    iOSObjCIntegrationTests,
     // Currently these are testing exactly the same thing as
     // macOSSwiftIntegrationTests, so we don't need to run both by default. This
     // should be enabled if any iOS-only tests are added (e.g., for a feature

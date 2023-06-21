@@ -8,6 +8,7 @@ import 'dart:html' as html;
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:mime/mime.dart' as mime;
 
 import 'src/image_resizer.dart';
 
@@ -166,7 +167,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     return files.first;
   }
 
-  /// Injects a file input, and returns a list of XFile that the user selected locally.
+  /// Injects a file input, and returns a list of XFile images that the user selected locally.
   @override
   Future<List<XFile>> getMultiImage({
     double? maxWidth,
@@ -185,6 +186,30 @@ class ImagePickerPlugin extends ImagePickerPlatform {
         imageQuality,
       ),
     );
+
+    return Future.wait<XFile>(resized);
+  }
+
+  /// Injects a file input, and returns a list of XFile media that the user selected locally.
+  @override
+  Future<List<XFile>> getMedia({
+    required MediaOptions options,
+  }) async {
+    final List<XFile> images = await getFiles(
+      accept: '$_kAcceptImageMimeType,$_kAcceptVideoMimeType',
+      multiple: options.allowMultiple,
+    );
+    final Iterable<Future<XFile>> resized = images.map((XFile media) {
+      if (mime.lookupMimeType(media.path)?.startsWith('image/') ?? false) {
+        return _imageResizer.resizeImageIfNeeded(
+          media,
+          options.imageOptions.maxWidth,
+          options.imageOptions.maxHeight,
+          options.imageOptions.imageQuality,
+        );
+      }
+      return Future<XFile>.value(media);
+    });
 
     return Future.wait<XFile>(resized);
   }

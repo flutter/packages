@@ -23,6 +23,27 @@ platform_properties:
           {"dependency": "open_jdk", "version": "version:11"},
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
+  linux_desktop:
+    properties:
+      os: Ubuntu
+      cores: "8"
+      device_type: none
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"},
+          {"dependency": "curl", "version": "version:7.64.0"}
+        ]
+  linux_web:
+    properties:
+      os: Ubuntu
+      cores: "8"
+      device_type: none
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+        ]
   windows:
     properties:
       dependencies: >
@@ -59,7 +80,7 @@ platform_properties:
         }
 
 targets:
-  ### Linux tasks ###
+  ### Linux-host general tasks ###
   - name: Linux repo_tools_tests
     recipe: packages/packages
     timeout: 30
@@ -68,6 +89,42 @@ targets:
       target_file: repo_tools_tests.yaml
       channel: master
       version_file: flutter_master.version
+
+  - name: Linux analyze master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze.yaml
+      channel: master
+      version_file: flutter_master.version
+
+  - name: Linux analyze stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze.yaml
+      channel: stable
+      version_file: flutter_stable.version
+
+  - name: Linux analyze_downgraded master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_downgraded.yaml
+      channel: master
+      version_file: flutter_master.version
+
+  - name: Linux analyze_downgraded stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_downgraded.yaml
+      channel: stable
+      version_file: flutter_stable.version
 
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
@@ -88,6 +145,42 @@ targets:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: android_build_all_packages.yaml
+      channel: stable
+
+  ### Web tasks ###
+  - name: Linux_web web_build_all_packages master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: web_build_all_packages.yaml
+      channel: master
+
+  - name: Linux_web web_build_all_packages stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      target_file: web_build_all_packages.yaml
+      channel: stable
+
+  ### Linux desktop tasks
+  - name: Linux_desktop build_all_packages master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: linux_build_all_packages.yaml
+      channel: master
+
+  - name: Linux_desktop build_all_packages stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      target_file: linux_build_all_packages.yaml
       channel: stable
 
   ### iOS+macOS tasks ###
@@ -176,7 +269,6 @@ targets:
       target_file: ios_build_all_packages.yaml
 
   - name: Mac_x64 ios_build_all_packages stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
