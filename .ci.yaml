@@ -12,6 +12,8 @@ platform_properties:
   linux:
     properties:
       os: Linux
+      cores: "8"
+      device_type: none
   linux_desktop:
     properties:
       os: Ubuntu
