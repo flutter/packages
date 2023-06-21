@@ -80,17 +80,23 @@ class UniformsSetter {
     }
   }
 
-  void setColor(Color color) {
-    shader
-      ..setFloat(_index++, color.red.toDouble() / 255)
-      ..setFloat(_index++, color.green.toDouble() / 255)
-      ..setFloat(_index++, color.blue.toDouble() / 255)
-      ..setFloat(_index++, color.opacity);
+  void setColor(Color color, {bool premultiply = true}) {
+    final double multiplier;
+    if (premultiply) {
+      multiplier = color.opacity;
+    } else {
+      multiplier = 1.0;
+    }
+
+    setFloat(color.red / 255 * multiplier);
+    setFloat(color.green / 255 * multiplier);
+    setFloat(color.blue / 255 * multiplier);
+    setFloat(color.opacity);
   }
 
-  void setColors(List<Color> colors) {
+  void setColors(List<Color> colors, {bool premultiply = false}) {
     for (final color in colors) {
-      setColor(color);
+      setColor(color, premultiply: premultiply);
     }
   }
 
