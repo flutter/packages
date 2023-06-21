@@ -80,7 +80,7 @@ class UniformsSetter {
     }
   }
 
-  void setColor(Color color, {bool premultiply = true}) {
+  void setColor(Color color, {bool premultiply = false}) {
     final double multiplier;
     if (premultiply) {
       multiplier = color.opacity;
