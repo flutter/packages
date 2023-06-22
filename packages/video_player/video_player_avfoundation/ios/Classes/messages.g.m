@@ -205,19 +205,15 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FLTClearCacheMessage
-+ (instancetype)makeWithTextureId:(NSNumber *)textureId
-    clear:(NSNumber *)clear {
++ (instancetype)makeWithTextureId:(NSNumber *)textureId {
   FLTClearCacheMessage* pigeonResult = [[FLTClearCacheMessage alloc] init];
   pigeonResult.textureId = textureId;
-  pigeonResult.clear = clear;
   return pigeonResult;
 }
 + (FLTClearCacheMessage *)fromList:(NSArray *)list {
   FLTClearCacheMessage *pigeonResult = [[FLTClearCacheMessage alloc] init];
   pigeonResult.textureId = GetNullableObjectAtIndex(list, 0);
   NSAssert(pigeonResult.textureId != nil, @"");
-  pigeonResult.clear = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.clear != nil, @"");
   return pigeonResult;
 }
 + (nullable FLTClearCacheMessage *)nullableFromList:(NSArray *)list {
@@ -226,7 +222,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList {
   return @[
     (self.textureId ?: [NSNull null]),
-    (self.clear ?: [NSNull null]),
   ];
 }
 @end
@@ -290,7 +285,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     uri:(nullable NSString *)uri
     packageName:(nullable NSString *)packageName
     formatHint:(nullable NSString *)formatHint
-    cache:(NSNumber *)cache
+    cache:(nullable NSNumber *)cache
     httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders {
   FLTCreateMessage* pigeonResult = [[FLTCreateMessage alloc] init];
   pigeonResult.asset = asset;
@@ -308,7 +303,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.packageName = GetNullableObjectAtIndex(list, 2);
   pigeonResult.formatHint = GetNullableObjectAtIndex(list, 3);
   pigeonResult.cache = GetNullableObjectAtIndex(list, 4);
-  NSAssert(pigeonResult.cache != nil, @"");
   pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 5);
   NSAssert(pigeonResult.httpHeaders != nil, @"");
   return pigeonResult;

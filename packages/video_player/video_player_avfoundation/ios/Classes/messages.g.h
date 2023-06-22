@@ -66,10 +66,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTClearCacheMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSNumber *)textureId
-    clear:(NSNumber *)clear;
++ (instancetype)makeWithTextureId:(NSNumber *)textureId;
 @property(nonatomic, strong) NSNumber * textureId;
-@property(nonatomic, strong) NSNumber * clear;
 @end
 
 @interface FLTPlaybackSpeedMessage : NSObject
@@ -97,13 +95,13 @@ NS_ASSUME_NONNULL_BEGIN
     uri:(nullable NSString *)uri
     packageName:(nullable NSString *)packageName
     formatHint:(nullable NSString *)formatHint
-    cache:(NSNumber *)cache
+    cache:(nullable NSNumber *)cache
     httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
 @property(nonatomic, copy, nullable) NSString * asset;
 @property(nonatomic, copy, nullable) NSString * uri;
 @property(nonatomic, copy, nullable) NSString * packageName;
 @property(nonatomic, copy, nullable) NSString * formatHint;
-@property(nonatomic, strong) NSNumber * cache;
+@property(nonatomic, strong, nullable) NSNumber * cache;
 @property(nonatomic, strong) NSDictionary<NSString *, NSString *> * httpHeaders;
 @end
 

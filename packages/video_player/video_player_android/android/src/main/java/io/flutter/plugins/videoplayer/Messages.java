@@ -295,19 +295,6 @@ public class Messages {
       this.textureId = setterArg;
     }
 
-    private @NonNull Boolean clear;
-
-    public @NonNull Boolean getClear() {
-      return clear;
-    }
-
-    public void setClear(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"clear\" is null.");
-      }
-      this.clear = setterArg;
-    }
-
     /** Constructor is non-public to enforce null safety; use Builder. */
     ClearCacheMessage() {}
 
@@ -320,26 +307,17 @@ public class Messages {
         return this;
       }
 
-      private @Nullable Boolean clear;
-
-      public @NonNull Builder setClear(@NonNull Boolean setterArg) {
-        this.clear = setterArg;
-        return this;
-      }
-
       public @NonNull ClearCacheMessage build() {
         ClearCacheMessage pigeonReturn = new ClearCacheMessage();
         pigeonReturn.setTextureId(textureId);
-        pigeonReturn.setClear(clear);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
       toListResult.add(textureId);
-      toListResult.add(clear);
       return toListResult;
     }
 
@@ -347,8 +325,6 @@ public class Messages {
       ClearCacheMessage pigeonResult = new ClearCacheMessage();
       Object textureId = list.get(0);
       pigeonResult.setTextureId((textureId == null) ? null : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
-      Object clear = list.get(1);
-      pigeonResult.setClear((Boolean) clear);
       return pigeonResult;
     }
   }

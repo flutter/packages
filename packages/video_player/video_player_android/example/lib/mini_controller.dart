@@ -364,7 +364,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   }
 
   Future<void> _applyClearCache() async {
-    await _platform.clearCache(_textureId, true);
+    await _platform.clearCache(_textureId);
   }
 
   Future<void> _applyPlaybackSpeed() async {

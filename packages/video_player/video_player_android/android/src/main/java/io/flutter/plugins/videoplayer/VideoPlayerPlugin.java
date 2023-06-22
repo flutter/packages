@@ -182,7 +182,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
 
   public void clearCache(Messages.ClearCacheMessage msg) {
     VideoPlayer player = videoPlayers.get(msg.getTextureId());
-    Log.d(TAG, "Clear cache: " + msg.getClear());
+    Log.d(TAG, "Clear cache");
     VideoCache.clearVideoCache(flutterState.applicationContext);
   }
 
