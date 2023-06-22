@@ -59,7 +59,7 @@ When under high memory pressure the Android system may kill the MainActivity of
 the application using the image_picker. On Android the image_picker makes use
 of the default `Intent.ACTION_GET_CONTENT` or `MediaStore.ACTION_IMAGE_CAPTURE`
 intents. This means that while the intent is executing the source application
-is moved to the background and becomes eligable for cleanup when the system is
+is moved to the background and becomes eligible for cleanup when the system is
 low on memory. When the intent finishes executing, Android will restart the
 application. Since the data is never returned to the original call use the
 `ImagePicker.retrieveLostData()` method to retrieve the lost data. For example:
@@ -180,6 +180,10 @@ final XFile? galleryVideo =
 final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
 // Pick multiple images.
 final List<XFile> images = await picker.pickMultiImage();
+// Pick singe image or video.
+final XFile? media = await picker.pickMedia();
+// Pick multiple images and videos.
+final List<XFile> medias = await picker.pickMultipleMedia();
 ```
 
 ## Migrating to 0.8.2+

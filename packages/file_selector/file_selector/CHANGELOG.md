@@ -1,6 +1,5 @@
-## 0.9.4
+## NEXT
 
-* Adds `getSaveLocation` and deprecates `getSavePath`.
 * Updates minimum supported macOS version to 10.14.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
