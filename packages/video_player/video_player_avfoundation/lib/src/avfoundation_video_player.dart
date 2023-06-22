@@ -78,11 +78,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> clearCache(int textureId, bool clear) {
-    return _api.clearCache(ClearCacheMessage(
-      textureId: textureId,
-      clear: clear,
-    ));
+  Future<void> clearCache(int textureId) {
+    return _api.clearCache(ClearCacheMessage(textureId: textureId));
   }
 
   @override

@@ -105,7 +105,7 @@ void main() {
 
     testWidgets('can clear cache', (WidgetTester tester) async {
       expect(
-        VideoPlayerPlatform.instance.clearCache(await textureId, true),
+        VideoPlayerPlatform.instance.clearCache(await textureId),
         completes,
       );
     });
