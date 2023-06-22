@@ -145,8 +145,7 @@ class RouteBuilder {
     if (matchList.isError) {
       keyToPage = <GlobalKey<NavigatorState>, List<Page<Object?>>>{
         navigatorKey: <Page<Object?>>[
-          _buildErrorPage(
-              context, _buildErrorState(matchList.error!, matchList.uri)),
+          _buildErrorPage(context, _buildErrorState(matchList)),
         ]
       };
     } else {
@@ -205,77 +204,73 @@ class RouteBuilder {
       keyToPages.putIfAbsent(navigatorKey, () => <Page<Object?>>[]).add(page);
       _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
           routerNeglect, keyToPages, navigatorKey, registry);
-    } else if (route is GoRoute) {
-      page = _buildPageForGoRoute(context, state, match, route, pagePopContext);
-      // If this GoRoute is for a different Navigator, add it to the
+    } else {
+      // If this RouteBase is for a different Navigator, add it to the
       // list of out of scope pages
-      final GlobalKey<NavigatorState> goRouteNavKey =
+      final GlobalKey<NavigatorState> routeNavKey =
           route.parentNavigatorKey ?? navigatorKey;
+      if (route is GoRoute) {
+        page =
+            _buildPageForGoRoute(context, state, match, route, pagePopContext);
 
-      keyToPages.putIfAbsent(goRouteNavKey, () => <Page<Object?>>[]).add(page);
+        keyToPages.putIfAbsent(routeNavKey, () => <Page<Object?>>[]).add(page);
 
-      _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
-          routerNeglect, keyToPages, navigatorKey, registry);
-    } else if (route is ShellRouteBase) {
-      assert(startIndex + 1 < matchList.matches.length,
-          'Shell routes must always have child routes');
-      // The key for the Navigator that will display this ShellRoute's page.
-      final GlobalKey<NavigatorState> parentNavigatorKey = navigatorKey;
+        _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
+            routerNeglect, keyToPages, navigatorKey, registry);
+      } else if (route is ShellRouteBase) {
+        assert(startIndex + 1 < matchList.matches.length,
+            'Shell routes must always have child routes');
 
-      // Add an entry for the parent navigator if none exists.
-      keyToPages.putIfAbsent(parentNavigatorKey, () => <Page<Object?>>[]);
+        // Add an entry for the parent navigator if none exists.
+        //
+        // Calling _buildRecursive can result in adding pages to the
+        // parentNavigatorKey entry's list. Store the current length so
+        // that the page for this ShellRoute is placed at the right index.
+        final int shellPageIdx =
+            keyToPages.putIfAbsent(routeNavKey, () => <Page<Object?>>[]).length;
 
-      // Calling _buildRecursive can result in adding pages to the
-      // parentNavigatorKey entry's list. Store the current length so
-      // that the page for this ShellRoute is placed at the right index.
-      final int shellPageIdx = keyToPages[parentNavigatorKey]!.length;
+        // Find the the navigator key for the sub-route of this shell route.
+        final RouteBase subRoute = matchList.matches[startIndex + 1].route;
+        final GlobalKey<NavigatorState> shellNavigatorKey =
+            route.navigatorKeyForSubRoute(subRoute);
 
-      // Get the current sub-route of this shell route from the match list.
-      final RouteBase subRoute = matchList.matches[startIndex + 1].route;
+        keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<Object?>>[]);
 
-      // The key to provide to the shell route's Navigator.
-      final GlobalKey<NavigatorState> shellNavigatorKey =
-          route.navigatorKeyForSubRoute(subRoute);
+        // Build the remaining pages
+        _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
+            routerNeglect, keyToPages, shellNavigatorKey, registry);
 
-      // Add an entry for the shell route's navigator
-      keyToPages.putIfAbsent(shellNavigatorKey, () => <Page<Object?>>[]);
+        final HeroController heroController = _goHeroCache.putIfAbsent(
+            shellNavigatorKey, () => _getHeroController(context));
 
-      // Build the remaining pages
-      _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
-          routerNeglect, keyToPages, shellNavigatorKey, registry);
+        // Build the Navigator for this shell route
+        Widget buildShellNavigator(
+            List<NavigatorObserver>? observers, String? restorationScopeId) {
+          return _buildNavigator(
+            pagePopContext.onPopPage,
+            keyToPages[shellNavigatorKey]!,
+            shellNavigatorKey,
+            observers: observers ?? const <NavigatorObserver>[],
+            restorationScopeId: restorationScopeId,
+            heroController: heroController,
+          );
+        }
 
-      final HeroController heroController = _goHeroCache.putIfAbsent(
-          shellNavigatorKey, () => _getHeroController(context));
-
-      // Build the Navigator for this shell route
-      Widget buildShellNavigator(
-          List<NavigatorObserver>? observers, String? restorationScopeId) {
-        return _buildNavigator(
-          pagePopContext.onPopPage,
-          keyToPages[shellNavigatorKey]!,
-          shellNavigatorKey,
-          observers: observers ?? const <NavigatorObserver>[],
-          restorationScopeId: restorationScopeId,
-          heroController: heroController,
+        // Call the ShellRouteBase to create/update the shell route state
+        final ShellRouteContext shellRouteContext = ShellRouteContext(
+          route: route,
+          routerState: state,
+          navigatorKey: shellNavigatorKey,
+          routeMatchList: matchList,
+          navigatorBuilder: buildShellNavigator,
         );
+
+        // Build the Page for this route
+        page = _buildPageForShellRoute(
+            context, state, match, route, pagePopContext, shellRouteContext);
+        // Place the ShellRoute's Page onto the list for the parent navigator.
+        keyToPages[routeNavKey]!.insert(shellPageIdx, page);
       }
-
-      // Call the ShellRouteBase to create/update the shell route state
-      final ShellRouteContext shellRouteContext = ShellRouteContext(
-        route: route,
-        routerState: state,
-        navigatorKey: shellNavigatorKey,
-        routeMatchList: matchList,
-        navigatorBuilder: buildShellNavigator,
-      );
-
-      // Build the Page for this route
-      page = _buildPageForShellRoute(
-          context, state, match, route, pagePopContext, shellRouteContext);
-      // Place the ShellRoute's Page onto the list for the parent navigator.
-      keyToPages
-          .putIfAbsent(parentNavigatorKey, () => <Page<Object?>>[])
-          .insert(shellPageIdx, page);
     }
     if (page != null) {
       registry[page] = state;
@@ -325,8 +320,7 @@ class RouteBuilder {
     if (match is ImperativeRouteMatch) {
       effectiveMatchList = match.matches;
       if (effectiveMatchList.isError) {
-        return _buildErrorState(
-            effectiveMatchList.error!, effectiveMatchList.uri);
+        return _buildErrorState(effectiveMatchList);
       }
     } else {
       effectiveMatchList = matchList;
@@ -491,19 +485,18 @@ class RouteBuilder {
         child: child,
       );
 
-  GoRouterState _buildErrorState(
-    Exception error,
-    Uri uri,
-  ) {
-    final String location = uri.toString();
+  GoRouterState _buildErrorState(RouteMatchList matchList) {
+    final String location = matchList.uri.toString();
+    assert(matchList.isError);
     return GoRouterState(
       configuration,
       location: location,
-      matchedLocation: uri.path,
-      name: null,
-      queryParameters: uri.queryParameters,
-      queryParametersAll: uri.queryParametersAll,
-      error: error,
+      matchedLocation: matchList.uri.path,
+      fullPath: matchList.fullPath,
+      pathParameters: matchList.pathParameters,
+      queryParameters: matchList.uri.queryParameters,
+      queryParametersAll: matchList.uri.queryParametersAll,
+      error: matchList.error,
       pageKey: ValueKey<String>('$location(error)'),
     );
   }

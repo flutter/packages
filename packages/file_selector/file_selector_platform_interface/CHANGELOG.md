@@ -1,3 +1,7 @@
+## 2.6.0
+
+* Adds `getSaveLocation` and deprecates `getSavePath`.
+
 ## 2.5.1
 
 * Adds compatibility with `http` 1.0.
