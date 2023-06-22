@@ -120,6 +120,38 @@ typedef NS_ENUM(NSInteger, FLTResolutionPreset) {
  */
 extern FLTResolutionPreset FLTGetFLTResolutionPresetForString(NSString *preset);
 
+#pragma mark - capture mode
+
+/**
+ * Represents camera's capture mode. Mirrors CaptureMode in camera.dart.
+ */
+typedef NS_ENUM(NSInteger, FLTCaptureMode) {
+  FLTCaptureModePhoto,
+  FLTCaptureModeVideo,
+};
+
+/**
+ * Gets FLTCaptureMode from its string representation.
+ * @param mode a string representation of FLTCaptureMode.
+ */
+extern FLTCaptureMode FLTGetFLTCaptureModeForString(NSString *mode);
+
+#pragma mark - aspect ratio preset
+
+/**
+ * Represents camera's aspect ratio preset. Mirrors AspectRatioPreset in camera.dart.
+ */
+typedef NS_ENUM(NSInteger, FLTAspectRatioPreset) {
+  FLTAspectRatioPresetStandard,
+  FLTAspectRatioPresetWideScreen,
+};
+
+/**
+ * Gets FLTAspectRatioPreset from its string representation.
+ * @param preset a string representation of FLTAspectRatioPreset.
+ */
+extern FLTAspectRatioPreset FLTGetFLTAspectRatioPresetForString(NSString *preset);
+
 #pragma mark - video format
 
 /**
