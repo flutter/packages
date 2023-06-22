@@ -125,6 +125,15 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: prefix),
+      ),
+    );
+  }
+
+  @override
   Future<bool> clearWithParameters(ClearParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
     if (filter.allowList != null) {
@@ -141,6 +150,15 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
     return getAllWithParameters(
       GetAllParameters(
         filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: prefix),
       ),
     );
   }
