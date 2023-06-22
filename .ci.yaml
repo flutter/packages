@@ -12,6 +12,17 @@ platform_properties:
   linux:
     properties:
       os: Linux
+  linux_android:
+    properties:
+      os: Ubuntu
+      cores: "8"
+      device_type: none
+      dependencies: >-
+        [
+          {"dependency": "android_sdk", "version": "version:33v6"},
+          {"dependency": "open_jdk", "version": "version:11"},
+          {"dependency": "curl", "version": "version:7.64.0"}
+        ]
   linux_desktop:
     properties:
       os: Ubuntu
@@ -114,6 +125,27 @@ targets:
       target_file: analyze_downgraded.yaml
       channel: stable
       version_file: flutter_stable.version
+
+  ### Android tasks ###
+  - name: Linux_android android_build_all_packages master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: android_build_all_packages.yaml
+      channel: master
+
+  - name: Linux_android android_build_all_packages stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: android_build_all_packages.yaml
+      channel: stable
 
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
