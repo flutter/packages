@@ -170,9 +170,13 @@ ${response.httpResponse.body}
       if (!await _regeneratePigeonFiles(package)) {
         return PackageResult.fail(<String>['Failed to update pigeon files']);
       }
+    } else if (dependency == 'mockito') {
+      if (!await _regenerateMocks(package)) {
+        return PackageResult.fail(<String>['Failed to update mocks']);
+      }
     }
     // TODO(stuartmorgan): Add additional handling of known packages that
-    // do file generation (mockito, etc.).
+    // do file generation.
 
     return PackageResult.success();
   }
@@ -255,6 +259,43 @@ ${response.httpResponse.body}
             '${pigeonResult.stdout}\n${pigeonResult.stderr}\n');
         return false;
       }
+    }
+    return true;
+  }
+
+  /// Re-runs Mockito mock generation for [package] if necessary.
+  Future<bool> _regenerateMocks(RepositoryPackage package) async {
+    final Pubspec pubspec = package.parsePubspec();
+    if (!pubspec.devDependencies.keys.contains('build_runner')) {
+      print(
+          '${indentation}No build_runner dependency; skipping mock regeneration.');
+      return true;
+    }
+
+    print('${indentation}Running pub get...');
+    final io.ProcessResult getResult = await processRunner
+        .run('dart', <String>['pub', 'get'], workingDir: package.directory);
+    if (getResult.exitCode != 0) {
+      printError('dart pub get failed (${getResult.exitCode}):\n'
+          '${getResult.stdout}\n${getResult.stderr}\n');
+      return false;
+    }
+
+    print('${indentation}Updating mocks...');
+    final io.ProcessResult buildRunnerResult = await processRunner.run(
+        'dart',
+        <String>[
+          'run',
+          'build_runner',
+          'build',
+          '--delete-conflicting-outputs'
+        ],
+        workingDir: package.directory);
+    if (buildRunnerResult.exitCode != 0) {
+      printError(
+          '"dart run build_runner build" failed (${buildRunnerResult.exitCode}):\n'
+          '${buildRunnerResult.stdout}\n${buildRunnerResult.stderr}\n');
+      return false;
     }
     return true;
   }

@@ -2589,6 +2589,33 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(Arrays.asList(instanceIdArg, requestInstanceIdArg)),
           channelReply -> callback.reply(null));
     }
+    /** Callback to Dart function `WebChromeClient.onGeolocationPermissionsShowPrompt`. */
+    public void onGeolocationPermissionsShowPrompt(
+        @NonNull Long instanceIdArg,
+        @NonNull Long paramsInstanceIdArg,
+        @NonNull String originArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, paramsInstanceIdArg, originArg)),
+          channelReply -> callback.reply(null));
+    }
+    /** Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`. */
+    public void onGeolocationPermissionsHidePrompt(
+        @NonNull Long identifierArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsHidePrompt",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          channelReply -> callback.reply(null));
+    }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface WebStorageHostApi {
@@ -2836,6 +2863,108 @@ public class GeneratedAndroidWebView {
               binaryMessenger, "dev.flutter.pigeon.PermissionRequestFlutterApi.create", getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, resourcesArg)),
+          channelReply -> callback.reply(null));
+    }
+  }
+  /**
+   * Host API for `GeolocationPermissionsCallback`.
+   *
+   * <p>This class may handle instantiating and adding native object instances that are attached to
+   * a Dart instance or handle method calls on the associated native class or an instance of the
+   * class.
+   *
+   * <p>See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface GeolocationPermissionsCallbackHostApi {
+    /** Handles Dart method `GeolocationPermissionsCallback.invoke`. */
+    void invoke(
+        @NonNull Long instanceId,
+        @NonNull String origin,
+        @NonNull Boolean allow,
+        @NonNull Boolean retain);
+
+    /** The codec used by GeolocationPermissionsCallbackHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `GeolocationPermissionsCallbackHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger,
+        @Nullable GeolocationPermissionsCallbackHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                String originArg = (String) args.get(1);
+                Boolean allowArg = (Boolean) args.get(2);
+                Boolean retainArg = (Boolean) args.get(3);
+                try {
+                  api.invoke(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(),
+                      originArg,
+                      allowArg,
+                      retainArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /**
+   * Flutter API for `GeolocationPermissionsCallback`.
+   *
+   * <p>This class may handle instantiating and adding Dart instances that are attached to a native
+   * instance or receiving callback methods from an overridden native class.
+   *
+   * <p>See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+   *
+   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   */
+  public static class GeolocationPermissionsCallbackFlutterApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public GeolocationPermissionsCallbackFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    @SuppressWarnings("UnknownNullness")
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by GeolocationPermissionsCallbackFlutterApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /** Create a new Dart instance and add it to the `InstanceManager`. */
+    public void create(@NonNull Long instanceIdArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.GeolocationPermissionsCallbackFlutterApi.create",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(instanceIdArg)),
           channelReply -> callback.reply(null));
     }
   }

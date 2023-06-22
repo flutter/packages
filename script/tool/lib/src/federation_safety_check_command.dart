@@ -53,6 +53,9 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
   final String name = 'federation-safety-check';
 
   @override
+  List<String> get aliases => <String>['check-federation-safety'];
+
+  @override
   final String description =
       'Checks that the change does not violate repository rules around changes '
       'to federated plugin packages.';
