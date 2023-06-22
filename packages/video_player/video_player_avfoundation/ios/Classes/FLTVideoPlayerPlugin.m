@@ -792,12 +792,14 @@ NS_INLINE UIViewController *rootViewController(void) {
   return @([AVPictureInPictureController isPictureInPictureSupported]);
 }
 
-- (void)setAutomaticallyStartsPictureInPicture:(FLTAutomaticallyStartsPictureInPictureMessage *)input
-                                        error:(FlutterError **)error {
+- (void)setAutomaticallyStartsPictureInPicture:
+            (FLTAutomaticallyStartsPictureInPictureMessage *)input
+                                         error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
   [player
-      setAutomaticallyStartsPictureInPicture:input.enableStartPictureInPictureAutomaticallyFromInline
-                                                .boolValue];
+      setAutomaticallyStartsPictureInPicture:input
+                                                 .enableStartPictureInPictureAutomaticallyFromInline
+                                                 .boolValue];
 }
 
 - (void)setPictureInPictureOverlayRect:(FLTSetPictureInPictureOverlayRectMessage *)input

@@ -24,7 +24,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^8.0.0
+  pigeon: ^9.2.4
 
 
 # FOR TESTING ONLY. DO NOT MERGE.

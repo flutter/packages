@@ -1,6 +1,6 @@
 ## NEXT
 
-* Adds support for picture-in-picture on iOS.
+* Adds support for picture-in-picture.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 2.4.6
