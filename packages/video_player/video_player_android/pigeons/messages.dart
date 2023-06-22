@@ -35,9 +35,8 @@ class IsCachingSupportedMessage {
 }
 
 class ClearCacheMessage {
-  ClearCacheMessage(this.textureId, this.clear);
+  ClearCacheMessage(this.textureId);
   int textureId;
-  bool clear;
 }
 
 class VolumeMessage {

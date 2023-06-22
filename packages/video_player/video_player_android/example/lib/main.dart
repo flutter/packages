@@ -110,16 +110,12 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late MiniController _controller;
 
-  final String supportedNetworkMediaUrl =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
-  final String noSupportedNetworkMediaUrl =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.m3u8';
-
   @override
   void initState() {
     super.initState();
 
-    _controller = MiniController.network(supportedNetworkMediaUrl);
+    _controller = MiniController.network(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
 
     _controller.addListener(() {
       setState(() {});
@@ -163,7 +159,8 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
           TextButton(
             onPressed: () {
               _controller
-                  .isCachingSupportedForNetworkMedia(noSupportedNetworkMediaUrl)
+                  .isCachingSupportedForNetworkMedia(
+                      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
                   .then((bool? value) => {
                         print(value ?? false
                             ? 'Caching is supported for mime type'
