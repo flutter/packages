@@ -165,7 +165,7 @@ void main() {
       expect(textureId, 3);
     });
 
-    test('can cache .mp4', () async {
+    test('can check is supported', () async {
       final bool? isSupported =
           await player.isCacheSupportedForNetworkMedia('www.video.mp4');
       expect(log.log.last, 'isCacheSupportedForNetworkMedia');
@@ -200,8 +200,8 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
-      expect(log.createMessage?.maxCacheSize, 0);
-      expect(log.createMessage?.maxFileSize, 0);
+      expect(log.createMessage?.maxCacheSize, null);
+      expect(log.createMessage?.maxFileSize, null);
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, null);
       expect(log.createMessage?.httpHeaders,
