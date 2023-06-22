@@ -167,8 +167,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  MiniController.asset(this.dataSource,
-      {this.package, this.maxCacheSize, this.maxFileSize})
+  MiniController.asset(this.dataSource, {this.package})
       : dataSourceType = DataSourceType.asset,
         super(const VideoPlayerValue(duration: Duration.zero));
 
@@ -180,7 +179,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from a file.
-  MiniController.file(File file, {this.maxCacheSize, this.maxFileSize})
+  MiniController.file(File file)
       : dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
@@ -197,11 +196,11 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
 
-  /// Only set for [network] videos.
-  final int? maxCacheSize;
+  /// Only for [network] videos.
+  int? maxCacheSize;
 
-  /// Only set for [network] videos.
-  final int? maxFileSize;
+  /// Only for [network] videos.
+  int? maxFileSize;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
