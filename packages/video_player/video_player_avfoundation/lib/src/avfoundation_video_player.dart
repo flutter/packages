@@ -192,18 +192,18 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> setPictureInPictureOverlayRect({
+  Future<void> setPictureInPictureOverlaySettings({
     required int textureId,
-    required Rect rect,
+    required PictureInPictureOverlaySettings settings,
   }) {
-    return _api.setPictureInPictureOverlayRect(
-      SetPictureInPictureOverlayRectMessage(
+    return _api.setPictureInPictureOverlaySettings(
+      SetPictureInPictureOverlaySettingsMessage(
         textureId: textureId,
-        rect: PictureInPictureOverlayRect(
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height,
+        settings: PictureInPictureOverlaySettingsMessage(
+          top: settings.top,
+          left: settings.left,
+          width: settings.width,
+          height: settings.height,
         ),
       ),
     );

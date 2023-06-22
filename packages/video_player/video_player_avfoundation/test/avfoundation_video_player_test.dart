@@ -23,7 +23,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   VolumeMessage? volumeMessage;
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
-  SetPictureInPictureOverlayRectMessage? setPictureInPictureOverlayRectMessage;
+  SetPictureInPictureOverlaySettingsMessage? setPictureInPictureOverlaySettingMessage;
   AutomaticallyStartsPictureInPictureMessage?
       automaticallyStartsPictureInPictureMessage;
   StartPictureInPictureMessage? startPictureInPictureMessage;
@@ -110,10 +110,10 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void setPictureInPictureOverlayRect(
-      SetPictureInPictureOverlayRectMessage msg) {
-    log.add('setPictureInPictureOverlayRect');
-    setPictureInPictureOverlayRectMessage = msg;
+  void setPictureInPictureOverlaySettings(
+      SetPictureInPictureOverlaySettingsMessage msg) {
+    log.add('setPictureInPictureOverlaySettings');
+    setPictureInPictureOverlaySettingMessage = msg;
   }
 
   @override
@@ -300,15 +300,15 @@ void main() {
           false);
     });
 
-    test('setPictureInPictureOverlayRect', () async {
-      await player.setPictureInPictureOverlayRect(
-          textureId: 1, rect: const Rect.fromLTWH(0, 1, 2, 3));
-      expect(log.log.last, 'setPictureInPictureOverlayRect');
-      expect(log.setPictureInPictureOverlayRectMessage?.textureId, 1);
-      expect(log.setPictureInPictureOverlayRectMessage?.rect?.left, 0);
-      expect(log.setPictureInPictureOverlayRectMessage?.rect?.top, 1);
-      expect(log.setPictureInPictureOverlayRectMessage?.rect?.width, 2);
-      expect(log.setPictureInPictureOverlayRectMessage?.rect?.height, 3);
+    test('setPictureInPictureOverlaySettings', () async {
+      await player.setPictureInPictureOverlaySettings(
+          textureId: 1, settings: const PictureInPictureOverlaySettings(top: 0, left: 1, width: 2, height: 3));
+      expect(log.log.last, 'setPictureInPictureOverlaySettings');
+      expect(log.setPictureInPictureOverlaySettingMessage?.textureId, 1);
+      expect(log.setPictureInPictureOverlaySettingMessage?.settings?.left, 0);
+      expect(log.setPictureInPictureOverlaySettingMessage?.settings?.top, 1);
+      expect(log.setPictureInPictureOverlaySettingMessage?.settings?.width, 2);
+      expect(log.setPictureInPictureOverlaySettingMessage?.settings?.height, 3);
     });
 
     test('startPictureInPicture', () async {

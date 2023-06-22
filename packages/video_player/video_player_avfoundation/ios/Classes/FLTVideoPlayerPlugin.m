@@ -280,9 +280,12 @@ NS_INLINE UIViewController *rootViewController(void) {
   // for issue #1, and restore the correct width and height for issue #2.
   // It is also used to start picture-in-picture
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-  // We set the opacity to 0.001 because it is an overlay.
-  // Picture-in-picture will show a placeholder over other widgets when video_player is used in a
-  // ScrollView, PageView or in a widget that changes location.
+  // By default picture-in-picture shows a placeholder where the original video was playing.
+  // This is a native overlay that does not scroll with the rest of the Flutter UI.
+  // That is why we need to set the opacity of the overlay.
+  // Setting it to 0 would result in the picture-in-picture not working.
+  // Setting it to 1 would result in the picture-in-picture overlay always showing over other widget.
+  // Setting it to 0.001 makes the placeholder invisible, but still allows the picture-in-picture.
   _playerLayer.opacity = 0.001;
   [rootViewController().view.layer addSublayer:_playerLayer];
 
@@ -315,7 +318,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   }
 }
 
-- (void)setPictureInPictureOverlayRect:(CGRect)frame {
+- (void)setPictureInPictureOverlaySettings:(CGRect)frame {
   if (_player) {
     self.playerLayer.frame = frame;
   }
@@ -802,13 +805,13 @@ NS_INLINE UIViewController *rootViewController(void) {
                                                  .boolValue];
 }
 
-- (void)setPictureInPictureOverlayRect:(FLTSetPictureInPictureOverlayRectMessage *)input
+- (void)setPictureInPictureOverlaySettings:(FLTSetPictureInPictureOverlaySettingsMessage *)input
                                  error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
-  [player setPictureInPictureOverlayRect:CGRectMake(input.rect.left.floatValue,
-                                                    input.rect.top.floatValue,
-                                                    input.rect.width.floatValue,
-                                                    input.rect.height.floatValue)];
+  [player setPictureInPictureOverlaySettings:CGRectMake(input.settings.left.floatValue,
+                                                    input.settings.top.floatValue,
+                                                    input.settings.width.floatValue,
+                                                    input.settings.height.floatValue)];
 }
 
 - (BOOL)doesInfoPlistSupportPictureInPicture:(FlutterError **)error {

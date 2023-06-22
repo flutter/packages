@@ -14,7 +14,12 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'src/closed_caption_file.dart';
 
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
-    show DurationRange, DataSourceType, VideoFormat, VideoPlayerOptions;
+    show
+        DurationRange,
+        DataSourceType,
+        VideoFormat,
+        VideoPlayerOptions,
+        PictureInPictureOverlaySettings;
 
 export 'src/closed_caption_file.dart';
 
@@ -599,15 +604,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// So picture-in-picture can use it for animating.
   /// The rect will represent the location of the video player view in Flutter. The rect will be
   /// passed to the platform to position the native picture-in-picture overlay correctly.
-  Future<void> setPictureInPictureOverlayRect({
-    required Rect rect,
+  Future<void> setPictureInPictureOverlaySettings({
+    required PictureInPictureOverlaySettings settings,
   }) async {
     if (!value.isInitialized || _isDisposed) {
       return;
     }
-    await _videoPlayerPlatform.setPictureInPictureOverlayRect(
+    await _videoPlayerPlatform.setPictureInPictureOverlaySettings(
       textureId: _textureId,
-      rect: rect,
+      settings: settings,
     );
   }
 

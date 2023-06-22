@@ -74,18 +74,18 @@ class AutomaticallyStartsPictureInPictureMessage {
   bool enableStartPictureInPictureAutomaticallyFromInline;
 }
 
-class SetPictureInPictureOverlayRectMessage {
-  SetPictureInPictureOverlayRectMessage(
+class SetPictureInPictureOverlaySettingsMessage {
+  SetPictureInPictureOverlaySettingsMessage(
     this.textureId,
-    this.rect,
+    this.settings,
   );
 
   int textureId;
-  PictureInPictureOverlayRect? rect;
+  PictureInPictureOverlaySettingsMessage? settings;
 }
 
-class PictureInPictureOverlayRect {
-  PictureInPictureOverlayRect({
+class PictureInPictureOverlaySettingsMessage {
+  PictureInPictureOverlaySettingsMessage({
     required this.top,
     required this.left,
     required this.width,
@@ -149,9 +149,9 @@ abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('isPictureInPictureSupported')
   bool isPictureInPictureSupported();
 
-  @ObjCSelector('setPictureInPictureOverlayRect:')
-  void setPictureInPictureOverlayRect(
-      SetPictureInPictureOverlayRectMessage msg);
+  @ObjCSelector('setPictureInPictureOverlaySettings:')
+  void setPictureInPictureOverlaySettings(
+      SetPictureInPictureOverlaySettingsMessage msg);
 
   @ObjCSelector('setAutomaticallyStartsPictureInPicture:')
   void setAutomaticallyStartsPictureInPicture(

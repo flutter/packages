@@ -90,8 +90,8 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   }) async {}
 
   @override
-  Future<void> setPictureInPictureOverlayRect({
-    required Rect rect,
+  Future<void> setPictureInPictureOverlaySettings({
+    required PictureInPictureOverlaySettings settings,
   }) async {}
 
   @override

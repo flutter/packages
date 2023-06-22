@@ -5,6 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'mini_controller.dart';
 
@@ -188,12 +189,12 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                 return;
               }
               final Offset offset = box.localToGlobal(Offset.zero);
-              _controller.setPictureInPictureOverlayRect(
-                rect: Rect.fromLTWH(
-                  offset.dx,
-                  offset.dy,
-                  box.size.width,
-                  box.size.height,
+              _controller.setPictureInPictureOverlaySettings(
+                settings: PictureInPictureOverlaySettings(
+                  top: offset.dx,
+                  left: offset.dy,
+                  width: box.size.width,
+                  height: box.size.height,
                 ),
               );
             },

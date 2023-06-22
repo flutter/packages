@@ -118,9 +118,9 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// Set the location of the video player view. So picture-in-picture can use it for animating.
   /// The rect will represent the location of the video player view in Flutter. The rect will be
   /// passed to the platform to position the native picture-in-picture overlay correctly.
-  Future<void> setPictureInPictureOverlayRect({
+  Future<void> setPictureInPictureOverlaySettings({
     required int textureId,
-    required Rect rect,
+    required PictureInPictureOverlaySettings settings,
   }) {
     throw UnimplementedError(
         'setPictureInPictureOverlayRect() has not been implemented.');
@@ -426,4 +426,25 @@ class VideoPlayerOptions {
   /// Note: This option will be silently ignored in the web platform (there is
   /// currently no way to implement this feature in this platform).
   final bool mixWithOthers;
+}
+
+/// [PictureInPictureOverlaySettings] can be optionally used to set the position and size of the picture-in-picture overlay
+@immutable
+class PictureInPictureOverlaySettings {
+  /// set the position and size of the picture-in-picture overlay
+  const PictureInPictureOverlaySettings({
+    required this.top,
+    required this.left,
+    required this.width,
+    required this.height,
+  });
+
+  /// The top position of the picture-in-picture overlay
+  final double top;
+  /// The left position of the picture-in-picture overlay
+  final double left;
+  /// The width of the picture-in-picture overlay
+  final double width;
+  /// The height of the picture-in-picture overlay
+  final double height;
 }
