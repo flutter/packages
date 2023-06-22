@@ -466,5 +466,122 @@ dev_dependencies:
         ]),
       );
     });
+
+    test('regenerates mocks when updating mockito if necessary', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      addDependency(package, 'mockito', version: '1.0.0');
+      addDevDependency(package, 'build_runner');
+
+      await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--pub-package',
+        'mockito',
+        '--version',
+        '1.5.0',
+      ]);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+            'dart',
+            const <String>['pub', 'get'],
+            package.path,
+          ),
+          ProcessCall(
+            'dart',
+            const <String>[
+              'run',
+              'build_runner',
+              'build',
+              '--delete-conflicting-outputs'
+            ],
+            package.path,
+          ),
+        ]),
+      );
+    });
+
+    test('skips regenerating mocks when there is no build_runner dependency',
+        () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      addDependency(package, 'mockito', version: '1.0.0');
+
+      await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--pub-package',
+        'mockito',
+        '--version',
+        '1.5.0',
+      ]);
+
+      expect(processRunner.recordedCalls.isEmpty, true);
+    });
+
+    test('updating mockito fails if pub get fails', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      addDependency(package, 'mockito', version: '1.0.0');
+      addDevDependency(package, 'build_runner');
+
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--pub-package',
+        'mockito',
+        '--version',
+        '1.5.0',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('dart pub get failed'),
+          contains('Failed to update mocks'),
+        ]),
+      );
+    });
+
+    test('updating mockito fails if running build_runner fails', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      addDependency(package, 'mockito', version: '1.0.0');
+      addDevDependency(package, 'build_runner');
+
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['run', 'build_runner']),
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--pub-package',
+        'mockito',
+        '--version',
+        '1.5.0',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('"dart run build_runner build" failed'),
+          contains('Failed to update mocks'),
+        ]),
+      );
+    });
   });
 }
