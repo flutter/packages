@@ -91,16 +91,15 @@ targets:
       version_file: flutter_master.version
 
   - name: Linux analyze master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
+      add_recipes_cq: "true"
       target_file: analyze.yaml
       channel: master
       version_file: flutter_master.version
 
   - name: Linux analyze stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -109,16 +108,15 @@ targets:
       version_file: flutter_stable.version
 
   - name: Linux analyze_downgraded master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
+      add_recipes_cq: "true"
       target_file: analyze_downgraded.yaml
       channel: master
       version_file: flutter_master.version
 
   - name: Linux analyze_downgraded stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
