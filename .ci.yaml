@@ -11,7 +11,9 @@ enabled_branches:
 platform_properties:
   linux:
     properties:
-      os: Linux
+      os: Ubuntu
+      cores: "8"
+      device_type: none
   linux_android:
     properties:
       os: Ubuntu
