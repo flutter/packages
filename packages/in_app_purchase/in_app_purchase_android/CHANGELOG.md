@@ -1,3 +1,32 @@
+## 0.3.0+6
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.21 to 1.8.22.
+
+## 0.3.0+5
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.0 to 1.8.21.
+
+## 0.3.0+4
+
+* Fixes unawaited_futures violations.
+
+## 0.3.0+3
+
+* Fixes Java lint issues.
+
+## 0.3.0+2
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.3.0+1
+
+* Fixes misaligned method signature strings.
+
+## 0.3.0
+
+* **BREAKING CHANGE**: Removes `launchPriceChangeConfirmationFlow` from `InAppPurchaseAndroidPlatform`. Price changes are now [handled by Google Play](https://developer.android.com/google/play/billing/subscriptions#price-change).
+* Returns both base plans and offers when `queryProductDetailsAsync` is called.
+
 ## 0.2.5+5
 
 * Updates gradle, AGP and fixes some lint errors.

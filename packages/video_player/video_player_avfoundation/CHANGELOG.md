@@ -1,6 +1,11 @@
-## 2.5.0
+## NEXT
 
 * Adds support for picture-in-picture on iOS.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.4.6
+
+* Fixes hang when seeking to end of video.
 
 ## 2.4.5
 

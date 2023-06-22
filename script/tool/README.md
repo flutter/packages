@@ -3,11 +3,7 @@
 This is a set of utilities used in this repository, both for CI and for
 local development.
 
-The tool is designed to be run at the root of the repository or `<repository-root>/packages/`.
-
 ## Getting Started
-
-In flutter/packages, the tool is run from source.
 
 Set up:
 
@@ -42,31 +38,36 @@ command is targetting. An package name can be any of:
 - A combination federated_plugin_name/package_name (e.g.,
   `path_provider/path_provider` for the app-facing package).
 
+The examples below assume they are being run from the repository root, but
+the script works from anywhere. If you develop in flutter/packages frequently,
+it may be useful to make an alias for
+`dart run /absolute/path/to/script/tool/bin/flutter_plugin_tools.dart` so that
+you can easily run commands from within packages. For that use case there is
+also a `--current-package` flag as an alternative to `--packages`, to target the
+current working directory's package (or enclosing package; it can be used from
+anywhere within a package).
+
 ### Format Code
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart format --packages package_name
 ```
 
 ### Run the Dart Static Analyzer
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart analyze --packages package_name
 ```
 
 ### Run Dart Unit Tests
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart test --packages package_name
 ```
 
 ### Run Dart Integration Tests
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart build-examples --apk --packages package_name
 dart run script/tool/bin/flutter_plugin_tools.dart drive-examples --android --packages package_name
 ```
@@ -83,7 +84,6 @@ runs both unit tests and (on platforms that support it) integration tests, but
 Examples:
 
 ```sh
-cd <repository root>
 # Run just unit tests for iOS and Android:
 dart run script/tool/bin/flutter_plugin_tools.dart native-test --ios --android --no-integration --packages package_name
 # Run all tests for macOS:
@@ -99,7 +99,6 @@ with submodules, you will need to `git submodule update --init --recursive`
 before running this command.
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts --packages package_name
 ```
 
@@ -114,7 +113,6 @@ For instance, if you add a new analysis option that requires production
 code changes across many packages:
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \
   --version=minimal \
   --base-branch=upstream/main \
@@ -143,7 +141,6 @@ For instance, to updated to version 3.0.0 of `some_package` in every package
 that depends on it:
 
 ```sh
-cd <repository root>
 dart run script/tool/bin/flutter_plugin_tools.dart update-dependency \
   --pub-package=some_package \
   --version=3.0.0 \

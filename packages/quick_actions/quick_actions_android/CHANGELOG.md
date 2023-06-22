@@ -1,3 +1,8 @@
+## 1.0.6
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 1.0.5
 
 * Fixes Java warnings.

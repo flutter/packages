@@ -1,3 +1,23 @@
+## 1.0.32
+
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates androidx.fragment version to 1.6.0.
+
+## 1.0.31
+
+* Updates androidx.fragment version to 1.5.7.
+* Updates androidx.core version to 1.10.1.
+
+## 1.0.30
+
+* Updates androidx.fragment version to 1.5.6
+
+## 1.0.29
+
+* Fixes a regression in 1.0.23 that caused canceled auths to return success.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 1.0.28
 
 * Removes unused resources as indicated by Android lint warnings.
