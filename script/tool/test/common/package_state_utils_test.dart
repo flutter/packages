@@ -333,10 +333,12 @@ void main() {
         ]
       });
 
-      final PackageChangeState state = await checkPackageChangeState(package,
-          changedPaths: changedFiles,
-          relativePackagePath: 'packages/a_plugin/',
-          git: git);
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+        git: git,
+      );
 
       expect(state.hasChanges, true);
       expect(state.needsVersionChange, true);
