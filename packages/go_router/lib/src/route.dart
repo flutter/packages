@@ -98,11 +98,19 @@ import 'typedefs.dart';
 @immutable
 abstract class RouteBase {
   const RouteBase._({
-    this.routes = const <RouteBase>[],
+    required this.routes,
+    required this.parentNavigatorKey,
   });
 
   /// The list of child routes associated with this route.
   final List<RouteBase> routes;
+
+  /// An optional key specifying which Navigator to display this route's screen
+  /// onto.
+  ///
+  /// Specifying the root Navigator will stack this route onto that
+  /// Navigator instead of the nearest ShellRoute ancestor.
+  final GlobalKey<NavigatorState>? parentNavigatorKey;
 
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
@@ -137,7 +145,7 @@ class GoRoute extends RouteBase {
     this.name,
     this.builder,
     this.pageBuilder,
-    this.parentNavigatorKey,
+    super.parentNavigatorKey,
     this.redirect,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
@@ -301,13 +309,6 @@ class GoRoute extends RouteBase {
   /// re-evaluation will be triggered if the [InheritedWidget] changes.
   final GoRouterRedirect? redirect;
 
-  /// An optional key specifying which Navigator to display this route's screen
-  /// onto.
-  ///
-  /// Specifying the root Navigator will stack this route onto that
-  /// Navigator instead of the nearest ShellRoute ancestor.
-  final GlobalKey<NavigatorState>? parentNavigatorKey;
-
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) =>
@@ -333,7 +334,9 @@ class GoRoute extends RouteBase {
 /// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   /// Constructs a [ShellRouteBase].
-  const ShellRouteBase._({super.routes}) : super._();
+  const ShellRouteBase._(
+      {required super.routes, required super.parentNavigatorKey})
+      : super._();
 
   /// Attempts to build the Widget representing this shell route.
   ///
@@ -496,7 +499,8 @@ class ShellRoute extends ShellRouteBase {
     this.builder,
     this.pageBuilder,
     this.observers,
-    super.routes,
+    required super.routes,
+    super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
   })  : assert(routes.isNotEmpty),
@@ -653,6 +657,7 @@ class StatefulShellRoute extends ShellRouteBase {
     this.builder,
     this.pageBuilder,
     required this.navigatorContainerBuilder,
+    super.parentNavigatorKey,
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
         assert((pageBuilder != null) ^ (builder != null),
@@ -676,12 +681,14 @@ class StatefulShellRoute extends ShellRouteBase {
   StatefulShellRoute.indexedStack({
     required List<StatefulShellBranch> branches,
     StatefulShellRouteBuilder? builder,
+    GlobalKey<NavigatorState>? parentNavigatorKey,
     StatefulShellRoutePageBuilder? pageBuilder,
     String? restorationScopeId,
   }) : this(
           branches: branches,
           builder: builder,
           pageBuilder: pageBuilder,
+          parentNavigatorKey: parentNavigatorKey,
           restorationScopeId: restorationScopeId,
           navigatorContainerBuilder: _indexedStackContainerBuilder,
         );

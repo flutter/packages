@@ -1,3 +1,7 @@
+## 0.8.7+3
+
+* Bumps androidx.activity:activity from 1.7.1 to 1.7.2.
+
 ## 0.8.7+2
 
 * Fixes a crash case when picking an image with a display name that does not contain a period.
