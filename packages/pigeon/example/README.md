@@ -34,21 +34,22 @@ file directly.
 <?code-excerpt "../../app/pigeons/messages.dart (config)"?>
 ```dart
 @ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/message.g.dart',
+  dartOut: 'lib/src/messages.g.dart',
   dartOptions: DartOptions(),
-  copyrightHeader: 'pigeons/copyright.txt',
-  javaOut: 'platforms_pigeon_out/message_java.java',
-  javaOptions: JavaOptions(),
-  objcHeaderOut: 'platforms_pigeon_out/message_objc.h',
-  objcSourceOut: 'platforms_pigeon_out/message_objc.m',
-  objcOptions: ObjcOptions(),
-  swiftOut: 'platforms_pigeon_out/message_swift.swift',
-  swiftOptions: SwiftOptions(),
-  kotlinOut: 'platforms_pigeon_out/message_kt.kt',
+  cppOptions: CppOptions(namespace: 'pigeon_example'),
+  cppHeaderOut: 'windows/runner/messages.g.h',
+  cppSourceOut: 'windows/runner/messages.g.cpp',
+  kotlinOut:
+      'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
   kotlinOptions: KotlinOptions(),
-  cppHeaderOut: 'platforms_pigeon_out/message_cpp.h',
-  cppSourceOut: 'platforms_pigeon_out/message_cpp.cpp',
-  cppOptions: CppOptions(),
+  javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
+  javaOptions: JavaOptions(),
+  swiftOut: 'ios/Runner/Messages.g.swift',
+  swiftOptions: SwiftOptions(),
+  objcHeaderOut: 'macos/runner/messages_objc.h',
+  objcSourceOut: 'macos/runner/message_objc.m',
+  objcOptions: ObjcOptions(),
+  copyrightHeader: 'pigeons/copyright.txt',
 ))
 ```
 
@@ -75,10 +76,11 @@ class CreateMessage {
 }
 
 @HostApi()
-abstract class MessageHostApi {
-  void initialize();
-  bool sendMessage(CreateMessage message);
+abstract class ExampleHostApi {
+  String getHostLanguage();
   int add(int a, int b);
+  @async
+  bool sendMessage(CreateMessage message);
 }
 ```
 
@@ -89,75 +91,53 @@ the host platform.
 
 <?code-excerpt "../../app/lib/main.dart (main-dart)"?>
 ```dart 
-import 'src/message.g.dart';
+final ExampleHostApi _api = ExampleHostApi();
 
-/// Example plugin for pigeon code excerpts and examples.
-class ExamplePluginClass {
-  /// Creates a new plugin implementation instance.
-  ExamplePluginClass();
-
-  final MessageHostApi _api = MessageHostApi();
-
-  /// Calls host method `add` with provided arguments.
-  Future<int> callAddPlusOne(int a, int b) async {
-    final int resultOfAdd = await _api.add(a, b);
-    return resultOfAdd + 1;
-  }
-
-  /// Sends message through host api using `CreateMessage` class
-  /// and api `sendMessage` method.
-  Future<bool> sendMessage(String messageText) {
-    final CreateMessage message = CreateMessage(
-      code: 42,
-      httpHeaders: <String?, String?>{'header': 'this is a header'},
-      uri: 'uri text',
-    );
-    return _api.sendMessage(message);
-  }
+/// Calls host method `add` with provided arguments.
+Future<int> callAddPlusOne(int a, int b) async {
+  final int resultOfAdd = await _api.add(a, b);
+  return resultOfAdd + 1;
 }
-```
 
-### AppDelegate.m
-
-This is the code that will use the generated Objective-C code to receive calls
-from Flutter.
-
-```objc
-
+/// Sends message through host api using `CreateMessage` class
+/// and api `sendMessage` method.
+Future<bool> sendMessage(String messageText) {
+  final CreateMessage message = CreateMessage(
+    code: 42,
+    httpHeaders: <String?, String?>{'header': 'this is a header'},
+    uri: 'uri text',
+  );
+  return _api.sendMessage(message);
+}
 ```
 
 ### AppDelegate.swift
 
 This is the code that will use the generated Swift code to receive calls from Flutter.
+packages/pigeon/example/app/ios/Runner/AppDelegate.swift
+<?code-excerpt "../../app/ios/Runner/AppDelegate.swift (swift-class)"?>
+```swift
+private class PigeonApiImplementation: ExampleHostApi {
+  func getHostLanguage() throws -> String {
+    return "Swift"
+  }
 
-<?code-excerpt ../../app/ios/Runner/AppDelegate.swift " (swift-class)"?>
-```swift 
-```
+  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
+    completion(Result(true, nil))
+  }
 
-### StartActivity.java
-
-This is the code that will use the generated Java code to receive calls from Flutter.
-
-```java
-
+  func add(a: Int64, b: Int64) throws -> Int64 {
+    return a + b
+  }
+}
 ```
 
 ### kotlin
-``` 
-
+```kt 
 ```
+
 ### c++
-```
-
-```
-
-### test.dart
-
-This is the Dart code that will call into the host-platform using the generated
-Dart code.
-
-```dart
-
+```c++
 ```
 
 ## FlutterApi Example

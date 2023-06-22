@@ -4,6 +4,9 @@ targets:
       include:
         - lib/**
         - pigeons/**
+        - app/lib/**
+        - app/pigeons/**
+        - app/ios/Runner/**
         # Some default includes that aren't really used here but will prevent
         # false-negative warnings:
         - $package$
@@ -15,4 +18,4 @@ targets:
       code_excerpter|code_excerpter:
         enabled: true
         generate_for:
-          - '**/*.dart'
+          - '**/*'

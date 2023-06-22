@@ -1,5 +1,4 @@
 # Pigeon
-<?code-excerpt path-base="excerpts/packages/pigeon_example"?>
 
 Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe, easier, and faster.

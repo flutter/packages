@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final ExampleHostApi _hostApi = ExampleHostApi();
   String? _hostCallResult;
 
+  // #docregion main-dart
   final ExampleHostApi _api = ExampleHostApi();
 
   /// Calls host method `add` with provided arguments.
@@ -60,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     return _api.sendMessage(message);
   }
+  // #enddocregion main-dart
 
   @override
   void initState() {
