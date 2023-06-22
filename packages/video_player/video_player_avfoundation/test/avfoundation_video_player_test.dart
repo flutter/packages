@@ -298,10 +298,9 @@ void main() {
     });
 
     test('clearCache', () async {
-      await player.clearCache(1, true);
+      await player.clearCache(1);
       expect(log.log.last, 'clearCache');
       expect(log.clearCacheMessage?.textureId, 1);
-      expect(log.clearCacheMessage?.clear, true);
     });
 
     test('seekTo', () async {

@@ -563,7 +563,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposedOrNotInitialized) {
       return;
     }
-    await _videoPlayerPlatform.clearCache(_textureId, true);
+    await _videoPlayerPlatform.clearCache(_textureId);
   }
 
   Future<void> _applyPlayPause() async {
