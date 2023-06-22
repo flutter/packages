@@ -580,7 +580,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _videoPlayerPlatform.isCacheSupportedForNetworkMedia(url);
   }
 
-  /// Clears the cache of the video.
+  /// Clears the cache of the player.
   Future<void> clearCache() async {
     if (_isDisposedOrNotInitialized) {
       return;

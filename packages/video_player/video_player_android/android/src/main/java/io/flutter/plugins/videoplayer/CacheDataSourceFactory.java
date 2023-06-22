@@ -21,15 +21,12 @@ public class CacheDataSourceFactory implements DataSource.Factory {
         this.context = context;
         this.maxCacheSize = maxCacheSize;
         this.maxFileSize = maxFileSize;
-//        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder(context).build();
         defaultDatasourceFactory =
                 new DefaultDataSource.Factory(this.context, upstreamDataSource);
     }
 
     @Override
     public DataSource createDataSource() {
-//        LeastRecentlyUsedCacheEvictor evictor = new LeastRecentlyUsedCacheEvictor(maxCacheSize);
-//        DatabaseProvider databaseProvider = new StandaloneDatabaseProvider(context);
 
         if (downloadCache == null) {
             downloadCache = VideoCache.getInstance(context, maxCacheSize);
