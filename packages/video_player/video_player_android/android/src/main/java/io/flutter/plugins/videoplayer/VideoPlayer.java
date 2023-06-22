@@ -85,7 +85,6 @@ final class VideoPlayer {
         new DefaultDataSource.Factory(context, httpDataSourceFactory);
 
     if (options.maxCacheSize != null && options.maxCacheSize > 0 && options.maxFileSize != null && options.maxFileSize > 0) {
-      Log.d("Timo", "caching enabled");
       dataSourceFactory =
               new CacheDataSourceFactory(context, options.maxCacheSize, options.maxFileSize, dataSourceFactory);
     }

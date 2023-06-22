@@ -317,7 +317,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
-  /// Clears the cache of the video.
+  /// Clears the cache of the player.
   void clearCache() {
     _applyClearCache();
   }

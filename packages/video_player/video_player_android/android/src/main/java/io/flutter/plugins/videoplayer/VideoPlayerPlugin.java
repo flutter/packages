@@ -159,7 +159,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               httpHeaders,
               options);
       boolean videoCanCache = canCache(Uri.parse(arg.getUri()));
-      if (!videoCanCache) {
+      if (videoCanCache) {
         player.setMaxCacheSize(arg.getMaxCacheSize());
         player.setMaxFileSize(arg.getMaxFileSize());
       }
