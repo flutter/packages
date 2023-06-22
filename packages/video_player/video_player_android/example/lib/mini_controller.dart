@@ -334,11 +334,11 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   }
 
   /// Returns if caching is supported for network media.
-  Future<bool?> isCachingSupportedForNetworkMedia(String url) async {
-    return _applyIsCachingSupported(url);
+  Future<bool?> isCacheSupportedForNetworkMedia(String url) async {
+    return _applyIsCacheSupported(url);
   }
 
-  Future<bool?> _applyIsCachingSupported(String url) async {
+  Future<bool?> _applyIsCacheSupported(String url) async {
     return _platform.isCacheSupportedForNetworkMedia(url);
   }
 
