@@ -17,7 +17,7 @@ flutter:
         fileName: file_selector_web.dart
 
 dependencies:
-  file_selector_platform_interface: ^2.3.0
+  file_selector_platform_interface: ^2.6.0
   flutter:
     sdk: flutter
   flutter_web_plugins:
@@ -26,8 +26,3 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {file_selector_platform_interface: {path: ../../file_selector/file_selector_platform_interface}}

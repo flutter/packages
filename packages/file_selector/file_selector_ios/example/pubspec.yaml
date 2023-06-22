@@ -18,7 +18,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ..
-  file_selector_platform_interface: ^2.2.0
+  file_selector_platform_interface: ^2.6.0
   flutter:
     sdk: flutter
 
@@ -30,8 +30,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {file_selector_platform_interface: {path: ../../../file_selector/file_selector_platform_interface}}
