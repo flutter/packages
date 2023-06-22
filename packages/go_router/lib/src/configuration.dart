@@ -221,9 +221,8 @@ class RouteConfiguration {
           '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
       return true;
     }());
-    final String keyName = name.toLowerCase();
-    assert(_nameToPath.containsKey(keyName), 'unknown route name: $name');
-    final String path = _nameToPath[keyName]!;
+    assert(_nameToPath.containsKey(name), 'unknown route name: $name');
+    final String path = _nameToPath[name]!;
     assert(() {
       // Check that all required params are present
       final List<String> paramNames = <String>[];
@@ -415,9 +414,10 @@ class RouteConfiguration {
         GoRouterState(
           this,
           location: prevLocation,
-          name: null,
           // No name available at the top level trim the query params off the
           // sub-location to match route.redirect
+          fullPath: prevMatchList.fullPath,
+          pathParameters: prevMatchList.pathParameters,
           matchedLocation: prevMatchList.uri.path,
           queryParameters: prevMatchList.uri.queryParameters,
           queryParametersAll: prevMatchList.uri.queryParametersAll,
@@ -564,7 +564,7 @@ class RouteConfiguration {
         final String fullPath = concatenatePaths(parentFullPath, route.path);
 
         if (route.name != null) {
-          final String name = route.name!.toLowerCase();
+          final String name = route.name!;
           assert(
               !_nameToPath.containsKey(name),
               'duplication fullpaths for name '

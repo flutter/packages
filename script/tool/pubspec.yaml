@@ -1,7 +1,8 @@
 name: flutter_plugin_tools
 description: Productivity and CI utils for flutter/packages
 repository: https://github.com/flutter/packages/tree/main/script/tool
-version: 0.13.4+4
+version: 1.0.0
+publish_to: none
 
 dependencies:
   args: ^2.1.0
