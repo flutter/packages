@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -77,6 +78,22 @@ void main() {
       await controller.seekTo(const Duration(seconds: 3));
 
       expect(await controller.position, const Duration(seconds: 3));
+    });
+
+    testWidgets('can clear cache', (WidgetTester tester) async {
+      await controller.initialize();
+
+      await controller.clearCache();
+    });
+
+    testWidgets('can check if caching is supported',
+        (WidgetTester tester) async {
+      await controller.initialize();
+
+      final bool? isSupported =
+          await controller.isCachingSupportedForNetworkMedia("www.video.mp4");
+
+      expect(isSupported, true);
     });
 
     testWidgets('can be paused', (WidgetTester tester) async {
