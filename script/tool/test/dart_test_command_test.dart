@@ -7,7 +7,7 @@ import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
-import 'package:flutter_plugin_tools/src/test_command.dart';
+import 'package:flutter_plugin_tools/src/dart_test_command.dart';
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
@@ -27,14 +27,29 @@ void main() {
       mockPlatform = MockPlatform();
       packagesDir = createPackagesDirectory(fileSystem: fileSystem);
       processRunner = RecordingProcessRunner();
-      final TestCommand command = TestCommand(
+      final DartTestCommand command = DartTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
       );
 
-      runner = CommandRunner<void>('test_test', 'Test for $TestCommand');
+      runner = CommandRunner<void>('test_test', 'Test for $DartTestCommand');
       runner.addCommand(command);
+    });
+
+    test('legacy "test" name still works', () async {
+      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir,
+          extraFiles: <String>['test/a_test.dart']);
+
+      await runCapturingPrint(runner, <String>['test']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(getFlutterCommand(mockPlatform),
+              const <String>['test', '--color'], plugin.path),
+        ]),
+      );
     });
 
     test('runs flutter test on each plugin', () async {
@@ -43,7 +58,7 @@ void main() {
       final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir,
           extraFiles: <String>['test/empty_test.dart']);
 
-      await runCapturingPrint(runner, <String>['test']);
+      await runCapturingPrint(runner, <String>['dart-test']);
 
       expect(
         processRunner.recordedCalls,
@@ -63,7 +78,7 @@ void main() {
             'example/test/an_example_test.dart'
           ]);
 
-      await runCapturingPrint(runner, <String>['test']);
+      await runCapturingPrint(runner, <String>['dart-test']);
 
       expect(
         processRunner.recordedCalls,
@@ -86,13 +101,13 @@ void main() {
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
           <FakeProcessInfo>[
         FakeProcessInfo(
-            MockProcess(exitCode: 1), <String>['test']), // plugin 1 test
-        FakeProcessInfo(MockProcess(), <String>['test']), // plugin 2 test
+            MockProcess(exitCode: 1), <String>['dart-test']), // plugin 1 test
+        FakeProcessInfo(MockProcess(), <String>['dart-test']), // plugin 2 test
       ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['test'], errorHandler: (Error e) {
+          runner, <String>['dart-test'], errorHandler: (Error e) {
         commandError = e;
       });
 
@@ -110,7 +125,7 @@ void main() {
       final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir,
           extraFiles: <String>['test/empty_test.dart']);
 
-      await runCapturingPrint(runner, <String>['test']);
+      await runCapturingPrint(runner, <String>['dart-test']);
 
       expect(
         processRunner.recordedCalls,
@@ -128,7 +143,7 @@ void main() {
           extraFiles: <String>['test/empty_test.dart']);
 
       await runCapturingPrint(
-          runner, <String>['test', '--enable-experiment=exp1']);
+          runner, <String>['dart-test', '--enable-experiment=exp1']);
 
       expect(
         processRunner.recordedCalls,
@@ -153,7 +168,7 @@ void main() {
         'example/test/an_example_test.dart'
       ]);
 
-      await runCapturingPrint(runner, <String>['test']);
+      await runCapturingPrint(runner, <String>['dart-test']);
 
       expect(
         processRunner.recordedCalls,
@@ -178,7 +193,7 @@ void main() {
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['test'], errorHandler: (Error e) {
+          runner, <String>['dart-test'], errorHandler: (Error e) {
         commandError = e;
       });
 
@@ -203,7 +218,7 @@ void main() {
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['test'], errorHandler: (Error e) {
+          runner, <String>['dart-test'], errorHandler: (Error e) {
         commandError = e;
       });
 
@@ -226,7 +241,7 @@ void main() {
         },
       );
 
-      await runCapturingPrint(runner, <String>['test']);
+      await runCapturingPrint(runner, <String>['dart-test']);
 
       expect(
         processRunner.recordedCalls,
@@ -249,7 +264,7 @@ void main() {
         },
       );
 
-      await runCapturingPrint(runner, <String>['test']);
+      await runCapturingPrint(runner, <String>['dart-test']);
 
       expect(
         processRunner.recordedCalls,
@@ -267,7 +282,7 @@ void main() {
           extraFiles: <String>['test/empty_test.dart']);
 
       await runCapturingPrint(
-          runner, <String>['test', '--enable-experiment=exp1']);
+          runner, <String>['dart-test', '--enable-experiment=exp1']);
 
       expect(
         processRunner.recordedCalls,

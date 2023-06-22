@@ -98,6 +98,9 @@ Future<String?> getSavePath({
   String? suggestedName,
   String? confirmButtonText,
 }) async {
+  // TODO(stuartmorgan): Update this to getSaveLocation in the next federated
+  // change PR.
+  // ignore: deprecated_member_use
   return FileSelectorPlatform.instance.getSavePath(
       acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,

@@ -137,6 +137,23 @@ Future<int> generatePigeons({required String baseDir}) async {
     if (generateCode != 0) {
       return generateCode;
     }
+
+    // macOS has to be run as a separate generation, since currently Pigeon
+    // doesn't have a way to output separate macOS and iOS Swift output in a
+    // single invocation.
+    generateCode = await runPigeon(
+      input: './pigeons/$input.dart',
+      objcHeaderOut: skipLanguages.contains(GeneratorLanguages.objc)
+          ? null
+          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.h',
+      objcSourceOut: skipLanguages.contains(GeneratorLanguages.objc)
+          ? null
+          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
+      suppressVersion: true,
+    );
+    if (generateCode != 0) {
+      return generateCode;
+    }
   }
   return 0;
 }
