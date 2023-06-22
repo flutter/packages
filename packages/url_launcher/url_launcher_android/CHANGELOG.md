@@ -1,6 +1,7 @@
 ## 6.0.36
 
-* Bumps androidx.annotation:annotation from 1.2.0 to 1.6.0
+* Bumps androidx.annotation:annotation from 1.2.0 to 1.6.0.
+* Adds a dependency on kotlin-bom to align versions of Kotlin transitive dependencies.
 
 ## 6.0.35
 
