@@ -360,7 +360,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   // Clears the media cache
   void _applyClearCache() {
-    _platform.clearCache(textureId, true);
+    _platform.clearCache(textureId);
   }
 
   /// The position in the current video.

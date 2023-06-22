@@ -47,9 +47,8 @@ class VolumeMessage {
 }
 
 class ClearCacheMessage {
-  ClearCacheMessage(this.textureId, this.clear);
+  ClearCacheMessage(this.textureId);
   int textureId;
-  bool clear;
 }
 
 class PlaybackSpeedMessage {
@@ -70,7 +69,7 @@ class CreateMessage {
   String? uri;
   String? packageName;
   String? formatHint;
-  bool cache;
+  bool? cache;
   Map<String?, String?> httpHeaders;
 }
 

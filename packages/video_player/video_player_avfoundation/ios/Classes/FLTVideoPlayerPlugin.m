@@ -69,7 +69,7 @@
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
               playerFactory:(id<FVPPlayerFactory>)playerFactory
-                enableCache:(BOOL)cacheEnabled;
+                enableCache:(NSNumber *)cacheEnabled;
 @end
 
 static void *timeRangeContext = &timeRangeContext;
@@ -85,14 +85,14 @@ static void *rateContext = &rateContext;
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FLTFrameUpdater *)frameUpdater
                 playerFactory:(id<FVPPlayerFactory>)playerFactory
-                  enableCache:(bool)enable
+                  enableCache:(NSNumber *)enable
   {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
   return [self initWithURL:[NSURL fileURLWithPath:path]
               frameUpdater:frameUpdater
                httpHeaders:@{}
              playerFactory:playerFactory
-             enableCache:NO];
+             enableCache:nil];
 }
 
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
@@ -230,13 +230,13 @@ NS_INLINE UIViewController *rootViewController(void) {
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
               playerFactory:(id<FVPPlayerFactory>)playerFactory
-                enableCache:(BOOL)cacheEnabled{
+                enableCache:(NSNumber *)cacheEnabled{
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
   }
     AVPlayerItem *item;
-    if (cacheEnabled) {
+    if (cacheEnabled.boolValue) {
         VIResourceLoaderManager *resourceLoaderManager = [VIResourceLoaderManager new];
         self.resourceLoaderManager = resourceLoaderManager;
         
@@ -656,11 +656,12 @@ NS_INLINE UIViewController *rootViewController(void) {
               NSLog(@"Unable to cache for mimetype, proceed without caching");
           }
       }
+    BOOL enableCache = input.cache.boolValue ? canCache : NO;
     player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
                                      httpHeaders:input.httpHeaders
                                    playerFactory:_playerFactory
-                                     enableCache:input.cache.boolValue ? canCache : NO];
+                                     enableCache:[NSNumber numberWithBool:enableCache]];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];

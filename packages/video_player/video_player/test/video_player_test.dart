@@ -1206,7 +1206,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> clearCache(int textureId, bool clear) async {
+  Future<void> clearCache(int textureId) async {
     calls.add('clearCache');
   }
 

@@ -129,17 +129,13 @@ class VolumeMessage {
 class ClearCacheMessage {
   ClearCacheMessage({
     required this.textureId,
-    required this.clear,
   });
 
   int textureId;
 
-  bool clear;
-
   Object encode() {
     return <Object?>[
       textureId,
-      clear,
     ];
   }
 
@@ -147,7 +143,6 @@ class ClearCacheMessage {
     result as List<Object?>;
     return ClearCacheMessage(
       textureId: result[0]! as int,
-      clear: result[1]! as bool,
     );
   }
 }
@@ -210,7 +205,7 @@ class CreateMessage {
     this.uri,
     this.packageName,
     this.formatHint,
-    required this.cache,
+    this.cache,
     required this.httpHeaders,
   });
 
@@ -222,7 +217,7 @@ class CreateMessage {
 
   String? formatHint;
 
-  bool cache;
+  bool? cache;
 
   Map<String?, String?> httpHeaders;
 
@@ -244,7 +239,7 @@ class CreateMessage {
       uri: result[1] as String?,
       packageName: result[2] as String?,
       formatHint: result[3] as String?,
-      cache: result[4]! as bool,
+      cache: result[4] as bool?,
       httpHeaders: (result[5] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
