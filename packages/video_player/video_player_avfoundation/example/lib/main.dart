@@ -195,8 +195,7 @@ class _BumbleBeeEncryptedLiveStreamState
     super.initState();
 
     _controller = MiniController.network(
-        'https://storage.googleapis.com/exoplayer-test-media-1/flac/play.flac',
-        cache: true);
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/encrypted_bee.m3u8');
 
     _controller.addListener(() {
       setState(() {});
