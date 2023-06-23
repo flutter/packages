@@ -121,7 +121,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   void initState() {
     super.initState();
 
-    _controller = MiniController.network(networkMediaUrl, cache: true);
+    _controller = MiniController.network(networkMediaUrl, enableCache: true);
 
     _controller.addListener(() {
       setState(() {});
