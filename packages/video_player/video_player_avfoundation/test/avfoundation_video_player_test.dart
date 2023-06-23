@@ -244,6 +244,24 @@ void main() {
       expect(textureId, 3);
     });
 
+    test('should cache (mp4)', () async {
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'someUri',
+        cache: false,
+        httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+      ));
+      expect(log.log.last, 'create');
+      expect(log.createMessage?.asset, null);
+      expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.cache, false);
+      expect(log.createMessage?.packageName, null);
+      expect(log.createMessage?.formatHint, null);
+      expect(log.createMessage?.httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'});
+      expect(textureId, 3);
+    });
+
     test('create with file', () async {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.file,
