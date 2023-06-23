@@ -160,19 +160,15 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
             onPressed: () {
               _controller
                   .isCachingSupportedForNetworkMedia(networkMediaUrl)
-                  .then((bool? value) {
-                print(value ?? false
-                    ? 'Caching is supported for mime type'
-                    : 'Caching is not supported for mime type');
-              });
+                  .then((bool? value) {});
             },
-            child: Text('Can cache'),
+            child: const Text('Can cache'),
           ),
           TextButton(
             onPressed: () {
               _controller.clearCache();
             },
-            child: Text('Clear cache'),
+            child: const Text('Clear cache'),
           )
         ],
       ),
@@ -231,7 +227,7 @@ class _BumbleBeeEncryptedLiveStreamState
             onPressed: () {
               _controller.clearCache();
             },
-            child: Text('Clear cache'),
+            child: const Text('Clear cache'),
           )
         ],
       ),

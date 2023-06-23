@@ -179,7 +179,7 @@ void main() {
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
       expect(log.createMessage?.packageName, null);
-      expect(log.createMessage?.enableCache, false);
+      expect(log.createMessage?.enableCache, null);
       expect(log.createMessage?.formatHint, 'dash');
       expect(log.createMessage?.httpHeaders, <String, String>{});
       expect(textureId, 3);
@@ -194,7 +194,7 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
-      expect(log.createMessage?.enableCache, false);
+      expect(log.createMessage?.enableCache, null);
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, null);
       expect(log.createMessage?.httpHeaders,
