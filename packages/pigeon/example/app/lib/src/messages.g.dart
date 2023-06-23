@@ -42,7 +42,8 @@ class CreateMessage {
       asset: result[0] as String?,
       uri: result[1] as String?,
       code: result[2]! as int,
-      httpHeaders: (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      httpHeaders:
+          (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
 }
@@ -62,7 +63,7 @@ class _ExampleHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return CreateMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -84,8 +85,7 @@ class ExampleHostApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ExampleHostApi.getHostLanguage', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -167,7 +167,8 @@ abstract class MessageFlutterApi {
 
   String method(String? aString);
 
-  static void setup(MessageFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(MessageFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.MessageFlutterApi.method', codec,
@@ -177,7 +178,7 @@ abstract class MessageFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.MessageFlutterApi.method was null.');
+              'Argument for dev.flutter.pigeon.MessageFlutterApi.method was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_aString = (args[0] as String?);
           final String output = api.method(arg_aString);

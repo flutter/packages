@@ -14,10 +14,7 @@ import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /** Generated class from Pigeon. */
@@ -33,8 +30,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -53,7 +49,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -166,7 +162,8 @@ public class Messages {
       Object uri = list.get(1);
       pigeonResult.setUri((String) uri);
       Object code = list.get(2);
-      pigeonResult.setCode((code == null) ? null : ((code instanceof Integer) ? (Integer) code : (Long) code));
+      pigeonResult.setCode(
+          (code == null) ? null : ((code instanceof Integer) ? (Integer) code : (Long) code));
       Object httpHeaders = list.get(3);
       pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
       return pigeonResult;
@@ -209,10 +206,10 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ExampleHostApi {
 
-    @NonNull 
+    @NonNull
     String getHostLanguage();
 
-    @NonNull 
+    @NonNull
     Long add(@NonNull Long a, @NonNull Long b);
 
     void sendMessage(@NonNull CreateMessage message, @NonNull Result<Boolean> result);
@@ -221,7 +218,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return ExampleHostApiCodec.INSTANCE;
     }
-    /**Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
       {
         BasicMessageChannel<Object> channel =
@@ -234,8 +231,7 @@ public class Messages {
                 try {
                   String output = api.getHostLanguage();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -257,10 +253,12 @@ public class Messages {
                 Number aArg = (Number) args.get(0);
                 Number bArg = (Number) args.get(1);
                 try {
-                  Long output = api.add((aArg == null) ? null : aArg.longValue(), (bArg == null) ? null : bArg.longValue());
+                  Long output =
+                      api.add(
+                          (aArg == null) ? null : aArg.longValue(),
+                          (bArg == null) ? null : bArg.longValue());
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -309,7 +307,7 @@ public class Messages {
       this.binaryMessenger = argBinaryMessenger;
     }
 
-    /** Public interface for sending reply. */ 
+    /** Public interface for sending reply. */
     @SuppressWarnings("UnknownNullness")
     public interface Reply<T> {
       void reply(T reply);
@@ -318,6 +316,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     public void method(@Nullable String aStringArg, @NonNull Reply<String> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(

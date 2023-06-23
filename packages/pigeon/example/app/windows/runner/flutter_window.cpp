@@ -14,13 +14,20 @@ namespace {
 using pigeon_example::ErrorOr;
 using pigeon_example::ExampleHostApi;
 
+// #docregion cpp-class
 class PigeonApiImplementation : public ExampleHostApi {
  public:
   PigeonApiImplementation() {}
   virtual ~PigeonApiImplementation() {}
 
   ErrorOr<std::string> GetHostLanguage() override { return "C++"; }
+  ErrorOr<int64_t> Add(int64_t a, int64_t b) { return a + b; }
+  void SendMessage(const CreateMessage& message,
+                   std::function<void(ErrorOr<bool> reply)> result) {
+    result(true);
+  }
 };
+// #enddocregion cpp-class
 }  // namespace
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)

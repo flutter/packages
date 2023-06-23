@@ -17,17 +17,16 @@
 
 namespace pigeon_example {
 
-
 // Generated class from Pigeon.
 
 class FlutterError {
  public:
-  explicit FlutterError(const std::string& code)
-    : code_(code) {}
+  explicit FlutterError(const std::string& code) : code_(code) {}
   explicit FlutterError(const std::string& code, const std::string& message)
-    : code_(code), message_(message) {}
-  explicit FlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
-    : code_(code), message_(message), details_(details) {}
+      : code_(code), message_(message) {}
+  explicit FlutterError(const std::string& code, const std::string& message,
+                        const flutter::EncodableValue& details)
+      : code_(code), message_(message), details_(details) {}
 
   const std::string& code() const { return code_; }
   const std::string& message() const { return message_; }
@@ -39,7 +38,8 @@ class FlutterError {
   flutter::EncodableValue details_;
 };
 
-template<class T> class ErrorOr {
+template <class T>
+class ErrorOr {
  public:
   ErrorOr(const T& rhs) : v_(rhs) {}
   ErrorOr(const T&& rhs) : v_(std::move(rhs)) {}
@@ -59,21 +59,17 @@ template<class T> class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
-
 // Generated class from Pigeon that represents data sent in messages.
 class CreateMessage {
  public:
   // Constructs an object setting all non-nullable fields.
-  explicit CreateMessage(
-    int64_t code,
-    const flutter::EncodableMap& http_headers);
+  explicit CreateMessage(int64_t code,
+                         const flutter::EncodableMap& http_headers);
 
   // Constructs an object setting all fields.
-  explicit CreateMessage(
-    const std::string* asset,
-    const std::string* uri,
-    int64_t code,
-    const flutter::EncodableMap& http_headers);
+  explicit CreateMessage(const std::string* asset, const std::string* uri,
+                         int64_t code,
+                         const flutter::EncodableMap& http_headers);
 
   const std::string* asset() const;
   void set_asset(const std::string_view* value_arg);
@@ -89,7 +85,6 @@ class CreateMessage {
   const flutter::EncodableMap& http_headers() const;
   void set_http_headers(const flutter::EncodableMap& value_arg);
 
-
  private:
   static CreateMessage FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
@@ -101,7 +96,6 @@ class CreateMessage {
   std::optional<std::string> uri_;
   int64_t code_;
   flutter::EncodableMap http_headers_;
-
 };
 
 class ExampleHostApiCodecSerializer : public flutter::StandardCodecSerializer {
@@ -112,53 +106,47 @@ class ExampleHostApiCodecSerializer : public flutter::StandardCodecSerializer {
     return sInstance;
   }
 
-  void WriteValue(
-    const flutter::EncodableValue& value,
-    flutter::ByteStreamWriter* stream) const override;
+  void WriteValue(const flutter::EncodableValue& value,
+                  flutter::ByteStreamWriter* stream) const override;
 
  protected:
   flutter::EncodableValue ReadValueOfType(
-    uint8_t type,
-    flutter::ByteStreamReader* stream) const override;
-
+      uint8_t type, flutter::ByteStreamReader* stream) const override;
 };
 
-// Generated interface from Pigeon that represents a handler of messages from Flutter.
+// Generated interface from Pigeon that represents a handler of messages from
+// Flutter.
 class ExampleHostApi {
  public:
   ExampleHostApi(const ExampleHostApi&) = delete;
   ExampleHostApi& operator=(const ExampleHostApi&) = delete;
   virtual ~ExampleHostApi() {}
   virtual ErrorOr<std::string> GetHostLanguage() = 0;
-  virtual ErrorOr<int64_t> Add(
-    int64_t a,
-    int64_t b) = 0;
-  virtual void SendMessage(
-    const CreateMessage& message,
-    std::function<void(ErrorOr<bool> reply)> result) = 0;
+  virtual ErrorOr<int64_t> Add(int64_t a, int64_t b) = 0;
+  virtual void SendMessage(const CreateMessage& message,
+                           std::function<void(ErrorOr<bool> reply)> result) = 0;
 
   // The codec used by ExampleHostApi.
   static const flutter::StandardMessageCodec& GetCodec();
-  // Sets up an instance of `ExampleHostApi` to handle messages through the `binary_messenger`.
-  static void SetUp(
-    flutter::BinaryMessenger* binary_messenger,
-    ExampleHostApi* api);
+  // Sets up an instance of `ExampleHostApi` to handle messages through the
+  // `binary_messenger`.
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    ExampleHostApi* api);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
  protected:
   ExampleHostApi() = default;
-
 };
-// Generated class from Pigeon that represents Flutter messages that can be called from C++.
+// Generated class from Pigeon that represents Flutter messages that can be
+// called from C++.
 class MessageFlutterApi {
  public:
   MessageFlutterApi(flutter::BinaryMessenger* binary_messenger);
   static const flutter::StandardMessageCodec& GetCodec();
-  void Method(
-    const std::string* a_string,
-    std::function<void(const std::string&)>&& on_success,
-    std::function<void(const FlutterError&)>&& on_error);
+  void Method(const std::string* a_string,
+              std::function<void(const std::string&)>&& on_success,
+              std::function<void(const FlutterError&)>&& on_error);
 
  private:
   flutter::BinaryMessenger* binary_messenger_;

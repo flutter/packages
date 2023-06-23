@@ -133,11 +133,38 @@ private class PigeonApiImplementation: ExampleHostApi {
 ```
 
 ### kotlin
+<?code-excerpt "../../app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class)"?>
 ```kt 
+private class PigeonApiImplementation: ExampleHostApi {
+    override fun getHostLanguage(): String {
+        return "Kotlin"
+    }
+
+    fun add(a: Long, b: Long): Long {
+        return a + b
+    }
+
+    fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
+        callback(Result.success(true))
+    }
+}
 ```
 
 ### c++
+<?code-excerpt "../../app/windows/runner/flutter_window.cpp (cpp-class)"?>
 ```c++
+class PigeonApiImplementation : public ExampleHostApi {
+ public:
+  PigeonApiImplementation() {}
+  virtual ~PigeonApiImplementation() {}
+
+  ErrorOr<std::string> GetHostLanguage() override { return "C++"; }
+  ErrorOr<int64_t> Add(int64_t a, int64_t b) { return a + b; }
+  void SendMessage(const CreateMessage& message,
+                   std::function<void(ErrorOr<bool> reply)> result) {
+    result(true);
+  }
+};
 ```
 
 ## FlutterApi Example

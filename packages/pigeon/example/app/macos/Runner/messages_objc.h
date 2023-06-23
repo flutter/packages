@@ -19,13 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithAsset:(nullable NSString *)asset
-    uri:(nullable NSString *)uri
-    code:(NSNumber *)code
-    httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
-@property(nonatomic, copy, nullable) NSString * asset;
-@property(nonatomic, copy, nullable) NSString * uri;
-@property(nonatomic, strong) NSNumber * code;
-@property(nonatomic, strong) NSDictionary<NSString *, NSString *> * httpHeaders;
+                          uri:(nullable NSString *)uri
+                         code:(NSNumber *)code
+                  httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
+@property(nonatomic, copy, nullable) NSString *asset;
+@property(nonatomic, copy, nullable) NSString *uri;
+@property(nonatomic, strong) NSNumber *code;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *httpHeaders;
 @end
 
 /// The codec used by ExampleHostApi.
@@ -35,18 +35,23 @@ NSObject<FlutterMessageCodec> *ExampleHostApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSString *)getHostLanguageWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)addA:(NSNumber *)a b:(NSNumber *)b error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)sendMessageMessage:(CreateMessage *)message completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (nullable NSNumber *)addA:(NSNumber *)a
+                          b:(NSNumber *)b
+                      error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)sendMessageMessage:(CreateMessage *)message
+                completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void ExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<ExampleHostApi> *_Nullable api);
+extern void ExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+                                NSObject<ExampleHostApi> *_Nullable api);
 
 /// The codec used by MessageFlutterApi.
 NSObject<FlutterMessageCodec> *MessageFlutterApiGetCodec(void);
 
 @interface MessageFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)methodAString:(nullable NSString *)aString completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)methodAString:(nullable NSString *)aString
+           completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 NS_ASSUME_NONNULL_END
