@@ -1,3 +1,7 @@
+## 10.1.1
+
+* [swift] Fixes a crash when casting `NSNull` to an array. 
+
 ## 10.1.0
 
 * [objc] Adds macOS support to facilitate code sharing with existing iOS plugins.
