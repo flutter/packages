@@ -5,14 +5,15 @@
 // This file is hand-formatted.
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart';
+import 'package:js/js.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:rfw/rfw.dart';
-import 'package:wasm/wasm.dart';
+// import 'package:wasm/wasm.dart';
 
 const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
 
@@ -47,18 +48,12 @@ class _ExampleState extends State<Example> {
 
   Future<void> _loadLogic() async {
     final DateTime expiryDate = DateTime.now().subtract(const Duration(hours: 6));
-    final Directory home = await getApplicationSupportDirectory();
-    final File interfaceFile = File(path.join(home.path, 'cache.rfw'));
-    if (!interfaceFile.existsSync() || interfaceFile.lastModifiedSync().isBefore(expiryDate)) {
-      final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse(interfaceUrl))).close();
-      await interfaceFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
-    }
-    final File logicFile = File(path.join(home.path, 'cache.wasm'));
-    if (!logicFile.existsSync() || logicFile.lastModifiedSync().isBefore(expiryDate)) {
-      final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse(logicUrl))).close();
-      await logicFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
-    }
-    _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(await interfaceFile.readAsBytes()));
+
+    final uiBytes = (await get(Uri.parse(interfaceUrl))).bodyBytes;
+    final logicBytes = (await get(Uri.parse(logicUrl))).bodyBytes;
+
+    _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(uiBytes));
+
     _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
     _dataFetcher = _logic.lookupFunction('value') as WasmFunction;
     _updateData();
