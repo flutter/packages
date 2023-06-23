@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -91,7 +90,7 @@ void main() {
       await controller.initialize();
 
       final bool? isSupported =
-          await controller.isCachingSupportedForNetworkMedia("www.video.mp4");
+          await controller.isCachingSupportedForNetworkMedia('www.video.mp4');
 
       expect(isSupported, true);
     });
