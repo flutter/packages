@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class FLTTextureMessage;
 @class FLTLoopingMessage;
 @class FLTIsSupportedMessage;
-@class FLTIsCachingSupportedMessage;
+@class FLTIsCacheSupportedMessage;
 @class FLTVolumeMessage;
 @class FLTClearCacheMessage;
 @class FLTPlaybackSpeedMessage;
@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSNumber * isSupported;
 @end
 
-@interface FLTIsCachingSupportedMessage : NSObject
+@interface FLTIsCacheSupportedMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUrl:(NSString *)url;
@@ -95,13 +95,13 @@ NS_ASSUME_NONNULL_BEGIN
     uri:(nullable NSString *)uri
     packageName:(nullable NSString *)packageName
     formatHint:(nullable NSString *)formatHint
-    cache:(nullable NSNumber *)cache
+    enableCache:(nullable NSNumber *)enableCache
     httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
 @property(nonatomic, copy, nullable) NSString * asset;
 @property(nonatomic, copy, nullable) NSString * uri;
 @property(nonatomic, copy, nullable) NSString * packageName;
 @property(nonatomic, copy, nullable) NSString * formatHint;
-@property(nonatomic, strong, nullable) NSNumber * cache;
+@property(nonatomic, strong, nullable) NSNumber * enableCache;
 @property(nonatomic, strong) NSDictionary<NSString *, NSString *> * httpHeaders;
 @end
 
@@ -124,7 +124,7 @@ NSObject<FlutterMessageCodec> *FLTAVFoundationVideoPlayerApiGetCodec(void);
 - (void)clearCache:(FLTClearCacheMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setVolume:(FLTVolumeMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable FLTIsSupportedMessage *)isCacheSupportedForNetworkMedia:(FLTIsCachingSupportedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FLTIsSupportedMessage *)isCacheSupportedForNetworkMedia:(FLTIsCacheSupportedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setPlaybackSpeed:(FLTPlaybackSpeedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)play:(FLTTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.

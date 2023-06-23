@@ -24,7 +24,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
   ClearCacheMessage? clearCacheMessage;
-  IsCachingSupportedMessage? isCachingSupportedMessage;
+  IsCacheSupportedMessage? isCacheSupportedMessage;
 
   @override
   TextureMessage create(CreateMessage arg) {
@@ -101,7 +101,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
 
   @override
   IsSupportedMessage isCacheSupportedForNetworkMedia(
-      IsCachingSupportedMessage msg) {
+      IsCacheSupportedMessage msg) {
     log.add('isCacheSupportedForNetworkMedia');
     return IsSupportedMessage(isSupported: true);
   }
