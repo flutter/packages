@@ -12,10 +12,10 @@ must be fixed in code in order to use go_router.
 This kind of exception are thrown when the configuration of go_router cannot handle incoming requests
 from users or other part of the code. For example, an GoException is thrown when user enter url that
 can't be parsed according to pattern specified in the `GoRouter.routes`. These exceptions can be
-handled in various callback.
+handled in various callbacks.
 
 Once can provide a callback to `GoRouter.onException` to handle this exception. In this callback,
-one can choose to ignore, redirect, or push different page based on needs.
+one can choose to ignore, redirect, or push different pages depending on the situation.
 See [Exception Handling](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/exception_handling.dart)
 on a runnable example.
 
