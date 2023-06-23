@@ -441,10 +441,13 @@ class PictureInPictureOverlaySettings {
 
   /// The top position of the picture-in-picture overlay
   final double top;
+
   /// The left position of the picture-in-picture overlay
   final double left;
+
   /// The width of the picture-in-picture overlay
   final double width;
+
   /// The height of the picture-in-picture overlay
   final double height;
 }

@@ -172,7 +172,8 @@ class CreateMessage {
       uri: result[1] as String?,
       packageName: result[2] as String?,
       formatHint: result[3] as String?,
-      httpHeaders: (result[4] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      httpHeaders:
+          (result[4] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
 }
@@ -246,7 +247,8 @@ class SetPictureInPictureOverlaySettingsMessage {
     return SetPictureInPictureOverlaySettingsMessage(
       textureId: result[0]! as int,
       settings: result[1] != null
-          ? PictureInPictureOverlaySettingsMessage.decode(result[1]! as List<Object?>)
+          ? PictureInPictureOverlaySettingsMessage.decode(
+              result[1]! as List<Object?>)
           : null,
     );
   }
@@ -378,29 +380,32 @@ class _AVFoundationVideoPlayerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
-        return AutomaticallyStartsPictureInPictureMessage.decode(readValue(buffer)!);
-      case 129: 
+      case 128:
+        return AutomaticallyStartsPictureInPictureMessage.decode(
+            readValue(buffer)!);
+      case 129:
         return CreateMessage.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return LoopingMessage.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return MixWithOthersMessage.decode(readValue(buffer)!);
-      case 132: 
-        return PictureInPictureOverlaySettingsMessage.decode(readValue(buffer)!);
-      case 133: 
+      case 132:
+        return PictureInPictureOverlaySettingsMessage.decode(
+            readValue(buffer)!);
+      case 133:
         return PlaybackSpeedMessage.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return PositionMessage.decode(readValue(buffer)!);
-      case 135: 
-        return SetPictureInPictureOverlaySettingsMessage.decode(readValue(buffer)!);
-      case 136: 
+      case 135:
+        return SetPictureInPictureOverlaySettingsMessage.decode(
+            readValue(buffer)!);
+      case 136:
         return StartPictureInPictureMessage.decode(readValue(buffer)!);
-      case 137: 
+      case 137:
         return StopPictureInPictureMessage.decode(readValue(buffer)!);
-      case 138: 
+      case 138:
         return TextureMessage.decode(readValue(buffer)!);
-      case 139: 
+      case 139:
         return VolumeMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -422,8 +427,7 @@ class AVFoundationVideoPlayerApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.AVFoundationVideoPlayerApi.initialize', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -672,10 +676,10 @@ class AVFoundationVideoPlayerApi {
 
   Future<bool> isPictureInPictureSupported() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.isPictureInPictureSupported', codec,
+        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.isPictureInPictureSupported',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -697,9 +701,11 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<void> setPictureInPictureOverlaySettings(SetPictureInPictureOverlaySettingsMessage arg_msg) async {
+  Future<void> setPictureInPictureOverlaySettings(
+      SetPictureInPictureOverlaySettingsMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.setPictureInPictureOverlaySettings', codec,
+        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.setPictureInPictureOverlaySettings',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -719,9 +725,11 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<void> setAutomaticallyStartsPictureInPicture(AutomaticallyStartsPictureInPictureMessage arg_msg) async {
+  Future<void> setAutomaticallyStartsPictureInPicture(
+      AutomaticallyStartsPictureInPictureMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.setAutomaticallyStartsPictureInPicture', codec,
+        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.setAutomaticallyStartsPictureInPicture',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -741,9 +749,11 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<void> startPictureInPicture(StartPictureInPictureMessage arg_msg) async {
+  Future<void> startPictureInPicture(
+      StartPictureInPictureMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.startPictureInPicture', codec,
+        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.startPictureInPicture',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -765,7 +775,8 @@ class AVFoundationVideoPlayerApi {
 
   Future<void> stopPictureInPicture(StopPictureInPictureMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.stopPictureInPicture', codec,
+        'dev.flutter.pigeon.AVFoundationVideoPlayerApi.stopPictureInPicture',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;

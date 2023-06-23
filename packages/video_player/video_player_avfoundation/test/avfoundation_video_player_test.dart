@@ -23,7 +23,8 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   VolumeMessage? volumeMessage;
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
-  SetPictureInPictureOverlaySettingsMessage? setPictureInPictureOverlaySettingMessage;
+  SetPictureInPictureOverlaySettingsMessage?
+      setPictureInPictureOverlaySettingMessage;
   AutomaticallyStartsPictureInPictureMessage?
       automaticallyStartsPictureInPictureMessage;
   StartPictureInPictureMessage? startPictureInPictureMessage;
@@ -302,11 +303,13 @@ void main() {
 
     test('setPictureInPictureOverlaySettings', () async {
       await player.setPictureInPictureOverlaySettings(
-          textureId: 1, settings: const PictureInPictureOverlaySettings(top: 0, left: 1, width: 2, height: 3));
+          textureId: 1,
+          settings: const PictureInPictureOverlaySettings(
+              top: 0, left: 1, width: 2, height: 3));
       expect(log.log.last, 'setPictureInPictureOverlaySettings');
       expect(log.setPictureInPictureOverlaySettingMessage?.textureId, 1);
-      expect(log.setPictureInPictureOverlaySettingMessage?.settings?.left, 0);
-      expect(log.setPictureInPictureOverlaySettingMessage?.settings?.top, 1);
+      expect(log.setPictureInPictureOverlaySettingMessage?.settings?.top, 0);
+      expect(log.setPictureInPictureOverlaySettingMessage?.settings?.left, 1);
       expect(log.setPictureInPictureOverlaySettingMessage?.settings?.width, 2);
       expect(log.setPictureInPictureOverlaySettingMessage?.settings?.height, 3);
     });

@@ -284,8 +284,9 @@ NS_INLINE UIViewController *rootViewController(void) {
   // This is a native overlay that does not scroll with the rest of the Flutter UI.
   // That is why we need to set the opacity of the overlay.
   // Setting it to 0 would result in the picture-in-picture not working.
-  // Setting it to 1 would result in the picture-in-picture overlay always showing over other widget.
-  // Setting it to 0.001 makes the placeholder invisible, but still allows the picture-in-picture.
+  // Setting it to 1 would result in the picture-in-picture overlay always showing over other
+  // widget. Setting it to 0.001 makes the placeholder invisible, but still allows the
+  // picture-in-picture.
   _playerLayer.opacity = 0.001;
   [rootViewController().view.layer addSublayer:_playerLayer];
 
@@ -792,7 +793,8 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (nullable NSNumber *)isPictureInPictureSupported:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-    return @([AVPictureInPictureController isPictureInPictureSupported] && [self doesInfoPlistSupportPictureInPicture]);
+  return @([AVPictureInPictureController isPictureInPictureSupported] &&
+           [self doesInfoPlistSupportPictureInPicture]);
 }
 
 - (void)setAutomaticallyStartsPictureInPicture:
@@ -806,25 +808,28 @@ NS_INLINE UIViewController *rootViewController(void) {
 }
 
 - (void)setPictureInPictureOverlaySettings:(FLTSetPictureInPictureOverlaySettingsMessage *)input
-                                 error:(FlutterError **)error {
+                                     error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
   [player setPictureInPictureOverlaySettings:CGRectMake(input.settings.left.floatValue,
-                                                    input.settings.top.floatValue,
-                                                    input.settings.width.floatValue,
-                                                    input.settings.height.floatValue)];
+                                                        input.settings.top.floatValue,
+                                                        input.settings.width.floatValue,
+                                                        input.settings.height.floatValue)];
 }
 
 - (BOOL)doesInfoPlistSupportPictureInPicture {
   NSArray *backgroundModes = [NSBundle.mainBundle objectForInfoDictionaryKey:@"UIBackgroundModes"];
-  return ![backgroundModes isKindOfClass:[NSArray class]] || ![backgroundModes containsObject:@"audio"];
+  return ![backgroundModes isKindOfClass:[NSArray class]] ||
+         ![backgroundModes containsObject:@"audio"];
 }
 
 - (void)startPictureInPicture:(FLTStartPictureInPictureMessage *)input
                         error:(FlutterError **)error {
   if (![self doesInfoPlistSupportPictureInPicture]) {
-      *error = [FlutterError errorWithCode:@"video_player"
-                                   message:@"Failed to start picture-in-picture because UIBackgroundModes: audio, AirPlay, picture-in-picture is not enabled in Info.plist"
-                                   details:nil];
+    *error = [FlutterError
+        errorWithCode:@"video_player"
+              message:@"Failed to start picture-in-picture because UIBackgroundModes: audio, "
+                      @"AirPlay, picture-in-picture is not enabled in Info.plist"
+              details:nil];
     return;
   }
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
@@ -833,9 +838,11 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (void)stopPictureInPicture:(FLTStopPictureInPictureMessage *)input error:(FlutterError **)error {
   if (![self doesInfoPlistSupportPictureInPicture]) {
-    *error = [FlutterError errorWithCode:@"video_player"
-                                 message:@"Failed to stop picture-in-picture because UIBackgroundModes: audio, AirPlay, picture-in-picture is not enabled in Info.plist"
-                                 details:nil];
+    *error = [FlutterError
+        errorWithCode:@"video_player"
+              message:@"Failed to stop picture-in-picture because UIBackgroundModes: audio, "
+                      @"AirPlay, picture-in-picture is not enabled in Info.plist"
+              details:nil];
     return;
   }
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
