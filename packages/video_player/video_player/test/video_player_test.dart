@@ -85,7 +85,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   ) async {}
 
   @override
-  bool? cache;
+  bool? enableCache;
 
   @override
   int? maxCacheSize;
