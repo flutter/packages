@@ -232,7 +232,7 @@ public class Messages {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class IsCachingSupportedMessage {
+  public static final class IsCacheSupportedMessage {
     private @NonNull String url;
 
     public @NonNull String getUrl() {
@@ -247,7 +247,7 @@ public class Messages {
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
-    IsCachingSupportedMessage() {}
+    IsCacheSupportedMessage() {}
 
     public static final class Builder {
 
@@ -258,8 +258,8 @@ public class Messages {
         return this;
       }
 
-      public @NonNull IsCachingSupportedMessage build() {
-        IsCachingSupportedMessage pigeonReturn = new IsCachingSupportedMessage();
+      public @NonNull IsCacheSupportedMessage build() {
+        IsCacheSupportedMessage pigeonReturn = new IsCacheSupportedMessage();
         pigeonReturn.setUrl(url);
         return pigeonReturn;
       }
@@ -272,8 +272,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull IsCachingSupportedMessage fromList(@NonNull ArrayList<Object> list) {
-      IsCachingSupportedMessage pigeonResult = new IsCachingSupportedMessage();
+    static @NonNull IsCacheSupportedMessage fromList(@NonNull ArrayList<Object> list) {
+      IsCacheSupportedMessage pigeonResult = new IsCacheSupportedMessage();
       Object url = list.get(0);
       pigeonResult.setUrl((String) url);
       return pigeonResult;
@@ -785,7 +785,7 @@ public class Messages {
         case (byte) 129:
           return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return IsCachingSupportedMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return IsCacheSupportedMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
           return IsSupportedMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
@@ -813,9 +813,9 @@ public class Messages {
       } else if (value instanceof CreateMessage) {
         stream.write(129);
         writeValue(stream, ((CreateMessage) value).toList());
-      } else if (value instanceof IsCachingSupportedMessage) {
+      } else if (value instanceof IsCacheSupportedMessage) {
         stream.write(130);
-        writeValue(stream, ((IsCachingSupportedMessage) value).toList());
+        writeValue(stream, ((IsCacheSupportedMessage) value).toList());
       } else if (value instanceof IsSupportedMessage) {
         stream.write(131);
         writeValue(stream, ((IsSupportedMessage) value).toList());
@@ -858,7 +858,7 @@ public class Messages {
     void setVolume(@NonNull VolumeMessage msg);
 
     @NonNull 
-    IsSupportedMessage isCacheSupportedForNetworkMedia(@NonNull IsCachingSupportedMessage msg);
+    IsSupportedMessage isCacheSupportedForNetworkMedia(@NonNull IsCacheSupportedMessage msg);
 
     void clearCache(@NonNull ClearCacheMessage msg);
 
@@ -1008,7 +1008,7 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                IsCachingSupportedMessage msgArg = (IsCachingSupportedMessage) args.get(0);
+                IsCacheSupportedMessage msgArg = (IsCacheSupportedMessage) args.get(0);
                 try {
                   IsSupportedMessage output = api.isCacheSupportedForNetworkMedia(msgArg);
                   wrapped.add(0, output);

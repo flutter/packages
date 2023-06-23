@@ -42,9 +42,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
-@interface FLTIsCachingSupportedMessage ()
-+ (FLTIsCachingSupportedMessage *)fromList:(NSArray *)list;
-+ (nullable FLTIsCachingSupportedMessage *)nullableFromList:(NSArray *)list;
+@interface FLTIsCacheSupportedMessage ()
++ (FLTIsCacheSupportedMessage *)fromList:(NSArray *)list;
++ (nullable FLTIsCacheSupportedMessage *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -155,20 +155,20 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation FLTIsCachingSupportedMessage
+@implementation FLTIsCacheSupportedMessage
 + (instancetype)makeWithUrl:(NSString *)url {
-  FLTIsCachingSupportedMessage* pigeonResult = [[FLTIsCachingSupportedMessage alloc] init];
+  FLTIsCacheSupportedMessage* pigeonResult = [[FLTIsCacheSupportedMessage alloc] init];
   pigeonResult.url = url;
   return pigeonResult;
 }
-+ (FLTIsCachingSupportedMessage *)fromList:(NSArray *)list {
-  FLTIsCachingSupportedMessage *pigeonResult = [[FLTIsCachingSupportedMessage alloc] init];
++ (FLTIsCacheSupportedMessage *)fromList:(NSArray *)list {
+  FLTIsCacheSupportedMessage *pigeonResult = [[FLTIsCacheSupportedMessage alloc] init];
   pigeonResult.url = GetNullableObjectAtIndex(list, 0);
   NSAssert(pigeonResult.url != nil, @"");
   return pigeonResult;
 }
-+ (nullable FLTIsCachingSupportedMessage *)nullableFromList:(NSArray *)list {
-  return (list) ? [FLTIsCachingSupportedMessage fromList:list] : nil;
++ (nullable FLTIsCacheSupportedMessage *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLTIsCacheSupportedMessage fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
@@ -285,14 +285,14 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     uri:(nullable NSString *)uri
     packageName:(nullable NSString *)packageName
     formatHint:(nullable NSString *)formatHint
-    cache:(nullable NSNumber *)cache
+    enableCache:(nullable NSNumber *)enableCache
     httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders {
   FLTCreateMessage* pigeonResult = [[FLTCreateMessage alloc] init];
   pigeonResult.asset = asset;
   pigeonResult.uri = uri;
   pigeonResult.packageName = packageName;
   pigeonResult.formatHint = formatHint;
-  pigeonResult.cache = cache;
+  pigeonResult.enableCache = enableCache;
   pigeonResult.httpHeaders = httpHeaders;
   return pigeonResult;
 }
@@ -302,7 +302,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.uri = GetNullableObjectAtIndex(list, 1);
   pigeonResult.packageName = GetNullableObjectAtIndex(list, 2);
   pigeonResult.formatHint = GetNullableObjectAtIndex(list, 3);
-  pigeonResult.cache = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.enableCache = GetNullableObjectAtIndex(list, 4);
   pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 5);
   NSAssert(pigeonResult.httpHeaders != nil, @"");
   return pigeonResult;
@@ -316,7 +316,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.uri ?: [NSNull null]),
     (self.packageName ?: [NSNull null]),
     (self.formatHint ?: [NSNull null]),
-    (self.cache ?: [NSNull null]),
+    (self.enableCache ?: [NSNull null]),
     (self.httpHeaders ?: [NSNull null]),
   ];
 }
@@ -354,7 +354,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     case 129: 
       return [FLTCreateMessage fromList:[self readValue]];
     case 130: 
-      return [FLTIsCachingSupportedMessage fromList:[self readValue]];
+      return [FLTIsCacheSupportedMessage fromList:[self readValue]];
     case 131: 
       return [FLTIsSupportedMessage fromList:[self readValue]];
     case 132: 
@@ -385,7 +385,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTCreateMessage class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTIsCachingSupportedMessage class]]) {
+  } else if ([value isKindOfClass:[FLTIsCacheSupportedMessage class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FLTIsSupportedMessage class]]) {
@@ -559,7 +559,7 @@ void FLTAVFoundationVideoPlayerApiSetup(id<FlutterBinaryMessenger> binaryMesseng
       NSCAssert([api respondsToSelector:@selector(isCacheSupportedForNetworkMedia:error:)], @"FLTAVFoundationVideoPlayerApi api (%@) doesn't respond to @selector(isCacheSupportedForNetworkMedia:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        FLTIsCachingSupportedMessage *arg_msg = GetNullableObjectAtIndex(args, 0);
+        FLTIsCacheSupportedMessage *arg_msg = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FLTIsSupportedMessage *output = [api isCacheSupportedForNetworkMedia:arg_msg error:&error];
         callback(wrapResult(output, error));
