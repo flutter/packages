@@ -87,8 +87,7 @@ void main() {
       expect(VideoPlayerPlatform.instance.dispose(await textureId), completes);
     });
 
-    testWidgets('can check is caching is supported',
-        (WidgetTester tester) async {
+    testWidgets('can check if cache is supported', (WidgetTester tester) async {
       expect(
         VideoPlayerPlatform.instance
             .isCacheSupportedForNetworkMedia("www.video.mp4"),
