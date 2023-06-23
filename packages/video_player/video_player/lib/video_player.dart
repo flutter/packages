@@ -586,7 +586,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<bool> isPictureInPictureSupported() =>
       _videoPlayerPlatform.isPictureInPictureSupported();
 
-  /// Enable/disable to start picture-in-picture automatically when the app goes to the background.
+  /// Enables/disables to start picture-in-picture automatically when the app goes to the background.
   Future<void> setAutomaticallyStartsPictureInPicture({
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) async {
@@ -600,7 +600,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
-  /// Set the location of the video player view.
+  /// Sets the location of the video player view.
   /// So picture-in-picture can use it for animating.
   /// The rect will represent the location of the video player view in Flutter. The rect will be
   /// passed to the platform to position the native picture-in-picture overlay correctly.
@@ -616,7 +616,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
-  /// Start picture-in-picture mode.
+  /// Starts picture-in-picture mode.
   Future<void> startPictureInPicture() async {
     if (!value.isInitialized || _isDisposed) {
       return;
@@ -624,7 +624,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _videoPlayerPlatform.startPictureInPicture(_textureId);
   }
 
-  /// Stop picture-in-picture mode.
+  /// Stops picture-in-picture mode.
   Future<void> stopPictureInPicture() async {
     if (!value.isInitialized || _isDisposed) {
       return;
