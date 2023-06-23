@@ -240,9 +240,14 @@ private class PigeonFlutterApi {
 
 ### c++
 
-<?code-excerpt "../../app/windows/runner/flutter_window.cpp (cpp-class-flutter)"?>
+<?code-excerpt "../../app/windows/runner/flutter_window.cpp (cpp-method-flutter)"?>
 ```c++
-
+void TestPlugin::CallFlutterMethod(
+    String aString, std::function<void(ErrorOr<int64_t> reply)> result) {
+  MessageFlutterApi->FlutterMethod(
+      aString, [result](String echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
 ```
 
 ## Swift / Kotlin Plugin Example

@@ -40,6 +40,15 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
 
+// #docregion cpp-method-flutter
+  void TestPlugin::CallFlutterMethod(
+      String aString, std::function<void(ErrorOr<int64_t> reply)> result) {
+    MessageFlutterApi->FlutterMethod(
+        aString, [result](String echo) { result(echo); },
+        [result](const FlutterError& error) { result(error); });
+  }
+// #enddocregion cpp-method-flutter
+
   RECT frame = GetClientArea();
 
   // The size here must match the window dimensions to avoid unnecessary surface
