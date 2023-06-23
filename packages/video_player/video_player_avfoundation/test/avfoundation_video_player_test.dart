@@ -248,13 +248,13 @@ void main() {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
-        cache: false,
+        enableCache: false,
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
       ));
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
-      expect(log.createMessage?.cache, false);
+      expect(log.createMessage?.enableCache, false);
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, null);
       expect(log.createMessage?.httpHeaders,
