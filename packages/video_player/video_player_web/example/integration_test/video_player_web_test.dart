@@ -90,7 +90,7 @@ void main() {
     testWidgets('can check if cache is supported', (WidgetTester tester) async {
       expect(
         VideoPlayerPlatform.instance
-            .isCacheSupportedForNetworkMedia("www.video.mp4"),
+            .isCacheSupportedForNetworkMedia('www.video.mp4'),
         completes,
       );
     });

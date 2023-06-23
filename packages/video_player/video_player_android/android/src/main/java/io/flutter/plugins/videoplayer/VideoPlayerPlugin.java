@@ -158,8 +158,8 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               arg.getFormatHint(),
               httpHeaders,
               options);
-      boolean videoCanCache = canCache(Uri.parse(arg.getUri()));
-      if (videoCanCache) {
+      boolean isSupported = isCacheSupported(Uri.parse(arg.getUri()));
+      if (isSupported) {
         player.setMaxCacheSize(arg.getMaxCacheSize());
         player.setMaxFileSize(arg.getMaxFileSize());
       }
@@ -229,10 +229,10 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   public Messages.IsSupportedMessage isCacheSupportedForNetworkMedia(@NonNull Messages.IsCacheSupportedMessage arg) {
-    boolean videoCanCache = canCache(Uri.parse(arg.getUrl()));
+    boolean isSupported = isCacheSupported(Uri.parse(arg.getUrl()));
     Messages.IsSupportedMessage result =
         new Messages.IsSupportedMessage.Builder()
-            .setIsSupported(videoCanCache).build();
+            .setIsSupported(isSupported).build();
     return result;
   }
 
@@ -273,9 +273,8 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
   }
 
-  public boolean canCache(Uri uri) {
+  public boolean isCacheSupported(Uri uri) {
     String mimeType = getMimeType(uri);
-    Log.d(TAG,mimeType);
      switch(mimeType) {
          case "video/mp4":
              return true;
