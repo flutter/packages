@@ -792,7 +792,7 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (nullable NSNumber *)isPictureInPictureSupported:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @([AVPictureInPictureController isPictureInPictureSupported]);
+    return @([AVPictureInPictureController isPictureInPictureSupported] && [self doesInfoPlistSupportPictureInPicture]);
 }
 
 - (void)setAutomaticallyStartsPictureInPicture:
@@ -814,21 +814,17 @@ NS_INLINE UIViewController *rootViewController(void) {
                                                     input.settings.height.floatValue)];
 }
 
-- (BOOL)doesInfoPlistSupportPictureInPicture:(FlutterError **)error {
+- (BOOL)doesInfoPlistSupportPictureInPicture {
   NSArray *backgroundModes = [NSBundle.mainBundle objectForInfoDictionaryKey:@"UIBackgroundModes"];
-  if (![backgroundModes isKindOfClass:[NSArray class]] ||
-      ![backgroundModes containsObject:@"audio"]) {
-    *error = [FlutterError errorWithCode:@"video_player"
-                                 message:@"missing audio UIBackgroundModes audio in Info.plist"
-                                 details:nil];
-    return NO;
-  }
-  return YES;
+  return ![backgroundModes isKindOfClass:[NSArray class]] || ![backgroundModes containsObject:@"audio"];
 }
 
 - (void)startPictureInPicture:(FLTStartPictureInPictureMessage *)input
                         error:(FlutterError **)error {
-  if (![self doesInfoPlistSupportPictureInPicture:error]) {
+  if (![self doesInfoPlistSupportPictureInPicture]) {
+      *error = [FlutterError errorWithCode:@"video_player"
+                                   message:@"Failed to start picture-in-picture because UIBackgroundModes: audio, AirPlay, picture-in-picture is not enabled in Info.plist"
+                                   details:nil];
     return;
   }
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
@@ -836,7 +832,10 @@ NS_INLINE UIViewController *rootViewController(void) {
 }
 
 - (void)stopPictureInPicture:(FLTStopPictureInPictureMessage *)input error:(FlutterError **)error {
-  if (![self doesInfoPlistSupportPictureInPicture:error]) {
+  if (![self doesInfoPlistSupportPictureInPicture]) {
+    *error = [FlutterError errorWithCode:@"video_player"
+                                 message:@"Failed to stop picture-in-picture because UIBackgroundModes: audio, AirPlay, picture-in-picture is not enabled in Info.plist"
+                                 details:nil];
     return;
   }
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];

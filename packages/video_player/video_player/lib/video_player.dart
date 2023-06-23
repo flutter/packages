@@ -223,6 +223,7 @@ class VideoPlayerValue {
           isPlaying == other.isPlaying &&
           isLooping == other.isLooping &&
           isBuffering == other.isBuffering &&
+          isPictureInPictureActive == other.isPictureInPictureActive &&
           volume == other.volume &&
           playbackSpeed == other.playbackSpeed &&
           errorDescription == other.errorDescription &&
