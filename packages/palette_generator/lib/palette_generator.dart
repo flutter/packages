@@ -42,15 +42,15 @@ class EncodedImage {
 class _FromByteDataArgs {
   const _FromByteDataArgs(
     this.encodedImage, {
-    this.region,
     required this.maximumColorCount,
+    this.region,
     this.filters = const <PaletteFilter>[avoidRedBlackWhitePaletteFilter],
     this.targets = const <PaletteTarget>[],
   });
 
   final EncodedImage encodedImage;
-  final Rect? region;
   final int maximumColorCount;
+  final Rect? region;
   final List<PaletteFilter> filters;
   final List<PaletteTarget> targets;
 }
