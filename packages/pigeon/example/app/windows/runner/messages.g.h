@@ -144,9 +144,9 @@ class MessageFlutterApi {
  public:
   MessageFlutterApi(flutter::BinaryMessenger* binary_messenger);
   static const flutter::StandardMessageCodec& GetCodec();
-  void Method(const std::string* a_string,
-              std::function<void(const std::string&)>&& on_success,
-              std::function<void(const FlutterError&)>&& on_error);
+  void FlutterMethod(const std::string* a_string,
+                     std::function<void(const std::string&)>&& on_success,
+                     std::function<void(const FlutterError&)>&& on_error);
 
  private:
   flutter::BinaryMessenger* binary_messenger_;

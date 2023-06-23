@@ -25,6 +25,23 @@ private class PigeonApiImplementation: ExampleHostApi {
 }
 // #enddocregion kotlin-class
 
+// #docregion kotlin-class-flutter
+private class PigeonFlutterApi {
+
+  var flutterApi: MessageFlutterApi? = null
+
+  fun init(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    flutterApi = MessageFlutterApi(binding.getBinaryMessenger())
+  }
+
+  fun callFlutterMethod(aString: String) {
+    flutterAPI!!.flutterMethod(aString) {
+      echo -> callback(Result.success(echo))
+    }
+  }
+}
+// #enddocregion kotlin-class-flutter
+
 class MainActivity: FlutterActivity() {
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

@@ -165,23 +165,23 @@ class ExampleHostApi {
 abstract class MessageFlutterApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  String method(String? aString);
+  String flutterMethod(String? aString);
 
   static void setup(MessageFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.MessageFlutterApi.method', codec,
+          'dev.flutter.pigeon.MessageFlutterApi.flutterMethod', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.MessageFlutterApi.method was null.');
+              'Argument for dev.flutter.pigeon.MessageFlutterApi.flutterMethod was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_aString = (args[0] as String?);
-          final String output = api.method(arg_aString);
+          final String output = api.flutterMethod(arg_aString);
           return output;
         });
       }

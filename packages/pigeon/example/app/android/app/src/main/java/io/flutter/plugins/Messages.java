@@ -317,10 +317,10 @@ public class Messages {
       return new StandardMessageCodec();
     }
 
-    public void method(@Nullable String aStringArg, @NonNull Reply<String> callback) {
+    public void flutterMethod(@Nullable String aStringArg, @NonNull Reply<String> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.MessageFlutterApi.method", getCodec());
+              binaryMessenger, "dev.flutter.pigeon.MessageFlutterApi.flutterMethod", getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {

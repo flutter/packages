@@ -21,6 +21,22 @@ private class PigeonApiImplementation: ExampleHostApi {
 }
 // #enddocregion swift-class
 
+// #docregion swift-class-flutter
+private class PigeonFlutterApi {
+  var flutterAPI: MessageFlutterApi
+
+  init(binaryMessenger: FlutterBinaryMessenger) {
+    flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
+  }
+
+  func callFlutterMethod(String: aString) {
+    flutterAPI.flutterMethod(aString) {
+      completion(.success($0))
+    }
+  }
+}
+// #enddocregion swift-class-flutter
+
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(

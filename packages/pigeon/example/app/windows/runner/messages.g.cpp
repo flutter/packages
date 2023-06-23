@@ -253,12 +253,12 @@ const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
       &flutter::StandardCodecSerializer::GetInstance());
 }
 
-void MessageFlutterApi::Method(
+void MessageFlutterApi::FlutterMethod(
     const std::string* a_string_arg,
     std::function<void(const std::string&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<BasicMessageChannel<>>(
-      binary_messenger_, "dev.flutter.pigeon.MessageFlutterApi.method",
+      binary_messenger_, "dev.flutter.pigeon.MessageFlutterApi.flutterMethod",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue(),

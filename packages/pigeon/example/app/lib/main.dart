@@ -9,7 +9,19 @@ import 'package:flutter/services.dart';
 
 import 'src/messages.g.dart';
 
+// #docregion main-dart-flutter
+class _ExampleFlutterApi implements MessageFlutterApi {
+  @override
+  String flutterMethod(String? aString) {
+    return aString ?? '';
+  }
+}
+// #enddocregion main-dart-flutter
+
 void main() {
+// #docregion main-dart-flutter
+  MessageFlutterApi.setup(_ExampleFlutterApi());
+// #enddocregion main-dart-flutter
   runApp(const MyApp());
 }
 

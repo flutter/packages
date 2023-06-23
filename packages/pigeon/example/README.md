@@ -86,7 +86,7 @@ abstract class ExampleHostApi {
 
 ### main.dart
 
-This is the code that will use the generated dart code to make calls from flutter to 
+This is the code that will use the generated dart code to make calls from Flutter to 
 the host platform.
 
 <?code-excerpt "../../app/lib/main.dart (main-dart)"?>
@@ -168,10 +168,81 @@ class PigeonApiImplementation : public ExampleHostApi {
 ```
 
 ## FlutterApi Example
-lorem
 
+This example gives an overview of how to use Pigeon to call into the Flutter
+app from the host platform.
+
+### Dart input (message.dart)
+
+<?code-excerpt "../../app/pigeons/messages.dart (flutter-definitions)"?>
+```dart
+@FlutterApi()
+abstract class MessageFlutterApi {
+  String flutterMethod(String? aString);
+}
 ```
-ipsum
+
+### main.dart
+
+This is the code that will use the generated dart code to make calls from Flutter to 
+the host platform.
+
+<?code-excerpt "../../app/lib/main.dart (main-dart-flutter)"?>
+```dart 
+class _ExampleFlutterApi implements MessageFlutterApi {
+  @override
+  String flutterMethod(String? aString) {
+    return aString ?? '';
+  }
+}
+// ···
+  MessageFlutterApi.setup(_ExampleFlutterApi());
+```
+
+### AppDelegate.swift
+
+<?code-excerpt "../../app/ios/Runner/AppDelegate.swift (swift-class-flutter)"?>
+```swift
+private class PigeonFlutterApi {
+  var flutterAPI: MessageFlutterApi
+
+  init(binaryMessenger: FlutterBinaryMessenger) {
+    flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
+  }
+
+  func callFlutterMethod(String: aString) {
+    flutterAPI.flutterMethod(aString) {
+      completion(.success($0))
+    }
+  }
+}
+```
+
+### kotlin
+
+<?code-excerpt "../../app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-flutter)"?>
+```kotlin
+private class PigeonFlutterApi {
+
+  var flutterApi: MessageFlutterApi? = null
+
+  fun init(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    flutterApi = MessageFlutterApi(binding.getBinaryMessenger())
+  }
+
+  fun callFlutterMethod(aString: String) {
+    flutterAPI!!.flutterMethod(aString) {
+      echo -> callback(Result.success(echo))
+    }
+  }
+}
+```
+
+### c++
+
+<?code-excerpt "../../app/windows/runner/flutter_window.cpp (cpp-class-flutter)"?>
+```c++
+
 ```
 
 ## Swift / Kotlin Plugin Example

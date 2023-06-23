@@ -177,8 +177,8 @@ class MessageFlutterApi(private val binaryMessenger: BinaryMessenger) {
       StandardMessageCodec()
     }
   }
-  fun method(aStringArg: String?, callback: (String) -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.MessageFlutterApi.method", codec)
+  fun flutterMethod(aStringArg: String?, callback: (String) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.MessageFlutterApi.flutterMethod", codec)
     channel.send(listOf(aStringArg)) {
       val result = it as String
       callback(result)

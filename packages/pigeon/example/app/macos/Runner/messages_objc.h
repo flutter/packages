@@ -50,8 +50,8 @@ NSObject<FlutterMessageCodec> *MessageFlutterApiGetCodec(void);
 
 @interface MessageFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)methodAString:(nullable NSString *)aString
-           completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)flutterMethodAString:(nullable NSString *)aString
+                  completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 NS_ASSUME_NONNULL_END

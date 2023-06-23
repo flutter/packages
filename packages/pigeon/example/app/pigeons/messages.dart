@@ -43,7 +43,9 @@ abstract class ExampleHostApi {
 }
 // #enddocregion host-definitions
 
+// #docregion flutter-definitions
 @FlutterApi()
 abstract class MessageFlutterApi {
-  String method(String? aString);
+  String flutterMethod(String? aString);
 }
+// #enddocregion flutter-definitions
