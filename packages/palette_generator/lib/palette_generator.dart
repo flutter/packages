@@ -172,7 +172,7 @@ class PaletteGenerator with Diagnosticable {
       'The encoding must be RGBA with 8 bits per channel.',
     );
 
-    // If we want to use an isolate, make a recursive compute call. We do it
+    // In order to use an isolate, make a recursive compute call. This is done
     // this way to avoid changing the rest of the function.
     if (useIsolate) {
       return compute(
@@ -182,7 +182,7 @@ class PaletteGenerator with Diagnosticable {
                 maximumColorCount: message.maximumColorCount,
                 filters: message.filters,
                 targets: message.targets,
-                // This is false to stop us from infinitely recursing
+                // This is false to stop the function from infinitely recursing.
                 useIsolate: false,
               ),
           _FromByteDataArgs(
