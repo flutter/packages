@@ -134,7 +134,7 @@ private class PigeonApiImplementation: ExampleHostApi {
 
 ### kotlin
 <?code-excerpt "../../app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class)"?>
-```kt 
+```kotlin
 private class PigeonApiImplementation: ExampleHostApi {
     override fun getHostLanguage(): String {
         return "Kotlin"
