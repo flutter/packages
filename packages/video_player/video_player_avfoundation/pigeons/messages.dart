@@ -19,11 +19,6 @@ class TextureMessage {
   int textureId;
 }
 
-class CacheMessage {
-  CacheMessage(this.can);
-  bool can;
-}
-
 class LoopingMessage {
   LoopingMessage(this.textureId, this.isLooping);
   int textureId;
@@ -35,8 +30,8 @@ class IsSupportedMessage {
   bool isSupported;
 }
 
-class IsCachingSupportedMessage {
-  IsCachingSupportedMessage(this.url);
+class IsCacheSupportedMessage {
+  IsCacheSupportedMessage(this.url);
   String url;
 }
 
@@ -64,12 +59,12 @@ class PositionMessage {
 }
 
 class CreateMessage {
-  CreateMessage({required this.httpHeaders, required this.cache});
+  CreateMessage({required this.httpHeaders, required this.enableCache});
   String? asset;
   String? uri;
   String? packageName;
   String? formatHint;
-  bool? cache;
+  bool? enableCache;
   Map<String?, String?> httpHeaders;
 }
 
@@ -94,7 +89,7 @@ abstract class AVFoundationVideoPlayerApi {
   void setVolume(VolumeMessage msg);
   @ObjCSelector('isCacheSupportedForNetworkMedia:')
   IsSupportedMessage isCacheSupportedForNetworkMedia(
-      IsCachingSupportedMessage msg);
+      IsCacheSupportedMessage msg);
   @ObjCSelector('setPlaybackSpeed:')
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
   @ObjCSelector('play:')

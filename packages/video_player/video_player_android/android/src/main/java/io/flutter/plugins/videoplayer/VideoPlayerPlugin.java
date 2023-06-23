@@ -228,7 +228,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     options.mixWithOthers = arg.getMixWithOthers();
   }
 
-  public Messages.IsSupportedMessage isCacheSupportedForNetworkMedia(@NonNull Messages.IsCachingSupportedMessage arg) {
+  public Messages.IsSupportedMessage isCacheSupportedForNetworkMedia(@NonNull Messages.IsCacheSupportedMessage arg) {
     boolean videoCanCache = canCache(Uri.parse(arg.getUrl()));
     Messages.IsSupportedMessage result =
         new Messages.IsSupportedMessage.Builder()

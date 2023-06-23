@@ -23,7 +23,7 @@ class _TestHostVideoPlayerApiCodec extends StandardMessageCodec {
     } else if (value is CreateMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is IsCachingSupportedMessage) {
+    } else if (value is IsCacheSupportedMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else if (value is IsSupportedMessage) {
@@ -60,7 +60,7 @@ class _TestHostVideoPlayerApiCodec extends StandardMessageCodec {
       case 129: 
         return CreateMessage.decode(readValue(buffer)!);
       case 130: 
-        return IsCachingSupportedMessage.decode(readValue(buffer)!);
+        return IsCacheSupportedMessage.decode(readValue(buffer)!);
       case 131: 
         return IsSupportedMessage.decode(readValue(buffer)!);
       case 132: 
@@ -97,7 +97,7 @@ abstract class TestHostVideoPlayerApi {
 
   void setVolume(VolumeMessage msg);
 
-  IsSupportedMessage isCacheSupportedForNetworkMedia(IsCachingSupportedMessage msg);
+  IsSupportedMessage isCacheSupportedForNetworkMedia(IsCacheSupportedMessage msg);
 
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
 
@@ -232,9 +232,9 @@ abstract class TestHostVideoPlayerApi {
           assert(message != null,
           'Argument for dev.flutter.pigeon.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final IsCachingSupportedMessage? arg_msg = (args[0] as IsCachingSupportedMessage?);
+          final IsCacheSupportedMessage? arg_msg = (args[0] as IsCacheSupportedMessage?);
           assert(arg_msg != null,
-              'Argument for dev.flutter.pigeon.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia was null, expected non-null IsCachingSupportedMessage.');
+              'Argument for dev.flutter.pigeon.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia was null, expected non-null IsCacheSupportedMessage.');
           final IsSupportedMessage output = api.isCacheSupportedForNetworkMedia(arg_msg!);
           return <Object?>[output];
         });

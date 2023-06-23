@@ -647,14 +647,11 @@ NS_INLINE UIViewController *rootViewController(void) {
       return nil;
     }
   } else if (input.uri) {
-      BOOL canCache = NO;
-      if (input.cache.boolValue) {
-          canCache = [self canCache:input.uri];
-          if (!canCache) {
-              NSLog(@"Unable to cache for mimetype, proceed without caching");
-          }
+    BOOL isCacheSupported = NO;
+      if (input.enableCache.boolValue) {
+          isCacheSupported = [self isCacheSupported:input.uri];
       }
-    BOOL enableCache = input.cache.boolValue ? canCache : NO;
+    BOOL enableCache = input.enableCache.boolValue ? isCacheSupported : NO;
     player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
                                      httpHeaders:input.httpHeaders
@@ -677,7 +674,7 @@ NS_INLINE UIViewController *rootViewController(void) {
     return contentType;
 }
 
-- (BOOL) canCache: (NSString *) path {
+- (BOOL) isCacheSupported: (NSString *) path {
     NSString *mimeType = [self mimeTypeForFileAtPath:path];
     NSArray *supportedMimetypes = @[@"video/mp4",@"audio/flac"];
     NSLog(@"%@",mimeType);
@@ -742,9 +739,9 @@ NS_INLINE UIViewController *rootViewController(void) {
   return result;
 }
 
-- (FLTIsSupportedMessage *)isCacheSupportedForNetworkMedia:(FLTIsCachingSupportedMessage *)msg
+- (FLTIsSupportedMessage *)isCacheSupportedForNetworkMedia:(FLTIsCacheSupportedMessage *)msg
                                                      error:(FlutterError **)error {
-    BOOL isSupported = [self canCache:msg.url];
+    BOOL isSupported = [self isCacheSupported:msg.url];
     FLTIsSupportedMessage *result = [FLTIsSupportedMessage makeWithIsSupported:[NSNumber numberWithBool:isSupported]];
     return result;
 }

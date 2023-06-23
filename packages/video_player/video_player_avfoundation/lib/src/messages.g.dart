@@ -79,8 +79,8 @@ class IsSupportedMessage {
   }
 }
 
-class IsCachingSupportedMessage {
-  IsCachingSupportedMessage({
+class IsCacheSupportedMessage {
+  IsCacheSupportedMessage({
     required this.url,
   });
 
@@ -92,9 +92,9 @@ class IsCachingSupportedMessage {
     ];
   }
 
-  static IsCachingSupportedMessage decode(Object result) {
+  static IsCacheSupportedMessage decode(Object result) {
     result as List<Object?>;
-    return IsCachingSupportedMessage(
+    return IsCacheSupportedMessage(
       url: result[0]! as String,
     );
   }
@@ -205,7 +205,7 @@ class CreateMessage {
     this.uri,
     this.packageName,
     this.formatHint,
-    this.cache,
+    this.enableCache,
     required this.httpHeaders,
   });
 
@@ -217,7 +217,7 @@ class CreateMessage {
 
   String? formatHint;
 
-  bool? cache;
+  bool? enableCache;
 
   Map<String?, String?> httpHeaders;
 
@@ -227,7 +227,7 @@ class CreateMessage {
       uri,
       packageName,
       formatHint,
-      cache,
+      enableCache,
       httpHeaders,
     ];
   }
@@ -239,7 +239,7 @@ class CreateMessage {
       uri: result[1] as String?,
       packageName: result[2] as String?,
       formatHint: result[3] as String?,
-      cache: result[4] as bool?,
+      enableCache: result[4] as bool?,
       httpHeaders: (result[5] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
@@ -276,7 +276,7 @@ class _AVFoundationVideoPlayerApiCodec extends StandardMessageCodec {
     } else if (value is CreateMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is IsCachingSupportedMessage) {
+    } else if (value is IsCacheSupportedMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else if (value is IsSupportedMessage) {
@@ -313,7 +313,7 @@ class _AVFoundationVideoPlayerApiCodec extends StandardMessageCodec {
       case 129: 
         return CreateMessage.decode(readValue(buffer)!);
       case 130: 
-        return IsCachingSupportedMessage.decode(readValue(buffer)!);
+        return IsCacheSupportedMessage.decode(readValue(buffer)!);
       case 131: 
         return IsSupportedMessage.decode(readValue(buffer)!);
       case 132: 
@@ -481,7 +481,7 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<IsSupportedMessage> isCacheSupportedForNetworkMedia(IsCachingSupportedMessage arg_msg) async {
+  Future<IsSupportedMessage> isCacheSupportedForNetworkMedia(IsCacheSupportedMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia', codec,
         binaryMessenger: _binaryMessenger);

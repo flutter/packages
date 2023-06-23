@@ -35,7 +35,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     String? asset;
     String? packageName;
     String? uri;
-    bool? cache;
+    bool? enableCache;
     String? formatHint;
     Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
@@ -45,7 +45,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         break;
       case DataSourceType.network:
         uri = dataSource.uri;
-        cache = dataSource.cache;
+        enableCache = dataSource.enableCache;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
         break;
@@ -60,7 +60,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       asset: asset,
       packageName: packageName,
       uri: uri,
-      cache: cache ?? false,
+      enableCache: enableCache,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
     );
@@ -85,7 +85,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<bool?> isCacheSupportedForNetworkMedia(String url) async {
     final IsSupportedMessage response = await _api
-        .isCacheSupportedForNetworkMedia(IsCachingSupportedMessage(url: url));
+        .isCacheSupportedForNetworkMedia(IsCacheSupportedMessage(url: url));
     return response.isSupported;
   }
 

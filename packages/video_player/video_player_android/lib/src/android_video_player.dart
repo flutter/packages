@@ -90,7 +90,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<bool?> isCacheSupportedForNetworkMedia(String url) async {
     final IsSupportedMessage response = await _api
-        .isCacheSupportedForNetworkMedia(IsCachingSupportedMessage(url: url));
+        .isCacheSupportedForNetworkMedia(IsCacheSupportedMessage(url: url));
     return response.isSupported;
   }
 
