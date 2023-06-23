@@ -1,3 +1,7 @@
+## 2.3.2
+
+* Implemented a proper disposal mechanism for event subscriptions in `GoogleMapController`. Previously, subscriptions were not cancelled upon disposal of the controller, which could lead to memory leaks or unexpected behavior. The controller now tracks all event subscriptions and cancels them when `dispose()` is called.
+
 ## 2.3.1
 
 * Fixes a regression from 2.2.8 that could cause incorrect handling of a
