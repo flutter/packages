@@ -280,7 +280,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.formatHint,
     this.maxCacheSize,
     this.maxFileSize,
-    this.cache,
+    this.enableCache,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
