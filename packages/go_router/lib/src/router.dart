@@ -481,9 +481,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   ///
   /// This method throws when it is called during redirects.
   static GoRouter of(BuildContext context) {
-  final InheritedGoRouter? inherited = maybeOf(context);
+  final GoRouter? inherited = maybeOf(context);
     assert(inherited != null, 'No GoRouter found in context');
-    return inherited!.goRouter;
+    return inherited!;
   }
 
   /// The current GoRouter in the widget tree, if any.
