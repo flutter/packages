@@ -2,7 +2,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
-* Add option to run `PaletteGenerator.from` functions in an isolate
+* Adds an option to run `PaletteGenerator.from` functions in an isolate.
 
 ## 0.3.3+2
 
