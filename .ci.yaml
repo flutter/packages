@@ -128,7 +128,6 @@ targets:
 
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -138,7 +137,6 @@ targets:
       channel: master
 
   - name: Linux_android android_build_all_packages stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
