@@ -25,3 +25,10 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   mockito: 5.4.1
+
+dependency_overrides:
+  # Override the google_maps_flutter dependency on google_maps_flutter_web.
+  # TODO(ditman): Unwind the circular dependency. This will create problems
+  # if we need to make a breaking change to google_maps_flutter_web.
+  google_maps_flutter_web:
+    path: ../

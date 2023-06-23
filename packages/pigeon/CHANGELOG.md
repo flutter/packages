@@ -1,6 +1,10 @@
-## 10.0.2
+## 10.1.1
 
 * Updates README to better reflect modern usage.
+
+## 10.1.0
+
+* [objc] Adds macOS support to facilitate code sharing with existing iOS plugins.
 
 ## 10.0.1
 

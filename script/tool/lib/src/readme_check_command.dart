@@ -49,6 +49,9 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
   final String name = 'readme-check';
 
   @override
+  List<String> get aliases => <String>['check-readme'];
+
+  @override
   final String description =
       'Checks that READMEs follow repository conventions.';
 

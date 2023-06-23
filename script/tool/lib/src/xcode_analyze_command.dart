@@ -43,6 +43,9 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
   final String name = 'xcode-analyze';
 
   @override
+  List<String> get aliases => <String>['analyze-xcode'];
+
+  @override
   final String description =
       'Runs Xcode analysis on the iOS and/or macOS example apps.';
 

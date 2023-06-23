@@ -15,9 +15,8 @@ For examples on usage, see the [Example README](./example/README.md).
 ### Supported Platforms
 
 Currently Pigeon supports generating:
-* Kotlin and Java code for Android,
-* Swift and Objective-C code for iOS
-* Swift code for macOS
+* Kotlin and Java code for Android
+* Swift and Objective-C code for iOS and macOS
 * C++ code for Windows
 
 ### Supported Datatypes

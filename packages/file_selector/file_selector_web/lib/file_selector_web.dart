@@ -61,6 +61,16 @@ class FileSelectorWeb extends FileSelectorPlatform {
       '';
 
   @override
+  Future<FileSaveLocation?> getSaveLocation({
+    List<XTypeGroup>? acceptedTypeGroups,
+    SaveDialogOptions options = const SaveDialogOptions(),
+  }) async {
+    // This is intended to be passed to XFile, which ignores the path, so
+    // provide a non-null dummy value.
+    return const FileSaveLocation('');
+  }
+
+  @override
   Future<String?> getDirectoryPath({
     String? initialDirectory,
     String? confirmButtonText,

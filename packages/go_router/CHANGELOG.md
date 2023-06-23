@@ -1,10 +1,18 @@
+## 8.2.0
+
+- Adds onException to GoRouter constructor.
+
+## 8.1.0
+
+- Adds parent navigator key to ShellRoute and StatefulShellRoute.
+
 ## 8.0.5
 
 - Fixes a bug that GoRouterState in top level redirect doesn't contain complete data.
 
 ## 8.0.4
 
-- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension. 
+- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension.
 
 ## 8.0.3
 
