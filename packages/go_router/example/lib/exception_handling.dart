@@ -5,32 +5,32 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// This sample app shows an app with two screens.
+/// This sample app shows how to use `GoRouter.onException` to redirect on
+/// exception.
 ///
 /// The first route '/' is mapped to [HomeScreen], and the second route
-/// '/details' is mapped to [DetailsScreen].
+/// '/404' is mapped to [NotFoundScreen].
 ///
-/// The buttons use context.go() to navigate to each destination. On mobile
-/// devices, each destination is deep-linkable and on the web, can be navigated
-/// to using the address bar.
+/// Any other unknown route or exception is redirected to `/404`.
 void main() => runApp(const MyApp());
 
 /// The route configuration.
 final GoRouter _router = GoRouter(
+  onException: (_, GoRouterState state, GoRouter router) {
+    router.go('/404', extra: state.location);
+  },
   routes: <RouteBase>[
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
         return const HomeScreen();
       },
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'details',
-          builder: (BuildContext context, GoRouterState state) {
-            return const DetailsScreen();
-          },
-        ),
-      ],
+    ),
+    GoRoute(
+      path: '/404',
+      builder: (BuildContext context, GoRouterState state) {
+        return NotFoundScreen(uri: state.extra as String? ?? '');
+      },
     ),
   ],
 );
@@ -59,28 +59,28 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Home Screen')),
       body: Center(
         child: ElevatedButton(
-          onPressed: () => context.go('/details'),
-          child: const Text('Go to the Details screen'),
+          onPressed: () => context.go('/some-unknown-route'),
+          child: const Text('Simulates user entering unknown url'),
         ),
       ),
     );
   }
 }
 
-/// The details screen
-class DetailsScreen extends StatelessWidget {
-  /// Constructs a [DetailsScreen]
-  const DetailsScreen({super.key});
+/// The not found screen
+class NotFoundScreen extends StatelessWidget {
+  /// Constructs a [HomeScreen]
+  const NotFoundScreen({super.key, required this.uri});
+
+  /// The uri that can not be found.
+  final String uri;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Details Screen')),
+      appBar: AppBar(title: const Text('Page Not Found')),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () => context.go('/'),
-          child: const Text('Go back to the Home screen'),
-        ),
+        child: Text("Can't find a page for: $uri"),
       ),
     );
   }

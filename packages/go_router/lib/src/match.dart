@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
+import 'misc/errors.dart';
 import 'path_utils.dart';
 
 /// An matched result by matching a [RouteBase] against a location.
@@ -183,7 +184,7 @@ class RouteMatchList {
   final Object? extra;
 
   /// An exception if there was an error during matching.
-  final Exception? error;
+  final GoException? error;
 
   /// the full path pattern that matches the uri.
   ///

@@ -14,6 +14,15 @@ import 'misc/inherited_router.dart';
 import 'parser.dart';
 import 'typedefs.dart';
 
+/// The function signature of [GoRouter.onException].
+///
+/// Use `state.error` to access the exception.
+typedef GoExceptionHandler = void Function(
+  BuildContext context,
+  GoRouterState state,
+  GoRouter router,
+);
+
 /// The route configuration for the app.
 ///
 /// The `routes` list specifies the top-level routes for the app. It must not be
@@ -29,6 +38,15 @@ import 'typedefs.dart';
 /// used during the redirection (which is how `of` methods are usually
 /// implemented), a re-evaluation will be triggered when the [InheritedWidget]
 /// changes.
+///
+/// To handle exceptions, use one of `onException`, `errorBuilder`, or
+/// `errorPageBuilder`. The `onException` is called when an exception is thrown.
+/// If `onException` is not provided, the exception is passed to
+/// `errorPageBuilder` to build a page for the Router if it is not null;
+/// otherwise, it is passed to `errorBuilder` instead. If none of them are
+/// provided, go_router builds a default error screen to show the exception.
+/// See [Error handling](https://pub.dev/documentation/go_router/latest/topics/error-handling.html)
+/// for more details.
 ///
 /// See also:
 /// * [Configuration](https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html)
@@ -51,8 +69,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
   GoRouter({
     required List<RouteBase> routes,
-    // TODO(johnpryan): Change to a route, improve error API
-    // See https://github.com/flutter/flutter/issues/108144
+    GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
     GoRouterRedirect? redirect,
@@ -70,6 +87,12 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
           initialExtra == null || initialLocation != null,
           'initialLocation must be set in order to use initialExtra',
         ),
+        assert(
+            (onException == null ? 0 : 1) +
+                    (errorPageBuilder == null ? 0 : 1) +
+                    (errorBuilder == null ? 0 : 1) <
+                2,
+            'Only one of onException, errorPageBuilder, or errorBuilder can be provided.'),
         assert(_debugCheckPath(routes, true)),
         assert(
             _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
@@ -90,7 +113,21 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       navigatorKey: navigatorKey,
     );
 
+    final ParserExceptionHandler? parserExceptionHandler;
+    if (onException != null) {
+      parserExceptionHandler =
+          (BuildContext context, RouteMatchList routeMatchList) {
+        onException(context,
+            configuration.buildTopLevelGoRouterState(routeMatchList), this);
+        // Avoid updating GoRouterDelegate if onException is provided.
+        return routerDelegate.currentConfiguration;
+      };
+    } else {
+      parserExceptionHandler = null;
+    }
+
     routeInformationParser = GoRouteInformationParser(
+      onParserException: parserExceptionHandler,
       configuration: configuration,
     );
 
@@ -102,6 +139,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
 
     routerDelegate = GoRouterDelegate(
       configuration: configuration,
+      onException: onException,
       errorPageBuilder: errorPageBuilder,
       errorBuilder: errorBuilder,
       routerNeglect: routerNeglect,
