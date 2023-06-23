@@ -154,20 +154,14 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
             onPressed: () {
               _controller.clearCache();
             },
-            child: Text('Clear cache'),
+            child: const Text('Clear cache'),
           ),
           TextButton(
             onPressed: () {
-              _controller
-                  .isCachingSupportedForNetworkMedia(
-                      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
-                  .then((bool? value) => {
-                        print(value ?? false
-                            ? 'Caching is supported for mime type'
-                            : 'Caching is not supported for mime type')
-                      });
+              _controller.isCachingSupportedForNetworkMedia(
+                  'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
             },
-            child: Text('Can cache'),
+            child: const Text('Can cache'),
           )
         ],
       ),
