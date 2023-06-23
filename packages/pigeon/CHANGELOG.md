@@ -1,3 +1,7 @@
+## 10.0.2
+
+* Updates README to better reflect modern usage.
+
 ## 10.0.1
 
 * Requires `analyzer 5.13.0` and replaces use of deprecated APIs.
