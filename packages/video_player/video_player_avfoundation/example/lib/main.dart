@@ -114,14 +114,12 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late MiniController _controller;
-  String networkMediaUrl =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
 
   @override
   void initState() {
     super.initState();
-
-    _controller = MiniController.network(networkMediaUrl, enableCache: true);
+    _controller = MiniController.network(
+        'https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv');
 
     _controller.addListener(() {
       setState(() {});
