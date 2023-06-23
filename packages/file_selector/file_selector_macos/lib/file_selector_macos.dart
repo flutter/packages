@@ -60,14 +60,14 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? suggestedName,
     String? confirmButtonText,
   }) async {
-    return (await getSaveLocation(
-            acceptedTypeGroups: acceptedTypeGroups,
-            options: SaveDialogOptions(
-              initialDirectory: initialDirectory,
-              suggestedName: suggestedName,
-              confirmButtonText: confirmButtonText,
-            )))
-        ?.path;
+    final FileSaveLocation? location = await getSaveLocation(
+        acceptedTypeGroups: acceptedTypeGroups,
+        options: SaveDialogOptions(
+          initialDirectory: initialDirectory,
+          suggestedName: suggestedName,
+          confirmButtonText: confirmButtonText,
+        ));
+    return location?.path;
   }
 
   @override
