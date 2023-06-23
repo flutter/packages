@@ -197,7 +197,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   final String? package;
 
   /// Adds cache to the video player. Video will be cached. Cache can be cleared manually.
-  bool? cache;
+  bool? enableCache;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -229,7 +229,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       case DataSourceType.network:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
-          cache: cache,
+          enableCache: enableCache,
           uri: dataSource,
         );
         break;

@@ -29,8 +29,8 @@ class IsSupportedMessage {
   bool isSupported;
 }
 
-class IsCachingSupportedMessage {
-  IsCachingSupportedMessage(this.url);
+class IsCacheSupportedMessage {
+  IsCacheSupportedMessage(this.url);
   String url;
 }
 
@@ -81,7 +81,7 @@ abstract class AndroidVideoPlayerApi {
   void setLooping(LoopingMessage msg);
   void setVolume(VolumeMessage msg);
   IsSupportedMessage isCacheSupportedForNetworkMedia(
-      IsCachingSupportedMessage msg);
+      IsCacheSupportedMessage msg);
   void clearCache(ClearCacheMessage msg);
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
   void play(TextureMessage msg);

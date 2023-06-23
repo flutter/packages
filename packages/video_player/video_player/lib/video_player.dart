@@ -357,7 +357,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// **iOS only**. Will set is caching is true (enabled) or false (disabled), default (disabled).
   /// currently only mimetypes: video/mp4 and audio/flac files can be cached. For other mimetypes this setting is ignored.
   /// detection with whatever is set here.
-  bool? cache;
+  bool? enableCache;
 
   /// **Android only**. Will set the size of the total cache. Default maxCacheSize is 0 (no cache enabled).
   /// currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
@@ -422,7 +422,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             uri: dataSource,
             formatHint: formatHint,
             httpHeaders: httpHeaders,
-            cache: cache,
+            enableCache: enableCache,
             maxCacheSize: maxCacheSize,
             maxFileSize: maxFileSize);
         break;
