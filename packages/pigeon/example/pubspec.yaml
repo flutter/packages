@@ -1,8 +1,6 @@
 name: pigeon_example
-description: pigeon example
-repository: https://github.com/flutter/packages/tree/main/packages/pigeon
-issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3Apigeon
-version: 0.0.1 
+description: example app to show basic usage of pigeon.
+publish_to: none
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
