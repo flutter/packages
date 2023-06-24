@@ -67,11 +67,13 @@ from Flutter to the host-platform.
 
 <?code-excerpt "../../app/pigeons/messages.dart (host-definitions)"?>
 ```dart
+enum Code { one, two }
+
 class CreateMessage {
   CreateMessage({required this.code, required this.httpHeaders});
   String? asset;
   String? uri;
-  int code;
+  Code code;
   Map<String?, String?> httpHeaders;
 }
 
@@ -103,7 +105,7 @@ Future<int> callAddPlusOne(int a, int b) async {
 /// and api `sendMessage` method.
 Future<bool> sendMessage(String messageText) {
   final CreateMessage message = CreateMessage(
-    code: 42,
+    code: Code.one,
     httpHeaders: <String?, String?>{'header': 'this is a header'},
     uri: 'uri text',
   );
@@ -117,17 +119,27 @@ This is the code that will use the generated Swift code to receive calls from Fl
 packages/pigeon/example/app/ios/Runner/AppDelegate.swift
 <?code-excerpt "../../app/ios/Runner/AppDelegate.swift (swift-class)"?>
 ```swift
+// This extension of Error is required to do use FlutterError in any swift code.
+extension FlutterError: Error {}
+
 private class PigeonApiImplementation: ExampleHostApi {
   func getHostLanguage() throws -> String {
     return "Swift"
   }
 
-  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
-    completion(Result(true, nil))
+  func add(a: Int64, b: Int64) throws -> Int64 {
+    if (a < 0 || b < 0) {
+      throw FlutterError("code", "message", "details");
+    }
+    return a + b
   }
 
-  func add(a: Int64, b: Int64) throws -> Int64 {
-    return a + b
+  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
+    if (message.code == Code.one) {
+      completion(Result(false, FlutterError("code", "message", "details")))
+      return
+    }
+    completion(Result(true, nil))
   }
 }
 ```
@@ -136,17 +148,24 @@ private class PigeonApiImplementation: ExampleHostApi {
 <?code-excerpt "../../app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class)"?>
 ```kotlin
 private class PigeonApiImplementation: ExampleHostApi {
-    override fun getHostLanguage(): String {
-        return "Kotlin"
-    }
+  override fun getHostLanguage(): String {
+    return "Kotlin"
+  }
 
-    fun add(a: Long, b: Long): Long {
-        return a + b
+  fun add(a: Long, b: Long): Long {
+    if (a < 0L || b < 0L) {
+      throw FlutterError("code", "message", "details");
     }
+    return a + b
+  }
 
-    fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
-        callback(Result.success(true))
+  fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
+    if (message.code == Code.ONE) {
+      callback(Result.failure(FlutterError("code", "message", "details")))
+      return
     }
+    callback(Result.success(true))
+  }
 }
 ```
 
@@ -159,9 +178,18 @@ class PigeonApiImplementation : public ExampleHostApi {
   virtual ~PigeonApiImplementation() {}
 
   ErrorOr<std::string> GetHostLanguage() override { return "C++"; }
-  ErrorOr<int64_t> Add(int64_t a, int64_t b) { return a + b; }
+  ErrorOr<int64_t> Add(int64_t a, int64_t b) {
+    if (a < 0 || b < 0) {
+      throw FlutterError("code", "message", "details");
+    }
+    return a + b;
+  }
   void SendMessage(const CreateMessage& message,
                    std::function<void(ErrorOr<bool> reply)> result) {
+    if (message.code == Code.one) {
+      result(FlutterError("code", "message", "details"));
+      return;
+    }
     result(true);
   }
 };

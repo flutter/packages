@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// and api `sendMessage` method.
   Future<bool> sendMessage(String messageText) {
     final CreateMessage message = CreateMessage(
-      code: 42,
+      code: Code.one,
       httpHeaders: <String?, String?>{'header': 'this is a header'},
       uri: 'uri text',
     );

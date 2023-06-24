@@ -6,17 +6,27 @@ import Flutter
 import UIKit
 
 // #docregion swift-class
+// This extension of Error is required to do use FlutterError in any swift code.
+extension FlutterError: Error {}
+
 private class PigeonApiImplementation: ExampleHostApi {
   func getHostLanguage() throws -> String {
     return "Swift"
   }
 
-  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
-    completion(Result(true, nil))
+  func add(a: Int64, b: Int64) throws -> Int64 {
+    if (a < 0 || b < 0) {
+      throw FlutterError("code", "message", "details");
+    }
+    return a + b
   }
 
-  func add(a: Int64, b: Int64) throws -> Int64 {
-    return a + b
+  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
+    if (message.code == Code.one) {
+      completion(Result(false, FlutterError("code", "message", "details")))
+      return
+    }
+    completion(Result(true, nil))
   }
 }
 // #enddocregion swift-class

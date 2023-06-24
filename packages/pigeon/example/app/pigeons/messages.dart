@@ -26,11 +26,13 @@ import 'package:pigeon/pigeon.dart';
 // #enddocregion config
 
 // #docregion host-definitions
+enum Code { one, two }
+
 class CreateMessage {
   CreateMessage({required this.code, required this.httpHeaders});
   String? asset;
   String? uri;
-  int code;
+  Code code;
   Map<String?, String?> httpHeaders;
 }
 

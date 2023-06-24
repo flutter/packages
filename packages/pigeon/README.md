@@ -29,7 +29,7 @@ Custom Classes and Nested datatypes are also supported.
 
 ### Enums
 
-Pigeon supports enum generation in class fields only. [Example.](./example/README.md#Enums)
+Pigeon supports enum generation in class fields only.
 
 ### Synchronous and Asynchronous methods
 
@@ -37,7 +37,7 @@ While all calls across platform channel apis (such as Pigeon methods) are asynch
 standard Pigeon methods can be treated as synchronous when handling returns and error.
 
 If asynchronous methods are needed, the `@async` annotation can be used. This will require 
-results or errors to be returned via a provided callback. [Example.](./example/README.md#Async)
+results or errors to be returned via a provided callback. [Example.](./example/README.md#HostApi_Example)
 
 ### Error Handling
 
@@ -47,7 +47,7 @@ All Host API exceptions are translated into Flutter `PlatformException`.
 * For synchronous methods, thrown exceptions will be caught and translated.
 * For asynchronous methods, there is no default exception handling; errors should be returned via the provided callback.
 
-To pass custom details into `PlatformException` for error handling, use `FlutterError` in your Host API. [Example.](./example/README.md#Error-Handling)
+To pass custom details into `PlatformException` for error handling, use `FlutterError` in your Host API. [Example.](./example/README.md#HostApi_Example)
 
 #### Objective-C and C++
 
@@ -66,7 +66,7 @@ For async methods:
 When targeting a Flutter version that supports the
 [TaskQueue API](https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-kotlin-tab#channels-and-platform-threading)
 the threading model for handling HostApi methods can be selected with the
-`TaskQueue` annotation. [Example.](./example/README.md#Task-Queue)
+`TaskQueue` annotation.
 
 ## Usage
 
@@ -80,7 +80,7 @@ the threading model for handling HostApi methods can be selected with the
 1) Implement the host-language code and add it to your build (see below).
 1) Call the generated Dart methods.
 
-### Rules for defining your communication interface
+### Rules for defining your communication interface [Example](./example/README.md#HostApi_Example)
 
 1) The file should contain no method or function definitions, only declarations.
 1) Custom classes used by APIs are defined as classes with fields of the
@@ -127,7 +127,7 @@ the threading model for handling HostApi methods can be selected with the
 Flutter also supports calling in the opposite direction.  The steps are similar
 but reversed.  For more information look at the annotation `@FlutterApi()` which
 denotes APIs that live in Flutter but are invoked from the host platform. 
-[Example](./example/README.md#Flutter-Api).
+[Example](./example/README.md#FlutterApi_Example).
 
 ## Feedback
 
