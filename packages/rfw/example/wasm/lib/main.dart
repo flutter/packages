@@ -9,11 +9,13 @@ import 'dart:async';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
-import 'package:js/js.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:rfw/rfw.dart';
 // import 'package:wasm/wasm.dart';
+import 'package:web/web.dart';
+import 'dart:js_interop';
+import 'package:js/js_util.dart';
 
 const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
 
@@ -34,7 +36,8 @@ class Example extends StatefulWidget {
 class _ExampleState extends State<Example> {
   final Runtime _runtime = Runtime();
   final DynamicContent _data = DynamicContent();
-  late final WasmInstance _logic;
+  // late final WasmInstance _logic;
+  late final Instance _logic;
 
   @override
   void initState() {
@@ -44,17 +47,16 @@ class _ExampleState extends State<Example> {
     _loadLogic();
   }
 
-  late final WasmFunction _dataFetcher;
+  late final _dataFetcher;
 
   Future<void> _loadLogic() async {
-    final DateTime expiryDate = DateTime.now().subtract(const Duration(hours: 6));
-
     final uiBytes = (await get(Uri.parse(interfaceUrl))).bodyBytes;
     final logicBytes = (await get(Uri.parse(logicUrl))).bodyBytes;
 
     _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(uiBytes));
+    _logic = (await promiseToFuture(WebAssembly.instantiate(jsify(logicBytes) as JSAny))).instance;
+    _dataFetcher = _logic.exports['value'];
 
-    _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
     _dataFetcher = _logic.lookupFunction('value') as WasmFunction;
     _updateData();
     setState(() { RendererBinding.instance.allowFirstFrame(); });

@@ -9,13 +9,18 @@ Currently this only runs on macOS, Windows, and Linux, since
 
 ## Building
 
-Before running this package, you must run `flutter pub run wasm:setup`
+Before running this package, you must run `dart run wasm:setup`
 in this directory. Before doing this, you will need to have installed
 Rust and clang.
 
 To rebuild the files in the logic/ directory (which are the files that
 the application downloads at runtime), you will additionally need to
 have installed clang and lld, and dart must be on your path.
+
+On macOS, clang from llvm (via Homebrew) is needed, since Xcode's clang
+doesn't support Wasm.
+
+Run `logic/build.sh` to rebuild the Wasm file.
 
 ## Conventions
 
