@@ -59,8 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// Calls host method `add` with provided arguments.
   Future<int> callAddPlusOne(int a, int b) async {
-    final int resultOfAdd = await _api.add(a, b);
-    return resultOfAdd + 1;
+    try {
+      return await _api.add(a, b);
+    } catch (e) {
+      return 0;
+    }
   }
 
   /// Sends message through host api using `CreateMessage` class
@@ -71,7 +74,11 @@ class _MyHomePageState extends State<MyHomePage> {
       httpHeaders: <String?, String?>{'header': 'this is a header'},
       uri: 'uri text',
     );
-    return _api.sendMessage(message);
+    try {
+      return _api.sendMessage(message);
+    } catch (e) {
+      rethrow;
+    }
   }
   // #enddocregion main-dart
 
