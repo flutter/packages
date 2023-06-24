@@ -9,8 +9,8 @@ check the [core_tests pigeon file](../pigeons/core_tests.dart) and
 
 This is an example call to Pigeon that would ingest a definition file
 `pigeons/message.dart` and generate corresponding output code for each
-supported language. In actual use, you would use just the languages matching
-your project.
+supported language. In actual use, you would include only the languages
+needed for your project.
 
 ```sh
 flutter pub run pigeon \
