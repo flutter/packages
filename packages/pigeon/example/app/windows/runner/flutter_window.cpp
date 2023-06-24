@@ -40,14 +40,14 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
 
-// #docregion cpp-method-flutter
+  // #docregion cpp-method-flutter
   void TestPlugin::CallFlutterMethod(
       String aString, std::function<void(ErrorOr<int64_t> reply)> result) {
     MessageFlutterApi->FlutterMethod(
         aString, [result](String echo) { result(echo); },
         [result](const FlutterError& error) { result(error); });
   }
-// #enddocregion cpp-method-flutter
+  // #enddocregion cpp-method-flutter
 
   RECT frame = GetClientArea();
 
