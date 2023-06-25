@@ -104,9 +104,9 @@ class FormatCommand extends PackageCommand {
     print('These files are not formatted correctly (see diff below):');
     LineSplitter.split(stdout).map((String line) => '  $line').forEach(print);
 
-    print('\nTo fix run "dart pub global activate flutter_plugin_tools && '
-        'dart pub global run flutter_plugin_tools format" or copy-paste '
-        'this command into your terminal:');
+    print('\nTo fix run the repository tooling `format` command: '
+        'https://github.com/flutter/packages/blob/main/script/tool/README.md#format-code\n'
+        'or copy-paste this command into your terminal:');
 
     final io.ProcessResult diff = await processRunner.run(
       'git',

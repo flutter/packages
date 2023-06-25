@@ -127,7 +127,12 @@ void main() {
         GoRoute(path: '/', builder: dummy),
       ];
 
-      final GoRouter router = await createRouter(routes, tester);
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
+      );
       router.go('/foo');
       await tester.pumpAndSettle();
       final List<RouteMatch> matches =
@@ -251,42 +256,6 @@ void main() {
       expect(matches, hasLength(1));
       expect(matches.first.matchedLocation, '/profile/foo');
       expect(find.byType(DummyScreen), findsOneWidget);
-    });
-
-    testWidgets('can access GoRouter parameters from builder',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(path: '/', redirect: (_, __) => '/1'),
-        GoRoute(
-            path: '/:id',
-            builder: (BuildContext context, GoRouterState state) {
-              return Text(GoRouter.of(context).location);
-            }),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester);
-      expect(find.text('/1'), findsOneWidget);
-      router.go('/123?id=456');
-      await tester.pumpAndSettle();
-      expect(find.text('/123?id=456'), findsOneWidget);
-    });
-
-    testWidgets('can access GoRouter parameters from error builder',
-        (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
-        GoRoute(path: '/', builder: dummy),
-      ];
-
-      final GoRouter router = await createRouter(routes, tester,
-          errorBuilder: (BuildContext context, GoRouterState state) {
-        return Text(GoRouter.of(context).location);
-      });
-      router.go('/123?id=456');
-      await tester.pumpAndSettle();
-      expect(find.text('/123?id=456'), findsOneWidget);
-      router.go('/1234?id=456');
-      await tester.pumpAndSettle();
-      expect(find.text('/1234?id=456'), findsOneWidget);
     });
 
     testWidgets('repeatedly pops imperative route does not crash',
@@ -611,7 +580,11 @@ void main() {
       // NOTE: match the lower case, since location is canonicalized to match the
       // path case whereas the location can be any case; so long as the path
       // produces a match regardless of the location case, we win!
-      expect(router.location.toLowerCase(), loc.toLowerCase());
+      expect(
+          router.routerDelegate.currentConfiguration.uri
+              .toString()
+              .toLowerCase(),
+          loc.toLowerCase());
 
       expect(matches, hasLength(1));
       expect(find.byType(FamilyScreen), findsOneWidget);
@@ -1675,7 +1648,8 @@ void main() {
         return state.matchedLocation == '/login' ? null : '/login';
       });
 
-      expect(router.location, '/login');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
       expect(redirected, isTrue);
 
       redirected = false;
@@ -1683,7 +1657,8 @@ void main() {
       await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
-      expect(router.location, '/login');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
       expect(redirected, isTrue);
     });
 
@@ -1711,11 +1686,12 @@ void main() {
         return state.location;
       });
 
-      expect(router.location, '/');
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/');
       // Directly set the url through platform message.
       await sendPlatformUrl('/dummy', tester);
       await tester.pumpAndSettle();
-      expect(router.location, '/dummy');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/dummy');
     });
 
     testWidgets('top-level redirect w/ named routes',
@@ -1751,7 +1727,8 @@ void main() {
                 ? null
                 : state.namedLocation('login'),
       );
-      expect(router.location, '/login');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
     });
 
     testWidgets('route-level redirect', (WidgetTester tester) async {
@@ -1779,7 +1756,8 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/dummy');
       await tester.pump();
-      expect(router.location, '/login');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
     });
 
     testWidgets('top-level redirect take priority over route level',
@@ -1821,7 +1799,8 @@ void main() {
       await sendPlatformUrl('/dummy', tester);
 
       await tester.pumpAndSettle();
-      expect(router.location, '/login');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
       expect(redirected, isTrue);
     });
 
@@ -1855,7 +1834,8 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       router.go('/dummy');
       await tester.pump();
-      expect(router.location, '/login');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/login');
     });
 
     testWidgets('multiple mixed redirect', (WidgetTester tester) async {
@@ -1885,18 +1865,22 @@ void main() {
               state.matchedLocation == '/dummy1' ? '/dummy2' : null);
       router.go('/dummy1');
       await tester.pump();
-      expect(router.location, '/');
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/');
     });
 
     testWidgets('top-level redirect loop', (WidgetTester tester) async {
-      final GoRouter router = await createRouter(<GoRoute>[], tester,
-          redirect: (BuildContext context, GoRouterState state) =>
-              state.matchedLocation == '/'
-                  ? '/login'
-                  : state.matchedLocation == '/login'
-                      ? '/'
-                      : null);
-
+      final GoRouter router = await createRouter(
+        <GoRoute>[],
+        tester,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.matchedLocation == '/'
+                ? '/login'
+                : state.matchedLocation == '/login'
+                    ? '/'
+                    : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
+      );
       final List<RouteMatch> matches =
           router.routerDelegate.currentConfiguration.matches;
       expect(matches, hasLength(0));
@@ -1921,6 +1905,8 @@ void main() {
           ),
         ],
         tester,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatch> matches =
@@ -1944,6 +1930,8 @@ void main() {
         tester,
         redirect: (BuildContext context, GoRouterState state) =>
             state.matchedLocation == '/' ? '/login' : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatch> matches =
@@ -1966,6 +1954,8 @@ void main() {
                 : state.matchedLocation == '/login'
                     ? '/'
                     : null,
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
       );
 
       final List<RouteMatch> matches =
@@ -1997,7 +1987,7 @@ void main() {
         tester,
         initialLocation: '/dummy',
       );
-      expect(router.location, '/');
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/');
     });
 
     testWidgets('top-level redirect state', (WidgetTester tester) async {
@@ -2153,6 +2143,8 @@ void main() {
         tester,
         redirect: (BuildContext context, GoRouterState state) =>
             '/${state.location}+',
+        errorBuilder: (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
         redirectLimit: 10,
       );
 
@@ -2297,7 +2289,8 @@ void main() {
       await sendPlatformUrl('/dummy/dummy2', tester);
 
       await tester.pumpAndSettle();
-      expect(router.location, '/other');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/other');
     });
   });
 
@@ -2323,7 +2316,8 @@ void main() {
         tester,
         initialLocation: '/dummy',
       );
-      expect(router.location, '/dummy');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/dummy');
     });
 
     testWidgets('initial location with extra', (WidgetTester tester) async {
@@ -2349,7 +2343,8 @@ void main() {
         initialLocation: '/dummy',
         initialExtra: 'extra',
       );
-      expect(router.location, '/dummy');
+      expect(
+          router.routerDelegate.currentConfiguration.uri.toString(), '/dummy');
       expect(find.byKey(const ValueKey<Object?>('extra')), findsOneWidget);
     });
 
@@ -2372,7 +2367,7 @@ void main() {
         tester,
         initialLocation: '/dummy',
       );
-      expect(router.location, '/');
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/');
     });
 
     testWidgets(
@@ -2448,7 +2443,7 @@ void main() {
         final RouteMatchList matches =
             router.routerDelegate.currentConfiguration;
 
-        expect(router.location, loc);
+        expect(router.routerDelegate.currentConfiguration.uri.toString(), loc);
         expect(matches.matches, hasLength(1));
         expect(find.byType(FamilyScreen), findsOneWidget);
         expect(matches.pathParameters['fid'], fid);
@@ -2478,7 +2473,7 @@ void main() {
         final RouteMatchList matches =
             router.routerDelegate.currentConfiguration;
 
-        expect(router.location, loc);
+        expect(router.routerDelegate.currentConfiguration.uri.toString(), loc);
         expect(matches.matches, hasLength(1));
         expect(find.byType(FamilyScreen), findsOneWidget);
         expect(matches.uri.queryParameters['fid'], fid);
@@ -2712,11 +2707,11 @@ void main() {
       await tester.pumpAndSettle();
       final RouteMatchList matches = router.routerDelegate.currentConfiguration;
 
-      expect(router.location, loc);
       expect(matches.matches, hasLength(2));
       expect(find.byType(PersonScreen), findsOneWidget);
       final ImperativeRouteMatch imperativeRouteMatch =
           matches.matches.last as ImperativeRouteMatch;
+      expect(imperativeRouteMatch.matches.uri.toString(), loc);
       expect(imperativeRouteMatch.matches.pathParameters['fid'], fid);
       expect(imperativeRouteMatch.matches.pathParameters['pid'], pid);
     });
@@ -2782,7 +2777,7 @@ void main() {
       await tester.pumpAndSettle();
       RouteMatchList matches = router.routerDelegate.currentConfiguration;
 
-      expect(router.location, loc);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), loc);
       expect(matches.matches, hasLength(4));
       expect(find.byType(PersonScreen), findsOneWidget);
       expect(matches.pathParameters['fid'], fid);
@@ -2844,7 +2839,8 @@ void main() {
           router.routerDelegate.currentConfiguration.matches;
 
       expect(matches, hasLength(1));
-      expectLocationWithQueryParams(router.location);
+      expectLocationWithQueryParams(
+          router.routerDelegate.currentConfiguration.uri.toString());
       expect(
         tester.widget<DummyScreen>(find.byType(DummyScreen)),
         isA<DummyScreen>().having(
@@ -2895,7 +2891,8 @@ void main() {
         router.routerDelegate.currentConfiguration.matches;
 
     expect(matches, hasLength(1));
-    expectLocationWithQueryParams(router.location);
+    expectLocationWithQueryParams(
+        router.routerDelegate.currentConfiguration.uri.toString());
     expect(
       tester.widget<DummyScreen>(find.byType(DummyScreen)),
       isA<DummyScreen>().having(
@@ -2945,7 +2942,8 @@ void main() {
         router.routerDelegate.currentConfiguration.matches;
 
     expect(matches, hasLength(1));
-    expectLocationWithQueryParams(router.location);
+    expectLocationWithQueryParams(
+        router.routerDelegate.currentConfiguration.uri.toString());
     expect(
       tester.widget<DummyScreen>(find.byType(DummyScreen)),
       isA<DummyScreen>().having(
