@@ -59,8 +59,7 @@ typedef GoRouterRedirect = FutureOr<String?> Function(
     BuildContext context, GoRouterState state);
 
 /// Signature for functions used to build Navigators
-typedef NavigatorBuilder = Widget Function(NavigatorKey navigatorKey,
-    List<NavigatorObserver>? observers, String? restorationScopeId);
-
-/// Alias for navigator keys ([GlobalKey]).
-typedef NavigatorKey = GlobalKey<NavigatorState>;
+typedef NavigatorBuilder = Widget Function(
+    GlobalKey<NavigatorState> navigatorKey,
+    List<NavigatorObserver>? observers,
+    String? restorationScopeId);

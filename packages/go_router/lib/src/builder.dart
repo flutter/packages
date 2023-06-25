@@ -247,23 +247,28 @@ class RouteBuilder {
           shellNavigatorKey, () => _getHeroController(context));
 
       // Build pages for preloadable navigators
-      final Map<NavigatorKey, RouteMatchList> preloadableNavigators =
-          route.preloadableNavigators(configuration);
-      for (final MapEntry<NavigatorKey, RouteMatchList> entry
+      final Map<GlobalKey<NavigatorState>, RouteMatchList>
+          preloadableNavigators =
+          route.preloadableNavigatorLocations(configuration);
+      for (final MapEntry<GlobalKey<NavigatorState>, RouteMatchList> entry
           in preloadableNavigators.entries) {
         if (entry.key == shellNavigatorKey) {
           // Skip the current navigator
           continue;
         }
-        // TODO: More assertion?
+        // Preloaded RouteMatchList must point to a route that is a descendant
+        // of the current shell route (initial/default location of a branch is
+        // fully validated in RouteConfiguration).
         assert(entry.value.matches[startIndex].route == route);
+
+        // Build the pages for this preloadable navigator
         _buildRecursive(context, entry.value, startIndex + 1, pagePopContext,
             routerNeglect, keyToPages, entry.key, registry);
         _goHeroCache.putIfAbsent(entry.key, () => _getHeroController(context));
       }
 
       // Build the Navigator for this shell route
-      Widget buildShellNavigator(NavigatorKey navigatorKey,
+      Widget buildShellNavigator(GlobalKey<NavigatorState> navigatorKey,
           List<NavigatorObserver>? observers, String? restorationScopeId) {
         return _buildNavigator(
           pagePopContext.onPopPage,

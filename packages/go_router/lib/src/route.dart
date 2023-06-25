@@ -353,7 +353,9 @@ abstract class ShellRouteBase extends RouteBase {
   /// immediate sub-route of this shell route.
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute);
 
-  Map<GlobalKey<NavigatorState>, RouteMatchList> preloadableNavigators(
+  /// Returns the locations for any [Navigator]s of this shell route that are
+  /// eligible for preloading.
+  Map<GlobalKey<NavigatorState>, RouteMatchList> preloadableNavigatorLocations(
           RouteConfiguration routeConfiguration) =>
       <GlobalKey<NavigatorState>, RouteMatchList>{};
 
@@ -388,15 +390,17 @@ class ShellRouteContext {
   /// The current route state associated with [route].
   final GoRouterState routerState;
 
-  /// The [Navigator] key to be used for the nested navigation associated with
+  /// The [Navigator] key of the current Navigator within the associated
   /// [route].
   final GlobalKey<NavigatorState> navigatorKey;
 
-  /// The route match list representing the current location within the
-  /// associated shell route.
+  /// The route match list representing the location of the current [Navigator]
+  /// within the associated [route].
   final RouteMatchList routeMatchList;
 
-  final Map<NavigatorKey, RouteMatchList> preloadedMatchLists;
+  /// The route match lists representing the locations of any additional
+  /// preloaded [Navigator]s within the associated [route].
+  final Map<GlobalKey<NavigatorState>, RouteMatchList> preloadedMatchLists;
 
   /// Function used to build the [Navigator] for the current route.
   final NavigatorBuilder navigatorBuilder;
@@ -783,7 +787,7 @@ class StatefulShellRoute extends ShellRouteBase {
   }
 
   @override
-  Map<GlobalKey<NavigatorState>, RouteMatchList> preloadableNavigators(
+  Map<GlobalKey<NavigatorState>, RouteMatchList> preloadableNavigatorLocations(
       RouteConfiguration routeConfiguration) {
     // Return quickly if there are no preloadable branches.
     if (_preloadableBranches.isEmpty) {
@@ -1168,7 +1172,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   void _preloadBranches() {
     final ShellRouteContext shellRouteContext = widget.shellRouteContext;
-    final Map<NavigatorKey, RouteMatchList> preloadedMatchLists =
+    final Map<GlobalKey<NavigatorState>, RouteMatchList> preloadedMatchLists =
         shellRouteContext.preloadedMatchLists;
     for (final StatefulShellBranch branch in route.branches) {
       final RouteMatchList? matches = preloadedMatchLists[branch.navigatorKey];
