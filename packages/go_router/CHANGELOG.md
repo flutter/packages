@@ -1,3 +1,7 @@
+## 9.1.0
+
+- Adds preload support to StatefulShellRoute, configurable via `lazy` parameter on StatefulShellBranch.
+
 ## 9.0.0
 
 - **BREAKING CHANGE**:
