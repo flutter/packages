@@ -184,6 +184,12 @@ Future<bool> _isDevChange(List<String> pathComponents,
       _isExampleBuildFile(pathComponents) ||
       // Test-only gradle depenedencies don't affect clients.
       await _isGradleTestDependencyChange(pathComponents,
+          git: git, repoPath: repoPath) ||
+      // Implementation comments don't affect clients.
+      // This check is currently Dart-only since that's the only place
+      // this has come up in practice; it could be generalized to other
+      // languages if needed.
+      await _isDartImplementationCommentChange(pathComponents,
           git: git, repoPath: repoPath);
 }
 
@@ -230,4 +236,35 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
   // Only return true if a test dependency change was found, as a failsafe
   // against having the wrong (e.g., incorrectly empty) diff output.
   return foundTestDependencyChange;
+}
+
+// Returns true if the given file is a Dart file whose only changes are
+// implementation comments (i.e., not doc comments).
+Future<bool> _isDartImplementationCommentChange(List<String> pathComponents,
+    {GitVersionFinder? git, String? repoPath}) async {
+  if (git == null) {
+    return false;
+  }
+  if (!pathComponents.last.endsWith('.dart')) {
+    return false;
+  }
+  final List<String> diff = await git.getDiffContents(targetPath: repoPath);
+  final RegExp changeLine = RegExp(r'^[+-] ');
+  final RegExp whitespaceLine = RegExp(r'^[+-]\s*$');
+  final RegExp nonDocCommentLine = RegExp(r'^[+-]\s*//\s');
+  bool foundIgnoredChange = false;
+  for (final String line in diff) {
+    if (!changeLine.hasMatch(line) ||
+        line.startsWith('--- ') ||
+        line.startsWith('+++ ')) {
+      continue;
+    }
+    if (!nonDocCommentLine.hasMatch(line) && !whitespaceLine.hasMatch(line)) {
+      return false;
+    }
+    foundIgnoredChange = true;
+  }
+  // Only return true if an ignored change was found, as a failsafe against
+  // having the wrong (e.g., incorrectly empty) diff output.
+  return foundIgnoredChange;
 }
