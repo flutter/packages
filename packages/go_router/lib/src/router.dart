@@ -45,7 +45,7 @@ typedef GoExceptionHandler = void Function(
 /// `errorPageBuilder` to build a page for the Router if it is not null;
 /// otherwise, it is passed to `errorBuilder` instead. If none of them are
 /// provided, go_router builds a default error screen to show the exception.
-/// See [Error handling](https://pub.dev/documentation/go_router/latest/topics/error-handling.html)
+/// See [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 /// for more details.
 ///
 /// See also:
