@@ -1,3 +1,8 @@
+## 0.1.2
+
+* Ensure constructed ui.Picture objects are disposed after usage.
+* Add [SetUniforms] to help constructing FragmentShader uniform data.
+
 ## 0.1.1
 
 * Fix `AnimatedSampler` offset assertion to no longer trigger incorrectly when shader is disabled.
