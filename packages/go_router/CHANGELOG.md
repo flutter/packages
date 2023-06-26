@@ -1,10 +1,27 @@
+## 9.0.0
+
+- **BREAKING CHANGE**:
+  - Removes GoRouter.location and GoRouter.canPop. Use GoRouterState.of().location and
+    Navigator.of().canPop instead.
+  - GoRouter does not `extends` ChangeNotifier.
+  - [Migration guide](https://flutter.dev/go/go-router-v9-breaking-changes)
+- Reduces excessive rebuilds due to inherited look up.
+
+## 8.2.0
+
+- Adds onException to GoRouter constructor.
+
+## 8.1.0
+
+- Adds parent navigator key to ShellRoute and StatefulShellRoute.
+
 ## 8.0.5
 
 - Fixes a bug that GoRouterState in top level redirect doesn't contain complete data.
 
 ## 8.0.4
 
-- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension. 
+- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension.
 
 ## 8.0.3
 

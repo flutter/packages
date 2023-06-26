@@ -1,0 +1,15 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+  - name: analyze repo tools
+    script: .ci/scripts/analyze_repo_tools.sh
+  - name: analyze
+    script: script/tool_runner.sh
+    # DO NOT change the custom-analysis argument here without changing the Dart repo.
+    # See the comment in script/configs/custom_analysis.yaml for details.
+    args: ["analyze", "--custom-analysis=script/configs/custom_analysis.yaml"]
+    # Re-run analysis with path-based dependencies to ensure that publishing
+    # the changes won't break analysis of other packages in the respository
+    # that depend on it.
+  - name: analyze - pathified
+    script: .ci/scripts/pathified_analyze.sh
