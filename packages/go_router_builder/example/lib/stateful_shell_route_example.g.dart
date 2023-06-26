@@ -15,7 +15,7 @@ List<RouteBase> get $appRoutes => [
 RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
       factory: $MyShellRouteDataExtension._fromState,
       branches: [
-        StatefulShellBranchData.$route(
+        StatefulShellBranchData.$branch(
           factory: $BranchADataExtension._fromState,
           routes: [
             GoRouteData.$route(
@@ -24,7 +24,7 @@ RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
             ),
           ],
         ),
-        StatefulShellBranchData.$route(
+        StatefulShellBranchData.$branch(
           factory: $BranchBDataExtension._fromState,
           navigatorKey: BranchBData.$navigatorKey,
           routes: [

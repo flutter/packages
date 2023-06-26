@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 @TypedStatefulShellRoute<MyShellRouteData>(
-  routes: <TypedRoute<RouteData>>[
+  branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
     TypedStatefulShellBranch<BranchAData>(
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<DetailsARouteData>(path: '/detailsA'),

@@ -115,13 +115,21 @@ class RouteConfig {
       parent,
       _generateNavigatorKeyGetterCode(
         classElement,
-        keyName: typeName.contains('Shell') ? r'$navigatorKey' : r'$parentNavigatorKey',
+        keyName: typeName.contains('Shell')
+            ? r'$navigatorKey'
+            : r'$parentNavigatorKey',
       ),
       typeName,
     );
-
-    value._children.addAll(reader.read('routes').listValue.map((DartObject e) =>
-        RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
+    if (typeName == 'TypedStatefulShellRoute') {
+      value._children.addAll(reader.read('branches').listValue.map(
+          (DartObject e) =>
+              RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
+    } else {
+      value._children.addAll(reader.read('routes').listValue.map(
+          (DartObject e) =>
+              RouteConfig._fromAnnotation(ConstantReader(e), element, value)));
+    }
 
     return value;
   }
@@ -341,14 +349,14 @@ RouteBase get $_routeGetterName => ${_routeDefinition()};
     final String routesBit = _children.isEmpty
         ? ''
         : '''
-${_typeName=='TypedStatefulShellRoute'?"branches:":"routes:"} [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
+${_typeName == 'TypedStatefulShellRoute' ? "branches:" : "routes:"} [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}],
 ''';
     final String navigatorKeyParameterName =
         _typeName.contains('Shell') ? 'navigatorKey' : 'parentNavigatorKey';
     final String navigatorKey = _key == null || _key!.isEmpty
         ? ''
         : '$navigatorKeyParameterName: $_key,';
-    if (_typeName=='TypedStatefulShellRoute') {
+    if (_typeName == 'TypedStatefulShellRoute') {
       return '''
   StatefulShellRouteData.\$route(
     factory: $_extensionName._fromState,
@@ -357,16 +365,16 @@ ${_typeName=='TypedStatefulShellRoute'?"branches:":"routes:"} [${_children.map((
   )
 ''';
     }
-    if (_typeName=='TypedStatefulShellBranch') {
+    if (_typeName == 'TypedStatefulShellBranch') {
       return '''
-  StatefulShellBranchData.\$route(
+  StatefulShellBranchData.\$branch(
     factory: $_extensionName._fromState,
     $navigatorKey
     $routesBit
   )
 ''';
     }
-     if (_typeName=='TypedShellRoute') {
+    if (_typeName == 'TypedShellRoute') {
       return '''
   ShellRouteData.\$route(
     factory: $_extensionName._fromState,
