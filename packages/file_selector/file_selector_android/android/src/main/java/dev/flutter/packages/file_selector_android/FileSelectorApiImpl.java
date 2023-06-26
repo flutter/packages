@@ -294,10 +294,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
         }
 
         final int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-        // If the size is unknown, the value stored is null. But because an
-        // int can't be null, the behavior is implementation-specific,
-        // and unpredictable. So as
-        // a rule, check if it's null before assigning to an int. This will
+        // If the size is unknown, the value stored is null. This will
         // happen often: The storage API allows for remote files, whose
         // size might not be locally known.
         if (!cursor.isNull(sizeIndex)) {
@@ -306,19 +303,16 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       }
     }
 
-    byte[] bytes = null;
-    if (size != null) {
-      bytes = new byte[size];
-      try (InputStream inputStream = contentResolver.openInputStream(uri)) {
-        final DataInputStream dataInputStream = objectFactory.newDataInputStream(inputStream);
-        dataInputStream.readFully(bytes);
-      } catch (IOException exception) {
-        Log.w(TAG, exception.getMessage());
-        return null;
-      }
+    if (size == null) {
+      return null;
     }
 
-    if (bytes == null) {
+    final byte[] bytes = new byte[size];
+    try (InputStream inputStream = contentResolver.openInputStream(uri)) {
+      final DataInputStream dataInputStream = objectFactory.newDataInputStream(inputStream);
+      dataInputStream.readFully(bytes);
+    } catch (IOException exception) {
+      Log.w(TAG, exception.getMessage());
       return null;
     }
 
