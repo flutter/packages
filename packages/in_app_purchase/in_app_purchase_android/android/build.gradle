@@ -63,8 +63,8 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.22"))
     implementation 'com.android.billingclient:billing:5.2.0'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.json:json:20230227'
-    testImplementation 'org.mockito:mockito-core:4.7.0'
+    testImplementation 'org.json:json:20230618'
+    testImplementation 'org.mockito:mockito-core:5.4.0'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

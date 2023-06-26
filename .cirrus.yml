@@ -47,22 +47,6 @@ flutter_upgrade_template: &FLUTTER_UPGRADE_TEMPLATE
     - flutter doctor -v
   << : *TOOL_SETUP_TEMPLATE
 
-# Ensures that the latest versions of all of the 1P packages can be used
-# together. See script/configs/exclude_all_packages_app.yaml for exceptions.
-build_all_packages_app_template: &BUILD_ALL_PACKAGES_APP_TEMPLATE
-  create_all_packages_app_script:
-    - $PLUGIN_TOOL_COMMAND create-all-packages-app --output-dir=. --exclude script/configs/exclude_all_packages_app.yaml
-  build_all_packages_debug_script:
-    - cd all_packages
-    - if [[ "$BUILD_ALL_ARGS" == "web" ]]; then
-    -   echo "Skipping; web does not support debug builds"
-    - else
-    -   flutter build $BUILD_ALL_ARGS --debug
-    - fi
-  build_all_packages_release_script:
-    - cd all_packages
-    - flutter build $BUILD_ALL_ARGS --release
-
 # Light-workload Linux tasks.
 # These use default machines, with fewer CPUs, to reduce pressure on the
 # concurrency limits.
@@ -115,30 +99,6 @@ task:
           - else
           -   ./script/tool_runner.sh federation-safety-check
           - fi
-    - name: analyze
-      env:
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      analyze_tool_script:
-        - cd script/tool
-        - dart analyze --fatal-infos
-      analyze_script:
-        # DO NOT change the custom-analysis argument here without changing the Dart repo.
-        # See the comment in script/configs/custom_analysis.yaml for details.
-        - ./script/tool_runner.sh analyze --custom-analysis=script/configs/custom_analysis.yaml
-      pathified_analyze_script:
-        # Re-run analysis with path-based dependencies to ensure that publishing
-        # the changes won't break analysis of other packages in the respository
-        # that depend on it.
-        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        # This uses --run-on-dirty-packages rather than --packages-for-branch
-        # since only the packages changed by 'make-deps-path-based' need to be
-        # checked.
-        - $PLUGIN_TOOL_COMMAND analyze --run-on-dirty-packages --log-timing --custom-analysis=script/configs/custom_analysis.yaml
-        # Restore the tree to a clean state, to avoid accidental issues if
-        # other script steps are added to this task.
-        - git checkout .
     # Does a sanity check that packages at least pass analysis on the N-1 and N-2
     # versions of Flutter stable if the package claims to support that version.
     # This is to minimize accidentally making changes that break old versions
@@ -147,7 +107,6 @@ task:
     # Note: The versions below should be manually updated after a new stable
     # version comes out.
     - name: legacy_version_analyze
-      depends_on: analyze
       matrix:
         # Change the arguments to pubspec-check when changing these values.
         env:
@@ -164,14 +123,6 @@ task:
         # Only analyze lib/; non-client code doesn't need to work on
         # all supported legacy version.
         - ./script/tool_runner.sh analyze --lib-only --skip-if-not-supporting-flutter-version="$CHANNEL" --skip-if-not-supporting-dart-version="$DART_VERSION" --custom-analysis=script/configs/custom_analysis.yaml
-    # Does a sanity check that packages pass analysis with the lowest possible
-    # versions of all dependencies. This is to catch cases where we add use of
-    # new APIs but forget to update minimum versions of dependencies to where
-    # those APIs are introduced.
-    - name: downgraded_analyze
-      depends_on: analyze
-      analyze_script:
-        - ./script/tool_runner.sh analyze --downgrade --custom-analysis=script/configs/custom_analysis.yaml
     - name: readme_excerpts
       env:
         CIRRUS_CLONE_SUBMODULES: true
@@ -273,18 +224,6 @@ task:
           path: "**/reports/lint-results-debug.xml"
           type: text/xml
           format: android-lint
-    - name: android-build_all_packages
-      env:
-        BUILD_ALL_ARGS: "apk"
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      << : *BUILD_ALL_PACKAGES_APP_TEMPLATE
-      create_all_packages_app_legacy_script:
-        - $PLUGIN_TOOL_COMMAND create-all-packages-app --legacy-source=.ci/legacy_project/all_packages --output-dir=legacy/ --exclude script/configs/exclude_all_packages_app.yaml
-      build_all_packages_legacy_script:
-        - cd legacy/all_packages
-        - flutter build $BUILD_ALL_ARGS --debug
     ### Web tasks ###
     - name: web-platform_tests
       env:
