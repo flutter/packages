@@ -4,8 +4,9 @@ In this example, the application downloads both RFW descriptions of UI
 and Wasm logic to drive it. The Flutter application itself does not
 contain any of the calculator UI or logic.
 
-Currently this only runs on macOS, Windows, and Linux, since
-`package:wasm` does not yet support Android, iOS, or web.
+Currently, this example uses `package:wasm` on macOS, Windows, and Linux.
+On web, it uses the Chrome browser APIs through JS interop. It does not
+support Android, iOS, or other browsers.
 
 ## Building
 
@@ -21,6 +22,17 @@ On macOS, clang from llvm (via Homebrew) is needed, since Xcode's clang
 doesn't support Wasm.
 
 Run `logic/build.sh` to rebuild the Wasm file.
+
+## Running on the web
+
+To use the binary encoding scheme from RFW (optional, but performance
+optimizing), int64 is needed, but not supported in dart2js. Therefore,
+in addition to the dynamically downloaded Wasm module, the web client
+application itself needs to be compiled in dart2wasm as well.
+
+To run the web app in Wasm,
+
+`flutter build web --wasm`
 
 ## Conventions
 
@@ -42,9 +54,3 @@ looked up as functions in the Wasm module. The `arguments` key, if
 present, must be a list of integers to pass to the function.
 
 Only the `core.widgets` local library is loaded into the runtime.
-
-## Application behavior
-
-The demo application fetches the RFW and Wasm files on startup, if it
-has not downloaded them before or if they were downloaded more than
-six hours earlier.

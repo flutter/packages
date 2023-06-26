@@ -5,17 +5,14 @@
 // This file is hand-formatted.
 
 import 'dart:async';
+import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
-import 'package:rfw/rfw.dart';
-// import 'package:wasm/wasm.dart';
-import 'package:web/web.dart';
-import 'dart:js_interop';
 import 'package:js/js_util.dart';
+import 'package:rfw/rfw.dart';
+import 'package:web/web.dart';
 
 const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
 
@@ -36,42 +33,53 @@ class Example extends StatefulWidget {
 class _ExampleState extends State<Example> {
   final Runtime _runtime = Runtime();
   final DynamicContent _data = DynamicContent();
-  // late final WasmInstance _logic;
-  late final Instance _logic;
+  // This is this object https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/Instance/exports
+  // which contains the Wasm memory and functions.
+  late final JSObject _wasmExports;
 
   @override
   void initState() {
     super.initState();
     RendererBinding.instance.deferFirstFrame();
     _runtime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
-    _loadLogic();
+    _loadRfwAndWasm();
   }
 
-  late final _dataFetcher;
+  Future<void> _loadRfwAndWasm() async {
+    final Response interfaceResponse =
+      await promiseToFuture<Response>(window.fetch(interfaceUrl.toJS));
+    final Response logicResponse =
+      await promiseToFuture<Response>(window.fetch(logicUrl.toJS));
 
-  Future<void> _loadLogic() async {
-    final uiBytes = (await get(Uri.parse(interfaceUrl))).bodyBytes;
-    final logicBytes = (await get(Uri.parse(logicUrl))).bodyBytes;
+    final ByteBuffer interfaceByteBuffer =
+      await promiseToFuture(interfaceResponse.arrayBuffer());
+    final ByteBuffer logicByteBuffer =
+      await promiseToFuture(logicResponse.arrayBuffer());
 
-    _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(uiBytes));
-    _logic = (await promiseToFuture(WebAssembly.instantiate(jsify(logicBytes) as JSAny))).instance;
-    _dataFetcher = _logic.exports['value'];
+    _runtime.update(
+      const LibraryName(<String>['main']),
+      decodeLibraryBlob(interfaceByteBuffer.asUint8List()),
+    );
+    final Instance wasmInstance = (
+      await promiseToFuture<WebAssemblyInstantiatedSource>(
+        WebAssembly.instantiate(logicByteBuffer.toJS)
+      )
+    ).instance;
+    _wasmExports = wasmInstance.exports;
 
-    _dataFetcher = _logic.lookupFunction('value') as WasmFunction;
     _updateData();
     setState(() { RendererBinding.instance.allowFirstFrame(); });
   }
 
   void _updateData() {
-    final dynamic value = _dataFetcher.apply(const <Object?>[]);
-    _data.update('value', <String, Object?>{ 'numeric': value, 'string': value.toString() });
-  }
-
-  List<Object?> _asList(Object? value) {
-    if (value is List<Object?>) {
-      return value;
-    }
-    return const <Object?>[];
+    // Retrieve the calculator value from Wasm.
+    final int value =
+      callMethod(_wasmExports, 'value', const <Object>[]).toInt();
+    // Push the calculator value to RFW.
+    _data.update(
+      'value',
+      <String, Object?>{ 'numeric': value, 'string': value.toString() },
+    );
   }
 
   @override
@@ -84,8 +92,15 @@ class _ExampleState extends State<Example> {
       data: _data,
       widget: const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
       onEvent: (String name, DynamicMap arguments) {
-        final WasmFunction function = _logic.lookupFunction(name) as WasmFunction;
-        function.apply(_asList(arguments['arguments']));
+        final Object? rfwArguments = arguments['arguments'];
+        // Call Wasm calculator function.
+        callMethod(
+          _wasmExports,
+          name,
+          rfwArguments == null
+              ? const <Object>[]
+              : rfwArguments as List<Object?>,
+        );
         _updateData();
       },
     );
