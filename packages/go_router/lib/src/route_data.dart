@@ -215,7 +215,7 @@ abstract class StatefulShellRouteData extends RouteData {
   Page<void> pageBuilder(
     BuildContext context,
     GoRouterState state,
-    Widget navigator,
+    StatefulNavigationShell navigationShell,
   ) =>
       const NoOpPage();
 
@@ -235,17 +235,10 @@ abstract class StatefulShellRouteData extends RouteData {
   static StatefulShellRoute $route<T extends StatefulShellRouteData>({
     required T Function(GoRouterState) factory,
     required List<StatefulShellBranch> branches,
+    ShellNavigationContainerBuilder? navigatorContainerBuilder,
     String? restorationScopeId,
   }) {
     T factoryImpl(GoRouterState state) {
-      final Object? extra = state.extra;
-
-      // If the "extra" value is of type `T` then we know it's the source
-      // instance of `StatefulShellRouteData`, so it doesn't need to be recreated.
-      if (extra is T) {
-        return extra;
-      }
-
       return (_stateObjectExpando[state] ??= factory(state)) as T;
     }
 
@@ -271,6 +264,14 @@ abstract class StatefulShellRouteData extends RouteData {
           navigationShell,
         );
 
+    if (navigatorContainerBuilder != null) {
+      return StatefulShellRoute(
+        branches: branches,
+        builder: builder,
+        pageBuilder: pageBuilder,
+        navigatorContainerBuilder: navigatorContainerBuilder,
+      );
+    }
     return StatefulShellRoute.indexedStack(
       branches: branches,
       builder: builder,
@@ -289,15 +290,14 @@ abstract class StatefulShellRouteData extends RouteData {
 
 /// Base class for supporting
 /// [StatefulShellRoute](https://pub.dev/documentation/go_router/latest/go_router/StatefulShellRoute-class.html)
-abstract class StatefulShellBranchData extends RouteData {
+abstract class StatefulShellBranchData {
   /// Default const constructor
   const StatefulShellBranchData();
 
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
-  static StatefulShellBranch $route<T extends StatefulShellBranchData>({
-    required T Function(GoRouterState) factory,
+  static StatefulShellBranch $branch<T extends StatefulShellBranchData>({
     GlobalKey<NavigatorState>? navigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
   }) {
@@ -365,19 +365,18 @@ class TypedStatefulShellRoute<T extends StatefulShellRouteData>
     extends TypedRoute<T> {
   /// Default const constructor
   const TypedStatefulShellRoute({
-    this.routes = const <TypedRoute<RouteData>>[],
+    this.branches = const <TypedStatefulShellBranch<StatefulShellBranchData>>[],
   });
 
   /// Child route definitions.
   ///
   /// See [RouteBase.routes].
-  final List<TypedRoute<RouteData>> routes;
+  final List<TypedStatefulShellBranch<StatefulShellBranchData>> branches;
 }
 
 /// A superclass for each typed shell route descendant
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
-class TypedStatefulShellBranch<T extends StatefulShellBranchData>
-    extends TypedRoute<T> {
+class TypedStatefulShellBranch<T extends StatefulShellBranchData> {
   /// Default const constructor
   const TypedStatefulShellBranch({
     this.routes = const <TypedRoute<RouteData>>[],

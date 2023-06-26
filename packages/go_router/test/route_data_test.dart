@@ -109,7 +109,7 @@ final StatefulShellRoute _statefulShellRouteDataBuilder =
     StatefulShellRouteData.$route(
   factory: (GoRouterState state) => const _StatefulShellRouteDataBuilder(),
   branches: <StatefulShellBranch>[
-    StatefulShellBranchData.$route(
+    StatefulShellBranchData.$branch(
       factory: (GoRouterState state) => const _StatefulShellBranchDataBuilder(),
       routes: <RouteBase>[
         GoRouteData.$route(
@@ -142,7 +142,7 @@ final StatefulShellRoute _statefulShellRouteDataPageBuilder =
     StatefulShellRouteData.$route(
   factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
   branches: <StatefulShellBranch>[
-    StatefulShellBranchData.$route(
+    StatefulShellBranchData.$branch(
       factory: (GoRouterState state) => const _StatefulShellBranchDataBuilder(),
       routes: <RouteBase>[
         GoRouteData.$route(
