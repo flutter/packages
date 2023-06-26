@@ -73,7 +73,7 @@ void main() {
         expect(coords.longitude, closeTo(26, _acceptableLatLngDelta));
       });
 
-      testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
+      testWidgets('addPadding', (WidgetTester tester) async {
         const LatLng initialMapCenter = LatLng(0, 0);
         const double initialZoomLevel = 5;
         const CameraPosition initialCameraPosition =
@@ -102,42 +102,29 @@ void main() {
         expect(firstVisibleRegion, isNot(zeroLatLngBounds));
         expect(firstVisibleRegion.contains(initialMapCenter), isTrue);
 
-        // Making a new `LatLngBounds` about (10, 10) distance south west to the `firstVisibleRegion`.
-        // The size of the `LatLngBounds` is 10 by 10.
-        final LatLng southWest = LatLng(
-            firstVisibleRegion.southwest.latitude - 20,
-            firstVisibleRegion.southwest.longitude - 20);
-        final LatLng northEast = LatLng(
-            firstVisibleRegion.southwest.latitude - 10,
-            firstVisibleRegion.southwest.longitude - 10);
-        final LatLng newCenter = LatLng(
-          (northEast.latitude + southWest.latitude) / 2,
-          (northEast.longitude + southWest.longitude) / 2,
-        );
-
-        expect(firstVisibleRegion.contains(northEast), isFalse);
-        expect(firstVisibleRegion.contains(southWest), isFalse);
-
-        final LatLngBounds latLngBounds =
-            LatLngBounds(southwest: southWest, northeast: northEast);
-
-        // TODO(iskakaushik): non-zero padding is needed for some device configurations
-        // https://github.com/flutter/flutter/issues/30575
-        const double padding = 0;
-        await controller
-            .moveCamera(CameraUpdate.newLatLngBounds(latLngBounds, padding));
+        const double padding = 0.1;
+        await controller.moveCamera(
+            CameraUpdate.newLatLngBounds(firstVisibleRegion, padding));
         await tester.pumpAndSettle(const Duration(seconds: 3));
 
         final LatLngBounds secondVisibleRegion =
             await controller.getVisibleRegion();
 
         expect(secondVisibleRegion, isNotNull);
-        expect(secondVisibleRegion.southwest, isNotNull);
-        expect(secondVisibleRegion.northeast, isNotNull);
         expect(secondVisibleRegion, isNot(zeroLatLngBounds));
-
-        expect(firstVisibleRegion, isNot(secondVisibleRegion));
-        expect(secondVisibleRegion.contains(newCenter), isTrue);
+        expect(
+          secondVisibleRegion,
+          isNot(firstVisibleRegion),
+        );
+        expect(secondVisibleRegion.contains(initialMapCenter), isTrue);
+        expect(
+          secondVisibleRegion.contains(firstVisibleRegion.northeast),
+          isTrue,
+        );
+        expect(
+          secondVisibleRegion.contains(firstVisibleRegion.southwest),
+          isTrue,
+        );
       });
     });
 
