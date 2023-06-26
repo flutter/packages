@@ -154,12 +154,6 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
-          TextButton(
-            onPressed: () {
-              _controller.clearCache();
-            },
-            child: const Text('Clear cache'),
-          )
         ],
       ),
     );
