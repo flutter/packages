@@ -23,6 +23,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   VolumeMessage? volumeMessage;
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
+  ClearCacheMessage? clearCacheMessage;
 
   @override
   TextureMessage create(CreateMessage arg) {
@@ -90,6 +91,12 @@ class _ApiLogger implements TestHostVideoPlayerApi {
     log.add('setPlaybackSpeed');
     playbackSpeedMessage = arg;
   }
+
+  @override
+  void clearCache(ClearCacheMessage msg) {
+    log.add('clearCache');
+    clearCacheMessage = msg;
+  }
 }
 
 void main() {
@@ -145,6 +152,7 @@ void main() {
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
       expect(log.createMessage?.packageName, null);
+      expect(log.createMessage?.cache, false);
       expect(log.createMessage?.formatHint, 'dash');
       expect(log.createMessage?.httpHeaders, <String, String>{});
       expect(textureId, 3);
@@ -159,6 +167,43 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.cache, false);
+      expect(log.createMessage?.packageName, null);
+      expect(log.createMessage?.formatHint, null);
+      expect(log.createMessage?.httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'});
+      expect(textureId, 3);
+    });
+
+    test('create with network (cache)', () async {
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'someUri',
+        cache: true,
+        httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+      ));
+      expect(log.log.last, 'create');
+      expect(log.createMessage?.asset, null);
+      expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.cache, true);
+      expect(log.createMessage?.packageName, null);
+      expect(log.createMessage?.formatHint, null);
+      expect(log.createMessage?.httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'});
+      expect(textureId, 3);
+    });
+
+    test('create without network (cache)', () async {
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'someUri',
+        cache: false,
+        httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+      ));
+      expect(log.log.last, 'create');
+      expect(log.createMessage?.asset, null);
+      expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.cache, false);
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, null);
       expect(log.createMessage?.httpHeaders,
@@ -217,6 +262,13 @@ void main() {
       expect(log.log.last, 'setPlaybackSpeed');
       expect(log.playbackSpeedMessage?.textureId, 1);
       expect(log.playbackSpeedMessage?.speed, 1.5);
+    });
+
+    test('clearCache', () async {
+      await player.clearCache(1, true);
+      expect(log.log.last, 'clearCache');
+      expect(log.clearCacheMessage?.textureId, 1);
+      expect(log.clearCacheMessage?.clear, true);
     });
 
     test('seekTo', () async {

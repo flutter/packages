@@ -523,6 +523,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _videoPlayerPlatform.setLooping(_textureId, value.isLooping);
   }
 
+  Future<void> _clearCache() async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+    await _videoPlayerPlatform.clearCache(_textureId, true);
+  }
+
   Future<void> _applyPlayPause() async {
     if (_isDisposedOrNotInitialized) {
       return;
