@@ -224,7 +224,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     super.initState();
     _controller = VideoPlayerController.network(
       supportedNetworkMediaUrl,
-      cache: true,
+      enableCache: true,
       maxCacheSize: 1000,
       maxFileSize: 100,
       closedCaptionFile: _loadCaptions(),
