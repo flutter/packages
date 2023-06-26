@@ -5,9 +5,14 @@
 package dev.flutter.pigeon_example_app
 
 import ExampleHostApi
+import CreateMessage
+import MessageFlutterApi
+import FlutterError
+
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 
 // #docregion kotlin-class
 private class PigeonApiImplementation: ExampleHostApi {
@@ -15,14 +20,14 @@ private class PigeonApiImplementation: ExampleHostApi {
     return "Kotlin"
   }
 
-  fun add(a: Long, b: Long): Long {
+  override fun add(a: Long, b: Long): Long {
     if (a < 0L || b < 0L) {
       throw FlutterError("code", "message", "details");
     }
     return a + b
   }
 
-  fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
+  override fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
     if (message.code == Code.ONE) {
       callback(Result.failure(FlutterError("code", "message", "details")))
       return
@@ -37,12 +42,12 @@ private class PigeonFlutterApi {
 
   var flutterApi: MessageFlutterApi? = null
 
-  fun init(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+  constructor(binding: FlutterPlugin.FlutterPluginBinding) {
     flutterApi = MessageFlutterApi(binding.getBinaryMessenger())
   }
 
-  fun callFlutterMethod(aString: String) {
-    flutterAPI!!.flutterMethod(aString) {
+  fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
+    flutterApi!!.flutterMethod(aString) {
       echo -> callback(Result.success(echo))
     }
   }

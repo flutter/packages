@@ -16,17 +16,17 @@ private class PigeonApiImplementation: ExampleHostApi {
 
   func add(a: Int64, b: Int64) throws -> Int64 {
     if (a < 0 || b < 0) {
-      throw FlutterError("code", "message", "details");
+      throw FlutterError(code: "code", message: "message", details: "details");
     }
     return a + b
   }
 
   func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
     if (message.code == Code.one) {
-      completion(Result(false, FlutterError("code", "message", "details")))
+      completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
       return
     }
-    completion(Result(true, nil))
+    completion(.success(true))
   }
 }
 // #enddocregion swift-class
@@ -39,8 +39,8 @@ private class PigeonFlutterApi {
     flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
   }
 
-  func callFlutterMethod(String: aString) {
-    flutterAPI.flutterMethod(aString) {
+  func callFlutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    flutterAPI.flutterMethod(aString: aStringArg) {
       completion(.success($0))
     }
   }
