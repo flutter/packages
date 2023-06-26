@@ -24,6 +24,12 @@ class LoopingMessage {
   bool isLooping;
 }
 
+class ClearCacheMessage {
+  ClearCacheMessage(this.textureId, this.clear);
+  int textureId;
+  bool clear;
+}
+
 class VolumeMessage {
   VolumeMessage(this.textureId, this.volume);
   int textureId;
@@ -48,6 +54,8 @@ class CreateMessage {
   String? uri;
   String? packageName;
   String? formatHint;
+  int? maxCacheSize;
+  int? maxFileSize;
   Map<String?, String?> httpHeaders;
 }
 
@@ -63,6 +71,7 @@ abstract class AndroidVideoPlayerApi {
   void dispose(TextureMessage msg);
   void setLooping(LoopingMessage msg);
   void setVolume(VolumeMessage msg);
+  void clearCache(ClearCacheMessage msg);
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
   void play(TextureMessage msg);
   PositionMessage position(TextureMessage msg);

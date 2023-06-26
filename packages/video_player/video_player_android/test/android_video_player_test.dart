@@ -23,6 +23,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   VolumeMessage? volumeMessage;
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
+  ClearCacheMessage? clearCacheMessage;
 
   @override
   TextureMessage create(CreateMessage arg) {
@@ -90,6 +91,11 @@ class _ApiLogger implements TestHostVideoPlayerApi {
     log.add('setPlaybackSpeed');
     playbackSpeedMessage = arg;
   }
+
+  @override
+  void clearCache(ClearCacheMessage msg) {
+    clearCacheMessage = msg;
+  }
 }
 
 void main() {
@@ -150,6 +156,25 @@ void main() {
       expect(textureId, 3);
     });
 
+    test('create with network (with caching)', () async {
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'someUri',
+        maxCacheSize: 1000,
+        maxFileSize: 500,
+        formatHint: VideoFormat.dash,
+      ));
+      expect(log.log.last, 'create');
+      expect(log.createMessage?.asset, null);
+      expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.maxCacheSize, 1000);
+      expect(log.createMessage?.maxFileSize, 500);
+      expect(log.createMessage?.packageName, null);
+      expect(log.createMessage?.formatHint, 'dash');
+      expect(log.createMessage?.httpHeaders, <String, String>{});
+      expect(textureId, 3);
+    });
+
     test('create with network (some headers)', () async {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,
@@ -159,11 +184,20 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.maxCacheSize, 0);
+      expect(log.createMessage?.maxFileSize, 0);
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, null);
       expect(log.createMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
+    });
+
+    test('clearCache', () async {
+      await player.clearCache(1, true);
+      expect(log.log.last, 'clearCache');
+      expect(log.clearCacheMessage?.textureId, 1);
+      expect(log.clearCacheMessage?.clear, true);
     });
 
     test('create with file', () async {

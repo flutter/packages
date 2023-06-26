@@ -35,6 +35,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     String? asset;
     String? packageName;
     String? uri;
+    bool? cache;
     String? formatHint;
     Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
@@ -44,6 +45,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         break;
       case DataSourceType.network:
         uri = dataSource.uri;
+        cache = dataSource.cache;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
         break;
@@ -58,6 +60,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       asset: asset,
       packageName: packageName,
       uri: uri,
+      cache: cache ?? false,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
     );
@@ -71,6 +74,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     return _api.setLooping(LoopingMessage(
       textureId: textureId,
       isLooping: looping,
+    ));
+  }
+
+  @override
+  Future<void> clearCache(int textureId, bool clear) {
+    return _api.clearCache(ClearCacheMessage(
+      textureId: textureId,
+      clear: clear,
     ));
   }
 
