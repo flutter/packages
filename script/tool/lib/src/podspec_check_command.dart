@@ -31,7 +31,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   final String name = 'podspec-check';
 
   @override
-  List<String> get aliases => <String>['podspec', 'podspecs'];
+  List<String> get aliases => <String>['podspec', 'podspecs', 'check-podspec'];
 
   @override
   final String description =

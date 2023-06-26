@@ -290,6 +290,90 @@ void main() {
     });
 
     test(
+        'does not requires changelog or version change for '
+        'non-doc-comment-only changes', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/lib/a_plugin.dart',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/lib/a_plugin.dart': <String>[
+          '-  // Old comment.',
+          '+  // New comment.',
+          '+ ', // Allow whitespace line changes as part of comment changes.
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/',
+          git: git);
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
+    test('requires changelog or version change for doc comment changes',
+        () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/lib/a_plugin.dart',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/lib/a_plugin.dart': <String>[
+          '-  /// Old doc comment.',
+          '+  /// New doc comment.',
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+        git: git,
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, true);
+      expect(state.needsChangelogChange, true);
+    });
+
+    test('requires changelog or version change for Dart code change', () async {
+      final RepositoryPackage package =
+          createFakePlugin('a_plugin', packagesDir);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/lib/a_plugin.dart',
+      ];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/lib/a_plugin.dart': <String>[
+          // Include inline comments to ensure the comment check doesn't have
+          // false positives for lines that include comment changes but aren't
+          // only comment changes.
+          '-  callOldMethod(); // inline comment',
+          '+  callNewMethod(); // inline comment',
+        ]
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/',
+          git: git);
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, true);
+      expect(state.needsChangelogChange, true);
+    });
+
+    test(
         'requires changelog or version change if build.gradle diffs cannot '
         'be checked', () async {
       final RepositoryPackage package =
