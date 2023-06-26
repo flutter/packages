@@ -5,6 +5,7 @@
 import 'dart:io' show Platform;
 
 import 'package:path/path.dart' as p;
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart';
 
 import 'process_utils.dart';
@@ -79,6 +80,8 @@ Future<int> generatePigeons({required String baseDir}) async {
           ? null
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
+      kotlinErrorClassName:
+          input == 'core_tests' ? null : '${pascalCaseName}Error',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguages.swift)
           ? null
@@ -91,6 +94,7 @@ Future<int> generatePigeons({required String baseDir}) async {
           ? null
           : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
+      suppressVersion: true,
     );
     if (generateCode != 0) {
       return generateCode;
@@ -104,6 +108,7 @@ Future<int> generatePigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguages.swift)
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
+      suppressVersion: true,
     );
     if (generateCode != 0) {
       return generateCode;
@@ -127,6 +132,24 @@ Future<int> generatePigeons({required String baseDir}) async {
       objcSourceOut: skipLanguages.contains(GeneratorLanguages.objc)
           ? null
           : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
+      suppressVersion: true,
+    );
+    if (generateCode != 0) {
+      return generateCode;
+    }
+
+    // macOS has to be run as a separate generation, since currently Pigeon
+    // doesn't have a way to output separate macOS and iOS Swift output in a
+    // single invocation.
+    generateCode = await runPigeon(
+      input: './pigeons/$input.dart',
+      objcHeaderOut: skipLanguages.contains(GeneratorLanguages.objc)
+          ? null
+          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.h',
+      objcSourceOut: skipLanguages.contains(GeneratorLanguages.objc)
+          ? null
+          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
+      suppressVersion: true,
     );
     if (generateCode != 0) {
       return generateCode;
@@ -139,6 +162,7 @@ Future<int> runPigeon({
   required String input,
   String? kotlinOut,
   String? kotlinPackage,
+  String? kotlinErrorClassName,
   String? swiftOut,
   String? cppHeaderOut,
   String? cppSourceOut,
@@ -149,8 +173,21 @@ Future<int> runPigeon({
   String? javaPackage,
   String? objcHeaderOut,
   String? objcSourceOut,
+  bool suppressVersion = false,
 }) async {
-  return Pigeon.runWithOptions(PigeonOptions(
+  // Temporarily suppress the version output via the global flag if requested.
+  // This is done because having the version in all the generated test output
+  // means every version bump updates every test file, which is problematic in
+  // review. For files where CI validates that this generation is up to date,
+  // having the version in these files isn't useful.
+  // TODO(stuartmorgan): Remove the option and do this unconditionally once
+  // all the checked in files are being validated; currently only
+  // generatePigeons is being checked in CI.
+  final bool originalWarningSetting = includeVersionInGeneratedWarning;
+  if (suppressVersion) {
+    includeVersionInGeneratedWarning = false;
+  }
+  final int result = await Pigeon.runWithOptions(PigeonOptions(
     input: input,
     copyrightHeader: './copyright_header.txt',
     dartOut: dartOut,
@@ -162,13 +199,16 @@ Future<int> runPigeon({
     javaOut: javaOut,
     javaOptions: JavaOptions(package: javaPackage),
     kotlinOut: kotlinOut,
-    kotlinOptions: KotlinOptions(package: kotlinPackage),
+    kotlinOptions: KotlinOptions(
+        package: kotlinPackage, errorClassName: kotlinErrorClassName),
     objcHeaderOut: objcHeaderOut,
     objcSourceOut: objcSourceOut,
     objcOptions: const ObjcOptions(),
     swiftOut: swiftOut,
     swiftOptions: const SwiftOptions(),
   ));
+  includeVersionInGeneratedWarning = originalWarningSetting;
+  return result;
 }
 
 /// Runs the repository tooling's format command on this package.

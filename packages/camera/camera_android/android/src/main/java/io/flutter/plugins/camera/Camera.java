@@ -21,7 +21,6 @@ import android.hardware.camera2.params.OutputConfiguration;
 import android.hardware.camera2.params.SessionConfiguration;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
-import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Build;
@@ -58,19 +57,18 @@ import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
+import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
 import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 @FunctionalInterface
@@ -90,39 +88,55 @@ class Camera
     supportedImageFormats = new HashMap<>();
     supportedImageFormats.put("yuv420", ImageFormat.YUV_420_888);
     supportedImageFormats.put("jpeg", ImageFormat.JPEG);
+    supportedImageFormats.put("nv21", ImageFormat.NV21);
   }
 
   /**
    * Holds all of the camera features/settings and will be used to update the request builder when
    * one changes.
    */
-  private final CameraFeatures cameraFeatures;
+  CameraFeatures cameraFeatures;
+
+  private String imageFormatGroup;
+
+  /**
+   * Takes an input/output surface and orients the recording correctly. This is needed because
+   * switching cameras while recording causes the wrong orientation.
+   */
+  private VideoRenderer videoRenderer;
+
+  /**
+   * Whether or not the camera aligns with the initial way the camera was facing if the camera was
+   * flipped.
+   */
+  private int initialCameraFacing;
 
   private final SurfaceTextureEntry flutterTexture;
+  private final ResolutionPreset resolutionPreset;
   private final boolean enableAudio;
   private final Context applicationContext;
-  private final DartMessenger dartMessenger;
-  private final CameraProperties cameraProperties;
+  final DartMessenger dartMessenger;
+  private CameraProperties cameraProperties;
   private final CameraFeatureFactory cameraFeatureFactory;
   private final Activity activity;
   /** A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture. */
   private final CameraCaptureCallback cameraCaptureCallback;
   /** A {@link Handler} for running tasks in the background. */
-  private Handler backgroundHandler;
+  Handler backgroundHandler;
 
   /** An additional thread for running tasks that shouldn't block the UI. */
   private HandlerThread backgroundHandlerThread;
 
-  private CameraDeviceWrapper cameraDevice;
-  private CameraCaptureSession captureSession;
+  CameraDeviceWrapper cameraDevice;
+  CameraCaptureSession captureSession;
   private ImageReader pictureImageReader;
-  private ImageReader imageStreamReader;
+  ImageStreamReader imageStreamReader;
   /** {@link CaptureRequest.Builder} for the camera preview */
-  private CaptureRequest.Builder previewRequestBuilder;
+  CaptureRequest.Builder previewRequestBuilder;
 
   private MediaRecorder mediaRecorder;
   /** True when recording video. */
-  private boolean recordingVideo;
+  boolean recordingVideo;
   /** True when the preview is paused. */
   private boolean pausedPreview;
 
@@ -133,13 +147,13 @@ class Camera
   /** Holds the last known capture properties */
   private CameraCaptureProperties captureProps;
 
-  private MethodChannel.Result flutterResult;
+  MethodChannel.Result flutterResult;
 
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
     private final CameraDevice cameraDevice;
 
-    private DefaultCameraDeviceWrapper(CameraDevice cameraDevice) {
+    DefaultCameraDeviceWrapper(CameraDevice cameraDevice) {
       this.cameraDevice = cameraDevice;
     }
 
@@ -156,7 +170,6 @@ class Camera
       cameraDevice.createCaptureSession(config);
     }
 
-    @TargetApi(VERSION_CODES.LOLLIPOP)
     @SuppressWarnings("deprecation")
     @Override
     public void createCaptureSession(
@@ -192,6 +205,7 @@ class Camera
     this.applicationContext = activity.getApplicationContext();
     this.cameraProperties = cameraProperties;
     this.cameraFeatureFactory = cameraFeatureFactory;
+    this.resolutionPreset = resolutionPreset;
     this.cameraFeatures =
         CameraFeatures.init(
             cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
@@ -219,9 +233,11 @@ class Camera
    *
    * @param requestBuilder request builder to update.
    */
-  private void updateBuilderSettings(CaptureRequest.Builder requestBuilder) {
+  void updateBuilderSettings(CaptureRequest.Builder requestBuilder) {
     for (CameraFeature<?> feature : cameraFeatures.getAllFeatures()) {
-      Log.d(TAG, "Updating builder with feature: " + feature.getDebugName());
+      if (BuildConfig.DEBUG) {
+        Log.d(TAG, "Updating builder with feature: " + feature.getDebugName());
+      }
       feature.updateBuilder(requestBuilder);
     }
   }
@@ -232,6 +248,7 @@ class Camera
     if (mediaRecorder != null) {
       mediaRecorder.release();
     }
+    closeRenderer();
 
     final PlatformChannel.DeviceOrientation lockedOrientation =
         cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
@@ -259,6 +276,7 @@ class Camera
 
   @SuppressLint("MissingPermission")
   public void open(String imageFormatGroup) throws CameraAccessException {
+    this.imageFormatGroup = imageFormatGroup;
     final ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
 
     if (!resolutionFeature.checkIsSupported()) {
@@ -287,7 +305,7 @@ class Camera
       imageFormat = ImageFormat.YUV_420_888;
     }
     imageStreamReader =
-        ImageReader.newInstance(
+        new ImageStreamReader(
             resolutionFeature.getPreviewSize().getWidth(),
             resolutionFeature.getPreviewSize().getHeight(),
             imageFormat,
@@ -303,14 +321,19 @@ class Camera
             cameraDevice = new DefaultCameraDeviceWrapper(device);
             try {
               startPreview();
-              dartMessenger.sendCameraInitializedEvent(
-                  resolutionFeature.getPreviewSize().getWidth(),
-                  resolutionFeature.getPreviewSize().getHeight(),
-                  cameraFeatures.getExposureLock().getValue(),
-                  cameraFeatures.getAutoFocus().getValue(),
-                  cameraFeatures.getExposurePoint().checkIsSupported(),
-                  cameraFeatures.getFocusPoint().checkIsSupported());
-            } catch (CameraAccessException e) {
+              if (!recordingVideo) { // only send initialization if we werent already recording and switching cameras
+                dartMessenger.sendCameraInitializedEvent(
+                    resolutionFeature.getPreviewSize().getWidth(),
+                    resolutionFeature.getPreviewSize().getHeight(),
+                    cameraFeatures.getExposureLock().getValue(),
+                    cameraFeatures.getAutoFocus().getValue(),
+                    cameraFeatures.getExposurePoint().checkIsSupported(),
+                    cameraFeatures.getFocusPoint().checkIsSupported());
+              }
+            } catch (Exception e) {
+              if (BuildConfig.DEBUG) {
+                Log.i(TAG, "open | onOpened error: " + e.getMessage());
+              }
               dartMessenger.sendCameraErrorEvent(e.getMessage());
               close();
             }
@@ -320,7 +343,8 @@ class Camera
           public void onClosed(@NonNull CameraDevice camera) {
             Log.i(TAG, "open | onClosed");
 
-            // Prevents calls to methods that would otherwise result in IllegalStateException exceptions.
+            // Prevents calls to methods that would otherwise result in IllegalStateException
+            // exceptions.
             cameraDevice = null;
             closeCaptureSession();
             dartMessenger.sendCameraClosingEvent();
@@ -467,7 +491,6 @@ class Camera
             callback));
   }
 
-  @TargetApi(VERSION_CODES.LOLLIPOP)
   @SuppressWarnings("deprecation")
   private void createCaptureSession(
       List<Surface> surfaces, CameraCaptureSession.StateCallback callback)
@@ -476,7 +499,7 @@ class Camera
   }
 
   // Send a repeating request to refresh  capture session.
-  private void refreshPreviewCaptureSession(
+  void refreshPreviewCaptureSession(
       @Nullable Runnable onSuccessCallback, @NonNull ErrorCallback onErrorCallback) {
     Log.i(TAG, "refreshPreviewCaptureSession");
 
@@ -512,7 +535,7 @@ class Camera
       surfaces.add(mediaRecorder.getSurface());
       successCallback = () -> mediaRecorder.start();
     }
-    if (stream) {
+    if (stream && imageStreamReader != null) {
       surfaces.add(imageStreamReader.getSurface());
     }
 
@@ -700,7 +723,7 @@ class Camera
   }
 
   /** Cancel and reset auto focus state and refresh the preview session. */
-  private void unlockAutoFocus() {
+  void unlockAutoFocus() {
     Log.i(TAG, "unlockAutoFocus");
     if (captureSession == null) {
       Log.i(TAG, "[unlockAutoFocus] captureSession null, returning");
@@ -735,7 +758,7 @@ class Camera
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
     }
-
+    initialCameraFacing = cameraProperties.getLensFacing();
     recordingVideo = true;
     try {
       startCapture(true, imageStreamChannel != null);
@@ -744,6 +767,13 @@ class Camera
       recordingVideo = false;
       captureFile = null;
       result.error("videoRecordingFailed", e.getMessage(), null);
+    }
+  }
+
+  private void closeRenderer() {
+    if (videoRenderer != null) {
+      videoRenderer.close();
+      videoRenderer = null;
     }
   }
 
@@ -757,6 +787,7 @@ class Camera
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, false));
     recordingVideo = false;
     try {
+      closeRenderer();
       captureSession.abortCaptures();
       mediaRecorder.stop();
     } catch (CameraAccessException | IllegalStateException e) {
@@ -765,7 +796,7 @@ class Camera
     mediaRecorder.reset();
     try {
       startPreview();
-    } catch (CameraAccessException | IllegalStateException e) {
+    } catch (CameraAccessException | IllegalStateException | InterruptedException e) {
       result.error("videoRecordingFailed", e.getMessage(), null);
       return;
     }
@@ -1049,11 +1080,48 @@ class Camera
         null, (code, message) -> dartMessenger.sendCameraErrorEvent(message));
   }
 
-  public void startPreview() throws CameraAccessException {
+  public void startPreview() throws CameraAccessException, InterruptedException {
+    // If recording is already in progress, the camera is being flipped, so send it through the VideoRenderer to keep the correct orientation.
+    if (recordingVideo) {
+      startPreviewWithVideoRendererStream();
+    } else {
+      startRegularPreview();
+    }
+  }
+
+  private void startRegularPreview() throws CameraAccessException {
     if (pictureImageReader == null || pictureImageReader.getSurface() == null) return;
     Log.i(TAG, "startPreview");
-
     createCaptureSession(CameraDevice.TEMPLATE_PREVIEW, pictureImageReader.getSurface());
+  }
+
+  private void startPreviewWithVideoRendererStream()
+      throws CameraAccessException, InterruptedException {
+    if (videoRenderer == null) return;
+
+    // get rotation for rendered video
+    final PlatformChannel.DeviceOrientation lockedOrientation =
+        cameraFeatures.getSensorOrientation().getLockedCaptureOrientation();
+    DeviceOrientationManager orientationManager =
+        cameraFeatures.getSensorOrientation().getDeviceOrientationManager();
+
+    int rotation = 0;
+    if (orientationManager != null) {
+      rotation =
+          lockedOrientation == null
+              ? orientationManager.getVideoOrientation()
+              : orientationManager.getVideoOrientation(lockedOrientation);
+    }
+
+    if (cameraProperties.getLensFacing() != initialCameraFacing) {
+
+      // If the new camera is facing the opposite way than the initial recording,
+      // the rotation should be flipped 180 degrees.
+      rotation = (rotation + 180) % 360;
+    }
+    videoRenderer.setRotation(rotation);
+
+    createCaptureSession(CameraDevice.TEMPLATE_RECORD, videoRenderer.getInputSurface());
   }
 
   public void startPreviewWithImageStream(EventChannel imageStreamChannel)
@@ -1122,52 +1190,24 @@ class Camera
 
           @Override
           public void onCancel(Object o) {
-            imageStreamReader.setOnImageAvailableListener(null, backgroundHandler);
+            if (imageStreamReader == null) {
+              return;
+            }
+
+            imageStreamReader.removeListener(backgroundHandler);
           }
         });
   }
 
-  private void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
-    imageStreamReader.setOnImageAvailableListener(
-        reader -> {
-          Image img = reader.acquireNextImage();
-          // Use acquireNextImage since image reader is only for one image.
-          if (img == null) return;
+  void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
+    if (imageStreamReader == null) {
+      return;
+    }
 
-          List<Map<String, Object>> planes = new ArrayList<>();
-          for (Image.Plane plane : img.getPlanes()) {
-            ByteBuffer buffer = plane.getBuffer();
-
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes, 0, bytes.length);
-
-            Map<String, Object> planeBuffer = new HashMap<>();
-            planeBuffer.put("bytesPerRow", plane.getRowStride());
-            planeBuffer.put("bytesPerPixel", plane.getPixelStride());
-            planeBuffer.put("bytes", bytes);
-
-            planes.add(planeBuffer);
-          }
-
-          Map<String, Object> imageBuffer = new HashMap<>();
-          imageBuffer.put("width", img.getWidth());
-          imageBuffer.put("height", img.getHeight());
-          imageBuffer.put("format", img.getFormat());
-          imageBuffer.put("planes", planes);
-          imageBuffer.put("lensAperture", this.captureProps.getLastLensAperture());
-          imageBuffer.put("sensorExposureTime", this.captureProps.getLastSensorExposureTime());
-          Integer sensorSensitivity = this.captureProps.getLastSensorSensitivity();
-          imageBuffer.put(
-              "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
-
-          final Handler handler = new Handler(Looper.getMainLooper());
-          handler.post(() -> imageStreamSink.success(imageBuffer));
-          img.close();
-        },
-        backgroundHandler);
+    imageStreamReader.subscribeListener(this.captureProps, imageStreamSink, backgroundHandler);
   }
 
-  private void closeCaptureSession() {
+  void closeCaptureSession() {
     if (captureSession != null) {
       Log.i(TAG, "closeCaptureSession");
 
@@ -1179,17 +1219,7 @@ class Camera
   public void close() {
     Log.i(TAG, "close");
 
-    if (cameraDevice != null) {
-      cameraDevice.close();
-      cameraDevice = null;
-
-      // Closing the CameraDevice without closing the CameraCaptureSession is recommended
-      // for quickly closing the camera:
-      // https://developer.android.com/reference/android/hardware/camera2/CameraCaptureSession#close()
-      captureSession = null;
-    } else {
-      closeCaptureSession();
-    }
+    stopAndReleaseCamera();
 
     if (pictureImageReader != null) {
       pictureImageReader.close();
@@ -1206,6 +1236,75 @@ class Camera
     }
 
     stopBackgroundThread();
+  }
+
+  private void stopAndReleaseCamera() {
+    if (cameraDevice != null) {
+      cameraDevice.close();
+      cameraDevice = null;
+
+      // Closing the CameraDevice without closing the CameraCaptureSession is recommended
+      // for quickly closing the camera:
+      // https://developer.android.com/reference/android/hardware/camera2/CameraCaptureSession#close()
+      captureSession = null;
+    } else {
+      closeCaptureSession();
+    }
+  }
+
+  private void prepareVideoRenderer() {
+    if (videoRenderer != null) return;
+    final ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
+
+    // handle videoRenderer errors
+    Thread.UncaughtExceptionHandler videoRendererUncaughtExceptionHandler =
+        new Thread.UncaughtExceptionHandler() {
+          @Override
+          public void uncaughtException(Thread thread, Throwable ex) {
+            dartMessenger.sendCameraErrorEvent(
+                "Failed to process frames after camera was flipped.");
+          }
+        };
+
+    videoRenderer =
+        new VideoRenderer(
+            mediaRecorder.getSurface(),
+            resolutionFeature.getCaptureSize().getWidth(),
+            resolutionFeature.getCaptureSize().getHeight(),
+            videoRendererUncaughtExceptionHandler);
+  }
+
+  public void setDescriptionWhileRecording(
+      @NonNull final Result result, CameraProperties properties) {
+
+    if (!recordingVideo) {
+      result.error("setDescriptionWhileRecordingFailed", "Device was not recording", null);
+      return;
+    }
+
+    // See VideoRenderer.java requires API 26 to switch camera while recording
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+      result.error(
+          "setDescriptionWhileRecordingFailed",
+          "Device does not support switching the camera while recording",
+          null);
+      return;
+    }
+
+    stopAndReleaseCamera();
+    prepareVideoRenderer();
+    cameraProperties = properties;
+    cameraFeatures =
+        CameraFeatures.init(
+            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
+    cameraFeatures.setAutoFocus(
+        cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
+    try {
+      open(imageFormatGroup);
+    } catch (CameraAccessException e) {
+      result.error("setDescriptionWhileRecordingFailed", e.getMessage(), null);
+    }
+    result.success(null);
   }
 
   public void dispose() {

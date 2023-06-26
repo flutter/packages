@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -43,17 +41,34 @@ import 'webview_widget.dart';
 class WebViewController {
   /// Constructs a [WebViewController].
   ///
+  /// {@template webview_fluttter.WebViewController.constructor}
+  /// `onPermissionRequest`: A callback that notifies the host application that
+  /// web content is requesting permission to access the specified resources.
+  /// To grant access for a device resource, most platforms will need to update
+  /// their app configurations for the relevant system resource.
+  ///
+  /// For Android, you will need to update your `AndroidManifest.xml`. See
+  /// https://developer.android.com/training/permissions/declaring
+  ///
+  /// For iOS, you will need to update your `Info.plist`. See
+  /// https://developer.apple.com/documentation/uikit/protecting_the_user_s_privacy/requesting_access_to_protected_resources?language=objc.
+  /// {@endtemplate}
+  ///
   /// See [WebViewController.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
-  WebViewController()
-      : this.fromPlatformCreationParams(
+  WebViewController({
+    void Function(WebViewPermissionRequest request)? onPermissionRequest,
+  }) : this.fromPlatformCreationParams(
           const PlatformWebViewControllerCreationParams(),
+          onPermissionRequest: onPermissionRequest,
         );
 
   /// Constructs a [WebViewController] from creation params for a specific
   /// platform.
   ///
-  /// {@template webview_flutter.WebViewCookieManager.fromPlatformCreationParams}
+  /// {@macro webview_fluttter.WebViewController.constructor}
+  ///
+  /// {@template webview_flutter.WebViewController.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
   /// iOS and Android:
   ///
@@ -80,11 +95,31 @@ class WebViewController {
   /// ```
   /// {@endtemplate}
   WebViewController.fromPlatformCreationParams(
-    PlatformWebViewControllerCreationParams params,
-  ) : this.fromPlatform(PlatformWebViewController(params));
+    PlatformWebViewControllerCreationParams params, {
+    void Function(WebViewPermissionRequest request)? onPermissionRequest,
+  }) : this.fromPlatform(
+          PlatformWebViewController(params),
+          onPermissionRequest: onPermissionRequest,
+        );
 
   /// Constructs a [WebViewController] from a specific platform implementation.
-  WebViewController.fromPlatform(this.platform);
+  ///
+  /// {@macro webview_fluttter.WebViewController.constructor}
+  WebViewController.fromPlatform(
+    this.platform, {
+    void Function(WebViewPermissionRequest request)? onPermissionRequest,
+  }) {
+    if (onPermissionRequest != null) {
+      platform.setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) {
+          onPermissionRequest(WebViewPermissionRequest._(
+            request,
+            types: request.types,
+          ));
+        },
+      );
+    }
+  }
 
   /// Implementation of [PlatformWebViewController] for the current platform.
   final PlatformWebViewController platform;
@@ -118,7 +153,7 @@ class WebViewController {
     return platform.loadHtmlString(html, baseUrl: baseUrl);
   }
 
-  /// Makes a specific HTTP request ands loads the response in the webview.
+  /// Makes a specific HTTP request and loads the response in the webview.
   ///
   /// [method] must be one of the supported HTTP methods in [LoadRequestMethod].
   ///
@@ -247,7 +282,7 @@ class WebViewController {
   /// to asynchronously invoke the message handler which will print the message
   /// to standard output.
   ///
-  /// Adding a new JavaScript channel only takes affect after the next page is
+  /// Adding a new JavaScript channel only takes effect after the next page is
   /// loaded.
   ///
   /// A channel [name] cannot be the same for multiple channels.
@@ -317,5 +352,51 @@ class WebViewController {
   /// Sets the value used for the HTTP `User-Agent:` request header.
   Future<void> setUserAgent(String? userAgent) {
     return platform.setUserAgent(userAgent);
+  }
+}
+
+/// Permissions request when web content requests access to protected resources.
+///
+/// A response MUST be provided by calling [grant], [deny], or a method from
+/// [platform].
+///
+/// ## Platform-Specific Features
+/// This class contains an underlying implementation provided by the current
+/// platform. Once a platform implementation is imported, the example below
+/// can be followed to use features provided by a platform's implementation.
+///
+/// Below is an example of accessing the platform-specific implementation for
+/// iOS and Android:
+///
+/// ```dart
+/// final WebViewPermissionRequest request = ...;
+///
+/// if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+///   final WebKitWebViewPermissionRequest webKitRequest =
+///       request.platform as WebKitWebViewPermissionRequest;
+/// } else if (WebViewPlatform.instance is AndroidWebViewPlatform) {
+///   final AndroidWebViewPermissionRequest androidRequest =
+///       request.platform as AndroidWebViewPermissionRequest;
+/// }
+/// ```
+@immutable
+class WebViewPermissionRequest {
+  const WebViewPermissionRequest._(this.platform, {required this.types});
+
+  /// All resources access has been requested for.
+  final Set<WebViewPermissionResourceType> types;
+
+  /// Implementation of [PlatformWebViewPermissionRequest] for the current
+  /// platform.
+  final PlatformWebViewPermissionRequest platform;
+
+  /// Grant permission for the requested resource(s).
+  Future<void> grant() {
+    return platform.grant();
+  }
+
+  /// Deny permission for the requested resource(s).
+  Future<void> deny() {
+    return platform.deny();
   }
 }

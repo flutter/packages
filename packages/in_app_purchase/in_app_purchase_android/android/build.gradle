@@ -22,6 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'io.flutter.plugins.inapppurchase'
+    }
     compileSdkVersion 33
 
     defaultConfig {
@@ -29,6 +33,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
     }
     compileOptions {
@@ -51,11 +57,14 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.5.0'
-    implementation 'com.android.billingclient:billing:5.1.0'
+    implementation 'androidx.annotation:annotation:1.6.0'
+    // org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.
+    // See: https://youtrack.jetbrains.com/issue/KT-55297/kotlin-stdlib-should-declare-constraints-on-kotlin-stdlib-jdk8-and-kotlin-stdlib-jdk7
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.22"))
+    implementation 'com.android.billingclient:billing:5.2.0'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.json:json:20220924'
-    testImplementation 'org.mockito:mockito-core:4.7.0'
+    testImplementation 'org.json:json:20230618'
+    testImplementation 'org.mockito:mockito-core:5.4.0'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

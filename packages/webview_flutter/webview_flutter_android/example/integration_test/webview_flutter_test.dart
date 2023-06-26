@@ -9,15 +9,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:webview_flutter_android/src/android_webview.dart' as android;
+import 'package:webview_flutter_android/src/android_webview.g.dart';
 import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
 import 'package:webview_flutter_android/src/instance_manager.dart';
 import 'package:webview_flutter_android/src/weak_reference_utils.dart';
@@ -110,6 +108,11 @@ Future<void> main() async {
           webViewGCCompleter.complete();
         }
       });
+
+      // Since the InstanceManager of the apis are being changed, the native
+      // InstanceManager needs to be cleared otherwise an exception will be
+      // thrown that an identifier is being reused.
+      await InstanceManagerHostApi().clear();
 
       android.WebView.api = WebViewHostApiImpl(
         instanceManager: instanceManager,
@@ -935,6 +938,81 @@ Future<void> main() async {
 
       final String? currentUrl = await controller.currentUrl();
       expect(currentUrl, secondaryUrl);
+    });
+
+    testWidgets('can receive url changes', (WidgetTester tester) async {
+      final Completer<void> pageLoaded = Completer<void>();
+
+      final PlatformNavigationDelegate navigationDelegate =
+          PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      )..setOnPageFinished((_) => pageLoaded.complete());
+
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      )
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setPlatformNavigationDelegate(navigationDelegate)
+        ..loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await pageLoaded.future;
+      await navigationDelegate.setOnPageFinished((_) {});
+
+      final Completer<String> urlChangeCompleter = Completer<String>();
+      await navigationDelegate.setOnUrlChange((UrlChange change) {
+        urlChangeCompleter.complete(change.url);
+      });
+
+      await controller.runJavaScript('location.href = "$primaryUrl"');
+
+      await expectLater(urlChangeCompleter.future, completion(primaryUrl));
+    });
+
+    testWidgets('can receive updates to history state',
+        (WidgetTester tester) async {
+      final Completer<void> pageLoaded = Completer<void>();
+
+      final PlatformNavigationDelegate navigationDelegate =
+          PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      )..setOnPageFinished((_) => pageLoaded.complete());
+
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      )
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setPlatformNavigationDelegate(navigationDelegate)
+        ..loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await pageLoaded.future;
+      await navigationDelegate.setOnPageFinished((_) {});
+
+      final Completer<String> urlChangeCompleter = Completer<String>();
+      await navigationDelegate.setOnUrlChange((UrlChange change) {
+        urlChangeCompleter.complete(change.url);
+      });
+
+      await controller.runJavaScript(
+        'window.history.pushState({}, "", "secondary.txt");',
+      );
+
+      await expectLater(urlChangeCompleter.future, completion(secondaryUrl));
     });
   });
 

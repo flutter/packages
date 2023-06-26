@@ -8,11 +8,11 @@ part of 'all_types.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<GoRoute> get $appRoutes => [
+List<RouteBase> get $appRoutes => [
       $allTypesBaseRoute,
     ];
 
-GoRoute get $allTypesBaseRoute => GoRouteData.$route(
+RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       path: '/',
       factory: $AllTypesBaseRouteExtension._fromState,
       routes: [
@@ -64,6 +64,10 @@ GoRoute get $allTypesBaseRoute => GoRouteData.$route(
           path: 'iterable-route',
           factory: $IterableRouteExtension._fromState,
         ),
+        GoRouteData.$route(
+          path: 'iterable-route-with-default-values',
+          factory: $IterableRouteWithDefaultValuesExtension._fromState,
+        ),
       ],
     );
 
@@ -77,7 +81,7 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -85,9 +89,10 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
 
 extension $BigIntRouteExtension on BigIntRoute {
   static BigIntRoute _fromState(GoRouterState state) => BigIntRoute(
-        requiredBigIntField: BigInt.parse(state.params['requiredBigIntField']!),
-        bigIntField:
-            _$convertMapValue('big-int-field', state.queryParams, BigInt.parse),
+        requiredBigIntField:
+            BigInt.parse(state.pathParameters['requiredBigIntField']!),
+        bigIntField: _$convertMapValue(
+            'big-int-field', state.queryParameters, BigInt.parse),
       );
 
   String get location => GoRouteData.$location(
@@ -99,7 +104,7 @@ extension $BigIntRouteExtension on BigIntRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -107,12 +112,13 @@ extension $BigIntRouteExtension on BigIntRoute {
 
 extension $BoolRouteExtension on BoolRoute {
   static BoolRoute _fromState(GoRouterState state) => BoolRoute(
-        requiredBoolField: _$boolConverter(state.params['requiredBoolField']!),
-        boolField:
-            _$convertMapValue('bool-field', state.queryParams, _$boolConverter),
+        requiredBoolField:
+            _$boolConverter(state.pathParameters['requiredBoolField']!),
+        boolField: _$convertMapValue(
+            'bool-field', state.queryParameters, _$boolConverter),
         boolFieldWithDefaultValue: _$convertMapValue(
                 'bool-field-with-default-value',
-                state.queryParams,
+                state.queryParameters,
                 _$boolConverter) ??
             true,
       );
@@ -129,7 +135,7 @@ extension $BoolRouteExtension on BoolRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -138,9 +144,9 @@ extension $BoolRouteExtension on BoolRoute {
 extension $DateTimeRouteExtension on DateTimeRoute {
   static DateTimeRoute _fromState(GoRouterState state) => DateTimeRoute(
         requiredDateTimeField:
-            DateTime.parse(state.params['requiredDateTimeField']!),
+            DateTime.parse(state.pathParameters['requiredDateTimeField']!),
         dateTimeField: _$convertMapValue(
-            'date-time-field', state.queryParams, DateTime.parse),
+            'date-time-field', state.queryParameters, DateTime.parse),
       );
 
   String get location => GoRouteData.$location(
@@ -153,7 +159,7 @@ extension $DateTimeRouteExtension on DateTimeRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -161,12 +167,13 @@ extension $DateTimeRouteExtension on DateTimeRoute {
 
 extension $DoubleRouteExtension on DoubleRoute {
   static DoubleRoute _fromState(GoRouterState state) => DoubleRoute(
-        requiredDoubleField: double.parse(state.params['requiredDoubleField']!),
-        doubleField:
-            _$convertMapValue('double-field', state.queryParams, double.parse),
+        requiredDoubleField:
+            double.parse(state.pathParameters['requiredDoubleField']!),
+        doubleField: _$convertMapValue(
+            'double-field', state.queryParameters, double.parse),
         doubleFieldWithDefaultValue: _$convertMapValue(
                 'double-field-with-default-value',
-                state.queryParams,
+                state.queryParameters,
                 double.parse) ??
             1.0,
       );
@@ -183,7 +190,7 @@ extension $DoubleRouteExtension on DoubleRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -191,10 +198,13 @@ extension $DoubleRouteExtension on DoubleRoute {
 
 extension $IntRouteExtension on IntRoute {
   static IntRoute _fromState(GoRouterState state) => IntRoute(
-        requiredIntField: int.parse(state.params['requiredIntField']!),
-        intField: _$convertMapValue('int-field', state.queryParams, int.parse),
+        requiredIntField: int.parse(state.pathParameters['requiredIntField']!),
+        intField:
+            _$convertMapValue('int-field', state.queryParameters, int.parse),
         intFieldWithDefaultValue: _$convertMapValue(
-                'int-field-with-default-value', state.queryParams, int.parse) ??
+                'int-field-with-default-value',
+                state.queryParameters,
+                int.parse) ??
             1,
       );
 
@@ -209,7 +219,7 @@ extension $IntRouteExtension on IntRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -217,10 +227,13 @@ extension $IntRouteExtension on IntRoute {
 
 extension $NumRouteExtension on NumRoute {
   static NumRoute _fromState(GoRouterState state) => NumRoute(
-        requiredNumField: num.parse(state.params['requiredNumField']!),
-        numField: _$convertMapValue('num-field', state.queryParams, num.parse),
+        requiredNumField: num.parse(state.pathParameters['requiredNumField']!),
+        numField:
+            _$convertMapValue('num-field', state.queryParameters, num.parse),
         numFieldWithDefaultValue: _$convertMapValue(
-                'num-field-with-default-value', state.queryParams, num.parse) ??
+                'num-field-with-default-value',
+                state.queryParameters,
+                num.parse) ??
             1,
       );
 
@@ -235,7 +248,7 @@ extension $NumRouteExtension on NumRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -244,12 +257,12 @@ extension $NumRouteExtension on NumRoute {
 extension $EnumRouteExtension on EnumRoute {
   static EnumRoute _fromState(GoRouterState state) => EnumRoute(
         requiredEnumField: _$PersonDetailsEnumMap
-            ._$fromName(state.params['requiredEnumField']!),
-        enumField: _$convertMapValue(
-            'enum-field', state.queryParams, _$PersonDetailsEnumMap._$fromName),
+            ._$fromName(state.pathParameters['requiredEnumField']!),
+        enumField: _$convertMapValue('enum-field', state.queryParameters,
+            _$PersonDetailsEnumMap._$fromName),
         enumFieldWithDefaultValue: _$convertMapValue(
                 'enum-field-with-default-value',
-                state.queryParams,
+                state.queryParameters,
                 _$PersonDetailsEnumMap._$fromName) ??
             PersonDetails.favoriteFood,
       );
@@ -267,7 +280,7 @@ extension $EnumRouteExtension on EnumRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -276,12 +289,12 @@ extension $EnumRouteExtension on EnumRoute {
 extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
   static EnhancedEnumRoute _fromState(GoRouterState state) => EnhancedEnumRoute(
         requiredEnumField: _$SportDetailsEnumMap
-            ._$fromName(state.params['requiredEnumField']!),
-        enumField: _$convertMapValue(
-            'enum-field', state.queryParams, _$SportDetailsEnumMap._$fromName),
+            ._$fromName(state.pathParameters['requiredEnumField']!),
+        enumField: _$convertMapValue('enum-field', state.queryParameters,
+            _$SportDetailsEnumMap._$fromName),
         enumFieldWithDefaultValue: _$convertMapValue(
                 'enum-field-with-default-value',
-                state.queryParams,
+                state.queryParameters,
                 _$SportDetailsEnumMap._$fromName) ??
             SportDetails.football,
       );
@@ -299,7 +312,7 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -307,10 +320,10 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
 
 extension $StringRouteExtension on StringRoute {
   static StringRoute _fromState(GoRouterState state) => StringRoute(
-        requiredStringField: state.params['requiredStringField']!,
-        stringField: state.queryParams['string-field'],
+        requiredStringField: state.pathParameters['requiredStringField']!,
+        stringField: state.queryParameters['string-field'],
         stringFieldWithDefaultValue:
-            state.queryParams['string-field-with-default-value'] ??
+            state.queryParameters['string-field-with-default-value'] ??
                 'defaultValue',
       );
 
@@ -325,7 +338,7 @@ extension $StringRouteExtension on StringRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -333,8 +346,9 @@ extension $StringRouteExtension on StringRoute {
 
 extension $UriRouteExtension on UriRoute {
   static UriRoute _fromState(GoRouterState state) => UriRoute(
-        requiredUriField: Uri.parse(state.params['requiredUriField']!),
-        uriField: _$convertMapValue('uri-field', state.queryParams, Uri.parse),
+        requiredUriField: Uri.parse(state.pathParameters['requiredUriField']!),
+        uriField:
+            _$convertMapValue('uri-field', state.queryParameters, Uri.parse),
       );
 
   String get location => GoRouteData.$location(
@@ -346,7 +360,7 @@ extension $UriRouteExtension on UriRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
@@ -462,7 +476,121 @@ extension $IterableRouteExtension on IterableRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+}
+
+extension $IterableRouteWithDefaultValuesExtension
+    on IterableRouteWithDefaultValues {
+  static IterableRouteWithDefaultValues _fromState(GoRouterState state) =>
+      IterableRouteWithDefaultValues(
+        intIterableField:
+            state.queryParametersAll['int-iterable-field']?.map(int.parse) ??
+                const <int>[0],
+        doubleIterableField: state.queryParametersAll['double-iterable-field']
+                ?.map(double.parse) ??
+            const <double>[0, 1, 2],
+        stringIterableField:
+            state.queryParametersAll['string-iterable-field']?.map((e) => e) ??
+                const <String>['defaultValue'],
+        boolIterableField: state.queryParametersAll['bool-iterable-field']
+                ?.map(_$boolConverter) ??
+            const <bool>[false],
+        enumIterableField: state.queryParametersAll['enum-iterable-field']
+                ?.map(_$SportDetailsEnumMap._$fromName) ??
+            const <SportDetails>[SportDetails.tennis, SportDetails.hockey],
+        intListField: state.queryParametersAll['int-list-field']
+                ?.map(int.parse)
+                .toList() ??
+            const <int>[0],
+        doubleListField: state.queryParametersAll['double-list-field']
+                ?.map(double.parse)
+                .toList() ??
+            const <double>[1, 2, 3],
+        stringListField: state.queryParametersAll['string-list-field']
+                ?.map((e) => e)
+                .toList() ??
+            const <String>['defaultValue0', 'defaultValue1'],
+        boolListField: state.queryParametersAll['bool-list-field']
+                ?.map(_$boolConverter)
+                .toList() ??
+            const <bool>[true],
+        enumListField: state.queryParametersAll['enum-list-field']
+                ?.map(_$SportDetailsEnumMap._$fromName)
+                .toList() ??
+            const <SportDetails>[SportDetails.football],
+        intSetField:
+            state.queryParametersAll['int-set-field']?.map(int.parse).toSet() ??
+                const <int>{0, 1},
+        doubleSetField: state.queryParametersAll['double-set-field']
+                ?.map(double.parse)
+                .toSet() ??
+            const <double>{},
+        stringSetField: state.queryParametersAll['string-set-field']
+                ?.map((e) => e)
+                .toSet() ??
+            const <String>{'defaultValue'},
+        boolSetField: state.queryParametersAll['bool-set-field']
+                ?.map(_$boolConverter)
+                .toSet() ??
+            const <bool>{true, false},
+        enumSetField: state.queryParametersAll['enum-set-field']
+                ?.map(_$SportDetailsEnumMap._$fromName)
+                .toSet() ??
+            const <SportDetails>{SportDetails.hockey},
+      );
+
+  String get location => GoRouteData.$location(
+        '/iterable-route-with-default-values',
+        queryParams: {
+          if (intIterableField != const <int>[0])
+            'int-iterable-field':
+                intIterableField.map((e) => e.toString()).toList(),
+          if (doubleIterableField != const <double>[0, 1, 2])
+            'double-iterable-field':
+                doubleIterableField.map((e) => e.toString()).toList(),
+          if (stringIterableField != const <String>['defaultValue'])
+            'string-iterable-field': stringIterableField.map((e) => e).toList(),
+          if (boolIterableField != const <bool>[false])
+            'bool-iterable-field':
+                boolIterableField.map((e) => e.toString()).toList(),
+          if (enumIterableField !=
+              const <SportDetails>[SportDetails.tennis, SportDetails.hockey])
+            'enum-iterable-field':
+                enumIterableField.map((e) => _$SportDetailsEnumMap[e]).toList(),
+          if (intListField != const <int>[0])
+            'int-list-field': intListField.map((e) => e.toString()).toList(),
+          if (doubleListField != const <double>[1, 2, 3])
+            'double-list-field':
+                doubleListField.map((e) => e.toString()).toList(),
+          if (stringListField !=
+              const <String>['defaultValue0', 'defaultValue1'])
+            'string-list-field': stringListField.map((e) => e).toList(),
+          if (boolListField != const <bool>[true])
+            'bool-list-field': boolListField.map((e) => e.toString()).toList(),
+          if (enumListField != const <SportDetails>[SportDetails.football])
+            'enum-list-field':
+                enumListField.map((e) => _$SportDetailsEnumMap[e]).toList(),
+          if (intSetField != const <int>{0, 1})
+            'int-set-field': intSetField.map((e) => e.toString()).toList(),
+          if (doubleSetField != const <double>{})
+            'double-set-field':
+                doubleSetField.map((e) => e.toString()).toList(),
+          if (stringSetField != const <String>{'defaultValue'})
+            'string-set-field': stringSetField.map((e) => e).toList(),
+          if (boolSetField != const <bool>{true, false})
+            'bool-set-field': boolSetField.map((e) => e.toString()).toList(),
+          if (enumSetField != const <SportDetails>{SportDetails.hockey})
+            'enum-set-field':
+                enumSetField.map((e) => _$SportDetailsEnumMap[e]).toList(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);

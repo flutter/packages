@@ -53,6 +53,12 @@ class ProcessCameraProvider extends JavaObject {
     return _api.bindToLifecycleFromInstances(this, cameraSelector, useCases);
   }
 
+  /// Returns whether or not the specified [UseCase] has been bound to the
+  /// lifecycle of the camera that this instance tracks.
+  Future<bool> isBound(UseCase useCase) {
+    return _api.isBoundFromInstances(this, useCase);
+  }
+
   /// Unbinds specified [UseCase]s from the lifecycle of the camera that this
   /// instance tracks.
   void unbind(List<UseCase> useCases) {
@@ -68,7 +74,14 @@ class ProcessCameraProvider extends JavaObject {
 
 /// Host API implementation of [ProcessCameraProvider].
 class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
-  /// Creates a [ProcessCameraProviderHostApiImpl].
+  /// Constructs an [ProcessCameraProviderHostApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   ProcessCameraProviderHostApiImpl(
       {this.binaryMessenger, InstanceManager? instanceManager})
       : super(binaryMessenger: binaryMessenger) {
@@ -76,9 +89,6 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
   }
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
   final BinaryMessenger? binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
@@ -87,17 +97,14 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
   /// Retrieves an instance of a ProcessCameraProvider from the context of
   /// the FlutterActivity.
   Future<ProcessCameraProvider> getInstancefromInstances() async {
-    return instanceManager.getInstanceWithWeakReference(await getInstance())!
-        as ProcessCameraProvider;
+    return instanceManager.getInstanceWithWeakReference<ProcessCameraProvider>(
+        await getInstance())!;
   }
 
   /// Gets identifier that the [instanceManager] has set for
   /// the [ProcessCameraProvider] instance.
   int getProcessCameraProviderIdentifier(ProcessCameraProvider instance) {
     final int? identifier = instanceManager.getIdentifier(instance);
-
-    assert(identifier != null,
-        'No ProcessCameraProvider has the identifer of that which was requested.');
     return identifier!;
   }
 
@@ -108,7 +115,7 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
     final List<int?> cameraInfos = await getAvailableCameraInfos(identifier);
     return cameraInfos
         .map<CameraInfo>((int? id) =>
-            instanceManager.getInstanceWithWeakReference(id!)! as CameraInfo)
+            instanceManager.getInstanceWithWeakReference<CameraInfo>(id!)!)
         .toList();
   }
 
@@ -132,8 +139,24 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
       instanceManager.getIdentifier(cameraSelector)!,
       useCaseIds,
     );
-    return instanceManager.getInstanceWithWeakReference(cameraIdentifier)!
-        as Camera;
+    return instanceManager
+        .getInstanceWithWeakReference<Camera>(cameraIdentifier)!;
+  }
+
+  /// Returns whether or not the specified [UseCase] has been bound to the
+  /// lifecycle of the camera that this instance tracks.
+  Future<bool> isBoundFromInstances(
+    ProcessCameraProvider instance,
+    UseCase useCase,
+  ) async {
+    final int identifier = getProcessCameraProviderIdentifier(instance);
+    final int? useCaseId = instanceManager.getIdentifier(useCase);
+
+    assert(useCaseId != null,
+        'UseCase must have been created in order for this check to be valid.');
+
+    final bool useCaseIsBound = await isBound(identifier, useCaseId!);
+    return useCaseIsBound;
   }
 
   /// Unbinds specified [UseCase]s from the lifecycle of the camera which the
@@ -161,30 +184,36 @@ class ProcessCameraProviderHostApiImpl extends ProcessCameraProviderHostApi {
 /// Flutter API Implementation of [ProcessCameraProvider].
 class ProcessCameraProviderFlutterApiImpl
     implements ProcessCameraProviderFlutterApi {
-  /// Constructs a [ProcessCameraProviderFlutterApiImpl].
+  /// Constructs an [ProcessCameraProviderFlutterApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
+  ///
+  /// An [instanceManager] is typically passed when a copy of an instance
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   ProcessCameraProviderFlutterApiImpl({
-    this.binaryMessenger,
+    BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  })  : _binaryMessenger = binaryMessenger,
+        _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager instanceManager;
+  final InstanceManager _instanceManager;
 
   @override
   void create(int identifier) {
-    instanceManager.addHostCreatedInstance(
+    _instanceManager.addHostCreatedInstance(
       ProcessCameraProvider.detached(
-          binaryMessenger: binaryMessenger, instanceManager: instanceManager),
+          binaryMessenger: _binaryMessenger, instanceManager: _instanceManager),
       identifier,
       onCopy: (ProcessCameraProvider original) {
         return ProcessCameraProvider.detached(
-            binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+            binaryMessenger: _binaryMessenger,
+            instanceManager: _instanceManager);
       },
     );
   }

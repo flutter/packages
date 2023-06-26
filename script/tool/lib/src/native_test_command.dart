@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
 
 import 'common/cmake.dart';
@@ -20,6 +21,16 @@ const String _integrationTestFlag = 'integration';
 const String _iOSDestinationFlag = 'ios-destination';
 
 const int _exitNoIOSSimulators = 3;
+
+/// The error message logged when a FlutterTestRunner test is not annotated with
+/// @DartIntegrationTest.
+@visibleForTesting
+const String misconfiguredJavaIntegrationTestErrorExplanation =
+    'The following files use @RunWith(FlutterTestRunner.class) '
+    'but not @DartIntegrationTest, which will cause hangs when run with '
+    'this command. See '
+    'https://github.com/flutter/flutter/wiki/Plugin-Tests#enabling-android-ui-tests '
+    'for instructions.';
 
 /// The command to run native tests for plugins:
 /// - iOS and macOS: XCTests (XCUnitTest and XCUITest)
@@ -61,6 +72,9 @@ class NativeTestCommand extends PackageLoopingCommand {
 
   @override
   final String name = 'native-test';
+
+  @override
+  List<String> get aliases => <String>['test-native'];
 
   @override
   final String description = '''
@@ -211,7 +225,17 @@ this command.
               .existsSync();
     }
 
-    bool exampleHasNativeIntegrationTests(RepositoryPackage example) {
+    _JavaTestInfo getJavaTestInfo(File testFile) {
+      final List<String> contents = testFile.readAsLinesSync();
+      return _JavaTestInfo(
+          usesFlutterTestRunner: contents.any((String line) =>
+              line.trimLeft().startsWith('@RunWith(FlutterTestRunner.class)')),
+          hasDartIntegrationTestAnnotation: contents.any((String line) =>
+              line.trimLeft().startsWith('@DartIntegrationTest')));
+    }
+
+    Map<File, _JavaTestInfo> findIntegrationTestFiles(
+        RepositoryPackage example) {
       final Directory integrationTestDirectory = example
           .platformDirectory(FlutterPlatform.android)
           .childDirectory('app')
@@ -220,37 +244,50 @@ this command.
       // There are two types of integration tests that can be in the androidTest
       // directory:
       // - FlutterTestRunner.class tests, which bridge to Dart integration tests
-      // - Purely native tests
+      // - Purely native integration tests
       // Only the latter is supported by this command; the former will hang if
       // run here because they will wait for a Dart call that will never come.
       //
-      // This repository uses a convention of putting the former in a
-      // *ActivityTest.java file, so ignore that file when checking for tests.
-      // Also ignore DartIntegrationTest.java, which defines the annotation used
-      // below for filtering the former out when running tests.
+      // Find all test files, and determine which kind of test they are based on
+      // the annotations they use.
       //
-      // If those are the only files, then there are no tests to run here.
-      return integrationTestDirectory.existsSync() &&
-          integrationTestDirectory
-              .listSync(recursive: true)
-              .whereType<File>()
-              .any((File file) {
-            final String basename = file.basename;
-            return !basename.endsWith('ActivityTest.java') &&
-                basename != 'DartIntegrationTest.java';
-          });
+      // Ignore DartIntegrationTest.java, which defines the annotation used
+      // below for filtering the former out when running tests.
+      if (!integrationTestDirectory.existsSync()) {
+        return <File, _JavaTestInfo>{};
+      }
+      final Iterable<File> integrationTestFiles = integrationTestDirectory
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((File file) {
+        final String basename = file.basename;
+        return basename != 'DartIntegrationTest.java' &&
+            basename != 'DartIntegrationTest.kt';
+      });
+      return <File, _JavaTestInfo>{
+        for (final File file in integrationTestFiles)
+          file: getJavaTestInfo(file)
+      };
     }
 
     final Iterable<RepositoryPackage> examples = plugin.getExamples();
+    final String pluginName = plugin.directory.basename;
 
     bool ranUnitTests = false;
     bool ranAnyTests = false;
     bool failed = false;
     bool hasMissingBuild = false;
+    bool hasMisconfiguredIntegrationTest = false;
+    // Iterate through all examples (in the rare case that there is more than
+    // one example); running any tests found for each one. Requirements on what
+    // tests are present are enforced at the overall package level, not a per-
+    // example level. E.g., it's fine for only one example to have unit tests.
     for (final RepositoryPackage example in examples) {
       final bool hasUnitTests = exampleHasUnitTests(example);
-      final bool hasIntegrationTests =
-          exampleHasNativeIntegrationTests(example);
+      final Map<File, _JavaTestInfo> candidateIntegrationTestFiles =
+          findIntegrationTestFiles(example);
+      final bool hasIntegrationTests = candidateIntegrationTestFiles.values
+          .any((_JavaTestInfo info) => !info.hasDartIntegrationTestAnnotation);
 
       if (mode.unit && !hasUnitTests) {
         _printNoExampleTestsMessage(example, 'Android unit');
@@ -284,7 +321,15 @@ this command.
 
       if (runUnitTests) {
         print('Running unit tests...');
-        final int exitCode = await project.runCommand('testDebugUnitTest');
+        const String taskName = 'testDebugUnitTest';
+        // Target the unit tests in the app and plugin specifically, to avoid
+        // transitively running tests in dependencies. If unit tests have
+        // already run in an earlier example, only run any app-level unit tests.
+        final List<String> pluginTestTask = <String>[
+          if (!ranUnitTests) '$pluginName:$taskName'
+        ];
+        final int exitCode = await project.runCommand('app:$taskName',
+            additionalTasks: pluginTestTask);
         if (exitCode != 0) {
           printError('$exampleName unit tests failed.');
           failed = true;
@@ -295,24 +340,41 @@ this command.
 
       if (runIntegrationTests) {
         // FlutterTestRunner-based tests will hang forever if run in a normal
-        // app build, since they wait for a Dart call from integration_test that
-        // will never come. Those tests have an extra annotation to allow
+        // app build, since they wait for a Dart call from integration_test
+        // that will never come. Those tests have an extra annotation to allow
         // filtering them out.
-        const String filter =
-            'notAnnotation=io.flutter.plugins.DartIntegrationTest';
+        final List<File> misconfiguredTestFiles = candidateIntegrationTestFiles
+            .entries
+            .where((MapEntry<File, _JavaTestInfo> entry) =>
+                entry.value.usesFlutterTestRunner &&
+                !entry.value.hasDartIntegrationTestAnnotation)
+            .map((MapEntry<File, _JavaTestInfo> entry) => entry.key)
+            .toList();
+        if (misconfiguredTestFiles.isEmpty) {
+          // Ideally we would filter out @RunWith(FlutterTestRunner.class)
+          // tests directly, but there doesn't seem to be a way to filter based
+          // on annotation contents, so the DartIntegrationTest annotation was
+          // created as a proxy for that.
+          const String filter =
+              'notAnnotation=io.flutter.plugins.DartIntegrationTest';
 
-        print('Running integration tests...');
-        final int exitCode = await project.runCommand(
-          'app:connectedAndroidTest',
-          arguments: <String>[
-            '-Pandroid.testInstrumentationRunnerArguments.$filter',
-          ],
-        );
-        if (exitCode != 0) {
-          printError('$exampleName integration tests failed.');
-          failed = true;
+          print('Running integration tests...');
+          final int exitCode = await project.runCommand(
+            'app:connectedAndroidTest',
+            arguments: <String>[
+              '-Pandroid.testInstrumentationRunnerArguments.$filter',
+            ],
+          );
+          if (exitCode != 0) {
+            printError('$exampleName integration tests failed.');
+            failed = true;
+          }
+          ranAnyTests = true;
+        } else {
+          hasMisconfiguredIntegrationTest = true;
+          printError('$misconfiguredJavaIntegrationTestErrorExplanation\n'
+              '${misconfiguredTestFiles.map((File f) => '  ${f.path}').join('\n')}');
         }
-        ranAnyTests = true;
       }
     }
 
@@ -321,6 +383,10 @@ this command.
           error: hasMissingBuild
               ? 'Examples must be built before testing.'
               : null);
+    }
+    if (hasMisconfiguredIntegrationTest) {
+      return _PlatformResult(RunState.failed,
+          error: 'Misconfigured integration test.');
     }
     if (!mode.integrationOnly && !ranUnitTests) {
       printError('No unit tests ran. Plugins are required to have unit tests.');
@@ -621,4 +687,17 @@ class _PlatformResult {
   ///
   /// Ignored unless [state] is `failed`.
   final String? error;
+}
+
+/// The state of a .java test file.
+class _JavaTestInfo {
+  const _JavaTestInfo(
+      {required this.usesFlutterTestRunner,
+      required this.hasDartIntegrationTestAnnotation});
+
+  /// Whether the test class uses the FlutterTestRunner.
+  final bool usesFlutterTestRunner;
+
+  /// Whether the test class has the @DartIntegrationTest annotation.
+  final bool hasDartIntegrationTestAnnotation;
 }

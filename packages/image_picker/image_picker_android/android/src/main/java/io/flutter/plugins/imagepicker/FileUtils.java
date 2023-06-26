@@ -45,6 +45,9 @@ class FileUtils {
    * <p>Each file is placed in its own directory to avoid conflicts according to the following
    * scheme: {cacheDir}/{randomUuid}/{fileName}
    *
+   * <p>File extension is changed to match MIME type of the file, if known. Otherwise, the extension
+   * is left unchanged.
+   *
    * <p>If the original file name is unknown, a predefined "image_picker" filename is used and the
    * file extension is deduced from the mime type (with fallback to ".jpg" in case of failure).
    */
@@ -57,9 +60,14 @@ class FileUtils {
       //  just clear the picked files after the app startup.
       targetDirectory.deleteOnExit();
       String fileName = getImageName(context, uri);
+      String extension = getImageExtension(context, uri);
+
       if (fileName == null) {
         Log.w("FileUtils", "Cannot get file name for " + uri);
-        fileName = "image_picker" + getImageExtension(context, uri);
+        if (extension == null) extension = ".jpg";
+        fileName = "image_picker" + extension;
+      } else if (extension != null) {
+        fileName = getBaseName(fileName) + extension;
       }
       File file = new File(targetDirectory, fileName);
       try (OutputStream outputStream = new FileOutputStream(file)) {
@@ -71,10 +79,17 @@ class FileUtils {
       // target file was written in full. Flushing the stream merely moves
       // the bytes into the OS, not necessarily to the file.
       return null;
+    } catch (SecurityException e) {
+      // Calling `ContentResolver#openInputStream()` has been reported to throw a
+      // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
+      // return `null`.
+      //
+      // See https://github.com/flutter/flutter/issues/100025 for more details.
+      return null;
     }
   }
 
-  /** @return extension of image with dot, or default .jpg if it none. */
+  /** @return extension of image with dot, or null if it's empty. */
   private static String getImageExtension(Context context, Uri uriImage) {
     String extension;
 
@@ -88,12 +103,11 @@ class FileUtils {
                 Uri.fromFile(new File(uriImage.getPath())).toString());
       }
     } catch (Exception e) {
-      extension = null;
+      return null;
     }
 
     if (extension == null || extension.isEmpty()) {
-      //default extension for matches the previous behavior of the plugin
-      extension = "jpg";
+      return null;
     }
 
     return "." + extension;
@@ -120,5 +134,14 @@ class FileUtils {
       out.write(buffer, 0, bytesRead);
     }
     out.flush();
+  }
+
+  private static String getBaseName(String fileName) {
+    int lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex < 0) {
+      return fileName;
+    }
+    // Basename is everything before the last '.'.
+    return fileName.substring(0, lastDotIndex);
   }
 }

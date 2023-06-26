@@ -100,25 +100,25 @@ void main() {
 
   test('parse args - swift_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_swift_out', 'Foo.swift']);
+        Pigeon.parseArgs(<String>['--swift_out', 'Foo.swift']);
     expect(opts.swiftOut, equals('Foo.swift'));
   });
 
   test('parse args - kotlin_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_kotlin_out', 'Foo.kt']);
+        Pigeon.parseArgs(<String>['--kotlin_out', 'Foo.kt']);
     expect(opts.kotlinOut, equals('Foo.kt'));
   });
 
   test('parse args - kotlin_package', () {
-    final PigeonOptions opts = Pigeon.parseArgs(
-        <String>['--experimental_kotlin_package', 'com.google.foo']);
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--kotlin_package', 'com.google.foo']);
     expect(opts.kotlinOptions?.package, equals('com.google.foo'));
   });
 
-  test('parse args - experimental_cpp_header_out', () {
+  test('parse args - cpp_header_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_cpp_header_out', 'foo.h']);
+        Pigeon.parseArgs(<String>['--cpp_header_out', 'foo.h']);
     expect(opts.cppHeaderOut, equals('foo.h'));
   });
 
@@ -128,9 +128,9 @@ void main() {
     expect(opts.javaOptions!.useGeneratedAnnotation, isTrue);
   });
 
-  test('parse args - experimental_cpp_source_out', () {
+  test('parse args - cpp_source_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_cpp_source_out', 'foo.cpp']);
+        Pigeon.parseArgs(<String>['--cpp_source_out', 'foo.cpp']);
     expect(opts.cppSourceOut, equals('foo.cpp'));
   });
 
@@ -770,6 +770,51 @@ enum Foo {
 @FlutterApi()
 abstract class Api {
   void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('enums list argument', () {
+    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+enum Foo { one, two }
+
+@HostApi()
+abstract class Api {
+  void doit(List<Foo> foo);
+}
+''';
+    final ParseResults parseResult = parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('enums map argument key', () {
+    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+enum Foo { one, two }
+
+@HostApi()
+abstract class Api {
+  void doit(Map<Foo, Object> foo);
+}
+''';
+    final ParseResults parseResult = parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('enums map argument value', () {
+    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+enum Foo { one, two }
+
+@HostApi()
+abstract class Api {
+  void doit(Map<Foo, Object> foo);
 }
 ''';
     final ParseResults parseResult = parseSource(code);

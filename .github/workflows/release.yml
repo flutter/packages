@@ -20,14 +20,23 @@ jobs:
       # Github Actions don't support templates so it is hard to share this snippet with another action
       # If we eventually need to use this in more workflow, we could create a shell script that contains this
       # snippet.
+      #
+      # This uses a pinned version of Flutter rather than `stable` so that it is
+      # not subject to out-of-band failures when new releases happen. It does
+      # not use the auto-rolled pin because there's no way for the autoroller
+      # to test the actual release flow, so changes would still show up in
+      # post-submit. A manually-rolled pin means that any changes here must be
+      # made deliberately, so that the person updating it knows to watch the
+      # next actual auto-release to ensure that it works, and knows to revert
+      # the change if it doesn't.
       run: |
         cd $HOME
-        git clone https://github.com/flutter/flutter.git --depth 1 -b stable _flutter
+        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.10.0 _flutter
         echo "$HOME/_flutter/bin" >> $GITHUB_PATH
         cd $GITHUB_WORKSPACE
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools

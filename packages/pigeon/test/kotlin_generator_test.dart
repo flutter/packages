@@ -190,7 +190,7 @@ void main() {
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.doSomething(inputArg))
-            } catch (exception: Error) {
+            } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
             reply.reply(wrapped)
@@ -1328,5 +1328,30 @@ void main() {
     generator.generate(kotlinOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains(' : StandardMessageCodec() '));
+  });
+
+  test('creates api error class for custom errors', () {
+    final Method method = Method(
+        name: 'doSomething',
+        returnType: const TypeDeclaration.voidDeclaration(),
+        arguments: <NamedType>[]);
+    final Api api = Api(
+        name: 'SomeApi', location: ApiLocation.host, methods: <Method>[method]);
+    final Root root = Root(
+      apis: <Api>[api],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions =
+        KotlinOptions(errorClassName: 'SomeError');
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink);
+    final String code = sink.toString();
+    expect(code, contains('class SomeError'));
+    expect(code, contains('if (exception is SomeError)'));
+    expect(code, contains('exception.code,'));
+    expect(code, contains('exception.message,'));
+    expect(code, contains('exception.details'));
   });
 }

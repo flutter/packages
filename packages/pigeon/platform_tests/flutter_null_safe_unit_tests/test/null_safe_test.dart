@@ -22,7 +22,8 @@ import 'test_util.dart';
   NullableCollectionReturnFlutterApi,
 ])
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  final TestWidgetsFlutterBinding binding =
+      TestWidgetsFlutterBinding.ensureInitialized();
 
   test('with values filled', () {
     final FlutterSearchReply reply = FlutterSearchReply()
@@ -134,7 +135,7 @@ void main() {
     NullableArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<int> resultCompleter = Completer<int>();
-    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+    binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableArgFlutterApi.doit',
       NullableArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
@@ -158,7 +159,7 @@ void main() {
     NullableCollectionArgFlutterApi.setup(mockFlutterApi);
 
     final Completer<List<String?>> resultCompleter = Completer<List<String?>>();
-    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+    binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionArgFlutterApi.doit',
       NullableCollectionArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
@@ -210,13 +211,13 @@ void main() {
     NullableReturnFlutterApi.setup(mockFlutterApi);
 
     final Completer<int?> resultCompleter = Completer<int?>();
-    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+    unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableReturnFlutterApi.doit',
       NullableReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
         resultCompleter.complete(null);
       },
-    );
+    ));
 
     expect(resultCompleter.future, completion(null));
 
@@ -233,13 +234,13 @@ void main() {
 
     final Completer<List<String?>?> resultCompleter =
         Completer<List<String?>?>();
-    ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+    unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.NullableCollectionReturnFlutterApi.doit',
       NullableCollectionReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
         resultCompleter.complete(null);
       },
-    );
+    ));
 
     expect(resultCompleter.future, completion(null));
 

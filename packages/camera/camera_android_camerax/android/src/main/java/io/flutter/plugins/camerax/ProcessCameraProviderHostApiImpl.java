@@ -28,13 +28,15 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
   private LifecycleOwner lifecycleOwner;
 
   public ProcessCameraProviderHostApiImpl(
-      BinaryMessenger binaryMessenger, InstanceManager instanceManager, Context context) {
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull InstanceManager instanceManager,
+      @NonNull Context context) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.context = context;
   }
 
-  public void setLifecycleOwner(LifecycleOwner lifecycleOwner) {
+  public void setLifecycleOwner(@NonNull LifecycleOwner lifecycleOwner) {
     this.lifecycleOwner = lifecycleOwner;
   }
 
@@ -45,7 +47,7 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
    * <p>If using the camera plugin in an add-to-app context, ensure that a new instance of the
    * {@code ProcessCameraProvider} is fetched via {@code #getInstance} anytime the context changes.
    */
-  public void setContext(Context context) {
+  public void setContext(@NonNull Context context) {
     this.context = context;
   }
 
@@ -54,7 +56,7 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
    * for the current {@code Context}.
    */
   @Override
-  public void getInstance(GeneratedCameraXLibrary.Result<Long> result) {
+  public void getInstance(@NonNull GeneratedCameraXLibrary.Result<Long> result) {
     ListenableFuture<ProcessCameraProvider> processCameraProviderFuture =
         ProcessCameraProvider.getInstance(context);
 
@@ -78,13 +80,14 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
   }
 
   /** Returns cameras available to the {@code ProcessCameraProvider}. */
+  @NonNull
   @Override
   public List<Long> getAvailableCameraInfos(@NonNull Long identifier) {
     ProcessCameraProvider processCameraProvider =
         (ProcessCameraProvider) Objects.requireNonNull(instanceManager.getInstance(identifier));
 
     List<CameraInfo> availableCameras = processCameraProvider.getAvailableCameraInfos();
-    List<Long> availableCamerasIds = new ArrayList<Long>();
+    List<Long> availableCamerasIds = new ArrayList<>();
     final CameraInfoFlutterApiImpl cameraInfoFlutterApi =
         new CameraInfoFlutterApiImpl(binaryMessenger, instanceManager);
 
@@ -103,7 +106,7 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
    * that {@code LifecycleOwner} reflects.
    */
   @Override
-  public Long bindToLifecycle(
+  public @NonNull Long bindToLifecycle(
       @NonNull Long identifier,
       @NonNull Long cameraSelectorIdentifier,
       @NonNull List<Long> useCaseIds) {
@@ -128,7 +131,16 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
       cameraFlutterApi.create(camera, result -> {});
     }
 
-    return instanceManager.getIdentifierForStrongReference(camera);
+    return Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(camera));
+  }
+
+  @Override
+  public @NonNull Boolean isBound(@NonNull Long identifier, @NonNull Long useCaseIdentifier) {
+    ProcessCameraProvider processCameraProvider =
+        (ProcessCameraProvider) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    UseCase useCase =
+        (UseCase) Objects.requireNonNull(instanceManager.getInstance(useCaseIdentifier));
+    return processCameraProvider.isBound(useCase);
   }
 
   @Override

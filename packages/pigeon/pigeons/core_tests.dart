@@ -15,6 +15,7 @@ class AllTypes {
   AllTypes({
     this.aBool = false,
     this.anInt = 0,
+    this.anInt64 = 0,
     this.aDouble = 0,
     required this.aByteArray,
     required this.a4ByteArray,
@@ -28,6 +29,7 @@ class AllTypes {
 
   bool aBool;
   int anInt;
+  int anInt64;
   double aDouble;
   Uint8List aByteArray;
   Int32List a4ByteArray;
@@ -46,6 +48,7 @@ class AllNullableTypes {
   AllNullableTypes(
     this.aNullableBool,
     this.aNullableInt,
+    this.aNullableInt64,
     this.aNullableDouble,
     this.aNullableByteArray,
     this.aNullable4ByteArray,
@@ -62,6 +65,7 @@ class AllNullableTypes {
 
   bool? aNullableBool;
   int? aNullableInt;
+  int? aNullableInt64;
   double? aNullableDouble;
   Uint8List? aNullableByteArray;
   Int32List? aNullable4ByteArray;
@@ -102,8 +106,11 @@ abstract class HostIntegrationCoreApi {
   /// Returns an error, to test error handling.
   Object? throwError();
 
-  /// Responds with an error from an async void function.
+  /// Returns an error from a void function, to test error handling.
   void throwErrorFromVoid();
+
+  /// Returns a Flutter error, to test error handling.
+  Object? throwFlutterError();
 
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
@@ -272,6 +279,10 @@ abstract class HostIntegrationCoreApi {
   /// Responds with an error from an async void function.
   @async
   void throwAsyncErrorFromVoid();
+
+  /// Responds with a Flutter error from an async function returning a value.
+  @async
+  Object? throwAsyncFlutterError();
 
   /// Returns the passed object, to test async serialization and deserialization.
   @async

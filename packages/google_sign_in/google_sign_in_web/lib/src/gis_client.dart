@@ -11,6 +11,9 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
+import 'button_configuration.dart'
+    show GSIButtonConfiguration, convertButtonConfiguration;
+import 'dom.dart';
 import 'people.dart' as people;
 import 'utils.dart' as utils;
 
@@ -22,10 +25,13 @@ class GisSdkClient {
   GisSdkClient({
     required List<String> initialScopes,
     required String clientId,
+    required StreamController<GoogleSignInUserData?> userDataController,
     bool loggingEnabled = false,
     String? hostedDomain,
-  }) : _initialScopes = initialScopes {
-    if (loggingEnabled) {
+  })  : _initialScopes = initialScopes,
+        _loggingEnabled = loggingEnabled,
+        _userDataEventsController = userDataController {
+    if (_loggingEnabled) {
       id.setLogLevel('debug');
     }
     // Configure the Stream objects that are going to be used by the clients.
@@ -45,20 +51,51 @@ class GisSdkClient {
     );
   }
 
+  void _logIfEnabled(String message, [List<Object?>? more]) {
+    if (_loggingEnabled) {
+      domConsole.info('[google_sign_in_web] $message', more);
+    }
+  }
+
   // Configure the credential (authentication) and token (authorization) response streams.
   void _configureStreams() {
     _tokenResponses = StreamController<TokenResponse>.broadcast();
     _credentialResponses = StreamController<CredentialResponse>.broadcast();
+
     _tokenResponses.stream.listen((TokenResponse response) {
       _lastTokenResponse = response;
     }, onError: (Object error) {
+      _logIfEnabled('Error on TokenResponse:', <Object>[error.toString()]);
       _lastTokenResponse = null;
     });
+
     _credentialResponses.stream.listen((CredentialResponse response) {
       _lastCredentialResponse = response;
     }, onError: (Object error) {
+      _logIfEnabled('Error on CredentialResponse:', <Object>[error.toString()]);
       _lastCredentialResponse = null;
     });
+
+    // In the future, the userDataEvents could propagate null userDataEvents too.
+    _credentialResponses.stream
+        .map(utils.gisResponsesToUserData)
+        .handleError(_cleanCredentialResponsesStreamErrors)
+        .forEach(_userDataEventsController.add);
+  }
+
+  // This function handles the errors that on the _credentialResponses Stream.
+  //
+  // Most of the time, these errors are part of the flow (like when One Tap UX
+  // cannot be rendered), and the stream of userDataEvents doesn't care about
+  // them.
+  //
+  // (This has been separated to a function so the _configureStreams formatting
+  // looks a little bit better)
+  void _cleanCredentialResponsesStreamErrors(Object error) {
+    _logIfEnabled(
+      'Removing error from `userDataEvents`:',
+      <Object>[error.toString()],
+    );
   }
 
   // Initializes the `id` SDK for the silent-sign in (authentication) client.
@@ -185,6 +222,14 @@ class GisSdkClient {
     }
   }
 
+  /// Calls `id.renderButton` on [parent] with the given [options].
+  Future<void> renderButton(
+    Object parent,
+    GSIButtonConfiguration options,
+  ) async {
+    return id.renderButton(parent, convertButtonConfiguration(options)!);
+  }
+
   /// Starts an oauth2 "implicit" flow to authorize requests.
   ///
   /// The new GIS SDK does not return user authentication from this flow, so:
@@ -245,7 +290,7 @@ class GisSdkClient {
 
   /// Revokes the current authentication.
   Future<void> signOut() async {
-    clearAuthCache();
+    await clearAuthCache();
     id.disableAutoSelect();
   }
 
@@ -254,7 +299,7 @@ class GisSdkClient {
     if (_lastTokenResponse != null) {
       oauth2.revoke(_lastTokenResponse!.access_token);
     }
-    signOut();
+    await signOut();
   }
 
   /// Returns true if the client has recognized this user before.
@@ -273,7 +318,14 @@ class GisSdkClient {
   ///
   /// Keeps the previously granted scopes.
   Future<bool> requestScopes(List<String> scopes) async {
+    // If we already know the user, use their `email` as a `hint`, so they don't
+    // have to pick their user again in the Authorization popup.
+    final GoogleSignInUserData? knownUser =
+        utils.gisResponsesToUserData(_lastCredentialResponse);
+
     _tokenClient.requestAccessToken(OverridableTokenClientConfig(
+      prompt: knownUser == null ? 'select_account' : '',
+      hint: knownUser?.email,
       scope: scopes.join(' '),
       include_granted_scopes: true,
     ));
@@ -282,6 +334,22 @@ class GisSdkClient {
 
     return oauth2.hasGrantedAllScopes(_lastTokenResponse!, scopes);
   }
+
+  /// Checks if the passed-in `accessToken` can access all `scopes`.
+  ///
+  /// This validates that the `accessToken` is the same as the last seen
+  /// token response, and uses that response to check if permissions are
+  /// still granted.
+  Future<bool> canAccessScopes(List<String> scopes, String? accessToken) async {
+    if (accessToken != null && _lastTokenResponse != null) {
+      if (accessToken == _lastTokenResponse!.access_token) {
+        return oauth2.hasGrantedAllScopes(_lastTokenResponse!, scopes);
+      }
+    }
+    return false;
+  }
+
+  final bool _loggingEnabled;
 
   // The scopes initially requested by the developer.
   //
@@ -300,6 +368,11 @@ class GisSdkClient {
   // The last-seen credential and token responses
   CredentialResponse? _lastCredentialResponse;
   TokenResponse? _lastTokenResponse;
+
+  /// The StreamController onto which the GIS Client propagates user authentication events.
+  ///
+  /// This is provided by the implementation of the plugin.
+  final StreamController<GoogleSignInUserData?> _userDataEventsController;
 
   // If the user *authenticates* (signs in) through oauth2, the SDK doesn't return
   // identity information anymore, so we synthesize it by calling the PeopleAPI

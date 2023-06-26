@@ -95,8 +95,8 @@ void main() {
 
     test('allows valid version', () async {
       createFakePlugin('plugin', packagesDir, version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> output = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main']);
@@ -118,8 +118,8 @@ void main() {
 
     test('denies invalid version', () async {
       createFakePlugin('plugin', packagesDir, version: '0.2.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 0.0.1'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1')),
       ];
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -144,12 +144,13 @@ void main() {
 
     test('uses merge-base without explicit base-sha', () async {
       createFakePlugin('plugin', packagesDir, version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-merge-base'] = <io.Process>[
-        MockProcess(stdout: 'abc123'),
-        MockProcess(stdout: 'abc123'),
+      processRunner.mockProcessesForExecutable['git-merge-base'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'abc123')),
+        FakeProcessInfo(MockProcess(stdout: 'abc123')),
       ];
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> output =
           await runCapturingPrint(runner, <String>['version-check']);
@@ -187,8 +188,8 @@ void main() {
 
     test('allows likely reverts.', () async {
       createFakePlugin('plugin', packagesDir, version: '0.6.1');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 0.6.2'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 0.6.2')),
       ];
       final List<String> output = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main']);
@@ -210,8 +211,8 @@ void main() {
 
     test('denies lower version that could not be a simple revert', () async {
       createFakePlugin('plugin', packagesDir, version: '0.5.1');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 0.6.2'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 0.6.2')),
       ];
 
       Error? commandError;
@@ -238,8 +239,8 @@ void main() {
     test('allows minor changes to platform interfaces', () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
           version: '1.1.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> output = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main']);
@@ -266,8 +267,8 @@ void main() {
         () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
           version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -302,8 +303,8 @@ void main() {
         () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
           version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -336,8 +337,8 @@ void main() {
         () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
           version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> output = await runCapturingPrint(runner, <String>[
         'version-check',
@@ -473,8 +474,8 @@ void main() {
 * Some other changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
       final List<String> output = await runCapturingPrint(
@@ -525,8 +526,8 @@ void main() {
       const String version = '1.0.1';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
       const String changelog = '''
@@ -562,8 +563,8 @@ void main() {
     test('fails if the version increases without replacing NEXT', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
       const String changelog = '''
@@ -604,8 +605,8 @@ void main() {
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.1'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.1')),
       ];
 
       final List<String> output = await runCapturingPrint(
@@ -656,8 +657,8 @@ void main() {
 * Some other changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
       Error? commandError;
@@ -689,8 +690,8 @@ void main() {
 * Some changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
       Error? commandError;
@@ -733,11 +734,13 @@ void main() {
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: ''),
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '')),
         ];
 
         final List<String> output =
@@ -762,13 +765,15 @@ void main() {
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
-'''),
+''')),
         ];
 
         Error? commandError;
@@ -797,15 +802,17 @@ packages/plugin/lib/plugin.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
 packages/plugin/CHANGELOG.md
 packages/plugin/pubspec.yaml
-'''),
+''')),
         ];
 
         final List<String> output =
@@ -828,14 +835,16 @@ packages/plugin/pubspec.yaml
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin_a/lib/plugin.dart
 tool/plugin/lib/plugin.dart
-'''),
+''')),
         ];
 
         final List<String> output =
@@ -858,17 +867,21 @@ tool/plugin/lib/plugin.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/plugin/example/android/.pluginToolsConfig.yaml
 packages/plugin/example/android/lint-baseline.xml
 packages/plugin/example/android/src/androidTest/foo/bar/FooTest.java
 packages/plugin/example/ios/RunnerTests/Foo.m
 packages/plugin/example/ios/RunnerUITests/info.plist
+packages/plugin/analysis_options.yaml
 packages/plugin/CHANGELOG.md
-'''),
+''')),
         ];
 
         final List<String> output =
@@ -891,15 +904,17 @@ packages/plugin/CHANGELOG.md
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
 packages/plugin/CHANGELOG.md
 packages/plugin/pubspec.yaml
-'''),
+''')),
         ];
 
         final List<String> output =
@@ -925,13 +940,15 @@ packages/plugin/pubspec.yaml
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/lib/foo.dart
-'''),
+''')),
         ];
 
         Error? commandError;
@@ -960,14 +977,16 @@ packages/plugin/example/lib/foo.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/lib/foo.dart
 packages/plugin/CHANGELOG.md
-'''),
+''')),
         ];
 
         final List<String> output =
@@ -991,14 +1010,16 @@ packages/plugin/CHANGELOG.md
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/lib/foo.dart
 packages/another_plugin/CHANGELOG.md
-'''),
+''')),
         ];
 
         Error? commandError;
@@ -1025,13 +1046,15 @@ packages/another_plugin/CHANGELOG.md
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/lib/foo.dart
-'''),
+''')),
         ];
 
         final List<String> output =
@@ -1061,21 +1084,23 @@ packages/plugin/example/lib/foo.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
           // File list.
-          MockProcess(stdout: '''
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/android/build.gradle
-'''),
+''')),
           // build.gradle diff
-          MockProcess(stdout: '''
+          FakeProcessInfo(MockProcess(stdout: '''
 -  androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 -  testImplementation 'junit:junit:4.10.0'
 +  androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 +  testImplementation 'junit:junit:4.13.2'
-'''),
+''')),
         ];
 
         final List<String> output =
@@ -1089,7 +1114,8 @@ packages/plugin/android/build.gradle
         );
       });
 
-      test('allows missing CHANGELOG and version change for dev-only changes',
+      test(
+          'allows missing CHANGELOG and version change for dev-only-file changes',
           () async {
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
@@ -1099,15 +1125,17 @@ packages/plugin/android/build.gradle
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
           // File list.
-          MockProcess(stdout: '''
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/tool/run_tests.dart
 packages/plugin/run_tests.sh
-'''),
+''')),
         ];
 
         final List<String> output =
@@ -1117,6 +1145,86 @@ packages/plugin/run_tests.sh
           output,
           containsAllInOrder(<Matcher>[
             contains('Running for plugin'),
+          ]),
+        );
+      });
+
+      test(
+          'allows missing CHANGELOG and version change for dev-only line-level '
+          'changes in production files', () async {
+        final RepositoryPackage plugin =
+            createFakePlugin('plugin', packagesDir, version: '1.0.0');
+
+        const String changelog = '''
+## 1.0.0
+* Some changes.
+''';
+        plugin.changelogFile.writeAsStringSync(changelog);
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+        ];
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          // File list.
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/plugin/lib/plugin.dart
+''')),
+          // Dart file diff.
+          FakeProcessInfo(MockProcess(stdout: '''
++   // TODO(someone): Fix this.
++   // ignore: some_lint
+'''), <String>['main', 'HEAD', '--', 'packages/plugin/lib/plugin.dart']),
+        ];
+
+        final List<String> output =
+            await runWithMissingChangeDetection(<String>[]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+          ]),
+        );
+      });
+
+      test('documentation comments are not exempt', () async {
+        final RepositoryPackage plugin =
+            createFakePlugin('plugin', packagesDir, version: '1.0.0');
+
+        const String changelog = '''
+## 1.0.0
+* Some changes.
+''';
+        plugin.changelogFile.writeAsStringSync(changelog);
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+        ];
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/plugin/lib/plugin.dart
+''')),
+          // Dart file diff.
+          FakeProcessInfo(MockProcess(stdout: '''
++   /// Important new information for API clients!
+'''), <String>['main', 'HEAD', '--', 'packages/plugin/lib/plugin.dart']),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runWithMissingChangeDetection(
+            <String>[], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('No version change found'),
+            contains('plugin:\n'
+                '    Missing version change'),
           ]),
         );
       });
@@ -1207,8 +1315,8 @@ ${indentation}HTTP response: null
       mockHttpStatus = 404;
 
       createFakePlugin('plugin', packagesDir, version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-        MockProcess(stdout: 'version: 1.0.0'),
+      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> result = await runCapturingPrint(runner,
           <String>['version-check', '--base-sha=main', '--against-pub']);
@@ -1226,8 +1334,9 @@ ${indentation}HTTP response: null
           'allow an otherwise-valid transition that also adds a pre-release component',
           () async {
         createFakePlugin('plugin', packagesDir, version: '2.0.0-dev');
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.0.0'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
         final List<String> output = await runCapturingPrint(
             runner, <String>['version-check', '--base-sha=main']);
@@ -1249,8 +1358,9 @@ ${indentation}HTTP response: null
 
       test('allow releasing a pre-release', () async {
         createFakePlugin('plugin', packagesDir, version: '1.2.0');
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.2.0-dev'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev')),
         ];
         final List<String> output = await runCapturingPrint(
             runner, <String>['version-check', '--base-sha=main']);
@@ -1276,8 +1386,9 @@ ${indentation}HTTP response: null
           'allow an otherwise-valid transition that also removes a pre-release component',
           () async {
         createFakePlugin('plugin', packagesDir, version: '2.0.0');
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.2.0-dev'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev')),
         ];
         final List<String> output = await runCapturingPrint(
             runner, <String>['version-check', '--base-sha=main']);
@@ -1299,8 +1410,9 @@ ${indentation}HTTP response: null
 
       test('allow changing only the pre-release version', () async {
         createFakePlugin('plugin', packagesDir, version: '1.2.0-dev.2');
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 1.2.0-dev.1'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev.1')),
         ];
         final List<String> output = await runCapturingPrint(
             runner, <String>['version-check', '--base-sha=main']);
@@ -1323,8 +1435,9 @@ ${indentation}HTTP response: null
       test('denies invalid version change that also adds a pre-release',
           () async {
         createFakePlugin('plugin', packagesDir, version: '0.2.0-dev');
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 0.0.1'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1')),
         ];
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -1350,8 +1463,9 @@ ${indentation}HTTP response: null
       test('denies invalid version change that also removes a pre-release',
           () async {
         createFakePlugin('plugin', packagesDir, version: '0.2.0');
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 0.0.1-dev'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1-dev')),
         ];
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -1376,8 +1490,9 @@ ${indentation}HTTP response: null
 
       test('denies invalid version change between pre-releases', () async {
         createFakePlugin('plugin', packagesDir, version: '0.2.0-dev');
-        processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-          MockProcess(stdout: 'version: 0.0.1-dev'),
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1-dev')),
         ];
         Error? commandError;
         final List<String> output = await runCapturingPrint(

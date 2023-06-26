@@ -4,28 +4,18 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:url_launcher_ios/src/messages.g.dart';
 import 'package:url_launcher_ios/url_launcher_ios.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$UrlLauncherIOS', () {
-    const MethodChannel channel =
-        MethodChannel('plugins.flutter.io/url_launcher_ios');
-    final List<MethodCall> log = <MethodCall>[];
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      log.add(methodCall);
+  group('UrlLauncherIOS', () {
+    late _FakeUrlLauncherApi api;
 
-      // Return null explicitly instead of relying on the implicit null
-      // returned by the method channel if no return statement is specified.
-      return null;
-    });
-
-    tearDown(() {
-      log.clear();
+    setUp(() {
+      api = _FakeUrlLauncherApi();
     });
 
     test('registers instance', () {
@@ -33,184 +23,167 @@ void main() {
       expect(UrlLauncherPlatform.instance, isA<UrlLauncherIOS>());
     });
 
-    test('canLaunch', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
-      await launcher.canLaunch('http://example.com/');
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('canLaunch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-          })
-        ],
-      );
+    test('canLaunch success', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(await launcher.canLaunch('http://example.com/'), true);
     });
 
-    test('canLaunch should return false if platform returns null', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
-      final bool canLaunch = await launcher.canLaunch('http://example.com/');
-
-      expect(canLaunch, false);
+    test('canLaunch failure', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(await launcher.canLaunch('unknown://scheme'), false);
     });
 
-    test('launch', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'useSafariVC': true,
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{},
-          })
-        ],
-      );
+    test('canLaunch invalid URL passes the PlatformException through',
+        () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      await expectLater(launcher.canLaunch('invalid://u r l'),
+          throwsA(isA<PlatformException>()));
     });
 
-    test('launch with headers', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{'key': 'value'},
-      );
+    test('launch success', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'useSafariVC': true,
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{'key': 'value'},
-          })
-        ],
-      );
+          await launcher.launch(
+            'http://example.com/',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          true);
+      expect(api.passedUniversalLinksOnly, false);
+    });
+
+    test('launch failure', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(
+          await launcher.launch(
+            'unknown://scheme',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          false);
+      expect(api.passedUniversalLinksOnly, false);
+    });
+
+    test('launch invalid URL passes the PlatformException through', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      await expectLater(
+          launcher.launch(
+            'invalid://u r l',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          throwsA(isA<PlatformException>()));
     });
 
     test('launch force SafariVC', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{},
-      );
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'useSafariVC': true,
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{},
-          })
-        ],
-      );
+          await launcher.launch(
+            'http://example.com/',
+            useSafariVC: true,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          true);
+      expect(api.usedSafariViewController, true);
     });
 
     test('launch universal links only', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: true,
-        headers: const <String, String>{},
-      );
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'useSafariVC': false,
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': true,
-            'headers': <String, String>{},
-          })
-        ],
-      );
+          await launcher.launch(
+            'http://example.com/',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: true,
+            headers: const <String, String>{},
+          ),
+          true);
+      expect(api.passedUniversalLinksOnly, true);
     });
 
     test('launch force SafariVC to false', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{},
-      );
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'useSafariVC': false,
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{},
-          })
-        ],
-      );
-    });
-
-    test('launch should return false if platform returns null', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
-      final bool launched = await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{},
-      );
-
-      expect(launched, false);
+          await launcher.launch(
+            'http://example.com/',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          true);
+      expect(api.usedSafariViewController, false);
     });
 
     test('closeWebView default behavior', () async {
-      final UrlLauncherIOS launcher = UrlLauncherIOS();
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       await launcher.closeWebView();
-      expect(
-        log,
-        <Matcher>[isMethodCall('closeWebView', arguments: null)],
-      );
+      expect(api.closed, true);
     });
   });
 }
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
+/// A fake implementation of the host API that reacts to specific schemes.
 ///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+/// See _isLaunchable for the behaviors.
+class _FakeUrlLauncherApi implements UrlLauncherApi {
+  bool? passedUniversalLinksOnly;
+  bool? usedSafariViewController;
+  bool? closed;
+
+  @override
+  Future<bool> canLaunchUrl(String url) async {
+    return _isLaunchable(url);
+  }
+
+  @override
+  Future<bool> launchUrl(String url, bool universalLinksOnly) async {
+    passedUniversalLinksOnly = universalLinksOnly;
+    usedSafariViewController = false;
+    return _isLaunchable(url);
+  }
+
+  @override
+  Future<bool> openUrlInSafariViewController(String url) async {
+    usedSafariViewController = true;
+    return _isLaunchable(url);
+  }
+
+  @override
+  Future<void> closeSafariViewController() async {
+    closed = true;
+  }
+
+  bool _isLaunchable(String url) {
+    final String scheme = url.split(':')[0];
+    switch (scheme) {
+      case 'http':
+      case 'https':
+        return true;
+      case 'invalid':
+        throw PlatformException(code: 'argument_error');
+      default:
+        return false;
+    }
+  }
+}

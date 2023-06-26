@@ -700,6 +700,29 @@ void main() {
       ]);
     });
 
+    test('Should set the description while recording', () async {
+      // Arrange
+      final MethodChannelMock channel = MethodChannelMock(
+        channelName: _channelName,
+        methods: <String, dynamic>{'setDescriptionWhileRecording': null},
+      );
+      const CameraDescription camera2Description = CameraDescription(
+          name: 'Test2',
+          lensDirection: CameraLensDirection.front,
+          sensorOrientation: 0);
+
+      // Act
+      await camera.setDescriptionWhileRecording(camera2Description);
+
+      // Assert
+      expect(channel.log, <Matcher>[
+        isMethodCall('setDescriptionWhileRecording',
+            arguments: <String, Object?>{
+              'cameraName': camera2Description.name,
+            }),
+      ]);
+    });
+
     test('Should set the flash mode', () async {
       // Arrange
       final MethodChannelMock channel = MethodChannelMock(
@@ -1096,7 +1119,7 @@ void main() {
         isMethodCall('startImageStream', arguments: null),
       ]);
 
-      subscription.cancel();
+      await subscription.cancel();
     });
 
     test('Should stop streaming', () async {
@@ -1113,7 +1136,7 @@ void main() {
       final StreamSubscription<CameraImageData> subscription = camera
           .onStreamedFrameAvailable(cameraId)
           .listen((CameraImageData imageData) {});
-      subscription.cancel();
+      await subscription.cancel();
 
       // Assert
       expect(channel.log, <Matcher>[

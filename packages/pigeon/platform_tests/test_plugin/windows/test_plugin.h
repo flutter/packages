@@ -43,6 +43,8 @@ class TestPlugin : public flutter::Plugin,
   ThrowError() override;
   std::optional<core_tests_pigeontest::FlutterError> ThrowErrorFromVoid()
       override;
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+  ThrowFlutterError() override;
   core_tests_pigeontest::ErrorOr<int64_t> EchoInt(int64_t an_int) override;
   core_tests_pigeontest::ErrorOr<double> EchoDouble(double a_double) override;
   core_tests_pigeontest::ErrorOr<bool> EchoBool(bool a_bool) override;
@@ -93,6 +95,11 @@ class TestPlugin : public flutter::Plugin,
   void ThrowAsyncErrorFromVoid(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
+  void ThrowAsyncFlutterError(
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+              reply)>
           result) override;
   void EchoAsyncAllTypes(
       const core_tests_pigeontest::AllTypes& everything,

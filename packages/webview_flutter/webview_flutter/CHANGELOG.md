@@ -1,3 +1,27 @@
+## 4.2.2
+
+* Fixes documentation typo.
+
+## 4.2.1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 4.2.0
+
+* Adds support to receive permission requests. See `WebViewController(onPermissionRequest)`.
+
+## 4.1.0
+
+* Adds support to track URL changes. See `NavigationDelegate(onUrlChange)`.
+* Updates minimum Flutter version to 3.3.
+* Fixes common typos in tests and documentation.
+* Fixes documentation for `WebViewController` and `WebViewCookieManager`.
+
+## 4.0.7
+
+* Updates the README with the migration of `WebView.initialCookies` and Hybrid Composition on
+  Android.
+
 ## 4.0.6
 
 * Updates iOS minimum version in README.

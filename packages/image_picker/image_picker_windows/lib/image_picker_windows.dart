@@ -13,7 +13,7 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 ///
 /// This class implements the `package:image_picker` functionality for
 /// Windows.
-class ImagePickerWindows extends ImagePickerPlatform {
+class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
   /// Constructs a ImagePickerWindows.
   ImagePickerWindows();
 
@@ -53,11 +53,8 @@ class ImagePickerWindows extends ImagePickerPlatform {
     ImagePickerPlatform.instance = ImagePickerWindows();
   }
 
-  // `maxWidth`, `maxHeight`, `imageQuality` and `preferredCameraDevice`
-  // arguments are not supported on Windows. If any of these arguments
-  // is supplied, it'll be silently ignored  by the Windows version of
-  // the plugin. `source` is not implemented for `ImageSource.camera`
-  // and will throw an exception.
+  // This is soft-deprecated in the platform interface, and is only implemented
+  // for compatibility. Callers should be using getImageFromSource.
   @override
   Future<PickedFile?> pickImage({
     required ImageSource source,
@@ -66,23 +63,21 @@ class ImagePickerWindows extends ImagePickerPlatform {
     int? imageQuality,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) async {
-    final XFile? file = await getImage(
+    final XFile? file = await getImageFromSource(
         source: source,
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        imageQuality: imageQuality,
-        preferredCameraDevice: preferredCameraDevice);
+        options: ImagePickerOptions(
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            imageQuality: imageQuality,
+            preferredCameraDevice: preferredCameraDevice));
     if (file != null) {
       return PickedFile(file.path);
     }
     return null;
   }
 
-  // `preferredCameraDevice` and `maxDuration` arguments are not
-  // supported on Windows. If any of these arguments is supplied,
-  // it'll be silently ignored by the Windows version of the plugin.
-  // `source` is not implemented for `ImageSource.camera` and will
-  // throw an exception.
+  // This is soft-deprecated in the platform interface, and is only implemented
+  // for compatibility. Callers should be using getVideo.
   @override
   Future<PickedFile?> pickVideo({
     required ImageSource source,
@@ -99,11 +94,8 @@ class ImagePickerWindows extends ImagePickerPlatform {
     return null;
   }
 
-  // `maxWidth`, `maxHeight`, `imageQuality`, and `preferredCameraDevice`
-  // arguments are not supported on Windows. If any of these arguments
-  // is supplied, it'll be silently ignored by the Windows version
-  // of the plugin. `source` is not implemented for `ImageSource.camera`
-  // and will throw an exception.
+  // This is soft-deprecated in the platform interface, and is only implemented
+  // for compatibility. Callers should be using getImageFromSource.
   @override
   Future<XFile?> getImage({
     required ImageSource source,
@@ -112,46 +104,73 @@ class ImagePickerWindows extends ImagePickerPlatform {
     int? imageQuality,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) async {
-    if (source != ImageSource.gallery) {
-      // TODO(azchohfi): Support ImageSource.camera.
-      //                 See https://github.com/flutter/flutter/issues/102115
-      throw UnimplementedError(
-          'ImageSource.gallery is currently the only supported source on Windows');
-    }
-    const XTypeGroup typeGroup =
-        XTypeGroup(label: 'images', extensions: imageFormats);
-    final XFile? file = await fileSelector
-        .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-    return file;
+    return getImageFromSource(
+        source: source,
+        options: ImagePickerOptions(
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            imageQuality: imageQuality,
+            preferredCameraDevice: preferredCameraDevice));
   }
 
-  // `preferredCameraDevice` and `maxDuration` arguments are not
-  // supported on Windows. If any of these arguments is supplied,
-  // it'll be silently ignored by the Windows version of the plugin.
-  // `source` is not implemented for `ImageSource.camera` and will
-  // throw an exception.
+  // [ImagePickerOptions] options are not currently supported. If any
+  // of its fields are set, they will be silently ignored.
+  //
+  // If source is `ImageSource.camera`, a `StateError` will be thrown
+  // unless a [cameraDelegate] is set.
+  @override
+  Future<XFile?> getImageFromSource({
+    required ImageSource source,
+    ImagePickerOptions options = const ImagePickerOptions(),
+  }) async {
+    switch (source) {
+      case ImageSource.camera:
+        return super.getImageFromSource(source: source);
+      case ImageSource.gallery:
+        const XTypeGroup typeGroup =
+            XTypeGroup(label: 'Images', extensions: imageFormats);
+        final XFile? file = await fileSelector
+            .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+        return file;
+    }
+    // Ensure that there's a fallback in case a new source is added.
+    // ignore: dead_code
+    throw UnimplementedError('Unknown ImageSource: $source');
+  }
+
+  // `preferredCameraDevice` and `maxDuration` arguments are not currently
+  // supported. If either of these arguments are supplied, they will be silently
+  // ignored.
+  //
+  // If source is `ImageSource.camera`, a `StateError` will be thrown
+  // unless a [cameraDelegate] is set.
   @override
   Future<XFile?> getVideo({
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
   }) async {
-    if (source != ImageSource.gallery) {
-      // TODO(azchohfi): Support ImageSource.camera.
-      //                 See https://github.com/flutter/flutter/issues/102115
-      throw UnimplementedError(
-          'ImageSource.gallery is currently the only supported source on Windows');
+    switch (source) {
+      case ImageSource.camera:
+        return super.getVideo(
+            source: source,
+            preferredCameraDevice: preferredCameraDevice,
+            maxDuration: maxDuration);
+      case ImageSource.gallery:
+        const XTypeGroup typeGroup =
+            XTypeGroup(label: 'Videos', extensions: videoFormats);
+        final XFile? file = await fileSelector
+            .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+        return file;
     }
-    const XTypeGroup typeGroup =
-        XTypeGroup(label: 'videos', extensions: videoFormats);
-    final XFile? file = await fileSelector
-        .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-    return file;
+    // Ensure that there's a fallback in case a new source is added.
+    // ignore: dead_code
+    throw UnimplementedError('Unknown ImageSource: $source');
   }
 
-  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not
-  // supported on Windows. If any of these arguments is supplied,
-  // it'll be silently ignored by the Windows version of the plugin.
+  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not currently
+  // supported. If any of these arguments are supplied, they will be silently
+  // ignored.
   @override
   Future<List<XFile>> getMultiImage({
     double? maxWidth,
@@ -159,9 +178,33 @@ class ImagePickerWindows extends ImagePickerPlatform {
     int? imageQuality,
   }) async {
     const XTypeGroup typeGroup =
-        XTypeGroup(label: 'images', extensions: imageFormats);
+        XTypeGroup(label: 'Images', extensions: imageFormats);
     final List<XFile> files = await fileSelector
         .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    return files;
+  }
+
+  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not
+  // supported on Windows. If any of these arguments is supplied,
+  // they will be silently ignored by the Windows version of the plugin.
+  @override
+  Future<List<XFile>> getMedia({required MediaOptions options}) async {
+    const XTypeGroup typeGroup = XTypeGroup(
+        label: 'images and videos',
+        extensions: <String>[...imageFormats, ...videoFormats]);
+
+    List<XFile> files;
+
+    if (options.allowMultiple) {
+      files = await fileSelector
+          .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    } else {
+      final XFile? file = await fileSelector
+          .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+      files = <XFile>[
+        if (file != null) file,
+      ];
+    }
     return files;
   }
 }

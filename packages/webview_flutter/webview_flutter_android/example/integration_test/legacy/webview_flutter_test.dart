@@ -9,15 +9,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:webview_flutter_android/src/android_webview.dart' as android;
+import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
 import 'package:webview_flutter_android/src/instance_manager.dart';
 import 'package:webview_flutter_android/src/weak_reference_utils.dart';
 import 'package:webview_flutter_android/src/webview_flutter_android_legacy.dart';
@@ -125,6 +124,79 @@ Future<void> main() async {
     final int gcIdentifier = await gcCompleter.future;
     expect(gcIdentifier, 0);
   }, timeout: const Timeout(Duration(seconds: 10)));
+
+  // TODO(bparrishMines): This test is skipped because of
+  // https://github.com/flutter/flutter/issues/123327
+  testWidgets(
+    'WebView is released by garbage collection',
+    (WidgetTester tester) async {
+      final Completer<void> webViewGCCompleter = Completer<void>();
+
+      late final InstanceManager instanceManager;
+      instanceManager =
+          InstanceManager(onWeakReferenceRemoved: (int identifier) {
+        final Copyable instance =
+            instanceManager.getInstanceWithWeakReference(identifier)!;
+        if (instance is android.WebView && !webViewGCCompleter.isCompleted) {
+          webViewGCCompleter.complete();
+        }
+      });
+
+      android.WebView.api = WebViewHostApiImpl(
+        instanceManager: instanceManager,
+      );
+      android.WebSettings.api = WebSettingsHostApiImpl(
+        instanceManager: instanceManager,
+      );
+      android.WebChromeClient.api = WebChromeClientHostApiImpl(
+        instanceManager: instanceManager,
+      );
+      android.WebViewClient.api = WebViewClientHostApiImpl(
+        instanceManager: instanceManager,
+      );
+      android.DownloadListener.api = DownloadListenerHostApiImpl(
+        instanceManager: instanceManager,
+      );
+
+      // Continually recreate web views until one is disposed through garbage
+      // collection.
+      while (!webViewGCCompleter.isCompleted) {
+        await tester.pumpWidget(
+          Builder(
+            builder: (BuildContext context) {
+              return AndroidWebView(instanceManager: instanceManager).build(
+                context: context,
+                creationParams: CreationParams(
+                  webSettings: WebSettings(
+                    hasNavigationDelegate: false,
+                    userAgent: const WebSetting<String>.of('woeifj'),
+                  ),
+                ),
+                javascriptChannelRegistry: JavascriptChannelRegistry(
+                  <JavascriptChannel>{},
+                ),
+                webViewPlatformCallbacksHandler: TestPlatformCallbacksHandler(),
+              );
+            },
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      }
+
+      android.WebView.api = WebViewHostApiImpl();
+      android.WebSettings.api = WebSettingsHostApiImpl();
+      android.WebChromeClient.api = WebChromeClientHostApiImpl();
+      android.WebViewClient.api = WebViewClientHostApiImpl();
+      android.DownloadListener.api = DownloadListenerHostApiImpl();
+
+      // Create a new `WebStorage` with the default InstanceManager.
+      android.WebStorage.instance = android.WebStorage();
+    },
+    skip: true,
+  );
 
   testWidgets('evaluateJavascript', (WidgetTester tester) async {
     final Completer<WebViewController> controllerCompleter =
@@ -1571,4 +1643,26 @@ class ClassWithCallbackClass {
   }
 
   late final CopyableObjectWithCallback callbackClass;
+}
+
+class TestPlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
+  @override
+  FutureOr<bool> onNavigationRequest({
+    required String url,
+    required bool isForMainFrame,
+  }) async {
+    return true;
+  }
+
+  @override
+  void onPageStarted(String url) {}
+
+  @override
+  void onPageFinished(String url) {}
+
+  @override
+  void onProgress(int progress) {}
+
+  @override
+  void onWebResourceError(WebResourceError error) {}
 }

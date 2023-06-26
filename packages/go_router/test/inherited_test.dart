@@ -25,7 +25,7 @@ void main() {
       expect(shouldNotify, false);
     });
 
-    test('updates when goRouter changes', () {
+    test('does not update even when goRouter changes', () {
       final GoRouter oldGoRouter = GoRouter(
         routes: <GoRoute>[
           GoRoute(
@@ -46,7 +46,7 @@ void main() {
         oldGoRouter: oldGoRouter,
         newGoRouter: newGoRouter,
       );
-      expect(shouldNotify, true);
+      expect(shouldNotify, false);
     });
   });
 
@@ -129,11 +129,12 @@ class MockGoRouter extends GoRouter {
   late String latestPushedName;
 
   @override
-  void pushNamed(String name,
-      {Map<String, String> params = const <String, String>{},
-      Map<String, dynamic> queryParams = const <String, dynamic>{},
+  Future<T?> pushNamed<T extends Object?>(String name,
+      {Map<String, String> pathParameters = const <String, String>{},
+      Map<String, dynamic> queryParameters = const <String, dynamic>{},
       Object? extra}) {
     latestPushedName = name;
+    return Future<T?>.value();
   }
 
   @override

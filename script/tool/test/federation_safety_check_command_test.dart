@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -59,8 +57,8 @@ void main() {
     final String changedFileOutput = <File>[
       package.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =
@@ -82,8 +80,8 @@ void main() {
     final String changedFileOutput = <File>[
       package.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =
@@ -107,8 +105,8 @@ void main() {
     final String changedFileOutput = <File>[
       platformInterface.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =
@@ -136,8 +134,8 @@ void main() {
       platformInterface.libDirectory.childFile('foo.dart'),
       platformInterface.pubspecFile,
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =
@@ -176,8 +174,8 @@ void main() {
       appFacing.libDirectory.childFile('foo.dart'),
       implementation.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =
@@ -204,14 +202,37 @@ void main() {
     final RepositoryPackage platformInterface =
         createFakePlugin('foo_platform_interface', pluginGroupDir);
 
+    const String appFacingChanges = '''
+diff --git a/packages/foo/foo/lib/foo.dart b/packages/foo/foo/lib/foo.dart
+index abc123..def456 100644
+--- a/packages/foo/foo/lib/foo.dart
++++ b/packages/foo/foo/lib/foo.dart
+@@ -51,6 +51,9 @@ Future<bool> launchUrl(
+   return true;
+ }
+
++// This is a new method
++bool foo() => true;
++
+ // This in an existing method
+ void aMethod() {
+   // Do things.
+''';
+
     final String changedFileOutput = <File>[
       appFacing.libDirectory.childFile('foo.dart'),
       implementation.libDirectory.childFile('foo.dart'),
       platformInterface.pubspecFile,
       platformInterface.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      // Ensure that a change with both a comment and non-comment addition is
+      // counted, to validate change analysis.
+      FakeProcessInfo(MockProcess(stdout: appFacingChanges),
+          <String>['', 'HEAD', '--', '/packages/foo/foo/lib/foo.dart']),
+      // The others diffs don't need to be specified, since empty diff is also
+      // treated as a non-comment change.
     ];
 
     Error? commandError;
@@ -255,8 +276,8 @@ void main() {
       platformInterface.pubspecFile,
       platformInterface.testDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =
@@ -287,12 +308,13 @@ void main() {
       platformInterface.pubspecFile,
       platformInterface.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
     // Simulate no change to the version in the interface's pubspec.yaml.
-    processRunner.mockProcessesForExecutable['git-show'] = <io.Process>[
-      MockProcess(stdout: platformInterface.pubspecFile.readAsStringSync()),
+    processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(
+          stdout: platformInterface.pubspecFile.readAsStringSync())),
     ];
 
     final List<String> output =
@@ -305,6 +327,141 @@ void main() {
         contains('No published changes for foo_platform_interface.'),
         contains('Running for foo_bar...'),
         contains('No published changes for foo_platform_interface.'),
+      ]),
+    );
+  });
+
+  test('ignores comment-only changes in implementation packages', () async {
+    final Directory pluginGroupDir = packagesDir.childDirectory('foo');
+    final RepositoryPackage implementation =
+        createFakePlugin('foo_bar', pluginGroupDir);
+    final RepositoryPackage platformInterface =
+        createFakePlugin('foo_platform_interface', pluginGroupDir);
+
+    final String changedFileOutput = <File>[
+      implementation.libDirectory.childFile('foo.dart'),
+      platformInterface.pubspecFile,
+      platformInterface.libDirectory.childFile('foo.dart'),
+    ].map((File file) => file.path).join('\n');
+
+    const String platformInterfaceChanges = '''
+diff --git a/packages/foo/foo_platform_interface/lib/foo.dart b/packages/foo/foo_platform_interface/lib/foo.dart
+index abc123..def456 100644
+--- a/packages/foo/foo_platform_interface/lib/foo.dart
++++ b/packages/foo/foo_platform_interface/lib/foo.dart
+@@ -51,6 +51,7 @@ Future<bool> launchUrl(
+ enum Foo {
+   a,
+   b,
++  c,
+   d,
+   e,
+ }
+''';
+    const String implementationChanges = '''
+diff --git a/packages/foo/foo_bar/lib/foo.dart b/packages/foo/foo_bar/lib/foo.dart
+index abc123..def456 100644
+--- a/packages/foo/foo_bar/lib/foo.dart
++++ b/packages/foo/foo_bar/lib/foo.dart
+@@ -51,6 +51,7 @@ Future<bool> launchUrl(
+ }
+
+ void foo() {
++  // ignore: exhaustive_cases
+   switch(a_foo) {
+     case a:
+       // Do things
+''';
+
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(
+          MockProcess(stdout: changedFileOutput), <String>['--name-only']),
+      FakeProcessInfo(MockProcess(stdout: implementationChanges),
+          <String>['', 'HEAD', '--', '/packages/foo/foo_bar/lib/foo.dart']),
+      FakeProcessInfo(MockProcess(stdout: platformInterfaceChanges), <String>[
+        '',
+        'HEAD',
+        '--',
+        '/packages/foo/foo_platform_interface/lib/foo.dart'
+      ]),
+    ];
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['federation-safety-check']);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Running for foo_bar...'),
+        contains('No Dart changes.'),
+      ]),
+    );
+  });
+
+  test('ignores comment-only changes in platform interface packages', () async {
+    final Directory pluginGroupDir = packagesDir.childDirectory('foo');
+    final RepositoryPackage implementation =
+        createFakePlugin('foo_bar', pluginGroupDir);
+    final RepositoryPackage platformInterface =
+        createFakePlugin('foo_platform_interface', pluginGroupDir);
+
+    final String changedFileOutput = <File>[
+      implementation.libDirectory.childFile('foo.dart'),
+      platformInterface.pubspecFile,
+      platformInterface.libDirectory.childFile('foo.dart'),
+    ].map((File file) => file.path).join('\n');
+
+    const String platformInterfaceChanges = '''
+diff --git a/packages/foo/foo_platform_interface/lib/foo.dart b/packages/foo/foo_platform_interface/lib/foo.dart
+index abc123..def456 100644
+--- a/packages/foo/foo_platform_interface/lib/foo.dart
++++ b/packages/foo/foo_platform_interface/lib/foo.dart
+@@ -51,6 +51,8 @@ Future<bool> launchUrl(
+   // existing comment
+   // existing comment
+   // existing comment
++  //
++  // additional comment
+   void foo() {
+     some code;
+   }
+''';
+    const String implementationChanges = '''
+diff --git a/packages/foo/foo_bar/lib/foo.dart b/packages/foo/foo_bar/lib/foo.dart
+index abc123..def456 100644
+--- a/packages/foo/foo_bar/lib/foo.dart
++++ b/packages/foo/foo_bar/lib/foo.dart
+@@ -51,6 +51,7 @@ Future<bool> launchUrl(
+ }
+
+ void foo() {
++  new code;
+   existing code;
+   ...
+   ...
+''';
+
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(
+          MockProcess(stdout: changedFileOutput), <String>['--name-only']),
+      FakeProcessInfo(MockProcess(stdout: implementationChanges),
+          <String>['', 'HEAD', '--', '/packages/foo/foo_bar/lib/foo.dart']),
+      FakeProcessInfo(MockProcess(stdout: platformInterfaceChanges), <String>[
+        '',
+        'HEAD',
+        '--',
+        '/packages/foo/foo_platform_interface/lib/foo.dart'
+      ]),
+    ];
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['federation-safety-check']);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Running for foo_bar...'),
+        contains('No public code changes for foo_platform_interface.'),
       ]),
     );
   });
@@ -328,8 +485,8 @@ void main() {
       otherPlugin1.libDirectory.childFile('bar.dart'),
       otherPlugin2.libDirectory.childFile('baz.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =
@@ -357,8 +514,8 @@ void main() {
       // This should be picked up as a change to 'foo', and not crash.
       plugin.directory.childFile('foo_bar.baz'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =
@@ -394,8 +551,8 @@ void main() {
           .childDirectory('lib')
           .childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
-    processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-      MockProcess(stdout: changedFileOutput),
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
     final List<String> output =

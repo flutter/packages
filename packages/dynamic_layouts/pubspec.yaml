@@ -1,14 +1,14 @@
 name: dynamic_layouts
 description: Widgets for building dynamic grid layouts.
-version: 0.0.1
+version: 0.0.1+1
 issue_tracker: https://github.com/flutter/flutter/labels/p%3A%20dynamic_layouts
 repository: https://github.com/flutter/packages/tree/main/packages/dynamic_layouts
 # Temporarily unpublished while in process of releasing full package in multiple stages.
 publish_to: none
 
 environment:
-  sdk: '>=2.17.6 <3.0.0'
-  flutter: ">=3.0.5"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:

@@ -22,6 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'io.flutter.plugins.camerax'
+    }
     // CameraX dependencies require compilation against version 33 or later.
     compileSdkVersion 33
 
@@ -49,20 +53,26 @@ android {
     }
 
     lintOptions {
-        disable 'AndroidGradlePluginVersion'
-        disable 'GradleDependency'
+        checkAllWarnings true
+        warningsAsErrors true
+        disable 'AndroidGradlePluginVersion', 'GradleDependency', 'InvalidPackage'
     }
 }
 
 dependencies {
     // CameraX core library using the camera2 implementation must use same version number.
-    def camerax_version = "1.3.0-alpha03"
+    def camerax_version = "1.3.0-alpha05"
     implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
-    implementation 'com.google.guava:guava:31.1-android'
+    implementation "androidx.camera:camera-video:${camerax_version}"
+    implementation 'com.google.guava:guava:32.0.1-android'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-inline:5.0.0'
     testImplementation 'androidx.test:core:1.4.0'
-    testImplementation 'org.robolectric:robolectric:4.8'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
+
+    // org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.
+    // See: https://youtrack.jetbrains.com/issue/KT-55297/kotlin-stdlib-should-declare-constraints-on-kotlin-stdlib-jdk8-and-kotlin-stdlib-jdk7
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.10"))
 }

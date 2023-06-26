@@ -1,3 +1,16 @@
+## 0.1.0+5
+
+* Fixes unawaited_futures violations.
+
+## 0.1.0+4
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.1.0+3
+
+* Migrates from SingletonFlutterWindow to PlatformDispatcher API.
+
 ## 0.1.0+2
 
 * Updates code to fix strict-cast violations.

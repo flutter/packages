@@ -54,6 +54,9 @@ class PublishCheckCommand extends PackageLoopingCommand {
   final String name = 'publish-check';
 
   @override
+  List<String> get aliases => <String>['check-publish'];
+
+  @override
   final String description =
       'Checks to make sure that a package *could* be published.';
 

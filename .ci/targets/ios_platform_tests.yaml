@@ -15,10 +15,13 @@ tasks:
     args: ["xcode-analyze", "--ios", "--ios-min-version=13.0"]
   - name: native test
     script: script/tool_runner.sh
-    args: ["native-test", "--ios", "--ios-destination", "platform=iOS Simulator,name=iPhone 13,OS=latest"]
+    args: ["native-test", "--ios", "--ios-destination", "platform=iOS Simulator,name=iPhone 14,OS=latest"]
   - name: drive examples
     # `drive-examples` contains integration tests, which changes the UI of the application.
     # This UI change sometimes affects `xctest`.
     # So we run `drive-examples` after `native-test`; changing the order will result ci failure.
     script: script/tool_runner.sh
     args: ["drive-examples", "--ios", "--exclude=script/configs/exclude_integration_ios.yaml"]
+  - name: remove simulator
+    script: .ci/scripts/remove_simulator.sh
+    always: true

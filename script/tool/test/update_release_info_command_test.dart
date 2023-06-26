@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -52,15 +50,15 @@ void main() {
 
   group('flags', () {
     test('fails if --changelog is missing', () async {
-      Exception? commandError;
+      Error? commandError;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=next',
-      ], exceptionHandler: (Exception e) {
+      ], errorHandler: (Error e) {
         commandError = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --changelog is blank', () async {
@@ -78,14 +76,14 @@ void main() {
     });
 
     test('fails if --version is missing', () async {
-      Exception? commandError;
+      Error? commandError;
       await runCapturingPrint(
-          runner, <String>['update-release-info', '--changelog', ''],
-          exceptionHandler: (Exception e) {
+          runner, <String>['update-release-info', '--changelog', 'A change.'],
+          errorHandler: (Error e) {
         commandError = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --version is an unknown value', () async {
@@ -94,7 +92,7 @@ void main() {
         'update-release-info',
         '--version=foo',
         '--changelog',
-        '',
+        'A change.',
       ], exceptionHandler: (Exception e) {
         commandError = e;
       });
@@ -386,10 +384,10 @@ $originalChangelog''';
     test('skips for "minimal" when there are no changes at all', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(stdout: '''
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
 packages/different_package/lib/foo.dart
-'''),
+''')),
       ];
       final String originalChangelog = package.changelogFile.readAsStringSync();
 
@@ -414,11 +412,11 @@ packages/different_package/lib/foo.dart
     test('skips for "minimal" when there are only test changes', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(stdout: '''
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
 packages/a_package/test/a_test.dart
 packages/a_package/example/integration_test/another_test.dart
-'''),
+''')),
       ];
       final String originalChangelog = package.changelogFile.readAsStringSync();
 
@@ -609,10 +607,10 @@ Some free-form text that isn't a list.
         () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(stdout: '''
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
 packages/a_package/lib/plugin.dart
-'''),
+''')),
       ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -634,10 +632,10 @@ packages/a_package/lib/plugin.dart
         () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-diff'] = <io.Process>[
-        MockProcess(stdout: '''
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
 packages/a_package/test/plugin_test.dart
-'''),
+''')),
       ];
 
       await runCapturingPrint(runner, <String>[

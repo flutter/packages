@@ -58,7 +58,7 @@ ${publishable ? '' : "publish_to: 'none'"}
 }
 
 String _environmentSection({
-  String dartConstraint = '>=2.17.0 <3.0.0',
+  String dartConstraint = '>=2.17.0 <4.0.0',
   String? flutterConstraint = '>=3.0.0',
 }) {
   return <String>[
@@ -99,19 +99,23 @@ ${isPlugin ? pluginEntry : ''}
 ''';
 }
 
-String _dependenciesSection() {
+String _dependenciesSection(
+    [List<String> extraDependencies = const <String>[]]) {
   return '''
 dependencies:
   flutter:
     sdk: flutter
+${extraDependencies.map((String dep) => '  $dep').join('\n')}
 ''';
 }
 
-String _devDependenciesSection() {
+String _devDependenciesSection(
+    [List<String> extraDependencies = const <String>[]]) {
   return '''
 dev_dependencies:
   flutter_test:
     sdk: flutter
+${extraDependencies.map((String dep) => '  $dep').join('\n')}
 ''';
 }
 
@@ -995,7 +999,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <3.0.0')}
+${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <4.0.0')}
 ${_dependenciesSection()}
 ''');
 
@@ -1020,7 +1024,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <3.0.0')}
+${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <4.0.0')}
 ${_dependenciesSection()}
 ''');
 
@@ -1043,7 +1047,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.14.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.14.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ''');
 
@@ -1074,7 +1078,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ''');
 
@@ -1099,7 +1103,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <3.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ''');
 
@@ -1152,7 +1156,7 @@ ${_dependenciesSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.16.0 <3.0.0')}
+${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.16.0 <4.0.0')}
 ${_dependenciesSection()}
 ''');
 
@@ -1173,6 +1177,179 @@ ${_dependenciesSection()}
               'bounds'),
         ]),
       );
+    });
+
+    group('dependency check', () {
+      test('passes for local dependencies', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+        final RepositoryPackage dependencyPackage =
+            createFakePackage('local_dependency', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['local_dependency: ^1.0.0'])}
+''');
+        dependencyPackage.pubspecFile.writeAsStringSync('''
+${_headerSection('local_dependency')}
+${_environmentSection()}
+${_dependenciesSection()}
+''');
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['pubspec-check']);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test('fails when an unexpected dependency is found', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['bad_dependency: ^1.0.0'])}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The following unexpected non-local dependencies were found:\n'
+                '  bad_dependency\n'
+                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+                'for more information and next steps.'),
+          ]),
+        );
+      });
+
+      test('fails when an unexpected dev dependency is found', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection()}
+${_devDependenciesSection(<String>['bad_dependency: ^1.0.0'])}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The following unexpected non-local dependencies were found:\n'
+                '  bad_dependency\n'
+                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+                'for more information and next steps.'),
+          ]),
+        );
+      });
+
+      test('passes when a dependency is on the allow list', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allowed: ^1.0.0'])}
+''');
+
+        final List<String> output = await runCapturingPrint(runner,
+            <String>['pubspec-check', '--allow-dependencies', 'allowed']);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test('passes when a pinned dependency is on the pinned allow list',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
+''');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+          '--allow-pinned-dependencies',
+          'allow_pinned'
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test('fails when an allowed-when-pinned dependency is unpinned',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allow_pinned: ^1.0.0'])}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+          '--allow-pinned-dependencies',
+          'allow_pinned'
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The following unexpected non-local dependencies were found:\n'
+                '  allow_pinned\n'
+                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+                'for more information and next steps.'),
+          ]),
+        );
+      });
     });
   });
 

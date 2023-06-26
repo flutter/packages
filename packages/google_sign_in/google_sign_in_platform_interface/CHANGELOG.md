@@ -1,5 +1,13 @@
-## NEXT
+## 2.4.1
 
+* Clarifies `canAccessScopes` method documentation.
+
+## 2.4.0
+
+* Introduces: `canAccessScopes` method and `userDataEvents` stream.
+  * These enable separation of Authentication and Authorization, and asynchronous
+    sign-in operations where needed (on the web, for example!)
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.3.1

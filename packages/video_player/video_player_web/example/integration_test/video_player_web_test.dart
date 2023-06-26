@@ -169,13 +169,47 @@ void main() {
       expect(VideoPlayerPlatform.instance.setMixWithOthers(false), completes);
     });
 
+    testWidgets(
+        'double call to play will emit a single isPlayingStateUpdate event',
+        (WidgetTester tester) async {
+      final int videoPlayerId = await textureId;
+      final Stream<VideoEvent> eventStream =
+          VideoPlayerPlatform.instance.videoEventsFor(videoPlayerId);
+
+      final Future<List<VideoEvent>> stream = eventStream.timeout(
+        const Duration(seconds: 2),
+        onTimeout: (EventSink<VideoEvent> sink) {
+          sink.close();
+        },
+      ).toList();
+
+      await VideoPlayerPlatform.instance.setVolume(videoPlayerId, 0);
+      await VideoPlayerPlatform.instance.play(videoPlayerId);
+      await VideoPlayerPlatform.instance.play(videoPlayerId);
+
+      // Let the video play, until we stop seeing events for two seconds
+      final List<VideoEvent> events = await stream;
+
+      await VideoPlayerPlatform.instance.pause(videoPlayerId);
+
+      expect(
+          events.where((VideoEvent e) =>
+              e.eventType == VideoEventType.isPlayingStateUpdate),
+          equals(<VideoEvent>[
+            VideoEvent(
+              eventType: VideoEventType.isPlayingStateUpdate,
+              isPlaying: true,
+            )
+          ]));
+    });
+
     testWidgets('video playback lifecycle', (WidgetTester tester) async {
       final int videoPlayerId = await textureId;
       final Stream<VideoEvent> eventStream =
           VideoPlayerPlatform.instance.videoEventsFor(videoPlayerId);
 
       final Future<List<VideoEvent>> stream = eventStream.timeout(
-        const Duration(seconds: 1),
+        const Duration(seconds: 2),
         onTimeout: (EventSink<VideoEvent> sink) {
           sink.close();
         },
@@ -184,23 +218,25 @@ void main() {
       await VideoPlayerPlatform.instance.setVolume(videoPlayerId, 0);
       await VideoPlayerPlatform.instance.play(videoPlayerId);
 
-      // Let the video play, until we stop seeing events for a second
+      // Let the video play, until we stop seeing events for two seconds
       final List<VideoEvent> events = await stream;
 
       await VideoPlayerPlatform.instance.pause(videoPlayerId);
 
       // The expected list of event types should look like this:
-      // 1. bufferingStart,
-      // 2. bufferingUpdate (videoElement.onWaiting),
-      // 3. initialized (videoElement.onCanPlay),
-      // 4. bufferingEnd (videoElement.onCanPlayThrough),
+      // 1. isPlayingStateUpdate (videoElement.onPlaying)
+      // 2. bufferingStart,
+      // 3. bufferingUpdate (videoElement.onWaiting),
+      // 4. initialized (videoElement.onCanPlay),
+      // 5. bufferingEnd (videoElement.onCanPlayThrough),
       expect(
           events.map((VideoEvent e) => e.eventType),
           equals(<VideoEventType>[
+            VideoEventType.isPlayingStateUpdate,
             VideoEventType.bufferingStart,
             VideoEventType.bufferingUpdate,
             VideoEventType.initialized,
-            VideoEventType.bufferingEnd
+            VideoEventType.bufferingEnd,
           ]));
     });
   });

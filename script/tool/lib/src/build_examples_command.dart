@@ -39,6 +39,8 @@ const String _flutterBuildTypeMacOS = 'macos';
 const String _flutterBuildTypeWeb = 'web';
 const String _flutterBuildTypeWindows = 'windows';
 
+const String _flutterBuildTypeAndroidAlias = 'android';
+
 /// A command to build the example applications for packages.
 class BuildExamplesCommand extends PackageLoopingCommand {
   /// Creates an instance of the build command.
@@ -52,7 +54,8 @@ class BuildExamplesCommand extends PackageLoopingCommand {
     argParser.addFlag(platformWeb);
     argParser.addFlag(platformWindows);
     argParser.addFlag(platformIOS);
-    argParser.addFlag(_platformFlagApk);
+    argParser.addFlag(_platformFlagApk,
+        aliases: const <String>[_flutterBuildTypeAndroidAlias]);
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',

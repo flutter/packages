@@ -39,4 +39,7 @@
        permission failure prevents tests from running.
   -->
   <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+  <!-- Used to debug accessing the camera in a WebView -->
+  <uses-permission android:name="android.permission.CAMERA"/>
 </manifest>

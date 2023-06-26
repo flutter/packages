@@ -7,15 +7,15 @@ import XCTest
 @testable import test_plugin
 
 class MockPrimitiveHostApi: PrimitiveHostApi {
-  func anInt(value: Int32) -> Int32 { value }
+  func anInt(value: Int64) -> Int64 { value }
   func aBool(value: Bool) -> Bool { value }
   func aString(value: String) -> String { value  }
   func aDouble(value: Double) -> Double { value }
-  func aMap(value: [AnyHashable: Any]) -> [AnyHashable: Any] { value }
-  func aList(value: [Any]) -> [Any] { value }
+  func aMap(value: [AnyHashable: Any?]) -> [AnyHashable: Any?] { value }
+  func aList(value: [Any?]) -> [Any?] { value }
   func anInt32List(value: FlutterStandardTypedData) -> FlutterStandardTypedData { value }
   func aBoolList(value: [Bool?]) -> [Bool?] { value }
-  func aStringIntMap(value: [String?: Int32?]) -> [String?: Int32?] { value }
+  func aStringIntMap(value: [String?: Int64?]) -> [String?: Int64?] { value }
 }
 
 class PrimitiveTests: XCTestCase {
@@ -35,7 +35,7 @@ class PrimitiveTests: XCTestCase {
       let outputList = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputList)
       
-      let output = outputList!.first as? Int32
+      let output = outputList!.first as? Int64
       XCTAssertEqual(1, output)
       XCTAssertTrue(outputList!.count == 1)
       expectation.fulfill()

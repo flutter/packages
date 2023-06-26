@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/match.dart';
 
 Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(
@@ -37,18 +38,18 @@ class GoRouterNamedLocationSpy extends GoRouter {
   GoRouterNamedLocationSpy({required super.routes});
 
   String? name;
-  Map<String, String>? params;
-  Map<String, dynamic>? queryParams;
+  Map<String, String>? pathParameters;
+  Map<String, dynamic>? queryParameters;
 
   @override
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) {
     this.name = name;
-    this.params = params;
-    this.queryParams = queryParams;
+    this.pathParameters = pathParameters;
+    this.queryParameters = queryParameters;
     return '';
   }
 }
@@ -70,20 +71,20 @@ class GoRouterGoNamedSpy extends GoRouter {
   GoRouterGoNamedSpy({required super.routes});
 
   String? name;
-  Map<String, String>? params;
-  Map<String, dynamic>? queryParams;
+  Map<String, String>? pathParameters;
+  Map<String, dynamic>? queryParameters;
   Object? extra;
 
   @override
   void goNamed(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) {
     this.name = name;
-    this.params = params;
-    this.queryParams = queryParams;
+    this.pathParameters = pathParameters;
+    this.queryParameters = queryParameters;
     this.extra = extra;
   }
 }
@@ -95,9 +96,10 @@ class GoRouterPushSpy extends GoRouter {
   Object? extra;
 
   @override
-  void push(String location, {Object? extra}) {
+  Future<T?> push<T extends Object?>(String location, {Object? extra}) {
     myLocation = location;
     this.extra = extra;
+    return Future<T?>.value(extra as T?);
   }
 }
 
@@ -105,21 +107,22 @@ class GoRouterPushNamedSpy extends GoRouter {
   GoRouterPushNamedSpy({required super.routes});
 
   String? name;
-  Map<String, String>? params;
-  Map<String, dynamic>? queryParams;
+  Map<String, String>? pathParameters;
+  Map<String, dynamic>? queryParameters;
   Object? extra;
 
   @override
-  void pushNamed(
+  Future<T?> pushNamed<T extends Object?>(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, dynamic> queryParams = const <String, dynamic>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) {
     this.name = name;
-    this.params = params;
-    this.queryParams = queryParams;
+    this.pathParameters = pathParameters;
+    this.queryParameters = queryParameters;
     this.extra = extra;
+    return Future<T?>.value(extra as T?);
   }
 }
 
@@ -141,22 +144,28 @@ Future<GoRouter> createRouter(
   WidgetTester tester, {
   GoRouterRedirect? redirect,
   String initialLocation = '/',
+  Object? initialExtra,
   int redirectLimit = 5,
   GlobalKey<NavigatorState>? navigatorKey,
   GoRouterWidgetBuilder? errorBuilder,
+  String? restorationScopeId,
+  GoExceptionHandler? onException,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
     redirect: redirect,
     initialLocation: initialLocation,
+    onException: onException,
+    initialExtra: initialExtra,
     redirectLimit: redirectLimit,
-    errorBuilder: errorBuilder ??
-        (BuildContext context, GoRouterState state) =>
-            TestErrorScreen(state.error!),
+    errorBuilder: errorBuilder,
     navigatorKey: navigatorKey,
+    restorationScopeId: restorationScopeId,
   );
   await tester.pumpWidget(
     MaterialApp.router(
+      restorationScopeId:
+          restorationScopeId != null ? '$restorationScopeId-root' : null,
       routerConfig: goRouter,
     ),
   );
@@ -224,10 +233,49 @@ class DummyStatefulWidget extends StatefulWidget {
   const DummyStatefulWidget({super.key});
 
   @override
-  State<DummyStatefulWidget> createState() => DummyStatefulWidgetState();
+  State<StatefulWidget> createState() => DummyStatefulWidgetState();
 }
 
 class DummyStatefulWidgetState extends State<DummyStatefulWidget> {
+  int counter = 0;
+
+  void increment() => setState(() {
+        counter++;
+      });
+
+  @override
+  Widget build(BuildContext context) => Container();
+}
+
+class DummyRestorableStatefulWidget extends StatefulWidget {
+  const DummyRestorableStatefulWidget({super.key, this.restorationId});
+
+  final String? restorationId;
+
+  @override
+  State<StatefulWidget> createState() => DummyRestorableStatefulWidgetState();
+}
+
+class DummyRestorableStatefulWidgetState
+    extends State<DummyRestorableStatefulWidget> with RestorationMixin {
+  final RestorableInt _counter = RestorableInt(0);
+
+  @override
+  String? get restorationId => widget.restorationId;
+
+  int get counter => _counter.value;
+
+  void increment([int count = 1]) => setState(() {
+        _counter.value += count;
+      });
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    if (restorationId != null) {
+      registerForRestoration(_counter, restorationId!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Container();
 }
@@ -237,4 +285,22 @@ Future<void> simulateAndroidBackButton(WidgetTester tester) async {
       const JSONMethodCodec().encodeMethodCall(const MethodCall('popRoute'));
   await tester.binding.defaultBinaryMessenger
       .handlePlatformMessage('flutter/navigation', message, (_) {});
+}
+
+GoRouterPageBuilder createPageBuilder(
+        {String? restorationId, required Widget child}) =>
+    (BuildContext context, GoRouterState state) =>
+        MaterialPage<dynamic>(restorationId: restorationId, child: child);
+
+StatefulShellRouteBuilder mockStackedShellBuilder = (BuildContext context,
+    GoRouterState state, StatefulNavigationShell navigationShell) {
+  return navigationShell;
+};
+
+RouteMatch createRouteMatch(RouteBase route, String location) {
+  return RouteMatch(
+    route: route,
+    matchedLocation: location,
+    pageKey: ValueKey<String>(location),
+  );
 }

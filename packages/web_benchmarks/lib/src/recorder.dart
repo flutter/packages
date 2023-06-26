@@ -238,7 +238,7 @@ abstract class SceneBuilderRecorder extends Recorder {
     final Completer<Profile> profileCompleter = Completer<Profile>();
     _profile = Profile(name: name);
 
-    window.onBeginFrame = (_) {
+    PlatformDispatcher.instance.onBeginFrame = (_) {
       try {
         startMeasureFrame(profile);
         onBeginFrame();
@@ -247,7 +247,7 @@ abstract class SceneBuilderRecorder extends Recorder {
         rethrow;
       }
     };
-    window.onDrawFrame = () {
+    PlatformDispatcher.instance.onDrawFrame = () {
       try {
         _profile.record('drawFrameDuration', () {
           final SceneBuilder sceneBuilder = SceneBuilder();
@@ -255,14 +255,15 @@ abstract class SceneBuilderRecorder extends Recorder {
           _profile.record('sceneBuildDuration', () {
             final Scene scene = sceneBuilder.build();
             _profile.record('windowRenderDuration', () {
-              window.render(scene);
+              // TODO(goderbauer): Migrate to PlatformDispatcher.implicitView once v3.9.0 is the oldest supported Flutter version.
+              window.render(scene); // ignore: deprecated_member_use
             }, reported: false);
           }, reported: false);
         }, reported: true);
         endMeasureFrame();
 
         if (shouldContinue()) {
-          window.scheduleFrame();
+          PlatformDispatcher.instance.scheduleFrame();
         } else {
           profileCompleter.complete(_profile);
         }
@@ -271,7 +272,7 @@ abstract class SceneBuilderRecorder extends Recorder {
         rethrow;
       }
     };
-    window.scheduleFrame();
+    PlatformDispatcher.instance.scheduleFrame();
     return profileCompleter.future;
   }
 }
@@ -391,7 +392,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
         reported: true);
 
     if (shouldContinue()) {
-      window.scheduleFrame();
+      PlatformDispatcher.instance.scheduleFrame();
     } else {
       for (final VoidCallback fn in _didStopCallbacks) {
         fn();
@@ -826,8 +827,7 @@ class Profile {
   ///
   /// [name] and [useCustomWarmUp] must not be null.
   Profile({required this.name, this.useCustomWarmUp = false})
-      : assert(name != null),
-        _isWarmingUp = useCustomWarmUp;
+      : _isWarmingUp = useCustomWarmUp;
 
   /// The name of the benchmark that produced this profile.
   final String name;
@@ -1212,13 +1212,6 @@ final Map<String, EngineBenchmarkValueListener> _engineBenchmarkListeners =
 /// If another listener is already registered, overrides it.
 void registerEngineBenchmarkValueListener(
     String name, EngineBenchmarkValueListener listener) {
-  if (listener == null) {
-    throw ArgumentError(
-      'Listener must not be null. To stop listening to engine benchmark values '
-      'under label "$name", call stopListeningToEngineBenchmarkValues(\'$name\').',
-    );
-  }
-
   if (_engineBenchmarkListeners.containsKey(name)) {
     throw StateError('A listener for "$name" is already registered.\n'
         'Call `stopListeningToEngineBenchmarkValues` to unregister the previous '

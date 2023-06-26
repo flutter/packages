@@ -74,8 +74,6 @@ abstract class LinkInfo {
   bool get isDisabled;
 }
 
-typedef _SendMessage = Function(String, ByteData?, void Function(ByteData?));
-
 /// Pushes the [routeName] into Flutter's navigation system via a platform
 /// message.
 ///
@@ -87,12 +85,11 @@ typedef _SendMessage = Function(String, ByteData?, void Function(ByteData?));
 // TODO(ianh): Remove the first argument.
 Future<ByteData> pushRouteNameToFramework(Object? _, String routeName) {
   final Completer<ByteData> completer = Completer<ByteData>();
+  // TODO(chunhtai): remove this ignore and migrate the code
+  // https://github.com/flutter/flutter/issues/124045.
+  // ignore: deprecated_member_use
   SystemNavigator.routeInformationUpdated(location: routeName);
-  final _SendMessage sendMessage = _ambiguate(WidgetsBinding.instance)
-          ?.platformDispatcher
-          .onPlatformMessage ??
-      ui.channelBuffers.push;
-  sendMessage(
+  ui.channelBuffers.push(
     'flutter/navigation',
     _codec.encodeMethodCall(
       MethodCall('pushRouteInformation', <dynamic, dynamic>{
@@ -104,9 +101,3 @@ Future<ByteData> pushRouteNameToFramework(Object? _, String routeName) {
   );
   return completer.future;
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

@@ -4,7 +4,6 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../go_router.dart';
 import 'configuration.dart';
 import 'misc/errors.dart';
 
@@ -17,42 +16,54 @@ class GoRouterState {
   const GoRouterState(
     this._configuration, {
     required this.location,
-    required this.subloc,
-    required this.name,
+    required this.matchedLocation,
+    this.name,
     this.path,
-    this.fullpath,
-    this.params = const <String, String>{},
-    this.queryParams = const <String, String>{},
-    this.queryParametersAll = const <String, List<String>>{},
+    required this.fullPath,
+    required this.pathParameters,
+    required this.queryParameters,
+    required this.queryParametersAll,
     this.extra,
     this.error,
     required this.pageKey,
   });
-
-  // TODO(johnpryan): remove once namedLocation is removed from go_router.
-  // See https://github.com/flutter/flutter/issues/107729
   final RouteConfiguration _configuration;
 
   /// The full location of the route, e.g. /family/f2/person/p1
   final String location;
 
-  /// The location of this sub-route, e.g. /family/f2
-  final String subloc;
+  /// The matched location until this point.
+  ///
+  /// For example:
+  ///
+  /// location = /family/f2/person/p1
+  /// route = GoRoute('/family/:id')
+  ///
+  /// matchedLocation = /family/f2
+  final String matchedLocation;
 
-  /// The optional name of the route.
+  /// The optional name of the route associated with this app.
+  ///
+  /// This can be null for GoRouterState pass into top level redirect.
   final String? name;
 
-  /// The path to this sub-route, e.g. family/:fid
+  /// The path of the route associated with this app. e.g. family/:fid
+  ///
+  /// This can be null for GoRouterState pass into top level redirect.
   final String? path;
 
   /// The full path to this sub-route, e.g. /family/:fid
-  final String? fullpath;
+  ///
+  /// For top level redirect, this is the entire path that matches the location.
+  /// It can be empty if go router can't find a match. In that case, the [error]
+  /// contains more information.
+  final String? fullPath;
 
-  /// The parameters for this sub-route, e.g. {'fid': 'f2'}
-  final Map<String, String> params;
+  /// The parameters for this match, e.g. {'fid': 'f2'}
+  final Map<String, String> pathParameters;
 
   /// The query parameters for the location, e.g. {'from': '/family/f2'}
-  final Map<String, String> queryParams;
+  final Map<String, String> queryParameters;
 
   /// The query parameters for the location,
   /// e.g. `{'q1': ['v1'], 'q2': ['v2', 'v3']}`
@@ -62,9 +73,13 @@ class GoRouterState {
   final Object? extra;
 
   /// The error associated with this sub-route.
-  final Exception? error;
+  final GoException? error;
 
-  /// A unique string key for this sub-route, e.g. ValueKey('/family/:fid')
+  /// A unique string key for this sub-route.
+  /// E.g.
+  /// ```dart
+  /// ValueKey('/family/:fid')
+  /// ```
   final ValueKey<String> pageKey;
 
   /// Gets the [GoRouterState] from context.
@@ -95,7 +110,7 @@ class GoRouterState {
   /// class MyWidget extends StatelessWidget {
   ///   @override
   ///   Widget build(BuildContext context) {
-  ///     return Text('${GoRouterState.of(context).params['id']}');
+  ///     return Text('${GoRouterState.of(context).pathParameters['id']}');
   ///   }
   /// }
   /// ```
@@ -122,26 +137,25 @@ class GoRouterState {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  @Deprecated('Use GoRouter.of(context).namedLocation instead')
   String namedLocation(
     String name, {
-    Map<String, String> params = const <String, String>{},
-    Map<String, String> queryParams = const <String, String>{},
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, String> queryParameters = const <String, String>{},
   }) {
     return _configuration.namedLocation(name,
-        params: params, queryParams: queryParams);
+        pathParameters: pathParameters, queryParameters: queryParameters);
   }
 
   @override
   bool operator ==(Object other) {
     return other is GoRouterState &&
         other.location == location &&
-        other.subloc == subloc &&
+        other.matchedLocation == matchedLocation &&
         other.name == name &&
         other.path == path &&
-        other.fullpath == fullpath &&
-        other.params == params &&
-        other.queryParams == queryParams &&
+        other.fullPath == fullPath &&
+        other.pathParameters == pathParameters &&
+        other.queryParameters == queryParameters &&
         other.queryParametersAll == queryParametersAll &&
         other.extra == extra &&
         other.error == error &&
@@ -149,8 +163,18 @@ class GoRouterState {
   }
 
   @override
-  int get hashCode => Object.hash(location, subloc, name, path, fullpath,
-      params, queryParams, queryParametersAll, extra, error, pageKey);
+  int get hashCode => Object.hash(
+      location,
+      matchedLocation,
+      name,
+      path,
+      fullPath,
+      pathParameters,
+      queryParameters,
+      queryParametersAll,
+      extra,
+      error,
+      pageKey);
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.

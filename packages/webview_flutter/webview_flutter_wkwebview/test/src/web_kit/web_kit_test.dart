@@ -441,6 +441,14 @@ void main() {
         ));
       });
 
+      test('limitsNavigationsToAppBoundDomains', () {
+        webViewConfiguration.setLimitsNavigationsToAppBoundDomains(true);
+        verify(mockPlatformHostApi.setLimitsNavigationsToAppBoundDomains(
+          instanceManager.getIdentifier(webViewConfiguration),
+          true,
+        ));
+      });
+
       test('mediaTypesRequiringUserActionForPlayback', () {
         webViewConfiguration.setMediaTypesRequiringUserActionForPlayback(
           <WKAudiovisualMediaType>{
@@ -937,6 +945,74 @@ void main() {
             isA<WKNavigationAction>(),
           ]),
         );
+      });
+
+      test('requestMediaCapturePermission', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WKUIDelegate instance = WKUIDelegate.detached(
+          requestMediaCapturePermission: (
+            WKUIDelegate instance,
+            WKWebView webView,
+            WKSecurityOrigin origin,
+            WKFrameInfo frame,
+            WKMediaCaptureType type,
+          ) async {
+            callbackParameters = <Object?>[
+              instance,
+              webView,
+              origin,
+              frame,
+              type,
+            ];
+            return WKPermissionDecision.grant;
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WKUIDelegateFlutterApiImpl flutterApi =
+            WKUIDelegateFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        final WKWebView webView = WKWebView.detached(
+          instanceManager: instanceManager,
+        );
+        const int webViewIdentifier = 42;
+        instanceManager.addHostCreatedInstance(
+          webView,
+          webViewIdentifier,
+        );
+
+        const WKSecurityOrigin origin =
+            WKSecurityOrigin(host: 'host', port: 12, protocol: 'protocol');
+        const WKFrameInfo frame = WKFrameInfo(isMainFrame: false);
+        const WKMediaCaptureType type = WKMediaCaptureType.microphone;
+
+        flutterApi.requestMediaCapturePermission(
+          instanceIdentifier,
+          webViewIdentifier,
+          WKSecurityOriginData(
+            host: origin.host,
+            port: origin.port,
+            protocol: origin.protocol,
+          ),
+          WKFrameInfoData(isMainFrame: frame.isMainFrame),
+          WKMediaCaptureTypeData(value: type),
+        );
+
+        expect(callbackParameters, <Object>[
+          instance,
+          webView,
+          isA<WKSecurityOrigin>(),
+          isA<WKFrameInfo>(),
+          type,
+        ]);
       });
     });
   });

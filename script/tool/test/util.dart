@@ -30,7 +30,7 @@ export 'package:flutter_plugin_tools/src/common/repository_package.dart';
 // get out of sync with what actually drives excerpting.
 const String kReadmeExcerptConfigPath = 'example/build.excerpt.yaml';
 
-const String _defaultDartConstraint = '>=2.14.0 <3.0.0';
+const String _defaultDartConstraint = '>=2.14.0 <4.0.0';
 const String _defaultFlutterConstraint = '>=2.5.0';
 
 /// Returns the exe name that command will use when running Flutter on
@@ -167,7 +167,8 @@ RepositoryPackage createFakePackage(
       isFlutter: isFlutter,
       version: version,
       flutterConstraint: flutterConstraint,
-      dartConstraint: dartConstraint);
+      dartConstraint: dartConstraint,
+      publishTo: publishTo);
   if (includeCommonFiles) {
     package.changelogFile.writeAsStringSync('''
 ## $version
@@ -363,14 +364,37 @@ Future<List<String>> runCapturingPrint(
   return prints;
 }
 
+/// Information about a process to return from [RecordingProcessRunner].
+class FakeProcessInfo {
+  const FakeProcessInfo(this.process,
+      [this.expectedInitialArgs = const <String>[]]);
+
+  /// The process to return.
+  final io.Process process;
+
+  /// The expected start of the argument array for the call.
+  ///
+  /// This does not have to be a full list of arguments, only enough of the
+  /// start to ensure that the call is as expected.
+  final List<String> expectedInitialArgs;
+}
+
 /// A mock [ProcessRunner] which records process calls.
 class RecordingProcessRunner extends ProcessRunner {
   final List<ProcessCall> recordedCalls = <ProcessCall>[];
 
   /// Maps an executable to a list of processes that should be used for each
   /// successive call to it via [run], [runAndStream], or [start].
-  final Map<String, List<io.Process>> mockProcessesForExecutable =
-      <String, List<io.Process>>{};
+  ///
+  /// If `expectedInitialArgs` are provided for a fake process, trying to
+  /// return that process when the arguments don't match will throw a
+  /// [StateError]. This allows tests to enforce that the fake results are
+  /// for the expected calls when the process name itself isn't enough to tell
+  /// (e.g., multiple different `dart` or `flutter` calls), without going all
+  /// the way to a complex argument matching scheme that can make tests
+  /// difficult to write and debug.
+  final Map<String, List<FakeProcessInfo>> mockProcessesForExecutable =
+      <String, List<FakeProcessInfo>>{};
 
   @override
   Future<int> runAndStream(
@@ -380,7 +404,7 @@ class RecordingProcessRunner extends ProcessRunner {
     bool exitOnError = false,
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
-    final io.Process? processToReturn = _getProcessToReturn(executable);
+    final io.Process? processToReturn = _getProcessToReturn(executable, args);
     final int exitCode =
         processToReturn == null ? 0 : await processToReturn.exitCode;
     if (exitOnError && (exitCode != 0)) {
@@ -402,7 +426,7 @@ class RecordingProcessRunner extends ProcessRunner {
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
 
-    final io.Process? process = _getProcessToReturn(executable);
+    final io.Process? process = _getProcessToReturn(executable, args);
     final List<String>? processStdout =
         await process?.stdout.transform(stdoutEncoding.decoder).toList();
     final String stdout = processStdout?.join() ?? '';
@@ -426,13 +450,22 @@ class RecordingProcessRunner extends ProcessRunner {
       {Directory? workingDirectory}) async {
     recordedCalls.add(ProcessCall(executable, args, workingDirectory?.path));
     return Future<io.Process>.value(
-        _getProcessToReturn(executable) ?? MockProcess());
+        _getProcessToReturn(executable, args) ?? MockProcess());
   }
 
-  io.Process? _getProcessToReturn(String executable) {
-    final List<io.Process>? processes = mockProcessesForExecutable[executable];
-    if (processes != null && processes.isNotEmpty) {
-      return processes.removeAt(0);
+  io.Process? _getProcessToReturn(String executable, List<String> args) {
+    final List<FakeProcessInfo> fakes =
+        mockProcessesForExecutable[executable] ?? <FakeProcessInfo>[];
+    if (fakes.isNotEmpty) {
+      final FakeProcessInfo fake = fakes.removeAt(0);
+      if (args.length < fake.expectedInitialArgs.length ||
+          !listsEqual(args.sublist(0, fake.expectedInitialArgs.length),
+              fake.expectedInitialArgs)) {
+        throw StateError('Next fake process for $executable expects arguments '
+            '[${fake.expectedInitialArgs.join(', ')}] but was called with '
+            'arguments [${args.join(', ')}]');
+      }
+      return fake.process;
     }
     return null;
   }

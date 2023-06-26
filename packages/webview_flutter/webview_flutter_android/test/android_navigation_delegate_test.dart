@@ -5,13 +5,23 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/src/android_webview.dart'
     as android_webview;
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
+import 'android_navigation_delegate_test.mocks.dart';
+import 'test_android_webview.g.dart';
+
+@GenerateMocks(<Type>[TestInstanceManagerHostApi])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
   group('AndroidNavigationDelegate', () {
     test('onPageFinished', () {
       final AndroidNavigationDelegate androidNavigationDelegate =
@@ -437,6 +447,27 @@ void main() {
       expect(completer.isCompleted, true);
     });
   });
+
+  test('onUrlChange', () {
+    final AndroidNavigationDelegate androidNavigationDelegate =
+        AndroidNavigationDelegate(_buildCreationParams());
+
+    late final AndroidUrlChange urlChange;
+    androidNavigationDelegate.setOnUrlChange(
+      (UrlChange change) {
+        urlChange = change as AndroidUrlChange;
+      },
+    );
+
+    CapturingWebViewClient.lastCreatedDelegate.doUpdateVisitedHistory!(
+      android_webview.WebView.detached(),
+      'https://www.google.com',
+      false,
+    );
+
+    expect(urlChange.url, 'https://www.google.com');
+    expect(urlChange.isReload, isFalse);
+  });
 }
 
 AndroidNavigationDelegateCreationParams _buildCreationParams() {
@@ -452,6 +483,7 @@ AndroidNavigationDelegateCreationParams _buildCreationParams() {
 }
 
 // Records the last created instance of itself.
+// ignore: must_be_immutable
 class CapturingWebViewClient extends android_webview.WebViewClient {
   CapturingWebViewClient({
     super.onPageFinished,
@@ -460,6 +492,9 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,
+    super.doUpdateVisitedHistory,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
@@ -480,6 +515,11 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   CapturingWebChromeClient({
     super.onProgressChanged,
     super.onShowFileChooser,
+    super.onGeolocationPermissionsShowPrompt,
+    super.onGeolocationPermissionsHidePrompt,
+    super.onPermissionRequest,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
@@ -491,6 +531,8 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
 class CapturingDownloadListener extends android_webview.DownloadListener {
   CapturingDownloadListener({
     required super.onDownloadStart,
+    super.binaryMessenger,
+    super.instanceManager,
   }) : super.detached() {
     lastCreatedListener = this;
   }

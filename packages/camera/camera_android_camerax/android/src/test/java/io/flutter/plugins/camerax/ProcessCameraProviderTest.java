@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -51,13 +52,13 @@ public class ProcessCameraProviderTest {
 
   @Before
   public void setUp() {
-    testInstanceManager = InstanceManager.open(identifier -> {});
+    testInstanceManager = InstanceManager.create(identifier -> {});
     context = ApplicationProvider.getApplicationContext();
   }
 
   @After
   public void tearDown() {
-    testInstanceManager.close();
+    testInstanceManager.stopFinalizationListener();
   }
 
   @Test
@@ -129,6 +130,21 @@ public class ProcessCameraProviderTest {
         processCameraProviderHostApi.bindToLifecycle(0L, 1L, Arrays.asList(2L)), Long.valueOf(3));
     verify(processCameraProvider)
         .bindToLifecycle(mockLifecycleOwner, mockCameraSelector, mockUseCases);
+  }
+
+  @Test
+  public void isBoundTest() {
+    final ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl =
+        new ProcessCameraProviderHostApiImpl(mockBinaryMessenger, testInstanceManager, context);
+    final UseCase mockUseCase = mock(UseCase.class);
+
+    testInstanceManager.addDartCreatedInstance(processCameraProvider, 0);
+    testInstanceManager.addDartCreatedInstance(mockUseCase, 27);
+
+    when(processCameraProvider.isBound(mockUseCase)).thenReturn(true);
+
+    assertTrue(processCameraProviderHostApiImpl.isBound(0L, 27L));
+    verify(processCameraProvider).isBound(mockUseCase);
   }
 
   @Test

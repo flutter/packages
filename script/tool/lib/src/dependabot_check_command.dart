@@ -33,6 +33,9 @@ class DependabotCheckCommand extends PackageLoopingCommand {
   final String name = 'dependabot-check';
 
   @override
+  List<String> get aliases => <String>['check-dependabot'];
+
+  @override
   final String description =
       'Checks that all packages have Dependabot coverage.';
 

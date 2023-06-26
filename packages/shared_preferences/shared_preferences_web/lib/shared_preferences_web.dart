@@ -18,19 +18,31 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     SharedPreferencesStorePlatform.instance = SharedPreferencesPlugin();
   }
 
+  static const String _defaultPrefix = 'flutter.';
+
   @override
   Future<bool> clear() async {
+    return clearWithPrefix(_defaultPrefix);
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
-    //            "flutter."
-    _storedFlutterKeys.forEach(html.window.localStorage.remove);
+    //            _prefix
+    _getStoredFlutterKeys(prefix).forEach(html.window.localStorage.remove);
     return true;
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
+    return getAllWithPrefix(_defaultPrefix);
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
     final Map<String, Object> allData = <String, Object>{};
-    for (final String key in _storedFlutterKeys) {
+    for (final String key in _getStoredFlutterKeys(prefix)) {
       allData[key] = _decodeValue(html.window.localStorage[key]!);
     }
     return allData;
@@ -38,31 +50,19 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> remove(String key) async {
-    _checkPrefix(key);
     html.window.localStorage.remove(key);
     return true;
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object? value) async {
-    _checkPrefix(key);
     html.window.localStorage[key] = _encodeValue(value);
     return true;
   }
 
-  void _checkPrefix(String key) {
-    if (!key.startsWith('flutter.')) {
-      throw FormatException(
-        'Shared preferences keys must start with prefix "flutter.".',
-        key,
-        0,
-      );
-    }
-  }
-
-  Iterable<String> get _storedFlutterKeys {
+  Iterable<String> _getStoredFlutterKeys(String prefix) {
     return html.window.localStorage.keys
-        .where((String key) => key.startsWith('flutter.'));
+        .where((String key) => key.startsWith(prefix));
   }
 
   String _encodeValue(Object? value) {

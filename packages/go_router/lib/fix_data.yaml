@@ -1,0 +1,161 @@
+# Copyright 2014 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# For details regarding the *Flutter Fix* feature, see
+# https://flutter.dev/docs/development/tools/flutter-fix
+
+# Please add new fixes to the top of the file, separated by one blank line
+# from other fixes. In a comment, include a link to the PR where the change
+# requiring the fix was made.
+
+# Every fix must be tested. See the flutter/packages/flutter/test_fixes/README.md
+# file for instructions on testing these data driven fixes.
+
+# For documentation about this file format, see
+# https://dart.dev/go/data-driven-fixes
+
+version: 1
+transforms:
+  - title: "Replaces 'params' and 'queryParams' in 'GoRouter.replaceNamed' with `pathParameters` and `queryParameters`"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      method: 'replaceNamed'
+      inClass: 'GoRouter'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'params'
+        newName: 'pathParameters'
+      - kind: 'renameParameter'
+        oldName: 'queryParams'
+        newName: 'queryParameters'
+  - title: "Replaces 'params' and 'queryParams' in 'GoRouter.pushReplacementNamed' with `pathParameters` and `queryParameters`"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      method: 'pushReplacementNamed'
+      inClass: 'GoRouter'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'params'
+        newName: 'pathParameters'
+      - kind: 'renameParameter'
+        oldName: 'queryParams'
+        newName: 'queryParameters'
+
+  - title: "Replaces 'params' and 'queryParams' in 'GoRouter.pushNamed' with `pathParameters` and `queryParameters`"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      method: 'pushNamed'
+      inClass: 'GoRouter'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'params'
+        newName: 'pathParameters'
+      - kind: 'renameParameter'
+        oldName: 'queryParams'
+        newName: 'queryParameters'
+
+  - title: "Replaces 'params' and 'queryParams' in 'GoRouter.goNamed' with `pathParameters` and `queryParameters`"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      method: 'goNamed'
+      inClass: 'GoRouter'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'params'
+        newName: 'pathParameters'
+      - kind: 'renameParameter'
+        oldName: 'queryParams'
+        newName: 'queryParameters'
+
+  - title: "Replaces 'params' and 'queryParams' in 'GoRouter.namedLocation' with `pathParameters` and `queryParameters`"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      method: 'namedLocation'
+      inClass: 'GoRouter'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'params'
+        newName: 'pathParameters'
+      - kind: 'renameParameter'
+        oldName: 'queryParams'
+        newName: 'queryParameters'
+
+  - title: "Replaces 'params' and 'queryParams' in 'GoRouterState.namedLocation' with `pathParameters` and `queryParameters`"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      method: 'namedLocation'
+      inClass: 'GoRouterState'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'params'
+        newName: 'pathParameters'
+      - kind: 'renameParameter'
+        oldName: 'queryParams'
+        newName: 'queryParameters'
+
+  - title: "Replaces 'GoRouterState.queryParams' with 'GoRouterState.queryParameters'"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      field: 'queryParams'
+      inClass: 'GoRouterState'
+    changes:
+      - kind: 'rename'
+        newName: 'queryParameters'
+
+  - title: "Replaces 'GoRouterState.fullpath' with 'GoRouterState.fullPath'"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      field: 'fullpath'
+      inClass: 'GoRouterState'
+    changes:
+      - kind: 'rename'
+        newName: 'fullPath'
+
+  - title: "Replaces 'GoRouterState.params' with 'GoRouterState.pathParameters'"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      field: 'params'
+      inClass: 'GoRouterState'
+    changes:
+      - kind: 'rename'
+        newName: 'pathParameters'
+
+  - title: "Replaces 'GoRouterState.subloc' with 'GoRouterState.matchedLocation'"
+    date: 2023-04-24
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      field: 'subloc'
+      inClass: 'GoRouterState'
+    changes:
+      - kind: 'rename'
+        newName: 'matchedLocation'

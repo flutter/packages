@@ -34,12 +34,12 @@ Then you will have access to the native class `FWFWebViewFlutterWKWebViewExterna
 This package uses [pigeon][3] to generate the communication layer between Flutter and the host
 platform (iOS). The communication interface is defined in the `pigeons/web_kit.dart`
 file. After editing the communication interface regenerate the communication layer by running
-`flutter pub run pigeon --input pigeons/web_kit.dart`.
+`dart run pigeon --input pigeons/web_kit.dart`.
 
 Besides [pigeon][3] this package also uses [mockito][4] to generate mock objects for testing
 purposes. To generate the mock objects run the following command:
 ```bash
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 If you would like to contribute to the plugin, check out our [contribution guide][5].

@@ -12,9 +12,12 @@ import 'package:mockito/mockito.dart';
 import 'preview_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestPreviewHostApi])
+@GenerateMocks(<Type>[TestInstanceManagerHostApi, TestPreviewHostApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('Preview', () {
     tearDown(() => TestPreviewHostApi.setup(null));
@@ -89,7 +92,7 @@ void main() {
     });
 
     test(
-        'releaseFlutterSurfaceTexture makes call to relase flutter surface texture entry',
+        'releaseFlutterSurfaceTexture makes call to release flutter surface texture entry',
         () async {
       final MockTestPreviewHostApi mockApi = MockTestPreviewHostApi();
       TestPreviewHostApi.setup(mockApi);

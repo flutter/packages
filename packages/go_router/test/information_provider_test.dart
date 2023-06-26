@@ -6,25 +6,31 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/information_provider.dart';
 
-const RouteInformation initialRoute = RouteInformation(location: '/');
-const RouteInformation newRoute = RouteInformation(location: '/new');
+const String initialRoute = '/';
+const String newRoute = '/new';
 
 void main() {
   group('GoRouteInformationProvider', () {
     testWidgets('notifies its listeners when set by the app',
         (WidgetTester tester) async {
       late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(initialRouteInformation: initialRoute);
+          GoRouteInformationProvider(
+              initialLocation: initialRoute, initialExtra: null);
       provider.addListener(expectAsync0(() {}));
-      provider.value = newRoute;
+      provider.go(newRoute);
     });
 
     testWidgets('notifies its listeners when set by the platform',
         (WidgetTester tester) async {
       late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(initialRouteInformation: initialRoute);
+          GoRouteInformationProvider(
+              initialLocation: initialRoute, initialExtra: null);
       provider.addListener(expectAsync0(() {}));
-      provider.didPushRouteInformation(newRoute);
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore_for_file: deprecated_member_use
+      provider
+          .didPushRouteInformation(const RouteInformation(location: newRoute));
     });
   });
 }
