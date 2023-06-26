@@ -94,7 +94,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> clearCache() async {}
 
   @override
-  Future<bool?> isCachingSupportedForNetworkMedia(String url) async => false;
+  Future<bool?> isCacheSupportedForNetworkMedia(String url) async => false;
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
