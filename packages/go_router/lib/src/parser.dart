@@ -98,6 +98,14 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       if (matchList.isError && onParserException != null) {
         return onParserException!(context, matchList);
       }
+
+      assert(() {
+        if (matchList.isNotEmpty) {
+          assert(!(matchList.last.route as GoRoute).redirectOnly,
+              'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
+        }
+        return true;
+      }());
       return _updateRouteMatchList(
         matchList,
         baseRouteMatchList: state.baseRouteMatchList,
