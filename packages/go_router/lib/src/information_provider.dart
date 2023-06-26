@@ -133,6 +133,14 @@ class GoRouteInformationProvider extends RouteInformationProvider
   RouteInformation get value => _value;
   RouteInformation _value;
 
+  @override
+  // TODO(chunhtai): remove this ignore once package minimum dart version is
+  // above 3.
+  // ignore: unnecessary_overrides
+  void notifyListeners() {
+    super.notifyListeners();
+  }
+
   void _setValue(String location, Object state) {
     final bool shouldNotify =
         _value.location != location || _value.state != state;
