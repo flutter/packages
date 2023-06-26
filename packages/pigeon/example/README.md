@@ -136,17 +136,17 @@ private class PigeonApiImplementation: ExampleHostApi {
 
   func add(a: Int64, b: Int64) throws -> Int64 {
     if (a < 0 || b < 0) {
-      throw FlutterError("code", "message", "details");
+      throw FlutterError(code: "code", message: "message", details: "details");
     }
     return a + b
   }
 
   func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
     if (message.code == Code.one) {
-      completion(Result(false, FlutterError("code", "message", "details")))
+      completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
       return
     }
-    completion(Result(true, nil))
+    completion(.success(true))
   }
 }
 ```
@@ -159,14 +159,14 @@ private class PigeonApiImplementation: ExampleHostApi {
     return "Kotlin"
   }
 
-  fun add(a: Long, b: Long): Long {
+  override fun add(a: Long, b: Long): Long {
     if (a < 0L || b < 0L) {
       throw FlutterError("code", "message", "details");
     }
     return a + b
   }
 
-  fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
+  override fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
     if (message.code == Code.ONE) {
       callback(Result.failure(FlutterError("code", "message", "details")))
       return
@@ -245,8 +245,8 @@ private class PigeonFlutterApi {
     flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
   }
 
-  func callFlutterMethod(String: aString) {
-    flutterAPI.flutterMethod(aString) {
+  func callFlutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    flutterAPI.flutterMethod(aString: aStringArg) {
       completion(.success($0))
     }
   }
@@ -261,12 +261,12 @@ private class PigeonFlutterApi {
 
   var flutterApi: MessageFlutterApi? = null
 
-  fun init(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+  constructor(binding: FlutterPlugin.FlutterPluginBinding) {
     flutterApi = MessageFlutterApi(binding.getBinaryMessenger())
   }
 
-  fun callFlutterMethod(aString: String) {
-    flutterAPI!!.flutterMethod(aString) {
+  fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
+    flutterApi!!.flutterMethod(aString) {
       echo -> callback(Result.success(echo))
     }
   }
