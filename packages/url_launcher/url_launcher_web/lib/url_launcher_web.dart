@@ -36,11 +36,14 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   /// A constructor that allows tests to override the window object used by the plugin.
   UrlLauncherPlugin({@visibleForTesting html.Window? debugWindow})
       : _window = debugWindow ?? html.window {
-    _isSafari = _isNavigatorSafari(_window.navigator);
+    isSafari = _isNavigatorSafari(_window.navigator);
   }
 
   final html.Window _window;
-  bool _isSafari = false;
+
+  /// Flag that allows for special behavior on Safari.
+  @visibleForTesting
+  late bool isSafari;
 
   // The set of schemes that can be handled by the plugin
   static final Set<String> _supportedSchemes = <String>{
@@ -68,7 +71,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
     // We need to open mailto, tel and sms urls on the _top window context on safari browsers.
     // See https://github.com/flutter/flutter/issues/51461 for reference.
     final String target = webOnlyWindowName ??
-        ((_isSafari && _isSafariTargetTopScheme(url)) ? '_top' : '');
+        ((isSafari && _isSafariTargetTopScheme(url)) ? '_top' : '');
     // ignore: unsafe_html
     return _window.open(url, target);
   }

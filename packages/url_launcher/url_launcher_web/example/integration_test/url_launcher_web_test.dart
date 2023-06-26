@@ -36,6 +36,10 @@ void main() {
       plugin = UrlLauncherPlugin(debugWindow: mockWindow);
     });
 
+    testWidgets('Not-Safari detected as such.', (WidgetTester _) async {
+      expect(plugin.isSafari, isFalse);
+    });
+
     group('canLaunch', () {
       testWidgets('"http" URLs -> true', (WidgetTester _) async {
         expect(plugin.canLaunch('http://google.com'), completion(isTrue));
@@ -153,6 +157,10 @@ void main() {
               '5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15');
           // Recreate the plugin, so it grabs the overrides from this group
           plugin = UrlLauncherPlugin(debugWindow: mockWindow);
+        });
+
+        testWidgets('should be detected', (WidgetTester _) async {
+          expect(plugin.isSafari, isTrue);
         });
 
         testWidgets('http urls should be launched in a new window',
