@@ -89,13 +89,9 @@ void main() {
       });
     } // end of for-loop
 
-    test('getDownloadsPath fails', () async {
-      try {
-        await pathProvider.getDownloadsPath();
-        fail('should throw UnsupportedError');
-      } catch (e) {
-        expect(e, isUnsupportedError);
-      }
+    test('getDownloadsPath succeeds', () async {
+      final String? path = await pathProvider.getDownloadsPath();
+      expect(path, kExternalStoragePaths);
     });
   });
 }

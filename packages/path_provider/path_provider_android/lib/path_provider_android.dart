@@ -81,7 +81,9 @@ class PathProviderAndroid extends PathProviderPlatform {
   }
 
   @override
-  Future<String?> getDownloadsPath() {
-    throw UnsupportedError('getDownloadsPath is not supported on Android');
+  Future<String?> getDownloadsPath() async {
+    final List<String>? paths =
+        await getExternalStoragePaths(type: StorageDirectory.downloads);
+    return paths?.first;
   }
 }
