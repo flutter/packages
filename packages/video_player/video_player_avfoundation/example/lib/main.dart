@@ -207,12 +207,6 @@ class _BumbleBeeEncryptedLiveStreamState
                   )
                 : const Text('loading...'),
           ),
-          TextButton(
-            onPressed: () {
-              _controller.clearCache();
-            },
-            child: const Text('Clear cache'),
-          )
         ],
       ),
     );
