@@ -25,7 +25,8 @@ bool _isSafariTargetTopScheme(String url) =>
 
 bool _isNavigatorSafari(html.Navigator navigator) {
   // Check for values specific to Safari.
-  return navigator.vendor.contains('Apple') && navigator.appVersion.contains('Version');
+  return navigator.vendor.contains('Apple') &&
+      navigator.appVersion.contains('Version');
 }
 
 /// The web implementation of [UrlLauncherPlatform].
