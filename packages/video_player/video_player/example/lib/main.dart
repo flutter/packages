@@ -214,6 +214,11 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
         fileContents); // For vtt files, use WebVTTCaptionFile
   }
 
+  final String supportedNetworkMediaUrl =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
+  final String noSupportedNetworkMediaUrl =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.m3u8';
+
   @override
   void initState() {
     super.initState();
@@ -259,6 +264,24 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
+          TextButton(
+            onPressed: () {
+              _controller.clearCache();
+            },
+            child: Text('Clear cache'),
+          ),
+          TextButton(
+            onPressed: () {
+              _controller
+                  .isCachingSupportedForNetworkMedia(supportedNetworkMediaUrl)
+                  .then((bool? value) => {
+                        print(value ?? false
+                            ? 'Caching is supported for mime type'
+                            : 'Caching is not supported for mime type')
+                      });
+            },
+            child: Text('Can cache'),
+          )
         ],
       ),
     );
