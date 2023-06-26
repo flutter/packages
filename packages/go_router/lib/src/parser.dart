@@ -14,16 +14,35 @@ import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
 
+/// The function signature of [GoRouteInformationParser.onParserException].
+///
+/// The `routeMatchList` parameter contains the exception explains the issue
+/// occurred.
+///
+/// The returned [RouteMatchList] is used as parsed result for the
+/// [GoRouterDelegate].
+typedef ParserExceptionHandler = RouteMatchList Function(
+  BuildContext context,
+  RouteMatchList routeMatchList,
+);
+
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 /// Also performs redirection using [RouteRedirector].
 class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Creates a [GoRouteInformationParser].
   GoRouteInformationParser({
     required this.configuration,
+    required this.onParserException,
   }) : _routeMatchListCodec = RouteMatchListCodec(configuration);
 
   /// The route configuration used for parsing [RouteInformation]s.
   final RouteConfiguration configuration;
+
+  /// The exception handler that is called when parser can't handle the incoming
+  /// uri.
+  ///
+  /// This method must return a [RouteMatchList] for the parsed result.
+  final ParserExceptionHandler? onParserException;
 
   final RouteMatchListCodec _routeMatchListCodec;
 
@@ -50,7 +69,13 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // the state.
       final RouteMatchList matchList =
           _routeMatchListCodec.decode(state as Map<Object?, Object?>);
-      return debugParserFuture = _redirect(context, matchList);
+      return debugParserFuture = _redirect(context, matchList)
+          .then<RouteMatchList>((RouteMatchList value) {
+        if (value.isError && onParserException != null) {
+          return onParserException!(context, value);
+        }
+        return value;
+      });
     }
 
     late final RouteMatchList initialMatches;
@@ -70,6 +95,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       context,
       initialMatches,
     ).then<RouteMatchList>((RouteMatchList matchList) {
+      if (matchList.isError && onParserException != null) {
+        return onParserException!(context, matchList);
+      }
       return _updateRouteMatchList(
         matchList,
         baseRouteMatchList: state.baseRouteMatchList,

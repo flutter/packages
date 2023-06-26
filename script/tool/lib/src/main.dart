@@ -13,6 +13,7 @@ import 'build_examples_command.dart';
 import 'common/core.dart';
 import 'create_all_packages_app_command.dart';
 import 'custom_test_command.dart';
+import 'dart_test_command.dart';
 import 'dependabot_check_command.dart';
 import 'drive_examples_command.dart';
 import 'federation_safety_check_command.dart';
@@ -31,7 +32,6 @@ import 'publish_command.dart';
 import 'pubspec_check_command.dart';
 import 'readme_check_command.dart';
 import 'remove_dev_dependencies_command.dart';
-import 'test_command.dart';
 import 'update_dependency_command.dart';
 import 'update_excerpts_command.dart';
 import 'update_min_sdk_command.dart';
@@ -80,7 +80,7 @@ void main(List<String> args) {
     ..addCommand(PubspecCheckCommand(packagesDir))
     ..addCommand(ReadmeCheckCommand(packagesDir))
     ..addCommand(RemoveDevDependenciesCommand(packagesDir))
-    ..addCommand(TestCommand(packagesDir))
+    ..addCommand(DartTestCommand(packagesDir))
     ..addCommand(UpdateDependencyCommand(packagesDir))
     ..addCommand(UpdateExcerptsCommand(packagesDir))
     ..addCommand(UpdateMinSdkCommand(packagesDir))
