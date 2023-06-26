@@ -110,11 +110,6 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late MiniController _controller;
 
-  final String supportedNetworkMediaUrl =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
-  final String noSupportedNetworkMediaUrl =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.m3u8';
-
   @override
   void initState() {
     super.initState();
@@ -163,7 +158,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
           ),
           TextButton(
             onPressed: () {
-              _controller.isCachingSupportedForNetworkMedia(
+              _controller.isCacheSupportedForNetworkMedia(
                   'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
             },
             child: const Text('Can cache'),
