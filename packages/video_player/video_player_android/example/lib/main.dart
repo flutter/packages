@@ -114,8 +114,10 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   void initState() {
     super.initState();
     _controller = MiniController.network(
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-    );
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+        maxCacheSize: 100 * 1024 * 1024, //100mb
+        maxFileSize: 10 * 1024 * 1024 //10mb
+        );
 
     _controller.addListener(() {
       setState(() {});
@@ -150,6 +152,12 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
+          TextButton(
+            onPressed: () {
+              _controller.clearCache();
+            },
+            child: Text('Clear cache'),
+          )
         ],
       ),
     );

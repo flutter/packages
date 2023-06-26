@@ -87,6 +87,13 @@ void main() {
       expect(VideoPlayerPlatform.instance.dispose(await textureId), completes);
     });
 
+    testWidgets('can clear cache', (WidgetTester tester) async {
+      expect(
+        VideoPlayerPlatform.instance.clearCache(await textureId, true),
+        completes,
+      );
+    });
+
     testWidgets('can set looping', (WidgetTester tester) async {
       expect(
         VideoPlayerPlatform.instance.setLooping(await textureId, true),

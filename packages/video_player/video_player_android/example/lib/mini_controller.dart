@@ -167,19 +167,20 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  MiniController.asset(this.dataSource, {this.package})
+  MiniController.asset(this.dataSource,
+      {this.package, this.maxCacheSize, this.maxFileSize})
       : dataSourceType = DataSourceType.asset,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
+  MiniController.network(this.dataSource, {this.maxCacheSize, this.maxFileSize})
       : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from a file.
-  MiniController.file(File file)
+  MiniController.file(File file, {this.maxCacheSize, this.maxFileSize})
       : dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
@@ -195,6 +196,12 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
+
+  /// Only set for [network] videos.
+  final int? maxCacheSize;
+
+  /// Only set for [network] videos.
+  final int? maxFileSize;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -227,6 +234,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
           uri: dataSource,
+          maxCacheSize: maxCacheSize,
+          maxFileSize: maxFileSize,
         );
         break;
       case DataSourceType.file:
@@ -313,6 +322,12 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// Clears the cache.
+  Future<void> clearCache() async {
+    value = value.copyWith(isPlaying: true);
+    await _applyClearCache();
+  }
+
   /// Pauses the video.
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
@@ -338,6 +353,10 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     } else {
       await _platform.pause(_textureId);
     }
+  }
+
+  Future<void> _applyClearCache() async {
+    await _platform.clearCache(_textureId, true);
   }
 
   Future<void> _applyPlaybackSpeed() async {

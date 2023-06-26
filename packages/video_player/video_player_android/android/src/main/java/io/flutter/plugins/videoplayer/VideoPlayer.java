@@ -31,6 +31,7 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
@@ -82,6 +83,13 @@ final class VideoPlayer {
     buildHttpDataSourceFactory(httpHeaders);
     DataSource.Factory dataSourceFactory =
         new DefaultDataSource.Factory(context, httpDataSourceFactory);
+
+    if (options.maxCacheSize != null && options.maxCacheSize > 0 && options.maxFileSize != null && options.maxFileSize > 0) {
+      Log.d("Timo", "caching enabled");
+      dataSourceFactory =
+              new CacheDataSourceFactory(context, options.maxCacheSize, options.maxFileSize, dataSourceFactory);
+    }
+  
 
     MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint);
 
@@ -261,6 +269,14 @@ final class VideoPlayer {
 
   void play() {
     exoPlayer.setPlayWhenReady(true);
+  }
+
+  void setMaxCacheSize(Long value) {
+    options.maxCacheSize = value;
+  }
+
+  void setMaxFileSize(Long value) {
+    options.maxFileSize = value;
   }
 
   void pause() {

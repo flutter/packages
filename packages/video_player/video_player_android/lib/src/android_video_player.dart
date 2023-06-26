@@ -36,6 +36,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     String? packageName;
     String? uri;
     String? formatHint;
+    int? maxCacheSize;
+    int? maxFileSize;
+
     Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
@@ -44,6 +47,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         break;
       case DataSourceType.network:
         uri = dataSource.uri;
+        maxCacheSize = dataSource.maxCacheSize;
+        maxFileSize = dataSource.maxFileSize;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
         break;
@@ -59,6 +64,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       asset: asset,
       packageName: packageName,
       uri: uri,
+      maxCacheSize: maxCacheSize,
+      maxFileSize: maxFileSize,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
     );
@@ -72,6 +79,14 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _api.setLooping(LoopingMessage(
       textureId: textureId,
       isLooping: looping,
+    ));
+  }
+
+  @override
+  Future<void> clearCache(int textureId, bool clear) {
+    return _api.clearCache(ClearCacheMessage(
+      textureId: textureId,
+      clear: clear,
     ));
   }
 

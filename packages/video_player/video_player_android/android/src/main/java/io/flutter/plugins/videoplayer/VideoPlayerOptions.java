@@ -6,4 +6,6 @@ package io.flutter.plugins.videoplayer;
 
 class VideoPlayerOptions {
   public boolean mixWithOthers;
+  public Long maxCacheSize;
+  public Long maxFileSize;
 }

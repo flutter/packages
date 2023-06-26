@@ -19,6 +19,11 @@ class TextureMessage {
   int textureId;
 }
 
+class CacheMessage {
+  CacheMessage(this.can);
+  bool can;
+}
+
 class LoopingMessage {
   LoopingMessage(this.textureId, this.isLooping);
   int textureId;
@@ -29,6 +34,12 @@ class VolumeMessage {
   VolumeMessage(this.textureId, this.volume);
   int textureId;
   double volume;
+}
+
+class ClearCacheMessage {
+  ClearCacheMessage(this.textureId, this.clear);
+  int textureId;
+  bool clear;
 }
 
 class PlaybackSpeedMessage {
@@ -44,11 +55,12 @@ class PositionMessage {
 }
 
 class CreateMessage {
-  CreateMessage({required this.httpHeaders});
+  CreateMessage({required this.httpHeaders, required this.cache});
   String? asset;
   String? uri;
   String? packageName;
   String? formatHint;
+  bool cache;
   Map<String?, String?> httpHeaders;
 }
 
@@ -67,6 +79,8 @@ abstract class AVFoundationVideoPlayerApi {
   void dispose(TextureMessage msg);
   @ObjCSelector('setLooping:')
   void setLooping(LoopingMessage msg);
+  @ObjCSelector('clearCache:')
+  void clearCache(ClearCacheMessage msg);
   @ObjCSelector('setVolume:')
   void setVolume(VolumeMessage msg);
   @ObjCSelector('setPlaybackSpeed:')
