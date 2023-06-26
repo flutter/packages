@@ -1,3 +1,7 @@
+## 2.0.18
+
+* Replaces nested third_party directory used for Safari detection with inline check.
+
 ## 2.0.17
 
 * Removes obsolete null checks on non-nullable values.
