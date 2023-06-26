@@ -173,7 +173,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
+  MiniController.network(this.dataSource, {this.cache})
       : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -195,6 +195,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
+
+  /// Adds cache to the video player. Video will be cached. Cache can be cleared manually.
+  bool? cache;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -226,6 +229,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       case DataSourceType.network:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
+          cache: cache,
           uri: dataSource,
         );
         break;
@@ -313,6 +317,11 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// Clears the cache of the video.
+  void clearCache() {
+    _applyClearCache();
+  }
+
   /// Pauses the video.
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
@@ -347,6 +356,10 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         value.playbackSpeed,
       );
     }
+  }
+
+  void _applyClearCache() {
+    _platform.clearCache(textureId, true);
   }
 
   /// The position in the current video.
