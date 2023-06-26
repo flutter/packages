@@ -1,4 +1,4 @@
-## 0.6.0+10
+## 0.5.1
 
 * Use padding from newLatLngBounds. Issue [#122192](https://github.com/flutter/flutter/issues/122192)
 
