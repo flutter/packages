@@ -239,13 +239,8 @@ NS_INLINE UIViewController *rootViewController(void) {
     if (cacheEnabled.boolValue) {
         VIResourceLoaderManager *resourceLoaderManager = [VIResourceLoaderManager new];
         self.resourceLoaderManager = resourceLoaderManager;
-        
         item = [resourceLoaderManager playerItemWithURL:url];
-        
         VICacheConfiguration *configuration = [VICacheManager cacheConfigurationForURL:url];
-        if (configuration.progress >= 1.0) {
-            NSLog(@"cache completed");
-        }
      } else {
          AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
          item = [AVPlayerItem playerItemWithAsset:urlAsset];
@@ -679,11 +674,10 @@ NS_INLINE UIViewController *rootViewController(void) {
 - (BOOL) isCacheSupported: (NSString *) path {
     NSString *mimeType = [self mimeTypeForFileAtPath:path];
     NSArray *supportedMimetypes = @[@"video/mp4",@"audio/flac"];
-    NSLog(@"%@",mimeType);
     if ([supportedMimetypes containsObject:mimeType]) {
         return YES;
     } else {
-        return false;
+        return NO;
     }
 }
 
