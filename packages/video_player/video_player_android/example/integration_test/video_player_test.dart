@@ -90,7 +90,7 @@ void main() {
       await controller.initialize();
 
       final bool? isSupported =
-          await controller.isCachingSupportedForNetworkMedia('www.video.mp4');
+          await controller.isCacheSupportedForNetworkMedia('www.video.mp4');
 
       expect(isSupported, true);
     });
