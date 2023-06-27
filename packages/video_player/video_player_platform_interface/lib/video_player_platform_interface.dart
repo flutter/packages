@@ -85,7 +85,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Clears the cached videos.
-  Future<void> clearCache(int textureId, bool clear) {
+  Future<void> clearCache(int textureId) {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 
