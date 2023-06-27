@@ -16,7 +16,7 @@ public class VideoCache {
   private static SimpleCache sDownloadCache;
 
   @NonNull
-  public static SimpleCache getInstance(Context context, long maxCacheSize) {
+  public static SimpleCache getInstance(@NonNull Context context, long maxCacheSize) {
     DatabaseProvider databaseProvider = new StandaloneDatabaseProvider(context);
 
     if (sDownloadCache == null)
