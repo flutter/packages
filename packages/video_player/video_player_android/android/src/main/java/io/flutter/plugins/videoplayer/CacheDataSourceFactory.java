@@ -1,6 +1,9 @@
 package io.flutter.plugins.videoplayer;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
@@ -24,7 +27,7 @@ public class CacheDataSourceFactory implements DataSource.Factory {
   }
 
   @Override
-  public DataSource createDataSource() {
+  public @NonNull DataSource createDataSource() {
 
     if (downloadCache == null) {
       downloadCache = VideoCache.getInstance(context, maxCacheSize);

@@ -1,6 +1,10 @@
 package io.flutter.plugins.videoplayer;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.database.DatabaseProvider;
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
@@ -11,7 +15,7 @@ public class VideoCache {
   private static final String cacheFolder = "exoCache";
   private static SimpleCache sDownloadCache;
 
-  public static SimpleCache getInstance(Context context, long maxCacheSize) {
+  public @NonNull static SimpleCache getInstance(Context context, long maxCacheSize) {
     DatabaseProvider databaseProvider = new StandaloneDatabaseProvider(context);
 
     if (sDownloadCache == null)
@@ -23,7 +27,8 @@ public class VideoCache {
     return sDownloadCache;
   }
 
-  public static void clearVideoCache(Context context) {
+  public @Nullable
+  static void clearVideoCache(Context context) {
     try {
       File dir = new File(context.getCacheDir(), cacheFolder);
       deleteDir(dir);
@@ -32,7 +37,8 @@ public class VideoCache {
     }
   }
 
-  public static boolean deleteDir(File dir) {
+  @NonNull
+  private static boolean deleteDir(File dir) {
     if (dir != null && dir.isDirectory()) {
       String[] children = dir.list();
       for (int i = 0; i < children.length; i++) {
