@@ -79,7 +79,7 @@ class FakePlatformViewsController {
       case 'create':
         return Future<int>.value(1);
       default:
-        return Future<dynamic>.value(null);
+        return Future<dynamic>.value();
     }
   }
 }
