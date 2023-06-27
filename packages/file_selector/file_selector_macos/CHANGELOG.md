@@ -1,3 +1,8 @@
+## 0.9.3
+
+* Adds `getSaveLocation` and deprecates `getSavePath`.
+* Updates minimum supported macOS version to 10.14.
+
 ## 0.9.2
 
 * Adds support for MIME types on macOS 11+.

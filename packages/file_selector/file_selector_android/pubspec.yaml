@@ -1,0 +1,31 @@
+name: file_selector_android
+description: Android implementation of the file_selector package.
+repository: https://github.com/flutter/packages/tree/main/packages/file_selector/file_selector_android
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+file_selector%22
+version: 0.5.0
+
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
+
+flutter:
+  plugin:
+    implements: file_selector
+    platforms:
+      android:
+        dartPluginClass: FileSelectorAndroid
+        package: dev.flutter.packages.file_selector_android
+        pluginClass: FileSelectorAndroidPlugin
+
+dependencies:
+  file_selector_platform_interface: ^2.5.0
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+
+dev_dependencies:
+  build_runner: ^2.1.4
+  flutter_test:
+    sdk: flutter
+  mockito: 5.4.1
+  pigeon: ^9.2.4

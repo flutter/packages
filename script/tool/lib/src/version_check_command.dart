@@ -172,6 +172,9 @@ class VersionCheckCommand extends PackageLoopingCommand {
   final String name = 'version-check';
 
   @override
+  List<String> get aliases => <String>['check-version'];
+
+  @override
   final String description =
       'Checks if the versions of packages have been incremented per pub specification.\n'
       'Also checks if the latest version in CHANGELOG matches the version in pubspec.\n\n'

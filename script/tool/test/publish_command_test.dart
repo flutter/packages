@@ -14,7 +14,6 @@ import 'package:flutter_plugin_tools/src/publish_command.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'common/package_command_test.mocks.dart';
@@ -22,8 +21,6 @@ import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  final String flutterCommand = getFlutterCommand(const LocalPlatform());
-
   late MockPlatform platform;
   late Directory packagesDir;
   late MockGitDir gitDir;
@@ -149,8 +146,7 @@ void main() {
       createFakePlugin('plugin1', packagesDir, examples: <String>[]);
       createFakePlugin('plugin2', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] =
-          <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(
             MockProcess(
                 stdout: 'Foo',
@@ -206,7 +202,7 @@ void main() {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              flutterCommand,
+              'flutter',
               const <String>['pub', 'publish', '--dry-run', '--server=bar'],
               plugin.path)));
     });
@@ -229,7 +225,7 @@ void main() {
       expect(
           processRunner.recordedCalls,
           contains(ProcessCall(
-              flutterCommand,
+              'flutter',
               const <String>['pub', 'publish', '--server=bar', '--force'],
               plugin.path)));
     });
@@ -253,11 +249,11 @@ void main() {
           processRunner.recordedCalls,
           containsAllInOrder(<ProcessCall>[
             ProcessCall(
-                flutterCommand,
+                'flutter',
                 const <String>['pub', 'publish', '--server=bar', '--force'],
                 plugin1.path),
             ProcessCall(
-                flutterCommand,
+                'flutter',
                 const <String>['pub', 'publish', '--server=bar', '--force'],
                 plugin2.path),
           ]));
@@ -285,8 +281,7 @@ void main() {
     test('throws if pub publish fails', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] =
-          <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 128), <String>['pub', 'publish'])
       ];
 
@@ -371,8 +366,7 @@ void main() {
     test('only if publishing succeeded', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable[flutterCommand] =
-          <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 128), <String>['pub', 'publish']),
       ];
 
@@ -954,7 +948,7 @@ class TestProcessRunner extends RecordingProcessRunner {
       {Directory? workingDirectory}) async {
     final io.Process process =
         await super.start(executable, args, workingDirectory: workingDirectory);
-    if (executable == getFlutterCommand(const LocalPlatform()) &&
+    if (executable == 'flutter' &&
         args.isNotEmpty &&
         args[0] == 'pub' &&
         args[1] == 'publish') {

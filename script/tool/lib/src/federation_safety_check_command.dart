@@ -53,6 +53,9 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
   final String name = 'federation-safety-check';
 
   @override
+  List<String> get aliases => <String>['check-federation-safety'];
+
+  @override
   final String description =
       'Checks that the change does not violate repository rules around changes '
       'to federated plugin packages.';
@@ -85,7 +88,8 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
         packageName = relativeComponents.removeAt(0);
       }
 
-      if (relativeComponents.last.endsWith('.dart')) {
+      if (relativeComponents.last.endsWith('.dart') &&
+          !await _changeIsCommentOnly(gitVersionFinder, path)) {
         _changedDartFiles[packageName] ??= <String>[];
         _changedDartFiles[packageName]!
             .add(p.posix.joinAll(relativeComponents));
@@ -195,5 +199,29 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       return true;
     }
     return pubspec.version != previousVersion;
+  }
+
+  Future<bool> _changeIsCommentOnly(
+      GitVersionFinder git, String repoPath) async {
+    final List<String> diff = await git.getDiffContents(targetPath: repoPath);
+    final RegExp changeLine = RegExp(r'^[+-] ');
+    // This will not catch /**/-style comments, but false negatives are fine
+    // (and in practice, we almost never use that comment style in Dart code).
+    final RegExp commentLine = RegExp(r'^[+-]\s*//');
+    bool foundComment = false;
+    for (final String line in diff) {
+      if (!changeLine.hasMatch(line) ||
+          line.startsWith('--- ') ||
+          line.startsWith('+++ ')) {
+        continue;
+      }
+      if (!commentLine.hasMatch(line)) {
+        return false;
+      }
+      foundComment = true;
+    }
+    // Only return true if a comment change was found, as a fail-safe against
+    // against having the wrong (e.g., incorrectly empty) diff output.
+    return foundComment;
   }
 }

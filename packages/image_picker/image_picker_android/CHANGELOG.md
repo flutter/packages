@@ -1,3 +1,43 @@
+## 0.8.7+3
+
+* Bumps androidx.activity:activity from 1.7.1 to 1.7.2.
+
+## 0.8.7+2
+
+* Fixes a crash case when picking an image with a display name that does not contain a period.
+
+## 0.8.7+1
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.21 to 1.8.22.
+
+## 0.8.7
+
+* Adds `getMedia` method.
+
+## 0.8.6+20
+
+* Bumps androidx.activity:activity from 1.7.0 to 1.7.1.
+
+## 0.8.6+19
+
+* Bumps androidx.core:core from 1.9.0 to 1.10.1.
+
+## 0.8.6+18
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.10 to 1.8.21.
+
+## 0.8.6+17
+
+* Moves disk accesses to background thread.
+
+## 0.8.6+16
+
+* Fixes crashes caused by `SecurityException` when calling `getPathFromUri()`.
+
+## 0.8.6+15
+
+* Bumps androidx.activity:activity from 1.6.1 to 1.7.0.
+
 ## 0.8.6+14
 
 * Fixes Java warnings.
