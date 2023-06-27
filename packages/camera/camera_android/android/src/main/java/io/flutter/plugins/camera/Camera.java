@@ -419,9 +419,11 @@ class Camera
       // except the surface used for still capture as this should
       // not be part of a repeating request.
       for (Surface surface : remainingSurfaces) {
+        Log.e("CAMILLE", "OK 1");
         if (surface == pictureImageReader.getSurface()) {
           continue;
         }
+        Log.e("CAMILLE", "OK 2");
         previewRequestBuilder.addTarget(surface);
       }
     }
