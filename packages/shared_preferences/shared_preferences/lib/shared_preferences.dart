@@ -182,6 +182,7 @@ class SharedPreferences {
     _preferenceCache.clear();
     if (_prefixHasBeenChanged) {
       try {
+        // ignore: deprecated_member_use
         return _store.clearWithPrefix(_prefix);
       } catch (e) {
         // Catching and clarifying UnimplementedError to provide a more robust message.
@@ -213,6 +214,7 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
     final Map<String, Object> fromSystem = <String, Object>{};
     if (_prefixHasBeenChanged) {
       try {
+        // ignore: deprecated_member_use
         fromSystem.addAll(await _store.getAllWithPrefix(_prefix));
       } catch (e) {
         // Catching and clarifying UnimplementedError to provide a more robust message.
