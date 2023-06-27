@@ -111,7 +111,7 @@ void main() {
     await finished2;
   }, skip: credentialsJson == null);
 
-  test('GcsLock attempts to unlock again on a 504 failure', () async {
+  test('GcsLock attempts to unlock again on a DetailedApiRequestError', () async {
     fakeAsync((FakeAsync fakeAsync) {
       final StorageApi mockStorageApi = MockStorageApi();
       final ObjectsResource mockObjectsResource = MockObjectsResource();
@@ -143,20 +143,5 @@ void main() {
       verify(mockObjectsResource.delete(kTestBucketName, lockFileName))
           .called(1);
     });
-  });
-
-  test('GcsLock attempts fails to unlock on a non-504 failure', () async {
-    final StorageApi mockStorageApi = MockStorageApi();
-    final ObjectsResource mockObjectsResource = MockObjectsResource();
-    final GcsLock gcsLock = GcsLock(mockStorageApi, kTestBucketName);
-    const String lockFileName = 'test.lock';
-    when(mockStorageApi.objects).thenReturn(mockObjectsResource);
-
-    // Simulate a failure to delete a lock file.
-    when(mockObjectsResource.delete(kTestBucketName, lockFileName))
-        .thenThrow(DetailedApiRequestError(403, ''));
-
-    expect(
-        () => gcsLock.protectedRun(lockFileName, () async {}), throwsException);
   });
 }

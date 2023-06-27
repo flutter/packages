@@ -78,14 +78,14 @@ class GcsLock {
   Future<void> _unlock(String lockFileName) async {
     Duration waitPeriod = const Duration(milliseconds: 10);
     bool unlocked = false;
-    // Retry in the case of GCS returning a 504 timeout, but rethrow if unable
+    // Retry in the case of GCS returning an API error, but rethrow if unable
     // to unlock after a certain period of time.
     while (!unlocked) {
       try {
         await _api.objects.delete(_bucketName, lockFileName);
         unlocked = true;
       } on DetailedApiRequestError catch (e) {
-        if (e.status == 504 && waitPeriod < _unlockThreshold) {
+        if (waitPeriod < _unlockThreshold) {
           await Future<void>.delayed(waitPeriod);
           waitPeriod *= 2;
         } else {
