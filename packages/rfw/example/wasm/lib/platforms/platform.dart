@@ -11,4 +11,3 @@ abstract class Wasm {
   Future<void> loadModule(String url);
   dynamic call(String name, [List<Object?>? arguments]);
 }
-

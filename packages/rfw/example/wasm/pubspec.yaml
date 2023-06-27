@@ -16,7 +16,7 @@ dependencies:
   rfw:
     path: ../../
   wasm: ">=0.1.0+1 <=2.0.0"
-  web: 0.1.4-beta
+  web: ^0.1.4-beta
 
 dev_dependencies:
   flutter_lints: ^2.0.1

@@ -16,7 +16,8 @@ class NetworkImplementation extends Network {
   }
 
   static Future<ByteBuffer> _loadByteBuffer(String url) async {
-    final Response response = await promiseToFuture<Response>(window.fetch(url.toJS));
+    final Response response =
+        await promiseToFuture<Response>(window.fetch(url.toJS));
     return await promiseToFuture(response.arrayBuffer());
   }
 }
@@ -28,12 +29,12 @@ class WasmImplementation extends Wasm {
 
   @override
   Future<void> loadModule(String url) async {
-    final ByteBuffer wasmByteBuffer = await NetworkImplementation._loadByteBuffer(url);
-    final Instance wasmInstance = (
-      await promiseToFuture<WebAssemblyInstantiatedSource>(
-        WebAssembly.instantiate(wasmByteBuffer.toJS)
-      )
-    ).instance;
+    final ByteBuffer wasmByteBuffer =
+        await NetworkImplementation._loadByteBuffer(url);
+    final Instance wasmInstance =
+        (await promiseToFuture<WebAssemblyInstantiatedSource>(
+                WebAssembly.instantiate(wasmByteBuffer.toJS)))
+            .instance;
     _wasmExports = wasmInstance.exports;
   }
 

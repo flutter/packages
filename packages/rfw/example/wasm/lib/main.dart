@@ -22,7 +22,12 @@ const String interfaceUrl = '$urlPrefix/calculator.rfw';
 const String logicUrl = '$urlPrefix/calculator.wasm';
 
 void main() {
-  runApp(WidgetsApp(color: const Color(0xFF000000), builder: (BuildContext context, Widget? navigator) => const Example()));
+  runApp(
+    WidgetsApp(
+      color: const Color(0xFF000000),
+      builder: (BuildContext context, Widget? navigator) => const Example(),
+    ),
+  );
 }
 
 class Example extends StatefulWidget {
@@ -43,7 +48,10 @@ class _ExampleState extends State<Example> {
   void initState() {
     super.initState();
     RendererBinding.instance.deferFirstFrame();
-    _rfwRuntime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
+    _rfwRuntime.update(
+      const LibraryName(<String>['core', 'widgets']),
+      createCoreWidgets(),
+    );
 
     // These produce platform specific implementations for network fetching
     // and Wasm loading and calling.
@@ -84,7 +92,10 @@ class _ExampleState extends State<Example> {
     return RemoteWidget(
       runtime: _rfwRuntime,
       data: _rfwData,
-      widget: const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
+      widget: const FullyQualifiedWidgetName(
+        LibraryName(<String>['main']),
+        'root',
+      ),
       onEvent: (String name, DynamicMap arguments) {
         final Object? rfwArguments = arguments['arguments'];
         // Call Wasm calculator function.

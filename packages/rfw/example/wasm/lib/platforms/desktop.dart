@@ -11,8 +11,10 @@ import 'platform.dart';
 class NetworkImplementation extends Network {
   @override
   Future<Uint8List> get(String url) async {
-    final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse(url))).close();
-    return Uint8List.fromList(await client.expand((List<int> chunk) => chunk).toList());
+    final HttpClientResponse client =
+        await (await HttpClient().getUrl(Uri.parse(url))).close();
+    return Uint8List.fromList(
+        await client.expand((List<int> chunk) => chunk).toList());
   }
 }
 
