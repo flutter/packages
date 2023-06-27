@@ -4,13 +4,15 @@
 
 package io.flutter.plugins.videoplayer;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.util.LongSparseArray;
 import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
+
+import com.google.android.exoplayer2.util.MimeTypes;
+
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -179,8 +181,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     player.setLooping(arg.getIsLooping());
   }
 
-  public void clearCache(Messages.ClearCacheMessage msg) {
-    VideoPlayer player = videoPlayers.get(msg.getTextureId());
+  public void clearCache(@NonNull Messages.ClearCacheMessage msg) {
     VideoCache.clearVideoCache(flutterState.applicationContext);
   }
 
@@ -225,12 +226,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     options.mixWithOthers = arg.getMixWithOthers();
   }
 
+  @NonNull
   public Messages.IsSupportedMessage isCacheSupportedForNetworkMedia(
       @NonNull Messages.IsCacheSupportedMessage arg) {
     boolean isSupported = isCacheSupported(Uri.parse(arg.getUrl()));
-    Messages.IsSupportedMessage result =
-        new Messages.IsSupportedMessage.Builder().setIsSupported(isSupported).build();
-    return result;
+    return new Messages.IsSupportedMessage.Builder().setIsSupported(isSupported).build();
   }
 
   private interface KeyForAssetFn {
@@ -270,25 +270,17 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
   }
 
-  public boolean isCacheSupported(Uri uri) {
-    String mimeType = getMimeType(uri);
-    switch (mimeType) {
-      case "video/mp4":
-        return true;
-      default:
-        return false;
-    }
+  private boolean isCacheSupported(Uri uri) {
+    String mimeType = getMimeType(uri.toString());
+    return MimeTypes.VIDEO_MP4.equals(mimeType);
   }
 
-  private String getMimeType(Uri uri) {
-    String mimeType = null;
-    if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
-      ContentResolver cr = flutterState.applicationContext.getContentResolver();
-      mimeType = cr.getType(uri);
-    } else {
-      String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
-      mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+  public static String getMimeType(String url) {
+    String type = null;
+    String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+    if (extension != null) {
+      type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
     }
-    return mimeType;
+    return type;
   }
 }
