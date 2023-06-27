@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -641,6 +640,8 @@ public class CameraTest {
     TestUtils.setPrivateField(camera, "videoRenderer", mockVideoRenderer);
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    ImageReader mockPictureImageReader = mock(ImageReader.class);
+    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
         (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
@@ -668,6 +669,8 @@ public class CameraTest {
     TestUtils.setPrivateField(camera, "pictureImageReader", mockImageReader);
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    ImageReader mockPictureImageReader = mock(ImageReader.class);
+    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
         (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
@@ -677,6 +680,7 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
+    when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startPreview();
     verify(mockImageReader, times(1))
@@ -737,7 +741,7 @@ public class CameraTest {
     camera.startPreviewWithImageStream(mock(EventChannel.class));
     verify(mockImageStreamReader, times(1))
         .getSurface(); // stream pulled from image streaming imageReader's surface.
-    verify(mockPictureImageReader, times(1))
+    verify(mockPictureImageReader, times(2))
         .getSurface(); // stream pulled from regular imageReader's surface.
   }
 
@@ -863,6 +867,7 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
+    when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startVideoRecording(mock(MethodChannel.Result.class), mock(EventChannel.class));
     verify(mockMediaRecorder, times(1))
@@ -1104,7 +1109,7 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
-    when(fakeCamera.createCaptureRequest(anyInt())).thenReturn(mockPreviewRequestBuilder);
+    when(fakeCamera.createCaptureRequest(any())).thenReturn(mockPreviewRequestBuilder);
     when(mockPictureImageReader.getSurface()).thenReturn(mockSurface);
 
     // Test with preview template, which should exclude any other surface.
