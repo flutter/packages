@@ -337,13 +337,24 @@ NS_INLINE UIViewController *rootViewController(void) {
       }
     }
   } else if (context == playbackBufferEmptyContext) {
-    // There's a bug in AVFoundation, KVO for `playbackBufferEmpty` when playing HLS content. The
-    // expected behavior of the value change for `playbackBufferEmpty` is not triggered. This
-    // issue has been confirmed in iOS 16.5. Refer:
-    // https://github.com/flutter/packages/pull/3826#discussion_r1204985454 Fortunately, the KVO
-    // for `playbackBufferFull` is working correctly, so the bug won't affect the event passing
-    // responsible for `bufferingEnd` or `bufferingStart` events.
     if (_eventSink != nil) {
+      // There's a bug in AVFoundation, KVO for `playbackBufferEmpty` when playing HLS content. The
+      // expected behavior of the value change for `playbackBufferEmpty` is not triggered. This
+      // issue has been confirmed in iOS 16.5. Refer:
+      // https://github.com/flutter/packages/pull/3826#discussion_r1204985454 Fortunately, the KVO
+      // for `playbackBufferFull` is working correctly, so the bug won't affect the event passing
+      // responsible for `bufferingEnd` or `bufferingStart` events.
+
+      // Here we check `isPlaybackLikelyToKeepUp` instead of `isPlaybackBufferEmpty` to determine if
+      // the playback is stalled or not. According to the Apple documentation for
+      // [`AVPlayerItem`](https://developer.apple.com/documentation/avfoundation/avplayeritem/1390348-playbacklikelytokeepup?language=objc),
+      // `isPlaybackLikelyToKeepUp` effectively indicates the likelihood of uninterrupted playback.
+      // When `isPlaybackBufferEmpty` is true, it indicates a possible stall or end of playback, as
+      // explained in the
+      // [documentation](https://developer.apple.com/documentation/avfoundation/avplayeritem/1386960-playbackbufferempty?language=objc).
+      // However, when `isPlaybackBufferEmpty` is false, we cannot determine if the playback is
+      // actively playing, stalled, or reaching the end. Therefore, we rely on
+      // `isPlaybackLikelyToKeepUp` to make this determination.
       if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
         _eventSink(@{@"event" : @"bufferingEnd"});
       } else {
@@ -352,6 +363,17 @@ NS_INLINE UIViewController *rootViewController(void) {
     }
   } else if (context == playbackBufferFullContext) {
     if (_eventSink != nil) {
+      // Here we check `isPlaybackLikelyToKeepUp` instead of `isPlaybackBufferFull` to determine if
+      // the playback is stalled or not. The
+      // [`isPlaybackLikelyToKeepUp`](https://developer.apple.com/documentation/avfoundation/avplayeritem/1390348-playbacklikelytokeepup?language=objc)
+      // property effectively indicates the likelihood of uninterrupted playback. It's important to
+      // note that
+      // [`isPlaybackBufferFull`](https://developer.apple.com/documentation/avfoundation/avplayeritem/1388852-playbackbufferfull?language=objc)
+      // is not suitable for predicting playback stalling. Its purpose is to determine whether the
+      // internal media buffer is full and if further I/O is suspended, rather than indicating the
+      // playback status. Since `isPlaybackBufferFull` does not provide information about playback
+      // stall or end, we rely on `isPlaybackLikelyToKeepUp` to make a more accurate determination
+      // about the playback status.
       if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
         _eventSink(@{@"event" : @"bufferingEnd"});
       } else {
