@@ -130,15 +130,16 @@ class GoogleMapController {
     );
   }
 
-  /// Adds a new stream subscription to the `streamSubscriptionsState` map.
+  /// Adds a new stream subscription to the [streamSubscriptionsState] map.
   ///
-  /// This method accepts a `StreamSubscription<dynamic>` object and adds it to the `streamSubscriptionsState` map,
-  /// initializing its state to `false` to indicate that the subscription has not been canceled yet.
+  /// The method takes a [StreamSubscription] and sets its status to `false`
+  /// in the [streamSubscriptionsState] map. This indicates that the subscription
+  /// has not been canceled yet.
   ///
-  /// The purpose of maintaining this map is to keep track of all active stream subscriptions,
-  /// so they can be properly canceled and their states updated when the object is disposed.
+  /// The [streamSubscriptionsState] map keeps track of all active stream subscriptions,
+  /// allowing them to be properly managed and disposed when necessary.
   ///
-  /// @param subscription The `StreamSubscription<dynamic>` object to be added to the `streamSubscriptionsState` map.
+  /// [subscription] is the [StreamSubscription] to be added to the [streamSubscriptionsState] map.
   void _addSubscription(StreamSubscription<dynamic> subscription) {
     streamSubscriptionsState[subscription] = false;
   }
