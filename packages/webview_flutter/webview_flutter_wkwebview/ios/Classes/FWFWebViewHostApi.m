@@ -197,6 +197,18 @@
        }];
 }
 
+- (void)setInspectableForWebViewWithIdentifier:(NSNumber *)identifier
+                                   inspectable:(NSNumber *)inspectable
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(macOS 13.3, iOS 16.4, tvOS 16.4, *)) {
+    [[self webViewForIdentifier:identifier] setInspectable:inspectable.boolValue];
+  } else {
+    *error = [FlutterError errorWithCode:@"FWFUnsupportedVersionError"
+                                 message:@"setInspectable is only supported on versions 16.4+."
+                                 details:nil];
+  }
+}
+
 - (void)goBackForWebViewWithIdentifier:(nonnull NSNumber *)identifier
                                  error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   [[self webViewForIdentifier:identifier] goBack];

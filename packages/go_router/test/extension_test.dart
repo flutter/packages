@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/match.dart';
 
 void main() {
   group('replaceNamed', () {
@@ -37,7 +38,10 @@ void main() {
       final GoRouter router = await createGoRouter(tester);
       await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
-      expect(router.location, '/page-0/settings?search=notification');
+      final ImperativeRouteMatch routeMatch = router
+          .routerDelegate.currentConfiguration.last as ImperativeRouteMatch;
+      expect(routeMatch.matches.uri.toString(),
+          '/page-0/settings?search=notification');
     });
   });
 }
