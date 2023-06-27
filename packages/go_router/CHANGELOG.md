@@ -1,3 +1,7 @@
+# 9.0.1
+
+- Fixes link of Error Handling Documentation in comment.
+
 ## 9.0.0
 
 - **BREAKING CHANGE**:
