@@ -18,7 +18,7 @@ class GoogleMapController {
   /// The mapId for this controller
   final int mapId;
 
-  /// State map of the stream subscriptions for this controller.
+  /// State map of the stream subscriptions for this controller, used internally.
   ///
   /// The map stores a [StreamSubscription] as key and a [bool] as value.
   /// Each [StreamSubscription] represents a subscription to an event from the native side.
@@ -26,8 +26,26 @@ class GoogleMapController {
   ///
   /// This map allows for efficient management of subscriptions, facilitating operations
   /// like mass cancellation during controller disposal.
-  final Map<StreamSubscription<dynamic>, bool> streamSubscriptionsState =
+  ///
+  /// This field is private to prevent external mutation. Access is provided through
+  /// the [streamSubscriptionsState] getter, which returns an unmodifiable view of this map.
+  final Map<StreamSubscription<dynamic>, bool> _streamSubscriptionsState =
       <StreamSubscription<dynamic>, bool>{};
+
+  /// Returns an unmodifiable view of the map that holds the active StreamSubscriptions
+  /// and their corresponding states.
+  ///
+  /// This getter provides a way to inspect the current state of active StreamSubscriptions
+  /// in the `GoogleMapController` class without allowing any outside mutations.
+  ///
+  /// The map contains StreamSubscription instances as keys, and bool as values.
+  /// A value of `true` indicates that the subscription is active and `false` indicates it is disposed.
+  ///
+  /// This is useful in situations where the need arises to monitor or debug the
+  /// lifecycle of various StreamSubscriptions handled within this class.
+  Map<StreamSubscription<dynamic>, bool> get streamSubscriptionsState =>
+      Map<StreamSubscription<dynamic>, bool>.unmodifiable(
+          _streamSubscriptionsState);
 
   /// Initialize control of a [GoogleMap] with [id].
   ///
@@ -130,18 +148,18 @@ class GoogleMapController {
     );
   }
 
-  /// Adds a new stream subscription to the [streamSubscriptionsState] map.
+  /// Adds a new stream subscription to the [_streamSubscriptionsState] map.
   ///
   /// The method takes a [StreamSubscription] and sets its status to `false`
-  /// in the [streamSubscriptionsState] map. This indicates that the subscription
+  /// in the [_streamSubscriptionsState] map. This indicates that the subscription
   /// has not been canceled yet.
   ///
-  /// The [streamSubscriptionsState] map keeps track of all active stream subscriptions,
+  /// The [_streamSubscriptionsState] map keeps track of all active stream subscriptions,
   /// allowing them to be properly managed and disposed when necessary.
   ///
-  /// [subscription] is the [StreamSubscription] to be added to the [streamSubscriptionsState] map.
+  /// [subscription] is the [StreamSubscription] to be added to the [_streamSubscriptionsState] map.
   void _addSubscription(StreamSubscription<dynamic> subscription) {
-    streamSubscriptionsState[subscription] = false;
+    _streamSubscriptionsState[subscription] = false;
   }
 
   /// Updates configuration options of the map user interface.
@@ -334,12 +352,12 @@ class GoogleMapController {
   /// Disposes of the platform resources
   void dispose() {
     for (final StreamSubscription<dynamic> subscription
-        in streamSubscriptionsState.keys) {
+        in _streamSubscriptionsState.keys) {
       subscription.cancel().then((void value) {
-        streamSubscriptionsState[subscription] = true;
+        _streamSubscriptionsState[subscription] = true;
       });
     }
-    streamSubscriptionsState.clear();
+    _streamSubscriptionsState.clear();
     GoogleMapsFlutterPlatform.instance.dispose(mapId: mapId);
   }
 }
