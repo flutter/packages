@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.LongSparseArray;
 import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.util.MimeTypes;
 
@@ -270,12 +271,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
   }
 
-  private boolean isCacheSupported(Uri uri) {
+  private boolean isCacheSupported(@NonNull Uri uri) {
     String mimeType = getMimeType(uri.toString());
     return MimeTypes.VIDEO_MP4.equals(mimeType);
   }
-
-  public static String getMimeType(String url) {
+  @Nullable
+  public static String getMimeType(@NonNull String url) {
     String type = null;
     String extension = MimeTypeMap.getFileExtensionFromUrl(url);
     if (extension != null) {
