@@ -5,14 +5,15 @@
 // This file is hand-formatted.
 
 import 'dart:async';
-import 'dart:js_interop';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:js/js_util.dart';
 import 'package:rfw/rfw.dart';
-import 'package:web/web.dart';
+
+import 'platforms/platform.dart'
+  if (dart.library.io) 'platforms/desktop.dart'
+  if (dart.library.html) 'platforms/web.dart';
 
 const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
 
@@ -31,17 +32,25 @@ class Example extends StatefulWidget {
 }
 
 class _ExampleState extends State<Example> {
-  final Runtime _runtime = Runtime();
-  final DynamicContent _data = DynamicContent();
-  // This is this object https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/Instance/exports
-  // which contains the Wasm memory and functions.
-  late final JSObject _wasmExports;
+  final Runtime _rfwRuntime = Runtime();
+  final DynamicContent _rfwData = DynamicContent();
+
+  late final Network _network;
+  late final Wasm _wasm;
+
+
 
   @override
   void initState() {
     super.initState();
     RendererBinding.instance.deferFirstFrame();
-    _runtime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
+    _rfwRuntime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
+
+    // These produce platform specific implementations for network fetching
+    // and Wasm loading and calling.
+    _network = NetworkImplementation();
+    _wasm = WasmImplementation();
+
     _loadRfwAndWasm();
   }
 
@@ -106,3 +115,4 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+

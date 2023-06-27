@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.0.0
   js: ^0.6.7
   path: ^1.8.0
   path_provider: ^2.0.2
