@@ -84,6 +84,9 @@ class PathProviderAndroid extends PathProviderPlatform {
   Future<String?> getDownloadsPath() async {
     final List<String>? paths =
         await getExternalStoragePaths(type: StorageDirectory.downloads);
-    return paths?.first;
+    if (paths != null && paths.isNotEmpty) {
+      return paths.first;
+    }
+    return null;
   }
 }

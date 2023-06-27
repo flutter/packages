@@ -93,5 +93,11 @@ void main() {
       final String? path = await pathProvider.getDownloadsPath();
       expect(path, kExternalStoragePaths);
     });
+
+    //TODO: override externalStoragePaths as empty
+    test('getDownloadsPath null', () async {
+      final String? path = await pathProvider.getDownloadsPath();
+      expect(path, null);
+    });
   });
 }
