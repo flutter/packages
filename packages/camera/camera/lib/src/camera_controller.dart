@@ -406,7 +406,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       // dispose resources from previous camera description
       if (_initCalled != null) {
         await _initCalled;
-        _unawaited(CameraPlatform.instance.dispose(_cameraId));
+        await CameraPlatform.instance.dispose(_cameraId);
       }
 
       await _initializeWithDescription(description);
