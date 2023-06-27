@@ -1,5 +1,10 @@
 ## 0.10.6
 
+- Fixes bug where old camera resources were not disposed when switching between camera descriptions
+- Fixes bug where _deviceOrientationSubscription would be recreated every time the camera description was changed
+
+## 0.10.6
+
 * Fixes camera resource handling
 
 ## 0.10.5
