@@ -63,8 +63,21 @@ class GoogleMapController {
     );
   }
 
+  /// The state object of the [GoogleMap] widget.
+  ///
+  /// This instance holds important properties and methods that are essential for
+  /// the behavior and state of the [GoogleMap] widget.
   final _GoogleMapState _googleMapState;
 
+  /// Subscribes to the various event streams from the [GoogleMapsFlutterPlatform] for a specific map.
+  ///
+  /// This method takes the `mapId` as an argument and uses it to subscribe to the various streams available from the [GoogleMapsFlutterPlatform].
+  /// It only subscribes to the streams if the corresponding callback from the widget is not null. This includes streams for camera movements,
+  /// marker taps, marker drag events, info window taps, polyline taps, polygon taps, circle taps, map taps, and map long presses.
+  ///
+  /// Each subscription is added to [_streamSubscriptionsState] for lifecycle management.
+  ///
+  /// - [mapId] is the identifier of the map for which to initiate the streams.
   void _connectStreams(int mapId) {
     if (_googleMapState.widget.onCameraMoveStarted != null) {
       _addSubscription(
@@ -151,13 +164,14 @@ class GoogleMapController {
   /// Adds a new stream subscription to the [_streamSubscriptionsState] map.
   ///
   /// The method takes a [StreamSubscription] and sets its status to `false`
-  /// in the [_streamSubscriptionsState] map. This indicates that the subscription
-  /// has not been canceled yet.
+  /// in the [_streamSubscriptionsState] map. The `false` status indicates that the subscription
+  /// is currently active and has not been canceled yet.
   ///
-  /// The [_streamSubscriptionsState] map keeps track of all active stream subscriptions,
-  /// allowing them to be properly managed and disposed when necessary.
+  /// The [_streamSubscriptionsState] map manages all active stream subscriptions
+  /// associated with this instance, which facilitates their lifecycle management
+  /// and ensures that they are properly canceled and disposed when necessary.
   ///
-  /// [subscription] is the [StreamSubscription] to be added to the [_streamSubscriptionsState] map.
+  /// [subscription]: A [StreamSubscription] that will be managed by the [_streamSubscriptionsState] map.
   void _addSubscription(StreamSubscription<dynamic> subscription) {
     _streamSubscriptionsState[subscription] = false;
   }
