@@ -18,8 +18,16 @@ class GoogleMapController {
   /// The mapId for this controller
   final int mapId;
 
-  /// Subscriptions to events from the native side of this controller.
-  final List<StreamSubscription<void>> _subscriptions = [];
+  /// State map of the stream subscriptions for this controller.
+  ///
+  /// The map stores a [StreamSubscription] as key and a [bool] as value.
+  /// Each [StreamSubscription] represents a subscription to an event from the native side.
+  /// The corresponding [bool] indicates whether the subscription has been cancelled (true) or not (false).
+  ///
+  /// This map allows for efficient management of subscriptions, facilitating operations
+  /// like mass cancellation during controller disposal.
+  final Map<StreamSubscription<dynamic>, bool> streamSubscriptionsState =
+      <StreamSubscription<dynamic>, bool>{};
 
   /// Initialize control of a [GoogleMap] with [id].
   ///
@@ -41,14 +49,14 @@ class GoogleMapController {
 
   void _connectStreams(int mapId) {
     if (_googleMapState.widget.onCameraMoveStarted != null) {
-      _subscriptions.add(
+      _addSubscription(
         GoogleMapsFlutterPlatform.instance
             .onCameraMoveStarted(mapId: mapId)
             .listen((_) => _googleMapState.widget.onCameraMoveStarted!()),
       );
     }
     if (_googleMapState.widget.onCameraMove != null) {
-      _subscriptions.add(
+      _addSubscription(
         GoogleMapsFlutterPlatform.instance.onCameraMove(mapId: mapId).listen(
               (CameraMoveEvent e) =>
                   _googleMapState.widget.onCameraMove!(e.value),
@@ -56,70 +64,74 @@ class GoogleMapController {
       );
     }
     if (_googleMapState.widget.onCameraIdle != null) {
-      _subscriptions.add(
+      _addSubscription(
         GoogleMapsFlutterPlatform.instance
             .onCameraIdle(mapId: mapId)
             .listen((_) => _googleMapState.widget.onCameraIdle!()),
       );
     }
 
-    _subscriptions
-      ..add(
-        GoogleMapsFlutterPlatform.instance
-            .onMarkerTap(mapId: mapId)
-            .listen((MarkerTapEvent e) => _googleMapState.onMarkerTap(e.value)),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance
-            .onMarkerDragStart(mapId: mapId)
-            .listen(
-              (MarkerDragStartEvent e) =>
-                  _googleMapState.onMarkerDragStart(e.value, e.position),
-            ),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance.onMarkerDrag(mapId: mapId).listen(
-              (MarkerDragEvent e) =>
-                  _googleMapState.onMarkerDrag(e.value, e.position),
-            ),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance.onMarkerDragEnd(mapId: mapId).listen(
-              (MarkerDragEndEvent e) =>
-                  _googleMapState.onMarkerDragEnd(e.value, e.position),
-            ),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance.onInfoWindowTap(mapId: mapId).listen(
-              (InfoWindowTapEvent e) =>
-                  _googleMapState.onInfoWindowTap(e.value),
-            ),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance.onPolylineTap(mapId: mapId).listen(
-              (PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value),
-            ),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance.onPolygonTap(mapId: mapId).listen(
-              (PolygonTapEvent e) => _googleMapState.onPolygonTap(e.value),
-            ),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance
-            .onCircleTap(mapId: mapId)
-            .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value)),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance
-            .onTap(mapId: mapId)
-            .listen((MapTapEvent e) => _googleMapState.onTap(e.position)),
-      )
-      ..add(
-        GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
-              (MapLongPressEvent e) => _googleMapState.onLongPress(e.position),
-            ),
-      );
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance
+          .onMarkerTap(mapId: mapId)
+          .listen((MarkerTapEvent e) => _googleMapState.onMarkerTap(e.value)),
+    );
+
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance.onMarkerDragStart(mapId: mapId).listen(
+            (MarkerDragStartEvent e) =>
+                _googleMapState.onMarkerDragStart(e.value, e.position),
+          ),
+    );
+
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance.onMarkerDrag(mapId: mapId).listen(
+            (MarkerDragEvent e) =>
+                _googleMapState.onMarkerDrag(e.value, e.position),
+          ),
+    );
+
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance.onMarkerDragEnd(mapId: mapId).listen(
+            (MarkerDragEndEvent e) =>
+                _googleMapState.onMarkerDragEnd(e.value, e.position),
+          ),
+    );
+
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance.onInfoWindowTap(mapId: mapId).listen(
+            (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value),
+          ),
+    );
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance.onPolylineTap(mapId: mapId).listen(
+            (PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value),
+          ),
+    );
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance.onPolygonTap(mapId: mapId).listen(
+            (PolygonTapEvent e) => _googleMapState.onPolygonTap(e.value),
+          ),
+    );
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance
+          .onCircleTap(mapId: mapId)
+          .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value)),
+    );
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance
+          .onTap(mapId: mapId)
+          .listen((MapTapEvent e) => _googleMapState.onTap(e.position)),
+    );
+    _addSubscription(
+      GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
+            (MapLongPressEvent e) => _googleMapState.onLongPress(e.position),
+          ),
+    );
+  }
+
+  void _addSubscription(StreamSubscription<dynamic> subscription) {
+    streamSubscriptionsState[subscription] = false;
   }
 
   /// Updates configuration options of the map user interface.
@@ -311,9 +323,13 @@ class GoogleMapController {
 
   /// Disposes of the platform resources
   void dispose() {
-    for (final subscription in _subscriptions) {
-      subscription.cancel();
+    for (final StreamSubscription<dynamic> subscription
+        in streamSubscriptionsState.keys) {
+      subscription.cancel().then((void value) {
+        streamSubscriptionsState[subscription] = true;
+      });
     }
+    streamSubscriptionsState.clear();
     GoogleMapsFlutterPlatform.instance.dispose(mapId: mapId);
   }
 }
