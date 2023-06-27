@@ -84,7 +84,7 @@ class GcsLock {
       try {
         await _api.objects.delete(_bucketName, lockFileName);
         unlocked = true;
-      } on DetailedApiRequestError catch (e) {
+      } on DetailedApiRequestError {
         if (waitPeriod < _unlockThreshold) {
           await Future<void>.delayed(waitPeriod);
           waitPeriod *= 2;
