@@ -4,7 +4,7 @@ Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe, easier, and faster.
 
 Pigeon removes the necessity to manage platform channel names as strings across multiple platforms and languages.
-It it also improves efficiency over standard data encoding across platform channels.
+It also improves efficiency over standard data encoding across platform channels.
 Most importantly though, it removes the need to write custom platform channel code and codecs,
 since Pigeon generates all of that code for you.
 
@@ -33,7 +33,7 @@ Pigeon supports enum generation in class fields only.
 
 ### Synchronous and Asynchronous methods
 
-While all calls across platform channel apis (such as Pigeon methods) are asynchronous,
+While all calls across platform channel api's (such as Pigeon methods) are asynchronous,
 standard Pigeon methods can be treated as synchronous when handling returns and error.
 
 If asynchronous methods are needed, the `@async` annotation can be used. This will require 
@@ -45,9 +45,14 @@ results or errors to be returned via a provided callback. [Example.](./example/R
 
 All Host API exceptions are translated into Flutter `PlatformException`.
 * For synchronous methods, thrown exceptions will be caught and translated.
-* For asynchronous methods, there is no default exception handling; errors should be returned via the provided callback.
+* For asynchronous methods, there is no default exception handling; errors
+should be returned via the provided callback.
 
-To pass custom details into `PlatformException` for error handling, use `FlutterError` in your Host API. [Example.](./example/README.md#HostApi_Example)
+To pass custom details into `PlatformException` for error handling, 
+use `FlutterError` in your Host API. [Example.](./example/README.md#HostApi_Example)
+
+To use `FlutterError` in swift you must first extend a standard error.
+[Example](./example/README.md#AppDelegate.swift)
 
 #### Objective-C and C++
 
@@ -124,7 +129,7 @@ the threading model for handling HostApi methods can be selected with the
 
 ### Calling into Flutter from the host platform
 
-Flutter also supports calling in the opposite direction.  The steps are similar
+Pigeon also supports calling in the opposite direction. The steps are similar
 but reversed.  For more information look at the annotation `@FlutterApi()` which
 denotes APIs that live in Flutter but are invoked from the host platform. 
 [Example](./example/README.md#FlutterApi_Example).
