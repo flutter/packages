@@ -111,7 +111,8 @@ void main() {
     await finished2;
   }, skip: credentialsJson == null);
 
-  test('GcsLock attempts to unlock again on a DetailedApiRequestError', () async {
+  test('GcsLock attempts to unlock again on a DetailedApiRequestError',
+      () async {
     fakeAsync((FakeAsync fakeAsync) {
       final StorageApi mockStorageApi = MockStorageApi();
       final ObjectsResource mockObjectsResource = MockObjectsResource();
