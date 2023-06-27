@@ -52,6 +52,8 @@ extension $HomeRouteDataExtension on HomeRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $UsersRouteDataExtension on UsersRouteData {
@@ -68,6 +70,8 @@ extension $UsersRouteDataExtension on UsersRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $UserRouteDataExtension on UserRouteData {
@@ -85,4 +89,6 @@ extension $UserRouteDataExtension on UserRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
