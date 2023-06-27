@@ -28,88 +28,84 @@ NS_ASSUME_NONNULL_BEGIN
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithTextureId:(NSNumber *)textureId;
-@property(nonatomic, strong) NSNumber * textureId;
+@property(nonatomic, strong) NSNumber *textureId;
 @end
 
 @interface FLTLoopingMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSNumber *)textureId
-    isLooping:(NSNumber *)isLooping;
-@property(nonatomic, strong) NSNumber * textureId;
-@property(nonatomic, strong) NSNumber * isLooping;
++ (instancetype)makeWithTextureId:(NSNumber *)textureId isLooping:(NSNumber *)isLooping;
+@property(nonatomic, strong) NSNumber *textureId;
+@property(nonatomic, strong) NSNumber *isLooping;
 @end
 
 @interface FLTIsSupportedMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithIsSupported:(NSNumber *)isSupported;
-@property(nonatomic, strong) NSNumber * isSupported;
+@property(nonatomic, strong) NSNumber *isSupported;
 @end
 
 @interface FLTIsCacheSupportedMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUrl:(NSString *)url;
-@property(nonatomic, copy) NSString * url;
+@property(nonatomic, copy) NSString *url;
 @end
 
 @interface FLTVolumeMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSNumber *)textureId
-    volume:(NSNumber *)volume;
-@property(nonatomic, strong) NSNumber * textureId;
-@property(nonatomic, strong) NSNumber * volume;
++ (instancetype)makeWithTextureId:(NSNumber *)textureId volume:(NSNumber *)volume;
+@property(nonatomic, strong) NSNumber *textureId;
+@property(nonatomic, strong) NSNumber *volume;
 @end
 
 @interface FLTClearCacheMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithTextureId:(NSNumber *)textureId;
-@property(nonatomic, strong) NSNumber * textureId;
+@property(nonatomic, strong) NSNumber *textureId;
 @end
 
 @interface FLTPlaybackSpeedMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSNumber *)textureId
-    speed:(NSNumber *)speed;
-@property(nonatomic, strong) NSNumber * textureId;
-@property(nonatomic, strong) NSNumber * speed;
++ (instancetype)makeWithTextureId:(NSNumber *)textureId speed:(NSNumber *)speed;
+@property(nonatomic, strong) NSNumber *textureId;
+@property(nonatomic, strong) NSNumber *speed;
 @end
 
 @interface FLTPositionMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSNumber *)textureId
-    position:(NSNumber *)position;
-@property(nonatomic, strong) NSNumber * textureId;
-@property(nonatomic, strong) NSNumber * position;
++ (instancetype)makeWithTextureId:(NSNumber *)textureId position:(NSNumber *)position;
+@property(nonatomic, strong) NSNumber *textureId;
+@property(nonatomic, strong) NSNumber *position;
 @end
 
 @interface FLTCreateMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithAsset:(nullable NSString *)asset
-    uri:(nullable NSString *)uri
-    packageName:(nullable NSString *)packageName
-    formatHint:(nullable NSString *)formatHint
-    enableCache:(nullable NSNumber *)enableCache
-    httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
-@property(nonatomic, copy, nullable) NSString * asset;
-@property(nonatomic, copy, nullable) NSString * uri;
-@property(nonatomic, copy, nullable) NSString * packageName;
-@property(nonatomic, copy, nullable) NSString * formatHint;
-@property(nonatomic, strong, nullable) NSNumber * enableCache;
-@property(nonatomic, strong) NSDictionary<NSString *, NSString *> * httpHeaders;
+                          uri:(nullable NSString *)uri
+                  packageName:(nullable NSString *)packageName
+                   formatHint:(nullable NSString *)formatHint
+                  enableCache:(nullable NSNumber *)enableCache
+                  httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
+@property(nonatomic, copy, nullable) NSString *asset;
+@property(nonatomic, copy, nullable) NSString *uri;
+@property(nonatomic, copy, nullable) NSString *packageName;
+@property(nonatomic, copy, nullable) NSString *formatHint;
+@property(nonatomic, strong, nullable) NSNumber *enableCache;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *httpHeaders;
 @end
 
 @interface FLTMixWithOthersMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithMixWithOthers:(NSNumber *)mixWithOthers;
-@property(nonatomic, strong) NSNumber * mixWithOthers;
+@property(nonatomic, strong) NSNumber *mixWithOthers;
 @end
 
 /// The codec used by FLTAVFoundationVideoPlayerApi.
@@ -118,22 +114,30 @@ NSObject<FlutterMessageCodec> *FLTAVFoundationVideoPlayerApiGetCodec(void);
 @protocol FLTAVFoundationVideoPlayerApi
 - (void)initialize:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable FLTTextureMessage *)create:(FLTCreateMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FLTTextureMessage *)create:(FLTCreateMessage *)msg
+                                 error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)dispose:(FLTTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setLooping:(FLTLoopingMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)clearCache:(FLTClearCacheMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setVolume:(FLTVolumeMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable FLTIsSupportedMessage *)isCacheSupportedForNetworkMedia:(FLTIsCacheSupportedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setPlaybackSpeed:(FLTPlaybackSpeedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FLTIsSupportedMessage *)
+    isCacheSupportedForNetworkMedia:(FLTIsCacheSupportedMessage *)msg
+                              error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setPlaybackSpeed:(FLTPlaybackSpeedMessage *)msg
+                   error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)play:(FLTTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable FLTPositionMessage *)position:(FLTTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FLTPositionMessage *)position:(FLTTextureMessage *)msg
+                                    error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)seekTo:(FLTPositionMessage *)msg completion:(void (^)(FlutterError *_Nullable))completion;
 - (void)pause:(FLTTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setMixWithOthers:(FLTMixWithOthersMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setMixWithOthers:(FLTMixWithOthersMessage *)msg
+                   error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void FLTAVFoundationVideoPlayerApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTAVFoundationVideoPlayerApi> *_Nullable api);
+extern void FLTAVFoundationVideoPlayerApiSetup(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FLTAVFoundationVideoPlayerApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
