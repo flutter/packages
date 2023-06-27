@@ -669,8 +669,6 @@ public class CameraTest {
     TestUtils.setPrivateField(camera, "pictureImageReader", mockImageReader);
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
-    ImageReader mockPictureImageReader = mock(ImageReader.class);
-    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
         (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
@@ -680,7 +678,7 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
-    when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
+    when(mockImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startPreview();
     verify(mockImageReader, times(1))
@@ -699,6 +697,8 @@ public class CameraTest {
     TestUtils.setPrivateField(camera, "initialCameraFacing", CameraMetadata.LENS_FACING_BACK);
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    ImageReader mockPictureImageReader = mock(ImageReader.class);
+    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
         (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
@@ -709,6 +709,7 @@ public class CameraTest {
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockCameraProperties.getLensFacing()).thenReturn(CameraMetadata.LENS_FACING_FRONT);
+    when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startPreview();
     verify(mockVideoRenderer, times(1)).setRotation(180);
@@ -867,6 +868,7 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
+    when(mockMediaRecorder.getSurface()).thenReturn(mock(Surface.class));
     when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startVideoRecording(mock(MethodChannel.Result.class), mock(EventChannel.class));
