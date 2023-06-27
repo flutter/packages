@@ -1,28 +1,14 @@
+import 'dart:typed_data';
+
+/// Platform agnostic API for retrieving data from the network. In this case,
+/// for RFW data and Wasm modules.
 abstract class Network {
-  Future<List<int>> get(String url);
+  Future<Uint8List> get(String url);
 }
 
+/// Platform agnostic API for loading Wasm modules and calling Wasm functions.
 abstract class Wasm {
   Future<void> loadModule(String url);
-  Future<dynamic> call(String name, List<Object?> arguments);
+  dynamic call(String name, [List<Object?>? arguments]);
 }
 
-class NetworkImplementation extends Network {
-  @override
-  Future<List<int>> get(String url) async {
-    throw UnimplementedError();
-  }
-}
-
-class WasmImplementation extends Wasm {
-
-  @override
-  Future<void> loadModule(String url) async {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<dynamic> call(String name, List<Object?> arguments) async {
-    throw UnimplementedError();
-  }
-}

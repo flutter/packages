@@ -1,14 +1,17 @@
-import 'dart:js_interop';;
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:js/js_util.dart';
 import 'package:web/web.dart';
 
-import 'api.dart';
+import 'platform.dart';
+
+// This file implements the Network and Wasm APIs using browser APIs accessed
+// through JS interop available for client web applications built in Wasm.
 
 class NetworkImplementation extends Network {
   @override
-  Future<List<int>> get(String url) async {
+  Future<Uint8List> get(String url) async {
     return (await _loadByteBuffer(url)).asUint8List();
   }
 
@@ -25,16 +28,19 @@ class WasmImplementation extends Wasm {
 
   @override
   Future<void> loadModule(String url) async {
-    // final ByteBuffer logicByteBuffer = await NetworkImplementation._loadByteBuffer(url);
-    // wasmInstance = (
-    //   await promiseToFuture<WebAssemblyInstantiatedSource>(
-    //     WebAssembly.instantiate(logicByteBuffer.toJS)
-    //   )
-    // ).instance;
+    final ByteBuffer wasmByteBuffer = await NetworkImplementation._loadByteBuffer(url);
+    final Instance wasmInstance = (
+      await promiseToFuture<WebAssemblyInstantiatedSource>(
+        WebAssembly.instantiate(wasmByteBuffer.toJS)
+      )
+    ).instance;
+    _wasmExports = wasmInstance.exports;
   }
 
   @override
-  Future<dynamic> call(String name, List<Object?> arguments) async {
-    // return callMethod(wasmInstance.exports, name, arguments);
+  dynamic call(String name, [List<Object?>? arguments]) {
+    // The wasm exports object contains the JSFunction objects that can be
+    // called directly via the js_util helper function.
+    return callMethod(_wasmExports, name, arguments ?? const <Object>[]);
   }
 }

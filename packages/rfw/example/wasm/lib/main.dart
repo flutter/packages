@@ -11,9 +11,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rfw/rfw.dart';
 
-import 'platforms/platform.dart'
+import 'platforms/platform.dart';
+import 'platforms/stub.dart'
   if (dart.library.io) 'platforms/desktop.dart'
-  if (dart.library.html) 'platforms/web.dart';
+  if (dart.library.js_interop) 'platforms/web.dart';
 
 const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
 
@@ -38,8 +39,6 @@ class _ExampleState extends State<Example> {
   late final Network _network;
   late final Wasm _wasm;
 
-
-
   @override
   void initState() {
     super.initState();
@@ -55,26 +54,13 @@ class _ExampleState extends State<Example> {
   }
 
   Future<void> _loadRfwAndWasm() async {
-    final Response interfaceResponse =
-      await promiseToFuture<Response>(window.fetch(interfaceUrl.toJS));
-    final Response logicResponse =
-      await promiseToFuture<Response>(window.fetch(logicUrl.toJS));
-
-    final ByteBuffer interfaceByteBuffer =
-      await promiseToFuture(interfaceResponse.arrayBuffer());
-    final ByteBuffer logicByteBuffer =
-      await promiseToFuture(logicResponse.arrayBuffer());
-
-    _runtime.update(
+    final List<int> interfaceBytes = await _network.get(interfaceUrl);
+    _rfwRuntime.update(
       const LibraryName(<String>['main']),
-      decodeLibraryBlob(interfaceByteBuffer.asUint8List()),
+      decodeLibraryBlob(Uint8List.fromList(interfaceBytes)),
     );
-    final Instance wasmInstance = (
-      await promiseToFuture<WebAssemblyInstantiatedSource>(
-        WebAssembly.instantiate(logicByteBuffer.toJS)
-      )
-    ).instance;
-    _wasmExports = wasmInstance.exports;
+
+    await _wasm.loadModule(logicUrl);
 
     _updateData();
     setState(() { RendererBinding.instance.allowFirstFrame(); });
@@ -82,10 +68,9 @@ class _ExampleState extends State<Example> {
 
   void _updateData() {
     // Retrieve the calculator value from Wasm.
-    final int value =
-      callMethod(_wasmExports, 'value', const <Object>[]).toInt();
+    final int value = _wasm.call('value', null).toInt();
     // Push the calculator value to RFW.
-    _data.update(
+    _rfwData.update(
       'value',
       <String, Object?>{ 'numeric': value, 'string': value.toString() },
     );
@@ -97,22 +82,17 @@ class _ExampleState extends State<Example> {
       return const SizedBox.shrink();
     }
     return RemoteWidget(
-      runtime: _runtime,
-      data: _data,
+      runtime: _rfwRuntime,
+      data: _rfwData,
       widget: const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
       onEvent: (String name, DynamicMap arguments) {
         final Object? rfwArguments = arguments['arguments'];
         // Call Wasm calculator function.
-        callMethod(
-          _wasmExports,
-          name,
-          rfwArguments == null
-              ? const <Object>[]
-              : rfwArguments as List<Object?>,
-        );
+        _wasm.call(name, rfwArguments == null
+            ? const <Object>[]
+            : rfwArguments as List<Object?>);
         _updateData();
       },
     );
   }
 }
-
