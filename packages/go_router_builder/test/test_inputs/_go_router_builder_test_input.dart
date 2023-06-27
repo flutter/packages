@@ -79,6 +79,8 @@ extension $NullableRequiredParamNotInPathExtension
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 T? _$convertMapValue<T>(
@@ -122,6 +124,8 @@ extension $NonNullableRequiredParamNotInPathExtension
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 ''')
 @TypedGoRoute<NonNullableRequiredParamNotInPath>(path: 'bob')
