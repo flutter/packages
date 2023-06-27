@@ -24,6 +24,12 @@ String? _getUrlScheme(String url) => Uri.tryParse(url)?.scheme;
 bool _isSafariTargetTopScheme(String url) =>
     _safariTargetTopSchemes.contains(_getUrlScheme(url));
 
+
+bool _isSafari(navigator) =>
+    navigator.userAgent.contains('Safari') &&
+    navigator.vendor.contains('Apple Computer, Inc.') &&
+    !navigator.userAgent.contains('Chrome');
+
 /// The web implementation of [UrlLauncherPlatform].
 ///
 /// This class implements the `package:url_launcher` functionality for the web.
@@ -31,7 +37,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   /// A constructor that allows tests to override the window object used by the plugin.
   UrlLauncherPlugin({@visibleForTesting html.Window? debugWindow})
       : _window = debugWindow ?? html.window {
-    _isSafari = navigatorIsSafari(_window.navigator);
+    _isSafari = _isSafari(_window.navigator);
   }
 
   final html.Window _window;
