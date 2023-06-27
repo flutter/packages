@@ -15,7 +15,8 @@ public class VideoCache {
   private static final String cacheFolder = "exoCache";
   private static SimpleCache sDownloadCache;
 
-  public @NonNull static SimpleCache getInstance(Context context, long maxCacheSize) {
+  @NonNull
+  public static SimpleCache getInstance(Context context, long maxCacheSize) {
     DatabaseProvider databaseProvider = new StandaloneDatabaseProvider(context);
 
     if (sDownloadCache == null)
@@ -27,8 +28,9 @@ public class VideoCache {
     return sDownloadCache;
   }
 
-  public @Nullable
-  static void clearVideoCache(Context context) {
+
+
+  public static void clearVideoCache(@NonNull Context context) {
     try {
       File dir = new File(context.getCacheDir(), cacheFolder);
       deleteDir(dir);
@@ -37,12 +39,13 @@ public class VideoCache {
     }
   }
 
-  @NonNull
-  private static boolean deleteDir(File dir) {
+
+  private static boolean deleteDir(@Nullable File dir) {
     if (dir != null && dir.isDirectory()) {
       String[] children = dir.list();
-      for (int i = 0; i < children.length; i++) {
-        boolean success = deleteDir(new File(dir, children[i]));
+      assert children != null;
+      for (String child : children) {
+        boolean success = deleteDir(new File(dir, child));
         if (!success) {
           return false;
         }
