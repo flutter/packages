@@ -51,8 +51,6 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         maxFileSize = dataSource.maxFileSize;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
-        maxCacheSize = dataSource.maxCacheSize;
-        maxFileSize = dataSource.maxFileSize;
         break;
       case DataSourceType.file:
         uri = dataSource.uri;

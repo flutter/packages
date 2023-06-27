@@ -1,49 +1,51 @@
 package io.flutter.plugins.videoplayer;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.net.Uri;
-
 import com.google.android.exoplayer2.database.DatabaseProvider;
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.Log;
-
 import java.io.File;
 
 public class VideoCache {
-    private static final String cacheFolder = "exoCache";
-    private static SimpleCache sDownloadCache;
+  private static final String cacheFolder = "exoCache";
+  private static SimpleCache sDownloadCache;
 
-    public static SimpleCache getInstance(Context context, long maxCacheSize) {
-        DatabaseProvider databaseProvider = new StandaloneDatabaseProvider(context);
+  public static SimpleCache getInstance(Context context, long maxCacheSize) {
+    DatabaseProvider databaseProvider = new StandaloneDatabaseProvider(context);
 
-        if (sDownloadCache == null) sDownloadCache = new SimpleCache(new File(context.getCacheDir(), cacheFolder), new LeastRecentlyUsedCacheEvictor(maxCacheSize), databaseProvider);
-        return sDownloadCache;
+    if (sDownloadCache == null)
+      sDownloadCache =
+          new SimpleCache(
+              new File(context.getCacheDir(), cacheFolder),
+              new LeastRecentlyUsedCacheEvictor(maxCacheSize),
+              databaseProvider);
+    return sDownloadCache;
+  }
+
+  public static void clearVideoCache(Context context) {
+    try {
+      File dir = new File(context.getCacheDir(), cacheFolder);
+      deleteDir(dir);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    public static void clearVideoCache(Context context){
-        try {
-            File dir = new File(context.getCacheDir(), cacheFolder);
-            deleteDir(dir);
-        } catch (Exception e) { e.printStackTrace();}
-    }
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-            return dir.delete();
-        } else if(dir!= null && dir.isFile()) {
-            return dir.delete();
-        } else {
-            return false;
+  public static boolean deleteDir(File dir) {
+    if (dir != null && dir.isDirectory()) {
+      String[] children = dir.list();
+      for (int i = 0; i < children.length; i++) {
+        boolean success = deleteDir(new File(dir, children[i]));
+        if (!success) {
+          return false;
         }
+      }
+      return dir.delete();
+    } else if (dir != null && dir.isFile()) {
+      return dir.delete();
+    } else {
+      return false;
     }
+  }
 }
