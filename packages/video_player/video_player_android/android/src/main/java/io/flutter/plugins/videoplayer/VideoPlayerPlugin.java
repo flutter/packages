@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.LongSparseArray;
 import android.webkit.MimeTypeMap;
-
 import androidx.annotation.NonNull;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
@@ -185,7 +184,6 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     VideoCache.clearVideoCache(flutterState.applicationContext);
   }
 
-
   public void setVolume(@NonNull VolumeMessage arg) {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     player.setVolume(arg.getVolume());
@@ -227,11 +225,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     options.mixWithOthers = arg.getMixWithOthers();
   }
 
-  public Messages.IsSupportedMessage isCacheSupportedForNetworkMedia(@NonNull Messages.IsCacheSupportedMessage arg) {
+  public Messages.IsSupportedMessage isCacheSupportedForNetworkMedia(
+      @NonNull Messages.IsCacheSupportedMessage arg) {
     boolean isSupported = isCacheSupported(Uri.parse(arg.getUrl()));
     Messages.IsSupportedMessage result =
-        new Messages.IsSupportedMessage.Builder()
-            .setIsSupported(isSupported).build();
+        new Messages.IsSupportedMessage.Builder().setIsSupported(isSupported).build();
     return result;
   }
 
@@ -274,12 +272,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
 
   public boolean isCacheSupported(Uri uri) {
     String mimeType = getMimeType(uri);
-     switch(mimeType) {
-         case "video/mp4":
-             return true;
-         default:
-             return false;
-     }
+    switch (mimeType) {
+      case "video/mp4":
+        return true;
+      default:
+        return false;
+    }
   }
 
   private String getMimeType(Uri uri) {
@@ -288,10 +286,8 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       ContentResolver cr = flutterState.applicationContext.getContentResolver();
       mimeType = cr.getType(uri);
     } else {
-      String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
-              .toString());
-      mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-              fileExtension.toLowerCase());
+      String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+      mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
     }
     return mimeType;
   }

@@ -133,14 +133,16 @@ class DataSource {
   ///
   /// The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  DataSource({
-    required this.sourceType,
-    this.uri,
-    this.formatHint,
-    this.asset,
-    this.package,
-    this.httpHeaders = const <String, String>{},
-  });
+  DataSource(
+      {required this.sourceType,
+      this.uri,
+      this.formatHint,
+      this.asset,
+      this.package,
+      this.httpHeaders = const <String, String>{},
+      this.maxCacheSize,
+      this.maxFileSize,
+      this.enableCache});
 
   /// The way in which the video was originally loaded.
   ///
@@ -153,6 +155,24 @@ class DataSource {
   /// This will be in different formats depending on the [DataSourceType] of
   /// the original video.
   final String? uri;
+
+  /// The URI to the video file.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final int? maxCacheSize;
+
+  /// The URI to the video file.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final int? maxFileSize;
+
+  /// The URI to the video file.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final bool? enableCache;
 
   /// **Android only**. Will override the platform's generic file format
   /// detection with whatever is set here.
