@@ -217,6 +217,9 @@ extension $_extensionName on $_className {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+
+  void replace(BuildContext context) =>
+      context.replace(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
   }

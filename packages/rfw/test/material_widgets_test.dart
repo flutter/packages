@@ -24,6 +24,7 @@ void main() {
     final List<String> eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
+        theme: ThemeData(useMaterial3: false),
         home: RemoteWidget(
           runtime: runtime,
           data: data,

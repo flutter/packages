@@ -79,6 +79,8 @@ extension $NullableRequiredParamNotInPathExtension
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 T? _$convertMapValue<T>(
@@ -122,6 +124,8 @@ extension $NonNullableRequiredParamNotInPathExtension
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 ''')
 @TypedGoRoute<NonNullableRequiredParamNotInPath>(path: 'bob')
@@ -151,6 +155,8 @@ extension $EnumParamExtension on EnumParam {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 const _$EnumTestEnumMap = {
@@ -204,6 +210,8 @@ extension $DefaultValueRouteExtension on DefaultValueRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 T? _$convertMapValue<T>(
@@ -248,6 +256,9 @@ extension $ExtraValueRouteExtension on ExtraValueRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 T? _$convertMapValue<T>(
@@ -289,6 +300,9 @@ extension $RequiredExtraValueRouteExtension on RequiredExtraValueRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 ''')
 @TypedGoRoute<RequiredExtraValueRoute>(path: '/default-value-route')
@@ -335,6 +349,8 @@ extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 const _$EnumOnlyUsedInIterableEnumMap = {
@@ -388,6 +404,8 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 ''')
 @TypedGoRoute<IterableDefaultValueRoute>(path: '/iterable-default-value-route')
@@ -416,6 +434,8 @@ extension $NamedRouteExtension on NamedRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 ''')
 @TypedGoRoute<NamedRoute>(path: '/named-route', name: 'namedRoute')
@@ -442,6 +462,8 @@ extension $NamedEscapedRouteExtension on NamedEscapedRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 ''')
 @TypedGoRoute<NamedEscapedRoute>(path: '/named-route', name: r'named$Route')
