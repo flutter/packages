@@ -335,6 +335,7 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) {
     log.add(const MethodCall('getAllWithPrefix'));
+    // ignore: deprecated_member_use
     return backend.getAllWithPrefix(prefix);
   }
 
