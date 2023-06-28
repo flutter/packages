@@ -535,7 +535,6 @@ class Camera
   }
 
   private void startCapture(boolean record, boolean stream) throws CameraAccessException {
-    System.out.println("DEBUG NOTE: made it to start capture");
     List<Surface> surfaces = new ArrayList<>();
     Runnable successCallback = null;
     if (record) {
@@ -763,12 +762,15 @@ class Camera
 
   public void startVideoRecording(
       @NonNull Result result, @Nullable EventChannel imageStreamChannel) {
+    System.out.println("DEBUG NOTE: made it to start video recording");
     prepareRecording(result);
-
+    System.out.println("DEBUG NOTE: properly prepared recording");
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
     }
+    System.out.println("DEBUG NOTE: properly handled imageStreamChannel");
     initialCameraFacing = cameraProperties.getLensFacing();
+    System.out.println("DEBUG NOTEgot past lens facing");
     recordingVideo = true;
     try {
       startCapture(true, imageStreamChannel != null);
