@@ -17,7 +17,6 @@ dependencies:
   http: ">=0.13.0 <2.0.0"
 
 dev_dependencies:
-  _discoveryapis_commons: ^1.0.0
   build_runner: ^2.1.1
   fake_async: ^1.2.0
   mockito: 5.4.1
