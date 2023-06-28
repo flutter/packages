@@ -101,34 +101,29 @@ class GoogleMapController {
             .listen((_) => _googleMapState.widget.onCameraIdle!()),
       );
     }
-
     _addSubscription(
       GoogleMapsFlutterPlatform.instance
           .onMarkerTap(mapId: mapId)
           .listen((MarkerTapEvent e) => _googleMapState.onMarkerTap(e.value)),
     );
-
     _addSubscription(
       GoogleMapsFlutterPlatform.instance.onMarkerDragStart(mapId: mapId).listen(
             (MarkerDragStartEvent e) =>
                 _googleMapState.onMarkerDragStart(e.value, e.position),
           ),
     );
-
     _addSubscription(
       GoogleMapsFlutterPlatform.instance.onMarkerDrag(mapId: mapId).listen(
             (MarkerDragEvent e) =>
                 _googleMapState.onMarkerDrag(e.value, e.position),
           ),
     );
-
     _addSubscription(
       GoogleMapsFlutterPlatform.instance.onMarkerDragEnd(mapId: mapId).listen(
             (MarkerDragEndEvent e) =>
                 _googleMapState.onMarkerDragEnd(e.value, e.position),
           ),
     );
-
     _addSubscription(
       GoogleMapsFlutterPlatform.instance.onInfoWindowTap(mapId: mapId).listen(
             (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value),
