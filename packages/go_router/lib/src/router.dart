@@ -62,7 +62,7 @@ typedef GoExceptionHandler = void Function(
 /// {@category Deep linking}
 /// {@category Error handling}
 /// {@category Named routes}
-class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
+class GoRouter implements RouterConfig<RouteMatchList> {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
   ///
@@ -152,7 +152,6 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       builderWithNav: (BuildContext context, Widget child) =>
           InheritedGoRouter(goRouter: this, child: child),
     );
-    routerDelegate.addListener(_handleStateMayChange);
 
     assert(() {
       log.info('setting initial location $initialLocation');
@@ -296,33 +295,8 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
-  /// Gets the current location.
-  // TODO(chunhtai): deprecates this once go_router_builder is migrated to
-  // GoRouterState.of.
-  String get location => _location;
-  String _location = '/';
-
   /// Returns `true` if there is at least two or more route can be pop.
   bool canPop() => routerDelegate.canPop();
-
-  void _handleStateMayChange() {
-    final String newLocation;
-    if (routerDelegate.currentConfiguration.isNotEmpty &&
-        routerDelegate.currentConfiguration.matches.last
-            is ImperativeRouteMatch) {
-      newLocation = (routerDelegate.currentConfiguration.matches.last
-              as ImperativeRouteMatch)
-          .matches
-          .uri
-          .toString();
-    } else {
-      newLocation = routerDelegate.currentConfiguration.uri.toString();
-    }
-    if (_location != newLocation) {
-      _location = newLocation;
-      notifyListeners();
-    }
-  }
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
@@ -488,7 +462,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// of any GoRoute under it.
   void pop<T extends Object?>([T? result]) {
     assert(() {
-      log.info('popping $location');
+      log.info('popping ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
     routerDelegate.pop<T>(result);
@@ -497,7 +471,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// Refresh the route.
   void refresh() {
     assert(() {
-      log.info('refreshing $location');
+      log.info('refreshing ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
     routeInformationProvider.notifyListeners();
@@ -507,27 +481,25 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///
   /// This method throws when it is called during redirects.
   static GoRouter of(BuildContext context) {
-    final InheritedGoRouter? inherited =
-        context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
+    final GoRouter? inherited = maybeOf(context);
     assert(inherited != null, 'No GoRouter found in context');
-    return inherited!.goRouter;
+    return inherited!;
   }
 
   /// The current GoRouter in the widget tree, if any.
   ///
   /// This method returns null when it is called during redirects.
   static GoRouter? maybeOf(BuildContext context) {
-    final InheritedGoRouter? inherited =
-        context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
+    final InheritedGoRouter? inherited = context
+        .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
+        ?.widget as InheritedGoRouter?;
     return inherited?.goRouter;
   }
 
-  @override
+  /// Disposes resource created by this object.
   void dispose() {
     routeInformationProvider.dispose();
-    routerDelegate.removeListener(_handleStateMayChange);
     routerDelegate.dispose();
-    super.dispose();
   }
 
   String _effectiveInitialLocation(String? initialLocation) {

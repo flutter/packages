@@ -5,6 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -52,12 +53,23 @@ class IllegalImplementation implements SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<bool> clearWithParameters(ClearParameters parameters) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Map<String, Object>> getAll() {
     throw UnimplementedError();
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) {
     throw UnimplementedError();
   }
 
@@ -87,12 +99,23 @@ class LegacyIsMockImplementation implements SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<bool> clearWithParameters(ClearParameters parameters) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Map<String, Object>> getAll() {
     throw UnimplementedError();
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) {
     throw UnimplementedError();
   }
 
@@ -124,12 +147,23 @@ class ModernMockImplementation
   }
 
   @override
+  Future<bool> clearWithParameters(ClearParameters parameters) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Map<String, Object>> getAll() {
     throw UnimplementedError();
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) {
     throw UnimplementedError();
   }
 

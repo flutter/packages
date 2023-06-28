@@ -1,3 +1,12 @@
+## 9.0.0
+
+- **BREAKING CHANGE**:
+  - Removes GoRouter.location and GoRouter.canPop. Use GoRouterState.of().location and
+    Navigator.of().canPop instead.
+  - GoRouter does not `extends` ChangeNotifier.
+  - [Migration guide](https://flutter.dev/go/go-router-v9-breaking-changes)
+- Reduces excessive rebuilds due to inherited look up.
+
 ## 8.2.0
 
 - Adds onException to GoRouter constructor.
@@ -157,7 +166,7 @@
 
 ## 6.0.5
 
-- Fixes [unnecessary_null_comparison](https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html) lint warnings.
+- Fixes [unnecessary_null_comparison](https://dart.dev/lints/unnecessary_null_checks) lint warnings.
 
 ## 6.0.4
 
@@ -655,7 +664,7 @@
 - enable case-insensitive path matching while still preserving path and query
   parameter cases
 - change a lifetime of habit to sort constructors first as per
-  [sort_constructors_first](https://dart-lang.github.io/linter/lints/sort_constructors_first.html).
+  [sort_constructors_first](https://dart.dev/lints/sort_constructors_first).
   Thanks for the PR, [Abhishek01039](https://github.com/Abhishek01039)!
 - set the initial transition example route to `/none` to make pushing the 'fade
   transition' button on the first run through more fun
