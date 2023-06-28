@@ -12,7 +12,6 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 
 import 'src/link.dart';
 import 'src/shims/dart_ui.dart' as ui;
-import 'src/third_party/platform_detect/browser.dart';
 
 const Set<String> _safariTargetTopSchemes = <String>{
   'mailto',
@@ -24,8 +23,7 @@ String? _getUrlScheme(String url) => Uri.tryParse(url)?.scheme;
 bool _isSafariTargetTopScheme(String url) =>
     _safariTargetTopSchemes.contains(_getUrlScheme(url));
 
-
-bool _isSafari(navigator) =>
+bool _navigatorIsSafari(navigator) =>
     navigator.userAgent.contains('Safari') &&
     navigator.vendor.contains('Apple Computer, Inc.') &&
     !navigator.userAgent.contains('Chrome');
@@ -37,7 +35,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   /// A constructor that allows tests to override the window object used by the plugin.
   UrlLauncherPlugin({@visibleForTesting html.Window? debugWindow})
       : _window = debugWindow ?? html.window {
-    _isSafari = _isSafari(_window.navigator);
+    _isSafari = _navigatorIsSafari(_window.navigator);
   }
 
   final html.Window _window;
