@@ -240,7 +240,6 @@ NS_INLINE UIViewController *rootViewController(void) {
     VIResourceLoaderManager *resourceLoaderManager = [VIResourceLoaderManager new];
     self.resourceLoaderManager = resourceLoaderManager;
     item = [resourceLoaderManager playerItemWithURL:url];
-    [VICacheManager cacheConfigurationForURL:url];
   } else {
     AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
     item = [AVPlayerItem playerItemWithAsset:urlAsset];
