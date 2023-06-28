@@ -35,3 +35,5 @@ flutter create -a java all_packages
 and then deleting everything but `android/` from it:
 
 - Added license boilerplate.
+- Replaced `jcenter` in build.gradle with `mavenCentral`, due to the
+  jcenter.bintray.com shutdown.
