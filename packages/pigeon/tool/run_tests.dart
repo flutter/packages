@@ -101,8 +101,8 @@ Future<void> _validateGeneratedExampleFiles() async {
       javaOut:
           './example/app/android/app/src/main/java/io/flutter/plugins/Messages.java',
       swiftOut: './example/app/ios/Runner/Messages.g.swift',
-      objcHeaderOut: './example/app/macos/runner/messages.h',
-      objcSourceOut: './example/app/macos/runner/messages.m',
+      objcHeaderOut: './example/app/macos/Runner/messages.h',
+      objcSourceOut: './example/app/macos/Runner/messages.m',
       objcPrefix: 'PGN',
       copyrightHeader: './example/app/pigeons/copyright.txt');
 
