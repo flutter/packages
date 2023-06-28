@@ -23,7 +23,7 @@ String? _getUrlScheme(String url) => Uri.tryParse(url)?.scheme;
 bool _isSafariTargetTopScheme(String url) =>
     _safariTargetTopSchemes.contains(_getUrlScheme(url));
 
-bool _navigatorIsSafari(navigator) =>
+bool _navigatorIsSafari(html.Navigator navigator) =>
     navigator.userAgent.contains('Safari') &&
     navigator.vendor.contains('Apple Computer, Inc.') &&
     !navigator.userAgent.contains('Chrome');
