@@ -418,8 +418,9 @@ class Camera
       // If it is not preview mode, add all surfaces as targets
       // except the surface used for still capture as this should
       // not be part of a repeating request.
+      Surface pictureImageReaderSurface = pictureImageReader.getSurface();
       for (Surface surface : remainingSurfaces) {
-        if (surface == pictureImageReader.getSurface()) {
+        if (surface == pictureImageReaderSurface) {
           continue;
         }
         previewRequestBuilder.addTarget(surface);
