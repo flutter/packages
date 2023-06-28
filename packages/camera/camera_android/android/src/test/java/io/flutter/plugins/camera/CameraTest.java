@@ -682,9 +682,13 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
+    when(mockImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startPreview();
-    verify(mockImageReader, times(2)) // we expect two calls to start regular preview
+    verify(
+            mockImageReader,
+            times(
+                2)) // we expect two calls to start regular preview
         .getSurface(); // stream pulled from regular imageReader's surface.
   }
 
