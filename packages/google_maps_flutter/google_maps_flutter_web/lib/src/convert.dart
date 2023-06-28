@@ -21,9 +21,6 @@ double _getCssOpacity(Color color) {
 
 // Converts a [Color] into a valid CSS value rgba(R, G, B, A).
 String _getCssColorWithAlpha(Color color) {
-  if (color == null) {
-    return _defaultCssColor;
-  }
   return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha / 255})';
 }
 

@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'fake_maps_controllers.dart';
+import 'fake_google_maps_flutter_platform.dart';
 
 Widget _mapWithHeatmaps(Set<Heatmap> heatmaps) {
   return Directionality(
@@ -20,32 +20,25 @@ Widget _mapWithHeatmaps(Set<Heatmap> heatmaps) {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  final FakePlatformViewsController fakePlatformViewsController =
-      FakePlatformViewsController();
-
-  setUpAll(() {
-    SystemChannels.platform_views.setMockMethodCallHandler(
-        fakePlatformViewsController.fakePlatformViewsMethodHandler);
-  });
+  late FakeGoogleMapsFlutterPlatform platform;
 
   setUp(() {
-    fakePlatformViewsController.reset();
+    platform = FakeGoogleMapsFlutterPlatform();
+    GoogleMapsFlutterPlatform.instance = platform;
   });
 
   testWidgets('Initializing a heatmap', (WidgetTester tester) async {
     const Heatmap c1 = Heatmap(heatmapId: HeatmapId('heatmap_1'));
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{c1}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.heatmapsToAdd.length, 1);
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.heatmapUpdates.last.heatmapsToAdd.length, 1);
 
-    final Heatmap initializedHeatmap = platformGoogleMap.heatmapsToAdd.first;
+    final Heatmap initializedHeatmap =
+        map.heatmapUpdates.last.heatmapsToAdd.first;
     expect(initializedHeatmap, equals(c1));
-    expect(platformGoogleMap.heatmapIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.heatmapsToChange.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToChange.isEmpty, true);
   });
 
   testWidgets('Adding a heatmap', (WidgetTester tester) async {
@@ -55,16 +48,15 @@ void main() {
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{c1}));
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{c1, c2}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.heatmapsToAdd.length, 1);
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.heatmapUpdates.last.heatmapsToAdd.length, 1);
 
-    final Heatmap addedHeatmap = platformGoogleMap.heatmapsToAdd.first;
+    final Heatmap addedHeatmap = map.heatmapUpdates.last.heatmapsToAdd.first;
     expect(addedHeatmap, equals(c2));
 
-    expect(platformGoogleMap.heatmapIdsToRemove.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.isEmpty, true);
 
-    expect(platformGoogleMap.heatmapsToChange.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToChange.isEmpty, true);
   });
 
   testWidgets('Removing a heatmap', (WidgetTester tester) async {
@@ -73,13 +65,13 @@ void main() {
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{c1}));
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.heatmapIdsToRemove.length, 1);
-    expect(platformGoogleMap.heatmapIdsToRemove.first, equals(c1.heatmapId));
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.length, 1);
+    expect(
+        map.heatmapUpdates.last.heatmapIdsToRemove.first, equals(c1.heatmapId));
 
-    expect(platformGoogleMap.heatmapsToChange.isEmpty, true);
-    expect(platformGoogleMap.heatmapsToAdd.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToChange.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToAdd.isEmpty, true);
   });
 
   testWidgets('Updating a heatmap', (WidgetTester tester) async {
@@ -89,13 +81,12 @@ void main() {
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{c1}));
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{c2}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.heatmapsToChange.length, 1);
-    expect(platformGoogleMap.heatmapsToChange.first, equals(c2));
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.heatmapUpdates.last.heatmapsToChange.length, 1);
+    expect(map.heatmapUpdates.last.heatmapsToChange.first, equals(c2));
 
-    expect(platformGoogleMap.heatmapIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.heatmapsToAdd.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToAdd.isEmpty, true);
   });
 
   testWidgets('Updating a heatmap', (WidgetTester tester) async {
@@ -105,11 +96,10 @@ void main() {
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{c1}));
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{c2}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.heatmapsToChange.length, 1);
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.heatmapUpdates.last.heatmapsToChange.length, 1);
 
-    final Heatmap update = platformGoogleMap.heatmapsToChange.first;
+    final Heatmap update = map.heatmapUpdates.last.heatmapsToChange.first;
     expect(update, equals(c2));
     expect(update.radius, 10);
   });
@@ -125,12 +115,11 @@ void main() {
     await tester.pumpWidget(_mapWithHeatmaps(prev));
     await tester.pumpWidget(_mapWithHeatmaps(cur));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.heatmapsToChange, cur);
-    expect(platformGoogleMap.heatmapIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.heatmapsToAdd.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToChange, cur);
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToAdd.isEmpty, true);
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
@@ -146,16 +135,16 @@ void main() {
     await tester.pumpWidget(_mapWithHeatmaps(prev));
     await tester.pumpWidget(_mapWithHeatmaps(cur));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.heatmapsToChange.length, 1);
-    expect(platformGoogleMap.heatmapsToAdd.length, 1);
-    expect(platformGoogleMap.heatmapIdsToRemove.length, 1);
+    expect(map.heatmapUpdates.last.heatmapsToChange.length, 1);
+    expect(map.heatmapUpdates.last.heatmapsToAdd.length, 1);
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.length, 1);
 
-    expect(platformGoogleMap.heatmapsToChange.first, equals(c2));
-    expect(platformGoogleMap.heatmapsToAdd.first, equals(c1));
-    expect(platformGoogleMap.heatmapIdsToRemove.first, equals(c3.heatmapId));
+    expect(map.heatmapUpdates.last.heatmapsToChange.first, equals(c2));
+    expect(map.heatmapUpdates.last.heatmapsToAdd.first, equals(c1));
+    expect(
+        map.heatmapUpdates.last.heatmapIdsToRemove.first, equals(c3.heatmapId));
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
@@ -169,11 +158,10 @@ void main() {
     await tester.pumpWidget(_mapWithHeatmaps(prev));
     await tester.pumpWidget(_mapWithHeatmaps(cur));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.heatmapsToChange, <Heatmap>{c3});
-    expect(platformGoogleMap.heatmapIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.heatmapsToAdd.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToChange, <Heatmap>{c3});
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.isEmpty, true);
+    expect(map.heatmapUpdates.last.heatmapsToAdd.isEmpty, true);
   });
 }

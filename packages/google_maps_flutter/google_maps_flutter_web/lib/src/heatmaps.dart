@@ -25,10 +25,6 @@ class HeatmapsController extends GeometryController {
   }
 
   void _addHeatmap(Heatmap heatmap) {
-    if (heatmap == null) {
-      return;
-    }
-
     final visualization.HeatmapLayerOptions heatmapOptions =
         _heatmapOptionsFromHeatmap(heatmap);
     final visualization.HeatmapLayer gmHeatmap =

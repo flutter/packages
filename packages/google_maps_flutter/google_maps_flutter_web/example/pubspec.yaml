@@ -40,5 +40,3 @@ dependency_overrides:
     path: ../../../google_maps_flutter/google_maps_flutter_ios
   google_maps_flutter_platform_interface:
     path: ../../../google_maps_flutter/google_maps_flutter_platform_interface
-  google_maps_flutter_web:
-    path: ../../../google_maps_flutter/google_maps_flutter_web

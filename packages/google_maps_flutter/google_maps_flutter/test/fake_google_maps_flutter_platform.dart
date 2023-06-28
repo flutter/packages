@@ -86,6 +86,15 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.heatmapUpdates.add(heatmapUpdates);
+    await _fakeDelay();
+  }
+
+  @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
@@ -288,6 +297,8 @@ class PlatformMapStateRecorder {
     polylineUpdates
         .add(PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines));
     circleUpdates.add(CircleUpdates.from(const <Circle>{}, mapObjects.circles));
+    heatmapUpdates
+        .add(HeatmapUpdates.from(const <Heatmap>{}, mapObjects.heatmaps));
     tileOverlaySets.add(mapObjects.tileOverlays);
   }
 
@@ -299,5 +310,6 @@ class PlatformMapStateRecorder {
   final List<PolygonUpdates> polygonUpdates = <PolygonUpdates>[];
   final List<PolylineUpdates> polylineUpdates = <PolylineUpdates>[];
   final List<CircleUpdates> circleUpdates = <CircleUpdates>[];
+  final List<HeatmapUpdates> heatmapUpdates = <HeatmapUpdates>[];
   final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
 }

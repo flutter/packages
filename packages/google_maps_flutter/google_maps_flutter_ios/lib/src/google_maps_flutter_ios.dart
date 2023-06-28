@@ -344,7 +344,6 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     HeatmapUpdates heatmapUpdates, {
     required int mapId,
   }) {
-    assert(heatmapUpdates != null);
     return _channel(mapId).invokeMethod<void>(
       'heatmaps#update',
       serializeMapsObjectUpdates(heatmapUpdates, serializeHeatmap),

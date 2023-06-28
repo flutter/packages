@@ -143,7 +143,6 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updateHeatmaps(HeatmapUpdates heatmapUpdates) {
-    assert(heatmapUpdates != null);
     return GoogleMapsFlutterPlatform.instance
         .updateHeatmaps(heatmapUpdates, mapId: mapId);
   }
