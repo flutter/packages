@@ -712,7 +712,9 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (void)clearCache:(FLTClearCacheMessage *)input error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
-  [player.resourceLoaderManager cleanCache];
+    if (@available(iOS 13, *)) {
+        [player.resourceLoaderManager cleanCache];
+    }
 }
 
 - (void)setVolume:(FLTVolumeMessage *)input error:(FlutterError **)error {
