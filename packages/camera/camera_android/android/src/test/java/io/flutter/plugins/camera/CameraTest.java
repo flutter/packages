@@ -686,7 +686,8 @@ public class CameraTest {
     camera.startPreview();
     verify(
             mockImageReader,
-            times(3)) // we expect two calls to start regular preview, one to create the capture session
+            times(
+                3)) // we expect two calls to start regular preview, one to create the capture session
         .getSurface(); // stream pulled from regular imageReader's surface.
   }
 
