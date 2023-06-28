@@ -243,8 +243,7 @@ class Camera
     }
   }
 
-  @VisibleForTesting
-  void prepareMediaRecorder(String outputFilePath) throws IOException {
+  private void prepareMediaRecorder(String outputFilePath) throws IOException {
     Log.i(TAG, "prepareMediaRecorder");
 
     if (mediaRecorder != null) {
@@ -764,6 +763,7 @@ class Camera
   public void startVideoRecording(
       @NonNull Result result, @Nullable EventChannel imageStreamChannel) {
     prepareRecording(result);
+
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
     }
@@ -1173,7 +1173,8 @@ class Camera
     cameraCaptureCallback.setCameraState(CameraState.STATE_PREVIEW);
   }
 
-  private void prepareRecording(@NonNull Result result) {
+  @VisibleForTesting
+  void prepareRecording(@NonNull Result result) {
     final File outputDir = applicationContext.getCacheDir();
     try {
       captureFile = File.createTempFile("REC", ".mp4", outputDir);

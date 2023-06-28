@@ -51,8 +51,8 @@ import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.utils.TestUtils;
 import io.flutter.view.TextureRegistry;
-import java.util.ArrayList;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -852,9 +852,11 @@ public class CameraTest {
     TestUtils.setPrivateField(cameraSpy, "pictureImageReader", mockPictureImageReader);
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     TestUtils.setPrivateField(cameraSpy, "cameraDevice", fakeCamera);
+    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(cameraSpy, "flutterTexture");
+        (TextureRegistry.SurfaceTextureEntry)
+            TestUtils.getPrivateField(cameraSpy, "flutterTexture");
     ResolutionFeature resolutionFeature =
         (ResolutionFeature)
             TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
@@ -863,9 +865,9 @@ public class CameraTest {
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockMediaRecorder.getSurface()).thenReturn(mock(Surface.class));
     when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
-    doNothing().when(cameraSpy).prepareMediaRecorder(anyString());
+    doNothing().when(cameraSpy).prepareRecording(mockResult);
 
-    cameraSpy.startVideoRecording(mock(MethodChannel.Result.class), null);
+    cameraSpy.startVideoRecording(mockResult, null);
     verify(mockMediaRecorder, times(1))
         .getSurface(); // stream pulled from media recorder's surface.
     verify(mockPictureImageReader, times(1))
