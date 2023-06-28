@@ -685,7 +685,7 @@ public class CameraTest {
     when(mockImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startPreview();
-    verify(mockImageReader, times(2)) // we expect two calls to start regular preview
+    verify(mockImageReader, times(2)) // we expect two calls to start regular preview.
         .getSurface(); // stream pulled from regular imageReader's surface.
   }
 
@@ -747,7 +747,7 @@ public class CameraTest {
         .getSurface(); // stream pulled from image streaming imageReader's surface.
     verify(
             mockPictureImageReader,
-            times(2)) // we expect one call to start the capture, one to create the capture session
+            times(2)) // we expect one call to start the capture, one to create the capture session.
         .getSurface(); // stream pulled from regular imageReader's surface.
   }
 
@@ -883,7 +883,7 @@ public class CameraTest {
         .getSurface(); // stream pulled from media recorder's surface.
     verify(
             mockPictureImageReader,
-            times(2)) // we expect one call to start the capture, one to create the capture session
+            times(2)) // we expect one call to start the capture, one to create the capture session.
         .getSurface(); // stream pulled from image streaming imageReader's surface.
   }
 
