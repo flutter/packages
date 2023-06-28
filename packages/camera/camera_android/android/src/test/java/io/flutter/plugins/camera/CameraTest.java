@@ -6,7 +6,6 @@ package io.flutter.plugins.camera;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -870,7 +869,7 @@ public class CameraTest {
     cameraSpy.startVideoRecording(mockResult, null);
     verify(mockMediaRecorder, times(1))
         .getSurface(); // stream pulled from media recorder's surface.
-    verify(mockPictureImageReader, times(1))
+    verify(mockPictureImageReader, times(2))
         .getSurface(); // stream pulled from image streaming imageReader's surface.
   }
 
