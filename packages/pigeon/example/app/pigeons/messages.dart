@@ -41,7 +41,11 @@ class MessageData {
 @HostApi()
 abstract class ExampleHostApi {
   String getHostLanguage();
+
+  @ObjCSelector('addNumber:otherNumber:')
+  @SwiftFunction('add(number:otherNumber:)')
   int add(int a, int b);
+
   @async
   bool sendMessage(MessageData message);
 }

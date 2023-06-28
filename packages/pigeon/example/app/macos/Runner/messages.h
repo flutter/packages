@@ -40,9 +40,9 @@ NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSString *)getHostLanguageWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)addA:(NSNumber *)a
-                          b:(NSNumber *)b
-                      error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)addNumber:(NSNumber *)a
+                     otherNumber:(NSNumber *)b
+                           error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)sendMessageMessage:(PGNMessageData *)message
                 completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end

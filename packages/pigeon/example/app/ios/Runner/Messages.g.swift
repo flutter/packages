@@ -111,7 +111,7 @@ class ExampleHostApiCodec: FlutterStandardMessageCodec {
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol ExampleHostApi {
   func getHostLanguage() throws -> String
-  func add(a: Int64, b: Int64) throws -> Int64
+  func add(number a: Int64, otherNumber b: Int64) throws -> Int64
   func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void)
 }
 
@@ -141,7 +141,7 @@ class ExampleHostApiSetup {
         let aArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
         let bArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
         do {
-          let result = try api.add(a: aArg, b: bArg)
+          let result = try api.add(number: aArg, otherNumber: bArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))

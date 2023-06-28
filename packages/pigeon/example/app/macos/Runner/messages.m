@@ -144,14 +144,16 @@ void PGNExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                                          binaryMessenger:binaryMessenger
                                                    codec:PGNExampleHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(addA:b:error:)],
-                @"PGNExampleHostApi api (%@) doesn't respond to @selector(addA:b:error:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(addNumber:otherNumber:error:)],
+          @"PGNExampleHostApi api (%@) doesn't respond to @selector(addNumber:otherNumber:error:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSNumber *arg_a = GetNullableObjectAtIndex(args, 0);
         NSNumber *arg_b = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        NSNumber *output = [api addA:arg_a b:arg_b error:&error];
+        NSNumber *output = [api addNumber:arg_a otherNumber:arg_b error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
