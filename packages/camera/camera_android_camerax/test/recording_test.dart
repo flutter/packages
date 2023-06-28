@@ -37,7 +37,7 @@ void main() {
       instanceManager.addHostCreatedInstance(recording, recordingId,
           onCopy: (_) => Recording.detached(instanceManager: instanceManager));
 
-      recording.close();
+      await recording.close();
 
       verify(mockApi.close(recordingId));
     });
@@ -57,7 +57,7 @@ void main() {
       instanceManager.addHostCreatedInstance(recording, recordingId,
           onCopy: (_) => Recording.detached(instanceManager: instanceManager));
 
-      recording.pause();
+      await recording.pause();
 
       verify(mockApi.pause(recordingId));
     });
@@ -77,7 +77,7 @@ void main() {
       instanceManager.addHostCreatedInstance(recording, recordingId,
           onCopy: (_) => Recording.detached(instanceManager: instanceManager));
 
-      recording.resume();
+      await recording.resume();
 
       verify(mockApi.resume(recordingId));
     });
@@ -97,7 +97,7 @@ void main() {
       instanceManager.addHostCreatedInstance(recording, recordingId,
           onCopy: (_) => Recording.detached(instanceManager: instanceManager));
 
-      recording.stop();
+      await recording.stop();
 
       verify(mockApi.stop(recordingId));
     });
