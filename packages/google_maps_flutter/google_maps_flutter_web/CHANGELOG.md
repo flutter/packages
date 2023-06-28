@@ -1,6 +1,6 @@
 ## 0.5.1
 
-* Use padding from newLatLngBounds. Issue [#122192](https://github.com/flutter/flutter/issues/122192)
+* Adds padding support to `CameraUpdate.newLatLngBounds`. Issue [#122192](https://github.com/flutter/flutter/issues/122192).
 
 ## 0.5.0+1
 
