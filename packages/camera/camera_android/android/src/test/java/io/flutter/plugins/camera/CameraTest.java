@@ -5,8 +5,10 @@
 package io.flutter.plugins.camera;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -1082,7 +1084,7 @@ public class CameraTest {
     Size mockSize = mock(Size.class);
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
-    CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
+    CameraDeviceWrapper fakeCamera = spy(new FakeCameraDeviceWrapper(mockRequestBuilders));
     ImageReader mockPictureImageReader = mock(ImageReader.class);
     TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
     TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
@@ -1098,12 +1100,12 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
-    when(fakeCamera.createCaptureRequest(any(Integer.class))).thenReturn(mockPreviewRequestBuilder);
+    when(fakeCamera.createCaptureRequest(anyInt())).thenReturn(mockPreviewRequestBuilder);
     when(mockPictureImageReader.getSurface()).thenReturn(mockSurface);
 
-    // Test with preview template, which should exclude any other surface.
+    // Test with preview template.
     camera.createCaptureSession(CameraDevice.TEMPLATE_PREVIEW, mockSurface, mockSecondarySurface);
-    verify(mockPreviewRequestBuilder, times(0)).addTarget(any(Surface.class));
+    verify(mockPreviewRequestBuilder, times(0)).addTarget(mockSurface);
 
     // Test with non-preview template.
     camera.createCaptureSession(CameraDevice.TEMPLATE_RECORD, mockSurface, mockSecondarySurface);

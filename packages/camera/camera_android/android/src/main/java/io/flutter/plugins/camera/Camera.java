@@ -535,6 +535,7 @@ class Camera
   }
 
   private void startCapture(boolean record, boolean stream) throws CameraAccessException {
+    System.out.println("DEBUG NOTE: made it to start capture");
     List<Surface> surfaces = new ArrayList<>();
     Runnable successCallback = null;
     if (record) {
