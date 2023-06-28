@@ -682,12 +682,11 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
-    // when(mockImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startPreview();
     verify(
             mockImageReader,
-            times(2)) // we expect one call to start the capture, one to create the capture session
+            times(3)) // we expect two calls to start regular preview, one to create the capture session
         .getSurface(); // stream pulled from regular imageReader's surface.
   }
 
@@ -715,7 +714,6 @@ public class CameraTest {
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockCameraProperties.getLensFacing()).thenReturn(CameraMetadata.LENS_FACING_FRONT);
-    // when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startPreview();
     verify(mockVideoRenderer, times(1)).setRotation(180);
@@ -879,8 +877,6 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
-    // when(mockMediaRecorder.getSurface()).thenReturn(mock(Surface.class));
-    // when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
     doNothing().when(cameraSpy).prepareRecording(mockResult);
 
     cameraSpy.startVideoRecording(mockResult, null);
@@ -1126,7 +1122,7 @@ public class CameraTest {
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(fakeCamera.createCaptureRequest(anyInt())).thenReturn(mockPreviewRequestBuilder);
-    // when(mockPictureImageReader.getSurface()).thenReturn(mockSurface);
+    when(mockPictureImageReader.getSurface()).thenReturn(mockSurface);
 
     // Test with preview template.
     camera.createCaptureSession(CameraDevice.TEMPLATE_PREVIEW, mockSurface, mockSecondarySurface);
