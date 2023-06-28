@@ -368,7 +368,6 @@ ${_typeName == 'TypedStatefulShellRoute' ? "branches:" : "routes:"} [${_children
     if (_typeName == 'TypedStatefulShellBranch') {
       return '''
   StatefulShellBranchData.\$branch(
-    factory: $_extensionName._fromState,
     $navigatorKey
     $routesBit
   )
