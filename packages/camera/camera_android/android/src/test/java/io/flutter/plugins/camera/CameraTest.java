@@ -886,7 +886,9 @@ public class CameraTest {
     cameraSpy.startVideoRecording(mockResult, null);
     verify(mockMediaRecorder, times(1))
         .getSurface(); // stream pulled from media recorder's surface.
-    verify(mockPictureImageReader, times(3)) // we expect one call to start the capture, two to create the capture session
+    verify(
+            mockPictureImageReader,
+            times(3)) // we expect one call to start the capture, two to create the capture session
         .getSurface(); // stream pulled from image streaming imageReader's surface.
   }
 
