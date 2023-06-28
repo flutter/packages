@@ -156,14 +156,6 @@ abstract class ShellRouteData extends RouteData {
     List<RouteBase> routes = const <RouteBase>[],
   }) {
     T factoryImpl(GoRouterState state) {
-      final Object? extra = state.extra;
-
-      // If the "extra" value is of type `T` then we know it's the source
-      // instance of `ShellRouteData`, so it doesn't need to be recreated.
-      if (extra is T) {
-        return extra;
-      }
-
       return (_stateObjectExpando[state] ??= factory(state)) as T;
     }
 

@@ -86,10 +86,6 @@ final ShellRoute _shellRouteDataPageBuilder = ShellRouteData.$route(
   ],
 );
 
-class _StatefulShellBranchDataBuilder extends StatefulShellBranchData {
-  const _StatefulShellBranchDataBuilder();
-}
-
 class _StatefulShellRouteDataBuilder extends StatefulShellRouteData {
   const _StatefulShellRouteDataBuilder();
 
@@ -97,7 +93,7 @@ class _StatefulShellRouteDataBuilder extends StatefulShellRouteData {
   Widget builder(
     BuildContext context,
     GoRouterState state,
-    Widget navigator,
+    StatefulNavigationShell navigator,
   ) =>
       SizedBox(
         key: const Key('builder'),
@@ -110,7 +106,6 @@ final StatefulShellRoute _statefulShellRouteDataBuilder =
   factory: (GoRouterState state) => const _StatefulShellRouteDataBuilder(),
   branches: <StatefulShellBranch>[
     StatefulShellBranchData.$branch(
-      factory: (GoRouterState state) => const _StatefulShellBranchDataBuilder(),
       routes: <RouteBase>[
         GoRouteData.$route(
           path: '/child',
@@ -128,7 +123,7 @@ class _StatefulShellRouteDataPageBuilder extends StatefulShellRouteData {
   Page<void> pageBuilder(
     BuildContext context,
     GoRouterState state,
-    Widget navigator,
+    StatefulNavigationShell navigator,
   ) =>
       MaterialPage<void>(
         child: SizedBox(
@@ -143,7 +138,6 @@ final StatefulShellRoute _statefulShellRouteDataPageBuilder =
   factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
   branches: <StatefulShellBranch>[
     StatefulShellBranchData.$branch(
-      factory: (GoRouterState state) => const _StatefulShellBranchDataBuilder(),
       routes: <RouteBase>[
         GoRouteData.$route(
           path: '/child',
@@ -181,11 +175,7 @@ void main() {
           initialLocation: '/build',
           routes: _routes,
         );
-        await tester.pumpWidget(MaterialApp.router(
-          routeInformationProvider: goRouter.routeInformationProvider,
-          routeInformationParser: goRouter.routeInformationParser,
-          routerDelegate: goRouter.routerDelegate,
-        ));
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('build')), findsOneWidget);
         expect(find.byKey(const Key('buildPage')), findsNothing);
       },
@@ -198,11 +188,7 @@ void main() {
           initialLocation: '/build-page',
           routes: _routes,
         );
-        await tester.pumpWidget(MaterialApp.router(
-          routeInformationProvider: goRouter.routeInformationProvider,
-          routeInformationParser: goRouter.routeInformationParser,
-          routerDelegate: goRouter.routerDelegate,
-        ));
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('build')), findsNothing);
         expect(find.byKey(const Key('buildPage')), findsOneWidget);
       },
@@ -219,11 +205,7 @@ void main() {
             _shellRouteDataBuilder,
           ],
         );
-        await tester.pumpWidget(MaterialApp.router(
-          routeInformationProvider: goRouter.routeInformationProvider,
-          routeInformationParser: goRouter.routeInformationParser,
-          routerDelegate: goRouter.routerDelegate,
-        ));
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('builder')), findsOneWidget);
         expect(find.byKey(const Key('page-builder')), findsNothing);
       },
@@ -238,11 +220,7 @@ void main() {
             _shellRouteDataPageBuilder,
           ],
         );
-        await tester.pumpWidget(MaterialApp.router(
-          routeInformationProvider: goRouter.routeInformationProvider,
-          routeInformationParser: goRouter.routeInformationParser,
-          routerDelegate: goRouter.routerDelegate,
-        ));
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('builder')), findsNothing);
         expect(find.byKey(const Key('page-builder')), findsOneWidget);
       },
@@ -259,11 +237,7 @@ void main() {
             _statefulShellRouteDataBuilder,
           ],
         );
-        await tester.pumpWidget(MaterialApp.router(
-          routeInformationProvider: goRouter.routeInformationProvider,
-          routeInformationParser: goRouter.routeInformationParser,
-          routerDelegate: goRouter.routerDelegate,
-        ));
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('builder')), findsOneWidget);
         expect(find.byKey(const Key('page-builder')), findsNothing);
       },
@@ -278,11 +252,7 @@ void main() {
             _statefulShellRouteDataPageBuilder,
           ],
         );
-        await tester.pumpWidget(MaterialApp.router(
-          routeInformationProvider: goRouter.routeInformationProvider,
-          routeInformationParser: goRouter.routeInformationParser,
-          routerDelegate: goRouter.routerDelegate,
-        ));
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('builder')), findsNothing);
         expect(find.byKey(const Key('page-builder')), findsOneWidget);
       },
@@ -296,11 +266,7 @@ void main() {
         initialLocation: '/redirect',
         routes: _routes,
       );
-      await tester.pumpWidget(MaterialApp.router(
-        routeInformationProvider: goRouter.routeInformationProvider,
-        routeInformationParser: goRouter.routeInformationParser,
-        routerDelegate: goRouter.routerDelegate,
-      ));
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsOneWidget);
     },
@@ -313,11 +279,7 @@ void main() {
         initialLocation: '/redirect-with-state',
         routes: _routes,
       );
-      await tester.pumpWidget(MaterialApp.router(
-        routeInformationProvider: goRouter.routeInformationProvider,
-        routeInformationParser: goRouter.routeInformationParser,
-        routerDelegate: goRouter.routerDelegate,
-      ));
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsNothing);
     },
