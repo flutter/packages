@@ -22,7 +22,7 @@ class GoogleMapController {
   ///
   /// The map stores a [StreamSubscription] as key and a [bool] as value.
   /// Each [StreamSubscription] represents a subscription to an event from the native side.
-  /// The corresponding [bool] indicates whether the subscription has been cancelled `true` or not `false`.
+  /// The corresponding [bool] indicates whether the subscription has been canceled `true` or not `false`.
   ///
   /// This map allows for efficient management of subscriptions, facilitating operations
   /// like mass cancellation during controller disposal.
@@ -39,7 +39,7 @@ class GoogleMapController {
   /// in the [GoogleMapController] class without allowing any outside mutations.
   ///
   /// The map contains [StreamSubscription] instances as keys, and [bool] as values.
-  /// A value of `true` indicates that the subscription is active and `false` indicates it is disposed.
+  /// The value indicates if the subscription has been canceled `true` or not `false`.
   ///
   /// This is useful in situations where the need arises to monitor or debug the
   /// lifecycle of various StreamSubscriptions handled within this class.
