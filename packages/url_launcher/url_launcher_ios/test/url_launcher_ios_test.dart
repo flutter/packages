@@ -36,7 +36,7 @@ void main() {
     test('canLaunch invalid URL passes the PlatformException through',
         () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
-      expectLater(launcher.canLaunch('invalid://u r l'),
+      await expectLater(launcher.canLaunch('invalid://u r l'),
           throwsA(isA<PlatformException>()));
     });
 
@@ -74,7 +74,7 @@ void main() {
 
     test('launch invalid URL passes the PlatformException through', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
-      expectLater(
+      await expectLater(
           launcher.launch(
             'invalid://u r l',
             useSafariVC: false,

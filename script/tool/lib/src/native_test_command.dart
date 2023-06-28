@@ -74,6 +74,9 @@ class NativeTestCommand extends PackageLoopingCommand {
   final String name = 'native-test';
 
   @override
+  List<String> get aliases => <String>['test-native'];
+
+  @override
   final String description = '''
 Runs native unit tests and native integration tests.
 
@@ -268,6 +271,7 @@ this command.
     }
 
     final Iterable<RepositoryPackage> examples = plugin.getExamples();
+    final String pluginName = plugin.directory.basename;
 
     bool ranUnitTests = false;
     bool ranAnyTests = false;
@@ -317,7 +321,15 @@ this command.
 
       if (runUnitTests) {
         print('Running unit tests...');
-        final int exitCode = await project.runCommand('testDebugUnitTest');
+        const String taskName = 'testDebugUnitTest';
+        // Target the unit tests in the app and plugin specifically, to avoid
+        // transitively running tests in dependencies. If unit tests have
+        // already run in an earlier example, only run any app-level unit tests.
+        final List<String> pluginTestTask = <String>[
+          if (!ranUnitTests) '$pluginName:$taskName'
+        ];
+        final int exitCode = await project.runCommand('app:$taskName',
+            additionalTasks: pluginTestTask);
         if (exitCode != 0) {
           printError('$exampleName unit tests failed.');
           failed = true;

@@ -52,6 +52,8 @@ extension $HomeRouteDataExtension on HomeRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $UsersRouteDataExtension on UsersRouteData {
@@ -68,11 +70,13 @@ extension $UsersRouteDataExtension on UsersRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $UserRouteDataExtension on UserRouteData {
   static UserRouteData _fromState(GoRouterState state) => UserRouteData(
-        id: int.parse(state.params['id']!),
+        id: int.parse(state.pathParameters['id']!),
       );
 
   String get location => GoRouteData.$location(
@@ -85,4 +89,6 @@ extension $UserRouteDataExtension on UserRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

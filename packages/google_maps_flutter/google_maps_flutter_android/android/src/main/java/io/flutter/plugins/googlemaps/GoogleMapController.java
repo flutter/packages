@@ -159,20 +159,17 @@ final class GoogleMapController
     }
     loadedCallbackPending = true;
     googleMap.setOnMapLoadedCallback(
-        new GoogleMap.OnMapLoadedCallback() {
-          @Override
-          public void onMapLoaded() {
-            loadedCallbackPending = false;
-            postFrameCallback(
-                () -> {
-                  postFrameCallback(
-                      () -> {
-                        if (mapView != null) {
-                          mapView.invalidate();
-                        }
-                      });
-                });
-          }
+        () -> {
+          loadedCallbackPending = false;
+          postFrameCallback(
+              () -> {
+                postFrameCallback(
+                    () -> {
+                      if (mapView != null) {
+                        mapView.invalidate();
+                      }
+                    });
+              });
         });
   }
 

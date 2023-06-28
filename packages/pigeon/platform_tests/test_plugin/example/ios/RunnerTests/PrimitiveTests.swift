@@ -11,8 +11,8 @@ class MockPrimitiveHostApi: PrimitiveHostApi {
   func aBool(value: Bool) -> Bool { value }
   func aString(value: String) -> String { value  }
   func aDouble(value: Double) -> Double { value }
-  func aMap(value: [AnyHashable: Any]) -> [AnyHashable: Any] { value }
-  func aList(value: [Any]) -> [Any] { value }
+  func aMap(value: [AnyHashable: Any?]) -> [AnyHashable: Any?] { value }
+  func aList(value: [Any?]) -> [Any?] { value }
   func anInt32List(value: FlutterStandardTypedData) -> FlutterStandardTypedData { value }
   func aBoolList(value: [Bool?]) -> [Bool?] { value }
   func aStringIntMap(value: [String?: Int64?]) -> [String?: Int64?] { value }

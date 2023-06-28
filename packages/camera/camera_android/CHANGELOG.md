@@ -1,3 +1,34 @@
+## NEXT
+
+* Fixes unawaited_futures violations.
+* Removes duplicate line in `MediaRecorderBuilder.java`.
+
+## 0.10.8+2
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.10.8+1
+
+* Fixes lint errors.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.10.8
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 0.10.7
+
+* Adds support for NV21 as a new streaming format in Android which includes correct handling of
+  image padding when present.
+
+## 0.10.6+2
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.10.6+1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 0.10.6
 
 * Fixes Java warnings.

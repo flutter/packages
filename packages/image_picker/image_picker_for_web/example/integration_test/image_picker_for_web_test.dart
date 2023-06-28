@@ -87,7 +87,8 @@ void main() {
         ));
   });
 
-  testWidgets('Can select multiple files', (WidgetTester tester) async {
+  testWidgets('getMultiImage can select multiple files',
+      (WidgetTester tester) async {
     final html.FileUploadInputElement mockInput = html.FileUploadInputElement();
 
     final ImagePickerPluginTestOverrides overrides =
@@ -100,6 +101,38 @@ void main() {
 
     // Init the pick file dialog...
     final Future<List<XFile>> files = plugin.getMultiImage();
+
+    // Mock the browser behavior of selecting a file...
+    mockInput.dispatchEvent(html.Event('change'));
+
+    // Now the file should be available
+    expect(files, completes);
+
+    // And readable
+    expect((await files).first.readAsBytes(), completion(isNotEmpty));
+
+    // Peek into the second file...
+    final XFile secondFile = (await files).elementAt(1);
+    expect(secondFile.readAsBytes(), completion(isNotEmpty));
+    expect(secondFile.name, secondTextFile.name);
+    expect(secondFile.length(), completion(secondTextFile.size));
+  });
+
+  testWidgets('getMedia can select multiple files',
+      (WidgetTester tester) async {
+    final html.FileUploadInputElement mockInput = html.FileUploadInputElement();
+
+    final ImagePickerPluginTestOverrides overrides =
+        ImagePickerPluginTestOverrides()
+          ..createInputElement = ((_, __) => mockInput)
+          ..getMultipleFilesFromInput =
+              ((_) => <html.File>[textFile, secondTextFile]);
+
+    final ImagePickerPlugin plugin = ImagePickerPlugin(overrides: overrides);
+
+    // Init the pick file dialog...
+    final Future<List<XFile>> files =
+        plugin.getMedia(options: const MediaOptions(allowMultiple: true));
 
     // Mock the browser behavior of selecting a file...
     mockInput.dispatchEvent(html.Event('change'));

@@ -1,3 +1,29 @@
+## 3.8.0
+
+* Adds support for handling geolocation permissions. See
+  `AndroidWebViewController.setGeolocationPermissionsPromptCallbacks`.
+
+## 3.7.1
+
+* Removes obsolete null checks on non-nullable values.
+
+## 3.7.0
+
+* Adds support to accept third party cookies. See
+  `AndroidWebViewCookieManager.setAcceptThirdPartyCookies`.
+
+## 3.6.3
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 3.6.2
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 3.6.1
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 3.6.0
 
 * Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.

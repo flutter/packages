@@ -6,9 +6,9 @@
 A Flutter plugin for iOS and Android for picking images from the image library,
 and taking new pictures with the camera.
 
-|             | Android | iOS     | Web                             |
-|-------------|---------|---------|---------------------------------|
-| **Support** | SDK 21+ | iOS 11+ | [See `image_picker_for_web`][1] |
+|             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
+|-------------|---------|---------|-------|--------|---------------------------------|-------------|
+| **Support** | SDK 21+ | iOS 11+ | Any   | 10.14+ | [See `image_picker_for_web`][1] | Windows 10+ |
 
 ## Installation
 
@@ -59,7 +59,7 @@ When under high memory pressure the Android system may kill the MainActivity of
 the application using the image_picker. On Android the image_picker makes use
 of the default `Intent.ACTION_GET_CONTENT` or `MediaStore.ACTION_IMAGE_CAPTURE`
 intents. This means that while the intent is executing the source application
-is moved to the background and becomes eligable for cleanup when the system is
+is moved to the background and becomes eligible for cleanup when the system is
 low on memory. When the intent finishes executing, Android will restart the
 application. Since the data is never returned to the original call use the
 `ImagePicker.retrieveLostData()` method to retrieve the lost data. For example:
@@ -109,6 +109,61 @@ As activities cannot communicate between tasks, the image picker activity cannot
 send back its eventual result to the calling activity.
 To work around this problem, consider using `launchMode: singleTask` instead.
 
+### Windows, macOS, and Linux
+
+This plugin currently has limited support for the three desktop platforms,
+serving as a wrapper around the [`file_selector`](https://pub.dev/packages/file_selector)
+plugin with appropriate file type filters set. Selection modification options,
+such as max width and height, are not yet supported.
+
+By default, `ImageSource.camera` is not supported, since unlike on Android and
+iOS there is no system-provided UI for taking photos. However, the desktop
+implementations allow delegating to a camera handler by setting a
+`cameraDelegate` before using `image_picker`, such as in `main()`:
+
+<?code-excerpt "readme_excerpts.dart (CameraDelegate)"?>
+``` dart
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+// ···
+class MyCameraDelegate extends ImagePickerCameraDelegate {
+  @override
+  Future<XFile?> takePhoto(
+      {ImagePickerCameraDelegateOptions options =
+          const ImagePickerCameraDelegateOptions()}) async {
+    return _takeAPhoto(options.preferredCameraDevice);
+  }
+
+  @override
+  Future<XFile?> takeVideo(
+      {ImagePickerCameraDelegateOptions options =
+          const ImagePickerCameraDelegateOptions()}) async {
+    return _takeAVideo(options.preferredCameraDevice);
+  }
+}
+// ···
+void setUpCameraDelegate() {
+  final ImagePickerPlatform instance = ImagePickerPlatform.instance;
+  if (instance is CameraDelegatingImagePickerPlatform) {
+    instance.cameraDelegate = MyCameraDelegate();
+  }
+}
+```
+
+Once you have set a `cameraDelegate`, `image_picker` calls with
+`ImageSource.camera` will work as normal, calling your provided delegate. We
+encourage the community to build packages that implement
+`ImagePickerCameraDelegate`, to provide options for desktop camera UI.
+
+#### macOS installation
+
+Since the macOS implementation uses `file_selector`, you will need to
+add a filesystem access
+[entitlement][https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox]:
+```xml
+  <key>com.apple.security.files.user-selected.read-only</key>
+  <true/>
+```
+
 ### Example
 
 <?code-excerpt "readme_excerpts.dart (Pick)"?>
@@ -125,17 +180,19 @@ final XFile? galleryVideo =
 final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
 // Pick multiple images.
 final List<XFile> images = await picker.pickMultiImage();
+// Pick singe image or video.
+final XFile? media = await picker.pickMedia();
+// Pick multiple images and videos.
+final List<XFile> medias = await picker.pickMultipleMedia();
 ```
 
-## Migrating to 0.8.2+
+## Migrating to 1.0
 
-Starting with version **0.8.2** of the image_picker plugin, new methods have
-been added for picking files that return `XFile` instances (from the
+Starting with version 0.8.2 of the image_picker plugin, new methods were
+added that return `XFile` instances (from the
 [cross_file](https://pub.dev/packages/cross_file) package) rather than the
-plugin's own `PickedFile` instances. While the previous methods still exist, it
-is already recommended to start migrating over to their new equivalents.
-Eventually, `PickedFile` and the methods that return instances of it will be
-deprecated and removed.
+plugin's own `PickedFile` instances. The previous methods were supported through
+0.8.9, and removed in 1.0.0.
 
 #### Call the new methods
 

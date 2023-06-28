@@ -1,6 +1,10 @@
 ## 2.3.0
 
 * Adds options for gesture handling and tilt controls on web.
+
+## 2.2.7
+
+* Removes obsolete null checks on non-nullable values.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 

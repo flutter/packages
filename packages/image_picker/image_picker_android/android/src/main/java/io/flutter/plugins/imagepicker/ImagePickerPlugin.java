@@ -19,11 +19,16 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry;
+import io.flutter.plugins.imagepicker.Messages.CacheRetrievalResult;
 import io.flutter.plugins.imagepicker.Messages.FlutterError;
+import io.flutter.plugins.imagepicker.Messages.GeneralOptions;
 import io.flutter.plugins.imagepicker.Messages.ImagePickerApi;
+import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
+import io.flutter.plugins.imagepicker.Messages.MediaSelectionOptions;
 import io.flutter.plugins.imagepicker.Messages.Result;
+import io.flutter.plugins.imagepicker.Messages.SourceCamera;
 import io.flutter.plugins.imagepicker.Messages.SourceSpecification;
-import java.io.File;
+import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -176,20 +181,18 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   }
 
   private FlutterPluginBinding pluginBinding;
-  private ActivityState activityState;
+  ActivityState activityState;
 
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     if (registrar.activity() == null) {
       // If a background flutter view tries to register the plugin, there will be no activity from the registrar,
       // we stop the registering process immediately because the ImagePicker requires an activity.
       return;
     }
     Activity activity = registrar.activity();
-    Application application = null;
-    if (registrar.context() != null) {
-      application = (Application) (registrar.context().getApplicationContext());
-    }
+    Application application = (Application) (registrar.context().getApplicationContext());
     ImagePickerPlugin plugin = new ImagePickerPlugin();
     plugin.setup(registrar.messenger(), application, activity, registrar, null);
   }
@@ -268,10 +271,9 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   final ImagePickerDelegate constructDelegate(final Activity setupActivity) {
     final ImagePickerCache cache = new ImagePickerCache(setupActivity);
 
-    final File externalFilesDirectory = setupActivity.getCacheDir();
     final ExifDataCopier exifDataCopier = new ExifDataCopier();
-    final ImageResizer imageResizer = new ImageResizer(externalFilesDirectory, exifDataCopier);
-    return new ImagePickerDelegate(setupActivity, externalFilesDirectory, imageResizer, cache);
+    final ImageResizer imageResizer = new ImageResizer(setupActivity, exifDataCopier);
+    return new ImagePickerDelegate(setupActivity, imageResizer, cache);
   }
 
   private @Nullable ImagePickerDelegate getImagePickerDelegate() {
@@ -283,7 +285,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
   private void setCameraDevice(
       @NonNull ImagePickerDelegate delegate, @NonNull SourceSpecification source) {
-    Messages.SourceCamera camera = source.getCamera();
+    SourceCamera camera = source.getCamera();
     if (camera != null) {
       ImagePickerDelegate.CameraDevice device;
       switch (camera) {
@@ -302,10 +304,9 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   @Override
   public void pickImages(
       @NonNull SourceSpecification source,
-      @NonNull Messages.ImageSelectionOptions options,
-      @NonNull Boolean allowMultiple,
-      @NonNull Boolean usePhotoPicker,
-      Result<List<String>> result) {
+      @NonNull ImageSelectionOptions options,
+      @NonNull GeneralOptions generalOptions,
+      @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
       result.error(
@@ -315,12 +316,12 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
     }
 
     setCameraDevice(delegate, source);
-    if (allowMultiple) {
-      delegate.chooseMultiImageFromGallery(options, usePhotoPicker, result);
+    if (generalOptions.getAllowMultiple()) {
+      delegate.chooseMultiImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
     } else {
       switch (source.getType()) {
         case GALLERY:
-          delegate.chooseImageFromGallery(options, usePhotoPicker, result);
+          delegate.chooseImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
           break;
         case CAMERA:
           delegate.takeImageWithCamera(options, result);
@@ -330,12 +331,26 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   }
 
   @Override
+  public void pickMedia(
+      @NonNull MediaSelectionOptions mediaSelectionOptions,
+      @NonNull GeneralOptions generalOptions,
+      @NonNull Result<List<String>> result) {
+    ImagePickerDelegate delegate = getImagePickerDelegate();
+    if (delegate == null) {
+      result.error(
+          new FlutterError(
+              "no_activity", "image_picker plugin requires a foreground activity.", null));
+      return;
+    }
+    delegate.chooseMediaFromGallery(mediaSelectionOptions, generalOptions, result);
+  }
+
+  @Override
   public void pickVideos(
       @NonNull SourceSpecification source,
-      @NonNull Messages.VideoSelectionOptions options,
-      @NonNull Boolean allowMultiple,
-      @NonNull Boolean usePhotoPicker,
-      Result<List<String>> result) {
+      @NonNull VideoSelectionOptions options,
+      @NonNull GeneralOptions generalOptions,
+      @NonNull Result<List<String>> result) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
       result.error(
@@ -345,12 +360,12 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
     }
 
     setCameraDevice(delegate, source);
-    if (allowMultiple) {
+    if (generalOptions.getAllowMultiple()) {
       result.error(new RuntimeException("Multi-video selection is not implemented"));
     } else {
       switch (source.getType()) {
         case GALLERY:
-          delegate.chooseVideoFromGallery(options, usePhotoPicker, result);
+          delegate.chooseVideoFromGallery(options, generalOptions.getUsePhotoPicker(), result);
           break;
         case CAMERA:
           delegate.takeVideoWithCamera(options, result);
@@ -361,7 +376,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
   @Nullable
   @Override
-  public Messages.CacheRetrievalResult retrieveLostResults() {
+  public CacheRetrievalResult retrieveLostResults() {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
       throw new FlutterError(

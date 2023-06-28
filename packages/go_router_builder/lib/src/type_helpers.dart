@@ -44,15 +44,15 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
 /// Returns the decoded [String] value for [element], if its type is supported.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String decodeParameter(ParameterElement element) {
+String decodeParameter(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
-    return 'state.${_stateValueAccess(element)}';
+    return 'state.${_stateValueAccess(element, pathParameters)}';
   }
 
   final DartType paramType = element.type;
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(paramType)) {
-      String decoded = helper._decode(element);
+      String decoded = helper._decode(element, pathParameters);
       if (element.isOptional && element.hasDefaultValue) {
         if (element.type.isNullableType) {
           throw NullableDefaultValueError(element);
@@ -92,30 +92,30 @@ String encodeField(PropertyAccessorElement element) {
 // ignore: deprecated_member_use
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
-String _stateValueAccess(ParameterElement element) {
+String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
     return 'extra as ${element.type.getDisplayString(withNullability: element.isOptional)}';
   }
 
-  if (element.isRequired) {
-    return 'params[${escapeDartString(element.name)}]!';
+  late String access;
+  if (pathParameters.contains(element.name)) {
+    access = 'pathParameters[${escapeDartString(element.name)}]';
+  } else {
+    access = 'queryParameters[${escapeDartString(element.name.kebab)}]';
+  }
+  if (pathParameters.contains(element.name) ||
+      (!element.type.isNullableType && !element.hasDefaultValue)) {
+    access += '!';
   }
 
-  if (element.isOptional) {
-    return 'queryParams[${escapeDartString(element.name.kebab)}]';
-  }
-
-  throw InvalidGenerationSourceError(
-    '$likelyIssueMessage (param not required or optional)',
-    element: element,
-  );
+  return access;
 }
 
 abstract class _TypeHelper {
   const _TypeHelper();
 
   /// Decodes the value from its string representation in the URL.
-  String _decode(ParameterElement parameterElement);
+  String _decode(ParameterElement parameterElement, Set<String> pathParameters);
 
   /// Encodes the value from its string representation in the URL.
   String _encode(String fieldName, DartType type);
@@ -228,8 +228,9 @@ class _TypeHelperString extends _TypeHelper {
   const _TypeHelperString();
 
   @override
-  String _decode(ParameterElement parameterElement) =>
-      'state.${_stateValueAccess(parameterElement)}';
+  String _decode(
+          ParameterElement parameterElement, Set<String> pathParameters) =>
+      'state.${_stateValueAccess(parameterElement, pathParameters)}';
 
   @override
   String _encode(String fieldName, DartType type) => fieldName;
@@ -257,7 +258,8 @@ class _TypeHelperIterable extends _TypeHelper {
   const _TypeHelperIterable();
 
   @override
-  String _decode(ParameterElement parameterElement) {
+  String _decode(
+      ParameterElement parameterElement, Set<String> pathParameters) {
     if (parameterElement.type is ParameterizedType) {
       final DartType iterableType =
           (parameterElement.type as ParameterizedType).typeArguments.first;
@@ -323,17 +325,20 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
   String helperName(DartType paramType);
 
   @override
-  String _decode(ParameterElement parameterElement) {
+  String _decode(
+      ParameterElement parameterElement, Set<String> pathParameters) {
     final DartType paramType = parameterElement.type;
+    final String parameterName = parameterElement.name;
 
-    if (!parameterElement.isRequired) {
+    if (!pathParameters.contains(parameterName) &&
+        (paramType.isNullableType || parameterElement.hasDefaultValue)) {
       return '$convertMapValueHelperName('
-          '${escapeDartString(parameterElement.name.kebab)}, '
-          'state.queryParams, '
+          '${escapeDartString(parameterName.kebab)}, '
+          'state.queryParameters, '
           '${helperName(paramType)})';
     }
     return '${helperName(paramType)}'
-        '(state.${_stateValueAccess(parameterElement)})';
+        '(state.${_stateValueAccess(parameterElement, pathParameters)})';
   }
 }
 

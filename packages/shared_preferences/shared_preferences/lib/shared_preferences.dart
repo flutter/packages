@@ -62,11 +62,12 @@ class SharedPreferences {
     if (_completer == null) {
       final Completer<SharedPreferences> completer =
           Completer<SharedPreferences>();
+      _completer = completer;
       try {
         final Map<String, Object> preferencesMap =
             await _getSharedPreferencesMap();
         completer.complete(SharedPreferences._(preferencesMap));
-      } on Exception catch (e) {
+      } catch (e) {
         // If there's an error, explicitly return the future with an error.
         // then set the completer to null so we can retry.
         completer.completeError(e);
@@ -74,7 +75,6 @@ class SharedPreferences {
         _completer = null;
         return sharedPrefsFuture;
       }
-      _completer = completer;
     }
     return _completer!.future;
   }
@@ -182,6 +182,7 @@ class SharedPreferences {
     _preferenceCache.clear();
     if (_prefixHasBeenChanged) {
       try {
+        // ignore: deprecated_member_use
         return _store.clearWithPrefix(_prefix);
       } catch (e) {
         // Catching and clarifying UnimplementedError to provide a more robust message.
@@ -213,6 +214,7 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
     final Map<String, Object> fromSystem = <String, Object>{};
     if (_prefixHasBeenChanged) {
       try {
+        // ignore: deprecated_member_use
         fromSystem.addAll(await _store.getAllWithPrefix(_prefix));
       } catch (e) {
         // Catching and clarifying UnimplementedError to provide a more robust message.

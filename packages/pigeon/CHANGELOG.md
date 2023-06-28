@@ -1,3 +1,20 @@
+## 10.1.0
+
+* [objc] Adds macOS support to facilitate code sharing with existing iOS plugins.
+
+## 10.0.1
+
+* Requires `analyzer 5.13.0` and replaces use of deprecated APIs.
+
+## 10.0.0
+
+* [swift] Avoids using `Any` to represent `Optional` in Swift.
+* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be 
+  translated into `[Any?]` (rather than `[Any]`) in Swift.
+* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be 
+  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`) in Swift. 
+* Adds an example application that uses Pigeon directly, rather than in a plugin.
+
 ## 9.2.5
 
 * Reports an error when trying to use an enum directly in a `List` or `Map`

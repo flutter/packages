@@ -99,6 +99,11 @@ class PublishCommand extends PackageLoopingCommand {
   // `flutter_plugin_tools-v0.0.24`.
   static const String _tagFormat = '%PACKAGE%-v%VERSION%';
 
+  /// Returns the correct path where the pub credential is stored.
+  @visibleForTesting
+  late final String credentialsPath =
+      _getCredentialsPath(platform: platform, path: path);
+
   @override
   final String name = 'publish';
 
@@ -383,7 +388,6 @@ Safe to ignore if the package is deleted in this commit.
     required String tag,
     required _RemoteInfo remote,
   }) async {
-    assert(remote != null && tag != null);
     if (!getBoolArg(_dryRunFlag)) {
       final io.ProcessResult result = await (await gitDir).runCommand(
         <String>['push', remote.name, tag],
@@ -397,13 +401,12 @@ Safe to ignore if the package is deleted in this commit.
   }
 
   void _ensureValidPubCredential() {
-    final String credentialsPath = _credentialsPath;
     final File credentialFile = packagesDir.fileSystem.file(credentialsPath);
     if (credentialFile.existsSync() &&
         credentialFile.readAsStringSync().isNotEmpty) {
       return;
     }
-    final String? credential = io.Platform.environment[_pubCredentialName];
+    final String? credential = platform.environment[_pubCredentialName];
     if (credential == null) {
       printError('''
 No pub credential available. Please check if `$credentialsPath` is valid.
@@ -411,46 +414,51 @@ If running this command on CI, you can set the pub credential content in the $_p
 ''');
       throw ToolExit(1);
     }
+    credentialFile.createSync(recursive: true);
     credentialFile.openSync(mode: FileMode.writeOnlyAppend)
       ..writeStringSync(credential)
       ..closeSync();
   }
-
-  /// Returns the correct path where the pub credential is stored.
-  @visibleForTesting
-  static String getCredentialPath() {
-    return _credentialsPath;
-  }
 }
 
 /// The path in which pub expects to find its credentials file.
-final String _credentialsPath = () {
-  // This follows the same logic as pub:
-  // https://github.com/dart-lang/pub/blob/d99b0d58f4059d7bb4ac4616fd3d54ec00a2b5d4/lib/src/system_cache.dart#L34-L43
-  String? cacheDir;
-  final String? pubCache = io.Platform.environment['PUB_CACHE'];
-  if (pubCache != null) {
-    cacheDir = pubCache;
-  } else if (io.Platform.isWindows) {
-    final String? appData = io.Platform.environment['APPDATA'];
+String _getCredentialsPath(
+    {required Platform platform, required p.Context path}) {
+  // See https://github.com/dart-lang/pub/blob/master/doc/cache_layout.md#layout
+  String? configDir;
+  if (platform.isLinux) {
+    String? configHome = platform.environment['XDG_CONFIG_HOME'];
+    if (configHome == null) {
+      final String? home = platform.environment['HOME'];
+      if (home == null) {
+        printError('"HOME" environment variable is not set.');
+      } else {
+        configHome = path.join(home, '.config');
+      }
+    }
+    if (configHome != null) {
+      configDir = path.join(configHome, 'dart');
+    }
+  } else if (platform.isWindows) {
+    final String? appData = platform.environment['APPDATA'];
     if (appData == null) {
       printError('"APPDATA" environment variable is not set.');
     } else {
-      cacheDir = p.join(appData, 'Pub', 'Cache');
+      configDir = path.join(appData, 'dart');
     }
-  } else {
-    final String? home = io.Platform.environment['HOME'];
+  } else if (platform.isMacOS) {
+    final String? home = platform.environment['HOME'];
     if (home == null) {
       printError('"HOME" environment variable is not set.');
     } else {
-      cacheDir = p.join(home, '.pub-cache');
+      configDir = path.join(home, 'Library', 'Application Support', 'dart');
     }
   }
 
-  if (cacheDir == null) {
-    printError('Unable to determine pub cache location');
+  if (configDir == null) {
+    printError('Unable to determine pub con location');
     throw ToolExit(1);
   }
 
-  return p.join(cacheDir, 'credentials.json');
-}();
+  return path.join(configDir, 'pub-credentials.json');
+}

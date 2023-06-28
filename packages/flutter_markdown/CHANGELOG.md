@@ -1,7 +1,15 @@
 ## NEXT
 
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.6.15
+
+* Fixes unawaited_futures violations.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
+* Replace `describeEnum` with the `name` getter.
+* Supports custom rendering of tags without children.
 
 ## 0.6.14
 

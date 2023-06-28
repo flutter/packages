@@ -471,9 +471,7 @@ class Camera {
     _onVideoRecordingErrorSubscription =
         mediaRecorder!.onError.listen((html.Event event) {
       final html.ErrorEvent error = event as html.ErrorEvent;
-      if (error != null) {
-        videoRecordingErrorController.add(error);
-      }
+      videoRecordingErrorController.add(error);
     });
 
     if (maxVideoDuration != null) {

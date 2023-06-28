@@ -3,4 +3,6 @@
 // found in the LICENSE file.
 
 export 'package:cross_file/cross_file.dart';
-export 'x_type_group/x_type_group.dart';
+export 'file_dialog_options.dart';
+export 'file_save_location.dart';
+export 'x_type_group.dart';
