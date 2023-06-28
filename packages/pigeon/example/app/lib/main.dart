@@ -58,26 +58,28 @@ class _MyHomePageState extends State<MyHomePage> {
   final ExampleHostApi _api = ExampleHostApi();
 
   /// Calls host method `add` with provided arguments.
-  Future<int> callAddPlusOne(int a, int b) async {
+  Future<int> add(int a, int b) async {
     try {
       return await _api.add(a, b);
     } catch (e) {
+      // handle error.
       return 0;
     }
   }
 
-  /// Sends message through host api using `CreateMessage` class
+  /// Sends message through host api using `MessageData` class
   /// and api `sendMessage` method.
   Future<bool> sendMessage(String messageText) {
-    final CreateMessage message = CreateMessage(
+    final MessageData message = MessageData(
       code: Code.one,
-      httpHeaders: <String?, String?>{'header': 'this is a header'},
-      uri: 'uri text',
+      data: <String?, String?>{'header': 'this is a header'},
+      description: 'uri text',
     );
     try {
       return _api.sendMessage(message);
     } catch (e) {
-      rethrow;
+      // handle error.
+      return Future<bool>(() => true);
     }
   }
   // #enddocregion main-dart

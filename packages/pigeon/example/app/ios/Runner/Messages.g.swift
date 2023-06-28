@@ -43,31 +43,31 @@ enum Code: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct CreateMessage {
-  var asset: String? = nil
-  var uri: String? = nil
+struct MessageData {
+  var name: String? = nil
+  var description: String? = nil
   var code: Code
-  var httpHeaders: [String?: String?]
+  var data: [String?: String?]
 
-  static func fromList(_ list: [Any?]) -> CreateMessage? {
-    let asset: String? = nilOrValue(list[0])
-    let uri: String? = nilOrValue(list[1])
+  static func fromList(_ list: [Any?]) -> MessageData? {
+    let name: String? = nilOrValue(list[0])
+    let description: String? = nilOrValue(list[1])
     let code = Code(rawValue: list[2] as! Int)!
-    let httpHeaders = list[3] as! [String?: String?]
+    let data = list[3] as! [String?: String?]
 
-    return CreateMessage(
-      asset: asset,
-      uri: uri,
+    return MessageData(
+      name: name,
+      description: description,
       code: code,
-      httpHeaders: httpHeaders
+      data: data
     )
   }
   func toList() -> [Any?] {
     return [
-      asset,
-      uri,
+      name,
+      description,
       code.rawValue,
-      httpHeaders,
+      data,
     ]
   }
 }
@@ -76,7 +76,7 @@ private class ExampleHostApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return CreateMessage.fromList(self.readValue() as! [Any?])
+        return MessageData.fromList(self.readValue() as! [Any?])
       default:
         return super.readValue(ofType: type)
     }
@@ -85,7 +85,7 @@ private class ExampleHostApiCodecReader: FlutterStandardReader {
 
 private class ExampleHostApiCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? CreateMessage {
+    if let value = value as? MessageData {
       super.writeByte(128)
       super.writeValue(value.toList())
     } else {
@@ -112,7 +112,7 @@ class ExampleHostApiCodec: FlutterStandardMessageCodec {
 protocol ExampleHostApi {
   func getHostLanguage() throws -> String
   func add(a: Int64, b: Int64) throws -> Int64
-  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void)
+  func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -154,7 +154,7 @@ class ExampleHostApiSetup {
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let messageArg = args[0] as! CreateMessage
+        let messageArg = args[0] as! MessageData
         api.sendMessage(message: messageArg) { result in
           switch result {
             case .success(let res):

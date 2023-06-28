@@ -16,39 +16,38 @@ enum Code {
   two,
 }
 
-class CreateMessage {
-  CreateMessage({
-    this.asset,
-    this.uri,
+class MessageData {
+  MessageData({
+    this.name,
+    this.description,
     required this.code,
-    required this.httpHeaders,
+    required this.data,
   });
 
-  String? asset;
+  String? name;
 
-  String? uri;
+  String? description;
 
   Code code;
 
-  Map<String?, String?> httpHeaders;
+  Map<String?, String?> data;
 
   Object encode() {
     return <Object?>[
-      asset,
-      uri,
+      name,
+      description,
       code.index,
-      httpHeaders,
+      data,
     ];
   }
 
-  static CreateMessage decode(Object result) {
+  static MessageData decode(Object result) {
     result as List<Object?>;
-    return CreateMessage(
-      asset: result[0] as String?,
-      uri: result[1] as String?,
+    return MessageData(
+      name: result[0] as String?,
+      description: result[1] as String?,
       code: Code.values[result[2]! as int],
-      httpHeaders:
-          (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      data: (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
 }
@@ -57,7 +56,7 @@ class _ExampleHostApiCodec extends StandardMessageCodec {
   const _ExampleHostApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is CreateMessage) {
+    if (value is MessageData) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
@@ -69,7 +68,7 @@ class _ExampleHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return CreateMessage.decode(readValue(buffer)!);
+        return MessageData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -139,7 +138,7 @@ class ExampleHostApi {
     }
   }
 
-  Future<bool> sendMessage(CreateMessage arg_message) async {
+  Future<bool> sendMessage(MessageData arg_message) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ExampleHostApi.sendMessage', codec,
         binaryMessenger: _binaryMessenger);

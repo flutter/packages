@@ -62,42 +62,40 @@ class ErrorOr {
 enum class Code { one = 0, two = 1 };
 
 // Generated class from Pigeon that represents data sent in messages.
-class CreateMessage {
+class MessageData {
  public:
   // Constructs an object setting all non-nullable fields.
-  explicit CreateMessage(const Code& code,
-                         const flutter::EncodableMap& http_headers);
+  explicit MessageData(const Code& code, const flutter::EncodableMap& data);
 
   // Constructs an object setting all fields.
-  explicit CreateMessage(const std::string* asset, const std::string* uri,
-                         const Code& code,
-                         const flutter::EncodableMap& http_headers);
+  explicit MessageData(const std::string* name, const std::string* description,
+                       const Code& code, const flutter::EncodableMap& data);
 
-  const std::string* asset() const;
-  void set_asset(const std::string_view* value_arg);
-  void set_asset(std::string_view value_arg);
+  const std::string* name() const;
+  void set_name(const std::string_view* value_arg);
+  void set_name(std::string_view value_arg);
 
-  const std::string* uri() const;
-  void set_uri(const std::string_view* value_arg);
-  void set_uri(std::string_view value_arg);
+  const std::string* description() const;
+  void set_description(const std::string_view* value_arg);
+  void set_description(std::string_view value_arg);
 
   const Code& code() const;
   void set_code(const Code& value_arg);
 
-  const flutter::EncodableMap& http_headers() const;
-  void set_http_headers(const flutter::EncodableMap& value_arg);
+  const flutter::EncodableMap& data() const;
+  void set_data(const flutter::EncodableMap& value_arg);
 
  private:
-  static CreateMessage FromEncodableList(const flutter::EncodableList& list);
+  static MessageData FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class ExampleHostApi;
   friend class ExampleHostApiCodecSerializer;
   friend class MessageFlutterApi;
   friend class MessageFlutterApiCodecSerializer;
-  std::optional<std::string> asset_;
-  std::optional<std::string> uri_;
+  std::optional<std::string> name_;
+  std::optional<std::string> description_;
   Code code_;
-  flutter::EncodableMap http_headers_;
+  flutter::EncodableMap data_;
 };
 
 class ExampleHostApiCodecSerializer : public flutter::StandardCodecSerializer {
@@ -125,7 +123,7 @@ class ExampleHostApi {
   virtual ~ExampleHostApi() {}
   virtual ErrorOr<std::string> GetHostLanguage() = 0;
   virtual ErrorOr<int64_t> Add(int64_t a, int64_t b) = 0;
-  virtual void SendMessage(const CreateMessage& message,
+  virtual void SendMessage(const MessageData& message,
                            std::function<void(ErrorOr<bool> reply)> result) = 0;
 
   // The codec used by ExampleHostApi.

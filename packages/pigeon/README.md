@@ -1,43 +1,43 @@
-# Pigeon
+# pigeon
 
 Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe, easier, and faster.
 
-Pigeon removes the necessity to manage platform channel names as strings across multiple platforms and languages.
-It also improves efficiency over standard data encoding across platform channels.
-Most importantly though, it removes the need to write custom platform channel code and codecs,
-since Pigeon generates all of that code for you.
+Pigeon removes the necessity to manage strings across multiple platforms and languages.
+It also improves efficiency over common method channel patterns. Most importantly though,
+it removes the need to write custom platform channel code, since pigeon generates it for you.
 
-For examples on usage, see the [Example README](./example/README.md).
+For usage examples, see the [Example README](./example/README.md).
 
 ## Features
 
 ### Supported Platforms
 
-Currently Pigeon supports generating:
+Currently pigeon supports generating:
 * Kotlin and Java code for Android
 * Swift and Objective-C code for iOS and macOS
 * C++ code for Windows
 
 ### Supported Datatypes
 
-Pigeon uses the `StandardMessageCodec` so it supports any datatype Platform
-Channels supports
-[[documentation](https://flutter.dev/docs/development/platform-integration/platform-channels#codec)].
+Pigeon uses the `StandardMessageCodec` so it supports 
+[[any datatype platform channels support](https://flutter.dev/docs/development/platform-integration/platform-channels#codec)].
 
-Custom Classes and Nested datatypes are also supported.
+Custom classes and nested datatypes are also supported.
 
-### Enums
+#### Enums
 
-Pigeon supports enum generation in class fields only.
+Pigeon currently supports enum generation in class fields only.
+See issue: [87307](https://github.com/flutter/flutter/issues/87307).
 
 ### Synchronous and Asynchronous methods
 
-While all calls across platform channel api's (such as Pigeon methods) are asynchronous,
-standard Pigeon methods can be treated as synchronous when handling returns and error.
+While all calls across platform channel APIs (such as pigeon methods) are asynchronous,
+pigeon methods can be written on the native side as synchronous methods,
+to make it simpler to always reply exactly once.
 
 If asynchronous methods are needed, the `@async` annotation can be used. This will require 
-results or errors to be returned via a provided callback. [Example.](./example/README.md#HostApi_Example)
+results or errors to be returned via a provided callback. [Example](./example/README.md#HostApi_Example).
 
 ### Error Handling
 
@@ -49,18 +49,18 @@ All Host API exceptions are translated into Flutter `PlatformException`.
 should be returned via the provided callback.
 
 To pass custom details into `PlatformException` for error handling, 
-use `FlutterError` in your Host API. [Example.](./example/README.md#HostApi_Example)
+use `FlutterError` in your Host API. [Example](./example/README.md#HostApi_Example).
 
-To use `FlutterError` in swift you must first extend a standard error.
-[Example](./example/README.md#AppDelegate.swift)
+To use `FlutterError` in Swift you must first extend a standard error.
+[Example](./example/README.md#AppDelegate.swift).
 
 #### Objective-C and C++
 
-Likewise, Host API errors can be sent using the provided `FlutterError` class (translated into `PlatformException`).
+Host API errors can be sent using the provided `FlutterError` class (translated into `PlatformException`).
 
 For synchronous methods:
-* Objective-C - Assign the `error` argument to a `FlutterError` reference.
-* C++ - Return a `FlutterError` directly (for void methods) or within an `ErrorOr` instance.
+* Objective-C - Set the `error` argument to a `FlutterError` reference.
+* C++ - Return a `FlutterError`.
 
 For async methods:
 * Return a `FlutterError` through the provided callback.
@@ -75,17 +75,18 @@ the threading model for handling HostApi methods can be selected with the
 
 ## Usage
 
-1) Add Pigeon as a `dev_dependency`.
+1) Add pigeon as a `dev_dependency`.
 1) Make a ".dart" file outside of your "lib" directory for defining the
    communication interface.
-1) Run Pigeon on your ".dart" file to generate the required Dart and
-   host-language code: `flutter pub get` then `flutter pub run Pigeon`
-   with suitable arguments.  [Example.](./example/README.md#Invocation).
+1) Run pigeon on your ".dart" file to generate the required Dart and
+   host-language code: `flutter pub get` then `flutter pub run pigeon`
+   with suitable arguments. [Example](./example/README.md#Invocation).
 1) Add the generated Dart code to `./lib` for compilation.
 1) Implement the host-language code and add it to your build (see below).
 1) Call the generated Dart methods.
 
-### Rules for defining your communication interface [Example](./example/README.md#HostApi_Example)
+### Rules for defining your communication interface 
+[Example](./example/README.md#HostApi_Example)
 
 1) The file should contain no method or function definitions, only declarations.
 1) Custom classes used by APIs are defined as classes with fields of the
@@ -137,4 +138,4 @@ denotes APIs that live in Flutter but are invoked from the host platform.
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with 
-"[Pigeon]" at the start of the title.
+"[pigeon]" at the start of the title.

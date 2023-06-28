@@ -66,25 +66,25 @@ public class Messages {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class CreateMessage {
-    private @Nullable String asset;
+  public static final class MessageData {
+    private @Nullable String name;
 
-    public @Nullable String getAsset() {
-      return asset;
+    public @Nullable String getName() {
+      return name;
     }
 
-    public void setAsset(@Nullable String setterArg) {
-      this.asset = setterArg;
+    public void setName(@Nullable String setterArg) {
+      this.name = setterArg;
     }
 
-    private @Nullable String uri;
+    private @Nullable String description;
 
-    public @Nullable String getUri() {
-      return uri;
+    public @Nullable String getDescription() {
+      return description;
     }
 
-    public void setUri(@Nullable String setterArg) {
-      this.uri = setterArg;
+    public void setDescription(@Nullable String setterArg) {
+      this.description = setterArg;
     }
 
     private @NonNull Code code;
@@ -100,35 +100,35 @@ public class Messages {
       this.code = setterArg;
     }
 
-    private @NonNull Map<String, String> httpHeaders;
+    private @NonNull Map<String, String> data;
 
-    public @NonNull Map<String, String> getHttpHeaders() {
-      return httpHeaders;
+    public @NonNull Map<String, String> getData() {
+      return data;
     }
 
-    public void setHttpHeaders(@NonNull Map<String, String> setterArg) {
+    public void setData(@NonNull Map<String, String> setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"httpHeaders\" is null.");
+        throw new IllegalStateException("Nonnull field \"data\" is null.");
       }
-      this.httpHeaders = setterArg;
+      this.data = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
-    CreateMessage() {}
+    MessageData() {}
 
     public static final class Builder {
 
-      private @Nullable String asset;
+      private @Nullable String name;
 
-      public @NonNull Builder setAsset(@Nullable String setterArg) {
-        this.asset = setterArg;
+      public @NonNull Builder setName(@Nullable String setterArg) {
+        this.name = setterArg;
         return this;
       }
 
-      private @Nullable String uri;
+      private @Nullable String description;
 
-      public @NonNull Builder setUri(@Nullable String setterArg) {
-        this.uri = setterArg;
+      public @NonNull Builder setDescription(@Nullable String setterArg) {
+        this.description = setterArg;
         return this;
       }
 
@@ -139,19 +139,19 @@ public class Messages {
         return this;
       }
 
-      private @Nullable Map<String, String> httpHeaders;
+      private @Nullable Map<String, String> data;
 
-      public @NonNull Builder setHttpHeaders(@NonNull Map<String, String> setterArg) {
-        this.httpHeaders = setterArg;
+      public @NonNull Builder setData(@NonNull Map<String, String> setterArg) {
+        this.data = setterArg;
         return this;
       }
 
-      public @NonNull CreateMessage build() {
-        CreateMessage pigeonReturn = new CreateMessage();
-        pigeonReturn.setAsset(asset);
-        pigeonReturn.setUri(uri);
+      public @NonNull MessageData build() {
+        MessageData pigeonReturn = new MessageData();
+        pigeonReturn.setName(name);
+        pigeonReturn.setDescription(description);
         pigeonReturn.setCode(code);
-        pigeonReturn.setHttpHeaders(httpHeaders);
+        pigeonReturn.setData(data);
         return pigeonReturn;
       }
     }
@@ -159,23 +159,23 @@ public class Messages {
     @NonNull
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<Object>(4);
-      toListResult.add(asset);
-      toListResult.add(uri);
+      toListResult.add(name);
+      toListResult.add(description);
       toListResult.add(code == null ? null : code.index);
-      toListResult.add(httpHeaders);
+      toListResult.add(data);
       return toListResult;
     }
 
-    static @NonNull CreateMessage fromList(@NonNull ArrayList<Object> list) {
-      CreateMessage pigeonResult = new CreateMessage();
-      Object asset = list.get(0);
-      pigeonResult.setAsset((String) asset);
-      Object uri = list.get(1);
-      pigeonResult.setUri((String) uri);
+    static @NonNull MessageData fromList(@NonNull ArrayList<Object> list) {
+      MessageData pigeonResult = new MessageData();
+      Object name = list.get(0);
+      pigeonResult.setName((String) name);
+      Object description = list.get(1);
+      pigeonResult.setDescription((String) description);
       Object code = list.get(2);
       pigeonResult.setCode(code == null ? null : Code.values()[(int) code]);
-      Object httpHeaders = list.get(3);
-      pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
+      Object data = list.get(3);
+      pigeonResult.setData((Map<String, String>) data);
       return pigeonResult;
     }
   }
@@ -196,7 +196,7 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return MessageData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -204,9 +204,9 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof CreateMessage) {
+      if (value instanceof MessageData) {
         stream.write(128);
-        writeValue(stream, ((CreateMessage) value).toList());
+        writeValue(stream, ((MessageData) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -222,7 +222,7 @@ public class Messages {
     @NonNull
     Long add(@NonNull Long a, @NonNull Long b);
 
-    void sendMessage(@NonNull CreateMessage message, @NonNull Result<Boolean> result);
+    void sendMessage(@NonNull MessageData message, @NonNull Result<Boolean> result);
 
     /** The codec used by ExampleHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -287,7 +287,7 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                CreateMessage messageArg = (CreateMessage) args.get(0);
+                MessageData messageArg = (MessageData) args.get(0);
                 Result<Boolean> resultCallback =
                     new Result<Boolean>() {
                       public void success(Boolean result) {

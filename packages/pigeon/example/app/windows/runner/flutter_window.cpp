@@ -27,7 +27,7 @@ class PigeonApiImplementation : public ExampleHostApi {
     }
     return a + b;
   }
-  void SendMessage(const CreateMessage& message,
+  void SendMessage(const MessageData& message,
                    std::function<void(ErrorOr<bool> reply)> result) {
     if (message.code == Code.one) {
       result(FlutterError("code", "message", "details"));

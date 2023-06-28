@@ -18,9 +18,9 @@ import 'package:pigeon/pigeon.dart';
   javaOptions: JavaOptions(),
   swiftOut: 'ios/Runner/Messages.g.swift',
   swiftOptions: SwiftOptions(),
-  objcHeaderOut: 'macos/runner/messages_objc.h',
-  objcSourceOut: 'macos/runner/message_objc.m',
-  objcOptions: ObjcOptions(),
+  objcHeaderOut: 'macos/runner/messages.h',
+  objcSourceOut: 'macos/runner/messages.m',
+  objcOptions: ObjcOptions(prefix: 'PGN'),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 // #enddocregion config
@@ -28,12 +28,12 @@ import 'package:pigeon/pigeon.dart';
 // #docregion host-definitions
 enum Code { one, two }
 
-class CreateMessage {
-  CreateMessage({required this.code, required this.httpHeaders});
-  String? asset;
-  String? uri;
+class MessageData {
+  MessageData({required this.code, required this.data});
+  String? name;
+  String? description;
   Code code;
-  Map<String?, String?> httpHeaders;
+  Map<String?, String?> data;
 }
 
 @HostApi()
@@ -41,7 +41,7 @@ abstract class ExampleHostApi {
   String getHostLanguage();
   int add(int a, int b);
   @async
-  bool sendMessage(CreateMessage message);
+  bool sendMessage(MessageData message);
 }
 // #enddocregion host-definitions
 

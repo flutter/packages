@@ -5,7 +5,7 @@
 package dev.flutter.pigeon_example_app
 
 import ExampleHostApi
-import CreateMessage
+import MessageData
 import MessageFlutterApi
 import FlutterError
 
@@ -27,7 +27,7 @@ private class PigeonApiImplementation: ExampleHostApi {
     return a + b
   }
 
-  override fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
+  override fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit) {
     if (message.code == Code.ONE) {
       callback(Result.failure(FlutterError("code", "message", "details")))
       return

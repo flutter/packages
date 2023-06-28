@@ -7,29 +7,9 @@ check the [core_tests pigeon file](../pigeons/core_tests.dart) and
 
 ## Invocation
 
-This is an example call to Pigeon that would ingest a definition file
-`pigeons/message.dart` and generate corresponding output code for each
-supported language. In actual use, you would include only the languages
+Begin by configuring pigeon at the top of the `.dart` input file.
+In actual use, you would include only the languages
 needed for your project.
-
-```sh
-flutter pub run pigeon \
-  --input pigeons/message.dart \
-  --dart_out lib/pigeon.dart \
-  --objc_header_out ios/Runner/pigeon.h \
-  --objc_source_out ios/Runner/pigeon.m \
-  --swift_out ios/Runner/Pigeon.swift \
-  --kotlin_out android/app/src/main/kotlin/dev/flutter/pigeon/Pigeon.kt \
-  --kotlin_package "dev.flutter.pigeon" \
-  --java_out android/app/src/main/java/dev/flutter/pigeon/Pigeon.java \
-  --java_package "dev.flutter.pigeon" \
-  --cpp_header_out windows/runner/pigeon.h \
-  --cpp_source_out windows/runner/pigeon.cpp \
-  --cpp_namespace pigeon
-```
-
-It is usually preferable to add a config into the pigeon input
-file directly. 
 
 <?code-excerpt "../../app/pigeons/messages.dart (config)"?>
 ```dart
@@ -46,21 +26,24 @@ file directly.
   javaOptions: JavaOptions(),
   swiftOut: 'ios/Runner/Messages.g.swift',
   swiftOptions: SwiftOptions(),
-  objcHeaderOut: 'macos/runner/messages_objc.h',
-  objcSourceOut: 'macos/runner/message_objc.m',
-  objcOptions: ObjcOptions(),
+  objcHeaderOut: 'macos/runner/messages.h',
+  objcSourceOut: 'macos/runner/messages.m',
+  objcOptions: ObjcOptions(prefix: 'PGN'),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+```
+Then make a simple call to run pigeon on the Dart file containing your definitions.
+
+```sh
+flutter pub run pigeon --input path/to/input.dart
 ```
 
 ## HostApi Example
 
 This example gives an overview of how to use Pigeon to call into the
-host-platform from Flutter.
+host platform from Flutter.
 
-For instructions to set up your own Pigeon usage see these [steps](../README.md#usage).
-
-### Dart input (message.dart)
+### Dart input
 
 This is the Pigeon file that describes the interface that will be used to call
 from Flutter to the host-platform.
@@ -69,12 +52,12 @@ from Flutter to the host-platform.
 ```dart
 enum Code { one, two }
 
-class CreateMessage {
-  CreateMessage({required this.code, required this.httpHeaders});
-  String? asset;
-  String? uri;
+class MessageData {
+  MessageData({required this.code, required this.data});
+  String? name;
+  String? description;
   Code code;
-  Map<String?, String?> httpHeaders;
+  Map<String?, String?> data;
 }
 
 @HostApi()
@@ -82,13 +65,13 @@ abstract class ExampleHostApi {
   String getHostLanguage();
   int add(int a, int b);
   @async
-  bool sendMessage(CreateMessage message);
+  bool sendMessage(MessageData message);
 }
 ```
 
-### main.dart
+### Dart
 
-This is the code that will use the generated dart code to make calls from Flutter to 
+This is the code that will use the generated Dart code to make calls from Flutter to 
 the host platform.
 
 <?code-excerpt "../../app/lib/main.dart (main-dart)"?>
@@ -96,37 +79,39 @@ the host platform.
 final ExampleHostApi _api = ExampleHostApi();
 
 /// Calls host method `add` with provided arguments.
-Future<int> callAddPlusOne(int a, int b) async {
+Future<int> add(int a, int b) async {
   try {
     return await _api.add(a, b);
   } catch (e) {
+    // handle error.
     return 0;
   }
 }
 
-/// Sends message through host api using `CreateMessage` class
+/// Sends message through host api using `MessageData` class
 /// and api `sendMessage` method.
 Future<bool> sendMessage(String messageText) {
-  final CreateMessage message = CreateMessage(
+  final MessageData message = MessageData(
     code: Code.one,
-    httpHeaders: <String?, String?>{'header': 'this is a header'},
-    uri: 'uri text',
+    data: <String?, String?>{'header': 'this is a header'},
+    description: 'uri text',
   );
   try {
     return _api.sendMessage(message);
   } catch (e) {
-    rethrow;
+    // handle error.
+    return Future<bool>(() => true);
   }
 }
 ```
 
-### AppDelegate.swift
+### Swift
 
 This is the code that will use the generated Swift code to receive calls from Flutter.
 packages/pigeon/example/app/ios/Runner/AppDelegate.swift
 <?code-excerpt "../../app/ios/Runner/AppDelegate.swift (swift-class)"?>
 ```swift
-// This extension of Error is required to do use FlutterError in any swift code.
+// This extension of Error is required to do use FlutterError in any Swift code.
 extension FlutterError: Error {}
 
 private class PigeonApiImplementation: ExampleHostApi {
@@ -141,7 +126,7 @@ private class PigeonApiImplementation: ExampleHostApi {
     return a + b
   }
 
-  func sendMessage(message: CreateMessage, completion: @escaping (Result<Bool, Error>) -> Void) {
+  func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
     if (message.code == Code.one) {
       completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
       return
@@ -151,7 +136,7 @@ private class PigeonApiImplementation: ExampleHostApi {
 }
 ```
 
-### kotlin
+### Kotlin
 <?code-excerpt "../../app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class)"?>
 ```kotlin
 private class PigeonApiImplementation: ExampleHostApi {
@@ -166,7 +151,7 @@ private class PigeonApiImplementation: ExampleHostApi {
     return a + b
   }
 
-  override fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit) {
+  override fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit) {
     if (message.code == Code.ONE) {
       callback(Result.failure(FlutterError("code", "message", "details")))
       return
@@ -176,7 +161,7 @@ private class PigeonApiImplementation: ExampleHostApi {
 }
 ```
 
-### c++
+### C++
 <?code-excerpt "../../app/windows/runner/flutter_window.cpp (cpp-class)"?>
 ```c++
 class PigeonApiImplementation : public ExampleHostApi {
@@ -191,7 +176,7 @@ class PigeonApiImplementation : public ExampleHostApi {
     }
     return a + b;
   }
-  void SendMessage(const CreateMessage& message,
+  void SendMessage(const MessageData& message,
                    std::function<void(ErrorOr<bool> reply)> result) {
     if (message.code == Code.one) {
       result(FlutterError("code", "message", "details"));
@@ -207,7 +192,7 @@ class PigeonApiImplementation : public ExampleHostApi {
 This example gives an overview of how to use Pigeon to call into the Flutter
 app from the host platform.
 
-### Dart input (message.dart)
+### Dart input
 
 <?code-excerpt "../../app/pigeons/messages.dart (flutter-definitions)"?>
 ```dart
@@ -217,10 +202,10 @@ abstract class MessageFlutterApi {
 }
 ```
 
-### main.dart
+### Dart
 
-This is the code that will use the generated dart code to make calls from Flutter to 
-the host platform.
+This is the code that will use the generated Dart code to handle calls made to 
+Flutter from the host platform.
 
 <?code-excerpt "../../app/lib/main.dart (main-dart-flutter)"?>
 ```dart 
@@ -234,7 +219,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
   MessageFlutterApi.setup(_ExampleFlutterApi());
 ```
 
-### AppDelegate.swift
+### Swift
 
 <?code-excerpt "../../app/ios/Runner/AppDelegate.swift (swift-class-flutter)"?>
 ```swift
@@ -253,7 +238,7 @@ private class PigeonFlutterApi {
 }
 ```
 
-### kotlin
+### Kotlin
 
 <?code-excerpt "../../app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-flutter)"?>
 ```kotlin
@@ -273,7 +258,7 @@ private class PigeonFlutterApi {
 }
 ```
 
-### c++
+### C++
 
 <?code-excerpt "../../app/windows/runner/flutter_window.cpp (cpp-method-flutter)"?>
 ```c++

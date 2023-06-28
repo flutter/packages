@@ -13,47 +13,47 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, Code) {
-  CodeOne = 0,
-  CodeTwo = 1,
+typedef NS_ENUM(NSUInteger, PGNCode) {
+  PGNCodeOne = 0,
+  PGNCodeTwo = 1,
 };
 
-@class CreateMessage;
+@class PGNMessageData;
 
-@interface CreateMessage : NSObject
+@interface PGNMessageData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithAsset:(nullable NSString *)asset
-                          uri:(nullable NSString *)uri
-                         code:(Code)code
-                  httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
-@property(nonatomic, copy, nullable) NSString *asset;
-@property(nonatomic, copy, nullable) NSString *uri;
-@property(nonatomic, assign) Code code;
-@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *httpHeaders;
++ (instancetype)makeWithName:(nullable NSString *)name
+                 description:(nullable NSString *)description
+                        code:(PGNCode)code
+                        data:(NSDictionary<NSString *, NSString *> *)data;
+@property(nonatomic, copy, nullable) NSString *name;
+@property(nonatomic, copy, nullable) NSString *description;
+@property(nonatomic, assign) PGNCode code;
+@property(nonatomic, strong) NSDictionary<NSString *, NSString *> *data;
 @end
 
-/// The codec used by ExampleHostApi.
-NSObject<FlutterMessageCodec> *ExampleHostApiGetCodec(void);
+/// The codec used by PGNExampleHostApi.
+NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void);
 
-@protocol ExampleHostApi
+@protocol PGNExampleHostApi
 /// @return `nil` only when `error != nil`.
 - (nullable NSString *)getHostLanguageWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)addA:(NSNumber *)a
                           b:(NSNumber *)b
                       error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)sendMessageMessage:(CreateMessage *)message
+- (void)sendMessageMessage:(PGNMessageData *)message
                 completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void ExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
-                                NSObject<ExampleHostApi> *_Nullable api);
+extern void PGNExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+                                   NSObject<PGNExampleHostApi> *_Nullable api);
 
-/// The codec used by MessageFlutterApi.
-NSObject<FlutterMessageCodec> *MessageFlutterApiGetCodec(void);
+/// The codec used by PGNMessageFlutterApi.
+NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void);
 
-@interface MessageFlutterApi : NSObject
+@interface PGNMessageFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (void)flutterMethodAString:(nullable NSString *)aString
                   completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;

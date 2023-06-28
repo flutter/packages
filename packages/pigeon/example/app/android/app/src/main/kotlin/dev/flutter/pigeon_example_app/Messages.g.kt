@@ -57,29 +57,29 @@ enum class Code(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class CreateMessage (
-  val asset: String? = null,
-  val uri: String? = null,
+data class MessageData (
+  val name: String? = null,
+  val description: String? = null,
   val code: Code,
-  val httpHeaders: Map<String?, String?>
+  val data: Map<String?, String?>
 
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): CreateMessage {
-      val asset = list[0] as String?
-      val uri = list[1] as String?
+    fun fromList(list: List<Any?>): MessageData {
+      val name = list[0] as String?
+      val description = list[1] as String?
       val code = Code.ofRaw(list[2] as Int)!!
-      val httpHeaders = list[3] as Map<String?, String?>
-      return CreateMessage(asset, uri, code, httpHeaders)
+      val data = list[3] as Map<String?, String?>
+      return MessageData(name, description, code, data)
     }
   }
   fun toList(): List<Any?> {
     return listOf<Any?>(
-      asset,
-      uri,
+      name,
+      description,
       code.raw,
-      httpHeaders,
+      data,
     )
   }
 }
@@ -90,7 +90,7 @@ private object ExampleHostApiCodec : StandardMessageCodec() {
     return when (type) {
       128.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          CreateMessage.fromList(it)
+          MessageData.fromList(it)
         }
       }
       else -> super.readValueOfType(type, buffer)
@@ -98,7 +98,7 @@ private object ExampleHostApiCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is CreateMessage -> {
+      is MessageData -> {
         stream.write(128)
         writeValue(stream, value.toList())
       }
@@ -111,7 +111,7 @@ private object ExampleHostApiCodec : StandardMessageCodec() {
 interface ExampleHostApi {
   fun getHostLanguage(): String
   fun add(a: Long, b: Long): Long
-  fun sendMessage(message: CreateMessage, callback: (Result<Boolean>) -> Unit)
+  fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit)
 
   companion object {
     /** The codec used by ExampleHostApi. */
@@ -161,7 +161,7 @@ interface ExampleHostApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val messageArg = args[0] as CreateMessage
+            val messageArg = args[0] as MessageData
             api.sendMessage(messageArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {

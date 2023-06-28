@@ -24,72 +24,72 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-// CreateMessage
+// MessageData
 
-CreateMessage::CreateMessage(const Code& code, const EncodableMap& http_headers)
-    : code_(code), http_headers_(http_headers) {}
+MessageData::MessageData(const Code& code, const EncodableMap& data)
+    : code_(code), data_(data) {}
 
-CreateMessage::CreateMessage(const std::string* asset, const std::string* uri,
-                             const Code& code, const EncodableMap& http_headers)
-    : asset_(asset ? std::optional<std::string>(*asset) : std::nullopt),
-      uri_(uri ? std::optional<std::string>(*uri) : std::nullopt),
+MessageData::MessageData(const std::string* name,
+                         const std::string* description, const Code& code,
+                         const EncodableMap& data)
+    : name_(name ? std::optional<std::string>(*name) : std::nullopt),
+      description_(description ? std::optional<std::string>(*description)
+                               : std::nullopt),
       code_(code),
-      http_headers_(http_headers) {}
+      data_(data) {}
 
-const std::string* CreateMessage::asset() const {
-  return asset_ ? &(*asset_) : nullptr;
+const std::string* MessageData::name() const {
+  return name_ ? &(*name_) : nullptr;
 }
 
-void CreateMessage::set_asset(const std::string_view* value_arg) {
-  asset_ = value_arg ? std::optional<std::string>(*value_arg) : std::nullopt;
+void MessageData::set_name(const std::string_view* value_arg) {
+  name_ = value_arg ? std::optional<std::string>(*value_arg) : std::nullopt;
 }
 
-void CreateMessage::set_asset(std::string_view value_arg) {
-  asset_ = value_arg;
+void MessageData::set_name(std::string_view value_arg) { name_ = value_arg; }
+
+const std::string* MessageData::description() const {
+  return description_ ? &(*description_) : nullptr;
 }
 
-const std::string* CreateMessage::uri() const {
-  return uri_ ? &(*uri_) : nullptr;
+void MessageData::set_description(const std::string_view* value_arg) {
+  description_ =
+      value_arg ? std::optional<std::string>(*value_arg) : std::nullopt;
 }
 
-void CreateMessage::set_uri(const std::string_view* value_arg) {
-  uri_ = value_arg ? std::optional<std::string>(*value_arg) : std::nullopt;
+void MessageData::set_description(std::string_view value_arg) {
+  description_ = value_arg;
 }
 
-void CreateMessage::set_uri(std::string_view value_arg) { uri_ = value_arg; }
+const Code& MessageData::code() const { return code_; }
 
-const Code& CreateMessage::code() const { return code_; }
+void MessageData::set_code(const Code& value_arg) { code_ = value_arg; }
 
-void CreateMessage::set_code(const Code& value_arg) { code_ = value_arg; }
+const EncodableMap& MessageData::data() const { return data_; }
 
-const EncodableMap& CreateMessage::http_headers() const {
-  return http_headers_;
-}
+void MessageData::set_data(const EncodableMap& value_arg) { data_ = value_arg; }
 
-void CreateMessage::set_http_headers(const EncodableMap& value_arg) {
-  http_headers_ = value_arg;
-}
-
-EncodableList CreateMessage::ToEncodableList() const {
+EncodableList MessageData::ToEncodableList() const {
   EncodableList list;
   list.reserve(4);
-  list.push_back(asset_ ? EncodableValue(*asset_) : EncodableValue());
-  list.push_back(uri_ ? EncodableValue(*uri_) : EncodableValue());
+  list.push_back(name_ ? EncodableValue(*name_) : EncodableValue());
+  list.push_back(description_ ? EncodableValue(*description_)
+                              : EncodableValue());
   list.push_back(EncodableValue((int)code_));
-  list.push_back(EncodableValue(http_headers_));
+  list.push_back(EncodableValue(data_));
   return list;
 }
 
-CreateMessage CreateMessage::FromEncodableList(const EncodableList& list) {
-  CreateMessage decoded((Code)(std::get<int32_t>(list[2])),
-                        std::get<EncodableMap>(list[3]));
-  auto& encodable_asset = list[0];
-  if (!encodable_asset.IsNull()) {
-    decoded.set_asset(std::get<std::string>(encodable_asset));
+MessageData MessageData::FromEncodableList(const EncodableList& list) {
+  MessageData decoded((Code)(std::get<int32_t>(list[2])),
+                      std::get<EncodableMap>(list[3]));
+  auto& encodable_name = list[0];
+  if (!encodable_name.IsNull()) {
+    decoded.set_name(std::get<std::string>(encodable_name));
   }
-  auto& encodable_uri = list[1];
-  if (!encodable_uri.IsNull()) {
-    decoded.set_uri(std::get<std::string>(encodable_uri));
+  auto& encodable_description = list[1];
+  if (!encodable_description.IsNull()) {
+    decoded.set_description(std::get<std::string>(encodable_description));
   }
   return decoded;
 }
@@ -100,7 +100,7 @@ EncodableValue ExampleHostApiCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 128:
-      return CustomEncodableValue(CreateMessage::FromEncodableList(
+      return CustomEncodableValue(MessageData::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
@@ -111,11 +111,11 @@ void ExampleHostApiCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(CreateMessage)) {
+    if (custom_value->type() == typeid(MessageData)) {
       stream->WriteByte(128);
       WriteValue(
           EncodableValue(
-              std::any_cast<CreateMessage>(*custom_value).ToEncodableList()),
+              std::any_cast<MessageData>(*custom_value).ToEncodableList()),
           stream);
       return;
     }
@@ -210,7 +210,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 reply(WrapError("message_arg unexpectedly null."));
                 return;
               }
-              const auto& message_arg = std::any_cast<const CreateMessage&>(
+              const auto& message_arg = std::any_cast<const MessageData&>(
                   std::get<CustomEncodableValue>(encodable_message_arg));
               api->SendMessage(message_arg, [reply](ErrorOr<bool>&& output) {
                 if (output.has_error()) {
