@@ -840,20 +840,21 @@ public class CameraTest {
   @Test
   public void startVideoRecording_shouldPullStreamsFromMediaRecorderAndImageReader()
       throws InterruptedException, IOException, CameraAccessException {
+    Camera cameraSpy = spy(camera);
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     Size mockSize = mock(Size.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     ImageReader mockPictureImageReader = mock(ImageReader.class);
-    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(camera, "recordingVideo", false);
-    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
+    TestUtils.setPrivateField(cameraSpy, "mediaRecorder", mockMediaRecorder);
+    TestUtils.setPrivateField(cameraSpy, "recordingVideo", false);
+    TestUtils.setPrivateField(cameraSpy, "pictureImageReader", mockPictureImageReader);
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    TestUtils.setPrivateField(cameraSpy, "cameraDevice", fakeCamera);
 
     TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
+        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(cameraSpy, "flutterTexture");
     ResolutionFeature resolutionFeature =
         (ResolutionFeature)
             TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
@@ -862,9 +863,9 @@ public class CameraTest {
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockMediaRecorder.getSurface()).thenReturn(mock(Surface.class));
     when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
-    doNothing().when(camera).prepareMediaRecorder(anyString());
+    doNothing().when(cameraSpy).prepareMediaRecorder(anyString());
 
-    camera.startVideoRecording(mock(MethodChannel.Result.class), null);
+    cameraSpy.startVideoRecording(mock(MethodChannel.Result.class), null);
     verify(mockMediaRecorder, times(1))
         .getSurface(); // stream pulled from media recorder's surface.
     verify(mockPictureImageReader, times(1))
