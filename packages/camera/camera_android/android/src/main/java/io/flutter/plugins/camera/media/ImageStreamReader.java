@@ -9,6 +9,7 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -104,7 +105,7 @@ public class ImageStreamReader {
       } else {
         imageBuffer.put("planes", parsePlanesForYuvOrJpeg(image));
       }
-
+      Log.d("ImageStreamReader", "width: " + image.getWidth());
       imageBuffer.put("width", image.getWidth());
       imageBuffer.put("height", image.getHeight());
       imageBuffer.put("format", dartImageFormat);

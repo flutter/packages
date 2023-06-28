@@ -9,6 +9,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.os.Build;
 import android.util.Size;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
@@ -46,9 +47,11 @@ public final class CameraRegionUtils {
       } else {
         rect = cameraProperties.getSensorInfoActiveArraySize();
       }
-
+      Log.i("boundaries", "rect" + rect.toString());
       return SizeFactory.create(rect.width(), rect.height());
     } else {
+            Log.i("boundaries", "rect" + cameraProperties.getSensorInfoPixelArraySize().toString());
+
       // No distortion correction support.
       return cameraProperties.getSensorInfoPixelArraySize();
     }

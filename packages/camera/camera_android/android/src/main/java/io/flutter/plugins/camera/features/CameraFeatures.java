@@ -20,6 +20,7 @@ import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
+import io.flutter.plugins.camera.types.CaptureMode;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,8 @@ public class CameraFeatures {
       @NonNull CameraProperties cameraProperties,
       @NonNull Activity activity,
       @NonNull DartMessenger dartMessenger,
-      @NonNull ResolutionPreset resolutionPreset) {
+      @NonNull ResolutionPreset resolutionPreset,
+      @NonNull CaptureMode captureMode) {
     CameraFeatures cameraFeatures = new CameraFeatures();
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, false));
@@ -67,12 +69,12 @@ public class CameraFeatures {
     cameraFeatures.setFlash(cameraFeatureFactory.createFlashFeature(cameraProperties));
     cameraFeatures.setFocusPoint(
         cameraFeatureFactory.createFocusPointFeature(cameraProperties, sensorOrientationFeature));
-    cameraFeatures.setFpsRange(cameraFeatureFactory.createFpsRangeFeature(cameraProperties));
+    cameraFeatures.setFpsRange(cameraFeatureFactory.createFpsRangeFeature(cameraProperties, captureMode));
     cameraFeatures.setNoiseReduction(
         cameraFeatureFactory.createNoiseReductionFeature(cameraProperties));
     cameraFeatures.setResolution(
         cameraFeatureFactory.createResolutionFeature(
-            cameraProperties, resolutionPreset, cameraProperties.getCameraName()));
+            cameraProperties, resolutionPreset, cameraProperties.getCameraName(), captureMode));
     cameraFeatures.setZoomLevel(cameraFeatureFactory.createZoomLevelFeature(cameraProperties));
     return cameraFeatures;
   }

@@ -21,6 +21,8 @@ enum ResolutionPreset {
   /// 2160p (3840x2160 on Android and iOS, 4096x2160 on Web)
   ultraHigh,
 
-  /// The highest resolution available.
+  /// The highest resolution available. When CaptureMode is video, this is the same as [ultraHigh].
+  /// When CaptureMode is photo, this is the maximum resolution of the camera which is typically
+  /// a 4:3 resolution.
   max,
 }

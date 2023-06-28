@@ -305,13 +305,11 @@
     NSString *cameraName = createMethodCall.arguments[@"cameraName"];
     NSString *resolutionPreset = createMethodCall.arguments[@"resolutionPreset"];
     NSString *captureMode = createMethodCall.arguments[@"captureMode"];
-    NSString *aspectRatioPreset = createMethodCall.arguments[@"aspectRatioPreset"];
     NSNumber *enableAudio = createMethodCall.arguments[@"enableAudio"];
     NSError *error;
     FLTCam *cam = [[FLTCam alloc] initWithCameraName:cameraName
                                     resolutionPreset:resolutionPreset
                                     captureMode: captureMode
-                                    aspectRatioPreset: aspectRatioPreset
                                          enableAudio:[enableAudio boolValue]
                                          orientation:[[UIDevice currentDevice] orientation]
                                  captureSessionQueue:strongSelf.captureSessionQueue

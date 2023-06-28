@@ -234,9 +234,8 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   CameraController(
     CameraDescription description,
-    this.resolutionPreset,
-    this.captureMode,
-    this.aspectRatioPreset, {
+    this.resolutionPreset, {
+    this.captureMode = CaptureMode.video,
     this.enableAudio = true,
     this.imageFormatGroup,
   }) : super(CameraValue.uninitialized(description));
@@ -244,7 +243,9 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
 
-  /// The capture mode this controller should be using.
+  /// The capture mode this controller should be using. Currently only includes
+  /// photo or video, but may be expanded in the future to include slow motion,
+  /// panoramic, etc.
   final CaptureMode captureMode;
 
   /// The resolution this controller is targeting.
@@ -254,15 +255,6 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// See also: [ResolutionPreset].
   final ResolutionPreset resolutionPreset;
-
-  /// The aspect ratio this controller is targeting.
-  ///
-  /// This aspect ratio preset is not guaranteed to be available on the device
-  /// for the selected resolution or capture mode.
-  /// if unavailable a different aspect ratio will be used.
-  ///
-  /// See also: [AspectRatioPreset].
-  final AspectRatioPreset aspectRatioPreset;
 
   /// Whether to include audio when recording a video.
   final bool enableAudio;
@@ -330,8 +322,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       _cameraId = await CameraPlatform.instance.createCamera(
         description,
         resolutionPreset,
-        captureMode,
-        aspectRatioPreset,
+        captureMode: captureMode,
         enableAudio: enableAudio,
       );
 

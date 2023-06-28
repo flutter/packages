@@ -94,9 +94,8 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<int> createCamera(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset,
-    CaptureMode? captureMode,
-    AspectRatioPreset? aspectRatioPreset, {
+    ResolutionPreset? resolutionPreset, {
+    CaptureMode captureMode = CaptureMode.video,
     bool enableAudio = false,
   }) async {
     try {
@@ -106,11 +105,7 @@ class AVFoundationCamera extends CameraPlatform {
         'resolutionPreset': resolutionPreset != null
             ? _serializeResolutionPreset(resolutionPreset)
             : null,
-        'captureMode':
-            captureMode != null ? serializeCaptureMode(captureMode) : null,
-        'aspectRatioPreset': aspectRatioPreset != null
-            ? serializeAspectRatioPreset(aspectRatioPreset)
-            : null,
+        'captureMode': captureMode.name,
         'enableAudio': enableAudio,
       });
 

@@ -20,6 +20,7 @@ import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
+import io.flutter.plugins.camera.types.CaptureMode;
 
 /**
  * Implementation of the {@link CameraFeatureFactory} interface creating the supported feature
@@ -58,8 +59,9 @@ public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
   public ResolutionFeature createResolutionFeature(
       @NonNull CameraProperties cameraProperties,
       @NonNull ResolutionPreset initialSetting,
-      @NonNull String cameraName) {
-    return new ResolutionFeature(cameraProperties, initialSetting, cameraName);
+      @NonNull String cameraName,
+      @NonNull CaptureMode captureMode) {
+    return new ResolutionFeature(cameraProperties, initialSetting, cameraName, captureMode);
   }
 
   @NonNull
@@ -72,8 +74,9 @@ public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
 
   @NonNull
   @Override
-  public FpsRangeFeature createFpsRangeFeature(@NonNull CameraProperties cameraProperties) {
-    return new FpsRangeFeature(cameraProperties);
+  public FpsRangeFeature createFpsRangeFeature(@NonNull CameraProperties cameraProperties,
+                                               @NonNull CaptureMode captureMode) {
+    return new FpsRangeFeature(cameraProperties, captureMode);
   }
 
   @NonNull

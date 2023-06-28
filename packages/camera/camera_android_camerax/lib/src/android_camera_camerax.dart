@@ -219,6 +219,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<int> createCamera(
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
+    CaptureMode captureMode = CaptureMode.video,
     bool enableAudio = false,
   }) async {
     // Must obtain proper permissions before attempting to access a camera.

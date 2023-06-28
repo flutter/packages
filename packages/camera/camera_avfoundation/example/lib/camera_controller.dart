@@ -174,6 +174,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   CameraController(
     CameraDescription cameraDescription,
     this.resolutionPreset, {
+    this.captureMode = CaptureMode.video,
     this.enableAudio = true,
     this.imageFormatGroup,
   }) : super(CameraValue.uninitialized(cameraDescription));
@@ -188,6 +189,15 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// See also: [ResolutionPreset].
   final ResolutionPreset resolutionPreset;
+
+  /// The mode this controller should operate in.
+  ///
+  /// This capture mode determines whether the capture session is optimized for
+  /// video recording or photo capture.
+  ///
+  /// Defaults to [CaptureMode.video] as the camera plugin configuration is
+  /// currently geared towards video recording.
+  final CaptureMode captureMode;
 
   /// Whether to include audio when recording a video.
   final bool enableAudio;
@@ -226,6 +236,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     _cameraId = await CameraPlatform.instance.createCamera(
       description,
       resolutionPreset,
+      captureMode: captureMode,
       enableAudio: enableAudio,
     );
 

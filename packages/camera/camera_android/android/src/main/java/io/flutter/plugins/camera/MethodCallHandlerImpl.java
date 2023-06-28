@@ -23,6 +23,7 @@ import io.flutter.plugins.camera.features.autofocus.FocusMode;
 import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
+import io.flutter.plugins.camera.types.CaptureMode;
 import io.flutter.view.TextureRegistry;
 import java.util.HashMap;
 import java.util.Map;
@@ -387,6 +388,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
   private void instantiateCamera(MethodCall call, Result result) throws CameraAccessException {
     String cameraName = call.argument("cameraName");
     String preset = call.argument("resolutionPreset");
+    String mode = call.argument("captureMode");
     boolean enableAudio = call.argument("enableAudio");
 
     TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture =
@@ -397,6 +399,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     CameraProperties cameraProperties =
         new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
     ResolutionPreset resolutionPreset = ResolutionPreset.valueOf(preset);
+    CaptureMode captureMode = CaptureMode.valueOf(mode);
 
     camera =
         new Camera(
@@ -406,6 +409,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
             dartMessenger,
             cameraProperties,
             resolutionPreset,
+            captureMode,
             enableAudio);
 
     Map<String, Object> reply = new HashMap<>();

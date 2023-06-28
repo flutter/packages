@@ -95,7 +95,6 @@ NSString *const errorMethod = @"error";
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
                   captureMode: (NSString *)captureMode
-                  aspectRatioPreset: (NSString *)aspectRatioPreset
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
@@ -103,7 +102,6 @@ NSString *const errorMethod = @"error";
   return [self initWithCameraName:cameraName
                  resolutionPreset:resolutionPreset
                  captureMode: (NSString *)captureMode
-                  aspectRatioPreset: (NSString *)aspectRatioPreset
                       enableAudio:enableAudio
                       orientation:orientation
               videoCaptureSession:[[AVCaptureSession alloc] init]
@@ -115,7 +113,6 @@ NSString *const errorMethod = @"error";
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
                   captureMode: (NSString *)captureMode
-                  aspectRatioPreset: (NSString *)aspectRatioPreset
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
                videoCaptureSession:(AVCaptureSession *)videoCaptureSession
@@ -174,7 +171,7 @@ NSString *const errorMethod = @"error";
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  if (![self setCaptureSessionWithResolutionPreset:_resolutionPreset withCaptureMode:_captureMode withAspectRatio:_aspectRatioPreset withError:error]) {
+  if (![self setCaptureSessionWithResolutionPreset:_resolutionPreset withCaptureMode:_captureMode withError:error]) {
     return nil;
   }
   [self updateOrientation];
@@ -352,7 +349,7 @@ NSString *const errorMethod = @"error";
 }
 
 
-- (BOOL)setCaptureSessionForWideScreen:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
+- (BOOL)setCaptureSessionForVideo:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
   switch (resolutionPreset) {
     case FLTResolutionPresetMax:
     case FLTResolutionPresetUltraHigh:
@@ -408,7 +405,7 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)setCaptureSessionForStandard:(FLTResolutionPreset)resolutionPreset {
+- (void)setCaptureSessionForPhoto:(FLTResolutionPreset)resolutionPreset {
   switch (resolutionPreset) {
     case FLTResolutionPresetMax:
     case FLTResolutionPresetUltraHigh:
@@ -417,22 +414,21 @@ NSString *const errorMethod = @"error";
           break;
       }
     case FLTResolutionPresetVeryHigh:
-      // Selects the appropriate 1080p resolution to match the desired aspect ratio.
+      // Selects the appropriate 1080p resolution to match the desired aspect ratio for photos.
       for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
-          CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-          if (dimensions.height == 1080) {
-              if (fabs((double)dimensions.width / dimensions.height - (double)4 / 3) < 0.01) {
-                  if ([_captureDevice lockForConfiguration:nil]) {
-                      _captureDevice.activeFormat = format;
-                      [_captureDevice unlockForConfiguration];
-                      //_videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
-                      break;
-                  }
-              }
+        CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+        if (dimensions.height == 1080) {
+          if (fabs((double)dimensions.width / dimensions.height - (double)4 / 3) < 0.01) {
+            if ([_captureDevice lockForConfiguration:nil]) {
+              _captureDevice.activeFormat = format;
+              [_captureDevice unlockForConfiguration];
+              break;
+            }
           }
+        }
       }
     case FLTResolutionPresetHigh:
-      // Selects the appropriate 720p or 768p resolution to match the desired aspect ratio.
+      // Selects the appropriate 720p or 768p resolution to match the desired aspect ratio for photos.
       for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
         CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
         if (dimensions.height == 720 || dimensions.height == 768) {
@@ -474,17 +470,16 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)setCaptureSessionWithResolutionPreset:(FLTResolutionPreset)resolutionPreset
-                              withCaptureMode: (FLTCaptureMode) captureMode
-                              withAspectRatio: (FLTAspectRatioPreset) aspectRatioPreset {
+                              withCaptureMode: (FLTCaptureMode) captureMode {
   NSArray<AVCaptureDeviceFormat *> *formats = _captureDevice.formats;
   for (AVCaptureDeviceFormat *format in formats) {
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
     NSLog(@"format: %@, resolution: %d x %d", format, dimensions.width, dimensions.height);
   }
-  if (captureMode == FLTCaptureModeVideo || aspectRatioPreset == FLTAspectRatioPresetWideScreen) {
-    [self setCaptureSessionForWideScreen:resolutionPreset];
+  if (captureMode == FLTCaptureModeVideo) {
+    [self setCaptureSessionForVideo:resolutionPreset];
   } else if (captureMode == FLTCaptureModePhoto) {
-    [self setCaptureSessionForStandard:resolutionPreset];
+    [self setCaptureSessionForPhoto:resolutionPreset];
   }
   CMVideoDimensions previewDimensions = CMVideoFormatDescriptionGetDimensions(_captureDevice.activeFormat.formatDescription);
   _previewSize = CGSizeMake(previewDimensions.width, previewDimensions.height);

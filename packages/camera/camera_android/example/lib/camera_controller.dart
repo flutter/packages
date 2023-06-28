@@ -174,6 +174,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   CameraController(
     CameraDescription cameraDescription,
     this.resolutionPreset, {
+    this.captureMode = CaptureMode.video,
     this.enableAudio = true,
     this.imageFormatGroup,
   }) : super(CameraValue.uninitialized(cameraDescription));
@@ -188,6 +189,8 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// See also: [ResolutionPreset].
   final ResolutionPreset resolutionPreset;
+
+  final CaptureMode captureMode;
 
   /// Whether to include audio when recording a video.
   final bool enableAudio;

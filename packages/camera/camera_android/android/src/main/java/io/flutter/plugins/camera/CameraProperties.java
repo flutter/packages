@@ -273,4 +273,7 @@ public interface CameraProperties {
    */
   @NonNull
   int[] getAvailableNoiseReductionModes();
+
+  @NonNull
+  Size[] getAvailableOutputSizes(int format);
 }
