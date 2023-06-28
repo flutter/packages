@@ -25,7 +25,7 @@ import 'package:pigeon/pigeon.dart';
 ))
 // #enddocregion config
 
-// This file and ./messagesTest.dart must be identical below this line.
+// This file and ./messages_test.dart must be identical below this line.
 
 // #docregion host-definitions
 enum Code { one, two }

@@ -91,7 +91,7 @@ Future<void> _validateGeneratedExampleFiles() async {
   print('  Generating example output...');
 
   final int generateExitCode = await runPigeon(
-      input: './example/app/pigeons/messagesTest.dart',
+      input: './example/app/pigeons/messages_test.dart',
       dartOut: './example/app/lib/src/messages.g.dart',
       cppNamespace: 'pigeon_example',
       cppHeaderOut: './example/app/windows/runner/messages.g.h',
@@ -104,7 +104,6 @@ Future<void> _validateGeneratedExampleFiles() async {
       objcHeaderOut: './example/app/macos/runner/messages.h',
       objcSourceOut: './example/app/macos/runner/messages.m',
       objcPrefix: 'PGN',
-      suppressVersion: false,
       copyrightHeader: './example/app/pigeons/copyright.txt');
 
   if (generateExitCode != 0) {
@@ -129,7 +128,7 @@ Future<void> _validateGeneratedExampleFiles() async {
   }
 
   print(
-      'Either messages.dart and messagesTest.dart have non-matching definitions or');
+      'Either messages.dart and messages_test.dart have non-matching definitions or');
   print('the following files are not updated, or not formatted correctly:');
   modifiedFiles.map((String line) => '  $line').forEach(print);
 
