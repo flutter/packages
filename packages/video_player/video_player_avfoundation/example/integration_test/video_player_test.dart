@@ -71,13 +71,27 @@ void main() {
       expect(await controller.position, greaterThan(Duration.zero));
     });
 
-    testWidgets('can seek', (WidgetTester tester) async {
-      await controller.initialize();
+    testWidgets(
+      'can seek',
+      (WidgetTester tester) async {
+        await controller.initialize();
 
-      await controller.seekTo(const Duration(seconds: 3));
+        await controller.seekTo(const Duration(seconds: 3));
 
-      expect(await controller.position, const Duration(seconds: 3));
-    });
+        expect(controller.value.position, const Duration(seconds: 3));
+      },
+    );
+
+    testWidgets(
+      'can seek to end',
+      (WidgetTester tester) async {
+        await controller.initialize();
+
+        await controller.seekTo(controller.value.duration);
+
+        expect(controller.value.duration, controller.value.position);
+      },
+    );
 
     testWidgets('can be paused', (WidgetTester tester) async {
       await controller.initialize();

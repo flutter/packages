@@ -1,6 +1,22 @@
-## 0.4.1
+## 0.5.1
 
 * Adds support for heatmap layers.
+
+## 0.5.0+1
+
+* Updates the README to mention that this package is the endorsed implementation
+  of `google_maps_flutter` for the web platform.
+
+## 0.5.0
+
+* **BREAKING CHANGE:** Fires a `MapStyleException` when an invalid JSON is used
+  in `setMapStyle` (was `FormatException` previously).
+* Implements a `GoogleMapsInspectorPlatform` to allow integration tests to inspect
+  parts of the internal state of a map.
+
+## 0.4.0+9
+
+* Removes obsolete null checks on non-nullable values.
 
 ## 0.4.0+8
 

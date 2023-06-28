@@ -1,3 +1,24 @@
+## 6.1.16
+
+* Updates Guava to version 32.0.1.
+
+## 6.1.15
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Updates Guava to version 32.0.0.
+
+## 6.1.14
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 6.1.13
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 6.1.12
+
+* Adds a namespace for compatibility with AGP 8.0.
+
 ## 6.1.11
 
 * Fixes Java warnings.

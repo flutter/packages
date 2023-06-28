@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 5.6.2
+
+* Updates functions without a prototype to avoid deprecation warning.
+
 ## 5.6.1
 
 * Clarifies explanation of endorsement in README.

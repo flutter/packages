@@ -31,7 +31,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: Int64? = nil'));
-    expect(code, contains('static func fromList(_ list: [Any]) -> Foobar?'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Foobar?'));
     expect(code, contains('func toList() -> [Any?]'));
   });
 
@@ -392,7 +392,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [Any]? = nil'));
+    expect(code, contains('var field1: [Any?]? = nil'));
   });
 
   test('gen map', () {
@@ -412,7 +412,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [AnyHashable: Any]? = nil'));
+    expect(code, contains('var field1: [AnyHashable: Any?]? = nil'));
   });
 
   test('gen nested', () {
@@ -451,7 +451,7 @@ void main() {
     expect(code, contains('struct Outer'));
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
-    expect(code, contains('static func fromList(_ list: [Any]) -> Outer?'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Outer?'));
     expect(code, contains('nested = Nested.fromList(nestedList)'));
     expect(code, contains('func toList() -> [Any?]'));
   });
@@ -796,7 +796,7 @@ void main() {
     generator.generate(swiftOptions, root, sink);
     final String code = sink.toString();
     expect(code, contains('func add(x: Int64, y: Int64) throws -> Int64'));
-    expect(code, contains('let args = message as! [Any]'));
+    expect(code, contains('let args = message as! [Any?]'));
     expect(
         code,
         contains(

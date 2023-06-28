@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -139,6 +135,30 @@ void main() {
       expect(cameraImage.format.group, ImageFormatGroup.yuv420);
     });
 
+    test('$CameraImage has ImageFormatGroup.nv21 for android', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+
+      final CameraImage cameraImage =
+          CameraImage.fromPlatformData(<dynamic, dynamic>{
+        'format': 17,
+        'height': 1,
+        'width': 4,
+        'lensAperture': 1.8,
+        'sensorExposureTime': 9991324,
+        'sensorSensitivity': 92.0,
+        'planes': <dynamic>[
+          <dynamic, dynamic>{
+            'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
+            'bytesPerPixel': 1,
+            'bytesPerRow': 4,
+            'height': 1,
+            'width': 4
+          }
+        ]
+      });
+      expect(cameraImage.format.group, ImageFormatGroup.nv21);
+    });
+
     test('$CameraImage has ImageFormatGroup.bgra8888 for iOS', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
@@ -162,6 +182,7 @@ void main() {
       });
       expect(cameraImage.format.group, ImageFormatGroup.bgra8888);
     });
+
     test('$CameraImage has ImageFormatGroup.unknown', () {
       final CameraImage cameraImage =
           CameraImage.fromPlatformData(<dynamic, dynamic>{

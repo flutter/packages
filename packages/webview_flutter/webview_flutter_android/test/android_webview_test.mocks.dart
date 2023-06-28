@@ -117,15 +117,18 @@ class MockCookieManagerHostApi extends _i1.Mock
   }
 
   @override
-  _i5.Future<bool> clearCookies() => (super.noSuchMethod(
+  _i5.Future<void> attachInstance(int? arg_instanceIdentifier) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #clearCookies,
-          [],
+          #attachInstance,
+          [arg_instanceIdentifier],
         ),
-        returnValue: _i5.Future<bool>.value(false),
-      ) as _i5.Future<bool>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
   @override
   _i5.Future<void> setCookie(
+    int? arg_identifier,
     String? arg_url,
     String? arg_value,
   ) =>
@@ -133,8 +136,35 @@ class MockCookieManagerHostApi extends _i1.Mock
         Invocation.method(
           #setCookie,
           [
+            arg_identifier,
             arg_url,
             arg_value,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<bool> removeAllCookies(int? arg_identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #removeAllCookies,
+          [arg_identifier],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+  @override
+  _i5.Future<void> setAcceptThirdPartyCookies(
+    int? arg_identifier,
+    int? arg_webViewIdentifier,
+    bool? arg_accept,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAcceptThirdPartyCookies,
+          [
+            arg_identifier,
+            arg_webViewIdentifier,
+            arg_accept,
           ],
         ),
         returnValue: _i5.Future<void>.value(),
@@ -223,6 +253,67 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
       ) as _i2.JavaScriptChannel);
 }
 
+/// A class which mocks [TestCookieManagerHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestCookieManagerHostApi extends _i1.Mock
+    implements _i6.TestCookieManagerHostApi {
+  MockTestCookieManagerHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void attachInstance(int? instanceIdentifier) => super.noSuchMethod(
+        Invocation.method(
+          #attachInstance,
+          [instanceIdentifier],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void setCookie(
+    int? identifier,
+    String? url,
+    String? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setCookie,
+          [
+            identifier,
+            url,
+            value,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  _i5.Future<bool> removeAllCookies(int? identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #removeAllCookies,
+          [identifier],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+  @override
+  void setAcceptThirdPartyCookies(
+    int? identifier,
+    int? webViewIdentifier,
+    bool? accept,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setAcceptThirdPartyCookies,
+          [
+            identifier,
+            webViewIdentifier,
+            accept,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [TestDownloadListenerHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -237,6 +328,36 @@ class MockTestDownloadListenerHostApi extends _i1.Mock
         Invocation.method(
           #create,
           [instanceId],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
+/// A class which mocks [TestGeolocationPermissionsCallbackHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestGeolocationPermissionsCallbackHostApi extends _i1.Mock
+    implements _i6.TestGeolocationPermissionsCallbackHostApi {
+  MockTestGeolocationPermissionsCallbackHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void invoke(
+    int? instanceId,
+    String? origin,
+    bool? allow,
+    bool? retain,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #invoke,
+          [
+            instanceId,
+            origin,
+            allow,
+            retain,
+          ],
         ),
         returnValueForMissingStub: null,
       );

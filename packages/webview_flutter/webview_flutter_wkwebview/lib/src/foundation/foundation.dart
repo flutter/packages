@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -91,6 +87,12 @@ enum NSKeyValueChangeKey {
   ///
   /// See https://developer.apple.com/documentation/foundation/nskeyvaluechangeoldkey?language=objc.
   oldValue,
+
+  /// An unknown change key.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
 }
 
 /// The supported keys in a cookie attributes dictionary.

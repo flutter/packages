@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -308,7 +305,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
   }) {
-    assert(optionsUpdate != null);
     return _channel(mapId).invokeMethod<void>(
       'map#update',
       <String, dynamic>{
@@ -322,7 +318,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerUpdates markerUpdates, {
     required int mapId,
   }) {
-    assert(markerUpdates != null);
     return _channel(mapId).invokeMethod<void>(
       'markers#update',
       markerUpdates.toJson(),
@@ -334,7 +329,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     PolygonUpdates polygonUpdates, {
     required int mapId,
   }) {
-    assert(polygonUpdates != null);
     return _channel(mapId).invokeMethod<void>(
       'polygons#update',
       polygonUpdates.toJson(),
@@ -346,7 +340,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     PolylineUpdates polylineUpdates, {
     required int mapId,
   }) {
-    assert(polylineUpdates != null);
     return _channel(mapId).invokeMethod<void>(
       'polylines#update',
       polylineUpdates.toJson(),
@@ -358,7 +351,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     CircleUpdates circleUpdates, {
     required int mapId,
   }) {
-    assert(circleUpdates != null);
     return _channel(mapId).invokeMethod<void>(
       'circles#update',
       circleUpdates.toJson(),
@@ -481,7 +473,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    assert(markerId != null);
     return _channel(mapId).invokeMethod<void>(
         'markers#showInfoWindow', <String, String>{'markerId': markerId.value});
   }
@@ -491,7 +482,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    assert(markerId != null);
     return _channel(mapId).invokeMethod<void>(
         'markers#hideInfoWindow', <String, String>{'markerId': markerId.value});
   }
@@ -501,7 +491,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) async {
-    assert(markerId != null);
     return (await _channel(mapId).invokeMethod<bool>(
         'markers#isInfoWindowShown',
         <String, String>{'markerId': markerId.value}))!;

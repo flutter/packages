@@ -30,10 +30,6 @@ class CirclesController extends GeometryController {
   }
 
   void _addCircle(Circle circle) {
-    if (circle == null) {
-      return;
-    }
-
     final gmaps.CircleOptions circleOptions = _circleOptionsFromCircle(circle);
     final gmaps.Circle gmCircle = gmaps.Circle(circleOptions)..map = googleMap;
     final CircleController controller = CircleController(

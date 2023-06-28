@@ -124,7 +124,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-  }) : assert(initialCameraPosition != null);
+  });
 
   /// Callback method for when the map is ready to be used.
   ///
@@ -368,40 +368,35 @@ class _GoogleMapState extends State<GoogleMap> {
       return;
     }
     final GoogleMapController controller = await _controller.future;
-    // ignore: unawaited_futures
-    controller._updateMapConfiguration(updates);
+    unawaited(controller._updateMapConfiguration(updates));
     _mapConfiguration = newConfig;
   }
 
   Future<void> _updateMarkers() async {
     final GoogleMapController controller = await _controller.future;
-    // ignore: unawaited_futures
-    controller._updateMarkers(
-        MarkerUpdates.from(_markers.values.toSet(), widget.markers));
+    unawaited(controller._updateMarkers(
+        MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
     _markers = keyByMarkerId(widget.markers);
   }
 
   Future<void> _updatePolygons() async {
     final GoogleMapController controller = await _controller.future;
-    // ignore: unawaited_futures
-    controller._updatePolygons(
-        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons));
+    unawaited(controller._updatePolygons(
+        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons)));
     _polygons = keyByPolygonId(widget.polygons);
   }
 
   Future<void> _updatePolylines() async {
     final GoogleMapController controller = await _controller.future;
-    // ignore: unawaited_futures
-    controller._updatePolylines(
-        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines));
+    unawaited(controller._updatePolylines(
+        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
     _polylines = keyByPolylineId(widget.polylines);
   }
 
   Future<void> _updateCircles() async {
     final GoogleMapController controller = await _controller.future;
-    // ignore: unawaited_futures
-    controller._updateCircles(
-        CircleUpdates.from(_circles.values.toSet(), widget.circles));
+    unawaited(controller._updateCircles(
+        CircleUpdates.from(_circles.values.toSet(), widget.circles)));
     _circles = keyByCircleId(widget.circles);
   }
 
@@ -416,8 +411,7 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updateTileOverlays() async {
     final GoogleMapController controller = await _controller.future;
-    // ignore: unawaited_futures
-    controller._updateTileOverlays(widget.tileOverlays);
+    unawaited(controller._updateTileOverlays(widget.tileOverlays));
   }
 
   Future<void> onPlatformViewCreated(int id) async {
@@ -427,7 +421,7 @@ class _GoogleMapState extends State<GoogleMap> {
       this,
     );
     _controller.complete(controller);
-    _updateTileOverlays();
+    unawaited(_updateTileOverlays());
     final MapCreatedCallback? onMapCreated = widget.onMapCreated;
     if (onMapCreated != null) {
       onMapCreated(controller);
@@ -435,7 +429,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onMarkerTap(MarkerId markerId) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onTap');
@@ -447,7 +440,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onMarkerDragStart(MarkerId markerId, LatLng position) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDragStart');
@@ -459,7 +451,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onMarkerDrag(MarkerId markerId, LatLng position) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDrag');
@@ -471,7 +462,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onMarkerDragEnd(MarkerId markerId, LatLng position) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'onDragEnd');
@@ -483,7 +473,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onPolygonTap(PolygonId polygonId) {
-    assert(polygonId != null);
     final Polygon? polygon = _polygons[polygonId];
     if (polygon == null) {
       throw UnknownMapObjectIdError('polygon', polygonId, 'onTap');
@@ -495,7 +484,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onPolylineTap(PolylineId polylineId) {
-    assert(polylineId != null);
     final Polyline? polyline = _polylines[polylineId];
     if (polyline == null) {
       throw UnknownMapObjectIdError('polyline', polylineId, 'onTap');
@@ -507,7 +495,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onCircleTap(CircleId circleId) {
-    assert(circleId != null);
     final Circle? circle = _circles[circleId];
     if (circle == null) {
       throw UnknownMapObjectIdError('marker', circleId, 'onTap');
@@ -519,7 +506,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onInfoWindowTap(MarkerId markerId) {
-    assert(markerId != null);
     final Marker? marker = _markers[markerId];
     if (marker == null) {
       throw UnknownMapObjectIdError('marker', markerId, 'InfoWindow onTap');
@@ -531,7 +517,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onTap(LatLng position) {
-    assert(position != null);
     final ArgumentCallback<LatLng>? onTap = widget.onTap;
     if (onTap != null) {
       onTap(position);
@@ -539,7 +524,6 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onLongPress(LatLng position) {
-    assert(position != null);
     final ArgumentCallback<LatLng>? onLongPress = widget.onLongPress;
     if (onLongPress != null) {
       onLongPress(position);

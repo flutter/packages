@@ -43,6 +43,7 @@ const String iOSObjCUnitTests = 'ios_objc_unittests';
 const String iOSObjCIntegrationTests = 'ios_objc_integration_tests';
 const String iOSSwiftUnitTests = 'ios_swift_unittests';
 const String iOSSwiftIntegrationTests = 'ios_swift_integration_tests';
+const String macOSObjCIntegrationTests = 'macos_objc_integration_tests';
 const String macOSSwiftUnitTests = 'macos_swift_unittests';
 const String macOSSwiftIntegrationTests = 'macos_swift_integration_tests';
 const String windowsUnitTests = 'windows_unittests';
@@ -91,6 +92,9 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
   iOSSwiftIntegrationTests: TestInfo(
       function: _runIOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code.'),
+  macOSObjCIntegrationTests: TestInfo(
+      function: _runMacOSObjCIntegrationTests,
+      description: 'Integration tests on generated Objective-C code on macOS.'),
   macOSSwiftUnitTests: TestInfo(
       function: _runMacOSSwiftUnitTests,
       description: 'Unit tests on generated Swift code on macOS.'),
@@ -279,6 +283,16 @@ Future<int> _runIOSObjCIntegrationTests() async {
   );
 }
 
+Future<int> _runMacOSObjCIntegrationTests() async {
+  const String examplePath =
+      './$_alternateLanguageTestPluginRelativePath/example';
+  return runFlutterCommand(
+    examplePath,
+    'test',
+    <String>[_integrationTestFileRelativePath, '-d', 'macos'],
+  );
+}
+
 Future<int> _runMacOSSwiftUnitTests() async {
   const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'macos');
@@ -323,7 +337,7 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
   return runXcodeBuild(
     '$examplePath/ios',
     sdk: 'iphonesimulator',
-    destination: 'platform=iOS Simulator,name=iPhone 13',
+    destination: 'platform=iOS Simulator,name=iPhone 14',
     extraArguments: <String>['test'],
   );
 }

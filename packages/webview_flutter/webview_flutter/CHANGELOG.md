@@ -1,3 +1,11 @@
+## 4.2.2
+
+* Fixes documentation typo.
+
+## 4.2.1
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 4.2.0
 
 * Adds support to receive permission requests. See `WebViewController(onPermissionRequest)`.

@@ -41,12 +41,14 @@
 - html
 - http
 - intl
+- io
 - js
 - json_serializable
 - lints
 - logging
 - markdown
 - meta
+- mime
 - path
 - shelf
 - shelf_static
