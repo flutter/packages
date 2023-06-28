@@ -96,7 +96,8 @@ class LoginRoute extends GoRouteData {
   final String? fromPage;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => LoginScreen(from: fromPage);
+  Widget build(BuildContext context, GoRouterState state) =>
+      LoginScreen(from: fromPage);
 }
 
 class FamilyRoute extends GoRouteData {
@@ -253,9 +254,11 @@ class PersonScreen extends StatelessWidget {
         body: ListView(
           children: <Widget>[
             ListTile(
-              title: Text('${person.name} ${family.name} is ${person.age} years old'),
+              title: Text(
+                  '${person.name} ${family.name} is ${person.age} years old'),
             ),
-            for (final MapEntry<PersonDetails, String> entry in person.details.entries)
+            for (final MapEntry<PersonDetails, String> entry
+                in person.details.entries)
               ListTile(
                 title: Text(
                   '${entry.key.name} - ${entry.value}',
@@ -269,8 +272,8 @@ class PersonScreen extends StatelessWidget {
                   ).go(context),
                   child: const Text('With extra...'),
                 ),
-                onTap: () =>
-                    PersonDetailsRoute(family.id, person.id, entry.key).go(context),
+                onTap: () => PersonDetailsRoute(family.id, person.id, entry.key)
+                    .go(context),
               )
           ],
         ),
@@ -303,7 +306,8 @@ class PersonDetailsPage extends StatelessWidget {
               ),
             ),
             if (extra == null) const ListTile(title: Text('No extra click!')),
-            if (extra != null) ListTile(title: Text('Extra click count: $extra')),
+            if (extra != null)
+              ListTile(title: Text('Extra click count: $extra')),
           ],
         ),
       );
