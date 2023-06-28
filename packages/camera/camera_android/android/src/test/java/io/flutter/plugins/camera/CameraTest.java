@@ -6,6 +6,8 @@ package io.flutter.plugins.camera;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
@@ -50,6 +52,7 @@ import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.utils.TestUtils;
 import io.flutter.view.TextureRegistry;
 import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -836,7 +839,7 @@ public class CameraTest {
 
   @Test
   public void startVideoRecording_shouldPullStreamsFromMediaRecorderAndImageReader()
-      throws InterruptedException, CameraAccessException {
+      throws InterruptedException, IOException, CameraAccessException {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
@@ -859,6 +862,7 @@ public class CameraTest {
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockMediaRecorder.getSurface()).thenReturn(mock(Surface.class));
     when(mockPictureImageReader.getSurface()).thenReturn(mock(Surface.class));
+    doNothing().when(camera).prepareMediaRecorder(anyString());
 
     camera.startVideoRecording(mock(MethodChannel.Result.class), null);
     verify(mockMediaRecorder, times(1))

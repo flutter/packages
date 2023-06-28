@@ -243,7 +243,8 @@ class Camera
     }
   }
 
-  private void prepareMediaRecorder(String outputFilePath) throws IOException {
+  @VisibleForTesting
+  void prepareMediaRecorder(String outputFilePath) throws IOException {
     Log.i(TAG, "prepareMediaRecorder");
 
     if (mediaRecorder != null) {
@@ -762,15 +763,11 @@ class Camera
 
   public void startVideoRecording(
       @NonNull Result result, @Nullable EventChannel imageStreamChannel) {
-    System.out.println("DEBUG NOTE: made it to start video recording");
     prepareRecording(result);
-    System.out.println("DEBUG NOTE: properly prepared recording");
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
     }
-    System.out.println("DEBUG NOTE: properly handled imageStreamChannel");
     initialCameraFacing = cameraProperties.getLensFacing();
-    System.out.println("DEBUG NOTEgot past lens facing");
     recordingVideo = true;
     try {
       startCapture(true, imageStreamChannel != null);
