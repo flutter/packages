@@ -36,4 +36,8 @@ and then deleting everything but `android/` from it:
 
 - Added license boilerplate.
 - Replaced `jcenter` in build.gradle with `mavenCentral`, due to the
+<<<<<<< HEAD
   jcenter.bintray.com shutdown.
+=======
+  jcenter.bintray.com shutdown.
+>>>>>>> refs/remotes/origin/example
