@@ -507,7 +507,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (videoOutputPath == null) {
       // Stop the current active recording as we will be unable to complete it
       // in this error case.
-      await recording!.close();
+      unawaited(recording!.close());
       recording = null;
       pendingRecording = null;
       throw CameraException(
@@ -516,7 +516,7 @@ class AndroidCameraCameraX extends CameraPlatform {
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-    await recording!.close();
+    unawaited(recording!.close());
     recording = null;
     pendingRecording = null;
     return XFile(videoOutputPath!);
@@ -614,7 +614,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           width: imageProxy.width);
 
       weakThis.target!.cameraImageDataStreamController!.add(cameraImageData);
-      await imageProxy.close();
+      unawaited(imageProxy.close());
     }
 
     // shouldCreateDetachedObjectForTesting is used to create an Analyzer
@@ -627,7 +627,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.
     imageAnalysis = createImageAnalysis(null);
-    await imageAnalysis!.setAnalyzer(analyzer);
+    unawaited(imageAnalysis!.setAnalyzer(analyzer));
 
     // TODO(camsim99): Reset live camera state observers here when
     // https://github.com/flutter/packages/pull/3419 lands.
