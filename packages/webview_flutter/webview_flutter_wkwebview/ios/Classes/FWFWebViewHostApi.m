@@ -201,7 +201,9 @@
                                    inspectable:(NSNumber *)inspectable
                                          error:(FlutterError *_Nullable *_Nonnull)error {
   if (@available(macOS 13.3, iOS 16.4, tvOS 16.4, *)) {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 164000
     [[self webViewForIdentifier:identifier] setInspectable:inspectable.boolValue];
+#endif
   } else {
     *error = [FlutterError errorWithCode:@"FWFUnsupportedVersionError"
                                  message:@"setInspectable is only supported on versions 16.4+."
