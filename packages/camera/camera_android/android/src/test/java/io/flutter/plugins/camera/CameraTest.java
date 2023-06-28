@@ -682,6 +682,7 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
+    when(mockImageReader.getSurface()).thenReturn(mock(Surface.class));
 
     camera.startPreview();
     verify(
