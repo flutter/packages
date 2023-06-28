@@ -684,10 +684,7 @@ public class CameraTest {
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
     camera.startPreview();
-    verify(
-            mockImageReader,
-            times(
-                2)) // we expect two calls to start regular preview
+    verify(mockImageReader, times(2)) // we expect two calls to start regular preview
         .getSurface(); // stream pulled from regular imageReader's surface.
   }
 
