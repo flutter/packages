@@ -48,10 +48,12 @@ void main() {
     });
 
     tearDown(() {
+      // ignore: deprecated_member_use
       preferences.clearWithPrefix('');
     });
 
     testWidgets('reading', (WidgetTester _) async {
+      // ignore: deprecated_member_use
       final Map<String, Object> values = await preferences.getAllWithPrefix('');
       expect(values['String'], isNull);
       expect(values['Bool'], isNull);
@@ -83,6 +85,7 @@ void main() {
             allTestValues['flutter.StringList']!)
       ]);
       final Map<String, Object> values =
+          // ignore: deprecated_member_use
           await preferences.getAllWithPrefix('prefix.');
       expect(values['prefix.String'], allTestValues['prefix.String']);
       expect(values['prefix.Bool'], allTestValues['prefix.Bool']);
@@ -113,14 +116,17 @@ void main() {
         preferences.setValue('StringList', 'flutter.StringList',
             allTestValues['flutter.StringList']!)
       ]);
+      // ignore: deprecated_member_use
       await preferences.clearWithPrefix('prefix.');
       Map<String, Object> values =
+          // ignore: deprecated_member_use
           await preferences.getAllWithPrefix('prefix.');
       expect(values['prefix.String'], null);
       expect(values['prefix.Bool'], null);
       expect(values['prefix.Int'], null);
       expect(values['prefix.Double'], null);
       expect(values['prefix.StringList'], null);
+      // ignore: deprecated_member_use
       values = await preferences.getAllWithPrefix('flutter.');
       expect(values['flutter.String'], allTestValues['flutter.String']);
       expect(values['flutter.Bool'], allTestValues['flutter.Bool']);
@@ -148,6 +154,7 @@ void main() {
         preferences.setValue('StringList', 'flutter.StringList',
             allTestValues['flutter.StringList']!)
       ]);
+      // ignore: deprecated_member_use
       final Map<String, Object> values = await preferences.getAllWithPrefix('');
       expect(values['String'], allTestValues['String']);
       expect(values['Bool'], allTestValues['Bool']);
@@ -180,7 +187,9 @@ void main() {
         preferences.setValue('StringList', 'flutter.StringList',
             allTestValues['flutter.StringList']!)
       ]);
+      // ignore: deprecated_member_use
       await preferences.clearWithPrefix('');
+      // ignore: deprecated_member_use
       final Map<String, Object> values = await preferences.getAllWithPrefix('');
       expect(values['String'], null);
       expect(values['Bool'], null);
@@ -226,6 +235,7 @@ void main() {
       await preferences.setValue(
           'StringList', key, allTestValues['flutter.StringList']!);
       await preferences.remove(key);
+      // ignore: deprecated_member_use
       final Map<String, Object> values = await preferences.getAllWithPrefix('');
       expect(values[key], isNull);
     });
@@ -260,6 +270,7 @@ void main() {
       // All writes should succeed.
       expect(result.where((bool element) => !element), isEmpty);
       // The last write should win.
+      // ignore: deprecated_member_use
       final Map<String, Object> values = await preferences.getAllWithPrefix('');
       expect(values['Int'], writeCount);
     });
@@ -268,6 +279,7 @@ void main() {
         (WidgetTester _) async {
       const String key = 'akey';
       const String value = 'a string value';
+      // ignore: deprecated_member_use
       await preferences.clearWithPrefix('');
 
       // Special prefixes used to store datatypes that can't be stored directly
@@ -284,6 +296,7 @@ void main() {
         expect(preferences.setValue('String', key, prefix + value),
             throwsA(isA<PlatformException>()));
         final Map<String, Object> values =
+            // ignore: deprecated_member_use
             await preferences.getAllWithPrefix('');
         expect(values[key], null);
       }
