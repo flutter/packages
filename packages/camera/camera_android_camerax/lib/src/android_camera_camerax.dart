@@ -661,7 +661,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Removes the previously set analyzer on the [imageAnalysis] instance, since
   /// image information should no longer be streamed.
   FutureOr<void> _onFrameStreamCancel() async {
-    await imageAnalysis!.clearAnalyzer();
+    unawaited(imageAnalysis!.clearAnalyzer());
   }
 
   /// Converts between Android ImageFormat constants and [ImageFormatGroup]s.
