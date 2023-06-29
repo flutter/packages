@@ -99,6 +99,8 @@ the threading model for handling HostApi methods can be selected with the
    `void`.
 1) Generics are supported, but can currently only be used with nullable types
    (example: `List<int?>`).
+1) Objc and Swift have special naming conventions that can be utilized with the
+   `@ObjCSelector` and `@SwiftFunction` respectively. 
 
 ### Flutter calling into iOS steps
 

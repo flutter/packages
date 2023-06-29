@@ -91,20 +91,9 @@ Future<void> _validateGeneratedExampleFiles() async {
   print('  Generating example output...');
 
   final int generateExitCode = await runPigeon(
-      input: './example/app/pigeons/messages_test.dart',
-      dartOut: './example/app/lib/src/messages.g.dart',
-      cppNamespace: 'pigeon_example',
-      cppHeaderOut: './example/app/windows/runner/messages.g.h',
-      cppSourceOut: './example/app/windows/runner/messages.g.cpp',
-      kotlinOut:
-          './example/app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
-      javaOut:
-          './example/app/android/app/src/main/java/io/flutter/plugins/Messages.java',
-      swiftOut: './example/app/ios/Runner/Messages.g.swift',
-      objcHeaderOut: './example/app/macos/Runner/messages.h',
-      objcSourceOut: './example/app/macos/Runner/messages.m',
-      objcPrefix: 'PGN',
-      copyrightHeader: './example/app/pigeons/copyright.txt');
+    input: './example/app/pigeons/messages.dart',
+    basePath: './example/app/',
+  );
 
   if (generateExitCode != 0) {
     print('Generation failed; see above for errors.');
