@@ -209,7 +209,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         }
       } else {
         if (!await _runTests(example, deviceFlags: deviceFlags)) {
-          errors.add('Integration tests failed');
+          errors.add('Integration tests failed.');
         }
       }
     }
