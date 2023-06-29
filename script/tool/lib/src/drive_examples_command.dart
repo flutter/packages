@@ -164,13 +164,13 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       }
       ++supportedExamplesFound;
 
-      final List<File> drivers = await _getDrivers(example);
-      if (drivers.isEmpty) {
-        print('No driver tests found for $exampleName');
+      final List<File> testTargets = await _getIntegrationTests(example);
+
+      if (testTargets.isEmpty) {
+        print('No integration_test/*.dart files found for $exampleName.');
+        errors.add('No integration tests found for $exampleName');
         continue;
       }
-
-      final List<File> testTargets = await _getIntegrationTests(example);
 
       // Check files for known problematic patterns.
       testTargets
@@ -181,23 +181,35 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         errors.add('${file.basename} failed validation');
       });
 
-      for (final File driver in drivers) {
-        if (testTargets.isEmpty) {
-          final String driverRelativePath =
-              getRelativePosixPath(driver, from: package.directory);
-          printError(
-              'Found $driverRelativePath, but no integration_test/*.dart files.');
-          errors.add('No test files for $driverRelativePath');
+      // `flutter test` doesn't yet support web integration tests, so fall back
+      // to `flutter drive`.
+      final bool useFlutterDrive = getBoolArg(platformWeb);
+
+      final List<File> drivers;
+      if (useFlutterDrive) {
+        drivers = await _getDrivers(example);
+        if (drivers.isEmpty) {
+          print('No driver found for $exampleName');
           continue;
         }
+      } else {
+        drivers = <File>[];
+      }
 
-        testsRan = true;
-        final List<File> failingTargets = await _driveTests(
-            example, driver, testTargets,
-            deviceFlags: deviceFlags);
-        for (final File failingTarget in failingTargets) {
-          errors.add(
-              getRelativePosixPath(failingTarget, from: package.directory));
+      testsRan = true;
+      if (useFlutterDrive) {
+        for (final File driver in drivers) {
+          final List<File> failingTargets = await _driveTests(
+              example, driver, testTargets,
+              deviceFlags: deviceFlags);
+          for (final File failingTarget in failingTargets) {
+            errors.add(
+                getRelativePosixPath(failingTarget, from: package.directory));
+          }
+        }
+      } else {
+        if (!await _runTests(example, deviceFlags: deviceFlags)) {
+          errors.add('Integration tests failed');
         }
       }
     }
@@ -211,7 +223,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       } else {
         return PackageResult.skip(supportedExamplesFound == 0
             ? 'No example supports requested platform(s).'
-            : 'No example is configured for driver tests.');
+            : 'No example is configured for integration tests.');
       }
     }
     return errors.isEmpty
@@ -354,5 +366,32 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       }
     }
     return failures;
+  }
+
+  /// Uses `flutter test integration_test` to run [example], returning the
+  /// success of the test run.
+  ///
+  /// [deviceFlags] should contain the flags to run the test on a specific
+  /// target device (plus any supporting device-specific flags). E.g.:
+  ///   - `['-d', 'macos']` for driving for macOS.
+  ///   - `['-d', 'web-server', '--web-port=<port>', '--browser-name=<browser>]`
+  ///     for web
+  Future<bool> _runTests(
+    RepositoryPackage example, {
+    required List<String> deviceFlags,
+  }) async {
+    final String enableExperiment = getStringArg(kEnableExperiment);
+
+    final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'test',
+          ...deviceFlags,
+          if (enableExperiment.isNotEmpty)
+            '--enable-experiment=$enableExperiment',
+          'integration_test',
+        ],
+        workingDir: example.directory);
+    return exitCode == 0;
   }
 }
