@@ -7,14 +7,15 @@
 // ignore_for_file: avoid_relative_lib_imports
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
+
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart';
 
 class _TestWKWebsiteDataStoreHostApiCodec extends StandardMessageCodec {
   const _TestWKWebsiteDataStoreHostApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WKWebsiteDataTypeEnumData) {
@@ -333,6 +334,7 @@ abstract class TestUIScrollViewHostApi {
 
 class _TestWKWebViewConfigurationHostApiCodec extends StandardMessageCodec {
   const _TestWKWebViewConfigurationHostApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WKAudiovisualMediaTypeEnumData) {
@@ -511,6 +513,7 @@ abstract class TestWKWebViewConfigurationHostApi {
 
 class _TestWKUserContentControllerHostApiCodec extends StandardMessageCodec {
   const _TestWKUserContentControllerHostApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WKUserScriptData) {
@@ -867,6 +870,7 @@ abstract class TestWKNavigationDelegateHostApi {
 
 class _TestNSObjectHostApiCodec extends StandardMessageCodec {
   const _TestNSObjectHostApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSKeyValueObservingOptionsEnumData) {
@@ -995,6 +999,7 @@ abstract class TestNSObjectHostApi {
 
 class _TestWKWebViewHostApiCodec extends StandardMessageCodec {
   const _TestWKWebViewHostApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSErrorData) {
@@ -1144,6 +1149,8 @@ abstract class TestWKWebViewHostApi {
   void setCustomUserAgent(int identifier, String? userAgent);
 
   Future<Object?> evaluateJavaScript(int identifier, String javaScriptString);
+
+  void setInspectable(int identifier, bool inspectable);
 
   static void setup(TestWKWebViewHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1575,6 +1582,31 @@ abstract class TestWKWebViewHostApi {
         });
       }
     }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WKWebViewHostApi.setInspectable', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WKWebViewHostApi.setInspectable was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.WKWebViewHostApi.setInspectable was null, expected non-null int.');
+          final bool? arg_inspectable = (args[1] as bool?);
+          assert(arg_inspectable != null,
+              'Argument for dev.flutter.pigeon.WKWebViewHostApi.setInspectable was null, expected non-null bool.');
+          api.setInspectable(arg_identifier!, arg_inspectable!);
+          return <Object?>[];
+        });
+      }
+    }
   }
 }
 
@@ -1617,6 +1649,7 @@ abstract class TestWKUIDelegateHostApi {
 
 class _TestWKHttpCookieStoreHostApiCodec extends StandardMessageCodec {
   const _TestWKHttpCookieStoreHostApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSHttpCookieData) {

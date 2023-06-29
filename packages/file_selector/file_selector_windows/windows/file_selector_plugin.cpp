@@ -29,8 +29,8 @@ namespace file_selector_windows {
 
 namespace {
 
+using flutter::CustomEncodableValue;
 using flutter::EncodableList;
-using flutter::EncodableMap;
 using flutter::EncodableValue;
 
 // The kind of file dialog to show.
@@ -137,7 +137,7 @@ class DialogWrapper {
 
     for (const EncodableValue& filter_info_value : filters) {
       const auto& type_group = std::any_cast<TypeGroup>(
-          std::get<flutter::CustomEncodableValue>(filter_info_value));
+          std::get<CustomEncodableValue>(filter_info_value));
       filter_names.push_back(Utf16FromUtf8(type_group.label()));
       filter_extensions.push_back(L"");
       std::wstring& spec = filter_extensions.back();
@@ -158,8 +158,8 @@ class DialogWrapper {
         static_cast<UINT>(filter_specs.size()), filter_specs.data());
   }
 
-  // Displays the dialog, and returns the selected files, or nullopt on error.
-  std::optional<EncodableList> Show(HWND parent_window) {
+  // Displays the dialog, and returns the result, or nullopt on error.
+  std::optional<FileDialogResult> Show(HWND parent_window) {
     assert(dialog_controller_);
     last_result_ = dialog_controller_->Show(parent_window);
     if (!SUCCEEDED(last_result_)) {
@@ -190,7 +190,14 @@ class DialogWrapper {
       }
       files.push_back(EncodableValue(GetPathForShellItem(shell_item)));
     }
-    return files;
+    FileDialogResult result(files, nullptr);
+    UINT file_type_index;
+    if (SUCCEEDED(dialog_controller_->GetFileTypeIndex(&file_type_index)) &&
+        file_type_index > 0) {
+      // Convert from the one-based index to a Dart index.
+      result.set_type_group_index(file_type_index - 1);
+    }
+    return result;
   }
 
   // Returns the result of the last Win32 API call related to this object.
@@ -205,7 +212,7 @@ class DialogWrapper {
   HRESULT last_result_;
 };
 
-ErrorOr<flutter::EncodableList> ShowDialog(
+ErrorOr<FileDialogResult> ShowDialog(
     const FileDialogControllerFactory& dialog_factory, HWND parent_window,
     DialogMode mode, const SelectionOptions& options,
     const std::string* initial_directory, const std::string* suggested_name,
@@ -243,16 +250,16 @@ ErrorOr<flutter::EncodableList> ShowDialog(
     dialog.SetFileTypeFilters(options.allowed_types());
   }
 
-  std::optional<EncodableList> files = dialog.Show(parent_window);
-  if (!files) {
+  std::optional<FileDialogResult> result = dialog.Show(parent_window);
+  if (!result) {
     if (dialog.last_result() != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
       return FlutterError("System error", "Could not show dialog",
                           EncodableValue(dialog.last_result()));
     } else {
-      return EncodableList();
+      return FileDialogResult(EncodableList(), nullptr);
     }
   }
-  return std::move(files.value());
+  return std::move(result.value());
 }
 
 // Returns the top-level window that owns |view|.
@@ -282,14 +289,14 @@ FileSelectorPlugin::FileSelectorPlugin(
 
 FileSelectorPlugin::~FileSelectorPlugin() = default;
 
-ErrorOr<flutter::EncodableList> FileSelectorPlugin::ShowOpenDialog(
+ErrorOr<FileDialogResult> FileSelectorPlugin::ShowOpenDialog(
     const SelectionOptions& options, const std::string* initialDirectory,
     const std::string* confirmButtonText) {
   return ShowDialog(*controller_factory_, get_root_window_(), DialogMode::open,
                     options, initialDirectory, nullptr, confirmButtonText);
 }
 
-ErrorOr<flutter::EncodableList> FileSelectorPlugin::ShowSaveDialog(
+ErrorOr<FileDialogResult> FileSelectorPlugin::ShowSaveDialog(
     const SelectionOptions& options, const std::string* initialDirectory,
     const std::string* suggestedName, const std::string* confirmButtonText) {
   return ShowDialog(*controller_factory_, get_root_window_(), DialogMode::save,

@@ -198,7 +198,7 @@ void main() {
     expect(matchesObj.uri.toString(), '/def');
     expect(matchesObj.extra, isNull);
     expect(matchesObj.error!.toString(),
-        'Exception: no routes for location: /def');
+        'GoException: no routes for location: /def');
   });
 
   testWidgets(

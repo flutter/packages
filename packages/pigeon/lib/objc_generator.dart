@@ -349,7 +349,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   void writeFileImports(
       ObjcOptions generatorOptions, Root root, Indent indent) {
     indent.writeln('#import "${generatorOptions.headerIncludePath}"');
+    indent.newln();
+    indent.writeln('#if TARGET_OS_OSX');
+    indent.writeln('#import <FlutterMacOS/FlutterMacOS.h>');
+    indent.writeln('#else');
     indent.writeln('#import <Flutter/Flutter.h>');
+    indent.writeln('#endif');
     indent.newln();
 
     indent.writeln('#if !__has_feature(objc_arc)');
