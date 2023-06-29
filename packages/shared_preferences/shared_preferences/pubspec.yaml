@@ -36,8 +36,6 @@ dependencies:
   shared_preferences_windows: ^2.2.0
 
 dev_dependencies:
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:
