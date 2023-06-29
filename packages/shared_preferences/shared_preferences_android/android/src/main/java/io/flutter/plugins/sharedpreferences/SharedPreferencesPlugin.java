@@ -120,8 +120,8 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
   }
 
   @Override
-  public @NonNull Boolean clear(
-      @NonNull String prefix, @Nullable List<String> allowList) throws RuntimeException {
+  public @NonNull Boolean clear(@NonNull String prefix, @Nullable List<String> allowList)
+      throws RuntimeException {
     SharedPreferences.Editor clearEditor = preferences.edit();
     Map<String, ?> allPrefs = preferences.getAll();
     ArrayList<String> filteredPrefs = new ArrayList<>();

@@ -194,8 +194,8 @@ class SharedPreferencesApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.clear', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_prefix, arg_allowList]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_prefix, arg_allowList]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -218,12 +218,13 @@ class SharedPreferencesApi {
   }
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  Future<Map<String?, Object?>> getAll(String arg_prefix, List<String?>? arg_allowList) async {
+  Future<Map<String?, Object?>> getAll(
+      String arg_prefix, List<String?>? arg_allowList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.SharedPreferencesApi.getAll', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_prefix, arg_allowList]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_prefix, arg_allowList]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

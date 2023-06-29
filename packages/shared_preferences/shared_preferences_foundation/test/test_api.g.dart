@@ -14,7 +14,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_foundation/messages.g.dart';
 
 abstract class TestUserDefaultsApi {
-  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   void remove(String key);
@@ -29,17 +30,21 @@ abstract class TestUserDefaultsApi {
 
   bool clear(String prefix, List<String?>? allowList);
 
-  static void setup(TestUserDefaultsApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(TestUserDefaultsApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.UserDefaultsApi.remove', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.UserDefaultsApi.remove was null.');
+              'Argument for dev.flutter.pigeon.UserDefaultsApi.remove was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_key = (args[0] as String?);
           assert(arg_key != null,
@@ -54,11 +59,14 @@ abstract class TestUserDefaultsApi {
           'dev.flutter.pigeon.UserDefaultsApi.setBool', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.UserDefaultsApi.setBool was null.');
+              'Argument for dev.flutter.pigeon.UserDefaultsApi.setBool was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_key = (args[0] as String?);
           assert(arg_key != null,
@@ -76,11 +84,14 @@ abstract class TestUserDefaultsApi {
           'dev.flutter.pigeon.UserDefaultsApi.setDouble', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.UserDefaultsApi.setDouble was null.');
+              'Argument for dev.flutter.pigeon.UserDefaultsApi.setDouble was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_key = (args[0] as String?);
           assert(arg_key != null,
@@ -98,11 +109,14 @@ abstract class TestUserDefaultsApi {
           'dev.flutter.pigeon.UserDefaultsApi.setValue', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.UserDefaultsApi.setValue was null.');
+              'Argument for dev.flutter.pigeon.UserDefaultsApi.setValue was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_key = (args[0] as String?);
           assert(arg_key != null,
@@ -120,17 +134,22 @@ abstract class TestUserDefaultsApi {
           'dev.flutter.pigeon.UserDefaultsApi.getAll', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.UserDefaultsApi.getAll was null.');
+              'Argument for dev.flutter.pigeon.UserDefaultsApi.getAll was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_prefix = (args[0] as String?);
           assert(arg_prefix != null,
               'Argument for dev.flutter.pigeon.UserDefaultsApi.getAll was null, expected non-null String.');
-          final List<String?>? arg_allowList = (args[1] as List<Object?>?)?.cast<String?>();
-          final Map<String?, Object?> output = api.getAll(arg_prefix!, arg_allowList);
+          final List<String?>? arg_allowList =
+              (args[1] as List<Object?>?)?.cast<String?>();
+          final Map<String?, Object?> output =
+              api.getAll(arg_prefix!, arg_allowList);
           return <Object?>[output];
         });
       }
@@ -140,16 +159,20 @@ abstract class TestUserDefaultsApi {
           'dev.flutter.pigeon.UserDefaultsApi.clear', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.UserDefaultsApi.clear was null.');
+              'Argument for dev.flutter.pigeon.UserDefaultsApi.clear was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_prefix = (args[0] as String?);
           assert(arg_prefix != null,
               'Argument for dev.flutter.pigeon.UserDefaultsApi.clear was null, expected non-null String.');
-          final List<String?>? arg_allowList = (args[1] as List<Object?>?)?.cast<String?>();
+          final List<String?>? arg_allowList =
+              (args[1] as List<Object?>?)?.cast<String?>();
           final bool output = api.clear(arg_prefix!, arg_allowList);
           return <Object?>[output];
         });

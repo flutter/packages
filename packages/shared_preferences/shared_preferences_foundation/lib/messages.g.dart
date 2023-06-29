@@ -109,12 +109,13 @@ class UserDefaultsApi {
     }
   }
 
-  Future<Map<String?, Object?>> getAll(String arg_prefix, List<String?>? arg_allowList) async {
+  Future<Map<String?, Object?>> getAll(
+      String arg_prefix, List<String?>? arg_allowList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserDefaultsApi.getAll', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_prefix, arg_allowList]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_prefix, arg_allowList]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -140,8 +141,8 @@ class UserDefaultsApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserDefaultsApi.clear', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_prefix, arg_allowList]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_prefix, arg_allowList]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

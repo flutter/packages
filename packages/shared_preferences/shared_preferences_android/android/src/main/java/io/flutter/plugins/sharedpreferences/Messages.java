@@ -13,12 +13,7 @@ import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import io.flutter.plugin.common.StandardMessageCodec;
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +30,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -55,48 +49,55 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface SharedPreferencesApi {
     /** Removes property from shared preferences data set. */
-    @NonNull 
+    @NonNull
     Boolean remove(@NonNull String key);
     /** Adds property to shared preferences data set of type bool. */
-    @NonNull 
+    @NonNull
     Boolean setBool(@NonNull String key, @NonNull Boolean value);
     /** Adds property to shared preferences data set of type String. */
-    @NonNull 
+    @NonNull
     Boolean setString(@NonNull String key, @NonNull String value);
     /** Adds property to shared preferences data set of type int. */
-    @NonNull 
+    @NonNull
     Boolean setInt(@NonNull String key, @NonNull Long value);
     /** Adds property to shared preferences data set of type double. */
-    @NonNull 
+    @NonNull
     Boolean setDouble(@NonNull String key, @NonNull Double value);
     /** Adds property to shared preferences data set of type List<String>. */
-    @NonNull 
+    @NonNull
     Boolean setStringList(@NonNull String key, @NonNull List<String> value);
     /** Removes all properties from shared preferences data set with matching prefix. */
-    @NonNull 
+    @NonNull
     Boolean clear(@NonNull String prefix, @Nullable List<String> allowList);
     /** Gets all properties from shared preferences data set with matching prefix. */
-    @NonNull 
+    @NonNull
     Map<String, Object> getAll(@NonNull String prefix, @Nullable List<String> allowList);
 
     /** The codec used by SharedPreferencesApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
-    /**Sets up an instance of `SharedPreferencesApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable SharedPreferencesApi api) {
+    /**
+     * Sets up an instance of `SharedPreferencesApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable SharedPreferencesApi api) {
       {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.SharedPreferencesApi.remove", getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.SharedPreferencesApi.remove",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -106,8 +107,7 @@ public class Messages {
                 try {
                   Boolean output = api.remove(keyArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -121,7 +121,10 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.SharedPreferencesApi.setBool", getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.SharedPreferencesApi.setBool",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -132,8 +135,7 @@ public class Messages {
                 try {
                   Boolean output = api.setBool(keyArg, valueArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -147,7 +149,10 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.SharedPreferencesApi.setString", getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.SharedPreferencesApi.setString",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -158,8 +163,7 @@ public class Messages {
                 try {
                   Boolean output = api.setString(keyArg, valueArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -173,7 +177,10 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.SharedPreferencesApi.setInt", getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.SharedPreferencesApi.setInt",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -182,10 +189,10 @@ public class Messages {
                 String keyArg = (String) args.get(0);
                 Number valueArg = (Number) args.get(1);
                 try {
-                  Boolean output = api.setInt(keyArg, (valueArg == null) ? null : valueArg.longValue());
+                  Boolean output =
+                      api.setInt(keyArg, (valueArg == null) ? null : valueArg.longValue());
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -199,7 +206,10 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.SharedPreferencesApi.setDouble", getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.SharedPreferencesApi.setDouble",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -210,8 +220,7 @@ public class Messages {
                 try {
                   Boolean output = api.setDouble(keyArg, valueArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -225,7 +234,10 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.SharedPreferencesApi.setStringList", getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.SharedPreferencesApi.setStringList",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -236,8 +248,7 @@ public class Messages {
                 try {
                   Boolean output = api.setStringList(keyArg, valueArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -251,7 +262,10 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.SharedPreferencesApi.clear", getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.SharedPreferencesApi.clear",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -262,8 +276,7 @@ public class Messages {
                 try {
                   Boolean output = api.clear(prefixArg, allowListArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -277,7 +290,10 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.SharedPreferencesApi.getAll", getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.SharedPreferencesApi.getAll",
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -288,8 +304,7 @@ public class Messages {
                 try {
                   Map<String, Object> output = api.getAll(prefixArg, allowListArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
