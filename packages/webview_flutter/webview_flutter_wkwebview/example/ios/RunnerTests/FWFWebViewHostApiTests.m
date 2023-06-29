@@ -465,9 +465,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   XCTAssertTrue(CGRectEqualToRect(webView.frame, CGRectMake(0, 0, 300, 100)));
 }
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130300 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400 || \
-    __TV_OS_VERSION_MAX_ALLOWED >= 160400
-- (void)testSetInspectable API_AVAILABLE(ios(16.4), macos(13.3), tvos(16.4)) {
+- (void)testSetInspectable API_AVAILABLE(ios(16.4), macos(13.3)) {
   FWFWebView *mockWebView = OCMClassMock([FWFWebView class]);
 
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
@@ -482,5 +480,4 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   OCMVerify([mockWebView setInspectable:YES]);
   XCTAssertNil(error);
 }
-#endif
 @end

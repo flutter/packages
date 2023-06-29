@@ -201,8 +201,7 @@
                                    inspectable:(NSNumber *)inspectable
                                          error:(FlutterError *_Nullable *_Nonnull)error {
   if (@available(macOS 13.3, iOS 16.4, tvOS 16.4, *)) {
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130300 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400 || \
-    __TV_OS_VERSION_MAX_ALLOWED >= 160400
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130300 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400
     [[self webViewForIdentifier:identifier] setInspectable:inspectable.boolValue];
 #endif
   } else {
