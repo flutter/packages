@@ -170,34 +170,23 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         continue;
       }
 
+      final List<File> testTargets = await _getIntegrationTests(example);
+
+      // Check files for known problematic patterns.
+      testTargets
+          .where((File file) => !_validateIntegrationTest(file))
+          .forEach((File file) {
+        // Report the issue, but continue with the test as the validation
+        // errors don't prevent running.
+        errors.add('${file.basename} failed validation');
+      });
+
       for (final File driver in drivers) {
-        final List<File> testTargets = <File>[];
-
-        // Try to find a matching app to drive without the _test.dart
-        // TODO(stuartmorgan): Migrate all remaining uses of this legacy
-        // approach (currently only video_player) and remove support for it:
-        // https://github.com/flutter/flutter/issues/85224.
-        final File? legacyTestFile = _getLegacyTestFileForTestDriver(driver);
-        if (legacyTestFile != null) {
-          testTargets.add(legacyTestFile);
-        } else {
-          for (final File testFile in await _getIntegrationTests(example)) {
-            // Check files for known problematic patterns.
-            final bool passesValidation = _validateIntegrationTest(testFile);
-            if (!passesValidation) {
-              // Report the issue, but continue with the test as the validation
-              // errors don't prevent running.
-              errors.add('${testFile.basename} failed validation');
-            }
-            testTargets.add(testFile);
-          }
-        }
-
         if (testTargets.isEmpty) {
           final String driverRelativePath =
               getRelativePosixPath(driver, from: package.directory);
           printError(
-              'Found $driverRelativePath, but no integration_test/*_test.dart files.');
+              'Found $driverRelativePath, but no integration_test/*.dart files.');
           errors.add('No test files for $driverRelativePath');
           continue;
         }
@@ -291,16 +280,6 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       }
     }
     return drivers;
-  }
-
-  File? _getLegacyTestFileForTestDriver(File testDriver) {
-    final String testName = testDriver.basename.replaceAll(
-      RegExp(r'_test.dart$'),
-      '.dart',
-    );
-    final File testFile = testDriver.parent.childFile(testName);
-
-    return testFile.existsSync() ? testFile : null;
   }
 
   Future<List<File>> _getIntegrationTests(RepositoryPackage example) async {
