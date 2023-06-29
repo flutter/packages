@@ -1,4 +1,8 @@
-## NEXT
+## 0.2.1
+
+* Adds `getMedia` method.
+
+## 0.2.0
 
 * Updates minimum Flutter version to 3.3.
 

@@ -1,3 +1,15 @@
+## 2.2.0
+
+* Adds replace methods to the generated routes.
+
+## 2.1.1
+
+* Fixes a bug that the required/positional parameters are not added to query parameters correctly.
+
+## 2.1.0
+
+* Supports required/positional parameters that are not in the path.
+
 ## 2.0.2
 
 * Fixes unawaited_futures violations.

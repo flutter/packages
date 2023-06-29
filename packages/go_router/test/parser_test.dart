@@ -6,15 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/configuration.dart';
+import 'package:go_router/src/information_provider.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
 import 'package:go_router/src/parser.dart';
 
-RouteInformation createRouteInformation(String location, [Object? state]) {
-  // TODO(chunhtai): remove this ignore and migrate the code
-  // https://github.com/flutter/flutter/issues/124045.
-  // ignore: deprecated_member_use
-  return RouteInformation(location: location, state: state);
+RouteInformation createRouteInformation(String location, [Object? extra]) {
+  return RouteInformation(
+      // TODO(chunhtai): remove this ignore and migrate the code
+      // https://github.com/flutter/flutter/issues/124045.
+      // ignore: deprecated_member_use
+      location: location,
+      state:
+          RouteInformationState<void>(type: NavigatingType.go, extra: extra));
 }
 
 void main() {
@@ -64,7 +67,7 @@ void main() {
     List<RouteMatch> matches = matchesObj.matches;
     expect(matches.length, 1);
     expect(matchesObj.uri.toString(), '/');
-    expect(matches[0].extra, isNull);
+    expect(matchesObj.extra, isNull);
     expect(matches[0].matchedLocation, '/');
     expect(matches[0].route, routes[0]);
 
@@ -74,11 +77,10 @@ void main() {
     matches = matchesObj.matches;
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), '/abc?def=ghi');
-    expect(matches[0].extra, extra);
+    expect(matchesObj.extra, extra);
     expect(matches[0].matchedLocation, '/');
     expect(matches[0].route, routes[0]);
 
-    expect(matches[1].extra, extra);
     expect(matches[1].matchedLocation, '/abc');
     expect(matches[1].route, routes[0].routes[0]);
   });
@@ -116,11 +118,8 @@ void main() {
     );
 
     expect(configuration.namedLocation('lowercase'), '/abc');
-    expect(configuration.namedLocation('LOWERCASE'), '/abc');
     expect(configuration.namedLocation('camelCase'), '/efg');
-    expect(configuration.namedLocation('camelcase'), '/efg');
     expect(configuration.namedLocation('snake_case'), '/hij');
-    expect(configuration.namedLocation('SNAKE_CASE'), '/hij');
 
     // With query parameters
     expect(configuration.namedLocation('lowercase'), '/abc');
@@ -195,12 +194,11 @@ void main() {
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation('/def'), context);
     final List<RouteMatch> matches = matchesObj.matches;
-    expect(matches.length, 1);
+    expect(matches.length, 0);
     expect(matchesObj.uri.toString(), '/def');
-    expect(matches[0].extra, isNull);
-    expect(matches[0].matchedLocation, '/def');
-    expect(matches[0].error!.toString(),
-        'Exception: no routes for location: /def');
+    expect(matchesObj.extra, isNull);
+    expect(matchesObj.error!.toString(),
+        'GoException: no routes for location: /def');
   });
 
   testWidgets(
@@ -267,10 +265,9 @@ void main() {
     expect(matchesObj.pathParameters.length, 2);
     expect(matchesObj.pathParameters['uid'], '123');
     expect(matchesObj.pathParameters['fid'], '456');
-    expect(matches[0].extra, isNull);
+    expect(matchesObj.extra, isNull);
     expect(matches[0].matchedLocation, '/');
 
-    expect(matches[1].extra, isNull);
     expect(matches[1].matchedLocation, '/123/family/456');
   });
 
@@ -399,8 +396,8 @@ void main() {
             createRouteInformation('/abd'), context);
     final List<RouteMatch> matches = matchesObj.matches;
 
-    expect(matches, hasLength(1));
-    expect(matches.first.error, isNotNull);
+    expect(matches, hasLength(0));
+    expect(matchesObj.error, isNotNull);
   });
 
   testWidgets('Creates a match for ShellRoute', (WidgetTester tester) async {
@@ -444,6 +441,6 @@ void main() {
     final List<RouteMatch> matches = matchesObj.matches;
 
     expect(matches, hasLength(2));
-    expect(matches.first.error, isNull);
+    expect(matchesObj.error, isNull);
   });
 }

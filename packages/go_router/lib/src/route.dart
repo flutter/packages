@@ -7,8 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import '../go_router.dart';
+import 'configuration.dart';
 import 'match.dart';
-import 'matching.dart';
 import 'path_utils.dart';
 import 'typedefs.dart';
 
@@ -98,11 +98,19 @@ import 'typedefs.dart';
 @immutable
 abstract class RouteBase {
   const RouteBase._({
-    this.routes = const <RouteBase>[],
+    required this.routes,
+    required this.parentNavigatorKey,
   });
 
   /// The list of child routes associated with this route.
   final List<RouteBase> routes;
+
+  /// An optional key specifying which Navigator to display this route's screen
+  /// onto.
+  ///
+  /// Specifying the root Navigator will stack this route onto that
+  /// Navigator instead of the nearest ShellRoute ancestor.
+  final GlobalKey<NavigatorState>? parentNavigatorKey;
 
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
@@ -137,7 +145,7 @@ class GoRoute extends RouteBase {
     this.name,
     this.builder,
     this.pageBuilder,
-    this.parentNavigatorKey,
+    super.parentNavigatorKey,
     this.redirect,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
@@ -208,7 +216,7 @@ class GoRoute extends RouteBase {
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
   ///
-  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/sub_routes.dart)
+  /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/path_and_query_parameters.dart)
   /// to learn more about parameters.
   final String path;
 
@@ -301,13 +309,6 @@ class GoRoute extends RouteBase {
   /// re-evaluation will be triggered if the [InheritedWidget] changes.
   final GoRouterRedirect? redirect;
 
-  /// An optional key specifying which Navigator to display this route's screen
-  /// onto.
-  ///
-  /// Specifying the root Navigator will stack this route onto that
-  /// Navigator instead of the nearest ShellRoute ancestor.
-  final GlobalKey<NavigatorState>? parentNavigatorKey;
-
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) =>
@@ -333,7 +334,9 @@ class GoRoute extends RouteBase {
 /// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   /// Constructs a [ShellRouteBase].
-  const ShellRouteBase._({super.routes}) : super._();
+  const ShellRouteBase._(
+      {required super.routes, required super.parentNavigatorKey})
+      : super._();
 
   /// Attempts to build the Widget representing this shell route.
   ///
@@ -496,7 +499,8 @@ class ShellRoute extends ShellRouteBase {
     this.builder,
     this.pageBuilder,
     this.observers,
-    super.routes,
+    required super.routes,
+    super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
   })  : assert(routes.isNotEmpty),
@@ -653,6 +657,7 @@ class StatefulShellRoute extends ShellRouteBase {
     this.builder,
     this.pageBuilder,
     required this.navigatorContainerBuilder,
+    super.parentNavigatorKey,
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
         assert((pageBuilder != null) ^ (builder != null),
@@ -676,12 +681,14 @@ class StatefulShellRoute extends ShellRouteBase {
   StatefulShellRoute.indexedStack({
     required List<StatefulShellBranch> branches,
     StatefulShellRouteBuilder? builder,
+    GlobalKey<NavigatorState>? parentNavigatorKey,
     StatefulShellRoutePageBuilder? pageBuilder,
     String? restorationScopeId,
   }) : this(
           branches: branches,
           builder: builder,
           pageBuilder: pageBuilder,
+          parentNavigatorKey: parentNavigatorKey,
           restorationScopeId: restorationScopeId,
           navigatorContainerBuilder: _indexedStackContainerBuilder,
         );
@@ -928,6 +935,8 @@ class StatefulNavigationShell extends StatefulWidget {
   /// current [StatefulShellBranch].
   final ShellRouteContext shellRouteContext;
 
+  final GoRouter _router;
+
   /// The builder for a custom container for shell route Navigators.
   final ShellNavigationContainerBuilder containerBuilder;
 
@@ -935,8 +944,6 @@ class StatefulNavigationShell extends StatefulWidget {
   ///
   /// Corresponds to the index in the branches field of [StatefulShellRoute].
   final int currentIndex;
-
-  final GoRouter _router;
 
   /// The associated [StatefulShellRoute].
   StatefulShellRoute get route => shellRouteContext.route as StatefulShellRoute;
@@ -948,6 +955,8 @@ class StatefulNavigationShell extends StatefulWidget {
   /// [StatefulShellRoute]. If the branch has not been visited before, or if
   /// initialLocation is true, this method will navigate to initial location of
   /// the branch (see [StatefulShellBranch.initialLocation]).
+  // TODO(chunhtai): figure out a way to avoid putting navigation API in widget
+  // class.
   void goBranch(int index, {bool initialLocation = false}) {
     final StatefulShellRoute route =
         shellRouteContext.route as StatefulShellRoute;
@@ -977,7 +986,7 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      return _router.locationForRoute(route)!;
+      return _router.configuration.locationForRoute(route)!;
     }
   }
 
@@ -1019,7 +1028,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   StatefulShellRoute get route => widget.route;
 
   GoRouter get _router => widget._router;
-  RouteMatcher get _matcher => _router.routeInformationParser.matcher;
 
   final Map<StatefulShellBranch, _RestorableRouteMatchList> _branchLocations =
       <StatefulShellBranch, _RestorableRouteMatchList>{};
@@ -1040,7 +1048,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
       [bool register = true]) {
     return _branchLocations.putIfAbsent(branch, () {
       final _RestorableRouteMatchList branchLocation =
-          _RestorableRouteMatchList(_matcher);
+          _RestorableRouteMatchList(_router.configuration);
       if (register) {
         registerForRestoration(
             branchLocation, _branchLocationRestorationScopeId(branch));
@@ -1070,6 +1078,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     if (index > 0) {
       final List<RouteMatch> matches = matchList.matches.sublist(0, index);
       return RouteMatchList(
+        extra: matchList.extra,
         matches: matches,
         uri: Uri.parse(matches.last.matchedLocation),
         pathParameters: matchList.pathParameters,
@@ -1114,15 +1123,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   /// the branch (see [StatefulShellBranch.initialLocation]).
   void goBranch(int index, {bool initialLocation = false}) {
     assert(index >= 0 && index < route.branches.length);
-    final RouteMatchList? matchlist =
+    final RouteMatchList? matchList =
         initialLocation ? null : _matchListForBranch(index);
-    if (matchlist != null && matchlist.isNotEmpty) {
-      final RouteInformation preParsed =
-          matchlist.toPreParsedRouteInformation();
-      // TODO(tolo): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use, unnecessary_non_null_assertion
-      _router.go(preParsed.location!, extra: preParsed.state);
+    if (matchList != null && matchList.isNotEmpty) {
+      _router.restore(matchList);
     } else {
       _router.go(widget._effectiveInitialBranchLocation(index));
     }
@@ -1169,8 +1173,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
 /// [RestorableProperty] for enabling state restoration of [RouteMatchList]s.
 class _RestorableRouteMatchList extends RestorableProperty<RouteMatchList> {
-  _RestorableRouteMatchList(RouteMatcher matcher)
-      : _matchListCodec = RouteMatchListCodec(matcher);
+  _RestorableRouteMatchList(RouteConfiguration configuration)
+      : _matchListCodec = RouteMatchListCodec(configuration);
 
   final RouteMatchListCodec _matchListCodec;
 
@@ -1193,13 +1197,15 @@ class _RestorableRouteMatchList extends RestorableProperty<RouteMatchList> {
 
   @override
   RouteMatchList fromPrimitives(Object? data) {
-    return _matchListCodec.decodeMatchList(data) ?? RouteMatchList.empty;
+    return data == null
+        ? RouteMatchList.empty
+        : _matchListCodec.decode(data as Map<Object?, Object?>);
   }
 
   @override
   Object? toPrimitives() {
     if (value.isNotEmpty) {
-      return _matchListCodec.encodeMatchList(value);
+      return _matchListCodec.encode(value);
     }
     return null;
   }

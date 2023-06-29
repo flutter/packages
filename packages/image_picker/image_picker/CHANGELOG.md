@@ -1,3 +1,24 @@
+## 1.0.0
+
+* **BREAKING CHANGE**: Removes the deprecated `get*` methods. Clients who have
+  not already done so will need to migrate to the `pick*` versions that use
+  `XFile` rather than `PickedFile` for return values.
+    * As this is the only change, we encourage authors of published packages
+      that depend on `image_picker` to consider using a constraint of
+      `'>=0.8.9 <2.0.0'` rather than `^1.0.0` when updating dependencies, to
+      avoid conflicts with packages that have not yet updated.
+
+## 0.8.9
+
+* Adds `pickMedia` and `pickMultipleMedia` methods.
+
+## 0.8.8
+
+* Adds initial support for Windows, macOS, and Linux.
+    * See README for current desktop limitations.
+* Adds `supportsImageSource` to allow runtime checks for whether a given source
+  is supported by the current platform's implementation.
+
 ## 0.8.7+5
 
 * Fixes `BuildContext` handling in example.
