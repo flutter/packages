@@ -196,8 +196,11 @@ FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
   if (error.userInfo) {
     userInfo = [NSMutableDictionary dictionary];
     for (NSErrorUserInfoKey key in error.userInfo.allKeys) {
-      if ([error.userInfo[key] isKindOfClass:[NSString class]]) {
-        userInfo[key] = error.userInfo[key];
+      NSObject *value = error.userInfo[key];
+      if ([value isKindOfClass:[NSString class]]) {
+        userInfo[key] = value;
+      } else {
+        userInfo[key] = [NSString stringWithFormat:@"Unsupported Type: %@", value.description];
       }
     }
   }

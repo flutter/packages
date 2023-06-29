@@ -830,8 +830,7 @@ class AndroidWebResourceError extends WebResourceError {
         );
 
   /// Gets the URL for which the failing resource request was made.
-  ///
-  /// This field is deprecated. Please use [url] instead.
+  @Deprecated('Please use `url`.')
   final String? failingUrl;
 
   static WebResourceErrorType? _errorCodeToErrorType(int errorCode) {
