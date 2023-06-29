@@ -299,7 +299,7 @@ void main() {
     expect(testStrings, 'test');
   });
 
-  test('unimplemented errors in withOptions methods are updated', () async {
+  test('unimplemented errors in withParameters methods are updated', () async {
     final UnimplementedSharedPreferencesStore localStore =
         UnimplementedSharedPreferencesStore();
     SharedPreferencesStorePlatform.instance = localStore;
@@ -319,7 +319,7 @@ void main() {
             "Shared Preferences doesn't yet support the setPrefix method"));
   });
 
-  test('non-Unimplemented errors pass through withOptions methods correctly',
+  test('non-Unimplemented errors pass through withParameters methods correctly',
       () async {
     final ThrowingSharedPreferencesStore localStore =
         ThrowingSharedPreferencesStore();
