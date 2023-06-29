@@ -1,3 +1,7 @@
+## 0.3.0+8
+
+* Adds a [guide for migrating](migration_guide.md) to [0.3.0](#0.3.0).
+
 ## 0.3.0+7
 
 * Bumps org.mockito:mockito-core from 4.7.0 to 5.3.1.
