@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 import 'package:path/path.dart' as path;
 import 'package:path_provider_linux/path_provider_linux.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 /// The Linux implementation of [SharedPreferencesStorePlatform].
 ///
@@ -94,26 +95,52 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
-    return clearWithPrefix(_defaultPrefix);
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
+    return clearWithParameters(
+        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
     final Map<String, Object> preferences = await _readPreferences();
-    preferences.removeWhere((String key, _) => key.startsWith(prefix));
+    preferences.removeWhere((String key, _) =>
+        key.startsWith(filter.prefix) &&
+        (filter.allowList == null || filter.allowList!.contains(key)));
     return _writePreferences(preferences);
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    return getAllWithPrefix(_defaultPrefix);
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    return getAllWithParameters(
+        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
     final Map<String, Object> withPrefix =
         Map<String, Object>.from(await _readPreferences());
-    withPrefix.removeWhere((String key, _) => !key.startsWith(prefix));
+    withPrefix.removeWhere((String key, _) => !(key.startsWith(filter.prefix) &&
+        (filter.allowList?.contains(key) ?? true)));
     return withPrefix;
   }
 
