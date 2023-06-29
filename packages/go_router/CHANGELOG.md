@@ -1,3 +1,6 @@
+## NEXT
+- Fixes a typo in docs for `StatefulShellRoute.indexedStack(...)`.
+
 ## 9.0.0
 
 - **BREAKING CHANGE**:
