@@ -17,7 +17,7 @@ import 'common/repository_package.dart';
 const int _exitNoPlatformFlags = 2;
 const int _exitNoAvailableDevice = 3;
 
-/// A command to run the example applications for packages via Flutter driver.
+/// A command to run the integration tests for a package's example applications.
 class DriveExamplesCommand extends PackageLoopingCommand {
   /// Creates an instance of the drive command.
   DriveExamplesCommand(
@@ -50,11 +50,9 @@ class DriveExamplesCommand extends PackageLoopingCommand {
   final String name = 'drive-examples';
 
   @override
-  final String description = 'Runs driver tests for package example apps.\n\n'
-      'For each *_test.dart in test_driver/ it drives an application with '
-      'either the corresponding test in test_driver (for example, '
-      'test_driver/app_test.dart would match test_driver/app.dart), or the '
-      '*_test.dart files in integration_test/.\n\n'
+  final String description = 'Runs Dart integration tests for example apps.\n\n'
+      "This runs all tests in each example's integration_test directory, "
+      'via "flutter test" on most platforms, and "flutter drive" on web.\n\n'
       'This command requires "flutter" to be in your path.';
 
   Map<String, List<String>> _targetDeviceFlags = const <String, List<String>>{};
