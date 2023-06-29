@@ -54,7 +54,7 @@
 }
 
 - (void)testObjectsAreStoredWithPointerHashcode {
-  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] initWithDeallocCallback:nil];
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
 
   NSURL *url1 = [NSURL URLWithString:@"https://www.flutter.dev"];
   NSURL *url2 = [NSURL URLWithString:@"https://www.flutter.dev"];
