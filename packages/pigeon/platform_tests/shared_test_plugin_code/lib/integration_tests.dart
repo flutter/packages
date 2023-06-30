@@ -549,7 +549,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const List<Object?> sentObject = <Object>[7, 'Hello Dart!'];
+      const List<Object?> sentObject = <Object?>[7, 'Hello Dart!', null];
       final List<Object?>? echoObject = await api.echoNullableList(sentObject);
       expect(listEquals(echoObject, sentObject), true);
     });
@@ -562,6 +562,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         'a': 1,
         'b': 2.3,
         'c': 'four',
+        'd': null,
       };
       final Map<String?, Object?>? echoObject =
           await api.echoNullableMap(sentObject);
