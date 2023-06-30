@@ -232,6 +232,29 @@ void main() {
     });
 
     test('runs in Chrome when requested for Flutter package', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        isFlutter: true,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>['test', '--color', '--platform=chrome'],
+              package.path),
+        ]),
+      );
+    });
+
+    test('runs in Chrome when requested for Flutter plugin that implement web',
+        () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -252,6 +275,52 @@ void main() {
               const <String>['test', '--color', '--platform=chrome'],
               plugin.path),
         ]),
+      );
+    });
+
+    test('runs in Chrome when requested for Flutter plugin that endorse web',
+        () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.federated),
+        },
+      );
+
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>['test', '--color', '--platform=chrome'],
+              plugin.path),
+        ]),
+      );
+    });
+
+    test('skips running non-web-plugins in browser mode', () async {
+      createFakePlugin(
+        'non_web_plugin',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains("Non-web plugin tests don't need web testing."),
+          ]));
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[]),
       );
     });
 

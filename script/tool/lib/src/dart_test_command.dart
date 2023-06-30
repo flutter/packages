@@ -7,6 +7,7 @@ import 'package:platform/platform.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
@@ -57,6 +58,17 @@ class DartTestCommand extends PackageLoopingCommand {
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     if (!package.testDirectory.existsSync()) {
       return PackageResult.skip('No test/ directory.');
+    }
+
+    // Skip running plugin tests for non-web-supporting plugins (or non-web
+    // federated plugin implementations) on web, since there's no reason to
+    // expect them to work.
+    final bool webPlatform = getStringArg(_platformFlag).isNotEmpty &&
+        getStringArg(_platformFlag) != 'vm';
+    if (webPlatform &&
+        isFlutterPlugin(package) &&
+        !pluginSupportsPlatform(platformWeb, package)) {
+      return PackageResult.skip("Non-web plugin tests don't need web testing.");
     }
 
     bool passed;
