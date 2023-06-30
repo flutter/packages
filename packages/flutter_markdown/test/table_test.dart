@@ -161,7 +161,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'table cell vertical alignment should follow stylesheet',
+      'table cell vertical alignment should follow stylesheet for different values',
       (WidgetTester tester) async {
         final ThemeData theme =
             ThemeData.light().copyWith(textTheme: textTheme);
