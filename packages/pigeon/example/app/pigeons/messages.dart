@@ -18,8 +18,9 @@ import 'package:pigeon/pigeon.dart';
   javaOptions: JavaOptions(),
   swiftOut: 'ios/Runner/Messages.g.swift',
   swiftOptions: SwiftOptions(),
-  objcHeaderOut: 'macos/Runner/messages.h',
-  objcSourceOut: 'macos/Runner/messages.m',
+  objcHeaderOut: 'macos/Runner/messages.g.h',
+  objcSourceOut: 'macos/Runner/messages.g.m',
+  // Set this to a unique prefix for your plugin or application, per Objective-C naming conventions.
   objcOptions: ObjcOptions(prefix: 'PGN'),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
@@ -42,8 +43,9 @@ class MessageData {
 abstract class ExampleHostApi {
   String getHostLanguage();
 
-  @ObjCSelector('addNumber:otherNumber:')
-  @SwiftFunction('add(number:otherNumber:)')
+  // These annotations create more idiomatic naming of methods in Objc and Swift.
+  @ObjCSelector('addNumber:toNumber:')
+  @SwiftFunction('add(_:to:)')
   int add(int a, int b);
 
   @async

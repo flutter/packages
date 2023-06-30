@@ -369,7 +369,7 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == 'stdout') {
     sink = stdout;
   } else {
-    file = File(basePath + output);
+    file = File(path.join(basePath, output));
     sink = file.openWrite();
   }
   return sink;
@@ -412,7 +412,7 @@ DartOptions _dartOptionsWithCopyrightHeader(
       sourceOutPath: dartOutPath,
       testOutPath: testOutPath,
       copyrightHeader: copyrightHeader != null
-          ? _lineReader(basePath + copyrightHeader)
+          ? _lineReader(path.join(basePath, copyrightHeader))
           : null));
 }
 

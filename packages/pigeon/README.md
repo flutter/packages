@@ -1,4 +1,4 @@
-# pigeon
+# Pigeon
 
 Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe, easier, and faster.

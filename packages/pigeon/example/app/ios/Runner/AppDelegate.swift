@@ -14,7 +14,7 @@ private class PigeonApiImplementation: ExampleHostApi {
     return "Swift"
   }
 
-  func add(number a: Int64, otherNumber b: Int64) throws -> Int64 {
+  func add(_ a: Int64, to b: Int64) throws -> Int64 {
     if (a < 0 || b < 0) {
       throw FlutterError(code: "code", message: "message", details: "details");
     }

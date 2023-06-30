@@ -23,7 +23,7 @@ class PigeonApiImplementation : public ExampleHostApi {
   ErrorOr<std::string> GetHostLanguage() override { return "C++"; }
   ErrorOr<int64_t> Add(int64_t a, int64_t b) {
     if (a < 0 || b < 0) {
-      throw FlutterError("code", "message", "details");
+      return FlutterError("code", "message", "details");
     }
     return a + b;
   }
