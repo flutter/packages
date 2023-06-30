@@ -29,9 +29,8 @@ class DartTestCommand extends PackageLoopingCommand {
     );
     argParser.addOption(
       _platformFlag,
-      defaultsTo: '',
-      help:
-          'Runs Dart unit tests on the given platform instead of the Dart VM.',
+      help: 'Runs tests on the given platform instead of the default platform '
+          '("vm" in most cases, "chrome" for web plugin implementations).',
     );
   }
 
@@ -60,11 +59,17 @@ class DartTestCommand extends PackageLoopingCommand {
       return PackageResult.skip('No test/ directory.');
     }
 
+    String? platform = getNullableStringArg(_platformFlag);
+
     // Skip running plugin tests for non-web-supporting plugins (or non-web
     // federated plugin implementations) on web, since there's no reason to
     // expect them to work.
-    final bool webPlatform = getStringArg(_platformFlag).isNotEmpty &&
-        getStringArg(_platformFlag) != 'vm';
+    final bool webPlatform = platform != null && platform != 'vm';
+    final bool explicitVMPlatform = platform == 'vm';
+    final bool isWebOnlyPluginImplementation = pluginSupportsPlatform(
+            platformWeb, package,
+            requiredMode: PlatformSupport.inline) &&
+        package.directory.basename.endsWith('_web');
     if (webPlatform) {
       if (isFlutterPlugin(package) &&
           !pluginSupportsPlatform(platformWeb, package)) {
@@ -72,23 +77,40 @@ class DartTestCommand extends PackageLoopingCommand {
             "Non-web plugin tests don't need web testing.");
       }
       if (_requiresVM(package)) {
+        // This explict skip is necessary because trying to run tests in a mode
+        // that the package has opted out of returns a non-zero exit code.
         return PackageResult.skip('Package has opted out of non-vm testing.');
       }
+    } else if (explicitVMPlatform) {
+      if (isWebOnlyPluginImplementation) {
+        return PackageResult.skip("Web plugin tests don't need vm testing.");
+      }
+      if (_requiresNonVM(package)) {
+        // This explict skip is necessary because trying to run tests in a mode
+        // that the package has opted out of returns a non-zero exit code.
+        return PackageResult.skip('Package has opted out of vm testing.');
+      }
+    } else if (platform == null && isWebOnlyPluginImplementation) {
+      // If no explicit mode is requested, run web plugin implementations in
+      // Chrome since their tests are not expected to work in vm mode. This
+      // allows easily running all unit tests locally, without having to run
+      // both modes.
+      platform = 'chrome';
     }
 
     bool passed;
     if (package.requiresFlutter()) {
-      passed = await _runFlutterTests(package);
+      passed = await _runFlutterTests(package, platform: platform);
     } else {
-      passed = await _runDartTests(package);
+      passed = await _runDartTests(package, platform: platform);
     }
     return passed ? PackageResult.success() : PackageResult.fail();
   }
 
   /// Runs the Dart tests for a Flutter package, returning true on success.
-  Future<bool> _runFlutterTests(RepositoryPackage package) async {
+  Future<bool> _runFlutterTests(RepositoryPackage package,
+      {String? platform}) async {
     final String experiment = getStringArg(kEnableExperiment);
-    final String platform = getStringArg(_platformFlag);
 
     final int exitCode = await processRunner.runAndStream(
       flutterCommand,
@@ -96,7 +118,7 @@ class DartTestCommand extends PackageLoopingCommand {
         'test',
         '--color',
         if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-        if (platform.isNotEmpty) '--platform=$platform',
+        if (platform != null) '--platform=$platform',
       ],
       workingDir: package.directory,
     );
@@ -104,7 +126,8 @@ class DartTestCommand extends PackageLoopingCommand {
   }
 
   /// Runs the Dart tests for a non-Flutter package, returning true on success.
-  Future<bool> _runDartTests(RepositoryPackage package) async {
+  Future<bool> _runDartTests(RepositoryPackage package,
+      {String? platform}) async {
     // Unlike `flutter test`, `pub run test` does not automatically get
     // packages
     int exitCode = await processRunner.runAndStream(
@@ -118,7 +141,6 @@ class DartTestCommand extends PackageLoopingCommand {
     }
 
     final String experiment = getStringArg(kEnableExperiment);
-    final String platform = getStringArg(_platformFlag);
 
     exitCode = await processRunner.runAndStream(
       'dart',
@@ -126,7 +148,7 @@ class DartTestCommand extends PackageLoopingCommand {
         'run',
         if (experiment.isNotEmpty) '--enable-experiment=$experiment',
         'test',
-        if (platform.isNotEmpty) '--platform=$platform',
+        if (platform != null) '--platform=$platform',
       ],
       workingDir: package.directory,
     );
@@ -141,10 +163,27 @@ class DartTestCommand extends PackageLoopingCommand {
     }
     // test_on lines can be very complex, but in pratice the packages in this
     // repo currently only need the ability to require vm or not, so that
-    // simple directive is all that is supported.
+    // simple directive is all that is currently supported.
     final RegExp vmRequrimentRegex = RegExp(r'^test_on:\s*vm$');
     return testConfig
         .readAsLinesSync()
         .any((String line) => vmRequrimentRegex.hasMatch(line));
+  }
+
+  bool _requiresNonVM(RepositoryPackage package) {
+    final File testConfig = package.directory.childFile('dart_test.yaml');
+    if (!testConfig.existsSync()) {
+      return false;
+    }
+    // test_on lines can be very complex, but in pratice the packages in this
+    // repo currently only need the ability to require vm or not, so a simple
+    // one-target directive is all that's supported currently. Making it
+    // deliberately strict avoids the possibility of accidentally skipping vm
+    // coverage due to a complex expression that's not handled correctly.
+    final RegExp testOnRegex = RegExp(r'^test_on:\s*([a-z])*\s*$');
+    return testConfig.readAsLinesSync().any((String line) {
+      final RegExpMatch? match = testOnRegex.firstMatch(line);
+      return match != null && match.group(1) != 'vm';
+    });
   }
 }
