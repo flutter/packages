@@ -14,13 +14,16 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rfw/rfw.dart';
 import 'package:wasm/wasm.dart';
 
-const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
+const String urlPrefix =
+    'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
 
 const String interfaceUrl = '$urlPrefix/calculator.rfw';
 const String logicUrl = '$urlPrefix/calculator.wasm';
 
 void main() {
-  runApp(WidgetsApp(color: const Color(0xFF000000), builder: (BuildContext context, Widget? navigator) => const Example()));
+  runApp(WidgetsApp(
+      color: const Color(0xFF000000),
+      builder: (BuildContext context, Widget? navigator) => const Example()));
 }
 
 class Example extends StatefulWidget {
@@ -39,35 +42,47 @@ class _ExampleState extends State<Example> {
   void initState() {
     super.initState();
     RendererBinding.instance.deferFirstFrame();
-    _runtime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
+    _runtime.update(
+        const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
     _loadLogic();
   }
 
   late final WasmFunction _dataFetcher;
 
   Future<void> _loadLogic() async {
-    final DateTime expiryDate = DateTime.now().subtract(const Duration(hours: 6));
+    final DateTime expiryDate =
+        DateTime.now().subtract(const Duration(hours: 6));
     final Directory home = await getApplicationSupportDirectory();
     final File interfaceFile = File(path.join(home.path, 'cache.rfw'));
-    if (!interfaceFile.existsSync() || interfaceFile.lastModifiedSync().isBefore(expiryDate)) {
-      final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse(interfaceUrl))).close();
-      await interfaceFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
+    if (!interfaceFile.existsSync() ||
+        interfaceFile.lastModifiedSync().isBefore(expiryDate)) {
+      final HttpClientResponse client =
+          await (await HttpClient().getUrl(Uri.parse(interfaceUrl))).close();
+      await interfaceFile.writeAsBytes(
+          await client.expand((List<int> chunk) => chunk).toList());
     }
     final File logicFile = File(path.join(home.path, 'cache.wasm'));
-    if (!logicFile.existsSync() || logicFile.lastModifiedSync().isBefore(expiryDate)) {
-      final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse(logicUrl))).close();
-      await logicFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
+    if (!logicFile.existsSync() ||
+        logicFile.lastModifiedSync().isBefore(expiryDate)) {
+      final HttpClientResponse client =
+          await (await HttpClient().getUrl(Uri.parse(logicUrl))).close();
+      await logicFile.writeAsBytes(
+          await client.expand((List<int> chunk) => chunk).toList());
     }
-    _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(await interfaceFile.readAsBytes()));
+    _runtime.update(const LibraryName(<String>['main']),
+        decodeLibraryBlob(await interfaceFile.readAsBytes()));
     _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
     _dataFetcher = _logic.lookupFunction('value') as WasmFunction;
     _updateData();
-    setState(() { RendererBinding.instance.allowFirstFrame(); });
+    setState(() {
+      RendererBinding.instance.allowFirstFrame();
+    });
   }
 
   void _updateData() {
     final dynamic value = _dataFetcher.apply(const <Object?>[]);
-    _data.update('value', <String, Object?>{ 'numeric': value, 'string': value.toString() });
+    _data.update('value',
+        <String, Object?>{'numeric': value, 'string': value.toString()});
   }
 
   List<Object?> _asList(Object? value) {
@@ -85,9 +100,11 @@ class _ExampleState extends State<Example> {
     return RemoteWidget(
       runtime: _runtime,
       data: _data,
-      widget: const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
+      widget:
+          const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
       onEvent: (String name, DynamicMap arguments) {
-        final WasmFunction function = _logic.lookupFunction(name) as WasmFunction;
+        final WasmFunction function =
+            _logic.lookupFunction(name) as WasmFunction;
         function.apply(_asList(arguments['arguments']));
         _updateData();
       },

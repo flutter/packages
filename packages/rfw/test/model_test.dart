@@ -10,9 +10,12 @@ import 'package:rfw/formats.dart';
 void main() {
   testWidgets('$LibraryName', (WidgetTester tester) async {
     T deconst<T>(T value) => value;
-    final LibraryName a = LibraryName(<String>['core', deconst<String>('widgets')]);
-    final LibraryName b = LibraryName(<String>['core', deconst<String>('widgets')]);
-    final LibraryName c = LibraryName(<String>['core', deconst<String>('material')]);
+    final LibraryName a =
+        LibraryName(<String>['core', deconst<String>('widgets')]);
+    final LibraryName b =
+        LibraryName(<String>['core', deconst<String>('widgets')]);
+    final LibraryName c =
+        LibraryName(<String>['core', deconst<String>('material')]);
     const LibraryName d = LibraryName(<String>['core']);
     expect('$a', 'core.widgets');
     expect('$c', 'core.material');
@@ -35,9 +38,12 @@ void main() {
   });
 
   testWidgets('$FullyQualifiedWidgetName', (WidgetTester tester) async {
-    const FullyQualifiedWidgetName aa = FullyQualifiedWidgetName(LibraryName(<String>['a']), 'a');
-    const FullyQualifiedWidgetName ab = FullyQualifiedWidgetName(LibraryName(<String>['a']), 'b');
-    const FullyQualifiedWidgetName bb = FullyQualifiedWidgetName(LibraryName(<String>['b']), 'b');
+    const FullyQualifiedWidgetName aa =
+        FullyQualifiedWidgetName(LibraryName(<String>['a']), 'a');
+    const FullyQualifiedWidgetName ab =
+        FullyQualifiedWidgetName(LibraryName(<String>['a']), 'b');
+    const FullyQualifiedWidgetName bb =
+        FullyQualifiedWidgetName(LibraryName(<String>['b']), 'b');
     expect('$aa', 'a:a');
     expect(aa, isNot(equals(bb)));
     expect(aa.hashCode, isNot(equals(bb.hashCode)));
@@ -58,46 +64,68 @@ void main() {
     expect('${const Switch(0, <Object?, Object>{1: 2})}', 'switch 0 {1: 2}');
     expect('${const ConstructorCall("a", <String, Object>{})}', 'a({})');
     expect('${const ArgsReference(<Object>["a"])}', 'args.a');
-    expect('${const BoundArgsReference(false, <Object>["a"])}', 'args(false).a');
+    expect(
+        '${const BoundArgsReference(false, <Object>["a"])}', 'args(false).a');
     expect('${const DataReference(<Object>["a"])}', 'data.a');
     expect('${const LoopReference(0, <Object>["a"])}', 'loop0.a');
     expect('${const BoundLoopReference(0, <Object>["a"])}', 'loop(0).a');
     expect('${const StateReference(<Object>["a"])}', 'state.a');
     expect('${const BoundStateReference(0, <Object>["a"])}', 'state^0.a');
     expect('${const EventHandler("a", <String, Object?>{})}', 'event a {}');
-    expect('${const SetStateHandler(StateReference(<Object>["a"]), false)}', 'set state.a = false');
+    expect('${const SetStateHandler(StateReference(<Object>["a"]), false)}',
+        'set state.a = false');
     expect('${const Import(LibraryName(<String>["a"]))}', 'import a;');
-    expect('${const WidgetDeclaration("a", null, ConstructorCall("b", <String, Object>{}))}', 'widget a = b({});');
-    expect('${const WidgetDeclaration("a", <String, Object?>{ "x": false }, ConstructorCall("b", <String, Object>{}))}', 'widget a = b({});');
-    expect('${const RemoteWidgetLibrary(<Import>[Import(LibraryName(<String>["a"]))], <WidgetDeclaration>[WidgetDeclaration("a", null, ConstructorCall("b", <String, Object>{}))])}', 'import a;\nwidget a = b({});');
+    expect(
+        '${const WidgetDeclaration("a", null, ConstructorCall("b", <String, Object>{}))}',
+        'widget a = b({});');
+    expect(
+        '${const WidgetDeclaration("a", <String, Object?>{
+              "x": false
+            }, ConstructorCall("b", <String, Object>{}))}',
+        'widget a = b({});');
+    expect(
+        '${const RemoteWidgetLibrary(<Import>[
+              Import(LibraryName(<String>["a"]))
+            ], <WidgetDeclaration>[
+              WidgetDeclaration(
+                  "a", null, ConstructorCall("b", <String, Object>{}))
+            ])}',
+        'import a;\nwidget a = b({});');
   });
 
   testWidgets('$BoundArgsReference', (WidgetTester tester) async {
     final Object target = Object();
-    final BoundArgsReference result = const ArgsReference(<Object>[0]).bind(target);
+    final BoundArgsReference result =
+        const ArgsReference(<Object>[0]).bind(target);
     expect(result.arguments, target);
     expect(result.parts, const <Object>[0]);
   });
 
   testWidgets('$DataReference', (WidgetTester tester) async {
-    final DataReference result = const DataReference(<Object>[0]).constructReference(<Object>[1]);
+    final DataReference result =
+        const DataReference(<Object>[0]).constructReference(<Object>[1]);
     expect(result.parts, const <Object>[0, 1]);
   });
 
   testWidgets('$LoopReference', (WidgetTester tester) async {
-    final LoopReference result = const LoopReference(9, <Object>[0]).constructReference(<Object>[1]);
+    final LoopReference result =
+        const LoopReference(9, <Object>[0]).constructReference(<Object>[1]);
     expect(result.parts, const <Object>[0, 1]);
   });
 
   testWidgets('$BoundLoopReference', (WidgetTester tester) async {
     final Object target = Object();
-    final BoundLoopReference result = const LoopReference(9, <Object>[0]).bind(target).constructReference(<Object>[1]);
+    final BoundLoopReference result = const LoopReference(9, <Object>[0])
+        .bind(target)
+        .constructReference(<Object>[1]);
     expect(result.value, target);
     expect(result.parts, const <Object>[0, 1]);
   });
 
   testWidgets('$BoundStateReference', (WidgetTester tester) async {
-    final BoundStateReference result = const StateReference(<Object>[0]).bind(9).constructReference(<Object>[1]);
+    final BoundStateReference result = const StateReference(<Object>[0])
+        .bind(9)
+        .constructReference(<Object>[1]);
     expect(result.depth, 9);
     expect(result.parts, const <Object>[0, 1]);
   });

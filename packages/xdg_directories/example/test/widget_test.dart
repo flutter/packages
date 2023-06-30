@@ -27,7 +27,10 @@ void main() {
     await tester.pump();
 
     // Verify that our counter has incremented.
-    expect(find.textContaining("[Directory: '/etc/xdg/xdg-ubuntu', Directory: '/etc/xdg']"), findsOneWidget);
+    expect(
+        find.textContaining(
+            "[Directory: '/etc/xdg/xdg-ubuntu', Directory: '/etc/xdg']"),
+        findsOneWidget);
   });
 
   testWidgets('Get cache home directory', (WidgetTester tester) async {
@@ -43,7 +46,7 @@ void main() {
     expect(find.text(dirHome), findsOneWidget);
   });
 
-testWidgets('Get config directory', (WidgetTester tester) async {
+  testWidgets('Get config directory', (WidgetTester tester) async {
     String config = "Directory: '${envVars['HOME'].toString()}/.config'";
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
