@@ -274,6 +274,14 @@ public interface CameraProperties {
   @NonNull
   int[] getAvailableNoiseReductionModes();
 
+  /** 
+   * Returns a list of available output sizes for a particular format.
+   * 
+   * <p>By default maps to the @see android.hardware.camera2.CameraCharacteristics#SCALER_STREAM_CONFIGURATION_MAP key.
+   * 
+   * @param format int The format for which available output sizes will be returned.
+   * @return Size[] List of available output sizes for a particular format.
+   */
   @NonNull
   Size[] getAvailableOutputSizes(int format);
 }

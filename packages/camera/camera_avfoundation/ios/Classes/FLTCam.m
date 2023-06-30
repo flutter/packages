@@ -410,33 +410,37 @@ NSString *const errorMethod = @"error";
     case FLTResolutionPresetMax:
     case FLTResolutionPresetUltraHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetPhoto]) {
-          _videoCaptureSession.sessionPreset = AVCaptureSessionPresetPhoto;
-          break;
+        _videoCaptureSession.sessionPreset = AVCaptureSessionPresetPhoto;
+        break;
       }
     case FLTResolutionPresetVeryHigh:
       // Selects the appropriate 1080p resolution to match the desired aspect ratio for photos.
-      for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
-        CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-        if (dimensions.height == 1080) {
-          if (fabs((double)dimensions.width / dimensions.height - (double)4 / 3) < 0.01) {
-            if ([_captureDevice lockForConfiguration:nil]) {
-              _captureDevice.activeFormat = format;
-              [_captureDevice unlockForConfiguration];
-              break;
+      if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionInputPriority]) {
+        for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
+          CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+          if (dimensions.height == 1080) {
+            if (fabs((double)dimensions.width / dimensions.height - (double)4 / 3) < 0.01) {
+              if ([_captureDevice lockForConfiguration:nil]) {
+                _captureDevice.activeFormat = format;
+                [_captureDevice unlockForConfiguration];
+                return;
+              }
             }
           }
         }
       }
     case FLTResolutionPresetHigh:
       // Selects the appropriate 720p or 768p resolution to match the desired aspect ratio for photos.
-      for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
-        CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-        if (dimensions.height == 720 || dimensions.height == 768) {
-          if (fabs((double)dimensions.width / dimensions.height - (double)4 / 3) < 0.01) {
-            if ([_captureDevice lockForConfiguration:nil]) {
-              _captureDevice.activeFormat = format;
-              [_captureDevice unlockForConfiguration];
-              break;
+      if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionInputPriority]) {
+        for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
+          CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+          if (dimensions.height == 720 || dimensions.height == 768) {
+            if (fabs((double)dimensions.width / dimensions.height - (double)4 / 3) < 0.01) {
+              if ([_captureDevice lockForConfiguration:nil]) {
+                _captureDevice.activeFormat = format;
+                [_captureDevice unlockForConfiguration];
+                return;
+              }
             }
           }
         }
