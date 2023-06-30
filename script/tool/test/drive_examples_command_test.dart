@@ -946,12 +946,9 @@ void main() {
         output,
         containsAllInOrder(<Matcher>[
           contains('Running for plugin'),
-          contains(
-              'No integration_test/*.dart files found for plugin/example.'),
           contains('No driver tests were run (1 example(s) found).'),
           contains('The following packages had errors:'),
           contains('  plugin:\n'
-              '    No integration tests found for plugin/example\n'
               '    No tests ran (use --exclude if this is intentional)'),
         ]),
       );

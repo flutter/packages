@@ -162,13 +162,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             'Skipping $exampleName; does not support any requested platforms.');
         continue;
       }
+
       ++supportedExamplesFound;
 
       final List<File> testTargets = await _getIntegrationTests(example);
-
       if (testTargets.isEmpty) {
         print('No integration_test/*.dart files found for $exampleName.');
-        errors.add('No integration tests found for $exampleName');
         continue;
       }
 
