@@ -3,4 +3,4 @@ tasks:
     script: .ci/scripts/prepare_tool.sh
   - name: Dart unit tests - web
     script: script/tool_runner.sh
-    args: ["dart-test", "--exclude=script/configs/dart_unit_tests_exceptions.yaml", "--browser=chrome"]
+    args: ["dart-test", "--exclude=script/configs/dart_unit_tests_exceptions.yaml", "--platform=chrome"]
