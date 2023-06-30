@@ -7,7 +7,6 @@ import 'package:platform/platform.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
-import 'common/plugin_utils.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
@@ -27,7 +26,15 @@ class DartTestCommand extends PackageLoopingCommand {
           'See https://github.com/dart-lang/sdk/blob/main/docs/process/experimental-flags.md '
           'for details.',
     );
+    argParser.addOption(
+      _platformFlag,
+      defaultsTo: '',
+      help:
+          'Runs Dart unit tests on the given platform instead of the Dart VM.',
+    );
   }
+
+  static const String _platformFlag = 'platform';
 
   @override
   final String name = 'dart-test';
@@ -64,6 +71,7 @@ class DartTestCommand extends PackageLoopingCommand {
   /// Runs the Dart tests for a Flutter package, returning true on success.
   Future<bool> _runFlutterTests(RepositoryPackage package) async {
     final String experiment = getStringArg(kEnableExperiment);
+    final String platform = getStringArg(_platformFlag);
 
     final int exitCode = await processRunner.runAndStream(
       flutterCommand,
@@ -71,10 +79,7 @@ class DartTestCommand extends PackageLoopingCommand {
         'test',
         '--color',
         if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-        // TODO(ditman): Remove this once all plugins are migrated to 'drive'.
-        if (pluginSupportsPlatform(platformWeb, package,
-            requiredMode: PlatformSupport.inline))
-          '--platform=chrome',
+        if (platform.isNotEmpty) '--platform=$platform',
       ],
       workingDir: package.directory,
     );
@@ -96,6 +101,7 @@ class DartTestCommand extends PackageLoopingCommand {
     }
 
     final String experiment = getStringArg(kEnableExperiment);
+    final String platform = getStringArg(_platformFlag);
 
     exitCode = await processRunner.runAndStream(
       'dart',
@@ -103,6 +109,7 @@ class DartTestCommand extends PackageLoopingCommand {
         'run',
         if (experiment.isNotEmpty) '--enable-experiment=$experiment',
         'test',
+        if (platform.isNotEmpty) '--platform=$platform',
       ],
       workingDir: package.directory,
     );
