@@ -1067,6 +1067,17 @@ class WKWebViewHostApiImpl extends WKWebViewHostApi {
     }
   }
 
+  /// Calls [setInspectable] with the ids of the provided object instances.
+  Future<void> setInspectableForInstances(
+    WKWebView instance,
+    bool inspectable,
+  ) async {
+    return setInspectable(
+      instanceManager.getIdentifier(instance)!,
+      inspectable,
+    );
+  }
+
   /// Calls [setNavigationDelegate] with the ids of the provided object instances.
   Future<void> setNavigationDelegateForInstances(
     WKWebView instance,

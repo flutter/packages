@@ -85,6 +85,8 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $BigIntRouteExtension on BigIntRoute {
@@ -108,6 +110,8 @@ extension $BigIntRouteExtension on BigIntRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $BoolRouteExtension on BoolRoute {
@@ -139,6 +143,8 @@ extension $BoolRouteExtension on BoolRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $DateTimeRouteExtension on DateTimeRoute {
@@ -163,6 +169,8 @@ extension $DateTimeRouteExtension on DateTimeRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $DoubleRouteExtension on DoubleRoute {
@@ -194,6 +202,8 @@ extension $DoubleRouteExtension on DoubleRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $IntRouteExtension on IntRoute {
@@ -223,6 +233,8 @@ extension $IntRouteExtension on IntRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $NumRouteExtension on NumRoute {
@@ -252,6 +264,8 @@ extension $NumRouteExtension on NumRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $EnumRouteExtension on EnumRoute {
@@ -284,6 +298,8 @@ extension $EnumRouteExtension on EnumRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
@@ -316,6 +332,8 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $StringRouteExtension on StringRoute {
@@ -342,6 +360,8 @@ extension $StringRouteExtension on StringRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $UriRouteExtension on UriRoute {
@@ -364,6 +384,8 @@ extension $UriRouteExtension on UriRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $IterableRouteExtension on IterableRoute {
@@ -480,6 +502,8 @@ extension $IterableRouteExtension on IterableRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $IterableRouteWithDefaultValuesExtension
@@ -594,6 +618,8 @@ extension $IterableRouteWithDefaultValuesExtension
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 const _$PersonDetailsEnumMap = {

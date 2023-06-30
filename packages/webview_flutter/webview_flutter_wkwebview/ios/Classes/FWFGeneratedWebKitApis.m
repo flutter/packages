@@ -2481,6 +2481,31 @@ void FWFWKWebViewHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.WKWebViewHostApi.setInspectable"
+        binaryMessenger:binaryMessenger
+                  codec:FWFWKWebViewHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(setInspectableForWebViewWithIdentifier:
+                                                                             inspectable:error:)],
+                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
+                @"@selector(setInspectableForWebViewWithIdentifier:inspectable:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_identifier = GetNullableObjectAtIndex(args, 0);
+        NSNumber *arg_inspectable = GetNullableObjectAtIndex(args, 1);
+        FlutterError *error;
+        [api setInspectableForWebViewWithIdentifier:arg_identifier
+                                        inspectable:arg_inspectable
+                                              error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }
 NSObject<FlutterMessageCodec> *FWFWKUIDelegateHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
