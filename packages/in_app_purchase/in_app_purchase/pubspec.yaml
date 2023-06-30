@@ -26,8 +26,6 @@ dependencies:
   in_app_purchase_storekit: ^0.3.4
 
 dev_dependencies:
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:
