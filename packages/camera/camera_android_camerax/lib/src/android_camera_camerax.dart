@@ -423,8 +423,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> pausePreview(int cameraId) async {
-    await _unbindUseCaseFromLifecycle(preview!);
     _previewIsPaused = true;
+    await _unbindUseCaseFromLifecycle(preview!);
   }
 
   /// Resume the paused preview for the selected camera.
@@ -432,8 +432,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> resumePreview(int cameraId) async {
-    await _bindPreviewToLifecycle(cameraId);
     _previewIsPaused = false;
+    await _bindPreviewToLifecycle(cameraId);
   }
 
   /// Returns a widget showing a live camera preview.
