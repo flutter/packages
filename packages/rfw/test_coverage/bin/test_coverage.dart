@@ -8,12 +8,20 @@ import 'dart:io';
 
 import 'package:lcov_parser/lcov_parser.dart' as lcov;
 
+// After you run this script, `.../rfw/coverage/lcov.info` will represent the
+// latest coverage information for the package. Load that file into your IDE's
+// coverage mode to see what lines need coverage.
+// In Emacs, that's `M-x coverlay-load-file`, for example.
+// (If you're using Emacs, you may need to set the variable `coverlay:base-path`
+// first (make sure it has a trailing slash), then load the overlay file, and
+// once it is loaded you can call `M-x coverlay-display-stats` to get a summary
+// of the files to look at.)
+
 // Please update these targets when you update this package.
 // Please ensure that test coverage continues to be 100%.
-const int targetLines = 2127;
-const String targetPercent = '64';
-// TODO(Hixie): Update tests to return coverage to 100%, https://github.com/flutter/packages/pull/2493
-const String lastUpdate = '2021-08-30';
+const int targetLines = 3114;
+const String targetPercent = '100';
+const String lastUpdate = '2023-06-29';
 
 Future<void> main(List<String> arguments) async {
   // This script is mentioned in the README.md file.
@@ -36,9 +44,11 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
-  if (Platform.environment['CHANNEL'] != 'master') {
+  if (Platform.environment.containsKey('CHANNEL') &&
+      Platform.environment['CHANNEL'] != 'master' &&
+      Platform.environment['CHANNEL'] != 'main') {
     print(
-      'Tests passed. (Coverage verification skipped; not on master channel.)',
+      'Tests passed. (Coverage verification skipped; currently on ${Platform.environment['CHANNEL']} channel.)',
     );
     coverageDirectory.deleteSync(recursive: true);
     exit(0);
