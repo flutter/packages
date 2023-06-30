@@ -28,6 +28,7 @@ class App extends StatelessWidget {
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
+  name: 'Home',
   routes: <TypedGoRoute<GoRouteData>>[
     TypedGoRoute<FamilyRoute>(path: 'family/:familyId')
   ],

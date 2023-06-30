@@ -1,3 +1,8 @@
+## 2.3.0
+
+* Adds `clearWithParameters` and `getAllWithParameters` methods.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.2.0
 
 * Adds `getAllWithPrefix` and `clearWithPrefix` methods.

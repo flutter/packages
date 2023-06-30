@@ -1,3 +1,8 @@
+## 0.2.1+7
+
+* Fixes unawaited_futures violations.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 0.2.1+6
 
 * Sets a cmake_policy compatibility version to fix build warnings.

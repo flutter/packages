@@ -14,6 +14,7 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
+      name: 'Home',
       factory: $HomeRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
@@ -36,6 +37,8 @@ extension $HomeRouteExtension on HomeRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
@@ -53,4 +56,6 @@ extension $FamilyRouteExtension on FamilyRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

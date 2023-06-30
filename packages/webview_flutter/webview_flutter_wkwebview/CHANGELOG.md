@@ -1,3 +1,21 @@
+## 3.6.0
+
+* Adds support to enable debugging of web contents on the latest versions of WebKit. See
+  `WebKitWebViewController.setInspectable`.
+  
+## 3.5.0
+
+* Adds support to limit navigation to pages within the app’s domain. See
+  `WebKitWebViewControllerCreationParams.limitsNavigationsToAppBoundDomains`.
+
+## 3.4.4
+
+* Removes obsolete null checks on non-nullable values.
+
+## 3.4.3
+
+* Replace `describeEnum` with the `name` getter.
+
 ## 3.4.2
 
 * Fixes an exception caused by the `onUrlChange` callback passing a null `NSUrl`.

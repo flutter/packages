@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraSelectorFlutterApi;
@@ -12,7 +13,7 @@ public class CameraSelectorFlutterApiImpl extends CameraSelectorFlutterApi {
   private final InstanceManager instanceManager;
 
   public CameraSelectorFlutterApiImpl(
-      BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     super(binaryMessenger);
     this.instanceManager = instanceManager;
   }

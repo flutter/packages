@@ -37,6 +37,7 @@ class InfoIterable extends IterableBase<String> {
 class RouteConfig {
   RouteConfig._(
     this._path,
+    this._name,
     this._routeDataClass,
     this._parent,
     this._key,
@@ -75,6 +76,7 @@ class RouteConfig {
     final bool isShellRoute = type.element.name == 'TypedShellRoute';
 
     String? path;
+    String? name;
 
     if (!isShellRoute) {
       final ConstantReader pathValue = reader.read('path');
@@ -85,6 +87,9 @@ class RouteConfig {
         );
       }
       path = pathValue.stringValue;
+
+      final ConstantReader nameValue = reader.read('name');
+      name = nameValue.isNull ? null : nameValue.stringValue;
     }
 
     final DartType typeParamType = type.typeArguments.single;
@@ -104,6 +109,7 @@ class RouteConfig {
 
     final RouteConfig value = RouteConfig._(
       path ?? '',
+      name,
       classElement,
       parent,
       _generateNavigatorKeyGetterCode(
@@ -121,6 +127,7 @@ class RouteConfig {
 
   final List<RouteConfig> _children = <RouteConfig>[];
   final String _path;
+  final String? _name;
   final InterfaceElement _routeDataClass;
   final RouteConfig? _parent;
   final String? _key;
@@ -210,6 +217,9 @@ extension $_extensionName on $_className {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+
+  void replace(BuildContext context) =>
+      context.replace(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
   }
@@ -352,6 +362,7 @@ routes: [${_children.map((RouteConfig e) => '${e._routeDefinition()},').join()}]
     return '''
 GoRouteData.\$route(
       path: ${escapeDartString(_path)},
+      ${_name != null ? 'name: ${escapeDartString(_name!)},' : ''}
       factory: $_extensionName._fromState,
       $navigatorKey
       $routesBit
@@ -361,21 +372,15 @@ GoRouteData.\$route(
 
   String _decodeFor(ParameterElement element) {
     if (element.isRequired) {
-      if (element.type.nullabilitySuffix == NullabilitySuffix.question) {
+      if (element.type.nullabilitySuffix == NullabilitySuffix.question &&
+          _pathParams.contains(element.name)) {
         throw InvalidGenerationSourceError(
-          'Required parameters cannot be nullable.',
-          element: element,
-        );
-      }
-
-      if (!_pathParams.contains(element.name) && !element.isExtraField) {
-        throw InvalidGenerationSourceError(
-          'Missing param `${element.name}` in path.',
+          'Required parameters in the path cannot be nullable.',
           element: element,
         );
       }
     }
-    final String fromStateExpression = decodeParameter(element);
+    final String fromStateExpression = decodeParameter(element, _pathParams);
 
     if (element.isPositional) {
       return '$fromStateExpression,';
@@ -439,7 +444,7 @@ GoRouteData.\$route(
 
   late final List<ParameterElement> _ctorParams =
       _ctor.parameters.where((ParameterElement element) {
-    if (element.isRequired && !element.isExtraField) {
+    if (_pathParams.contains(element.name)) {
       return true;
     }
     return false;
@@ -447,7 +452,7 @@ GoRouteData.\$route(
 
   late final List<ParameterElement> _ctorQueryParams = _ctor.parameters
       .where((ParameterElement element) =>
-          element.isOptional && !element.isExtraField)
+          !_pathParams.contains(element.name) && !element.isExtraField)
       .toList();
 
   ConstructorElement get _ctor {

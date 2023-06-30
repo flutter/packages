@@ -46,23 +46,25 @@ class PlaneProxy extends JavaObject {
 /// overridden native class.
 @protected
 class PlaneProxyFlutterApiImpl implements PlaneProxyFlutterApi {
-  /// Constructs a [PlaneProxyFlutterApiImpl].
+  /// Constructs an [PlaneProxyFlutterApiImpl].
+  ///
+  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
+  /// which routes to the host platform.
   ///
   /// An [instanceManager] is typically passed when a copy of an instance
-  /// contained by an `InstanceManager` is being created.
+  /// contained by an [InstanceManager] is being created. If left null, it
+  /// will default to the global instance defined in [JavaObject].
   PlaneProxyFlutterApiImpl({
-    this.binaryMessenger,
+    BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-  }) : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  })  : _binaryMessenger = binaryMessenger,
+        _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
 
   /// Receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used which routes to
-  /// the host platform.
-  final BinaryMessenger? binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager instanceManager;
+  final InstanceManager _instanceManager;
 
   @override
   void create(
@@ -71,18 +73,18 @@ class PlaneProxyFlutterApiImpl implements PlaneProxyFlutterApi {
     int pixelStride,
     int rowStride,
   ) {
-    instanceManager.addHostCreatedInstance(
+    _instanceManager.addHostCreatedInstance(
       PlaneProxy.detached(
-        binaryMessenger: binaryMessenger,
-        instanceManager: instanceManager,
+        binaryMessenger: _binaryMessenger,
+        instanceManager: _instanceManager,
         buffer: buffer,
         pixelStride: pixelStride,
         rowStride: rowStride,
       ),
       identifier,
       onCopy: (PlaneProxy original) => PlaneProxy.detached(
-          binaryMessenger: binaryMessenger,
-          instanceManager: instanceManager,
+          binaryMessenger: _binaryMessenger,
+          instanceManager: _instanceManager,
           buffer: buffer,
           pixelStride: pixelStride,
           rowStride: rowStride),

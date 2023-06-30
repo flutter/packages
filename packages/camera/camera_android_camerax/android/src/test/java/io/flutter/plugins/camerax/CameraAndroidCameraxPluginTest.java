@@ -36,17 +36,20 @@ public class CameraAndroidCameraxPluginTest {
         mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
     ProcessCameraProviderHostApiImpl mockProcessCameraProviderHostApiImpl =
         mock(ProcessCameraProviderHostApiImpl.class);
+    LiveDataHostApiImpl mockLiveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
 
     doNothing().when(plugin).setUp(any(), any(), any());
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     plugin.processCameraProviderHostApiImpl = mockProcessCameraProviderHostApiImpl;
+    plugin.liveDataHostApiImpl = mockLiveDataHostApiImpl;
     plugin.systemServicesHostApiImpl = mock(SystemServicesHostApiImpl.class);
 
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onAttachedToActivity(activityPluginBinding);
 
     verify(mockProcessCameraProviderHostApiImpl).setLifecycleOwner(any(LifecycleOwner.class));
+    verify(mockLiveDataHostApiImpl).setLifecycleOwner(any(LifecycleOwner.class));
   }
 
   @Test
@@ -56,12 +59,14 @@ public class CameraAndroidCameraxPluginTest {
     Activity mockActivity = mock(Activity.class);
     ProcessCameraProviderHostApiImpl mockProcessCameraProviderHostApiImpl =
         mock(ProcessCameraProviderHostApiImpl.class);
+    LiveDataHostApiImpl mockLiveDataHostApiImpl = mock(LiveDataHostApiImpl.class);
 
     doNothing().when(plugin).setUp(any(), any(), any());
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
     when(mockActivity.getApplication()).thenReturn(mock(Application.class));
 
     plugin.processCameraProviderHostApiImpl = mockProcessCameraProviderHostApiImpl;
+    plugin.liveDataHostApiImpl = mockLiveDataHostApiImpl;
     plugin.systemServicesHostApiImpl = mock(SystemServicesHostApiImpl.class);
 
     plugin.onAttachedToEngine(flutterPluginBinding);
@@ -69,5 +74,6 @@ public class CameraAndroidCameraxPluginTest {
 
     verify(mockProcessCameraProviderHostApiImpl)
         .setLifecycleOwner(any(ProxyLifecycleProvider.class));
+    verify(mockLiveDataHostApiImpl).setLifecycleOwner(any(ProxyLifecycleProvider.class));
   }
 }

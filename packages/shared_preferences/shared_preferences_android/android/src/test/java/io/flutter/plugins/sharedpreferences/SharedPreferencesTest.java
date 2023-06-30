@@ -67,12 +67,12 @@ public class SharedPreferencesTest {
   }
 
   @Test
-  public void getAllWithPrefix() {
-    assertEquals(plugin.getAllWithPrefix("").size(), 0);
+  public void getAll() {
+    assertEquals(plugin.getAll("", null).size(), 0);
 
     addData();
 
-    Map<String, Object> flutterData = plugin.getAllWithPrefix("flutter.");
+    Map<String, Object> flutterData = plugin.getAll("flutter.", null);
 
     assertEquals(flutterData.size(), 5);
     assertEquals(flutterData.get("flutter.Language"), "Java");
@@ -81,9 +81,35 @@ public class SharedPreferencesTest {
     assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart"));
     assertEquals(flutterData.get("flutter.NewToFlutter"), false);
 
-    Map<String, Object> allData = plugin.getAllWithPrefix("");
+    Map<String, Object> allData = plugin.getAll("", null);
 
     assertEquals(allData, data);
+  }
+
+  @Test
+  public void allowList() {
+    assertEquals(plugin.getAll("", null).size(), 0);
+
+    addData();
+
+    final List<String> allowList = Arrays.asList("flutter.Language");
+
+    Map<String, Object> allData = plugin.getAll("flutter.", allowList);
+
+    assertEquals(allData.size(), 1);
+    assertEquals(allData.get("flutter.Language"), "Java");
+    assertEquals(allData.get("flutter.Counter"), null);
+
+    allData = plugin.getAll("", allowList);
+
+    assertEquals(allData.size(), 1);
+    assertEquals(allData.get("flutter.Language"), "Java");
+    assertEquals(allData.get("flutter.Counter"), null);
+
+    allData = plugin.getAll("prefix.", allowList);
+
+    assertEquals(allData.size(), 0);
+    assertEquals(allData.get("flutter.Language"), null);
   }
 
   @Test
@@ -91,7 +117,7 @@ public class SharedPreferencesTest {
     final String key = "language";
     final String value = "Java";
     plugin.setString(key, value);
-    Map<String, Object> flutterData = plugin.getAllWithPrefix("");
+    Map<String, Object> flutterData = plugin.getAll("", null);
     assertEquals(flutterData.get(key), value);
   }
 
@@ -100,7 +126,7 @@ public class SharedPreferencesTest {
     final String key = "Counter";
     final Long value = 0L;
     plugin.setInt(key, value);
-    Map<String, Object> flutterData = plugin.getAllWithPrefix("");
+    Map<String, Object> flutterData = plugin.getAll("", null);
     assertEquals(flutterData.get(key), value);
   }
 
@@ -109,7 +135,7 @@ public class SharedPreferencesTest {
     final String key = "Pie";
     final double value = 3.14;
     plugin.setDouble(key, value);
-    Map<String, Object> flutterData = plugin.getAllWithPrefix("");
+    Map<String, Object> flutterData = plugin.getAll("", null);
     assertEquals(flutterData.get(key), value);
   }
 
@@ -118,7 +144,7 @@ public class SharedPreferencesTest {
     final String key = "Names";
     final List<String> value = Arrays.asList("Flutter", "Dart");
     plugin.setStringList(key, value);
-    Map<String, Object> flutterData = plugin.getAllWithPrefix("");
+    Map<String, Object> flutterData = plugin.getAll("", null);
     assertEquals(flutterData.get(key), value);
   }
 
@@ -127,30 +153,41 @@ public class SharedPreferencesTest {
     final String key = "NewToFlutter";
     final boolean value = false;
     plugin.setBool(key, value);
-    Map<String, Object> flutterData = plugin.getAllWithPrefix("");
+    Map<String, Object> flutterData = plugin.getAll("", null);
     assertEquals(flutterData.get(key), value);
   }
 
   @Test
-  public void clearWithPrefix() {
+  public void clearWithNoAllowList() {
     addData();
 
-    assertEquals(plugin.getAllWithPrefix("").size(), 15);
+    assertEquals(plugin.getAll("", null).size(), 15);
 
-    plugin.clearWithPrefix("flutter.");
+    plugin.clear("flutter.", null);
 
-    assertEquals(plugin.getAllWithPrefix("").size(), 10);
+    assertEquals(plugin.getAll("", null).size(), 10);
+  }
+
+  @Test
+  public void clearWithAllowList() {
+    addData();
+
+    assertEquals(plugin.getAll("", null).size(), 15);
+
+    plugin.clear("flutter.", Arrays.asList("flutter.Language"));
+
+    assertEquals(plugin.getAll("", null).size(), 14);
   }
 
   @Test
   public void clearAll() {
     addData();
 
-    assertEquals(plugin.getAllWithPrefix("").size(), 15);
+    assertEquals(plugin.getAll("", null).size(), 15);
 
-    plugin.clearWithPrefix("");
+    plugin.clear("", null);
 
-    assertEquals(plugin.getAllWithPrefix("").size(), 0);
+    assertEquals(plugin.getAll("", null).size(), 0);
   }
 
   @Test
@@ -158,9 +195,9 @@ public class SharedPreferencesTest {
     final String key = "NewToFlutter";
     final boolean value = true;
     plugin.setBool(key, value);
-    assert (plugin.getAllWithPrefix("").containsKey(key));
+    assert (plugin.getAll("", null).containsKey(key));
     plugin.remove(key);
-    assertFalse(plugin.getAllWithPrefix("").containsKey(key));
+    assertFalse(plugin.getAll("", null).containsKey(key));
   }
 
   private void addData() {

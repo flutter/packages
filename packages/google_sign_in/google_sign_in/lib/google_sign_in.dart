@@ -48,9 +48,7 @@ class GoogleSignInAccount implements GoogleIdentity {
         id = data.id,
         photoUrl = data.photoUrl,
         serverAuthCode = data.serverAuthCode,
-        _idToken = data.idToken {
-    assert(id != null);
-  }
+        _idToken = data.idToken;
 
   // These error codes must match with ones declared on Android and iOS sides.
 
@@ -298,11 +296,13 @@ class GoogleSignIn {
 
   // Performs initialization, guarding it with the _initialization future.
   Future<void> _ensureInitialized() async {
-    return _initialization ??= _doInitialization()
-      ..catchError((dynamic _) {
-        // Invalidate initialization if it errors out.
-        _initialization = null;
-      });
+    _initialization ??= _doInitialization().catchError((Object e) {
+      // Invalidate initialization if it errors out.
+      _initialization = null;
+      // ignore: only_throw_errors
+      throw e;
+    });
+    return _initialization;
   }
 
   // Actually performs the initialization.
@@ -319,10 +319,10 @@ class GoogleSignIn {
       forceCodeForRefreshToken: forceCodeForRefreshToken,
     ));
 
-    GoogleSignInPlatform.instance.userDataEvents
+    unawaited(GoogleSignInPlatform.instance.userDataEvents
         ?.map((GoogleSignInUserData? userData) {
       return userData != null ? GoogleSignInAccount._(this, userData) : null;
-    }).forEach(_setCurrentUser);
+    }).forEach(_setCurrentUser));
   }
 
   /// The most recently scheduled method call.
@@ -448,7 +448,7 @@ class GoogleSignIn {
     return GoogleSignInPlatform.instance.requestScopes(scopes);
   }
 
-  /// Checks if the [_currentUser] can access all the given [scopes].
+  /// Checks if the current user has granted access to all the specified [scopes].
   ///
   /// Optionally, an [accessToken] can be passed to perform this check. This
   /// may be useful when an application holds on to a cached, potentially

@@ -8,7 +8,7 @@ A Flutter plugin that manages files and interactions with file dialogs.
 
 |             | iOS     | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|--------|-----|-------------|
-| **Support** | iOS 11+ | Any   | 10.11+ | Any | Windows 10+ |
+| **Support** | iOS 11+ | Any   | 10.14+ | Any | Windows 10+ |
 
 ## Usage
 
@@ -68,8 +68,9 @@ final List<XFile> files = await openFiles(acceptedTypeGroups: <XTypeGroup>[
 <?code-excerpt "readme_standalone_excerpts.dart (Save)"?>
 ```dart
 const String fileName = 'suggested_name.txt';
-final String? path = await getSavePath(suggestedName: fileName);
-if (path == null) {
+final FileSaveLocation? result =
+    await getSaveLocation(suggestedName: fileName);
+if (result == null) {
   // Operation was canceled by the user.
   return;
 }
@@ -78,7 +79,7 @@ final Uint8List fileData = Uint8List.fromList('Hello World!'.codeUnits);
 const String mimeType = 'text/plain';
 final XFile textFile =
     XFile.fromData(fileData, mimeType: mimeType, name: fileName);
-await textFile.saveTo(path);
+await textFile.saveTo(result.path);
 ```
 
 #### Get a directory path
