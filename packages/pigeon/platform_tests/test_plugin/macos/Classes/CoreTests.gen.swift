@@ -58,6 +58,7 @@ struct AllTypes {
   var aMap: [AnyHashable: Any?]
   var anEnum: AnEnum
   var aString: String
+  var aClass: AllNullableTypes
 
   static func fromList(_ list: [Any?]) -> AllTypes? {
     let aBool = list[0] as! Bool
@@ -72,6 +73,7 @@ struct AllTypes {
     let aMap = list[9] as! [AnyHashable: Any?]
     let anEnum = AnEnum(rawValue: list[10] as! Int)!
     let aString = list[11] as! String
+    let aClass = AllNullableTypes.fromList(list[12] as! [Any?])!
 
     return AllTypes(
       aBool: aBool,
@@ -85,7 +87,8 @@ struct AllTypes {
       aList: aList,
       aMap: aMap,
       anEnum: anEnum,
-      aString: aString
+      aString: aString,
+      aClass: aClass
     )
   }
   func toList() -> [Any?] {
@@ -102,6 +105,7 @@ struct AllTypes {
       aMap,
       anEnum.rawValue,
       aString,
+      aClass.toList(),
     ]
   }
 }
@@ -123,6 +127,7 @@ struct AllNullableTypes {
   var nullableMapWithObject: [String?: Any?]? = nil
   var aNullableEnum: AnEnum? = nil
   var aNullableString: String? = nil
+  var aNullableClass: AllTypes? = nil
 
   static func fromList(_ list: [Any?]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
@@ -144,6 +149,10 @@ struct AllNullableTypes {
       aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)!
     }
     let aNullableString: String? = nilOrValue(list[14])
+    var aNullableClass: AllTypes? = nil
+    if let aNullableClassList: [Any?] = nilOrValue(list[15]) {
+      aNullableClass = AllTypes.fromList(aNullableClassList)
+    }
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -160,7 +169,8 @@ struct AllNullableTypes {
       nullableMapWithAnnotations: nullableMapWithAnnotations,
       nullableMapWithObject: nullableMapWithObject,
       aNullableEnum: aNullableEnum,
-      aNullableString: aNullableString
+      aNullableString: aNullableString,
+      aNullableClass: aNullableClass
     )
   }
   func toList() -> [Any?] {
@@ -180,6 +190,7 @@ struct AllNullableTypes {
       nullableMapWithObject,
       aNullableEnum?.rawValue,
       aNullableString,
+      aNullableClass?.toList(),
     ]
   }
 }
@@ -375,7 +386,7 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization asynchronously.
   func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   /// Returns the passed map, to test serialization and deserialization asynchronously.
-  func echAsyncoNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+  func echoAsyncNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void)
   func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void)
@@ -1177,7 +1188,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aMapArg: [String?: Any?]? = nilOrValue(args[0])
-        api.echAsyncoNullable(aMapArg) { result in
+        api.echoAsyncNullable(aMapArg) { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))

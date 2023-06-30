@@ -32,6 +32,7 @@ class AllTypes {
     required this.aMap,
     required this.anEnum,
     required this.aString,
+    required this.aClass,
   });
 
   bool aBool;
@@ -58,6 +59,8 @@ class AllTypes {
 
   String aString;
 
+  AllNullableTypes aClass;
+
   Object encode() {
     return <Object?>[
       aBool,
@@ -72,6 +75,7 @@ class AllTypes {
       aMap,
       anEnum.index,
       aString,
+      aClass.encode(),
     ];
   }
 
@@ -90,6 +94,7 @@ class AllTypes {
       aMap: result[9]! as Map<Object?, Object?>,
       anEnum: AnEnum.values[result[10]! as int],
       aString: result[11]! as String,
+      aClass: AllNullableTypes.decode(result[12]! as List<Object?>),
     );
   }
 }
@@ -111,6 +116,7 @@ class AllNullableTypes {
     this.nullableMapWithObject,
     this.aNullableEnum,
     this.aNullableString,
+    this.aNullableClass,
   });
 
   bool? aNullableBool;
@@ -143,6 +149,8 @@ class AllNullableTypes {
 
   String? aNullableString;
 
+  AllTypes? aNullableClass;
+
   Object encode() {
     return <Object?>[
       aNullableBool,
@@ -160,6 +168,7 @@ class AllNullableTypes {
       nullableMapWithObject,
       aNullableEnum?.index,
       aNullableString,
+      aNullableClass?.encode(),
     ];
   }
 
@@ -184,6 +193,9 @@ class AllNullableTypes {
       aNullableEnum:
           result[13] != null ? AnEnum.values[result[13]! as int] : null,
       aNullableString: result[14] as String?,
+      aNullableClass: result[15] != null
+          ? AllTypes.decode(result[15]! as List<Object?>)
+          : null,
     );
   }
 }

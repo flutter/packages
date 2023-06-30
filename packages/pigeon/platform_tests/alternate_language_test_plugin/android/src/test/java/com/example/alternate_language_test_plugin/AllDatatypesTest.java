@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.nio.ByteBuffer;
@@ -54,6 +55,7 @@ public class AllDatatypesTest {
           assertNull(everything.getANullableList());
           assertNull(everything.getANullableMap());
           assertNull(everything.getNullableMapWithObject());
+          assertNull(everything.getANullableClass());
         });
     assertTrue(didCall[0]);
   }
@@ -84,6 +86,19 @@ public class AllDatatypesTest {
 
   @Test
   public void hasValues() {
+    AllTypes allEverything = new AllTypes();
+    allEverything.setABool(false);
+    allEverything.setAnInt(1234L);
+    allEverything.setADouble(2.0);
+    allEverything.setAString("hello");
+    allEverything.setAByteArray(new byte[] {1, 2, 3, 4});
+    allEverything.setA4ByteArray(new int[] {1, 2, 3, 4});
+    allEverything.setA8ByteArray(new long[] {1, 2, 3, 4});
+    allEverything.setAFloatArray(new double[] {0.5, 0.25, 1.5, 1.25});
+    allEverything.setAList(Arrays.asList(new int[] {1, 2, 3}));
+    allEverything.setAMap(makeMap("hello", 1234));
+    allEverything.setAClass(new AllNullableTypes());
+
     AllNullableTypes everything = new AllNullableTypes();
     everything.setANullableBool(false);
     everything.setANullableInt(1234L);
@@ -96,6 +111,8 @@ public class AllDatatypesTest {
     everything.setANullableList(Arrays.asList(new int[] {1, 2, 3}));
     everything.setANullableMap(makeMap("hello", 1234));
     everything.setNullableMapWithObject(makeStringMap("hello", 1234));
+    everything.setANullableClass(allEverything);
+
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
             invocation -> {
@@ -140,6 +157,9 @@ public class AllDatatypesTest {
           assertArrayEquals(
               everything.getNullableMapWithObject().values().toArray(),
               result.getNullableMapWithObject().values().toArray());
+          // assertThat(everything.getANullableClass())
+          //     .usingRecursiveComparison()
+          //     .isEqualTo(result.getANullableClass());
         });
     assertTrue(didCall[0]);
   }

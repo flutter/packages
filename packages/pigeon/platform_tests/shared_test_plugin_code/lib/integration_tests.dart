@@ -49,9 +49,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
     a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
     aFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
-    aList: <Object?>['Thing 1', 2, true, 3.14],
-    aMap: <Object?, Object?>{'a': 1, 'b': 2.0, 'c': 'three', 'd': false},
+    aList: <Object?>['Thing 1', 2, true, 3.14, null],
+    aMap: <Object?, Object?>{
+      'a': 1,
+      'b': 2.0,
+      'c': 'three',
+      'd': false,
+      'e': null
+    },
     anEnum: AnEnum.two,
+    aClass: AllNullableTypes(aNullableInt64: 1),
   );
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
@@ -64,12 +71,13 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
     aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
     aNullableFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
-    aNullableList: <Object?>['Thing 1', 2, true, 3.14],
+    aNullableList: <Object?>['Thing 1', 2, true, 3.14, null],
     aNullableMap: <Object?, Object?>{
       'a': 1,
       'b': 2.0,
       'c': 'three',
-      'd': false
+      'd': false,
+      'e': null
     },
     nullableNestedList: <List<bool>>[
       <bool>[true, false],
@@ -78,6 +86,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     nullableMapWithAnnotations: <String?, String?>{},
     nullableMapWithObject: <String?, Object?>{},
     aNullableEnum: AnEnum.two,
+    aNullableClass: genericAllTypes,
   );
 
   group('Host sync API tests', () {
@@ -105,6 +114,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
       expect(echoObject.anEnum, genericAllTypes.anEnum);
+      expect(echoObject.aClass, genericAllTypes.aClass);
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly',
@@ -154,6 +164,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
               genericAllNullableTypes.nullableMapWithObject),
           true);
       expect(echoObject?.aNullableEnum, genericAllNullableTypes.aNullableEnum);
+      expect(
+          echoObject?.aNullableClass, genericAllNullableTypes.aNullableClass);
     });
 
     testWidgets('all null datatypes serialize and deserialize correctly',
@@ -162,76 +174,77 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes allTypesNull = AllNullableTypes();
 
-      final AllNullableTypes? echoNullFilledObject =
+      final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(allTypesNull);
 
-      expect(echoNullFilledObject?.aNullableBool, allTypesNull.aNullableBool);
-      expect(echoNullFilledObject?.aNullableBool, null);
+      expect(echoNullFilledClass?.aNullableBool, allTypesNull.aNullableBool);
+      expect(echoNullFilledClass?.aNullableBool, null);
 
-      expect(echoNullFilledObject?.aNullableInt, allTypesNull.aNullableInt);
-      expect(echoNullFilledObject?.aNullableInt, null);
+      expect(echoNullFilledClass?.aNullableInt, allTypesNull.aNullableInt);
+      expect(echoNullFilledClass?.aNullableInt, null);
 
-      expect(echoNullFilledObject?.aNullableInt64, allTypesNull.aNullableInt64);
-      expect(echoNullFilledObject?.aNullableInt64, null);
-
-      expect(
-          echoNullFilledObject?.aNullableDouble, allTypesNull.aNullableDouble);
-      expect(echoNullFilledObject?.aNullableDouble, null);
+      expect(echoNullFilledClass?.aNullableInt64, allTypesNull.aNullableInt64);
+      expect(echoNullFilledClass?.aNullableInt64, null);
 
       expect(
-          echoNullFilledObject?.aNullableString, allTypesNull.aNullableString);
-      expect(echoNullFilledObject?.aNullableString, null);
+          echoNullFilledClass?.aNullableDouble, allTypesNull.aNullableDouble);
+      expect(echoNullFilledClass?.aNullableDouble, null);
 
-      expect(echoNullFilledObject?.aNullableByteArray,
+      expect(
+          echoNullFilledClass?.aNullableString, allTypesNull.aNullableString);
+      expect(echoNullFilledClass?.aNullableString, null);
+
+      expect(echoNullFilledClass?.aNullableByteArray,
           allTypesNull.aNullableByteArray);
-      expect(echoNullFilledObject?.aNullableByteArray, null);
+      expect(echoNullFilledClass?.aNullableByteArray, null);
 
-      expect(echoNullFilledObject?.aNullable4ByteArray,
+      expect(echoNullFilledClass?.aNullable4ByteArray,
           allTypesNull.aNullable4ByteArray);
-      expect(echoNullFilledObject?.aNullable4ByteArray, null);
+      expect(echoNullFilledClass?.aNullable4ByteArray, null);
 
-      expect(echoNullFilledObject?.aNullable8ByteArray,
+      expect(echoNullFilledClass?.aNullable8ByteArray,
           allTypesNull.aNullable8ByteArray);
-      expect(echoNullFilledObject?.aNullable8ByteArray, null);
+      expect(echoNullFilledClass?.aNullable8ByteArray, null);
 
-      expect(echoNullFilledObject?.aNullableFloatArray,
+      expect(echoNullFilledClass?.aNullableFloatArray,
           allTypesNull.aNullableFloatArray);
-      expect(echoNullFilledObject?.aNullableFloatArray, null);
+      expect(echoNullFilledClass?.aNullableFloatArray, null);
 
       expect(
           listEquals(
-              echoNullFilledObject?.aNullableList, allTypesNull.aNullableList),
+              echoNullFilledClass?.aNullableList, allTypesNull.aNullableList),
           true);
-      expect(echoNullFilledObject?.aNullableList, null);
+      expect(echoNullFilledClass?.aNullableList, null);
 
       expect(
           mapEquals(
-              echoNullFilledObject?.aNullableMap, allTypesNull.aNullableMap),
+              echoNullFilledClass?.aNullableMap, allTypesNull.aNullableMap),
           true);
-      expect(echoNullFilledObject?.aNullableMap, null);
+      expect(echoNullFilledClass?.aNullableMap, null);
 
       // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
       // https://github.com/flutter/flutter/issues/116117
-      //for (int i = 0; i < echoNullFilledObject?.nullableNestedList!.length; i++) {
-      //  expect(listEquals(echoNullFilledObject?.nullableNestedList![i], allTypesNull.nullableNestedList![i]),
+      //for (int i = 0; i < echoNullFilledClass?.nullableNestedList!.length; i++) {
+      //  expect(listEquals(echoNullFilledClass?.nullableNestedList![i], allTypesNull.nullableNestedList![i]),
       //      true);
       //}
-      expect(echoNullFilledObject?.nullableNestedList, null);
+      expect(echoNullFilledClass?.nullableNestedList, null);
 
       expect(
-          mapEquals(echoNullFilledObject?.nullableMapWithAnnotations,
+          mapEquals(echoNullFilledClass?.nullableMapWithAnnotations,
               allTypesNull.nullableMapWithAnnotations),
           true);
-      expect(echoNullFilledObject?.nullableMapWithAnnotations, null);
+      expect(echoNullFilledClass?.nullableMapWithAnnotations, null);
 
       expect(
-          mapEquals(echoNullFilledObject?.nullableMapWithObject,
+          mapEquals(echoNullFilledClass?.nullableMapWithObject,
               allTypesNull.nullableMapWithObject),
           true);
-      expect(echoNullFilledObject?.nullableMapWithObject, null);
+      expect(echoNullFilledClass?.nullableMapWithObject, null);
 
-      expect(echoNullFilledObject?.aNullableEnum, allTypesNull.aNullableEnum);
-      expect(echoNullFilledObject?.aNullableEnum, null);
+      expect(echoNullFilledClass?.aNullableEnum, allTypesNull.aNullableEnum);
+      expect(echoNullFilledClass?.aNullableEnum, null);
+      expect(echoNullFilledClass?.aNullableClass, allTypesNull.aNullableClass);
     },
         // TODO(stuartmorgan): Fix and re-enable.
         // See https://github.com/flutter/flutter/issues/118733
@@ -244,11 +257,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypes nullableListTypes =
           AllNullableTypes(aNullableList: <String?>['String', null]);
 
-      final AllNullableTypes? echoNullFilledObject =
+      final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(nullableListTypes);
 
       expect(
-          echoNullFilledObject?.aNullableList, nullableListTypes.aNullableList);
+          echoNullFilledClass?.aNullableList, nullableListTypes.aNullableList);
     });
 
     testWidgets('Classes with map of null serialize and deserialize correctly',
@@ -258,11 +271,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypes nullableListTypes = AllNullableTypes(
           aNullableMap: <String?, String?>{'String': 'string', 'null': null});
 
-      final AllNullableTypes? echoNullFilledObject =
+      final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(nullableListTypes);
 
-      expect(
-          echoNullFilledObject?.aNullableMap, nullableListTypes.aNullableMap);
+      expect(echoNullFilledClass?.aNullableMap, nullableListTypes.aNullableMap);
     });
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {
@@ -336,11 +348,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      final AllNullableTypes echoNullFilledObject =
+      final AllNullableTypes echoNullFilledClass =
           await api.sendMultipleNullableTypes(null, null, null);
-      expect(echoNullFilledObject.aNullableInt, null);
-      expect(echoNullFilledObject.aNullableBool, null);
-      expect(echoNullFilledObject.aNullableString, null);
+      expect(echoNullFilledClass.aNullableInt, null);
+      expect(echoNullFilledClass.aNullableBool, null);
+      expect(echoNullFilledClass.aNullableString, null);
     });
 
     testWidgets('Int serialize and deserialize correctly',
@@ -729,76 +741,77 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes allTypesNull = AllNullableTypes();
 
-      final AllNullableTypes? echoNullFilledObject =
+      final AllNullableTypes? echoNullFilledClass =
           await api.echoAsyncNullableAllNullableTypes(allTypesNull);
 
-      expect(echoNullFilledObject?.aNullableBool, allTypesNull.aNullableBool);
-      expect(echoNullFilledObject?.aNullableBool, null);
+      expect(echoNullFilledClass?.aNullableBool, allTypesNull.aNullableBool);
+      expect(echoNullFilledClass?.aNullableBool, null);
 
-      expect(echoNullFilledObject?.aNullableInt, allTypesNull.aNullableInt);
-      expect(echoNullFilledObject?.aNullableInt, null);
+      expect(echoNullFilledClass?.aNullableInt, allTypesNull.aNullableInt);
+      expect(echoNullFilledClass?.aNullableInt, null);
 
-      expect(echoNullFilledObject?.aNullableInt64, allTypesNull.aNullableInt64);
-      expect(echoNullFilledObject?.aNullableInt64, null);
-
-      expect(
-          echoNullFilledObject?.aNullableDouble, allTypesNull.aNullableDouble);
-      expect(echoNullFilledObject?.aNullableDouble, null);
+      expect(echoNullFilledClass?.aNullableInt64, allTypesNull.aNullableInt64);
+      expect(echoNullFilledClass?.aNullableInt64, null);
 
       expect(
-          echoNullFilledObject?.aNullableString, allTypesNull.aNullableString);
-      expect(echoNullFilledObject?.aNullableString, null);
+          echoNullFilledClass?.aNullableDouble, allTypesNull.aNullableDouble);
+      expect(echoNullFilledClass?.aNullableDouble, null);
 
-      expect(echoNullFilledObject?.aNullableByteArray,
+      expect(
+          echoNullFilledClass?.aNullableString, allTypesNull.aNullableString);
+      expect(echoNullFilledClass?.aNullableString, null);
+
+      expect(echoNullFilledClass?.aNullableByteArray,
           allTypesNull.aNullableByteArray);
-      expect(echoNullFilledObject?.aNullableByteArray, null);
+      expect(echoNullFilledClass?.aNullableByteArray, null);
 
-      expect(echoNullFilledObject?.aNullable4ByteArray,
+      expect(echoNullFilledClass?.aNullable4ByteArray,
           allTypesNull.aNullable4ByteArray);
-      expect(echoNullFilledObject?.aNullable4ByteArray, null);
+      expect(echoNullFilledClass?.aNullable4ByteArray, null);
 
-      expect(echoNullFilledObject?.aNullable8ByteArray,
+      expect(echoNullFilledClass?.aNullable8ByteArray,
           allTypesNull.aNullable8ByteArray);
-      expect(echoNullFilledObject?.aNullable8ByteArray, null);
+      expect(echoNullFilledClass?.aNullable8ByteArray, null);
 
-      expect(echoNullFilledObject?.aNullableFloatArray,
+      expect(echoNullFilledClass?.aNullableFloatArray,
           allTypesNull.aNullableFloatArray);
-      expect(echoNullFilledObject?.aNullableFloatArray, null);
+      expect(echoNullFilledClass?.aNullableFloatArray, null);
 
       expect(
           listEquals(
-              echoNullFilledObject?.aNullableList, allTypesNull.aNullableList),
+              echoNullFilledClass?.aNullableList, allTypesNull.aNullableList),
           true);
-      expect(echoNullFilledObject?.aNullableList, null);
+      expect(echoNullFilledClass?.aNullableList, null);
 
       expect(
           mapEquals(
-              echoNullFilledObject?.aNullableMap, allTypesNull.aNullableMap),
+              echoNullFilledClass?.aNullableMap, allTypesNull.aNullableMap),
           true);
-      expect(echoNullFilledObject?.aNullableMap, null);
+      expect(echoNullFilledClass?.aNullableMap, null);
 
       // TODO(stuartmorgan): Enable this once the Dart types are fixed; see
       // https://github.com/flutter/flutter/issues/116117
-      //for (int i = 0; i < echoNullFilledObject?.nullableNestedList!.length; i++) {
-      //  expect(listEquals(echoNullFilledObject?.nullableNestedList![i], allTypesNull.nullableNestedList![i]),
+      //for (int i = 0; i < echoNullFilledClass?.nullableNestedList!.length; i++) {
+      //  expect(listEquals(echoNullFilledClass?.nullableNestedList![i], allTypesNull.nullableNestedList![i]),
       //      true);
       //}
-      expect(echoNullFilledObject?.nullableNestedList, null);
+      expect(echoNullFilledClass?.nullableNestedList, null);
 
       expect(
-          mapEquals(echoNullFilledObject?.nullableMapWithAnnotations,
+          mapEquals(echoNullFilledClass?.nullableMapWithAnnotations,
               allTypesNull.nullableMapWithAnnotations),
           true);
-      expect(echoNullFilledObject?.nullableMapWithAnnotations, null);
+      expect(echoNullFilledClass?.nullableMapWithAnnotations, null);
 
       expect(
-          mapEquals(echoNullFilledObject?.nullableMapWithObject,
+          mapEquals(echoNullFilledClass?.nullableMapWithObject,
               allTypesNull.nullableMapWithObject),
           true);
-      expect(echoNullFilledObject?.nullableMapWithObject, null);
+      expect(echoNullFilledClass?.nullableMapWithObject, null);
 
-      expect(echoNullFilledObject?.aNullableEnum, allTypesNull.aNullableEnum);
-      expect(echoNullFilledObject?.aNullableEnum, null);
+      expect(echoNullFilledClass?.aNullableEnum, allTypesNull.aNullableEnum);
+      expect(echoNullFilledClass?.aNullableEnum, null);
+      expect(echoNullFilledClass?.aNullableClass, allTypesNull.aNullableClass);
     },
         // TODO(stuartmorgan): Fix and re-enable.
         // See https://github.com/flutter/flutter/issues/118733
@@ -1141,6 +1154,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(listEquals(echoObject.aList, genericAllTypes.aList), true);
       expect(mapEquals(echoObject.aMap, genericAllTypes.aMap), true);
       expect(echoObject.anEnum, genericAllTypes.anEnum);
+      expect(echoObject.aClass, genericAllNullableTypes.aNullableClass);
     });
 
     testWidgets(

@@ -25,6 +25,7 @@ class AllTypes {
     this.aMap = const <String?, Object?>{},
     this.anEnum = AnEnum.one,
     this.aString = '',
+    required this.aClass,
   });
 
   bool aBool;
@@ -41,6 +42,7 @@ class AllTypes {
   Map aMap;
   AnEnum anEnum;
   String aString;
+  AllNullableTypes aClass;
 }
 
 // A class containing all supported nullable types.
@@ -61,6 +63,7 @@ class AllNullableTypes {
     this.nullableMapWithObject,
     this.aNullableEnum,
     this.aNullableString,
+    this.aNullableClass,
   );
 
   bool? aNullableBool;
@@ -80,6 +83,7 @@ class AllNullableTypes {
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
   String? aNullableString;
+  AllTypes? aNullableClass;
 }
 
 // A class for testing nested object handling.
@@ -92,7 +96,7 @@ class AllNullableTypesWrapper {
 /// platform_test integration tests.
 @HostApi()
 abstract class HostIntegrationCoreApi {
-  // ========== Syncronous method tests ==========
+  // ========== Synchronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
@@ -342,7 +346,7 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization asynchronously.
   @async
   @ObjCSelector('echoAsyncNullableMap:')
-  @SwiftFunction('echAsyncoNullable(_:)')
+  @SwiftFunction('echoAsyncNullable(_:)')
   Map<String?, Object?>? echoAsyncNullableMap(Map<String?, Object?>? aMap);
 
   // ========== Flutter API test wrappers ==========
