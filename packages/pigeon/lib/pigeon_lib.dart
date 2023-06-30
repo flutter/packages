@@ -369,7 +369,7 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == 'stdout') {
     sink = stdout;
   } else {
-    file = File(path.join(basePath, output));
+    file = File(path.posix.join(basePath, output));
     sink = file.openWrite();
   }
   return sink;
@@ -412,7 +412,7 @@ DartOptions _dartOptionsWithCopyrightHeader(
       sourceOutPath: dartOutPath,
       testOutPath: testOutPath,
       copyrightHeader: copyrightHeader != null
-          ? _lineReader(path.join(basePath, copyrightHeader))
+          ? _lineReader(path.posix.join(basePath, copyrightHeader))
           : null));
 }
 
@@ -516,7 +516,8 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
       copyrightHeader: options.copyrightHeader != null
-          ? _lineReader((options.basePath ?? '') + options.copyrightHeader!)
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
     ));
     final OutputFileOptions<ObjcOptions> outputFileOptions =
@@ -555,7 +556,8 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
         className: javaOptions.className ??
             path.basenameWithoutExtension(options.javaOut!),
         copyrightHeader: options.copyrightHeader != null
-            ? _lineReader((options.basePath ?? '') + options.copyrightHeader!)
+            ? _lineReader(path.posix
+                .join(options.basePath ?? '', options.copyrightHeader))
             : null));
     const JavaGenerator generator = JavaGenerator();
     generator.generate(javaOptions, root, sink);
@@ -583,7 +585,8 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
     SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
     swiftOptions = swiftOptions.merge(SwiftOptions(
         copyrightHeader: options.copyrightHeader != null
-            ? _lineReader((options.basePath ?? '') + options.copyrightHeader!)
+            ? _lineReader(path.posix
+                .join(options.basePath ?? '', options.copyrightHeader))
             : null));
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink);
@@ -612,7 +615,8 @@ class CppGeneratorAdapter implements GeneratorAdapter {
     final CppOptions cppOptions = options.cppOptions ?? const CppOptions();
     final CppOptions cppOptionsWithHeader = cppOptions.merge(CppOptions(
       copyrightHeader: options.copyrightHeader != null
-          ? _lineReader((options.basePath ?? '') + options.copyrightHeader!)
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
     ));
     final OutputFileOptions<CppOptions> outputFileOptions =
@@ -651,7 +655,8 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
         errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
         copyrightHeader: options.copyrightHeader != null
-            ? _lineReader((options.basePath ?? '') + options.copyrightHeader!)
+            ? _lineReader(path.posix
+                .join(options.basePath ?? '', options.copyrightHeader))
             : null));
     const KotlinGenerator generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink);
