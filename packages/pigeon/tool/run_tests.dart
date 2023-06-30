@@ -92,7 +92,7 @@ Future<void> _validateGeneratedExampleFiles() async {
 
   final int generateExitCode = await runPigeon(
     input: './example/app/pigeons/messages.dart',
-    basePath: './example/app',
+    basePath: './example/app/',
   );
 
   if (generateExitCode != 0) {
