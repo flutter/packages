@@ -25,12 +25,31 @@ class RunnerTests: XCTestCase {
       plugin.setValue(key: "\(aPrefix)aString", value: "hello world")
       plugin.setValue(key: "\(aPrefix)aStringList", value: ["hello", "world"])
 
-      let storedValues = plugin.getAllWithPrefix(prefix: aPrefix)
+      let storedValues = plugin.getAll(prefix: aPrefix, allowList: nil)
       XCTAssertEqual(storedValues["\(aPrefix)aBool"] as? Bool, true)
       XCTAssertEqual(storedValues["\(aPrefix)aDouble"] as! Double, 3.14, accuracy: 0.0001)
       XCTAssertEqual(storedValues["\(aPrefix)anInt"] as? Int, 42)
       XCTAssertEqual(storedValues["\(aPrefix)aString"] as? String, "hello world")
       XCTAssertEqual(storedValues["\(aPrefix)aStringList"] as? Array<String>, ["hello", "world"])
+    }
+  }
+
+  func testGetWithAllowList() throws {
+    for aPrefix in prefixes {
+      let plugin = SharedPreferencesPlugin()
+
+      plugin.setBool(key: "\(aPrefix)aBool", value: true)
+      plugin.setDouble(key: "\(aPrefix)aDouble", value: 3.14)
+      plugin.setValue(key: "\(aPrefix)anInt", value: 42)
+      plugin.setValue(key: "\(aPrefix)aString", value: "hello world")
+      plugin.setValue(key: "\(aPrefix)aStringList", value: ["hello", "world"])
+
+      let storedValues = plugin.getAll(prefix: aPrefix, allowList: ["\(aPrefix)aBool"])
+      XCTAssertEqual(storedValues["\(aPrefix)aBool"] as? Bool, true)
+      XCTAssertNil(storedValues["\(aPrefix)aDouble"] ?? nil)
+      XCTAssertNil(storedValues["\(aPrefix)anInt"] ?? nil)
+      XCTAssertNil(storedValues["\(aPrefix)aString"] ?? nil)
+      XCTAssertNil(storedValues["\(aPrefix)aStringList"] ?? nil)
     }
   }
 
@@ -41,33 +60,50 @@ class RunnerTests: XCTestCase {
       plugin.setValue(key: testKey, value: 42)
 
       // Make sure there is something to remove, so the test can't pass due to a set failure.
-      let preRemovalValues = plugin.getAllWithPrefix(prefix: aPrefix)
+      let preRemovalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
       XCTAssertEqual(preRemovalValues[testKey] as? Int, 42)
 
       // Then verify that removing it works.
       plugin.remove(key: testKey)
 
-      let finalValues = plugin.getAllWithPrefix(prefix: aPrefix)
+      let finalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
       XCTAssertNil(finalValues[testKey] as Any?)
     }
   }
+    
+    func testClearWithNoAllowlist() throws {
+      for aPrefix in prefixes {
+        let plugin = SharedPreferencesPlugin()
+        let testKey = "\(aPrefix)foo"
+        plugin.setValue(key: testKey, value: 42)
 
-  func testClear() throws {
-    for aPrefix in prefixes {
-      let plugin = SharedPreferencesPlugin()
-      let testKey = "\(aPrefix)foo"
-      plugin.setValue(key: testKey, value: 42)
+        // Make sure there is something to clear, so the test can't pass due to a set failure.
+        let preRemovalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
+        XCTAssertEqual(preRemovalValues[testKey] as? Int, 42)
 
-      // Make sure there is something to clear, so the test can't pass due to a set failure.
-      let preRemovalValues = plugin.getAllWithPrefix(prefix: aPrefix)
-      XCTAssertEqual(preRemovalValues[testKey] as? Int, 42)
+        // Then verify that clearing works.
+        plugin.clear(prefix: aPrefix, allowList: nil)
 
-      // Then verify that clearing works.
-      plugin.clearWithPrefix(prefix: aPrefix)
-
-      let finalValues = plugin.getAllWithPrefix(prefix: aPrefix)
-      XCTAssertNil(finalValues[testKey] as Any?)
+        let finalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
+        XCTAssertNil(finalValues[testKey] as Any?)
+      }
     }
-  }
+    
+    func testClearWithAllowlist() throws {
+      for aPrefix in prefixes {
+        let plugin = SharedPreferencesPlugin()
+        let testKey = "\(aPrefix)foo"
+        plugin.setValue(key: testKey, value: 42)
+
+        // Make sure there is something to clear, so the test can't pass due to a set failure.
+        let preRemovalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
+        XCTAssertEqual(preRemovalValues[testKey] as? Int, 42)
+
+        plugin.clear(prefix: aPrefix, allowList: ["\(aPrefix)notfoo"])
+
+        let finalValues = plugin.getAll(prefix: aPrefix, allowList: nil)
+          XCTAssertEqual(finalValues[testKey] as? Int, 42)
+      }
+    }
   
 }
