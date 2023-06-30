@@ -1,3 +1,7 @@
+## 3.6.1
+
+* Fixes unawaited_futures violations.
+
 ## 3.6.0
 
 * Adds support to enable debugging of web contents on the latest versions of WebKit. See
