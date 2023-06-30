@@ -65,10 +65,15 @@ class DartTestCommand extends PackageLoopingCommand {
     // expect them to work.
     final bool webPlatform = getStringArg(_platformFlag).isNotEmpty &&
         getStringArg(_platformFlag) != 'vm';
-    if (webPlatform &&
-        isFlutterPlugin(package) &&
-        !pluginSupportsPlatform(platformWeb, package)) {
-      return PackageResult.skip("Non-web plugin tests don't need web testing.");
+    if (webPlatform) {
+      if (isFlutterPlugin(package) &&
+          !pluginSupportsPlatform(platformWeb, package)) {
+        return PackageResult.skip(
+            "Non-web plugin tests don't need web testing.");
+      }
+      if (_requiresVM(package)) {
+        return PackageResult.skip('Package has opted out of non-vm testing.');
+      }
     }
 
     bool passed;
@@ -127,5 +132,19 @@ class DartTestCommand extends PackageLoopingCommand {
     );
 
     return exitCode == 0;
+  }
+
+  bool _requiresVM(RepositoryPackage package) {
+    final File testConfig = package.directory.childFile('dart_test.yaml');
+    if (!testConfig.existsSync()) {
+      return false;
+    }
+    // test_on lines can be very complex, but in pratice the packages in this
+    // repo currently only need the ability to require vm or not, so that
+    // simple directive is all that is supported.
+    final RegExp vmRequrimentRegex = RegExp(r'^test_on:\s*vm$');
+    return testConfig
+        .readAsLinesSync()
+        .any((String line) => vmRequrimentRegex.hasMatch(line));
   }
 }

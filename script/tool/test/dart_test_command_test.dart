@@ -344,6 +344,30 @@ void main() {
       );
     });
 
+    test('skips running in browser mode if package opts out', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: vm
+''');
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Package has opted out of non-vm testing.'),
+          ]));
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[]),
+      );
+    });
+
     test('enable-experiment flag', () async {
       final RepositoryPackage plugin = createFakePlugin('a', packagesDir,
           extraFiles: <String>['test/empty_test.dart']);
