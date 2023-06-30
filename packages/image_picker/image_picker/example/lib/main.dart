@@ -62,6 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
       await _disposeVideoController();
       late VideoPlayerController controller;
       if (kIsWeb) {
+        // TODO(gabrielokura): remove the ignore once the following line can migrate to
+        // use VideoPlayerController.networkUrl after the issue is resolved.
+        // https://github.com/flutter/flutter/issues/121927
+        // ignore: deprecated_member_use
         controller = VideoPlayerController.network(file.path);
       } else {
         controller = VideoPlayerController.file(File(file.path));
