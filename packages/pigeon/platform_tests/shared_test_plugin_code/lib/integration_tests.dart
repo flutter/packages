@@ -237,6 +237,34 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         // See https://github.com/flutter/flutter/issues/118733
         skip: targetGenerator == TargetGenerator.objc);
 
+    testWidgets('Classes with list of null serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes nullableListTypes =
+          AllNullableTypes(aNullableList: <String?>['String', null]);
+
+      final AllNullableTypes? echoNullFilledObject =
+          await api.echoAllNullableTypes(nullableListTypes);
+
+      expect(
+          echoNullFilledObject?.aNullableList, nullableListTypes.aNullableList);
+    });
+
+    testWidgets('Classes with map of null serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes nullableListTypes = AllNullableTypes(
+          aNullableMap: <String?, String?>{'String': 'string', 'null': null});
+
+      final AllNullableTypes? echoNullFilledObject =
+          await api.echoAllNullableTypes(nullableListTypes);
+
+      expect(
+          echoNullFilledObject?.aNullableMap, nullableListTypes.aNullableMap);
+    });
+
     testWidgets('errors are returned correctly', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
