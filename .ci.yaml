@@ -93,6 +93,51 @@ targets:
       version_file: flutter_master.version
 
   - name: Linux dart_unit_test_shard_1 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_2 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_1 stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_2 stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_1 master
+    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -101,12 +146,9 @@ targets:
       version_file: flutter_master.version
       cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
-        ]
 
-  - name: Linux dart_unit_test_shard_2 master
+  - name: Linux_web web_dart_unit_test_shard_2 master
+    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -115,10 +157,28 @@ targets:
       version_file: flutter_master.version
       cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
-        ]
+
+  - name: Linux_web web_dart_unit_test_shard_1 stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_2 stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux analyze master
     recipe: packages/packages
