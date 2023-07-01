@@ -29,5 +29,5 @@ dev_dependencies:
   mustache_template: ^2.0.0
   path_provider_platform_interface: ^2.0.1
   plugin_platform_interface: ^2.0.2
-  protobuf: ^2.0.1
+  protobuf: ">=2.0.1 <4.0.0"
   test: ^1.19.5
