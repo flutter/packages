@@ -137,7 +137,10 @@ void main() {
 
     test('create with incorrect asset', () async {
       try {
-        await player.create(DataSource(sourceType: DataSourceType.asset));
+        await player.create(DataSource(
+          sourceType: DataSourceType.asset,
+          asset: 'incorrectAsset',
+        ));
         fail('should throw PlatformException');
       } catch (e) {
         expect(e, isException);
