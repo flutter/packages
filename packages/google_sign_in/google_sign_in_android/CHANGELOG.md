@@ -1,3 +1,7 @@
+## 6.1.17
+
+* Converts method channels to Pigeon.
+
 ## 6.1.16
 
 * Updates Guava to version 32.0.1.
