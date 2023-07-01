@@ -21,7 +21,7 @@ dependencies:
   crypto: ^3.0.0
 
 dev_dependencies:
-  cider: ^0.1.3
+  cider: ">=0.1.3 <0.3.0"
   flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter

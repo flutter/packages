@@ -69,10 +69,10 @@ packages:
     dependency: transitive
     description:
       name: change
-      sha256: b4d4aceb94f5081d40a2c08211bd779e55373265ce2304b7b38b5c4c218a9263
+      sha256: b6d35f856cb92c34ac1930669d0447d9b4e5b68b40323989f5ebb78e172d2a40
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.0"
+    version: "0.7.1"
   characters:
     dependency: transitive
     description:
@@ -93,10 +93,10 @@ packages:
     dependency: "direct dev"
     description:
       name: cider
-      sha256: "714a853bf92701b982496df0bd601c0cf2d882cfc1f2d41ae9aff2b20cee016a"
+      sha256: "6501112ef9d895fbc5d2741b9a2db74cb89e84390eb215d70450c73076ba43db"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.5"
+    version: "0.2.3"
   clock:
     dependency: transitive
     description:
@@ -275,14 +275,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.1"
-  klizma:
-    dependency: transitive
-    description:
-      name: klizma
-      sha256: "3bb0ed5cc183274e39d48fa42a61484e4dda3dc52970aa902379c7403cd7f0f2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.1"
   lints:
     dependency: transitive
     description:
