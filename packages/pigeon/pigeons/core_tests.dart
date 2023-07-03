@@ -158,7 +158,7 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AllClassesWrapper echoClassWrapper(AllClassesWrapper wrapper);
 
-  // ========== Syncronous nullable method tests ==========
+  // ========== Synchronous nullable method tests ==========
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
@@ -223,7 +223,7 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoNullable(_:)')
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
 
-  // ========== Asyncronous method tests ==========
+  // ========== Asynchronous method tests ==========
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
@@ -615,7 +615,7 @@ abstract class FlutterSmallApi {
 
 /// A data class containing a List, used in unit tests.
 // TODO(stuartmorgan): Evaluate whether these unit tests are still useful; see
-// TODOs above about restructring.
+// TODOs above about restructuring.
 class TestMessage {
   // ignore: always_specify_types, strict_raw_type
   List? testList;

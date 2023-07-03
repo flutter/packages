@@ -100,6 +100,7 @@ by any non-flutter versions of the app (for migrating from a native app to flutt
 If the prefix is set to a value such as `''` that causes it to read values that were 
 not originally stored by the `SharedPreferences`, initializing `SharedPreferences` 
 may fail if any of the values are of types that are not supported by `SharedPreferences`.
+In this case, you can set an `allowList` that contains only preferences of supported types.
 
 If you decide to remove the prefix entirely, you can still access previously created
 preferences by manually adding the previous prefix `flutter.` to the beginning of 

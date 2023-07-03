@@ -1,6 +1,10 @@
-## 10.1.1
+## 10.1.2
 
 * [swift] Fixes a crash when casting `NSNull` to an array. 
+
+## 10.1.1
+
+* Updates README to better reflect modern usage.
 
 ## 10.1.0
 
