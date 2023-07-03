@@ -45,7 +45,7 @@ String _javaFilenameForName(String inputName) {
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
 }
 
-Future<int> generatePigeons({required String baseDir}) async {
+Future<int> generateTestPigeons({required String baseDir}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const List<String> inputs = <String>[
@@ -173,7 +173,10 @@ Future<int> runPigeon({
   String? javaPackage,
   String? objcHeaderOut,
   String? objcSourceOut,
+  String objcPrefix = '',
   bool suppressVersion = false,
+  String copyrightHeader = './copyright_header.txt',
+  String? basePath,
 }) async {
   // Temporarily suppress the version output via the global flag if requested.
   // This is done because having the version in all the generated test output
@@ -189,7 +192,7 @@ Future<int> runPigeon({
   }
   final int result = await Pigeon.runWithOptions(PigeonOptions(
     input: input,
-    copyrightHeader: './copyright_header.txt',
+    copyrightHeader: copyrightHeader,
     dartOut: dartOut,
     dartTestOut: dartTestOut,
     dartOptions: const DartOptions(),
@@ -203,9 +206,10 @@ Future<int> runPigeon({
         package: kotlinPackage, errorClassName: kotlinErrorClassName),
     objcHeaderOut: objcHeaderOut,
     objcSourceOut: objcSourceOut,
-    objcOptions: const ObjcOptions(),
+    objcOptions: ObjcOptions(prefix: objcPrefix),
     swiftOut: swiftOut,
     swiftOptions: const SwiftOptions(),
+    basePath: basePath,
   ));
   includeVersionInGeneratedWarning = originalWarningSetting;
   return result;
@@ -213,7 +217,7 @@ Future<int> runPigeon({
 
 /// Runs the repository tooling's format command on this package.
 ///
-/// This is intended for formatting generated autoput, but since there's no
+/// This is intended for formatting generated output, but since there's no
 /// way to filter to specific files in with the repo tooling it runs over the
 /// entire package.
 Future<int> formatAllFiles({required String repositoryRoot}) {

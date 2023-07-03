@@ -58,7 +58,7 @@ void main() {
                 '--config',
                 'excerpt',
                 '--output',
-                'excerpts',
+                UpdateExcerptsCommand.excerptOutputDir,
                 '--delete-conflicting-outputs',
               ],
               example.path),
@@ -85,7 +85,7 @@ void main() {
                 '--config',
                 'excerpt',
                 '--output',
-                'excerpts',
+                UpdateExcerptsCommand.excerptOutputDir,
                 '--delete-conflicting-outputs',
               ],
               example.path),
@@ -129,7 +129,7 @@ void main() {
                 '--config',
                 'excerpt',
                 '--output',
-                'excerpts',
+                UpdateExcerptsCommand.excerptOutputDir,
                 '--delete-conflicting-outputs',
               ],
               example.path),
@@ -174,7 +174,7 @@ void main() {
                 '--config',
                 'excerpt',
                 '--output',
-                'excerpts',
+                UpdateExcerptsCommand.excerptOutputDir,
                 '--delete-conflicting-outputs',
               ],
               example.path),
@@ -415,5 +415,53 @@ void main() {
         containsAllInOrder(<Matcher>[
           contains('Unable to determine local file state'),
         ]));
+  });
+
+  test('cleans up excerpt output by default', () async {
+    final RepositoryPackage package = createFakePackage(
+        'a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+    // Simulate the creation of the output directory.
+    final Directory excerptOutputDir = package
+        .getExamples()
+        .first
+        .directory
+        .childDirectory(UpdateExcerptsCommand.excerptOutputDir);
+    excerptOutputDir.createSync(recursive: true);
+
+    const String changedFilePath = 'packages/a_plugin/linux/CMakeLists.txt';
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
+    ];
+
+    await runCapturingPrint(runner, <String>['update-excerpts']);
+
+    expect(excerptOutputDir.existsSync(), false);
+  });
+
+  test('cleans up excerpt output by default', () async {
+    final RepositoryPackage package = createFakePackage(
+        'a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+    // Simulate the creation of the output directory.
+    const String outputDirName = UpdateExcerptsCommand.excerptOutputDir;
+    final Directory excerptOutputDir =
+        package.getExamples().first.directory.childDirectory(outputDirName);
+    excerptOutputDir.createSync(recursive: true);
+
+    const String changedFilePath = 'packages/a_plugin/linux/CMakeLists.txt';
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
+    ];
+
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['update-excerpts', '--no-cleanup']);
+
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Extraction output is in example/$outputDirName/'),
+        ]));
+    expect(excerptOutputDir.existsSync(), true);
   });
 }

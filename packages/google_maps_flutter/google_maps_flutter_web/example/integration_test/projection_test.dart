@@ -72,6 +72,60 @@ void main() {
         expect(coords.latitude, closeTo(19, _acceptableLatLngDelta));
         expect(coords.longitude, closeTo(26, _acceptableLatLngDelta));
       });
+
+      testWidgets('addPadding', (WidgetTester tester) async {
+        const LatLng initialMapCenter = LatLng(0, 0);
+        const double initialZoomLevel = 5;
+        const CameraPosition initialCameraPosition =
+            CameraPosition(target: initialMapCenter, zoom: initialZoomLevel);
+        final LatLngBounds zeroLatLngBounds = LatLngBounds(
+            southwest: const LatLng(0, 0), northeast: const LatLng(0, 0));
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: GoogleMap(
+              initialCameraPosition: initialCameraPosition,
+              onMapCreated: onMapCreated,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final GoogleMapController controller = await controllerCompleter.future;
+
+        final LatLngBounds firstVisibleRegion =
+            await controller.getVisibleRegion();
+
+        expect(firstVisibleRegion, isNotNull);
+        expect(firstVisibleRegion.southwest, isNotNull);
+        expect(firstVisibleRegion.northeast, isNotNull);
+        expect(firstVisibleRegion, isNot(zeroLatLngBounds));
+        expect(firstVisibleRegion.contains(initialMapCenter), isTrue);
+
+        const double padding = 0.1;
+        await controller.moveCamera(
+            CameraUpdate.newLatLngBounds(firstVisibleRegion, padding));
+        await tester.pumpAndSettle(const Duration(seconds: 3));
+
+        final LatLngBounds secondVisibleRegion =
+            await controller.getVisibleRegion();
+
+        expect(secondVisibleRegion, isNotNull);
+        expect(secondVisibleRegion, isNot(zeroLatLngBounds));
+        expect(
+          secondVisibleRegion,
+          isNot(firstVisibleRegion),
+        );
+        expect(secondVisibleRegion.contains(initialMapCenter), isTrue);
+        expect(
+          secondVisibleRegion.contains(firstVisibleRegion.northeast),
+          isTrue,
+        );
+        expect(
+          secondVisibleRegion.contains(firstVisibleRegion.southwest),
+          isTrue,
+        );
+      });
     });
 
     group('getScreenCoordinate', () {
