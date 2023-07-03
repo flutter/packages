@@ -58,7 +58,6 @@ struct AllTypes {
   var aMap: [AnyHashable: Any?]
   var anEnum: AnEnum
   var aString: String
-  var aClass: AllNullableTypes
 
   static func fromList(_ list: [Any?]) -> AllTypes? {
     let aBool = list[0] as! Bool
@@ -73,7 +72,6 @@ struct AllTypes {
     let aMap = list[9] as! [AnyHashable: Any?]
     let anEnum = AnEnum(rawValue: list[10] as! Int)!
     let aString = list[11] as! String
-    let aClass = AllNullableTypes.fromList(list[12] as! [Any?])!
 
     return AllTypes(
       aBool: aBool,
@@ -87,8 +85,7 @@ struct AllTypes {
       aList: aList,
       aMap: aMap,
       anEnum: anEnum,
-      aString: aString,
-      aClass: aClass
+      aString: aString
     )
   }
   func toList() -> [Any?] {
@@ -105,7 +102,6 @@ struct AllTypes {
       aMap,
       anEnum.rawValue,
       aString,
-      aClass.toList(),
     ]
   }
 }
@@ -127,7 +123,6 @@ struct AllNullableTypes {
   var nullableMapWithObject: [String?: Any?]? = nil
   var aNullableEnum: AnEnum? = nil
   var aNullableString: String? = nil
-  var aNullableClass: AllTypes? = nil
 
   static func fromList(_ list: [Any?]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
@@ -149,10 +144,6 @@ struct AllNullableTypes {
       aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)!
     }
     let aNullableString: String? = nilOrValue(list[14])
-    var aNullableClass: AllTypes? = nil
-    if let aNullableClassList: [Any?] = nilOrValue(list[15]) {
-      aNullableClass = AllTypes.fromList(aNullableClassList)
-    }
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -169,8 +160,7 @@ struct AllNullableTypes {
       nullableMapWithAnnotations: nullableMapWithAnnotations,
       nullableMapWithObject: nullableMapWithObject,
       aNullableEnum: aNullableEnum,
-      aNullableString: aNullableString,
-      aNullableClass: aNullableClass
+      aNullableString: aNullableString
     )
   }
   func toList() -> [Any?] {
@@ -190,25 +180,31 @@ struct AllNullableTypes {
       nullableMapWithObject,
       aNullableEnum?.rawValue,
       aNullableString,
-      aNullableClass?.toList(),
     ]
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllNullableTypesWrapper {
-  var values: AllNullableTypes
+struct AllClassesWrapper {
+  var allNullableTypes: AllNullableTypes
+  var allTypes: AllTypes? = nil
 
-  static func fromList(_ list: [Any?]) -> AllNullableTypesWrapper? {
-    let values = AllNullableTypes.fromList(list[0] as! [Any?])!
+  static func fromList(_ list: [Any?]) -> AllClassesWrapper? {
+    let allNullableTypes = AllNullableTypes.fromList(list[0] as! [Any?])!
+    var allTypes: AllTypes? = nil
+    if let allTypesList: [Any?] = nilOrValue(list[1]) {
+      allTypes = AllTypes.fromList(allTypesList)
+    }
 
-    return AllNullableTypesWrapper(
-      values: values
+    return AllClassesWrapper(
+      allNullableTypes: allNullableTypes,
+      allTypes: allTypes
     )
   }
   func toList() -> [Any?] {
     return [
-      values.toList(),
+      allNullableTypes.toList(),
+      allTypes?.toList(),
     ]
   }
 }
@@ -237,9 +233,9 @@ private class HostIntegrationCoreApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return AllNullableTypes.fromList(self.readValue() as! [Any?])
+        return AllClassesWrapper.fromList(self.readValue() as! [Any?])
       case 129:
-        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any?])
+        return AllNullableTypes.fromList(self.readValue() as! [Any?])
       case 130:
         return AllTypes.fromList(self.readValue() as! [Any?])
       case 131:
@@ -252,10 +248,10 @@ private class HostIntegrationCoreApiCodecReader: FlutterStandardReader {
 
 private class HostIntegrationCoreApiCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? AllNullableTypes {
+    if let value = value as? AllClassesWrapper {
       super.writeByte(128)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWrapper {
+    } else if let value = value as? AllNullableTypes {
       super.writeByte(129)
       super.writeValue(value.toList())
     } else if let value = value as? AllTypes {
@@ -316,14 +312,16 @@ protocol HostIntegrationCoreApi {
   func echo(_ aList: [Any?]) throws -> [Any?]
   /// Returns the passed map, to test serialization and deserialization.
   func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?]
+  /// Returns the passed map to test nested class serialization and deserialization.
+  func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  func extractNestedNullableString(from wrapper: AllNullableTypesWrapper) throws -> String?
+  func extractNestedNullableString(from wrapper: AllClassesWrapper) throws -> String?
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  func createNestedObject(with nullableString: String?) throws -> AllNullableTypesWrapper
+  func createNestedObject(with nullableString: String?) throws -> AllClassesWrapper
   /// Returns passed in arguments of multiple types.
   func sendMultipleNullableTypes(aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?) throws -> AllNullableTypes
   /// Returns passed in int.
@@ -615,6 +613,22 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoMapChannel.setMessageHandler(nil)
     }
+    /// Returns the passed map to test nested class serialization and deserialization.
+    let echoClassWrapperChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoClassWrapper", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoClassWrapperChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let wrapperArg = args[0] as! AllClassesWrapper
+        do {
+          let result = try api.echo(wrapperArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoClassWrapperChannel.setMessageHandler(nil)
+    }
     /// Returns the passed object, to test serialization and deserialization.
     let echoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -637,7 +651,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       extractNestedNullableStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let wrapperArg = args[0] as! AllNullableTypesWrapper
+        let wrapperArg = args[0] as! AllClassesWrapper
         do {
           let result = try api.extractNestedNullableString(from: wrapperArg)
           reply(wrapResult(result))
@@ -1525,9 +1539,9 @@ private class FlutterIntegrationCoreApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return AllNullableTypes.fromList(self.readValue() as! [Any?])
+        return AllClassesWrapper.fromList(self.readValue() as! [Any?])
       case 129:
-        return AllNullableTypesWrapper.fromList(self.readValue() as! [Any?])
+        return AllNullableTypes.fromList(self.readValue() as! [Any?])
       case 130:
         return AllTypes.fromList(self.readValue() as! [Any?])
       case 131:
@@ -1540,10 +1554,10 @@ private class FlutterIntegrationCoreApiCodecReader: FlutterStandardReader {
 
 private class FlutterIntegrationCoreApiCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? AllNullableTypes {
+    if let value = value as? AllClassesWrapper {
       super.writeByte(128)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWrapper {
+    } else if let value = value as? AllNullableTypes {
       super.writeByte(129)
       super.writeValue(value.toList())
     } else if let value = value as? AllTypes {

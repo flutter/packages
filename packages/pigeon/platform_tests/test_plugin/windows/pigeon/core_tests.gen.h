@@ -78,8 +78,7 @@ class AllTypes {
                     const std::vector<double>& a_float_array,
                     const flutter::EncodableList& a_list,
                     const flutter::EncodableMap& a_map, const AnEnum& an_enum,
-                    const std::string& a_string,
-                    const AllNullableTypes& a_class);
+                    const std::string& a_string);
 
   bool a_bool() const;
   void set_a_bool(bool value_arg);
@@ -117,13 +116,10 @@ class AllTypes {
   const std::string& a_string() const;
   void set_a_string(std::string_view value_arg);
 
-  const AllNullableTypes& a_class() const;
-  void set_a_class(const AllNullableTypes& value_arg);
-
  private:
   static AllTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
-  friend class AllNullableTypes;
+  friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class HostIntegrationCoreApiCodecSerializer;
   friend class FlutterIntegrationCoreApi;
@@ -147,7 +143,6 @@ class AllTypes {
   flutter::EncodableMap a_map_;
   AnEnum an_enum_;
   std::string a_string_;
-  AllNullableTypes a_class_;
 };
 
 // Generated class from Pigeon that represents data sent in messages.
@@ -169,8 +164,7 @@ class AllNullableTypes {
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
-      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
-      const AllTypes* a_nullable_class);
+      const AnEnum* a_nullable_enum, const std::string* a_nullable_string);
 
   const bool* a_nullable_bool() const;
   void set_a_nullable_bool(const bool* value_arg);
@@ -234,15 +228,10 @@ class AllNullableTypes {
   void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
 
-  const AllTypes* a_nullable_class() const;
-  void set_a_nullable_class(const AllTypes* value_arg);
-  void set_a_nullable_class(const AllTypes& value_arg);
-
  private:
   static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
-  friend class AllTypes;
-  friend class AllNullableTypesWrapper;
+  friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class HostIntegrationCoreApiCodecSerializer;
   friend class FlutterIntegrationCoreApi;
@@ -269,20 +258,27 @@ class AllNullableTypes {
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
   std::optional<AnEnum> a_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
-  std::optional<AllTypes> a_nullable_class_;
 };
 
 // Generated class from Pigeon that represents data sent in messages.
-class AllNullableTypesWrapper {
+class AllClassesWrapper {
  public:
-  // Constructs an object setting all fields.
-  explicit AllNullableTypesWrapper(const AllNullableTypes& values);
+  // Constructs an object setting all non-nullable fields.
+  explicit AllClassesWrapper(const AllNullableTypes& all_nullable_types);
 
-  const AllNullableTypes& values() const;
-  void set_values(const AllNullableTypes& value_arg);
+  // Constructs an object setting all fields.
+  explicit AllClassesWrapper(const AllNullableTypes& all_nullable_types,
+                             const AllTypes* all_types);
+
+  const AllNullableTypes& all_nullable_types() const;
+  void set_all_nullable_types(const AllNullableTypes& value_arg);
+
+  const AllTypes* all_types() const;
+  void set_all_types(const AllTypes* value_arg);
+  void set_all_types(const AllTypes& value_arg);
 
  private:
-  static AllNullableTypesWrapper FromEncodableList(
+  static AllClassesWrapper FromEncodableList(
       const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
@@ -296,7 +292,8 @@ class AllNullableTypesWrapper {
   friend class FlutterSmallApi;
   friend class FlutterSmallApiCodecSerializer;
   friend class CoreTestsTest;
-  AllNullableTypes values_;
+  AllNullableTypes all_nullable_types_;
+  std::optional<AllTypes> all_types_;
 };
 
 // A data class containing a List, used in unit tests.
@@ -390,16 +387,20 @@ class HostIntegrationCoreApi {
   // Returns the passed map, to test serialization and deserialization.
   virtual ErrorOr<flutter::EncodableMap> EchoMap(
       const flutter::EncodableMap& a_map) = 0;
+  // Returns the passed map to test nested class serialization and
+  // deserialization.
+  virtual ErrorOr<AllClassesWrapper> EchoClassWrapper(
+      const AllClassesWrapper& wrapper) = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
       const AllNullableTypes* everything) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
   virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(
-      const AllNullableTypesWrapper& wrapper) = 0;
+      const AllClassesWrapper& wrapper) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
-  virtual ErrorOr<AllNullableTypesWrapper> CreateNestedNullableString(
+  virtual ErrorOr<AllClassesWrapper> CreateNestedNullableString(
       const std::string* nullable_string) = 0;
   // Returns passed in arguments of multiple types.
   virtual ErrorOr<AllNullableTypes> SendMultipleNullableTypes(

@@ -83,12 +83,16 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aMap
   }
 
-  override fun extractNestedNullableString(wrapper: AllNullableTypesWrapper): String? {
-    return wrapper.values.aNullableString
+  override fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper {
+    return wrapper
   }
 
-  override fun createNestedNullableString(nullableString: String?): AllNullableTypesWrapper {
-    return AllNullableTypesWrapper(AllNullableTypes(aNullableString = nullableString))
+  override fun extractNestedNullableString(wrapper: AllClassesWrapper): String? {
+    return wrapper.allNullableTypes.aNullableString
+  }
+
+  override fun createNestedNullableString(nullableString: String?): AllClassesWrapper {
+    return AllClassesWrapper(AllNullableTypes(aNullableString = nullableString))
   }
 
   override fun sendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): AllNullableTypes {
