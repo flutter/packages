@@ -147,7 +147,12 @@ Page resource error:
       )
       ..loadRequest(LoadRequestParams(
         uri: Uri.parse('https://flutter.dev'),
-      ));
+      ))
+      ..setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
+        debugPrint(
+          'Content offset change to x = ${contentOffsetChange.x}, y = ${contentOffsetChange.y}',
+        );
+      });
   }
 
   @override

@@ -3,9 +3,14 @@
 // found in the LICENSE file.
 
 #import "FWFScrollViewHostApi.h"
+#import "FWFScrollViewDelegateHostApi.h"
 #import "FWFWebViewHostApi.h"
 
 @interface FWFScrollViewHostApiImpl ()
+// BinaryMessenger must be weak to prevent a circular reference with the host API it
+// references.
+@property(nonatomic, weak) id<FlutterBinaryMessenger> binaryMessenger;
+
 // InstanceManager must be weak to prevent a circular reference with the object it stores.
 @property(nonatomic, weak) FWFInstanceManager *instanceManager;
 @end
@@ -28,6 +33,7 @@
                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   WKWebView *webView =
       (WKWebView *)[self.instanceManager instanceForIdentifier:webViewIdentifier.longValue];
+    NSLog(@"UISCRILLVI ID %@", identifier);
   [self.instanceManager addDartCreatedInstance:webView.scrollView
                                 withIdentifier:identifier.longValue];
 }
@@ -56,4 +62,14 @@
   [[self scrollViewForIdentifier:identifier]
       setContentOffset:CGPointMake(x.doubleValue, y.doubleValue)];
 }
+- (void)setDelegateForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
+                uiScrollViewDelegateIdentifier:(nonnull NSNumber *)uiScrollViewDelegateIdentifier
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+    NSLog(@"UISCRILL ID %@", identifier);
+    NSLog(@"UISCRILLDELEGATE ID %@", uiScrollViewDelegateIdentifier);
+  [[self scrollViewForIdentifier:identifier]
+      setDelegate:(FWFScrollViewDelegate *)[self.instanceManager
+                      instanceForIdentifier:uiScrollViewDelegateIdentifier.longValue]];
+}
+
 @end

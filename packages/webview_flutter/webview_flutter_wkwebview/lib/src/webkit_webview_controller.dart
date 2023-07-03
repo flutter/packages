@@ -13,6 +13,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'common/instance_manager.dart';
 import 'common/weak_reference_utils.dart';
 import 'foundation/foundation.dart';
+import 'ui_kit/ui_kit.dart';
 import 'web_kit/web_kit.dart';
 import 'webkit_proxy.dart';
 
@@ -206,6 +207,15 @@ class WebKitWebViewController extends PlatformWebViewController {
     );
 
     _webView.setUIDelegate(_uiDelegate);
+    _uiScrollViewDelegate = _webKitParams.webKitProxy
+        .createUIScrollViewDelegate(
+        scrollViewDidScroll: (UIScrollView uiScrollView) async {
+          final Point<double> offset = await uiScrollView.getContentOffset();
+          _onContentOffsetChangedCallback
+              ?.call(ContentOffsetChange(offset.x.toInt(), offset.y.toInt()));
+        });
+    _webView.scrollView.setDelegate(_uiScrollViewDelegate);
+
   }
 
   /// The WebKit WebView being controlled.
@@ -249,6 +259,8 @@ class WebKitWebViewController extends PlatformWebViewController {
   );
 
   late final WKUIDelegate _uiDelegate;
+  
+  late final UIScrollViewDelegate _uiScrollViewDelegate;
 
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
       <String, WebKitJavaScriptChannelParams>{};
@@ -257,6 +269,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
+
+  Function(ContentOffsetChange contentOffsetChange)?
+      _onContentOffsetChangedCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
       params as WebKitWebViewControllerCreationParams;
@@ -530,6 +545,13 @@ class WebKitWebViewController extends PlatformWebViewController {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  @override
+  Future<void> setOnContentOffsetChanged(
+      void Function(ContentOffsetChange contentOffsetChange)?
+          onOffsetChange) async {
+    _onContentOffsetChangedCallback = onOffsetChange;
   }
 }
 

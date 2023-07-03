@@ -398,6 +398,10 @@ abstract class UIScrollViewHostApi {
 
   @ObjCSelector('setContentOffsetForScrollViewWithIdentifier:toX:y:')
   void setContentOffset(int identifier, double x, double y);
+
+  @ObjCSelector(
+      'setDelegateForScrollViewWithIdentifier:uiScrollViewDelegateIdentifier:')
+  void setDelegate(int identifier, int uiScrollViewDelegateIdentifier);
 }
 
 /// Mirror of WKWebViewConfiguration.
@@ -769,4 +773,32 @@ abstract class NSUrlHostApi {
 abstract class NSUrlFlutterApi {
   @ObjCSelector('createWithIdentifier:')
   void create(int identifier);
+}
+
+/// Host API for `UIScrollViewDelegate`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+@HostApi(dartHostTestHandler: 'TestUIScrollViewDelegateHostApi')
+abstract class UIScrollViewDelegateHostApi {
+  @ObjCSelector('createWithIdentifier:')
+  void create(int identifier);
+}
+
+/// Flutter API for `UIScrollViewDelegate`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+@FlutterApi()
+abstract class UIScrollViewDelegateFlutterApi {
+  @ObjCSelector(
+    'scrollViewDidScrollWithIdentifier:uiScrollViewIdentifier:',
+  )
+  void scrollViewDidScroll(int identifier, int uiScrollViewIdentifier);
 }

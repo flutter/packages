@@ -10,6 +10,7 @@
 #import "FWFObjectHostApi.h"
 #import "FWFPreferencesHostApi.h"
 #import "FWFScriptMessageHandlerHostApi.h"
+#import "FWFScrollViewDelegateHostApi.h"
 #import "FWFScrollViewHostApi.h"
 #import "FWFUIDelegateHostApi.h"
 #import "FWFUIViewHostApi.h"
@@ -104,7 +105,10 @@
   FWFNSUrlHostApiSetup(registrar.messenger,
                        [[FWFURLHostApiImpl alloc] initWithBinaryMessenger:registrar.messenger
                                                           instanceManager:instanceManager]);
-
+  FWFUIScrollViewDelegateHostApiSetup(
+      registrar.messenger,
+      [[FWFScrollViewDelegateHostApiImpl alloc] initWithBinaryMessenger:registrar.messenger
+                                                        instanceManager:instanceManager]);
   FWFWebViewFactory *webviewFactory = [[FWFWebViewFactory alloc] initWithManager:instanceManager];
   [registrar registerViewFactory:webviewFactory withId:@"plugins.flutter.io/webview"];
 

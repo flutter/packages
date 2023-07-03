@@ -4,6 +4,7 @@
 
 import 'common/instance_manager.dart';
 import 'foundation/foundation.dart';
+import 'ui_kit/ui_kit.dart';
 import 'web_kit/web_kit.dart';
 
 // This convenience method was added because Dart doesn't support constant
@@ -22,14 +23,14 @@ WKWebsiteDataStore _defaultWebsiteDataStore() =>
 /// it intends to return.
 class WebKitProxy {
   /// Constructs a [WebKitProxy].
-  const WebKitProxy({
-    this.createWebView = WKWebView.new,
-    this.createWebViewConfiguration = WKWebViewConfiguration.new,
-    this.createScriptMessageHandler = WKScriptMessageHandler.new,
-    this.defaultWebsiteDataStore = _defaultWebsiteDataStore,
-    this.createNavigationDelegate = WKNavigationDelegate.new,
-    this.createUIDelegate = WKUIDelegate.new,
-  });
+  const WebKitProxy(
+      {this.createWebView = WKWebView.new,
+      this.createWebViewConfiguration = WKWebViewConfiguration.new,
+      this.createScriptMessageHandler = WKScriptMessageHandler.new,
+      this.defaultWebsiteDataStore = _defaultWebsiteDataStore,
+      this.createNavigationDelegate = WKNavigationDelegate.new,
+      this.createUIDelegate = WKUIDelegate.new,
+      this.createUIScrollViewDelegate = UIScrollViewDelegate.new});
 
   /// Constructs a [WKWebView].
   final WKWebView Function(
@@ -89,4 +90,9 @@ class WebKitProxy {
     )? requestMediaCapturePermission,
     InstanceManager? instanceManager,
   }) createUIDelegate;
+
+  /// Constructs a [UIScrollViewDelegate].
+  final UIScrollViewDelegate Function(
+          {void Function(UIScrollView scrollView)? scrollViewDidScroll})
+      createUIScrollViewDelegate;
 }

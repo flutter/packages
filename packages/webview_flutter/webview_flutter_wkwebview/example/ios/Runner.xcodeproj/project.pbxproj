@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1096EF442A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1096EF432A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		8F4FF949299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4FF948299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m */; };
@@ -66,6 +67,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1096EF432A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FWFScrollViewDelegateHostApiTests.m; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		17781D9462A1AEA7C99F8E45 /* libPods-RunnerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RunnerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -165,6 +167,7 @@
 				8FB79B902820BAC700C101D3 /* FWFUIViewHostApiTests.m */,
 				8FB79B962821985200C101D3 /* FWFObjectHostApiTests.m */,
 				8F4FF94A29AC223F000A6586 /* FWFURLTests.m */,
+				1096EF432A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -315,7 +318,7 @@
 			isa = PBXProject;
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "The Flutter Authors";
 				TargetAttributes = {
 					68BDCAE823C3F7CB00D9C032 = {
@@ -475,6 +478,7 @@
 				8FB79B7928209D1300C101D3 /* FWFUserContentControllerHostApiTests.m in Sources */,
 				8F4FF949299ADC2D000A6586 /* FWFWebViewFlutterWKWebViewExternalAPITests.m in Sources */,
 				8FB79B6B28204EE500C101D3 /* FWFWebsiteDataStoreHostApiTests.m in Sources */,
+				1096EF442A6BD9DB000CBDF7 /* FWFScrollViewDelegateHostApiTests.m in Sources */,
 				8FB79B8F2820BAB300C101D3 /* FWFScrollViewHostApiTests.m in Sources */,
 				8FB79B912820BAC700C101D3 /* FWFUIViewHostApiTests.m in Sources */,
 				8FB79B55281B24F600C101D3 /* FWFDataConvertersTests.m in Sources */,

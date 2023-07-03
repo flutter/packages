@@ -13,6 +13,7 @@
 #import "FWFObjectHostApi.h"
 #import "FWFPreferencesHostApi.h"
 #import "FWFScriptMessageHandlerHostApi.h"
+#import "FWFScrollViewDelegateHostApi.h"
 #import "FWFScrollViewHostApi.h"
 #import "FWFUIDelegateHostApi.h"
 #import "FWFUIViewHostApi.h"

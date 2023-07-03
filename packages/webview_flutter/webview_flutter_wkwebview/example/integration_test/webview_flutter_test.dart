@@ -668,7 +668,7 @@ Future<void> main() async {
   });
 
   group('Programmatic Scroll', () {
-    testWidgets('setAndGetScrollPosition', (WidgetTester tester) async {
+    testWidgets('setAndGetAndListenScrollPosition', (WidgetTester tester) async {
       const String scrollTestPage = '''
         <!DOCTYPE html>
         <html>
@@ -694,6 +694,8 @@ Future<void> main() async {
           base64Encode(const Utf8Encoder().convert(scrollTestPage));
 
       final Completer<void> pageLoaded = Completer<void>();
+      Completer<ContentOffsetChange> offsetsCompleter =
+          Completer<ContentOffsetChange>();
       final PlatformWebViewController controller = PlatformWebViewController(
         WebKitWebViewControllerCreationParams(),
       )
@@ -709,7 +711,10 @@ Future<void> main() async {
               'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
             ),
           ),
-        );
+        )
+        ..setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
+          offsetsCompleter.complete(contentOffsetChange);
+        });
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -738,12 +743,23 @@ Future<void> main() async {
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL);
       expect(scrollPos.dy, Y_SCROLL);
+      await expectLater(
+          offsetsCompleter.future.then(
+              (ContentOffsetChange contentOffsetChange) =>
+                  <int>[contentOffsetChange.x, contentOffsetChange.y]),
+          completion(<int>[X_SCROLL, Y_SCROLL]));
 
       // Check scrollBy() (on top of scrollTo())
+      offsetsCompleter = Completer<ContentOffsetChange>();
       await controller.scrollBy(X_SCROLL, Y_SCROLL);
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL * 2);
       expect(scrollPos.dy, Y_SCROLL * 2);
+      await expectLater(
+          offsetsCompleter.future.then(
+              (ContentOffsetChange contentOffsetChange) =>
+                  <int>[contentOffsetChange.x, contentOffsetChange.y]),
+          completion(<int>[X_SCROLL * 2, Y_SCROLL * 2]));
     });
   });
 
