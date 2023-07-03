@@ -106,7 +106,7 @@ ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
     const AllClassesWrapper& wrapper) {
   const std::string* inner_string =
-      wrapper.allNullableTypes().a_nullable_string();
+      wrapper.all_nullable_types().a_nullable_string();
   return inner_string ? std::optional<std::string>(*inner_string)
                       : std::nullopt;
 }
