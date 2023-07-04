@@ -90,10 +90,7 @@ Future<void> _validateGeneratedExampleFiles() async {
   print('Validating generated files:');
   print('  Generating example output...');
 
-  final int generateExitCode = await runPigeon(
-    input: './example/app/pigeons/messages.dart',
-    basePath: './example/app',
-  );
+  final int generateExitCode = await generateExamplePigeons();
 
   if (generateExitCode != 0) {
     print('Generation failed; see above for errors.');
