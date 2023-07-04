@@ -58,7 +58,8 @@ class TestPlugin : public flutter::Plugin,
       const flutter::EncodableList& a_list) override;
   core_tests_pigeontest::ErrorOr<flutter::EncodableMap> EchoMap(
       const flutter::EncodableMap& a_map) override;
-  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllClassesWrapper> EchoClassWrapper(
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllClassesWrapper>
+  EchoClassWrapper(
       const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
   ExtractNestedNullableString(
