@@ -415,7 +415,7 @@ NSString *const errorMethod = @"error";
       }
     case FLTResolutionPresetVeryHigh:
       // Selects the appropriate 1080p resolution to match the desired aspect ratio for photos.
-      if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionInputPriority]) {
+      if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetInputPriority]) {
         for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
           CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
           if (dimensions.height == 1080) {
@@ -431,7 +431,7 @@ NSString *const errorMethod = @"error";
       }
     case FLTResolutionPresetHigh:
       // Selects the appropriate 720p or 768p resolution to match the desired aspect ratio for photos.
-      if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionInputPriority]) {
+      if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetInputPriority]) {
         for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
           CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
           if (dimensions.height == 720 || dimensions.height == 768) {

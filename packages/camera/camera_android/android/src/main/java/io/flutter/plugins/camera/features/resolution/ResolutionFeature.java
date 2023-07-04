@@ -20,6 +20,8 @@ import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.SdkCapabilityChecker;
 import io.flutter.plugins.camera.features.CameraFeature;
 import io.flutter.plugins.camera.types.CaptureMode;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -118,8 +120,6 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   @Override
   public void setValue(@NonNull ResolutionPreset value) {
     this.currentSetting = value;
-    // TODO
-    Log.d("RESOLUTION", "setValue: " + value.toString());
     configureResolution(currentSetting, cameraId, captureMode, cameraProperties.getAvailableOutputSizes(ImageFormat.PRIVATE));
   }
 
@@ -131,10 +131,6 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   @Override
   public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     // No-op: when setting a resolution there is no need to update the request builder.
-  }
-
-  static int gcd(int a, int b) {
-    return (b == 0) ? a : gcd(b, a % b);
   }
 
   @VisibleForTesting
@@ -287,76 +283,76 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   @SuppressWarnings("fallthrough")
   @NonNull
   public static Size getBestAvailableCameraSizeForResolutionPreset(@NonNull ResolutionPreset preset, Size[] availableOutputSizes) {
+    List<Size> availableStandardOutputSizes = new ArrayList<>();
+    for (Size outputSize : availableOutputSizes) {
+      if ((Math.abs((double) outputSize.getWidth() / outputSize.getHeight() - (double)4 / 3) < 0.01)) {
+        availableStandardOutputSizes.add(outputSize);
+      }
+    }
     Size selectedSize = null;
     switch (preset) {
       case max:
-        selectedSize = selectPhotoCaptureSize(null, availableOutputSizes);
+        selectedSize = selectPhotoCaptureSize(null, availableStandardOutputSizes);
         if (selectedSize != null) {
           return selectedSize;
         }
         // fall through
       case ultraHigh:
-        selectedSize = selectPhotoCaptureSize(2160, availableOutputSizes);
+        selectedSize = selectPhotoCaptureSize(2160, availableStandardOutputSizes);
         if (selectedSize != null) {
           return selectedSize;
         }
         // fall through
       case veryHigh:
-        selectedSize = selectPhotoCaptureSize(1080, availableOutputSizes);
+        selectedSize = selectPhotoCaptureSize(1080, availableStandardOutputSizes);
         if (selectedSize != null) {
           return selectedSize;
         }
         // fall through
       case high:
-        selectedSize = selectPhotoCaptureSize(720, availableOutputSizes);
+        // Both 768 and 720 are common HD picture heights.
+        selectedSize = selectPhotoCaptureSize(768, availableStandardOutputSizes);
+        if (selectedSize != null) {
+          return selectedSize;
+        }
+        selectedSize = selectPhotoCaptureSize(720, availableStandardOutputSizes);
         if (selectedSize != null) {
           return selectedSize;
         }
         // fall through
       case medium:
-        selectedSize = selectPhotoCaptureSize(480, availableOutputSizes);
+        selectedSize = selectPhotoCaptureSize(480, availableStandardOutputSizes);
         if (selectedSize != null) {
           return selectedSize;
         }
         // fall through
       case low:
-        selectedSize = selectPhotoCaptureSize(240, availableOutputSizes);
+        selectedSize = selectPhotoCaptureSize(240, availableStandardOutputSizes);
         if (selectedSize != null) {
           return selectedSize;
         }
         // fall through
       default:
-        // default to 720p as a fallback as it should be available on most devices as an option.
-        selectedSize = selectPhotoCaptureSize(720, availableOutputSizes);
-        if (selectedSize != null) {
-          return selectedSize;
+        // default to lowest available 4:3 resolution.
+        if (availableStandardOutputSizes.size() > 0) {
+          return availableStandardOutputSizes.get(availableStandardOutputSizes.size() - 1);
         }
-
         throw new IllegalArgumentException(
                 "No capture session available for current capture session.");
     }
   }
 
-  private static Size selectPhotoCaptureSize(Integer resolutionWidth, Size[] availableOutputSizes) {
-    // When the capture mode is photo, the preview size should be a 4:3 aspect ratio.
+  private static Size selectPhotoCaptureSize(Integer resolutionWidth, List<Size> availableStandardOutputSizes) {
     Size selectedPreviewResolution = null;
     int currentHighestPixel = 0;
-    for (int i = 0; i < availableOutputSizes.length; i++) {
-      int factor = gcd(availableOutputSizes[i].getWidth(), availableOutputSizes[i].getHeight());
-      int widthRatio = availableOutputSizes[i].getWidth() / factor;
-      int heightRatio = availableOutputSizes[i].getHeight() / factor;
-
-      Log.d("RESOLUTION", availableOutputSizes[i].toString() + "Aspect Ratio: " + widthRatio + ":" + heightRatio);
+    for (Size standardOutputSize : availableStandardOutputSizes) {
       // When no resolutionWidth is provided, the highest resolution should be selected.
-      if ((Math.abs((double) availableOutputSizes[i].getWidth() / availableOutputSizes[i].getHeight() - (double)4 / 3) < 0.01 && resolutionWidth != null && availableOutputSizes[i].getHeight() == resolutionWidth) || resolutionWidth == null) {
-        if (availableOutputSizes[i].getWidth() * availableOutputSizes[i].getHeight() > currentHighestPixel) {
-          selectedPreviewResolution = availableOutputSizes[i];
-          currentHighestPixel = availableOutputSizes[i].getWidth() * availableOutputSizes[i].getHeight();
+      if ((resolutionWidth != null && standardOutputSize.getHeight() == resolutionWidth) || resolutionWidth == null) {
+        if (standardOutputSize.getWidth() * standardOutputSize.getHeight() > currentHighestPixel) {
+          selectedPreviewResolution = standardOutputSize;
+          currentHighestPixel = standardOutputSize.getWidth() * standardOutputSize.getHeight();
         }
       }
-    }
-    if (selectedPreviewResolution != null) {
-      Log.d("RESOLUTION PICKED", selectedPreviewResolution.toString());
     }
     return selectedPreviewResolution;
   }

@@ -43,11 +43,6 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
       currentSetting = MAX_PIXEL4A_RANGE;
     } else {
       Range<Integer>[] ranges = cameraProperties.getControlAutoExposureAvailableTargetFpsRanges();
-      // print all ranges
-      //
-       for (Range<Integer> range : ranges) {
-         Log.d("FpsRangeFeature", "FpsRangeFeature: " + range.getLower()+ " " + range.getUpper());
-       }
 
       if (ranges != null) {
         for (Range<Integer> range : ranges) {
@@ -99,7 +94,6 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
     if (!checkIsSupported()) {
       return;
     }
-    Log.d("FpsRangeFeature", "updateBuilder: " + currentSetting);
     requestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, currentSetting);
   }
 }
