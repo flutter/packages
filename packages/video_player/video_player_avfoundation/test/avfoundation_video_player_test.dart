@@ -139,7 +139,7 @@ void main() {
       try {
         await player.create(DataSource(
           sourceType: DataSourceType.asset,
-          asset: 'incorrectAsset',
+          asset: '/path/to/incorrect_asset',
         ));
         fail('should throw PlatformException');
       } catch (e) {
