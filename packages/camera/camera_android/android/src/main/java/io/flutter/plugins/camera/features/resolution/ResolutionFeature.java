@@ -50,6 +50,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    * @param cameraProperties Collection of characteristics for the current camera device.
    * @param resolutionPreset Platform agnostic enum containing resolution information.
    * @param cameraName       Camera identifier of the camera for which to configure the resolution.
+   * @param captureMode      Capture mode to configure the appropriate resolution and aspect ratio.
    */
   public ResolutionFeature(
           @NonNull CameraProperties cameraProperties,
@@ -135,7 +136,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
 
   @VisibleForTesting
   static Size computeBestPreviewSize(int cameraId, ResolutionPreset preset, CaptureMode captureMode, Size[] availableOutputSizes)
-          throws IndexOutOfBoundsException {
+      throws IndexOutOfBoundsException {
     // Using max resolution for the preview is not a good use of system resources.
     // Limiting the max resolution used for the preview to 1080p. is a good balance.
     if (preset.ordinal() > ResolutionPreset.high.ordinal()) {
@@ -146,7 +147,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       EncoderProfiles profile =
-              getBestAvailableCamcorderProfileForResolutionPreset(cameraId, preset);
+          getBestAvailableCamcorderProfileForResolutionPreset(cameraId, preset);
       List<EncoderProfiles.VideoProfile> videoProfiles = profile.getVideoProfiles();
       EncoderProfiles.VideoProfile defaultVideoProfile = videoProfiles.get(0);
 
@@ -158,7 +159,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     // TODO(camsim99): Suppression is currently safe because legacy code is used as a fallback for SDK < S.
     // This should be removed when reverting that fallback behavior: https://github.com/flutter/flutter/issues/119668.
     CamcorderProfile profile =
-            getBestAvailableCamcorderProfileForResolutionPresetLegacy(cameraId, preset);
+        getBestAvailableCamcorderProfileForResolutionPresetLegacy(cameraId, preset);
     return new Size(profile.videoFrameWidth, profile.videoFrameHeight);
   }
 
@@ -178,10 +179,10 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   @SuppressWarnings({"fallthrough", "deprecation"})
   @NonNull
   public static CamcorderProfile getBestAvailableCamcorderProfileForResolutionPresetLegacy(
-          int cameraId, @NonNull ResolutionPreset preset) {
+      int cameraId, @NonNull ResolutionPreset preset) {
     if (cameraId < 0) {
       throw new AssertionError(
-              "getBestAvailableCamcorderProfileForResolutionPreset can only be used with valid (>=0) camera identifiers.");
+          "getBestAvailableCamcorderProfileForResolutionPreset can only be used with valid (>=0) camera identifiers.");
     }
 
     switch (preset) {
@@ -220,7 +221,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
           return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
         } else {
           throw new IllegalArgumentException(
-                  "No capture session available for current capture session.");
+              "No capture session available for current capture session.");
         }
     }
   }
@@ -230,10 +231,10 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   @SuppressWarnings("fallthrough")
   @NonNull
   public static EncoderProfiles getBestAvailableCamcorderProfileForResolutionPreset(
-          int cameraId, @NonNull ResolutionPreset preset) {
+      int cameraId, @NonNull ResolutionPreset preset) {
     if (cameraId < 0) {
       throw new AssertionError(
-              "getBestAvailableCamcorderProfileForResolutionPreset can only be used with valid (>=0) camera identifiers.");
+          "getBestAvailableCamcorderProfileForResolutionPreset can only be used with valid (>=0) camera identifiers.");
     }
 
     String cameraIdString = Integer.toString(cameraId);
@@ -275,7 +276,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
         }
 
         throw new IllegalArgumentException(
-                "No capture session available for current capture session.");
+            "No capture session available for current capture session.");
     }
   }
 
@@ -338,7 +339,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
           return availableStandardOutputSizes.get(availableStandardOutputSizes.size() - 1);
         }
         throw new IllegalArgumentException(
-                "No capture session available for current capture session.");
+            "No capture session available for current capture session.");
     }
   }
 

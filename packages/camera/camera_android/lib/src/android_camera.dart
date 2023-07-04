@@ -184,8 +184,6 @@ class AndroidCamera extends CameraPlatform {
     return _cameraEvents(cameraId).whereType<CameraResolutionChangedEvent>();
   }
 
-  /// TODO investigate if this is needed for capturemode
-
   @override
   Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
     return _cameraEvents(cameraId).whereType<CameraClosingEvent>();

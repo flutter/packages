@@ -94,6 +94,7 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
     if (!checkIsSupported()) {
       return;
     }
+
     requestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, currentSetting);
   }
 }

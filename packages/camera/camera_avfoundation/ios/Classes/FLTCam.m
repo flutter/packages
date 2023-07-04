@@ -476,10 +476,6 @@ NSString *const errorMethod = @"error";
 - (void)setCaptureSessionWithResolutionPreset:(FLTResolutionPreset)resolutionPreset
                               withCaptureMode: (FLTCaptureMode) captureMode {
   NSArray<AVCaptureDeviceFormat *> *formats = _captureDevice.formats;
-  for (AVCaptureDeviceFormat *format in formats) {
-    CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-    NSLog(@"format: %@, resolution: %d x %d", format, dimensions.width, dimensions.height);
-  }
   if (captureMode == FLTCaptureModeVideo) {
     [self setCaptureSessionForVideo:resolutionPreset];
   } else if (captureMode == FLTCaptureModePhoto) {
@@ -488,7 +484,6 @@ NSString *const errorMethod = @"error";
   CMVideoDimensions previewDimensions = CMVideoFormatDescriptionGetDimensions(_captureDevice.activeFormat.formatDescription);
   _previewSize = CGSizeMake(previewDimensions.width, previewDimensions.height);
   _audioCaptureSession.sessionPreset = _videoCaptureSession.sessionPreset;
-  NSLog(@"preview resolution: %d x %d", previewDimensions.width, previewDimensions.height);
   return YES;
 }
 
