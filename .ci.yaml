@@ -117,6 +117,16 @@ targets:
       version_file: flutter_master.version
       cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 2"
+      # DO NOT LAND - for adding to the real target.
+      # Android deps for tests that build Android.
+      # clang for tests that run the formatter.
+      dependencies: >-
+        [
+          {"dependency": "android_sdk", "version": "version:33v6"},
+          {"dependency": "open_jdk", "version": "version:11"},
+          {"dependency": "curl", "version": "version:7.64.0"}
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+        ]
 
   - name: Linux dart_unit_test_shard_1 stable
     bringup: true # New target
