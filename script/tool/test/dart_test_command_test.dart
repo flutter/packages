@@ -231,9 +231,32 @@ void main() {
           ]));
     });
 
-    test('runs on Chrome for web plugins', () async {
+    test('runs in Chrome when requested for Flutter package', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        isFlutter: true,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>['test', '--color', '--platform=chrome'],
+              package.path),
+        ]),
+      );
+    });
+
+    test('runs in Chrome by default for Flutter plugins that implement web',
+        () async {
       final RepositoryPackage plugin = createFakePlugin(
-        'plugin',
+        'some_plugin_web',
         packagesDir,
         extraFiles: <String>['test/empty_test.dart'],
         platformSupport: <String, PlatformDetails>{
@@ -254,7 +277,33 @@ void main() {
       );
     });
 
-    test('Does not run on Chrome for web endorsements', () async {
+    test('runs in Chrome when requested for Flutter plugins that implement web',
+        () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'some_plugin_web',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>['test', '--color', '--platform=chrome'],
+              plugin.path),
+        ]),
+      );
+    });
+
+    test('runs in Chrome when requested for Flutter plugin that endorse web',
+        () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -264,13 +313,176 @@ void main() {
         },
       );
 
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>['test', '--color', '--platform=chrome'],
+              plugin.path),
+        ]),
+      );
+    });
+
+    test('skips running non-web plugins in browser mode', () async {
+      createFakePlugin(
+        'non_web_plugin',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains("Non-web plugin tests don't need web testing."),
+          ]));
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[]),
+      );
+    });
+
+    test('skips running web plugins in explicit vm mode', () async {
+      createFakePlugin(
+        'some_plugin_web',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=vm']);
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains("Web plugin tests don't need vm testing."),
+          ]));
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[]),
+      );
+    });
+
+    test('does not skip for plugins that endorse web', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'some_plugin',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.federated),
+          platformAndroid: const PlatformDetails(PlatformSupport.federated),
+        },
+      );
+
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>['test', '--color', '--platform=chrome'],
+              plugin.path),
+        ]),
+      );
+    });
+
+    test('runs in Chrome when requested for Dart package', () async {
+      final RepositoryPackage package = createFakePackage(
+        'package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('dart', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart',
+              const <String>['run', 'test', '--platform=chrome'], package.path),
+        ]),
+      );
+    });
+
+    test('skips running in browser mode if package opts out', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: vm
+''');
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome']);
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Package has opted out of non-vm testing.'),
+          ]));
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[]),
+      );
+    });
+
+    test('skips running in vm mode if package opts out', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: browser
+''');
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=vm']);
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Package has opted out of vm testing.'),
+          ]));
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[]),
+      );
+    });
+
+    test('tries to run for a test_on that the tool does not recognize',
+        () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: !vm && firefox
+''');
+
       await runCapturingPrint(runner, <String>['dart-test']);
 
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall(getFlutterCommand(mockPlatform),
-              const <String>['test', '--color'], plugin.path),
+          ProcessCall('dart', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart', const <String>['run', 'test'], package.path),
         ]),
       );
     });

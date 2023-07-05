@@ -375,7 +375,7 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization asynchronously.
   func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   /// Returns the passed map, to test serialization and deserialization asynchronously.
-  func echAsyncoNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+  func echoAsyncNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void)
   func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void)
@@ -1177,7 +1177,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aMapArg: [String?: Any?]? = nilOrValue(args[0])
-        api.echAsyncoNullable(aMapArg) { result in
+        api.echoAsyncNullable(aMapArg) { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
