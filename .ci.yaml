@@ -93,40 +93,26 @@ targets:
       version_file: flutter_master.version
 
   - name: Linux dart_unit_test_shard_1 master
-    # DO NOT LAND - for presubmit validation only.
-    #bringup: true # New target
+    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
-      # DO NOT LAND - for presubmit validation only.
-      target_file: linux_custom_package_tests.yaml
+      target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
       cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux dart_unit_test_shard_2 master
-    # DO NOT LAND - for presubmit validation only.
-    #bringup: true # New target
+    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
-      # DO NOT LAND - for presubmit validation only.
-      target_file: linux_custom_package_tests.yaml
+      target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
       cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 2"
-      # DO NOT LAND - for adding to the real target.
-      # Android deps for tests that build Android.
-      # clang for tests that run the formatter.
-      dependencies: >-
-        [
-          {"dependency": "android_sdk", "version": "version:33v6"},
-          {"dependency": "open_jdk", "version": "version:11"},
-          {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
-        ]
 
   - name: Linux dart_unit_test_shard_1 stable
     bringup: true # New target
@@ -228,28 +214,39 @@ targets:
       channel: stable
       version_file: flutter_stable.version
 
-  - name: Linux custom_package_tests master
+  - name: Linux_android custom_package_tests master
     bringup: true # New target
     recipe: packages/packages
-    timeout: 60
+    timeout: 30
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: linux_custom_package_tests.yaml
       cores: "32"
+      # Pigeon tests need Andoid deps (thus the Linux_android base) and
+      # clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
       channel: master
 
-  - name: Linux custom_package_tests stable
+  - name: Linux_android custom_package_tests stable
     bringup: true # New target
     recipe: packages/packages
-    timeout: 60
+    timeout: 30
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       cores: "32"
+      # Pigeon tests need Andoid deps (thus the Linux_android base) and
+      # clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
       channel: stable
-
 
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
