@@ -11,13 +11,14 @@ import 'package:meta/meta_meta.dart';
 import 'route.dart';
 import 'state.dart';
 
-/// A superclass for each route data
+/// Baseclass for supporting
+/// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 abstract class RouteData {
-  /// Default const constructor
+  /// Allows subclasses to have `const` constructors.
   const RouteData();
 }
 
-/// Baseclass for supporting
+/// A class to represent a [GoRoute] in
 /// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 ///
 /// Subclasses must override one of [build], [buildPage], or
@@ -123,10 +124,12 @@ abstract class GoRouteData extends RouteData {
   );
 }
 
-/// Base class for supporting
-/// [nested navigation](https://pub.dev/packages/go_router#nested-navigation)
+/// A class to represent a [ShellRoute] in
+/// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 abstract class ShellRouteData extends RouteData {
-  /// Default const constructor
+  /// Allows subclasses to have `const` constructors.
+  ///
+  /// [GoRouteData] is abstract and cannot be instantiated directly.
   const ShellRouteData();
 
   /// [pageBuilder] is used to build the page

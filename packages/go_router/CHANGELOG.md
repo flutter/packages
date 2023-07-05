@@ -1,3 +1,7 @@
+## 9.0.1
+
+- Exposes package-level privates.
+
 ## 9.0.0
 
 - **BREAKING CHANGE**:
