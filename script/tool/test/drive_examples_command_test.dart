@@ -190,91 +190,6 @@ void main() {
       );
     });
 
-    test('driving under folder "test_driver"', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin',
-        packagesDir,
-        extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
-          'example/android/android.java',
-          'example/ios/ios.m',
-        ],
-        platformSupport: <String, PlatformDetails>{
-          platformAndroid: const PlatformDetails(PlatformSupport.inline),
-          platformIOS: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
-
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
-
-      setMockFlutterDevicesOutput();
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['drive-examples', '--ios']);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('No issues found!'),
-        ]),
-      );
-
-      expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(getFlutterCommand(mockPlatform),
-                const <String>['devices', '--machine'], null),
-            ProcessCall(
-                getFlutterCommand(mockPlatform),
-                const <String>[
-                  'drive',
-                  '-d',
-                  _fakeIOSDevice,
-                  '--driver',
-                  'test_driver/plugin_test.dart',
-                  '--target',
-                  'test_driver/plugin.dart'
-                ],
-                pluginExampleDirectory.path),
-          ]));
-    });
-
-    test('driving under folder "test_driver" when test files are missing"',
-        () async {
-      setMockFlutterDevicesOutput();
-      createFakePlugin(
-        'plugin',
-        packagesDir,
-        extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/android/android.java',
-          'example/ios/ios.m',
-        ],
-        platformSupport: <String, PlatformDetails>{
-          platformAndroid: const PlatformDetails(PlatformSupport.inline),
-          platformIOS: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['drive-examples', '--android'],
-          errorHandler: (Error e) {
-        commandError = e;
-      });
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('No driver tests were run (1 example(s) found).'),
-          contains('No test files for example/test_driver/plugin_test.dart'),
-        ]),
-      );
-    });
-
     test('a plugin without any integration test files is reported as an error',
         () async {
       setMockFlutterDevicesOutput();
@@ -351,14 +266,11 @@ void main() {
       );
     });
 
-    test(
-        'driving under folder "test_driver" when targets are under "integration_test"',
-        () async {
+    test('tests an iOS plugin', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/integration_test.dart',
           'example/integration_test/bar_test.dart',
           'example/integration_test/foo_test.dart',
           'example/integration_test/ignore_me.dart',
@@ -393,25 +305,10 @@ void main() {
             ProcessCall(
                 getFlutterCommand(mockPlatform),
                 const <String>[
-                  'drive',
+                  'test',
                   '-d',
                   _fakeIOSDevice,
-                  '--driver',
-                  'test_driver/integration_test.dart',
-                  '--target',
-                  'integration_test/bar_test.dart',
-                ],
-                pluginExampleDirectory.path),
-            ProcessCall(
-                getFlutterCommand(mockPlatform),
-                const <String>[
-                  'drive',
-                  '-d',
-                  _fakeIOSDevice,
-                  '--driver',
-                  'test_driver/integration_test.dart',
-                  '--target',
-                  'integration_test/foo_test.dart',
+                  'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
@@ -419,8 +316,7 @@ void main() {
 
     test('driving when plugin does not support Linux is a no-op', () async {
       createFakePlugin('plugin', packagesDir, extraFiles: <String>[
-        'example/test_driver/plugin_test.dart',
-        'example/test_driver/plugin.dart',
+        'example/integration_test/plugin_test.dart',
       ]);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -442,13 +338,12 @@ void main() {
       expect(processRunner.recordedCalls, <ProcessCall>[]);
     });
 
-    test('driving on a Linux plugin', () async {
+    test('tests a Linux plugin', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
           'example/linux/linux.cc',
         ],
         platformSupport: <String, PlatformDetails>{
@@ -477,13 +372,10 @@ void main() {
             ProcessCall(
                 getFlutterCommand(mockPlatform),
                 const <String>[
-                  'drive',
+                  'test',
                   '-d',
                   'linux',
-                  '--driver',
-                  'test_driver/plugin_test.dart',
-                  '--target',
-                  'test_driver/plugin.dart'
+                  'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
@@ -491,8 +383,7 @@ void main() {
 
     test('driving when plugin does not suppport macOS is a no-op', () async {
       createFakePlugin('plugin', packagesDir, extraFiles: <String>[
-        'example/test_driver/plugin_test.dart',
-        'example/test_driver/plugin.dart',
+        'example/integration_test/plugin_test.dart',
       ]);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -514,13 +405,12 @@ void main() {
       expect(processRunner.recordedCalls, <ProcessCall>[]);
     });
 
-    test('driving on a macOS plugin', () async {
+    test('tests a macOS plugin', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
           'example/macos/macos.swift',
         ],
         platformSupport: <String, PlatformDetails>{
@@ -549,13 +439,10 @@ void main() {
             ProcessCall(
                 getFlutterCommand(mockPlatform),
                 const <String>[
-                  'drive',
+                  'test',
                   '-d',
                   'macos',
-                  '--driver',
-                  'test_driver/plugin_test.dart',
-                  '--target',
-                  'test_driver/plugin.dart'
+                  'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
@@ -563,8 +450,7 @@ void main() {
 
     test('driving when plugin does not suppport web is a no-op', () async {
       createFakePlugin('plugin', packagesDir, extraFiles: <String>[
-        'example/test_driver/plugin_test.dart',
-        'example/test_driver/plugin.dart',
+        'example/integration_test/plugin_test.dart',
       ]);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -585,13 +471,13 @@ void main() {
       expect(processRunner.recordedCalls, <ProcessCall>[]);
     });
 
-    test('driving a web plugin', () async {
+    test('drives a web plugin', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
+          'example/test_driver/integration_test.dart',
           'example/web/index.html',
         ],
         platformSupport: <String, PlatformDetails>{
@@ -626,21 +512,21 @@ void main() {
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--driver',
-                  'test_driver/plugin_test.dart',
+                  'test_driver/integration_test.dart',
                   '--target',
-                  'test_driver/plugin.dart'
+                  'integration_test/plugin_test.dart',
                 ],
                 pluginExampleDirectory.path),
           ]));
     });
 
-    test('driving a web plugin with CHROME_EXECUTABLE', () async {
+    test('drives a web plugin with CHROME_EXECUTABLE', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
+          'example/test_driver/integration_test.dart',
           'example/web/index.html',
         ],
         platformSupport: <String, PlatformDetails>{
@@ -678,9 +564,9 @@ void main() {
                   '--browser-name=chrome',
                   '--chrome-binary=/path/to/chrome',
                   '--driver',
-                  'test_driver/plugin_test.dart',
+                  'test_driver/integration_test.dart',
                   '--target',
-                  'test_driver/plugin.dart'
+                  'integration_test/plugin_test.dart',
                 ],
                 pluginExampleDirectory.path),
           ]));
@@ -688,8 +574,7 @@ void main() {
 
     test('driving when plugin does not suppport Windows is a no-op', () async {
       createFakePlugin('plugin', packagesDir, extraFiles: <String>[
-        'example/test_driver/plugin_test.dart',
-        'example/test_driver/plugin.dart',
+        'example/integration_test/plugin_test.dart',
       ]);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -711,13 +596,12 @@ void main() {
       expect(processRunner.recordedCalls, <ProcessCall>[]);
     });
 
-    test('driving on a Windows plugin', () async {
+    test('tests a Windows plugin', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
           'example/windows/windows.cpp',
         ],
         platformSupport: <String, PlatformDetails>{
@@ -746,25 +630,21 @@ void main() {
             ProcessCall(
                 getFlutterCommand(mockPlatform),
                 const <String>[
-                  'drive',
+                  'test',
                   '-d',
                   'windows',
-                  '--driver',
-                  'test_driver/plugin_test.dart',
-                  '--target',
-                  'test_driver/plugin.dart'
+                  'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
     });
 
-    test('driving on an Android plugin', () async {
+    test('tests an Android plugin', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
           'example/android/android.java',
         ],
         platformSupport: <String, PlatformDetails>{
@@ -796,25 +676,21 @@ void main() {
             ProcessCall(
                 getFlutterCommand(mockPlatform),
                 const <String>[
-                  'drive',
+                  'test',
                   '-d',
                   _fakeAndroidDevice,
-                  '--driver',
-                  'test_driver/plugin_test.dart',
-                  '--target',
-                  'test_driver/plugin.dart'
+                  'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
     });
 
-    test('driving on an Android plugin with alias', () async {
+    test('tests an Android plugin with "apk" alias', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
           'example/android/android.java',
         ],
         platformSupport: <String, PlatformDetails>{
@@ -846,13 +722,10 @@ void main() {
             ProcessCall(
                 getFlutterCommand(mockPlatform),
                 const <String>[
-                  'drive',
+                  'test',
                   '-d',
                   _fakeAndroidDevice,
-                  '--driver',
-                  'test_driver/plugin_test.dart',
-                  '--target',
-                  'test_driver/plugin.dart'
+                  'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
@@ -863,8 +736,7 @@ void main() {
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
         ],
         platformSupport: <String, PlatformDetails>{
           platformMacOS: const PlatformDetails(PlatformSupport.inline),
@@ -896,8 +768,7 @@ void main() {
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
         ],
         platformSupport: <String, PlatformDetails>{
           platformMacOS: const PlatformDetails(PlatformSupport.inline),
@@ -951,8 +822,7 @@ void main() {
         'plugin',
         packagesDir,
         extraFiles: <String>[
-          'example/test_driver/plugin_test.dart',
-          'example/test_driver/plugin.dart',
+          'example/integration_test/plugin_test.dart',
           'example/android/android.java',
           'example/ios/ios.m',
         ],
@@ -979,14 +849,11 @@ void main() {
             ProcessCall(
                 getFlutterCommand(mockPlatform),
                 const <String>[
-                  'drive',
+                  'test',
                   '-d',
                   _fakeIOSDevice,
                   '--enable-experiment=exp1',
-                  '--driver',
-                  'test_driver/plugin_test.dart',
-                  '--target',
-                  'test_driver/plugin.dart'
+                  'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
@@ -1021,7 +888,7 @@ void main() {
       );
     });
 
-    test('fails when no driver is present', () async {
+    test('web fails when no driver is present', () async {
       createFakePlugin(
         'plugin',
         packagesDir,
@@ -1046,7 +913,7 @@ void main() {
         output,
         containsAllInOrder(<Matcher>[
           contains('Running for plugin'),
-          contains('No driver tests found for plugin/example'),
+          contains('No driver found for plugin/example'),
           contains('No driver tests were run (1 example(s) found).'),
           contains('The following packages had errors:'),
           contains('  plugin:\n'
@@ -1055,7 +922,7 @@ void main() {
       );
     });
 
-    test('fails when no integration tests are present', () async {
+    test('web fails when no integration tests are present', () async {
       createFakePlugin(
         'plugin',
         packagesDir,
@@ -1079,18 +946,15 @@ void main() {
         output,
         containsAllInOrder(<Matcher>[
           contains('Running for plugin'),
-          contains('Found example/test_driver/integration_test.dart, but no '
-              'integration_test/*_test.dart files.'),
           contains('No driver tests were run (1 example(s) found).'),
           contains('The following packages had errors:'),
           contains('  plugin:\n'
-              '    No test files for example/test_driver/integration_test.dart\n'
               '    No tests ran (use --exclude if this is intentional)'),
         ]),
       );
     });
 
-    test('reports test failures', () async {
+    test('"flutter drive" reports test failures', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -1098,10 +962,10 @@ void main() {
           'example/test_driver/integration_test.dart',
           'example/integration_test/bar_test.dart',
           'example/integration_test/foo_test.dart',
-          'example/macos/macos.swift',
+          'example/web/index.html',
         ],
         platformSupport: <String, PlatformDetails>{
-          platformMacOS: const PlatformDetails(PlatformSupport.inline),
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
         },
       );
 
@@ -1109,17 +973,14 @@ void main() {
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
           <FakeProcessInfo>[
-        // No mock for 'devices', since it's running for macOS.
-        FakeProcessInfo(
-            MockProcess(exitCode: 1), <String>['drive']), // 'drive' #1
-        FakeProcessInfo(
-            MockProcess(exitCode: 1), <String>['drive']), // 'drive' #2
+        // Fail both bar_test.dart and foo_test.dart.
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['drive']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['drive']),
       ];
 
       Error? commandError;
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['drive-examples', '--macos'],
-              errorHandler: (Error e) {
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['drive-examples', '--web'], errorHandler: (Error e) {
         commandError = e;
       });
 
@@ -1144,7 +1005,9 @@ void main() {
                 const <String>[
                   'drive',
                   '-d',
-                  'macos',
+                  'web-server',
+                  '--web-port=7357',
+                  '--browser-name=chrome',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -1156,11 +1019,68 @@ void main() {
                 const <String>[
                   'drive',
                   '-d',
-                  'macos',
+                  'web-server',
+                  '--web-port=7357',
+                  '--browser-name=chrome',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
                   'integration_test/foo_test.dart',
+                ],
+                pluginExampleDirectory.path),
+          ]));
+    });
+
+    test('"flutter test" reports test failures', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/bar_test.dart',
+          'example/integration_test/foo_test.dart',
+          'example/macos/macos.swift',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformMacOS: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      // Simulate failure from `flutter test`.
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['test']),
+      ];
+
+      Error? commandError;
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['drive-examples', '--macos'],
+              errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('The following packages had errors:'),
+          contains('  plugin:\n'
+              '    Integration tests failed.'),
+        ]),
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+                getFlutterCommand(mockPlatform),
+                const <String>[
+                  'test',
+                  '-d',
+                  'macos',
+                  'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
@@ -1301,7 +1221,8 @@ void main() {
           output,
           containsAllInOrder(<Matcher>[
             contains('Running for a_package'),
-            contains('SKIPPING: No example is configured for driver tests.'),
+            contains(
+                'SKIPPING: No example is configured for integration tests.'),
           ]),
         );
 
