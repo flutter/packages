@@ -129,7 +129,7 @@ abstract class GoRouteData extends RouteData {
 abstract class ShellRouteData extends RouteData {
   /// Allows subclasses to have `const` constructors.
   ///
-  /// [GoRouteData] is abstract and cannot be instantiated directly.
+  /// [ShellRouteData] is abstract and cannot be instantiated directly.
   const ShellRouteData();
 
   /// [pageBuilder] is used to build the page
