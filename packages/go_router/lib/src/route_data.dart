@@ -154,6 +154,8 @@ abstract class ShellRouteData extends RouteData {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? navigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    List<NavigatorObserver>? observers,
+    String? restorationScopeId,
   }) {
     T factoryImpl(GoRouterState state) {
       return (_stateObjectExpando[state] ??= factory(state)) as T;
@@ -186,6 +188,8 @@ abstract class ShellRouteData extends RouteData {
       pageBuilder: pageBuilder,
       routes: routes,
       navigatorKey: navigatorKey,
+      observers: observers,
+      restorationScopeId: restorationScopeId,
     );
   }
 
@@ -262,6 +266,7 @@ abstract class StatefulShellRouteData extends RouteData {
         builder: builder,
         pageBuilder: pageBuilder,
         navigatorContainerBuilder: navigatorContainerBuilder,
+        restorationScopeId: restorationScopeId,
       );
     }
     return StatefulShellRoute.indexedStack(
@@ -292,10 +297,16 @@ abstract class StatefulShellBranchData {
   static StatefulShellBranch $branch<T extends StatefulShellBranchData>({
     GlobalKey<NavigatorState>? navigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    List<NavigatorObserver>? observers,
+    String? initialLocation,
+    String? restorationScopeId,
   }) {
     return StatefulShellBranch(
       routes: routes,
       navigatorKey: navigatorKey,
+      observers: observers,
+      initialLocation: initialLocation,
+      restorationScopeId: restorationScopeId,
     );
   }
 }
