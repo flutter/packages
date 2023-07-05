@@ -25,7 +25,6 @@ bool _isSafariTargetTopScheme(String url) =>
 
 bool _navigatorIsSafari(html.Navigator navigator) =>
     navigator.userAgent.contains('Safari') &&
-    navigator.vendor.contains('Apple Computer, Inc.') &&
     !navigator.userAgent.contains('Chrome');
 
 /// The web implementation of [UrlLauncherPlatform].
