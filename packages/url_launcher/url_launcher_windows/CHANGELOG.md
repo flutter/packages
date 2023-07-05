@@ -1,5 +1,6 @@
-## NEXT
+## 3.0.7
 
+* Update pigeon dependency for url_launcher_windows to "^9.2.4".
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 3.0.6
