@@ -427,7 +427,6 @@ class Camera
         previewRequestBuilder.addTarget(surface);
       }
     }
-    previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, cameraProperties.getSensorInfoActiveArraySize());
 
     // Update camera regions.
     Size cameraBoundaries =
