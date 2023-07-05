@@ -1024,6 +1024,18 @@ typedef GeolocationPermissionsHidePrompt = void Function(
   WebChromeClient instance,
 );
 
+/// Signature for the callback that is responsible for showing a custom view.
+typedef ShowCustomViewCallback = void Function(
+  WebChromeClient instance,
+  View view,
+  CustomViewCallback callback,
+);
+
+/// Signature for the callback that is responsible for hiding a custom view.
+typedef HideCustomViewCallback = void Function(
+  WebChromeClient instance,
+);
+
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
@@ -1031,13 +1043,10 @@ class WebChromeClient extends JavaObject {
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onPermissionRequest,
-<<<<<<< HEAD
-    this.onShowCustomView,
-    this.onHideCustomView,
-=======
     this.onGeolocationPermissionsShowPrompt,
     this.onGeolocationPermissionsHidePrompt,
->>>>>>> origin/main
+    this.onShowCustomView,
+    this.onHideCustomView,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -1055,13 +1064,10 @@ class WebChromeClient extends JavaObject {
     this.onProgressChanged,
     this.onShowFileChooser,
     this.onPermissionRequest,
-<<<<<<< HEAD
-    this.onShowCustomView,
-    this.onHideCustomView,
-=======
     this.onGeolocationPermissionsShowPrompt,
     this.onGeolocationPermissionsHidePrompt,
->>>>>>> origin/main
+    this.onShowCustomView,
+    this.onHideCustomView,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -1096,32 +1102,24 @@ class WebChromeClient extends JavaObject {
     PermissionRequest request,
   )? onPermissionRequest;
 
-<<<<<<< HEAD
-  /// Notify the host application that the current page has entered full screen
-  /// mode.
-  ///
-  /// After this call, web content will no longer be rendered in the WebView,
-  /// but will instead be rendered in `view`.
-  final void Function(
-    WebChromeClient instance,
-    View view,
-    CustomViewCallback callback,
-  )? onShowCustomView;
-
-  /// Notify the host application that the current page has exited full screen
-  /// mode.
-  final void Function(WebChromeClient instance)? onHideCustomView;
-=======
   /// Indicates the client should handle geolocation permissions.
   final GeolocationPermissionsShowPrompt? onGeolocationPermissionsShowPrompt;
 
   /// Notify the host application that a request for Geolocation permissions,
   /// made with a previous call to [onGeolocationPermissionsShowPrompt] has been
   /// canceled.
-  final void Function(
-    WebChromeClient instance,
-  )? onGeolocationPermissionsHidePrompt;
->>>>>>> origin/main
+  final GeolocationPermissionsHidePrompt? onGeolocationPermissionsHidePrompt;
+
+  /// Notify the host application that the current page has entered full screen
+  /// mode.
+  ///
+  /// After this call, web content will no longer be rendered in the WebView,
+  /// but will instead be rendered in `view`.
+  final ShowCustomViewCallback? onShowCustomView;
+
+  /// Notify the host application that the current page has exited full screen
+  /// mode.
+  final HideCustomViewCallback? onHideCustomView;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -1157,14 +1155,11 @@ class WebChromeClient extends JavaObject {
     return WebChromeClient.detached(
       onProgressChanged: onProgressChanged,
       onShowFileChooser: onShowFileChooser,
-<<<<<<< HEAD
       onPermissionRequest: onPermissionRequest,
-      onShowCustomView: onShowCustomView,
-      onHideCustomView: onHideCustomView,
-=======
       onGeolocationPermissionsShowPrompt: onGeolocationPermissionsShowPrompt,
       onGeolocationPermissionsHidePrompt: onGeolocationPermissionsHidePrompt,
->>>>>>> origin/main
+      onShowCustomView: onShowCustomView,
+      onHideCustomView: onHideCustomView,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );

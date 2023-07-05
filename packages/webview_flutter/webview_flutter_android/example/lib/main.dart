@@ -33,6 +33,19 @@ The navigation delegate is set to block navigation to the youtube website.
 </html>
 ''';
 
+const String kVideoExamplePage = '''
+<!DOCTYPE html><html>
+<head><title>Video example</title></head>
+  <body>
+    <video controls width="250">
+      <source id='mp4' src="http://media.w3.org/2010/05/sintel/trailer.mp4" type='video/mp4' />
+      <source id='webm' src="http://media.w3.org/2010/05/sintel/trailer.webm" type='video/webm' />
+      <source id='ogv' src="http://media.w3.org/2010/05/sintel/trailer.ogv" type='video/ogg' />
+    </video>
+  </body>
+</html>
+''';
+
 const String kLocalExamplePage = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -200,6 +213,7 @@ enum MenuOptions {
   loadHtmlString,
   transparentBackground,
   setCookie,
+  videoExample,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -260,6 +274,9 @@ class SampleMenu extends StatelessWidget {
           case MenuOptions.setCookie:
             _onSetCookie();
             break;
+          case MenuOptions.videoExample:
+            _onVideoExample(context);
+            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -315,6 +332,10 @@ class SampleMenu extends StatelessWidget {
           key: ValueKey<String>('ShowTransparentBackgroundExample'),
           value: MenuOptions.transparentBackground,
           child: Text('Transparent background example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.videoExample,
+          child: Text('Video example'),
         ),
       ],
     );
@@ -409,6 +430,23 @@ class SampleMenu extends StatelessWidget {
     await webViewController.loadRequest(LoadRequestParams(
       uri: Uri.parse('https://httpbin.org/anything'),
     ));
+  }
+
+  Future<void> _onVideoExample(BuildContext context) {
+    final AndroidWebViewController androidController =
+        webViewController as AndroidWebViewController;
+    androidController.setCustomViewCallbacks(
+      onShowCustomView:
+          (AndroidCustomViewWidget widget, OnHideCustomViewCallback callback) {
+        Navigator.of(context).push(MaterialPageRoute<void>(
+          builder: (BuildContext context) => widget,
+          fullscreenDialog: true,
+        ));
+      },
+      onHideCustomView: () {},
+    );
+
+    return androidController.loadHtmlString(kVideoExamplePage);
   }
 
   Future<void> _onDoPostRequest() {

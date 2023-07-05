@@ -473,6 +473,23 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> setCustomViewCallbacks({
+    _i6.OnShowCustomViewCallback? onShowCustomView,
+    _i6.OnHideCustomViewCallback? onHideCustomView,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setCustomViewCallbacks,
+          [],
+          {
+            #onShowCustomView: onShowCustomView,
+            #onHideCustomView: onHideCustomView,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
