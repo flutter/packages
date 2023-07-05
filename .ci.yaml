@@ -93,22 +93,26 @@ targets:
       version_file: flutter_master.version
 
   - name: Linux dart_unit_test_shard_1 master
-    bringup: true # New target
+    # DO NOT LAND - for presubmit validation only.
+    #bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: dart_unit_tests.yaml
+      # DO NOT LAND - for presubmit validation only.
+      target_file: linux_custom_package_tests.yaml
       channel: master
       version_file: flutter_master.version
       cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux dart_unit_test_shard_2 master
-    bringup: true # New target
+    # DO NOT LAND - for presubmit validation only.
+    #bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: dart_unit_tests.yaml
+      # DO NOT LAND - for presubmit validation only.
+      target_file: linux_custom_package_tests.yaml
       channel: master
       version_file: flutter_master.version
       cores: "32"
