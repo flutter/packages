@@ -135,10 +135,10 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux_web web_dart_unit_test_shard_1 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
+      add_recipes_cq: "true"
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -146,10 +146,10 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux_web web_dart_unit_test_shard_2 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
+      add_recipes_cq: "true"
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -157,7 +157,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux_web web_dart_unit_test_shard_1 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -168,7 +167,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux_web web_dart_unit_test_shard_2 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
