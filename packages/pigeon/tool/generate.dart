@@ -30,9 +30,9 @@ Future<void> main(List<String> args) async {
     ..addFlag(_formatFlag, abbr: 'f', help: 'Autoformats after generation.')
     ..addFlag(_helpFlag,
         negatable: false, abbr: 'h', help: 'Print this reference.')
-    ..addOption(_files,
+    ..addMultiOption(_files,
         help:
-            'Select specific group of files to generate; $_test or $_example. Defaults to both.',
+            'Select specific groups of files to generate; $_test or $_example. Defaults to both.',
         allowed: _fileGroups);
 
   final ArgResults argResults = parser.parse(args);
@@ -46,10 +46,10 @@ ${parser.usage}''');
 
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
 
-  final String? toGenerate =
-      argResults.wasParsed(_files) ? argResults[_files] as String : null;
+  final List<String>? toGenerate =
+      argResults.wasParsed(_files) ? argResults[_files] as List<String> : null;
 
-  if (toGenerate == null || toGenerate == _test) {
+  if (toGenerate == null || toGenerate.contains(_test)) {
     print('Generating platform_test/ output...');
     final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
     if (generateExitCode == 0) {
@@ -60,7 +60,7 @@ ${parser.usage}''');
     }
   }
 
-  if (toGenerate == null || toGenerate == _example) {
+  if (toGenerate == null || toGenerate.contains(_example)) {
     print('Generating example/ output...');
     final int generateExitCode = await generateExamplePigeons();
     if (generateExitCode == 0) {
