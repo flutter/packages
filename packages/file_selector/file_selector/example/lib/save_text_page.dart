@@ -85,7 +85,7 @@ class SaveTextPage extends StatelessWidget {
               ),
               onPressed: _isIOS ? null : () => _saveFile(),
               child: const Text(
-                'Press to save a text file (not supported on iOS).',
+                'Press to save a text file.',
               ),
             ),
           ],

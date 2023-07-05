@@ -38,7 +38,7 @@ ${parser.usage}''');
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
 
   print('Generating platform_test/ output...');
-  final int generateExitCode = await generatePigeons(baseDir: baseDir);
+  final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
   if (generateExitCode == 0) {
     print('Generation complete!');
   } else {

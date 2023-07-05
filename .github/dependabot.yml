@@ -160,6 +160,17 @@ updates:
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
   - package-ecosystem: "gradle"
+    directory: "/packages/file_selector/file_selector/example/android/app"
+    commit-message:
+      prefix: "[file_selector]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  - package-ecosystem: "gradle"
     directory: "/packages/file_selector/file_selector_android/android"
     commit-message:
       prefix: "[file_selector]"
