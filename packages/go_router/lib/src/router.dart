@@ -295,6 +295,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
+  /// Returns `true` if there is at least two or more route can be pop.
+  bool canPop() => routerDelegate.canPop();
+
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
   String namedLocation(
