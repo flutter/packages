@@ -375,6 +375,16 @@ abstract class WebChromeClientFlutterApi {
 
   /// Callback to Dart function `WebChromeClient.onHideCustomView`.
   void onHideCustomView(int instanceId);
+
+  /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsShowPrompt`.
+  void onGeolocationPermissionsShowPrompt(
+    int instanceId,
+    int paramsInstanceId,
+    String origin,
+  );
+
+  /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`.
+  void onGeolocationPermissionsHidePrompt(int identifier);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebStorageHostApi')
@@ -464,4 +474,30 @@ abstract class CustomViewCallbackFlutterApi {
 abstract class ViewFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int identifier);
+}
+
+/// Host API for `GeolocationPermissionsCallback`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+@HostApi(dartHostTestHandler: 'TestGeolocationPermissionsCallbackHostApi')
+abstract class GeolocationPermissionsCallbackHostApi {
+  /// Handles Dart method `GeolocationPermissionsCallback.invoke`.
+  void invoke(int instanceId, String origin, bool allow, bool retain);
+}
+
+/// Flutter API for `GeolocationPermissionsCallback`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+@FlutterApi()
+abstract class GeolocationPermissionsCallbackFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId);
 }

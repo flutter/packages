@@ -417,6 +417,11 @@ abstract class WKWebViewConfigurationHostApi {
   void setAllowsInlineMediaPlayback(int identifier, bool allow);
 
   @ObjCSelector(
+    'setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:isLimited:',
+  )
+  void setLimitsNavigationsToAppBoundDomains(int identifier, bool limit);
+
+  @ObjCSelector(
     'setMediaTypesRequiresUserActionForConfigurationWithIdentifier:forTypes:',
   )
   void setMediaTypesRequiringUserActionForPlayback(
@@ -689,6 +694,9 @@ abstract class WKWebViewHostApi {
   @ObjCSelector('evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:')
   @async
   Object? evaluateJavaScript(int identifier, String javaScriptString);
+
+  @ObjCSelector('setInspectableForWebViewWithIdentifier:inspectable:')
+  void setInspectable(int identifier, bool inspectable);
 }
 
 /// Mirror of WKUIDelegate.

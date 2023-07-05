@@ -1,3 +1,11 @@
+## 1.0.10
+
+* Adds retry logic when removing a `GcsLock` file lock in case of failure.
+
+## 1.0.9
+
+* Adds compatibility with `http` 1.0.
+
 ## 1.0.8
 
 * Removes obsolete null checks on non-nullable values.

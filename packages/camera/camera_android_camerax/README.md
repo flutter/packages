@@ -49,6 +49,11 @@ Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 
 `setZoomLevel` is unimplemented.
 
+### Some video capture functionality \[[Issue #127896][127896], [Issue #126477][126477]\]
+
+`startVideoCapturing` is unimplemented; use `startVideoRecording` instead.
+`onVideoRecordedEvent` is also unimplemented.
+
 ## Contributing
 
 For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
@@ -66,3 +71,5 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 [120468]: https://github.com/flutter/flutter/issues/120468
 [120467]: https://github.com/flutter/flutter/issues/120467
 [125371]: https://github.com/flutter/flutter/issues/125371
+[126477]: https://github.com/flutter/flutter/issues/126477
+[127896]: https://github.com/flutter/flutter/issues/127896

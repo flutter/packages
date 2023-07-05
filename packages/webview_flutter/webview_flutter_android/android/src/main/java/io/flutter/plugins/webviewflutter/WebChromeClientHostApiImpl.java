@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
 import android.view.View;
+import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -62,6 +63,16 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     @Override
     public void onHideCustomView() {
       flutterApi.onHideCustomView(this, reply -> {});
+    }
+
+    public void onGeolocationPermissionsShowPrompt(
+        @NonNull String origin, @NonNull GeolocationPermissions.Callback callback) {
+      flutterApi.onGeolocationPermissionsShowPrompt(this, origin, callback, reply -> {});
+    }
+
+    @Override
+    public void onGeolocationPermissionsHidePrompt() {
+      flutterApi.onGeolocationPermissionsHidePrompt(this, reply -> {});
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

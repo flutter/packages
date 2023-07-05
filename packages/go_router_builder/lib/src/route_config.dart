@@ -217,6 +217,9 @@ extension $_extensionName on $_className {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+
+  void replace(BuildContext context) =>
+      context.replace(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
   }
@@ -369,21 +372,15 @@ GoRouteData.\$route(
 
   String _decodeFor(ParameterElement element) {
     if (element.isRequired) {
-      if (element.type.nullabilitySuffix == NullabilitySuffix.question) {
+      if (element.type.nullabilitySuffix == NullabilitySuffix.question &&
+          _pathParams.contains(element.name)) {
         throw InvalidGenerationSourceError(
-          'Required parameters cannot be nullable.',
-          element: element,
-        );
-      }
-
-      if (!_pathParams.contains(element.name) && !element.isExtraField) {
-        throw InvalidGenerationSourceError(
-          'Missing param `${element.name}` in path.',
+          'Required parameters in the path cannot be nullable.',
           element: element,
         );
       }
     }
-    final String fromStateExpression = decodeParameter(element);
+    final String fromStateExpression = decodeParameter(element, _pathParams);
 
     if (element.isPositional) {
       return '$fromStateExpression,';
@@ -447,7 +444,7 @@ GoRouteData.\$route(
 
   late final List<ParameterElement> _ctorParams =
       _ctor.parameters.where((ParameterElement element) {
-    if (element.isRequired && !element.isExtraField) {
+    if (_pathParams.contains(element.name)) {
       return true;
     }
     return false;
@@ -455,7 +452,7 @@ GoRouteData.\$route(
 
   late final List<ParameterElement> _ctorQueryParams = _ctor.parameters
       .where((ParameterElement element) =>
-          element.isOptional && !element.isExtraField)
+          !_pathParams.contains(element.name) && !element.isExtraField)
       .toList();
 
   ConstructorElement get _ctor {

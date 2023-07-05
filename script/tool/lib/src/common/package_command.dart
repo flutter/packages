@@ -71,6 +71,7 @@ abstract class PackageCommand extends Command<void> {
       defaultsTo: <String>[],
     );
     argParser.addFlag(_runOnChangedPackagesArg,
+        negatable: false,
         help: 'Run the command on changed packages.\n'
             'If no packages have changed, or if there have been changes that may\n'
             'affect all packages, the command runs on all packages.\n'
@@ -78,18 +79,29 @@ abstract class PackageCommand extends Command<void> {
             'See $_baseShaArg if a custom base is needed to determine the diff.\n\n'
             'Cannot be combined with $_packagesArg.\n');
     argParser.addFlag(_runOnDirtyPackagesArg,
+        negatable: false,
         help:
             'Run the command on packages with changes that have not been committed.\n'
             'Packages excluded with $_excludeArg are excluded even if changed.\n'
             'Cannot be combined with $_packagesArg.\n',
         hide: true);
     argParser.addFlag(_packagesForBranchArg,
+        negatable: false,
         help: 'This runs on all packages changed in the last commit on main '
             '(or master), and behaves like --run-on-changed-packages on '
             'any other branch.\n\n'
             'Cannot be combined with $_packagesArg.\n\n'
             'This is intended for use in CI.\n',
         hide: true);
+    argParser.addFlag(_currentPackageArg,
+        negatable: false,
+        help:
+            'Set the target package(s) based on the current working directory.\n'
+            '- If the current working directory is (or is inside) a package, '
+            'that package will be targeted.\n'
+            '- If the current working directory is the root of a federated '
+            'plugin group, that group will be targeted.\n'
+            'Cannot be combined with $_packagesArg.\n');
     argParser.addOption(_baseShaArg,
         help: 'The base sha used to determine git diff. \n'
             'This is useful when $_runOnChangedPackagesArg is specified.\n'
@@ -104,17 +116,22 @@ abstract class PackageCommand extends Command<void> {
             'but more information may be added in the future.');
   }
 
-  static const String _baseBranchArg = 'base-branch';
-  static const String _baseShaArg = 'base-sha';
-  static const String _excludeArg = 'exclude';
-  static const String _logTimingArg = 'log-timing';
+  // Package selection.
   static const String _packagesArg = 'packages';
   static const String _packagesForBranchArg = 'packages-for-branch';
+  static const String _currentPackageArg = 'current-package';
   static const String _pluginsLegacyAliasArg = 'plugins';
   static const String _runOnChangedPackagesArg = 'run-on-changed-packages';
   static const String _runOnDirtyPackagesArg = 'run-on-dirty-packages';
+  static const String _excludeArg = 'exclude';
+  // Diff base selection.
+  static const String _baseBranchArg = 'base-branch';
+  static const String _baseShaArg = 'base-sha';
+  // Sharding.
   static const String _shardCountArg = 'shardCount';
   static const String _shardIndexArg = 'shardIndex';
+  // Utility.
+  static const String _logTimingArg = 'log-timing';
 
   /// The directory containing the packages.
   final Directory packagesDir;
@@ -308,13 +325,15 @@ abstract class PackageCommand extends Command<void> {
       _runOnChangedPackagesArg,
       _runOnDirtyPackagesArg,
       _packagesForBranchArg,
+      _currentPackageArg,
     };
     if (packageSelectionFlags
             .where((String flag) => argResults!.wasParsed(flag))
             .length >
         1) {
-      printError('Only one of --$_packagesArg, --$_runOnChangedPackagesArg, or '
-          '--$_packagesForBranchArg can be provided.');
+      printError('Only one of the package selection arguments '
+          '(${packageSelectionFlags.join(", ")}) '
+          'can be provided.');
       throw ToolExit(exitInvalidArguments);
     }
 
@@ -383,6 +402,14 @@ abstract class PackageCommand extends Command<void> {
       if (packages.isEmpty) {
         return;
       }
+    } else if (getBoolArg(_currentPackageArg)) {
+      final String? currentPackageName = _getCurrentDirectoryPackageName();
+      if (currentPackageName == null) {
+        printError('Unable to determine packages; --$_currentPackageArg can '
+            'only be used within a repository package or package group.');
+        throw ToolExit(exitInvalidArguments);
+      }
+      packages = <String>{currentPackageName};
     }
 
     final Directory thirdPartyPackagesDirectory = packagesDir.parent
@@ -543,6 +570,32 @@ abstract class PackageCommand extends Command<void> {
       print('Changed packages: $changedPackages');
     }
     return packages;
+  }
+
+  String? _getCurrentDirectoryPackageName() {
+    // Ensure that the current directory is within the packages directory.
+    final Directory absolutePackagesDir = packagesDir.absolute;
+    Directory currentDir = packagesDir.fileSystem.currentDirectory.absolute;
+    if (!currentDir.path.startsWith(absolutePackagesDir.path) ||
+        currentDir.path == packagesDir.path) {
+      return null;
+    }
+    // If the current directory is a direct subdirectory of the packages
+    // directory, then that's the target.
+    if (currentDir.parent.path == absolutePackagesDir.path) {
+      return currentDir.basename;
+    }
+    // Otherwise, walk up until a package is found...
+    while (!isPackage(currentDir)) {
+      currentDir = currentDir.parent;
+      if (currentDir.path == absolutePackagesDir.path) {
+        return null;
+      }
+    }
+    // ... and then check whether it has an enclosing package.
+    final RepositoryPackage package = RepositoryPackage(currentDir);
+    final RepositoryPackage? enclosingPackage = package.getEnclosingPackage();
+    return (enclosingPackage ?? package).directory.basename;
   }
 
   // Returns true if the current checkout is on an ancestor of [branch].

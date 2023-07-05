@@ -2589,31 +2589,31 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(Arrays.asList(instanceIdArg, requestInstanceIdArg)),
           channelReply -> callback.reply(null));
     }
-    /** Callback to Dart function `WebChromeClient.onShowCustomView`. */
-    public void onShowCustomView(
+    /** Callback to Dart function `WebChromeClient.onGeolocationPermissionsShowPrompt`. */
+    public void onGeolocationPermissionsShowPrompt(
         @NonNull Long instanceIdArg,
-        @NonNull Long viewIdentifierArg,
-        @NonNull Long callbackIdentifierArg,
+        @NonNull Long paramsInstanceIdArg,
+        @NonNull String originArg,
         @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.WebChromeClientFlutterApi.onShowCustomView",
+              "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt",
               getCodec());
       channel.send(
-          new ArrayList<Object>(
-              Arrays.asList(instanceIdArg, viewIdentifierArg, callbackIdentifierArg)),
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, paramsInstanceIdArg, originArg)),
           channelReply -> callback.reply(null));
     }
-    /** Callback to Dart function `WebChromeClient.onHideCustomView`. */
-    public void onHideCustomView(@NonNull Long instanceIdArg, @NonNull Reply<Void> callback) {
+    /** Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`. */
+    public void onGeolocationPermissionsHidePrompt(
+        @NonNull Long identifierArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.WebChromeClientFlutterApi.onHideCustomView",
+              "dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsHidePrompt",
               getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(instanceIdArg)),
+          new ArrayList<Object>(Collections.singletonList(identifierArg)),
           channelReply -> callback.reply(null));
     }
   }
@@ -2867,46 +2867,56 @@ public class GeneratedAndroidWebView {
     }
   }
   /**
-   * Host API for `CustomViewCallback`.
+   * Host API for `GeolocationPermissionsCallback`.
    *
    * <p>This class may handle instantiating and adding native object instances that are attached to
    * a Dart instance or handle method calls on the associated native class or an instance of the
    * class.
    *
-   * <p>See
-   * https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+   * <p>See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
    *
    * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
    */
-  public interface CustomViewCallbackHostApi {
-    /** Handles Dart method `CustomViewCallback.onCustomViewHidden`. */
-    void onCustomViewHidden(@NonNull Long identifier);
+  public interface GeolocationPermissionsCallbackHostApi {
+    /** Handles Dart method `GeolocationPermissionsCallback.invoke`. */
+    void invoke(
+        @NonNull Long instanceId,
+        @NonNull String origin,
+        @NonNull Boolean allow,
+        @NonNull Boolean retain);
 
-    /** The codec used by CustomViewCallbackHostApi. */
+    /** The codec used by GeolocationPermissionsCallbackHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
     /**
-     * Sets up an instance of `CustomViewCallbackHostApi` to handle messages through the
+     * Sets up an instance of `GeolocationPermissionsCallbackHostApi` to handle messages through the
      * `binaryMessenger`.
      */
     static void setup(
-        @NonNull BinaryMessenger binaryMessenger, @Nullable CustomViewCallbackHostApi api) {
+        @NonNull BinaryMessenger binaryMessenger,
+        @Nullable GeolocationPermissionsCallbackHostApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.CustomViewCallbackHostApi.onCustomViewHidden",
+                "dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Number identifierArg = (Number) args.get(0);
+                Number instanceIdArg = (Number) args.get(0);
+                String originArg = (String) args.get(1);
+                Boolean allowArg = (Boolean) args.get(2);
+                Boolean retainArg = (Boolean) args.get(3);
                 try {
-                  api.onCustomViewHidden(
-                      (identifierArg == null) ? null : identifierArg.longValue());
+                  api.invoke(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(),
+                      originArg,
+                      allowArg,
+                      retainArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -2921,20 +2931,19 @@ public class GeneratedAndroidWebView {
     }
   }
   /**
-   * Flutter API for `CustomViewCallback`.
+   * Flutter API for `GeolocationPermissionsCallback`.
    *
    * <p>This class may handle instantiating and adding Dart instances that are attached to a native
    * instance or receiving callback methods from an overridden native class.
    *
-   * <p>See
-   * https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+   * <p>See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
    *
    * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
    */
-  public static class CustomViewCallbackFlutterApi {
+  public static class GeolocationPermissionsCallbackFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
 
-    public CustomViewCallbackFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+    public GeolocationPermissionsCallbackFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
       this.binaryMessenger = argBinaryMessenger;
     }
 
@@ -2943,55 +2952,19 @@ public class GeneratedAndroidWebView {
     public interface Reply<T> {
       void reply(T reply);
     }
-    /** The codec used by CustomViewCallbackFlutterApi. */
+    /** The codec used by GeolocationPermissionsCallbackFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
     /** Create a new Dart instance and add it to the `InstanceManager`. */
-    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
+    public void create(@NonNull Long instanceIdArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.CustomViewCallbackFlutterApi.create",
+              "dev.flutter.pigeon.GeolocationPermissionsCallbackFlutterApi.create",
               getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(identifierArg)),
-          channelReply -> callback.reply(null));
-    }
-  }
-  /**
-   * Flutter API for `View`.
-   *
-   * <p>This class may handle instantiating and adding Dart instances that are attached to a native
-   * instance or receiving callback methods from an overridden native class.
-   *
-   * <p>See https://developer.android.com/reference/android/view/View.
-   *
-   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
-   */
-  public static class ViewFlutterApi {
-    private final @NonNull BinaryMessenger binaryMessenger;
-
-    public ViewFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
-      this.binaryMessenger = argBinaryMessenger;
-    }
-
-    /** Public interface for sending reply. */
-    @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
-      void reply(T reply);
-    }
-    /** The codec used by ViewFlutterApi. */
-    static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
-    }
-    /** Create a new Dart instance and add it to the `InstanceManager`. */
-    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.ViewFlutterApi.create", getCodec());
-      channel.send(
-          new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          new ArrayList<Object>(Collections.singletonList(instanceIdArg)),
           channelReply -> callback.reply(null));
     }
   }

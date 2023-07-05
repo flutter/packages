@@ -6,9 +6,8 @@ host platform type-safe, easier and faster.
 ## Supported Platforms
 
 Currently Pigeon supports generating:
-* Kotlin and Java code for Android,
-* Swift and Objective-C code for iOS
-* Swift code for macOS
+* Kotlin and Java code for Android
+* Swift and Objective-C code for iOS and macOS
 * C++ code for Windows
 
 ## Runtime Requirements
