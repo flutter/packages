@@ -214,6 +214,29 @@ targets:
       channel: stable
       version_file: flutter_stable.version
 
+  - name: Linux custom_package_tests master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: linux_custom_package_tests.yaml
+      cores: "32"
+      channel: master
+
+  - name: Linux custom_package_tests stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: linux_custom_package_tests.yaml
+      cores: "32"
+      channel: stable
+
+
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
     recipe: packages/packages
