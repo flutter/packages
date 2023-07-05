@@ -56,7 +56,6 @@ typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
 typedef NavigatorBuilder = Widget Function(
     List<NavigatorObserver>? observers, String? restorationScopeId);
 
-
 /// The base class for [GoRoute] and [ShellRoute].
 ///
 /// Routes are defined in a tree such that parent routes must match the
