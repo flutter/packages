@@ -13,7 +13,6 @@
 
 # Temporary opt-outs of unawaited_futures; see
 # https://github.com/flutter/flutter/issues/127323
-- camera/camera_android_camerax
 - webview_flutter/webview_flutter
 - webview_flutter/webview_flutter_android
 - webview_flutter/webview_flutter_wkwebview
