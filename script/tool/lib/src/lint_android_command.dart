@@ -43,9 +43,15 @@ class LintAndroidCommand extends PackageLoopingCommand {
           processRunner: processRunner, platform: platform);
 
       if (!project.isConfigured()) {
-        // TODO(stuartmorgan): Replace this with a --config-only build once
-        // that's available on stable.
-        return PackageResult.fail(<String>['Build examples before linting']);
+        final int exitCode = await processRunner.runAndStream(
+          flutterCommand,
+          <String>['build', 'apk', '--config-only'],
+          workingDir: example.directory,
+        );
+        if (exitCode != 0) {
+          printError('Unable to configure Gradle project.');
+          return PackageResult.fail(<String>['Unable to configure Gradle.']);
+        }
       }
 
       final String packageName = package.directory.basename;
