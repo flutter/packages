@@ -19,12 +19,21 @@ import 'shared/generation.dart';
 
 const String _helpFlag = 'help';
 const String _formatFlag = 'format';
+const String _files = 'files';
+const String _test = 'test';
+const String _example = 'example';
+
+const List<String> _fileGroups = <String>[_test, _example];
 
 Future<void> main(List<String> args) async {
   final ArgParser parser = ArgParser()
     ..addFlag(_formatFlag, abbr: 'f', help: 'Autoformats after generation.')
     ..addFlag(_helpFlag,
-        negatable: false, abbr: 'h', help: 'Print this reference.');
+        negatable: false, abbr: 'h', help: 'Print this reference.')
+    ..addMultiOption(_files,
+        help:
+            'Select specific groups of files to generate; $_test or $_example. Defaults to both.',
+        allowed: _fileGroups);
 
   final ArgResults argResults = parser.parse(args);
   if (argResults.wasParsed(_helpFlag)) {
@@ -37,13 +46,29 @@ ${parser.usage}''');
 
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
 
-  print('Generating platform_test/ output...');
-  final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
-  if (generateExitCode == 0) {
-    print('Generation complete!');
-  } else {
-    print('Generation failed; see above for errors.');
-    exit(generateExitCode);
+  final List<String>? toGenerate =
+      argResults.wasParsed(_files) ? argResults[_files] as List<String> : null;
+
+  if (toGenerate == null || toGenerate.contains(_test)) {
+    print('Generating platform_test/ output...');
+    final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
+    if (generateExitCode == 0) {
+      print('Generation complete!');
+    } else {
+      print('Generation failed; see above for errors.');
+      exit(generateExitCode);
+    }
+  }
+
+  if (toGenerate == null || toGenerate.contains(_example)) {
+    print('Generating example/ output...');
+    final int generateExitCode = await generateExamplePigeons();
+    if (generateExitCode == 0) {
+      print('Generation complete!');
+    } else {
+      print('Generation failed; see above for errors.');
+      exit(generateExitCode);
+    }
   }
 
   if (argResults.wasParsed(_formatFlag)) {
