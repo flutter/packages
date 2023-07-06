@@ -8,11 +8,12 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../go_router.dart';
 import 'configuration.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'route.dart';
+import 'router.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
 ///

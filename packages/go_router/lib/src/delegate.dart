@@ -7,12 +7,11 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../go_router.dart';
 import 'builder.dart';
 import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
-import 'typedefs.dart';
+import 'route.dart';
 
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
@@ -26,7 +25,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required GoRouterWidgetBuilder? errorBuilder,
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
-    required this.onException,
     String? restorationScopeId,
   }) : _configuration = configuration {
     builder = RouteBuilder(
@@ -46,13 +44,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Set to true to disable creating history entries on the web.
   final bool routerNeglect;
-
-  /// The exception handler that is called when parser can't handle the incoming
-  /// uri.
-  ///
-  /// If this is null, the exception is handled in the
-  /// [RouteBuilder.errorPageBuilder] or [RouteBuilder.errorBuilder].
-  final GoExceptionHandler? onException;
 
   final RouteConfiguration _configuration;
 
