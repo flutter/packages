@@ -215,7 +215,6 @@ targets:
       version_file: flutter_stable.version
 
   - name: Linux_android custom_package_tests master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -232,7 +231,6 @@ targets:
       channel: master
 
   - name: Linux_android custom_package_tests stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
