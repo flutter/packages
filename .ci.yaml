@@ -11,7 +11,20 @@ enabled_branches:
 platform_properties:
   linux:
     properties:
-      os: Linux
+      os: Ubuntu
+      cores: "8"
+      device_type: none
+  linux_android:
+    properties:
+      os: Ubuntu
+      cores: "8"
+      device_type: none
+      dependencies: >-
+        [
+          {"dependency": "android_sdk", "version": "version:33v6"},
+          {"dependency": "open_jdk", "version": "version:11"},
+          {"dependency": "curl", "version": "version:7.64.0"}
+        ]
   linux_desktop:
     properties:
       os: Ubuntu
@@ -52,7 +65,7 @@ platform_properties:
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e222b"
+          "sdk_version": "14e300c"
         }
   mac_x64:
     properties:
@@ -65,7 +78,7 @@ platform_properties:
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e222b"
+          "sdk_version": "14e300c"
         }
 
 targets:
@@ -79,17 +92,100 @@ targets:
       channel: master
       version_file: flutter_master.version
 
+  - name: Linux dart_unit_test_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_1 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_2 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: web_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: web_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_1 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_2 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
   - name: Linux analyze master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
+      add_recipes_cq: "true"
       target_file: analyze.yaml
       channel: master
       version_file: flutter_master.version
 
   - name: Linux analyze stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -98,22 +194,74 @@ targets:
       version_file: flutter_stable.version
 
   - name: Linux analyze_downgraded master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
+      add_recipes_cq: "true"
       target_file: analyze_downgraded.yaml
       channel: master
       version_file: flutter_master.version
 
   - name: Linux analyze_downgraded stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
       target_file: analyze_downgraded.yaml
       channel: stable
       version_file: flutter_stable.version
+
+  - name: Linux_android custom_package_tests master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: linux_custom_package_tests.yaml
+      cores: "32"
+      # Pigeon tests need Andoid deps (thus the Linux_android base) and
+      # clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
+      channel: master
+
+  - name: Linux_android custom_package_tests stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: linux_custom_package_tests.yaml
+      cores: "32"
+      # Pigeon tests need Android deps (thus the Linux_android base) and
+      # clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
+      channel: stable
+
+  ### Android tasks ###
+  - name: Linux_android android_build_all_packages master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: android_build_all_packages.yaml
+      channel: master
+
+  - name: Linux_android android_build_all_packages stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: android_build_all_packages.yaml
+      channel: stable
 
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master

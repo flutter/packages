@@ -67,6 +67,8 @@ class ErrorOr {
 
 enum class AnEnum { one = 0, two = 1, three = 2 };
 
+// A class containing all supported types.
+//
 // Generated class from Pigeon that represents data sent in messages.
 class AllTypes {
  public:
@@ -119,6 +121,7 @@ class AllTypes {
  private:
   static AllTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
+  friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class HostIntegrationCoreApiCodecSerializer;
   friend class FlutterIntegrationCoreApi;
@@ -144,6 +147,8 @@ class AllTypes {
   std::string a_string_;
 };
 
+// A class containing all supported nullable types.
+//
 // Generated class from Pigeon that represents data sent in messages.
 class AllNullableTypes {
  public:
@@ -230,7 +235,7 @@ class AllNullableTypes {
  private:
   static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
-  friend class AllNullableTypesWrapper;
+  friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
   friend class HostIntegrationCoreApiCodecSerializer;
   friend class FlutterIntegrationCoreApi;
@@ -259,17 +264,31 @@ class AllNullableTypes {
   std::optional<std::string> a_nullable_string_;
 };
 
+// A class for testing nested class handling.
+//
+// This is needed to test nested nullable and non-nullable classes,
+// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+// than `AllTypes` when testing doesn't require both (ie. testing null classes).
+//
 // Generated class from Pigeon that represents data sent in messages.
-class AllNullableTypesWrapper {
+class AllClassesWrapper {
  public:
-  // Constructs an object setting all fields.
-  explicit AllNullableTypesWrapper(const AllNullableTypes& values);
+  // Constructs an object setting all non-nullable fields.
+  explicit AllClassesWrapper(const AllNullableTypes& all_nullable_types);
 
-  const AllNullableTypes& values() const;
-  void set_values(const AllNullableTypes& value_arg);
+  // Constructs an object setting all fields.
+  explicit AllClassesWrapper(const AllNullableTypes& all_nullable_types,
+                             const AllTypes* all_types);
+
+  const AllNullableTypes& all_nullable_types() const;
+  void set_all_nullable_types(const AllNullableTypes& value_arg);
+
+  const AllTypes* all_types() const;
+  void set_all_types(const AllTypes* value_arg);
+  void set_all_types(const AllTypes& value_arg);
 
  private:
-  static AllNullableTypesWrapper FromEncodableList(
+  static AllClassesWrapper FromEncodableList(
       const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
@@ -283,7 +302,8 @@ class AllNullableTypesWrapper {
   friend class FlutterSmallApi;
   friend class FlutterSmallApiCodecSerializer;
   friend class CoreTestsTest;
-  AllNullableTypes values_;
+  AllNullableTypes all_nullable_types_;
+  std::optional<AllTypes> all_types_;
 };
 
 // A data class containing a List, used in unit tests.
@@ -377,16 +397,20 @@ class HostIntegrationCoreApi {
   // Returns the passed map, to test serialization and deserialization.
   virtual ErrorOr<flutter::EncodableMap> EchoMap(
       const flutter::EncodableMap& a_map) = 0;
+  // Returns the passed map to test nested class serialization and
+  // deserialization.
+  virtual ErrorOr<AllClassesWrapper> EchoClassWrapper(
+      const AllClassesWrapper& wrapper) = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
       const AllNullableTypes* everything) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
   virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(
-      const AllNullableTypesWrapper& wrapper) = 0;
+      const AllClassesWrapper& wrapper) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
-  virtual ErrorOr<AllNullableTypesWrapper> CreateNestedNullableString(
+  virtual ErrorOr<AllClassesWrapper> CreateNestedNullableString(
       const std::string* nullable_string) = 0;
   // Returns passed in arguments of multiple types.
   virtual ErrorOr<AllNullableTypes> SendMultipleNullableTypes(

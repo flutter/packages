@@ -6,6 +6,7 @@ import 'dart:io' as io;
 
 import 'package:file/file.dart';
 import 'package:git/git.dart';
+import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
@@ -30,9 +31,14 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           gitDir: gitDir,
         ) {
     argParser.addFlag(_failOnChangeFlag, hide: true);
+    argParser.addFlag(_noCleanupFlag,
+        help: 'Skips the step of cleaning up the excerpt extraction output. '
+            'This can be useful when debugging extraction or checking paths to '
+            'reference in snippets.');
   }
 
   static const String _failOnChangeFlag = 'fail-on-change';
+  static const String _noCleanupFlag = 'no-cleanup';
 
   static const String _buildRunnerConfigName = 'excerpt';
   // The name of the build_runner configuration file that will be in an example
@@ -40,8 +46,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   static const String _buildRunnerConfigFile =
       'build.$_buildRunnerConfigName.yaml';
 
-  // The relative directory path to put the extracted excerpt yaml files.
-  static const String _excerptOutputDir = 'excerpts';
+  /// The relative directory path to put the extracted excerpt yaml files.
+  @visibleForTesting
+  static const String excerptOutputDir = 'excerpts';
 
   // The filename to store the pre-modification copy of the pubspec.
   static const String _originalPubspecFilename =
@@ -97,9 +104,16 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         // Clean up the pubspec changes and extracted excerpts directory.
         _undoPubspecChanges(example);
         final Directory excerptDirectory =
-            example.directory.childDirectory(_excerptOutputDir);
+            example.directory.childDirectory(excerptOutputDir);
         if (excerptDirectory.existsSync()) {
-          excerptDirectory.deleteSync(recursive: true);
+          if (getBoolArg(_noCleanupFlag)) {
+            final String relativeDir =
+                getRelativePosixPath(excerptDirectory, from: package.directory);
+            print(
+                '\n\nSKIPPING CLEANUP: Extraction output is in $relativeDir/');
+          } else {
+            excerptDirectory.deleteSync(recursive: true);
+          }
         }
       }
     }
@@ -134,7 +148,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           '--config',
           _buildRunnerConfigName,
           '--output',
-          _excerptOutputDir,
+          excerptOutputDir,
           '--delete-conflicting-outputs',
         ],
         workingDir: example.directory);

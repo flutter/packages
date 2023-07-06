@@ -189,9 +189,7 @@ void main() {
         routes: _routes,
       );
       await tester.pumpWidget(MaterialApp.router(
-        routeInformationProvider: goRouter.routeInformationProvider,
-        routeInformationParser: goRouter.routeInformationParser,
-        routerDelegate: goRouter.routerDelegate,
+        routerConfig: goRouter,
       ));
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsOneWidget);
@@ -206,9 +204,7 @@ void main() {
         routes: _routes,
       );
       await tester.pumpWidget(MaterialApp.router(
-        routeInformationProvider: goRouter.routeInformationProvider,
-        routeInformationParser: goRouter.routeInformationParser,
-        routerDelegate: goRouter.routerDelegate,
+        routerConfig: goRouter,
       ));
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsNothing);

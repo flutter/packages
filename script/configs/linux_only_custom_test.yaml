@@ -1,9 +1,0 @@
-# Packages that only support `custom-test` in linux, because that's
-# the only place where we install Chrome.
-#
-# This file is used to "--exclude" these packages from the relevant
-# mac/windows CI test runs.
-
-- cross_file
-- google_identity_services_web
-

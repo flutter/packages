@@ -72,8 +72,8 @@ class GoRouterState {
   /// An extra object to pass along with the navigation.
   final Object? extra;
 
-  /// The error associated with this match.
-  final Exception? error;
+  /// The error associated with this sub-route.
+  final GoException? error;
 
   /// A unique string key for this sub-route.
   /// E.g.

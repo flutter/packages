@@ -464,4 +464,20 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   XCTAssertTrue(feq(webView.scrollView.contentInset.bottom, -insetToAdjust.bottom));
   XCTAssertTrue(CGRectEqualToRect(webView.frame, CGRectMake(0, 0, 300, 100)));
 }
+
+- (void)testSetInspectable API_AVAILABLE(ios(16.4), macos(13.3)) {
+  FWFWebView *mockWebView = OCMClassMock([FWFWebView class]);
+
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:0];
+
+  FWFWebViewHostApiImpl *hostAPI = [[FWFWebViewHostApiImpl alloc]
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+
+  FlutterError *error;
+  [hostAPI setInspectableForWebViewWithIdentifier:@0 inspectable:@YES error:&error];
+  OCMVerify([mockWebView setInspectable:YES]);
+  XCTAssertNil(error);
+}
 @end

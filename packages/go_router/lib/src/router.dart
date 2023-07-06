@@ -14,6 +14,15 @@ import 'misc/inherited_router.dart';
 import 'parser.dart';
 import 'typedefs.dart';
 
+/// The function signature of [GoRouter.onException].
+///
+/// Use `state.error` to access the exception.
+typedef GoExceptionHandler = void Function(
+  BuildContext context,
+  GoRouterState state,
+  GoRouter router,
+);
+
 /// The route configuration for the app.
 ///
 /// The `routes` list specifies the top-level routes for the app. It must not be
@@ -30,6 +39,15 @@ import 'typedefs.dart';
 /// implemented), a re-evaluation will be triggered when the [InheritedWidget]
 /// changes.
 ///
+/// To handle exceptions, use one of `onException`, `errorBuilder`, or
+/// `errorPageBuilder`. The `onException` is called when an exception is thrown.
+/// If `onException` is not provided, the exception is passed to
+/// `errorPageBuilder` to build a page for the Router if it is not null;
+/// otherwise, it is passed to `errorBuilder` instead. If none of them are
+/// provided, go_router builds a default error screen to show the exception.
+/// See [Error handling](https://pub.dev/documentation/go_router/latest/topics/error-handling.html)
+/// for more details.
+///
 /// See also:
 /// * [Configuration](https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html)
 /// * [GoRoute], which provides APIs to define the routing table.
@@ -44,15 +62,14 @@ import 'typedefs.dart';
 /// {@category Deep linking}
 /// {@category Error handling}
 /// {@category Named routes}
-class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
+class GoRouter implements RouterConfig<RouteMatchList> {
   /// Default constructor to configure a GoRouter with a routes builder
   /// and an error page builder.
   ///
   /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
   GoRouter({
     required List<RouteBase> routes,
-    // TODO(johnpryan): Change to a route, improve error API
-    // See https://github.com/flutter/flutter/issues/108144
+    GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
     GoRouterRedirect? redirect,
@@ -70,6 +87,12 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
           initialExtra == null || initialLocation != null,
           'initialLocation must be set in order to use initialExtra',
         ),
+        assert(
+            (onException == null ? 0 : 1) +
+                    (errorPageBuilder == null ? 0 : 1) +
+                    (errorBuilder == null ? 0 : 1) <
+                2,
+            'Only one of onException, errorPageBuilder, or errorBuilder can be provided.'),
         assert(_debugCheckPath(routes, true)),
         assert(
             _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
@@ -90,7 +113,21 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       navigatorKey: navigatorKey,
     );
 
+    final ParserExceptionHandler? parserExceptionHandler;
+    if (onException != null) {
+      parserExceptionHandler =
+          (BuildContext context, RouteMatchList routeMatchList) {
+        onException(context,
+            configuration.buildTopLevelGoRouterState(routeMatchList), this);
+        // Avoid updating GoRouterDelegate if onException is provided.
+        return routerDelegate.currentConfiguration;
+      };
+    } else {
+      parserExceptionHandler = null;
+    }
+
     routeInformationParser = GoRouteInformationParser(
+      onParserException: parserExceptionHandler,
       configuration: configuration,
     );
 
@@ -102,6 +139,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
 
     routerDelegate = GoRouterDelegate(
       configuration: configuration,
+      onException: onException,
       errorPageBuilder: errorPageBuilder,
       errorBuilder: errorBuilder,
       routerNeglect: routerNeglect,
@@ -114,7 +152,6 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
       builderWithNav: (BuildContext context, Widget child) =>
           InheritedGoRouter(goRouter: this, child: child),
     );
-    routerDelegate.addListener(_handleStateMayChange);
 
     assert(() {
       log.info('setting initial location $initialLocation');
@@ -258,33 +295,8 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
-  /// Gets the current location.
-  // TODO(chunhtai): deprecates this once go_router_builder is migrated to
-  // GoRouterState.of.
-  String get location => _location;
-  String _location = '/';
-
   /// Returns `true` if there is at least two or more route can be pop.
   bool canPop() => routerDelegate.canPop();
-
-  void _handleStateMayChange() {
-    final String newLocation;
-    if (routerDelegate.currentConfiguration.isNotEmpty &&
-        routerDelegate.currentConfiguration.matches.last
-            is ImperativeRouteMatch) {
-      newLocation = (routerDelegate.currentConfiguration.matches.last
-              as ImperativeRouteMatch)
-          .matches
-          .uri
-          .toString();
-    } else {
-      newLocation = routerDelegate.currentConfiguration.uri.toString();
-    }
-    if (_location != newLocation) {
-      _location = newLocation;
-      notifyListeners();
-    }
-  }
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
@@ -450,7 +462,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// of any GoRoute under it.
   void pop<T extends Object?>([T? result]) {
     assert(() {
-      log.info('popping $location');
+      log.info('popping ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
     routerDelegate.pop<T>(result);
@@ -459,7 +471,7 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   /// Refresh the route.
   void refresh() {
     assert(() {
-      log.info('refreshing $location');
+      log.info('refreshing ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
     routeInformationProvider.notifyListeners();
@@ -469,27 +481,25 @@ class GoRouter extends ChangeNotifier implements RouterConfig<RouteMatchList> {
   ///
   /// This method throws when it is called during redirects.
   static GoRouter of(BuildContext context) {
-    final InheritedGoRouter? inherited =
-        context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
+    final GoRouter? inherited = maybeOf(context);
     assert(inherited != null, 'No GoRouter found in context');
-    return inherited!.goRouter;
+    return inherited!;
   }
 
   /// The current GoRouter in the widget tree, if any.
   ///
   /// This method returns null when it is called during redirects.
   static GoRouter? maybeOf(BuildContext context) {
-    final InheritedGoRouter? inherited =
-        context.dependOnInheritedWidgetOfExactType<InheritedGoRouter>();
+    final InheritedGoRouter? inherited = context
+        .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
+        ?.widget as InheritedGoRouter?;
     return inherited?.goRouter;
   }
 
-  @override
+  /// Disposes resource created by this object.
   void dispose() {
     routeInformationProvider.dispose();
-    routerDelegate.removeListener(_handleStateMayChange);
     routerDelegate.dispose();
-    super.dispose();
   }
 
   String _effectiveInitialLocation(String? initialLocation) {
