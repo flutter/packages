@@ -31,7 +31,7 @@ void main() {
       when(mockWindow.open(any, any)).thenReturn(MockWindow());
 
       when(mockNavigator.userAgent).thenReturn(
-              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
 
       plugin = UrlLauncherPlugin(debugWindow: mockWindow);
     });
@@ -149,7 +149,7 @@ void main() {
       group('Safari', () {
         setUp(() {
           when(mockNavigator.userAgent).thenReturn(
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5.1 Safari/605.1.15');
+              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5.1 Safari/605.1.15');
           // Recreate the plugin, so it grabs the overrides from this group
           plugin = UrlLauncherPlugin(debugWindow: mockWindow);
         });
