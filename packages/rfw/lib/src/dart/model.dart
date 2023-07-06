@@ -74,7 +74,8 @@ class LibraryName implements Comparable<LibraryName> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is LibraryName && _listEquals<String>(parts, other.parts);
+    return other is LibraryName
+        && _listEquals<String>(parts, other.parts);
   }
 
   @override
@@ -118,9 +119,8 @@ class FullyQualifiedWidgetName implements Comparable<FullyQualifiedWidgetName> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is FullyQualifiedWidgetName &&
-        library == other.library &&
-        widget == other.widget;
+    return other is FullyQualifiedWidgetName
+        && library == other.library && widget == other.widget;
   }
 
   @override
@@ -286,7 +286,7 @@ class BoundArgsReference extends Reference {
   /// The parameters must not be mutated after the object is created.
   ///
   /// Generally this class is created using [ArgsReference.bind].
-  const BoundArgsReference(this.arguments, List<Object> parts) : super(parts);
+  const BoundArgsReference(this.arguments, List<Object> parts): super(parts);
 
   /// The object into which [parts] will be indexed.
   ///
@@ -333,7 +333,7 @@ class LoopReference extends Reference {
   /// Wraps the given [loop] and [parts] as a [LoopReference].
   ///
   /// The [parts] must not be mutated after the object is created.
-  const LoopReference(this.loop, List<Object> parts) : super(parts);
+  const LoopReference(this.loop, List<Object> parts): super(parts);
 
   /// The index to the referenced loop.
   ///
@@ -390,7 +390,7 @@ class BoundLoopReference extends Reference {
   /// The [parts] must not be mutated after the object is created.
   ///
   /// Generally this class is created using [LoopReference.bind].
-  const BoundLoopReference(this.value, List<Object> parts) : super(parts);
+  const BoundLoopReference(this.value, List<Object> parts): super(parts);
 
   /// The object into which [parts] will index.
   ///
@@ -471,7 +471,7 @@ class BoundStateReference extends AnyStateReference {
   /// The [parts] must not be mutated after the object is created.
   ///
   /// Generally this class is created using [StateReference.bind].
-  const BoundStateReference(this.depth, List<Object> parts) : super(parts);
+  const BoundStateReference(this.depth, List<Object> parts): super(parts);
 
   /// The widget to whose state the state reference refers.
   ///
@@ -596,8 +596,7 @@ class WidgetDeclaration extends BlobNode {
   /// Binds the given [name] to the definition given by [root].
   ///
   /// The [initialState] may be null. If it is not, this represents a stateful widget.
-  const WidgetDeclaration(this.name, this.initialState, this.root)
-      : assert(root is ConstructorCall || root is Switch);
+  const WidgetDeclaration(this.name, this.initialState, this.root) : assert(root is ConstructorCall || root is Switch);
 
   /// The name of the widget that this declaration represents.
   ///
@@ -648,8 +647,5 @@ class RemoteWidgetLibrary extends WidgetLibrary {
   final List<WidgetDeclaration> widgets;
 
   @override
-  String toString() => const Iterable<Object>.empty()
-      .followedBy(imports)
-      .followedBy(widgets)
-      .join('\n');
+  String toString() => const Iterable<Object>.empty().followedBy(imports).followedBy(widgets).join('\n');
 }

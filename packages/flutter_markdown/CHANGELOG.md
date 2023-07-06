@@ -1,3 +1,7 @@
+## 0.6.16
+
+* Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
+
 ## 0.6.15+1
 
 * Fixes 'The Scrollbar's ScrollController has no ScrollPosition attached' exception when scrolling scrollable code blocks.

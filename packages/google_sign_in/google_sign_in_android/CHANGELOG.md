@@ -1,3 +1,7 @@
+## 6.1.18
+
+* Updates play-services-auth version to 20.6.0.
+
 ## 6.1.17
 
 * Converts method channels to Pigeon.

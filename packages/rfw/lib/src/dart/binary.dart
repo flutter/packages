@@ -65,8 +65,7 @@ Uint8List encodeDataBlob(Object value) {
 ///    Remote Flutter Widgets binary library blobs.
 ///  * [parseDataFile], which parses the text variant of this format.
 Object decodeDataBlob(Uint8List bytes) {
-  final _BlobDecoder decoder = _BlobDecoder(
-      bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
+  final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
   decoder.expectSignature(dataBlobSignature);
   final Object result = decoder.readValue();
   if (!decoder.finished) {
@@ -253,13 +252,11 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///    Remote Flutter Widgets binary data blobs.
 ///  * [parseDataFile], which parses the text variant of this format.
 RemoteWidgetLibrary decodeLibraryBlob(Uint8List bytes) {
-  final _BlobDecoder decoder = _BlobDecoder(
-      bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
+  final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
   decoder.expectSignature(libraryBlobSignature);
   final RemoteWidgetLibrary result = decoder.readLibrary();
   if (!decoder.finished) {
-    throw const FormatException(
-        'Unexpected trailing bytes after constructors.');
+    throw const FormatException('Unexpected trailing bytes after constructors.');
   }
   return result;
 }
@@ -305,8 +302,7 @@ class _BlobDecoder {
 
   void _advance(String context, int length) {
     if (_cursor + length > bytes.lengthInBytes) {
-      throw FormatException(
-          'Could not read $context at offset $_cursor: unexpected end of file.');
+      throw FormatException('Could not read $context at offset $_cursor: unexpected end of file.');
     }
     _cursor += length;
   }
@@ -333,8 +329,7 @@ class _BlobDecoder {
     final int length = _readInt64();
     final int byteOffset = _cursor;
     _advance('string', length);
-    return utf8.decode(
-        bytes.buffer.asUint8List(bytes.offsetInBytes + byteOffset, length));
+    return utf8.decode(bytes.buffer.asUint8List(bytes.offsetInBytes + byteOffset, length));
   }
 
   List<Object> _readPartList() {
@@ -346,14 +341,12 @@ class _BlobDecoder {
         case _msInt64:
           return _readInt64();
         default:
-          throw FormatException(
-              'Invalid reference type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
+          throw FormatException('Invalid reference type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
       }
     });
   }
 
-  Map<String, Object?>? _readMap(Object Function() readNode,
-      {bool nullIfEmpty = false}) {
+  Map<String, Object?>? _readMap(Object Function() readNode, { bool nullIfEmpty = false }) {
     final int count = _readInt64();
     if (count == 0 && nullIfEmpty) {
       return null;
@@ -408,9 +401,7 @@ class _BlobDecoder {
         return DynamicList.generate(_readInt64(), (int index) => readNode());
       case _msMap:
         return _readMap(readNode)!;
-      default:
-        throw FormatException(
-            'Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
+      default: throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding blob.');
     }
   }
 
@@ -438,8 +429,7 @@ class _BlobDecoder {
       case _msSwitch:
         return _readSwitch();
       case _msSetState:
-        return SetStateHandler(
-            StateReference(_readPartList()), _readArgument());
+        return SetStateHandler(StateReference(_readPartList()), _readArgument());
       default:
         return _parseValue(type, _readArgument);
     }
@@ -468,20 +458,17 @@ class _BlobDecoder {
         root = _readWidget();
         break;
       default:
-        throw FormatException(
-            'Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget declaration root.');
+        throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget declaration root.');
     }
     return WidgetDeclaration(name, initialState, root);
   }
 
   List<WidgetDeclaration> _readDeclarationList() {
-    return List<WidgetDeclaration>.generate(
-        _readInt64(), (int index) => _readDeclaration());
+    return List<WidgetDeclaration>.generate(_readInt64(), (int index) => _readDeclaration());
   }
 
   Import _readImport() {
-    return Import(LibraryName(
-        List<String>.generate(_readInt64(), (int index) => _readString())));
+    return Import(LibraryName(List<String>.generate(_readInt64(), (int index) => _readString())));
   }
 
   List<Import> _readImportList() {
@@ -504,9 +491,11 @@ class _BlobDecoder {
       }
     }
     if (!match) {
-      throw FormatException('File signature mismatch. '
-          'Expected ${signature.map<String>((int byte) => byte.toRadixString(16).toUpperCase().padLeft(2, "0")).join(" ")} '
-          'but found ${bytes.map<String>((int byte) => byte.toRadixString(16).toUpperCase().padLeft(2, "0")).join(" ")}.');
+      throw FormatException(
+        'File signature mismatch. '
+        'Expected ${signature.map<String>((int byte) => byte.toRadixString(16).toUpperCase().padLeft(2, "0")).join(" ")} '
+        'but found ${bytes.map<String>((int byte) => byte.toRadixString(16).toUpperCase().padLeft(2, "0")).join(" ")}.'
+      );
     }
   }
 }
@@ -522,11 +511,9 @@ class _BlobEncoder {
   _BlobEncoder();
 
   static final Uint8List _scratchOut = Uint8List(8);
-  static final ByteData _scratchIn = _scratchOut.buffer
-      .asByteData(_scratchOut.offsetInBytes, _scratchOut.lengthInBytes);
+  static final ByteData _scratchIn = _scratchOut.buffer.asByteData(_scratchOut.offsetInBytes, _scratchOut.lengthInBytes);
 
-  final BytesBuilder bytes =
-      BytesBuilder(); // copying builder -- we repeatedly add _scratchOut after changing it
+  final BytesBuilder bytes = BytesBuilder(); // copying builder -- we repeatedly add _scratchOut after changing it
 
   void _writeInt64(int value) {
     _scratchIn.setInt64(0, value, _blobEndian);
@@ -555,8 +542,7 @@ class _BlobEncoder {
       bytes.addByte(_msString);
       _writeString(value);
     } else {
-      throw StateError(
-          'Unexpected type ${value.runtimeType} while encoding blob.');
+      throw StateError('Unexpected type ${value.runtimeType} while encoding blob.');
     }
   }
 

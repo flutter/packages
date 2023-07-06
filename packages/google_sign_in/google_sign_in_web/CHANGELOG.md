@@ -1,3 +1,7 @@
+## 0.12.0+3
+
+* Fixes null cast error on accounts without picture or name details.
+
 ## 0.12.0+2
 
 * Adds compatibility with `http` 1.0.
