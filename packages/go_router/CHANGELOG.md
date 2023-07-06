@@ -1,3 +1,7 @@
+## 9.0.1
+
+- Allows redirect only GoRoute to be part of RouteMatchList.
+
 ## 9.0.0
 
 - **BREAKING CHANGE**:
