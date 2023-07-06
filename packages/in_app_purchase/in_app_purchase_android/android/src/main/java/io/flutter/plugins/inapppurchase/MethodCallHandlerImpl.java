@@ -71,8 +71,8 @@ class MethodCallHandlerImpl
   // https://github.com/flutter/flutter/issues/128957
   @SuppressWarnings(value = "deprecation")
   private static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
-          com.android.billingclient.api.BillingFlowParams
-                  .ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
+      com.android.billingclient.api.BillingFlowParams.ProrationMode
+          .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
@@ -163,7 +163,7 @@ class MethodCallHandlerImpl
             (String) call.argument("purchaseToken"),
             call.hasArgument("prorationMode")
                 ? (int) call.argument("prorationMode")
-                    : PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+                : PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
             result);
         break;
       case MethodNames.QUERY_PURCHASES_ASYNC:
@@ -280,8 +280,7 @@ class MethodCallHandlerImpl
     }
 
     if (oldProduct == null
-            && prorationMode
-            != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+        && prorationMode != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
       result.error(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
           "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
@@ -341,7 +340,8 @@ class MethodCallHandlerImpl
   // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode
   // https://github.com/flutter/flutter/issues/128957
   @SuppressWarnings(value = "deprecation")
-  private void setReplaceProrationMode(BillingFlowParams.SubscriptionUpdateParams.Builder builder, int prorationMode) {
+  private void setReplaceProrationMode(
+      BillingFlowParams.SubscriptionUpdateParams.Builder builder, int prorationMode) {
     // The proration mode value has to match one of the following declared in
     // https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode
     builder.setReplaceProrationMode(prorationMode);
