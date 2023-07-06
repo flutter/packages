@@ -262,6 +262,144 @@ targets:
       target_file: android_build_all_packages.yaml
       channel: stable
 
+  - name: Linux_android android_platform_tests_shard_1 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_2 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_3 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 2 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_4 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 3 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_5 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 4 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_6 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 6 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_1 stable
+    bringup: true # New target
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_2 stable
+    bringup: true # New target
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_3 stable
+    bringup: true # New target
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 2 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_4 stable
+    bringup: true # New target
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 3 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_5 stable
+    bringup: true # New target
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 4 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_6 stable
+    bringup: true # New target
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 6 --shardCount 6"
+
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
     recipe: packages/packages
