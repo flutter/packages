@@ -39,6 +39,7 @@ public class AllDatatypesTest {
     assertArrayEquals(
         firstTypes.getAMap().values().toArray(), secondTypes.getAMap().values().toArray());
     assertEquals(firstTypes.getAnEnum(), secondTypes.getAnEnum());
+    assertEquals(firstTypes.getAnObject(), secondTypes.getAnObject());
     assertEquals(firstTypes.getAString(), secondTypes.getAString());
   }
 
@@ -68,6 +69,7 @@ public class AllDatatypesTest {
     assertArrayEquals(
         firstTypes.getNullableMapWithObject().values().toArray(),
         secondTypes.getNullableMapWithObject().values().toArray());
+    assertEquals(firstTypes.getAnObject(), secondTypes.getAnObject());
   }
 
   @Test

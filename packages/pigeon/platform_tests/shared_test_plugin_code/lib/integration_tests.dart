@@ -56,6 +56,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(listEquals(allTypesOne.aList, allTypesTwo.aList), true);
     expect(mapEquals(allTypesOne.aMap, allTypesTwo.aMap), true);
     expect(allTypesOne.anEnum, allTypesTwo.anEnum);
+    expect(allTypesOne.anObject, allTypesTwo.anObject);
   }
 
   void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
@@ -105,6 +106,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         mapEquals(allNullableTypesOne.nullableMapWithObject,
             allNullableTypesTwo.nullableMapWithObject),
         true);
+    expect(allNullableTypesOne.aNullableObject,
+        allNullableTypesTwo.aNullableObject);
     // TODO(stuartmorgan): Fix and re-enable.
     // See https://github.com/flutter/flutter/issues/118733
     if (targetGenerator != TargetGenerator.objc) {

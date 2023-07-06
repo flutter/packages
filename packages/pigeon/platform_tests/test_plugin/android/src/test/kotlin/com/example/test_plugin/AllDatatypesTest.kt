@@ -31,6 +31,7 @@ internal class AllDatatypesTest: TestCase() {
         assertEquals(firstTypes.aList, secondTypes.aList)
         assertEquals(firstTypes.aMap, secondTypes.aMap)
         assertEquals(firstTypes.anEnum, secondTypes.anEnum)
+        assertEquals(firstTypes.anObject, secondTypes.anObject)
     }
 
     fun compareAllNullableTypes(firstTypes: AllNullableTypes?, secondTypes: AllNullableTypes?) {
@@ -49,6 +50,7 @@ internal class AllDatatypesTest: TestCase() {
         assertEquals(firstTypes.aNullableList, secondTypes.aNullableList)
         assertEquals(firstTypes.aNullableMap, secondTypes.aNullableMap)
         assertEquals(firstTypes.nullableMapWithObject, secondTypes.nullableMapWithObject)
+        assertEquals(firstTypes.aNullableObject, secondTypes.aNullableObject)
     }
 
     @Test
