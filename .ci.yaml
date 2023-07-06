@@ -240,7 +240,7 @@ targets:
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       cores: "32"
-      # Pigeon tests need Andoid deps (thus the Linux_android base) and
+      # Pigeon tests need Android deps (thus the Linux_android base) and
       # clang-format.
       dependencies: >-
         [
