@@ -12,6 +12,7 @@ import 'configuration.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'route.dart';
 import 'router.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
