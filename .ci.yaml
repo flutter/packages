@@ -88,15 +88,9 @@ targets:
     timeout: 30
     properties:
       add_recipes_cq: "true"
-      # NOT FOR LANDING; presubmit testing only
-      target_file: repo_checks.yaml
+      target_file: repo_tools_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # NOT FOR LANDING; presubmit testing only
-      dependencies: >-
-        [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
-        ]
 
   - name: Linux repo_checks
     bringup: true # New target
