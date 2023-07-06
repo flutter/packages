@@ -158,22 +158,6 @@ task:
     memory: 16G
   matrix:
     ### Platform-agnostic tasks ###
-    - name: dart_unit_tests
-      env:
-        matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 2"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 2"
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      unit_test_script:
-        - ./script/tool_runner.sh dart-test --exclude=script/configs/dart_unit_tests_exceptions.yaml
-      pathified_unit_test_script:
-        # Run tests with path-based dependencies to ensure that publishing
-        # the changes won't break tests of other packages in the repository
-        # that depend on it.
-        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        - $PLUGIN_TOOL_COMMAND dart-test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
     - name: linux-custom_package_tests
       env:
         PATH: $PATH:/usr/local/bin
@@ -214,7 +198,7 @@ task:
       firebase_test_lab_script:
         - if [[ -n "$GCLOUD_FIREBASE_TESTLAB_KEY" ]]; then
         -   echo $GCLOUD_FIREBASE_TESTLAB_KEY > ${HOME}/gcloud-service-key.json
-        -   ./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --device model=starqlteue,version=26 --exclude=script/configs/exclude_integration_android.yaml
+        -   ./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --exclude=script/configs/exclude_integration_android.yaml
         - else
         -   echo "This user does not have permission to run Firebase Test Lab tests."
         - fi

@@ -1,6 +1,12 @@
-## 3.6.1
+## 3.6.2 
 
 * Fixes unawaited_futures violations.
+
+## 3.6.1
+
+* Fixes bug where a native `NSURL` could be removed from an `InstanceManager` if it is equal to an
+  already present `NSURL`.
+* Fixes compile-time error from using `WKWebView.inspectable` on unsupported Xcode versions.
 
 ## 3.6.0
 

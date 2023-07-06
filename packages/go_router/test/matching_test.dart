@@ -6,9 +6,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/configuration.dart';
+import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
-import 'package:go_router/src/router.dart';
 
 import 'test_helpers.dart';
 
@@ -22,9 +21,8 @@ void main() {
               const Placeholder()),
     ];
 
-    final GoRouter router = await createRouter(routes, tester);
-    router.go('/page-0');
-    await tester.pumpAndSettle();
+    final GoRouter router =
+        await createRouter(routes, tester, initialLocation: '/page-0');
 
     final RouteMatchList matches = router.routerDelegate.currentConfiguration;
     expect(matches.toString(), contains('/page-0'));
