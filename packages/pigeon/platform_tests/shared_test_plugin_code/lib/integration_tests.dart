@@ -39,15 +39,11 @@ enum TargetGenerator {
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  bool compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
-    if (allTypesOne == null && allTypesTwo == null) {
-      return true;
-    }
-
+  void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
+    expect(allTypesOne == null, allTypesTwo == null);
     if (allTypesOne == null || allTypesTwo == null) {
-      return false;
+      return;
     }
-
     expect(allTypesOne.aBool, allTypesTwo.aBool);
     expect(allTypesOne.anInt, allTypesTwo.anInt);
     expect(allTypesOne.anInt64, allTypesTwo.anInt64);
@@ -60,20 +56,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(listEquals(allTypesOne.aList, allTypesTwo.aList), true);
     expect(mapEquals(allTypesOne.aMap, allTypesTwo.aMap), true);
     expect(allTypesOne.anEnum, allTypesTwo.anEnum);
-
-    return true;
   }
 
-  bool compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
+  void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
       AllNullableTypes? allNullableTypesTwo) {
-    if (allNullableTypesOne == null && allNullableTypesTwo == null) {
-      return true;
-    }
-
+    expect(allNullableTypesOne == null, allNullableTypesTwo == null);
     if (allNullableTypesOne == null || allNullableTypesTwo == null) {
-      return false;
+      return;
     }
-
     expect(
         allNullableTypesOne.aNullableBool, allNullableTypesTwo.aNullableBool);
     expect(allNullableTypesOne.aNullableInt, allNullableTypesTwo.aNullableInt);
@@ -121,23 +111,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(
           allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
     }
-
-    return true;
   }
 
-  bool compareAllClassesWrapper(
+  void compareAllClassesWrapper(
       AllClassesWrapper? wrapperOne, AllClassesWrapper? wrapperTwo) {
-    if (wrapperOne == null && wrapperTwo == null) {
-      return true;
-    }
-
+    expect(wrapperOne == null, wrapperTwo == null);
     if (wrapperOne == null || wrapperTwo == null) {
-      return false;
+      return;
     }
 
-    return compareAllNullableTypes(
-            wrapperOne.allNullableTypes, wrapperTwo.allNullableTypes) &&
-        compareAllTypes(wrapperOne.allTypes, wrapperTwo.allTypes);
+    compareAllNullableTypes(
+        wrapperOne.allNullableTypes, wrapperTwo.allNullableTypes);
+    compareAllTypes(wrapperOne.allTypes, wrapperTwo.allTypes);
   }
 
   final AllTypes genericAllTypes = AllTypes(
@@ -200,7 +185,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllTypes echoObject = await api.echoAllTypes(genericAllTypes);
-      expect(compareAllTypes(echoObject, genericAllTypes), true);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly',
@@ -209,8 +194,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoObject =
           await api.echoAllNullableTypes(genericAllNullableTypes);
-      expect(
-          compareAllNullableTypes(echoObject, genericAllNullableTypes), true);
+
+      compareAllNullableTypes(echoObject, genericAllNullableTypes);
     });
 
     testWidgets('all null datatypes serialize and deserialize correctly',
@@ -221,7 +206,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(allTypesNull);
-      expect(compareAllNullableTypes(allTypesNull, echoNullFilledClass), true);
+      compareAllNullableTypes(allTypesNull, echoNullFilledClass);
     });
 
     testWidgets('Classes with list of null serialize and deserialize correctly',
@@ -234,8 +219,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(nullableListTypes);
 
-      expect(compareAllNullableTypes(nullableListTypes, echoNullFilledClass),
-          true);
+      compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
     });
 
     testWidgets('Classes with map of null serialize and deserialize correctly',
@@ -248,8 +232,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAllNullableTypes(nullableListTypes);
 
-      expect(compareAllNullableTypes(nullableListTypes, echoNullFilledClass),
-          true);
+      compareAllNullableTypes(nullableListTypes, echoNullFilledClass);
     });
 
     testWidgets('errors are returned correctly', (WidgetTester _) async {
@@ -312,7 +295,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllClassesWrapper receivedClassWrapper =
           await api.echoClassWrapper(sentWrapper);
-      expect(compareAllClassesWrapper(sentWrapper, receivedClassWrapper), true);
+      compareAllClassesWrapper(sentWrapper, receivedClassWrapper);
     });
 
     testWidgets('nested null classes can serialize and deserialize correctly',
@@ -324,7 +307,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllClassesWrapper receivedClassWrapper =
           await api.echoClassWrapper(sentWrapper);
-      expect(compareAllClassesWrapper(sentWrapper, receivedClassWrapper), true);
+      compareAllClassesWrapper(sentWrapper, receivedClassWrapper);
     });
 
     testWidgets(
@@ -670,7 +653,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllTypes echoObject = await api.echoAsyncAllTypes(genericAllTypes);
 
-      expect(compareAllTypes(echoObject, genericAllTypes), true);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets(
@@ -680,8 +663,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoObject =
           await api.echoAsyncNullableAllNullableTypes(genericAllNullableTypes);
-      expect(
-          compareAllNullableTypes(echoObject, genericAllNullableTypes), true);
+
+      compareAllNullableTypes(echoObject, genericAllNullableTypes);
     });
 
     testWidgets('all null datatypes async serialize and deserialize correctly',
@@ -692,7 +675,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAsyncNullableAllNullableTypes(allTypesNull);
-      expect(compareAllNullableTypes(echoNullFilledClass, allTypesNull), true);
+      compareAllNullableTypes(echoNullFilledClass, allTypesNull);
     });
 
     testWidgets('Int async serialize and deserialize correctly',
@@ -1020,7 +1003,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllTypes echoObject =
           await api.callFlutterEchoAllTypes(genericAllTypes);
 
-      expect(compareAllTypes(echoObject, genericAllTypes), true);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets(

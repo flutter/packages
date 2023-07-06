@@ -14,15 +14,11 @@ import java.util.ArrayList
 
 
 internal class AllDatatypesTest: TestCase() {
-    fun compareAllTypes(firstTypes: AllTypes?, secondTypes: AllTypes?): Boolean {
-
-        if (firstTypes == null && secondTypes == null) {
-            return true
-        }
+    fun compareAllTypes(firstTypes: AllTypes?, secondTypes: AllTypes?) {
+        assertEquals(firstTypes == null, secondTypes == null)
         if (firstTypes == null || secondTypes == null) {
-            return false
+            return
         }
-
         assertEquals(firstTypes.aBool, secondTypes.aBool)
         assertEquals(firstTypes.anInt, secondTypes.anInt)
         assertEquals(firstTypes.anInt64, secondTypes.anInt64)
@@ -35,18 +31,13 @@ internal class AllDatatypesTest: TestCase() {
         assertEquals(firstTypes.aList, secondTypes.aList)
         assertEquals(firstTypes.aMap, secondTypes.aMap)
         assertEquals(firstTypes.anEnum, secondTypes.anEnum)
-        
-        return true
     }
 
-    fun compareAllNullableTypes(firstTypes: AllNullableTypes?, secondTypes: AllNullableTypes?): Boolean {
-        if (firstTypes == null && secondTypes == null) {
-            return true
-        }
+    fun compareAllNullableTypes(firstTypes: AllNullableTypes?, secondTypes: AllNullableTypes?) {
+        assertEquals(firstTypes == null, secondTypes == null)
         if (firstTypes == null || secondTypes == null) {
-            return false
+            return
         }
-
         assertEquals(firstTypes.aNullableBool, secondTypes.aNullableBool)
         assertEquals(firstTypes.aNullableInt, secondTypes.aNullableInt)
         assertEquals(firstTypes.aNullableDouble, secondTypes.aNullableDouble)
@@ -58,8 +49,6 @@ internal class AllDatatypesTest: TestCase() {
         assertEquals(firstTypes.aNullableList, secondTypes.aNullableList)
         assertEquals(firstTypes.aNullableMap, secondTypes.aNullableMap)
         assertEquals(firstTypes.nullableMapWithObject, secondTypes.nullableMapWithObject)
-
-        return true
     }
 
     @Test
@@ -130,7 +119,7 @@ internal class AllDatatypesTest: TestCase() {
         var didCall = false
         api.echoAllNullableTypes(everything) {
             didCall = true
-            assertTrue(compareAllNullableTypes(everything, it))
+            compareAllNullableTypes(everything, it)
         }
 
         assertTrue(didCall)

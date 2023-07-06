@@ -1,6 +1,6 @@
 ## 10.1.2
 
-* [swift] Fixes a crash when casting `NSNull` to an array. 
+* [swift] Fixes a crash when passing `null` for nested nullable classes. 
 
 ## 10.1.1
 

@@ -19,15 +19,11 @@ import org.junit.Test;
 
 public class AllDatatypesTest {
 
-  boolean compareAllTypes(AllTypes firstTypes, AllTypes secondTypes) {
-
-    if (firstTypes == null && secondTypes == null) {
-      return true;
-    }
+  void compareAllTypes(AllTypes firstTypes, AllTypes secondTypes) {
+    assertEquals(firstTypes == null, secondTypes == null);
     if (firstTypes == null || secondTypes == null) {
-      return false;
+      return;
     }
-
     assertEquals(firstTypes.getABool(), secondTypes.getABool());
     assertEquals(firstTypes.getAnInt(), secondTypes.getAnInt());
     assertEquals(firstTypes.getAnInt64(), secondTypes.getAnInt64());
@@ -44,17 +40,12 @@ public class AllDatatypesTest {
         firstTypes.getAMap().values().toArray(), secondTypes.getAMap().values().toArray());
     assertEquals(firstTypes.getAnEnum(), secondTypes.getAnEnum());
     assertEquals(firstTypes.getAString(), secondTypes.getAString());
-
-    return true;
   }
 
-  boolean compareAllNullableTypes(AllNullableTypes firstTypes, AllNullableTypes secondTypes) {
-
-    if (firstTypes == null && secondTypes == null) {
-      return true;
-    }
+  void compareAllNullableTypes(AllNullableTypes firstTypes, AllNullableTypes secondTypes) {
+    assertEquals(firstTypes == null, secondTypes == null);
     if (firstTypes == null || secondTypes == null) {
-      return false;
+      return;
     }
     assertEquals(firstTypes.getANullableBool(), secondTypes.getANullableBool());
     assertEquals(firstTypes.getANullableInt(), secondTypes.getANullableInt());
@@ -77,8 +68,6 @@ public class AllDatatypesTest {
     assertArrayEquals(
         firstTypes.getNullableMapWithObject().values().toArray(),
         secondTypes.getNullableMapWithObject().values().toArray());
-
-    return true;
   }
 
   @Test
@@ -202,7 +191,7 @@ public class AllDatatypesTest {
         everything,
         (result) -> {
           didCall[0] = true;
-          assert (compareAllNullableTypes(everything, result));
+          compareAllNullableTypes(everything, result);
         });
     assertTrue(didCall[0]);
   }
