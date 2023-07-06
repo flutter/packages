@@ -231,6 +231,24 @@ void main() {
           ]));
     });
 
+    test('converts --platform=vm to no argument for flutter test', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'some_plugin',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      await runCapturingPrint(runner, <String>['dart-test', '--platform=vm']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(getFlutterCommand(mockPlatform),
+              const <String>['test', '--color'], plugin.path),
+        ]),
+      );
+    });
+
     test('runs in Chrome when requested for Flutter package', () async {
       final RepositoryPackage package = createFakePackage(
         'a_package',
