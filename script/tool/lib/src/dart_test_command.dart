@@ -118,7 +118,9 @@ class DartTestCommand extends PackageLoopingCommand {
         'test',
         '--color',
         if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-        if (platform != null) '--platform=$platform',
+        // Flutter defaults to VM mode (under a different name) and explicitly
+        // setting it is deprecated, so pass nothing in that case.
+        if (platform != null && platform != 'vm') '--platform=$platform',
       ],
       workingDir: package.directory,
     );
