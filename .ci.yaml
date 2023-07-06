@@ -286,7 +286,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: web_platform_tests.yaml
       cores: "32"
       version_file: flutter_master.version
@@ -298,7 +297,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: web_platform_tests.yaml
       cores: "32"
       version_file: flutter_master.version
@@ -310,7 +308,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: web_platform_tests.yaml
       cores: "32"
       version_file: flutter_stable.version
@@ -322,7 +319,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: web_platform_tests.yaml
       cores: "32"
       version_file: flutter_stable.version
