@@ -417,6 +417,7 @@ public class MethodCallHandlerTest {
   }
 
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Proration() {
     // Fetch the product details first and query the method call
     String productId = "foo";
@@ -454,6 +455,7 @@ public class MethodCallHandlerTest {
   }
 
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Proration_with_null_OldProduct() {
     // Fetch the product details first and query the method call
     String productId = "foo";
@@ -488,6 +490,7 @@ public class MethodCallHandlerTest {
   }
 
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Full() {
     // Fetch the product details first and query the method call
     String productId = "foo";
