@@ -1,3 +1,7 @@
+## 0.10.8+4
+
+* Updates Guava version to 32.1.1.
+
 ## 0.10.8+3
 
 * Fixes unawaited_futures violations.
