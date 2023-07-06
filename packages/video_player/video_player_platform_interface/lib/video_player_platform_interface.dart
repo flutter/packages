@@ -403,6 +403,7 @@ class VideoPlayerWebOptions {
   const VideoPlayerWebOptions({
     this.controls = const VideoPlayerWebOptionsControls.disabled(),
     this.allowContextMenu = true,
+    this.allowRemotePlayback = true,
   });
 
   /// Additional settings how control options are displayed
@@ -410,6 +411,9 @@ class VideoPlayerWebOptions {
 
   /// Whether context menu (right click) is allowed
   final bool allowContextMenu;
+
+  /// Whether remote playback is allowed
+  final bool allowRemotePlayback;
 }
 
 /// [VideoPlayerWebOptions] can be used to set how control options are displayed
@@ -420,6 +424,7 @@ class VideoPlayerWebOptionsControls {
     this.allowDownload = true,
     this.allowFullscreen = true,
     this.allowPlaybackRate = true,
+    this.allowPictureInPicture = true,
   }) : enabled = true;
 
   /// Disables control options. Default behavior.
@@ -427,7 +432,8 @@ class VideoPlayerWebOptionsControls {
       : enabled = false,
         allowDownload = false,
         allowFullscreen = false,
-        allowPlaybackRate = false;
+        allowPlaybackRate = false,
+        allowPictureInPicture = false;
 
   /// Whether native controls are enabled
   final bool enabled;
@@ -446,6 +452,11 @@ class VideoPlayerWebOptionsControls {
   ///
   /// Only applicable when [controlsEnabled] is true
   final bool allowPlaybackRate;
+
+  /// Whether picture in picture control is displayed
+  ///
+  /// Only applicable when [controlsEnabled] is true
+  final bool allowPictureInPicture;
 
   /// A string representation of disallowed controls
   String get controlsList {
