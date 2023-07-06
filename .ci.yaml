@@ -214,6 +214,40 @@ targets:
       channel: stable
       version_file: flutter_stable.version
 
+  - name: Linux_android custom_package_tests master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: linux_custom_package_tests.yaml
+      cores: "32"
+      # Pigeon tests need Andoid deps (thus the Linux_android base) and
+      # clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
+      channel: master
+
+  - name: Linux_android custom_package_tests stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      target_file: linux_custom_package_tests.yaml
+      cores: "32"
+      # Pigeon tests need Android deps (thus the Linux_android base) and
+      # clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
+      channel: stable
+
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
     recipe: packages/packages
