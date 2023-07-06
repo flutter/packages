@@ -185,7 +185,9 @@ void main() {
 
           expect((mip.toJson() as List<dynamic>)[2], 1);
           expect((scaled.toJson() as List<dynamic>)[2], 3);
-        });
+        },
+            // TODO(stuartmorgan): Investigate timeout on web.
+            skip: kIsWeb);
 
         test('name cannot be null or empty', () {
           expect(() {

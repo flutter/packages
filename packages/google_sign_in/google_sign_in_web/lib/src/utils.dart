@@ -72,8 +72,8 @@ GoogleSignInUserData? gisResponsesToUserData(
   return GoogleSignInUserData(
     email: payload['email']! as String,
     id: payload['sub']! as String,
-    displayName: payload['name']! as String,
-    photoUrl: payload['picture']! as String,
+    displayName: payload['name'] as String?,
+    photoUrl: payload['picture'] as String?,
     idToken: credentialResponse.credential,
   );
 }

@@ -17,7 +17,7 @@ import 'common/repository_package.dart';
 const int _exitNoPlatformFlags = 2;
 const int _exitNoAvailableDevice = 3;
 
-/// A command to run the example applications for packages via Flutter driver.
+/// A command to run the integration tests for a package's example applications.
 class DriveExamplesCommand extends PackageLoopingCommand {
   /// Creates an instance of the drive command.
   DriveExamplesCommand(
@@ -50,11 +50,9 @@ class DriveExamplesCommand extends PackageLoopingCommand {
   final String name = 'drive-examples';
 
   @override
-  final String description = 'Runs driver tests for package example apps.\n\n'
-      'For each *_test.dart in test_driver/ it drives an application with '
-      'either the corresponding test in test_driver (for example, '
-      'test_driver/app_test.dart would match test_driver/app.dart), or the '
-      '*_test.dart files in integration_test/.\n\n'
+  final String description = 'Runs Dart integration tests for example apps.\n\n'
+      "This runs all tests in each example's integration_test directory, "
+      'via "flutter test" on most platforms, and "flutter drive" on web.\n\n'
       'This command requires "flutter" to be in your path.';
 
   Map<String, List<String>> _targetDeviceFlags = const <String, List<String>>{};
@@ -164,53 +162,53 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             'Skipping $exampleName; does not support any requested platforms.');
         continue;
       }
+
       ++supportedExamplesFound;
 
-      final List<File> drivers = await _getDrivers(example);
-      if (drivers.isEmpty) {
-        print('No driver tests found for $exampleName');
+      final List<File> testTargets = await _getIntegrationTests(example);
+      if (testTargets.isEmpty) {
+        print('No integration_test/*.dart files found for $exampleName.');
         continue;
       }
 
-      for (final File driver in drivers) {
-        final List<File> testTargets = <File>[];
+      // Check files for known problematic patterns.
+      testTargets
+          .where((File file) => !_validateIntegrationTest(file))
+          .forEach((File file) {
+        // Report the issue, but continue with the test as the validation
+        // errors don't prevent running.
+        errors.add('${file.basename} failed validation');
+      });
 
-        // Try to find a matching app to drive without the _test.dart
-        // TODO(stuartmorgan): Migrate all remaining uses of this legacy
-        // approach (currently only video_player) and remove support for it:
-        // https://github.com/flutter/flutter/issues/85224.
-        final File? legacyTestFile = _getLegacyTestFileForTestDriver(driver);
-        if (legacyTestFile != null) {
-          testTargets.add(legacyTestFile);
-        } else {
-          for (final File testFile in await _getIntegrationTests(example)) {
-            // Check files for known problematic patterns.
-            final bool passesValidation = _validateIntegrationTest(testFile);
-            if (!passesValidation) {
-              // Report the issue, but continue with the test as the validation
-              // errors don't prevent running.
-              errors.add('${testFile.basename} failed validation');
-            }
-            testTargets.add(testFile);
-          }
-        }
+      // `flutter test` doesn't yet support web integration tests, so fall back
+      // to `flutter drive`.
+      final bool useFlutterDrive = getBoolArg(platformWeb);
 
-        if (testTargets.isEmpty) {
-          final String driverRelativePath =
-              getRelativePosixPath(driver, from: package.directory);
-          printError(
-              'Found $driverRelativePath, but no integration_test/*_test.dart files.');
-          errors.add('No test files for $driverRelativePath');
+      final List<File> drivers;
+      if (useFlutterDrive) {
+        drivers = await _getDrivers(example);
+        if (drivers.isEmpty) {
+          print('No driver found for $exampleName');
           continue;
         }
+      } else {
+        drivers = <File>[];
+      }
 
-        testsRan = true;
-        final List<File> failingTargets = await _driveTests(
-            example, driver, testTargets,
-            deviceFlags: deviceFlags);
-        for (final File failingTarget in failingTargets) {
-          errors.add(
-              getRelativePosixPath(failingTarget, from: package.directory));
+      testsRan = true;
+      if (useFlutterDrive) {
+        for (final File driver in drivers) {
+          final List<File> failingTargets = await _driveTests(
+              example, driver, testTargets,
+              deviceFlags: deviceFlags);
+          for (final File failingTarget in failingTargets) {
+            errors.add(
+                getRelativePosixPath(failingTarget, from: package.directory));
+          }
+        }
+      } else {
+        if (!await _runTests(example, deviceFlags: deviceFlags)) {
+          errors.add('Integration tests failed.');
         }
       }
     }
@@ -224,7 +222,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       } else {
         return PackageResult.skip(supportedExamplesFound == 0
             ? 'No example supports requested platform(s).'
-            : 'No example is configured for driver tests.');
+            : 'No example is configured for integration tests.');
       }
     }
     return errors.isEmpty
@@ -293,16 +291,6 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       }
     }
     return drivers;
-  }
-
-  File? _getLegacyTestFileForTestDriver(File testDriver) {
-    final String testName = testDriver.basename.replaceAll(
-      RegExp(r'_test.dart$'),
-      '.dart',
-    );
-    final File testFile = testDriver.parent.childFile(testName);
-
-    return testFile.existsSync() ? testFile : null;
   }
 
   Future<List<File>> _getIntegrationTests(RepositoryPackage example) async {
@@ -377,5 +365,32 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       }
     }
     return failures;
+  }
+
+  /// Uses `flutter test integration_test` to run [example], returning the
+  /// success of the test run.
+  ///
+  /// [deviceFlags] should contain the flags to run the test on a specific
+  /// target device (plus any supporting device-specific flags). E.g.:
+  ///   - `['-d', 'macos']` for driving for macOS.
+  ///   - `['-d', 'web-server', '--web-port=<port>', '--browser-name=<browser>]`
+  ///     for web
+  Future<bool> _runTests(
+    RepositoryPackage example, {
+    required List<String> deviceFlags,
+  }) async {
+    final String enableExperiment = getStringArg(kEnableExperiment);
+
+    final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'test',
+          ...deviceFlags,
+          if (enableExperiment.isNotEmpty)
+            '--enable-experiment=$enableExperiment',
+          'integration_test',
+        ],
+        workingDir: example.directory);
+    return exitCode == 0;
   }
 }
