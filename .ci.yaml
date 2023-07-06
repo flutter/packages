@@ -88,7 +88,18 @@ targets:
     timeout: 30
     properties:
       add_recipes_cq: "true"
-      target_file: repo_tools_tests.yaml
+      # NOT FOR LANDING; presubmit testing only
+      target_file: repo_checks.yaml
+      channel: master
+      version_file: flutter_master.version
+
+  - name: Linux repo_checks
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: repo_checks.yaml
       channel: master
       version_file: flutter_master.version
 
