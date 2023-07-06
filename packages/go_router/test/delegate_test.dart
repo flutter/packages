@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
 import 'package:go_router/src/misc/error_screen.dart';
+import 'package:go_router/src/misc/errors.dart';
 
 import 'test_helpers.dart';
 
@@ -94,6 +95,73 @@ void main() {
         ..push('/error');
       await tester.pumpAndSettle();
       await goRouter.routerDelegate.popRoute();
+      expect(await goRouter.routerDelegate.popRoute(), isFalse);
+    });
+
+    testWidgets('throw if nothing to pop', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final GoRouter goRouter = await createRouter(
+        <RouteBase>[
+          ShellRoute(
+            navigatorKey: rootKey,
+            builder: (_, __, Widget child) => child,
+            routes: <RouteBase>[
+              ShellRoute(
+                parentNavigatorKey: rootKey,
+                navigatorKey: navKey,
+                builder: (_, __, Widget child) => child,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/',
+                    parentNavigatorKey: navKey,
+                    builder: (_, __) => const Text('Home'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+        tester,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsOneWidget);
+      String? message;
+      try {
+        goRouter.pop();
+      } on GoError catch (e) {
+        message = e.message;
+      }
+      expect(message, 'There is nothing to pop');
+    });
+
+    testWidgets('poproute return false if nothing to pop',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final GoRouter goRouter = await createRouter(
+        <RouteBase>[
+          ShellRoute(
+            navigatorKey: rootKey,
+            builder: (_, __, Widget child) => child,
+            routes: <RouteBase>[
+              ShellRoute(
+                parentNavigatorKey: rootKey,
+                navigatorKey: navKey,
+                builder: (_, __, Widget child) => child,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/',
+                    parentNavigatorKey: navKey,
+                    builder: (_, __) => const Text('Home'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+        tester,
+      );
       expect(await goRouter.routerDelegate.popRoute(), isFalse);
     });
   });

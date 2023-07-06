@@ -1,3 +1,12 @@
+## 3.8.1
+
+* Bumps androidx.webkit:webkit from 1.6.0 to 1.7.0.
+
+## 3.8.0
+
+* Adds support for handling geolocation permissions. See
+  `AndroidWebViewController.setGeolocationPermissionsPromptCallbacks`.
+
 ## 3.7.1
 
 * Removes obsolete null checks on non-nullable values.

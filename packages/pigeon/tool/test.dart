@@ -74,6 +74,7 @@ ${parser.usage}''');
       iOSSwiftIntegrationTests,
     ];
     const List<String> macOSTests = <String>[
+      macOSObjCIntegrationTests,
       macOSSwiftUnitTests,
       macOSSwiftIntegrationTests
     ];
