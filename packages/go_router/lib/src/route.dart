@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -96,7 +97,7 @@ import 'typedefs.dart';
 /// ///
 /// See [main.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 @immutable
-abstract class RouteBase {
+abstract class RouteBase with Diagnosticable {
   const RouteBase._({
     required this.routes,
     required this.parentNavigatorKey,
@@ -117,6 +118,15 @@ abstract class RouteBase {
   static Iterable<RouteBase> routesRecursively(Iterable<RouteBase> routes) {
     return routes.expand(
         (RouteBase e) => <RouteBase>[e, ...routesRecursively(e.routes)]);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    if (parentNavigatorKey != null) {
+      properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>(
+          'parentNavKey', parentNavigatorKey));
+    }
   }
 }
 
@@ -156,6 +166,11 @@ class GoRoute extends RouteBase {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, pathParameters);
   }
+
+  /// Whether this [GoRoute] only redirects to another route.
+  ///
+  /// If this is true, this route must redirect location other than itself.
+  bool get redirectOnly => pageBuilder == null && builder == null;
 
   /// Optional name of the route.
   ///
@@ -323,8 +338,12 @@ class GoRoute extends RouteBase {
   final List<String> pathParameters = <String>[];
 
   @override
-  String toString() {
-    return 'GoRoute(name: $name, path: $path)';
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('name', name));
+    properties.add(StringProperty('path', path));
+    properties.add(
+        FlagProperty('redirect', value: redirectOnly, ifTrue: 'Redirect Only'));
   }
 
   late final RegExp _pathRE;
@@ -337,6 +356,21 @@ abstract class ShellRouteBase extends RouteBase {
   const ShellRouteBase._(
       {required super.routes, required super.parentNavigatorKey})
       : super._();
+
+  static void _debugCheckSubRouteParentNavigatorKeys(
+      List<RouteBase> subRoutes, GlobalKey<NavigatorState> navigatorKey) {
+    for (final RouteBase route in subRoutes) {
+      assert(
+          route.parentNavigatorKey == null ||
+              route.parentNavigatorKey == navigatorKey,
+          "sub-route's parent navigator key must either be null or has the same navigator key as parent's key");
+      if (route is GoRoute && route.redirectOnly) {
+        // This route does not produce a page, need to check its sub-routes
+        // instead.
+        _debugCheckSubRouteParentNavigatorKeys(route.routes, navigatorKey);
+      }
+    }
+  }
 
   /// Attempts to build the Widget representing this shell route.
   ///
@@ -506,12 +540,11 @@ class ShellRoute extends ShellRouteBase {
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._() {
-    for (final RouteBase route in routes) {
-      if (route is GoRoute) {
-        assert(route.parentNavigatorKey == null ||
-            route.parentNavigatorKey == navigatorKey);
-      }
-    }
+    assert(() {
+      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
+          routes, this.navigatorKey);
+      return true;
+    }());
   }
 
   /// The widget builder for a shell route.
@@ -576,6 +609,13 @@ class ShellRoute extends ShellRouteBase {
   @override
   Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
       <GlobalKey<NavigatorState>>[navigatorKey];
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>(
+        'navigatorKey', navigatorKey));
+  }
 }
 
 /// A route that displays a UI shell with separate [Navigator]s for its
@@ -828,6 +868,13 @@ class StatefulShellRoute extends ShellRouteBase {
     }
     return true;
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Iterable<GlobalKey<NavigatorState>>>(
+        'navigatorKeys', _navigatorKeys));
+  }
 }
 
 /// Representation of a separate branch in a stateful navigation tree, used to
@@ -854,7 +901,13 @@ class StatefulShellBranch {
     this.initialLocation,
     this.restorationScopeId,
     this.observers,
-  }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>();
+  }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
+    assert(() {
+      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
+          routes, this.navigatorKey);
+      return true;
+    }());
+  }
 
   /// The [GlobalKey] to be used by the [Navigator] built for this branch.
   ///

@@ -10,7 +10,7 @@ enum AnEnum {
   three,
 }
 
-// A class containing all supported types.
+/// A class containing all supported types.
 class AllTypes {
   AllTypes({
     this.aBool = false,
@@ -43,7 +43,7 @@ class AllTypes {
   String aString;
 }
 
-// A class containing all supported nullable types.
+/// A class containing all supported nullable types.
 class AllNullableTypes {
   AllNullableTypes(
     this.aNullableBool,
@@ -82,10 +82,15 @@ class AllNullableTypes {
   String? aNullableString;
 }
 
-// A class for testing nested object handling.
-class AllNullableTypesWrapper {
-  AllNullableTypesWrapper(this.values);
-  AllNullableTypes values;
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `AllTypes` when testing doesn't require both (ie. testing null classes).
+class AllClassesWrapper {
+  AllClassesWrapper(this.allNullableTypes, this.allTypes);
+  AllNullableTypes allNullableTypes;
+  AllTypes? allTypes;
 }
 
 /// The core interface that each host language plugin must implement in
@@ -152,6 +157,11 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
 
+  /// Returns the passed map to test nested class serialization and deserialization.
+  @ObjCSelector('echoClassWrapper:')
+  @SwiftFunction('echo(_:)')
+  AllClassesWrapper echoClassWrapper(AllClassesWrapper wrapper);
+
   // ========== Synchronous nullable method tests ==========
 
   /// Returns the passed object, to test serialization and deserialization.
@@ -163,13 +173,13 @@ abstract class HostIntegrationCoreApi {
   /// sending of nested objects.
   @ObjCSelector('extractNestedNullableStringFrom:')
   @SwiftFunction('extractNestedNullableString(from:)')
-  String? extractNestedNullableString(AllNullableTypesWrapper wrapper);
+  String? extractNestedNullableString(AllClassesWrapper wrapper);
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   @ObjCSelector('createNestedObjectWithNullableString:')
   @SwiftFunction('createNestedObject(with:)')
-  AllNullableTypesWrapper createNestedNullableString(String? nullableString);
+  AllClassesWrapper createNestedNullableString(String? nullableString);
 
   /// Returns passed in arguments of multiple types.
   @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')

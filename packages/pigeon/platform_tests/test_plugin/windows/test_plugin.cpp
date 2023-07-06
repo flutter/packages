@@ -16,8 +16,8 @@
 
 namespace test_plugin {
 
+using core_tests_pigeontest::AllClassesWrapper;
 using core_tests_pigeontest::AllNullableTypes;
-using core_tests_pigeontest::AllNullableTypesWrapper;
 using core_tests_pigeontest::AllTypes;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
@@ -98,14 +98,20 @@ ErrorOr<EncodableMap> TestPlugin::EchoMap(const EncodableMap& a_map) {
   return a_map;
 }
 
+ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
+    const AllClassesWrapper& wrapper) {
+  return wrapper;
+}
+
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
-    const AllNullableTypesWrapper& wrapper) {
-  const std::string* inner_string = wrapper.values().a_nullable_string();
+    const AllClassesWrapper& wrapper) {
+  const std::string* inner_string =
+      wrapper.all_nullable_types().a_nullable_string();
   return inner_string ? std::optional<std::string>(*inner_string)
                       : std::nullopt;
 }
 
-ErrorOr<AllNullableTypesWrapper> TestPlugin::CreateNestedNullableString(
+ErrorOr<AllClassesWrapper> TestPlugin::CreateNestedNullableString(
     const std::string* nullable_string) {
   AllNullableTypes inner_object;
   // The string pointer can't be passed through directly since the setter for
@@ -116,7 +122,7 @@ ErrorOr<AllNullableTypesWrapper> TestPlugin::CreateNestedNullableString(
   } else {
     inner_object.set_a_nullable_string(nullptr);
   }
-  AllNullableTypesWrapper wrapper(inner_object);
+  AllClassesWrapper wrapper(inner_object);
   return wrapper;
 }
 

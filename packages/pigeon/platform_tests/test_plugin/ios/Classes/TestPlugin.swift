@@ -81,12 +81,16 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aMap
   }
 
-  func extractNestedNullableString(from wrapper: AllNullableTypesWrapper) -> String? {
-    return wrapper.values.aNullableString;
+   func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper {
+    return wrapper
+   }
+
+  func extractNestedNullableString(from wrapper: AllClassesWrapper) -> String? {
+    return wrapper.allNullableTypes.aNullableString;
   }
 
-  func createNestedObject(with nullableString: String?) -> AllNullableTypesWrapper {
-    return AllNullableTypesWrapper(values: AllNullableTypes(aNullableString: nullableString))
+  func createNestedObject(with nullableString: String?) -> AllClassesWrapper {
+    return AllClassesWrapper(allNullableTypes: AllNullableTypes(aNullableString: nullableString))
   }
 
   func sendMultipleNullableTypes(aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?) -> AllNullableTypes {
