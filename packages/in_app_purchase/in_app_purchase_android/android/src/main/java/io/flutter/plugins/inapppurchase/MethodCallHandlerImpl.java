@@ -70,7 +70,7 @@ class MethodCallHandlerImpl
   // ReplacementMode enum values.
   // https://github.com/flutter/flutter/issues/128957
   @SuppressWarnings(value = "deprecation")
-  static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
+  private static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
           com.android.billingclient.api.BillingFlowParams
                   .ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 
