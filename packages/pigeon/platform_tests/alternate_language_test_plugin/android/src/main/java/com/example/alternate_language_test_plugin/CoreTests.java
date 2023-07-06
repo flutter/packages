@@ -71,7 +71,11 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * A class containing all supported types.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class AllTypes {
     private @NonNull Boolean aBool;
 
@@ -388,7 +392,11 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * A class containing all supported nullable types.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class AllNullableTypes {
     private @Nullable Boolean aNullableBool;
 
@@ -735,52 +743,84 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class AllNullableTypesWrapper {
-    private @NonNull AllNullableTypes values;
+  /**
+   * A class for testing nested class handling.
+   *
+   * <p>This is needed to test nested nullable and non-nullable classes, `AllNullableTypes` is
+   * non-nullable here as it is easier to instantiate than `AllTypes` when testing doesn't require
+   * both (ie. testing null classes).
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class AllClassesWrapper {
+    private @NonNull AllNullableTypes allNullableTypes;
 
-    public @NonNull AllNullableTypes getValues() {
-      return values;
+    public @NonNull AllNullableTypes getAllNullableTypes() {
+      return allNullableTypes;
     }
 
-    public void setValues(@NonNull AllNullableTypes setterArg) {
+    public void setAllNullableTypes(@NonNull AllNullableTypes setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"values\" is null.");
+        throw new IllegalStateException("Nonnull field \"allNullableTypes\" is null.");
       }
-      this.values = setterArg;
+      this.allNullableTypes = setterArg;
+    }
+
+    private @Nullable AllTypes allTypes;
+
+    public @Nullable AllTypes getAllTypes() {
+      return allTypes;
+    }
+
+    public void setAllTypes(@Nullable AllTypes setterArg) {
+      this.allTypes = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
-    AllNullableTypesWrapper() {}
+    AllClassesWrapper() {}
 
     public static final class Builder {
 
-      private @Nullable AllNullableTypes values;
+      private @Nullable AllNullableTypes allNullableTypes;
 
-      public @NonNull Builder setValues(@NonNull AllNullableTypes setterArg) {
-        this.values = setterArg;
+      public @NonNull Builder setAllNullableTypes(@NonNull AllNullableTypes setterArg) {
+        this.allNullableTypes = setterArg;
         return this;
       }
 
-      public @NonNull AllNullableTypesWrapper build() {
-        AllNullableTypesWrapper pigeonReturn = new AllNullableTypesWrapper();
-        pigeonReturn.setValues(values);
+      private @Nullable AllTypes allTypes;
+
+      public @NonNull Builder setAllTypes(@Nullable AllTypes setterArg) {
+        this.allTypes = setterArg;
+        return this;
+      }
+
+      public @NonNull AllClassesWrapper build() {
+        AllClassesWrapper pigeonReturn = new AllClassesWrapper();
+        pigeonReturn.setAllNullableTypes(allNullableTypes);
+        pigeonReturn.setAllTypes(allTypes);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
-      toListResult.add((values == null) ? null : values.toList());
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add((allNullableTypes == null) ? null : allNullableTypes.toList());
+      toListResult.add((allTypes == null) ? null : allTypes.toList());
       return toListResult;
     }
 
-    static @NonNull AllNullableTypesWrapper fromList(@NonNull ArrayList<Object> list) {
-      AllNullableTypesWrapper pigeonResult = new AllNullableTypesWrapper();
-      Object values = list.get(0);
-      pigeonResult.setValues(
-          (values == null) ? null : AllNullableTypes.fromList((ArrayList<Object>) values));
+    static @NonNull AllClassesWrapper fromList(@NonNull ArrayList<Object> list) {
+      AllClassesWrapper pigeonResult = new AllClassesWrapper();
+      Object allNullableTypes = list.get(0);
+      pigeonResult.setAllNullableTypes(
+          (allNullableTypes == null)
+              ? null
+              : AllNullableTypes.fromList((ArrayList<Object>) allNullableTypes));
+      Object allTypes = list.get(1);
+      pigeonResult.setAllTypes(
+          (allTypes == null) ? null : AllTypes.fromList((ArrayList<Object>) allTypes));
       return pigeonResult;
     }
   }
@@ -848,9 +888,9 @@ public class CoreTests {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return AllNullableTypesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
           return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
@@ -862,12 +902,12 @@ public class CoreTests {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof AllNullableTypes) {
+      if (value instanceof AllClassesWrapper) {
         stream.write(128);
-        writeValue(stream, ((AllNullableTypes) value).toList());
-      } else if (value instanceof AllNullableTypesWrapper) {
+        writeValue(stream, ((AllClassesWrapper) value).toList());
+      } else if (value instanceof AllNullableTypes) {
         stream.write(129);
-        writeValue(stream, ((AllNullableTypesWrapper) value).toList());
+        writeValue(stream, ((AllNullableTypes) value).toList());
       } else if (value instanceof AllTypes) {
         stream.write(130);
         writeValue(stream, ((AllTypes) value).toList());
@@ -926,6 +966,9 @@ public class CoreTests {
     /** Returns the passed map, to test serialization and deserialization. */
     @NonNull
     Map<String, Object> echoMap(@NonNull Map<String, Object> aMap);
+    /** Returns the passed map to test nested class serialization and deserialization. */
+    @NonNull
+    AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper);
     /** Returns the passed object, to test serialization and deserialization. */
     @Nullable
     AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
@@ -933,12 +976,12 @@ public class CoreTests {
      * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
      */
     @Nullable
-    String extractNestedNullableString(@NonNull AllNullableTypesWrapper wrapper);
+    String extractNestedNullableString(@NonNull AllClassesWrapper wrapper);
     /**
      * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
      */
     @NonNull
-    AllNullableTypesWrapper createNestedNullableString(@Nullable String nullableString);
+    AllClassesWrapper createNestedNullableString(@Nullable String nullableString);
     /** Returns passed in arguments of multiple types. */
     @NonNull
     AllNullableTypes sendMultipleNullableTypes(
@@ -1386,6 +1429,31 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.HostIntegrationCoreApi.echoClassWrapper",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllClassesWrapper wrapperArg = (AllClassesWrapper) args.get(0);
+                try {
+                  AllClassesWrapper output = api.echoClassWrapper(wrapperArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes",
                 getCodec());
         if (api != null) {
@@ -1418,7 +1486,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AllNullableTypesWrapper wrapperArg = (AllNullableTypesWrapper) args.get(0);
+                AllClassesWrapper wrapperArg = (AllClassesWrapper) args.get(0);
                 try {
                   String output = api.extractNestedNullableString(wrapperArg);
                   wrapped.add(0, output);
@@ -1445,8 +1513,7 @@ public class CoreTests {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String nullableStringArg = (String) args.get(0);
                 try {
-                  AllNullableTypesWrapper output =
-                      api.createNestedNullableString(nullableStringArg);
+                  AllClassesWrapper output = api.createNestedNullableString(nullableStringArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -2968,9 +3035,9 @@ public class CoreTests {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return AllNullableTypesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
           return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
@@ -2982,12 +3049,12 @@ public class CoreTests {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof AllNullableTypes) {
+      if (value instanceof AllClassesWrapper) {
         stream.write(128);
-        writeValue(stream, ((AllNullableTypes) value).toList());
-      } else if (value instanceof AllNullableTypesWrapper) {
+        writeValue(stream, ((AllClassesWrapper) value).toList());
+      } else if (value instanceof AllNullableTypes) {
         stream.write(129);
-        writeValue(stream, ((AllNullableTypesWrapper) value).toList());
+        writeValue(stream, ((AllNullableTypes) value).toList());
       } else if (value instanceof AllTypes) {
         stream.write(130);
         writeValue(stream, ((AllTypes) value).toList());

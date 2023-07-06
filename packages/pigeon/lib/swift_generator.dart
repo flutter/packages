@@ -627,7 +627,8 @@ import FlutterMacOS
       if (listEncodedClassNames != null &&
           listEncodedClassNames.contains(type.baseName)) {
         indent.writeln('var $variableName: $fieldType? = nil');
-        indent.write('if let ${variableName}List = $value as! [Any?]? ');
+        indent
+            .write('if let ${variableName}List: [Any?] = nilOrValue($value) ');
         indent.addScoped('{', '}', () {
           indent.writeln(
               '$variableName = $fieldType.fromList(${variableName}List)');
