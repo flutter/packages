@@ -157,6 +157,16 @@ task:
     cpu: 4
     memory: 16G
   matrix:
+    ### Platform-agnostic tasks ###
+    - name: linux-custom_package_tests
+      env:
+        PATH: $PATH:/usr/local/bin
+        # Master has been migrated to LUCI, but stable is blocked on
+        # https://github.com/flutter/flutter/issues/130071
+        CHANNEL: "stable"
+      << : *INSTALL_CHROME_LINUX
+      local_tests_script:
+        - ./script/tool_runner.sh custom-test
     ### Android tasks ###
     - name: android-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
