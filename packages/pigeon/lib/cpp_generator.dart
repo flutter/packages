@@ -669,6 +669,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                 .map((Class x) => x.name)
                 .contains(field.type.baseName)) {
           return '${hostDatatype.datatype}::FromEncodableList(std::get<EncodableList>($encodable))';
+        } else if (field.type.baseName == 'Object') {
+          return 'std::get($encodable)';
         } else {
           return 'std::get<${hostDatatype.datatype}>($encodable)';
         }
@@ -1186,6 +1188,9 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
       final String nonNullValue =
           hostType.isNullable ? '(*$variableName)' : variableName;
       encodableValue = 'EncodableValue((int)$nonNullValue)';
+    } else if (dartType.baseName == 'Object') {
+      final String operator = hostType.isNullable ? '*' : '';
+      encodableValue = '$operator$variableName';
     } else {
       final String operator = hostType.isNullable ? '*' : '';
       encodableValue = 'EncodableValue($operator$variableName)';
