@@ -22,9 +22,10 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 
 @class AllTypes;
 @class AllNullableTypes;
-@class AllNullableTypesWrapper;
+@class AllClassesWrapper;
 @class TestMessage;
 
+/// A class containing all supported types.
 @interface AllTypes : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
@@ -54,6 +55,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, copy) NSString *aString;
 @end
 
+/// A class containing all supported nullable types.
 @interface AllNullableTypes : NSObject
 + (instancetype)makeWithANullableBool:(nullable NSNumber *)aNullableBool
                          aNullableInt:(nullable NSNumber *)aNullableInt
@@ -89,11 +91,18 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @end
 
-@interface AllNullableTypesWrapper : NSObject
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `AllTypes` when testing doesn't require both (ie. testing null classes).
+@interface AllClassesWrapper : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithValues:(AllNullableTypes *)values;
-@property(nonatomic, strong) AllNullableTypes *values;
++ (instancetype)makeWithAllNullableTypes:(AllNullableTypes *)allNullableTypes
+                                allTypes:(nullable AllTypes *)allTypes;
+@property(nonatomic, strong) AllNullableTypes *allNullableTypes;
+@property(nonatomic, strong, nullable) AllTypes *allTypes;
 @end
 
 /// A data class containing a List, used in unit tests.
@@ -159,18 +168,23 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSDictionary<NSString *, id> *)echoMap:(NSDictionary<NSString *, id> *)aMap
                                              error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed map to test nested class serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable AllClassesWrapper *)echoClassWrapper:(AllClassesWrapper *)wrapper
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed object, to test serialization and deserialization.
 - (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
                                               error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the inner `aString` value from the wrapped object, to test
 /// sending of nested objects.
-- (nullable NSString *)extractNestedNullableStringFrom:(AllNullableTypesWrapper *)wrapper
+- (nullable NSString *)extractNestedNullableStringFrom:(AllClassesWrapper *)wrapper
                                                  error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the inner `aString` value from the wrapped object, to test
 /// sending of nested objects.
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable AllNullableTypesWrapper *)
+- (nullable AllClassesWrapper *)
     createNestedObjectWithNullableString:(nullable NSString *)nullableString
                                    error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns passed in arguments of multiple types.

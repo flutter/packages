@@ -45,6 +45,14 @@ String _javaFilenameForName(String inputName) {
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
 }
 
+Future<int> generateExamplePigeons() async {
+  return runPigeon(
+    input: './example/app/pigeons/messages.dart',
+    basePath: './example/app',
+    suppressVersion: true,
+  );
+}
+
 Future<int> generateTestPigeons({required String baseDir}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.

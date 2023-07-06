@@ -265,8 +265,11 @@ class RouteMatchList {
     assert(index != -1);
     newMatches.removeRange(index, newMatches.length);
 
-    // Also pop ShellRoutes when there are no subsequent route matches
-    while (newMatches.isNotEmpty && newMatches.last.route is ShellRouteBase) {
+    // Also pop ShellRoutes that have no subsequent route matches and GoRoutes
+    // that only have redirect.
+    while (newMatches.isNotEmpty &&
+        (newMatches.last.route is ShellRouteBase ||
+            (newMatches.last.route as GoRoute).redirectOnly)) {
       newMatches.removeLast();
     }
     // Removing ImperativeRouteMatch should not change uri and pathParameters.

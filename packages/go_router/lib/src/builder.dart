@@ -95,6 +95,8 @@ class RouteBuilder {
       // empty box until then.
       return const SizedBox.shrink();
     }
+    assert(
+        matchList.isError || !(matchList.last.route as GoRoute).redirectOnly);
     return builderWithNav(
       context,
       Builder(
@@ -219,8 +221,12 @@ class RouteBuilder {
       if (route is GoRoute) {
         page =
             _buildPageForGoRoute(context, state, match, route, pagePopContext);
-
-        keyToPages.putIfAbsent(routeNavKey, () => <Page<Object?>>[]).add(page);
+        assert(page != null || route.redirectOnly);
+        if (page != null) {
+          keyToPages
+              .putIfAbsent(routeNavKey, () => <Page<Object?>>[])
+              .add(page);
+        }
 
         _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
             routerNeglect, keyToPages, navigatorKey, registry);
@@ -282,8 +288,6 @@ class RouteBuilder {
     if (page != null) {
       registry[page] = state;
       pagePopContext._setRouteMatchForPage(page, match);
-    } else {
-      throw GoError('Unsupported route type $route');
     }
   }
 
@@ -351,36 +355,30 @@ class RouteBuilder {
   }
 
   /// Builds a [Page] for [GoRoute]
-  Page<Object?> _buildPageForGoRoute(BuildContext context, GoRouterState state,
+  Page<Object?>? _buildPageForGoRoute(BuildContext context, GoRouterState state,
       RouteMatch match, GoRoute route, _PagePopContext pagePopContext) {
-    Page<Object?>? page;
-
     // Call the pageBuilder if it's non-null
     final GoRouterPageBuilder? pageBuilder = route.pageBuilder;
     if (pageBuilder != null) {
-      page = pageBuilder(context, state);
-      if (page is NoOpPage) {
-        page = null;
+      final Page<Object?> page = pageBuilder(context, state);
+      if (page is! NoOpPage) {
+        return page;
       }
     }
-
-    // Return the result of the route's builder() or pageBuilder()
-    return page ??
-        buildPage(context, state, Builder(builder: (BuildContext context) {
-          return _callGoRouteBuilder(context, state, route);
-        }));
+    return _callGoRouteBuilder(context, state, route);
   }
 
   /// Calls the user-provided route builder from the [GoRoute].
-  Widget _callGoRouteBuilder(
+  Page<Object?>? _callGoRouteBuilder(
       BuildContext context, GoRouterState state, GoRoute route) {
     final GoRouterWidgetBuilder? builder = route.builder;
 
     if (builder == null) {
-      throw GoError('No routeBuilder provided to GoRoute: $route');
+      return null;
     }
-
-    return builder(context, state);
+    return buildPage(context, state, Builder(builder: (BuildContext context) {
+      return builder(context, state);
+    }));
   }
 
   /// Builds a [Page] for [ShellRouteBase]
