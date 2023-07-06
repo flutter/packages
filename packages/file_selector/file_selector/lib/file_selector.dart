@@ -92,42 +92,6 @@ Future<List<XFile>> openFiles({
 /// When not provided, the default OS label is used (for example, "Save").
 ///
 /// Returns `null` if the user cancels the operation.
-@Deprecated('Use getSaveLocation instead')
-Future<String?> getSavePath({
-  List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
-  String? initialDirectory,
-  String? suggestedName,
-  String? confirmButtonText,
-}) async {
-  return (await getSaveLocation(
-          acceptedTypeGroups: acceptedTypeGroups,
-          initialDirectory: initialDirectory,
-          suggestedName: suggestedName,
-          confirmButtonText: confirmButtonText))
-      ?.path;
-}
-
-/// Opens a save dialog and returns the target path chosen by the user.
-///
-/// [acceptedTypeGroups] is a list of file type groups that can be selected in
-/// the dialog. How this is displayed depends on the pltaform, for example:
-/// - On Windows and Linux, each group will be an entry in a list of filter
-///   options.
-/// - On macOS, the union of all types allowed by all of the groups will be
-///   allowed.
-/// Throws an [ArgumentError] if any type groups do not include filters
-/// supported by the current platform.
-///
-/// [initialDirectory] is the full path to the directory that will be displayed
-/// when the dialog is opened. When not provided, the platform will pick an
-/// initial location.
-///
-/// [suggestedName] is initial value of file name.
-///
-/// [confirmButtonText] is the text in the confirmation button of the dialog.
-/// When not provided, the default OS label is used (for example, "Save").
-///
-/// Returns `null` if the user cancels the operation.
 Future<FileSaveLocation?> getSaveLocation({
   List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
   String? initialDirectory,
