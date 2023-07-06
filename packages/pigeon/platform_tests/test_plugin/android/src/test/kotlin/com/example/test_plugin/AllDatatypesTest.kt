@@ -14,6 +14,43 @@ import java.util.ArrayList
 
 
 internal class AllDatatypesTest: TestCase() {
+    fun compareAllTypes(firstTypes: AllTypes?, secondTypes: AllTypes?) {
+        assertEquals(firstTypes == null, secondTypes == null)
+        if (firstTypes == null || secondTypes == null) {
+            return
+        }
+        assertEquals(firstTypes.aBool, secondTypes.aBool)
+        assertEquals(firstTypes.anInt, secondTypes.anInt)
+        assertEquals(firstTypes.anInt64, secondTypes.anInt64)
+        assertEquals(firstTypes.aDouble, secondTypes.aDouble)
+        assertEquals(firstTypes.aString, secondTypes.aString)
+        assertTrue(firstTypes.aByteArray.contentEquals(secondTypes.aByteArray))
+        assertTrue(firstTypes.a4ByteArray.contentEquals(secondTypes.a4ByteArray))
+        assertTrue(firstTypes.a8ByteArray.contentEquals(secondTypes.a8ByteArray))
+        assertTrue(firstTypes.aFloatArray.contentEquals(secondTypes.aFloatArray))
+        assertEquals(firstTypes.aList, secondTypes.aList)
+        assertEquals(firstTypes.aMap, secondTypes.aMap)
+        assertEquals(firstTypes.anEnum, secondTypes.anEnum)
+    }
+
+    fun compareAllNullableTypes(firstTypes: AllNullableTypes?, secondTypes: AllNullableTypes?) {
+        assertEquals(firstTypes == null, secondTypes == null)
+        if (firstTypes == null || secondTypes == null) {
+            return
+        }
+        assertEquals(firstTypes.aNullableBool, secondTypes.aNullableBool)
+        assertEquals(firstTypes.aNullableInt, secondTypes.aNullableInt)
+        assertEquals(firstTypes.aNullableDouble, secondTypes.aNullableDouble)
+        assertEquals(firstTypes.aNullableString, secondTypes.aNullableString)
+        assertTrue(firstTypes.aNullableByteArray.contentEquals(secondTypes.aNullableByteArray))
+        assertTrue(firstTypes.aNullable4ByteArray.contentEquals(secondTypes.aNullable4ByteArray))
+        assertTrue(firstTypes.aNullable8ByteArray.contentEquals(secondTypes.aNullable8ByteArray))
+        assertTrue(firstTypes.aNullableFloatArray.contentEquals(secondTypes.aNullableFloatArray))
+        assertEquals(firstTypes.aNullableList, secondTypes.aNullableList)
+        assertEquals(firstTypes.aNullableMap, secondTypes.aNullableMap)
+        assertEquals(firstTypes.nullableMapWithObject, secondTypes.nullableMapWithObject)
+    }
+
     @Test
     fun testNullValues() {
         val everything = AllNullableTypes()
@@ -63,7 +100,7 @@ internal class AllDatatypesTest: TestCase() {
             aNullableFloatArray = doubleArrayOf(0.5, 0.25, 1.5, 1.25),
             aNullableList = listOf(1, 2, 3),
             aNullableMap = mapOf("hello" to 1234),
-            nullableMapWithObject = mapOf("hello" to 1234)
+            nullableMapWithObject = mapOf("hello" to 1234),
         )
         val binaryMessenger = mockk<BinaryMessenger>()
         val api = FlutterIntegrationCoreApi(binaryMessenger)
@@ -82,17 +119,7 @@ internal class AllDatatypesTest: TestCase() {
         var didCall = false
         api.echoAllNullableTypes(everything) {
             didCall = true
-            assertEquals(everything.aNullableBool, it.aNullableBool)
-            assertEquals(everything.aNullableInt, it.aNullableInt)
-            assertEquals(everything.aNullableDouble, it.aNullableDouble)
-            assertEquals(everything.aNullableString, it.aNullableString)
-            assertTrue(everything.aNullableByteArray.contentEquals(it.aNullableByteArray))
-            assertTrue(everything.aNullable4ByteArray.contentEquals(it.aNullable4ByteArray))
-            assertTrue(everything.aNullable8ByteArray.contentEquals(it.aNullable8ByteArray))
-            assertTrue(everything.aNullableFloatArray.contentEquals(it.aNullableFloatArray))
-            assertEquals(everything.aNullableList, it.aNullableList)
-            assertEquals(everything.aNullableMap, it.aNullableMap)
-            assertEquals(everything.nullableMapWithObject, it.nullableMapWithObject)
+            compareAllNullableTypes(everything, it)
         }
 
         assertTrue(didCall)
