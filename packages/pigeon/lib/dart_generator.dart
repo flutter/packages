@@ -204,6 +204,9 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   ) {
     void writeValueDecode(NamedType field, int index) {
       final String resultAt = 'result[$index]';
+      final String castCallPrefix = field.type.isNullable ? '?' : '!';
+      final String genericType = _makeGenericTypeArguments(field.type);
+      final String castCall = _makeGenericCastCall(field.type);
       if (customClassNames.contains(field.type.baseName)) {
         final String nonNullValue =
             '${field.type.baseName}.decode($resultAt! as List<Object?>)';
@@ -227,23 +230,13 @@ $resultAt != null
           indent.add(nonNullValue);
         }
       } else if (field.type.typeArguments.isNotEmpty) {
-        final String genericType = _makeGenericTypeArguments(field.type);
-        final String castCall = _makeGenericCastCall(field.type);
-        final String castCallPrefix = field.type.isNullable ? '?' : '!';
         indent.add(
           '($resultAt as $genericType?)$castCallPrefix$castCall',
         );
       } else {
-        final String genericdType = _addGenericTypesNullable(field.type);
-        if (field.type.isNullable) {
-          indent.add(
-            '$resultAt as $genericdType',
-          );
-        } else {
-          indent.add(
-            '$resultAt! as $genericdType',
-          );
-        }
+        indent.add(
+          '$resultAt${_basicCastString(field.type)}',
+        );
       }
     }
 
@@ -757,8 +750,19 @@ String _addGenericTypes(TypeDeclaration type) {
 }
 
 String _addGenericTypesNullable(TypeDeclaration type) {
-  final String genericdType = _addGenericTypes(type);
-  return type.isNullable ? '$genericdType?' : genericdType;
+  final String genericType = _addGenericTypes(type);
+  return type.isNullable ? '$genericType?' : genericType;
+}
+
+String _basicCastString(TypeDeclaration type) {
+  final String genericType = _addGenericTypesNullable(type);
+  final String castCallPrefix = type.isNullable ? '' : '!';
+
+  if (type.baseName == 'Object') {
+    return castCallPrefix;
+  }
+
+  return '$castCallPrefix as $genericType';
 }
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a

@@ -151,6 +151,7 @@ public class AllDatatypesTest {
             .setAList(Arrays.asList(new int[] {1, 2, 3}))
             .setAMap(makeMap("hello", 1234))
             .setAnEnum(CoreTests.AnEnum.ONE)
+            .setAnObject(0)
             .build();
 
     AllNullableTypes everything =
@@ -166,6 +167,7 @@ public class AllDatatypesTest {
             .setANullableList(Arrays.asList(new int[] {1, 2, 3}))
             .setANullableMap(makeMap("hello", 1234))
             .setNullableMapWithObject(makeStringMap("hello", 1234))
+            .setANullableObject(0)
             .build();
 
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);

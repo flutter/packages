@@ -144,6 +144,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       'e': null
     },
     anEnum: AnEnum.two,
+    anObject: 0,
   );
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
@@ -171,6 +172,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     nullableMapWithAnnotations: <String?, String?>{},
     nullableMapWithObject: <String?, Object?>{},
     aNullableEnum: AnEnum.two,
+    aNullableObject: 0,
   );
 
   group('Host sync API tests', () {

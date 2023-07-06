@@ -101,6 +101,7 @@ internal class AllDatatypesTest: TestCase() {
             aNullableList = listOf(1, 2, 3),
             aNullableMap = mapOf("hello" to 1234),
             nullableMapWithObject = mapOf("hello" to 1234),
+            aNullableObject = 0,
         )
         val binaryMessenger = mockk<BinaryMessenger>()
         val api = FlutterIntegrationCoreApi(binaryMessenger)
@@ -134,7 +135,7 @@ internal class AllDatatypesTest: TestCase() {
         assertNotNull(list[1])
         assertTrue(list[1] == 123L)
 
-        val list2 = listOf(null, 123, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        val list2 = listOf(null, 123, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
         val everything2 = AllNullableTypes.fromList(list2)
 
         assertEquals(everything.aNullableInt, everything2.aNullableInt)
