@@ -1,6 +1,6 @@
 ## 3.9.0
 
-* Adds support for fullscreen video.
+* Adds support for playing video in fullscreen.
 
 ## 3.8.1
 

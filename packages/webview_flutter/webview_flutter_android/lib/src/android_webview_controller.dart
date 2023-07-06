@@ -974,7 +974,9 @@ class AndroidCustomViewWidget extends StatelessWidget {
           view: _creationParams.customView,
           instanceManager: _creationParams.instanceManager,
           layoutDirection: _creationParams.layoutDirection,
-        );
+        )
+          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+          ..create();
       },
     );
   }
