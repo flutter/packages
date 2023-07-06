@@ -211,11 +211,19 @@ class VideoPlayer {
       if (controlsList.isNotEmpty) {
         _videoElement.setAttribute('controlsList', controlsList);
       }
+
+      if (!options.controls.allowPictureInPicture) {
+        _videoElement.setAttribute('disablePictureInPicture', true);
+      }
     }
 
     if (!options.allowContextMenu) {
       _onContextMenu = (html.Event event) => event.preventDefault();
       _videoElement.addEventListener('contextmenu', _onContextMenu);
+    }
+
+    if (!options.allowRemotePlayback) {
+      _videoElement.setAttribute('disableRemotePlayback', true);
     }
   }
 
