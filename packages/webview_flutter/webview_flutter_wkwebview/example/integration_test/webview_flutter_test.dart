@@ -1132,6 +1132,7 @@ Future<void> main() async {
       const PlatformNavigationDelegateCreationParams(),
     );
     unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
 
     await controller.runJavaScript('window.open("$primaryUrl", "_blank")');
 
