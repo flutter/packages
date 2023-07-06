@@ -12,7 +12,7 @@
 #import "messages.g.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
-#import "VIMediaCache.h"
+#import "VideoPlayerCache.h"
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -63,7 +63,7 @@
 @property(nonatomic, readonly) BOOL disposed;
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
-@property(nonatomic, strong) VIResourceLoaderManager *resourceLoaderManager;
+@property(nonatomic, strong) ResourceLoaderManager *resourceLoaderManager;
 @property(nonatomic, readonly) BOOL isInitialized;
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
@@ -236,18 +236,64 @@ NS_INLINE UIViewController *rootViewController(void) {
   }
   AVPlayerItem *item;
   if (cacheEnabled.boolValue) {
-      if (@available(iOS 13, *)) {
-          VIResourceLoaderManager *resourceLoaderManager = [VIResourceLoaderManager new];
-          self.resourceLoaderManager = resourceLoaderManager;
-          item = [resourceLoaderManager playerItemWithURL:url];
-      }
+      NSLog(@"cache enabled %@", url);
+      ResourceLoaderManager *resourceLoaderManager = [ResourceLoaderManager new];
+      self.resourceLoaderManager = resourceLoaderManager;
+      item = [resourceLoaderManager playerItemWithURL:url];
+      
+//      NSLog(@"cache 3");
+//      CacheConfiguration *configuration = [CacheManager cacheConfigurationForURL:url];
+//      NSLog(@"cache 4");
+//      if (configuration.progress >= 1.0) {
+//          NSLog(@"cache completed");
+//      }
+      
+      //for debugging purposes
+      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contentCacheDidChanged:) name:CacheManagerDidUpdateCacheNotification object:nil];
+      NSLog(@"cache");
   } else {
     AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
     item = [AVPlayerItem playerItemWithAsset:urlAsset];
   }
-
+   
   return [self initWithPlayerItem:item frameUpdater:frameUpdater playerFactory:playerFactory];
 }
+
+- (void)contentCacheDidChanged:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    CacheConfiguration *configuration = userInfo[CacheConfigurationKey];
+    NSArray<NSValue *> *cachedFragments = configuration.cacheFragments;
+    long long contentLength = configuration.contentInfo.contentLength;
+    
+    NSInteger number = 100;
+    NSMutableString *progressStr = [NSMutableString string];
+    
+    [cachedFragments enumerateObjectsUsingBlock:^(NSValue * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSRange range = obj.rangeValue;
+        
+        NSInteger location = roundf((range.location / (double)contentLength) * number);
+        
+        NSInteger progressCount = progressStr.length;
+        [self string:progressStr appendString:@"0" muti:location - progressCount];
+        
+        NSInteger length = roundf((range.length / (double)contentLength) * number);
+        [self string:progressStr appendString:@"1" muti:length];
+        
+        
+        if (idx == cachedFragments.count - 1 && (location + length) <= number + 1) {
+            [self string:progressStr appendString:@"0" muti:number - (length + location)];
+        }
+    }];
+    
+    NSLog(@"%@", progressStr);
+}
+
+- (void)string:(NSMutableString *)string appendString:(NSString *)appendString muti:(NSInteger)muti {
+    for (NSInteger i = 0; i < muti; i++) {
+        [string appendString:appendString];
+    }
+}
+
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FLTFrameUpdater *)frameUpdater
@@ -712,9 +758,16 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (void)clearCache:(FLTClearCacheMessage *)input error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
-    if (@available(iOS 13, *)) {
-        [player.resourceLoaderManager cleanCache];
+    NSLog(@"Clean cache");
+    [player.resourceLoaderManager cleanCache];
+    unsigned long long fileSize = [CacheManager calculateCachedSizeWithError:nil];
+    NSLog(@"file cache size: %@", @(fileSize));
+    NSError *error2;
+    [CacheManager cleanAllCacheWithError:&error2];
+    if (error2) {
+        NSLog(@"clean cache failure: %@", error2);
     }
+    [CacheManager cleanAllCacheWithError:&error2];
 }
 
 - (void)setVolume:(FLTVolumeMessage *)input error:(FlutterError **)error {
