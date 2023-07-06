@@ -44,6 +44,8 @@ enum AnEnum: Int {
   case three = 2
 }
 
+/// A class containing all supported types.
+///
 /// Generated class from Pigeon that represents data sent in messages.
 struct AllTypes {
   var aBool: Bool
@@ -106,6 +108,8 @@ struct AllTypes {
   }
 }
 
+/// A class containing all supported nullable types.
+///
 /// Generated class from Pigeon that represents data sent in messages.
 struct AllNullableTypes {
   var aNullableBool: Bool? = nil
@@ -184,6 +188,12 @@ struct AllNullableTypes {
   }
 }
 
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `AllTypes` when testing doesn't require both (ie. testing null classes).
+///
 /// Generated class from Pigeon that represents data sent in messages.
 struct AllClassesWrapper {
   var allNullableTypes: AllNullableTypes

@@ -25,6 +25,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @class AllClassesWrapper;
 @class TestMessage;
 
+/// A class containing all supported types.
 @interface AllTypes : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
@@ -54,6 +55,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, copy) NSString *aString;
 @end
 
+/// A class containing all supported nullable types.
 @interface AllNullableTypes : NSObject
 + (instancetype)makeWithANullableBool:(nullable NSNumber *)aNullableBool
                          aNullableInt:(nullable NSNumber *)aNullableInt
@@ -89,6 +91,11 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @end
 
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `AllTypes` when testing doesn't require both (ie. testing null classes).
 @interface AllClassesWrapper : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;

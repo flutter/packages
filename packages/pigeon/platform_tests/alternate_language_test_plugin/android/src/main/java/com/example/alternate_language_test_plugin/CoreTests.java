@@ -71,7 +71,11 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * A class containing all supported types.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class AllTypes {
     private @NonNull Boolean aBool;
 
@@ -388,7 +392,11 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * A class containing all supported nullable types.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class AllNullableTypes {
     private @Nullable Boolean aNullableBool;
 
@@ -735,7 +743,15 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
+  /**
+   * A class for testing nested class handling.
+   *
+   * <p>This is needed to test nested nullable and non-nullable classes, `AllNullableTypes` is
+   * non-nullable here as it is easier to instantiate than `AllTypes` when testing doesn't require
+   * both (ie. testing null classes).
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
   public static final class AllClassesWrapper {
     private @NonNull AllNullableTypes allNullableTypes;
 

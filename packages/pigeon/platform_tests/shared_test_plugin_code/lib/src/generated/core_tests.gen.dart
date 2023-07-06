@@ -18,6 +18,7 @@ enum AnEnum {
   three,
 }
 
+/// A class containing all supported types.
 class AllTypes {
   AllTypes({
     required this.aBool,
@@ -94,6 +95,7 @@ class AllTypes {
   }
 }
 
+/// A class containing all supported nullable types.
 class AllNullableTypes {
   AllNullableTypes({
     this.aNullableBool,
@@ -188,6 +190,11 @@ class AllNullableTypes {
   }
 }
 
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `AllTypes` when testing doesn't require both (ie. testing null classes).
 class AllClassesWrapper {
   AllClassesWrapper({
     required this.allNullableTypes,

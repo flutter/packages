@@ -67,6 +67,8 @@ class ErrorOr {
 
 enum class AnEnum { one = 0, two = 1, three = 2 };
 
+// A class containing all supported types.
+//
 // Generated class from Pigeon that represents data sent in messages.
 class AllTypes {
  public:
@@ -145,6 +147,8 @@ class AllTypes {
   std::string a_string_;
 };
 
+// A class containing all supported nullable types.
+//
 // Generated class from Pigeon that represents data sent in messages.
 class AllNullableTypes {
  public:
@@ -260,6 +264,12 @@ class AllNullableTypes {
   std::optional<std::string> a_nullable_string_;
 };
 
+// A class for testing nested class handling.
+//
+// This is needed to test nested nullable and non-nullable classes,
+// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+// than `AllTypes` when testing doesn't require both (ie. testing null classes).
+//
 // Generated class from Pigeon that represents data sent in messages.
 class AllClassesWrapper {
  public:

@@ -59,7 +59,11 @@ enum class AnEnum(val raw: Int) {
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
+/**
+ * A class containing all supported types.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
 data class AllTypes (
   val aBool: Boolean,
   val anInt: Long,
@@ -111,7 +115,11 @@ data class AllTypes (
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
+/**
+ * A class containing all supported nullable types.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
 data class AllNullableTypes (
   val aNullableBool: Boolean? = null,
   val aNullableInt: Long? = null,
@@ -174,7 +182,15 @@ data class AllNullableTypes (
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
+/**
+ * A class for testing nested class handling.
+ *
+ * This is needed to test nested nullable and non-nullable classes,
+ * `AllNullableTypes` is non-nullable here as it is easier to instantiate
+ * than `AllTypes` when testing doesn't require both (ie. testing null classes).
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
 data class AllClassesWrapper (
   val allNullableTypes: AllNullableTypes,
   val allTypes: AllTypes? = null
