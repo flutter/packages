@@ -608,7 +608,7 @@ void main() {
         mockScrollView: mockScrollView,
       );
 
-      controller.setBackgroundColor(Colors.red);
+      await controller.setBackgroundColor(Colors.red);
 
       // UIScrollView.setBackgroundColor must be called last.
       verifyInOrder(<Object>[
@@ -894,7 +894,7 @@ void main() {
       );
 
       late final int callbackProgress;
-      navigationDelegate.setOnProgress(
+      await navigationDelegate.setOnProgress(
         (int progress) => callbackProgress = progress,
       );
 
@@ -1031,7 +1031,7 @@ void main() {
       );
 
       final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
-      navigationDelegate.setOnUrlChange(
+      await navigationDelegate.setOnUrlChange(
         (UrlChange change) => urlChangeCompleter.complete(change),
       );
 
@@ -1085,7 +1085,7 @@ void main() {
       );
 
       final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
-      navigationDelegate.setOnUrlChange(
+      await navigationDelegate.setOnUrlChange(
         (UrlChange change) => urlChangeCompleter.complete(change),
       );
 
@@ -1127,7 +1127,7 @@ void main() {
       await controller.setOnPlatformPermissionRequest(
         (PlatformWebViewPermissionRequest request) async {
           permissionRequest = request;
-          request.grant();
+          await request.grant();
         },
       );
 
