@@ -1,3 +1,7 @@
+## 6.1.19
+
+* Updates Guava to version 32.1.1.
+
 ## 6.1.18
 
 * Updates play-services-auth version to 20.6.0.
