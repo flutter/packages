@@ -292,8 +292,14 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: linux_build_all_packages.yaml
+      # DO NOT LAND: For testing
+      target_file: linux_platform_tests.yaml
       channel: master
+      # DO NOT LAND: For testing
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+        ]
 
   - name: Linux_desktop build_all_packages stable
     recipe: packages/packages
