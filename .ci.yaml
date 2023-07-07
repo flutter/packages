@@ -14,6 +14,10 @@ platform_properties:
       os: Ubuntu
       cores: "8"
       device_type: none
+      dependencies: >-
+        [
+          {"dependency": "curl", "version": "version:7.64.0"}
+        ]
   linux_android:
     properties:
       os: Ubuntu
@@ -91,6 +95,21 @@ targets:
       target_file: repo_tools_tests.yaml
       channel: master
       version_file: flutter_master.version
+
+  - name: Linux repo_checks
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: repo_checks.yaml
+      channel: master
+      version_file: flutter_master.version
+      # The format check requires clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
 
   - name: Linux dart_unit_test_shard_1 master
     recipe: packages/packages
