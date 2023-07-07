@@ -7,6 +7,7 @@ import 'package:platform/platform.dart';
 
 import 'common/package_looping_command.dart';
 import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 const String _scriptName = 'run_tests.dart';
@@ -47,10 +48,7 @@ class CustomTestCommand extends PackageLoopingCommand {
     // Run the custom Dart script if presest.
     if (script.existsSync()) {
       // Ensure that dependencies are available.
-      final int pubGetExitCode = await processRunner.runAndStream(
-          'dart', <String>['pub', 'get'],
-          workingDir: package.directory);
-      if (pubGetExitCode != 0) {
+      if (!await runPubGet(package, processRunner, platform)) {
         return PackageResult.fail(
             <String>['Unable to get script dependencies']);
       }

@@ -14,6 +14,7 @@ import 'package:yaml_edit/yaml_edit.dart';
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
 import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to update .md code excerpts from code files.
@@ -81,10 +82,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
 
       try {
         // Ensure that dependencies are available.
-        final int pubGetExitCode = await processRunner.runAndStream(
-            'dart', <String>['pub', 'get'],
-            workingDir: example.directory);
-        if (pubGetExitCode != 0) {
+        if (!await runPubGet(example, processRunner, platform)) {
           return PackageResult.fail(
               <String>['Unable to get script dependencies']);
         }
