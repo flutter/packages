@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:wasm/wasm.dart';
 
 import 'platform.dart';
@@ -11,10 +13,21 @@ import 'platform.dart';
 class NetworkImplementation extends Network {
   @override
   Future<Uint8List> get(String url) async {
-    final HttpClientResponse client =
-        await (await HttpClient().getUrl(Uri.parse(url))).close();
-    return Uint8List.fromList(
-        await client.expand((List<int> chunk) => chunk).toList());
+    final DateTime expiryDate = DateTime.now().subtract(const Duration(hours: 6));
+    final Directory home = await getApplicationSupportDirectory();
+    final Uri uri = Uri.parse(url);
+    final File interfaceFile = File(path.join(home.path, 'cache', uri.pathSegments.last));
+    if (!interfaceFile.existsSync() || interfaceFile.lastModifiedSync().isBefore(expiryDate)) {
+      final HttpClientResponse client =
+          await (await HttpClient().getUrl(Uri.parse(url))).close();
+      final Uint8List bytes = Uint8List.fromList(
+          await client.expand((List<int> chunk) => chunk).toList());
+      interfaceFile.createSync(recursive: true);
+      await interfaceFile.writeAsBytes(bytes);
+      return bytes;
+    } else {
+      return interfaceFile.readAsBytesSync();
+    }
   }
 }
 
