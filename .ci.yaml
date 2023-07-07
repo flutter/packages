@@ -338,7 +338,7 @@ targets:
       channel: master
       version_file: flutter_master.version
       cores: "32"
-      package_sharding: "--shardIndex 6 --shardCount 6"
+      package_sharding: "--shardIndex 5 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_1 stable
     recipe: packages/packages
@@ -404,7 +404,7 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       cores: "32"
-      package_sharding: "--shardIndex 6 --shardCount 6"
+      package_sharding: "--shardIndex 5 --shardCount 6"
 
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
