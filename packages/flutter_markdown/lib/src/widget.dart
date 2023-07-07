@@ -73,13 +73,13 @@ abstract class MarkdownElementBuilder {
   /// Called when an Element has been reached, after its children have been
   /// visited.
   ///
-  /// If [MarkdownWidget.styleSheet] has a style of this tag, will passing
-  /// to [preferredStyle].
+  /// If [MarkdownWidget.styleSheet] has a style with this tag, it will be
+  /// passed as [preferredStyle].
   ///
-  /// If parent element has [TextStyle]'s set, it will be passed as
+  /// If parent element has [TextStyle] set, it will be passed as
   /// [parentStyle].
   ///
-  /// If you needn't build a widget, return null.
+  /// If a widget build isn't needed, return null.
   Widget? visitElementAfterWithContext(
     BuildContext context,
     md.Element element,

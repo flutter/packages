@@ -1,11 +1,9 @@
 ## 0.6.17
 
-* Introduce a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
-  the parent texts' `TextStyle`.  
-  This should allow custom syntax implementations to get data from the current context, as well as properly style any
-  text, e.g. a color syntax can make parts of a headline colored, while still keeping the font size of the headline.
+* Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
+  the parent text's `TextStyle`.
   
-  ## 0.6.16
+## 0.6.16
 
 * Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
 
