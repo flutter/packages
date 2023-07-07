@@ -204,9 +204,10 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   ) {
     void writeValueDecode(NamedType field, int index) {
       final String resultAt = 'result[$index]';
-      final String castCallPrefix = field.type.isNullable ? '?' : '!';
+      String castCallPrefix = field.type.isNullable ? '?' : '!';
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
+      final String nullableTag = field.type.isNullable ? '?' : '';
       if (customClassNames.contains(field.type.baseName)) {
         final String nonNullValue =
             '${field.type.baseName}.decode($resultAt! as List<Object?>)';
@@ -234,8 +235,13 @@ $resultAt != null
           '($resultAt as $genericType?)$castCallPrefix$castCall',
         );
       } else {
+        castCallPrefix = field.type.isNullable ? '' : '!';
+        final String castString = field.type.baseName == 'Object'
+            ? ''
+            : ' as $genericType$nullableTag';
+
         indent.add(
-          '$resultAt${_basicCastString(field.type)}',
+          '$resultAt$castCallPrefix$castString',
         );
       }
     }
@@ -752,18 +758,6 @@ String _addGenericTypes(TypeDeclaration type) {
 String _addGenericTypesNullable(TypeDeclaration type) {
   final String genericType = _addGenericTypes(type);
   return type.isNullable ? '$genericType?' : genericType;
-}
-
-String _basicCastString(TypeDeclaration type) {
-  //DONT MERGE UNTIL MORE ADDED HERE....
-  final String genericType = _addGenericTypesNullable(type);
-  final String castCallPrefix = type.isNullable ? '' : '!';
-
-  if (type.baseName == 'Object') {
-    return castCallPrefix;
-  }
-
-  return '$castCallPrefix as $genericType';
 }
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
