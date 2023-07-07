@@ -2,7 +2,7 @@
 #import "ResourceLoaderManager.h"
 #import "ResourceLoader.h"
 
-static NSString *kCacheScheme = @"__ContentCache___:";
+static NSString *kCacheScheme = @"VideoPlayerCache:";
 
 @interface ResourceLoaderManager () <ResourceLoaderDelegate>
 

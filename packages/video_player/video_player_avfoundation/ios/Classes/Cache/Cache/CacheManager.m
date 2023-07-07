@@ -2,23 +2,16 @@
 #import "CacheManager.h"
 #import "ContentDownloader.h"
 
-NSString *CacheManagerDidUpdateCacheNotification = @"CacheManagerDidUpdateCacheNotification";
-NSString *CacheManagerDidFinishCacheNotification = @"CacheManagerDidFinishCacheNotification";
-
 NSString *CacheConfigurationKey = @"CacheConfigurationKey";
-NSString *CacheFinishedErrorKey = @"CacheFinishedErrorKey";
 
 static NSString *kMContentCacheDirectory;
-static NSTimeInterval kMCContentCacheNotifyInterval;
-static NSString *(^kMCFileNameRules)(NSURL *url);
 
 @implementation CacheManager
 
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self setCacheDirectory:[NSTemporaryDirectory() stringByAppendingPathComponent:@"media"]];
-        [self setCacheUpdateNotifyInterval:0.1];
+        [self setCacheDirectory:[NSTemporaryDirectory() stringByAppendingPathComponent:@"video_player_temporary_cache_directory"]];
     });
 }
 
@@ -30,27 +23,9 @@ static NSString *(^kMCFileNameRules)(NSURL *url);
     return kMContentCacheDirectory;
 }
 
-+ (void)setCacheUpdateNotifyInterval:(NSTimeInterval)interval {
-    kMCContentCacheNotifyInterval = interval;
-}
-
-+ (NSTimeInterval)cacheUpdateNotifyInterval {
-    return kMCContentCacheNotifyInterval;
-}
-
-+ (void)setFileNameRules:(NSString *(^)(NSURL *url))rules {
-    kMCFileNameRules = rules;
-}
-
 + (NSString *)cachedFilePathForURL:(NSURL *)url {
     NSLog(@"%@", url);
-    NSString *pathComponent = nil;
-    if (kMCFileNameRules) {
-        pathComponent = kMCFileNameRules(url);
-    } else {
-        pathComponent = url.absoluteString;
-//        pathComponent = [pathComponent stringByAppendingPathExtension:url.pathExtension];
-    }
+    NSString *pathComponent = url.absoluteString;
     return [[self cacheDirectory] stringByAppendingPathComponent:pathComponent];
 }
 
@@ -73,7 +48,7 @@ static NSString *(^kMCFileNameRules)(NSURL *url);
                 size = -1;
                 break;
             }
-            
+
             size += [attribute fileSize];
         }
     }
@@ -107,58 +82,5 @@ static NSString *(^kMCFileNameRules)(NSURL *url);
         }
     }
 }
-
-+ (void)cleanCacheForURL:(NSURL *)url error:(NSError **)error {
-    //check if url is still downloading.
-    if ([[ContentDownloaderStatus shared] containsURL:url]) {
-        NSString *description = [NSString stringWithFormat:NSLocalizedString(@"Url: `%@` still downloading, unable to clean cache", nil), url];
-        if (error) {
-            *error = [NSError errorWithDomain:@"video_player" code:2 userInfo:@{NSLocalizedDescriptionKey: description}];
-        }
-        return;
-    }
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *filePath = [self cachedFilePathForURL:url];
-    
-    if ([fileManager fileExistsAtPath:filePath]) {
-        if (![fileManager removeItemAtPath:filePath error:error]) {
-            return;
-        }
-    }
-    
-    NSString *configurationPath = [CacheConfiguration configurationFilePathForFilePath:filePath];
-    if ([fileManager fileExistsAtPath:configurationPath]) {
-        if (![fileManager removeItemAtPath:configurationPath error:error]) {
-            return;
-        }
-    }
-}
-
-//+ (BOOL)addCacheFile:(NSString *)filePath forURL:(NSURL *)url error:(NSError **)error {
-//    NSFileManager *fileManager = [NSFileManager defaultManager];
-//
-//    NSString *cachePath = [CacheManager cachedFilePathForURL:url];
-//    NSString *cacheFolder = [cachePath stringByDeletingLastPathComponent];
-//    if (![fileManager fileExistsAtPath:cacheFolder]) {
-//        if (![fileManager createDirectoryAtPath:cacheFolder
-//                    withIntermediateDirectories:YES
-//                                     attributes:nil
-//                                          error:error]) {
-//            return NO;
-//        }
-//    }
-//
-//    if (![fileManager copyItemAtPath:filePath toPath:cachePath error:error]) {
-//        return NO;
-//    }
-//
-//    if (![CacheConfiguration createAndSaveDownloadedConfigurationForURL:url error:error]) {
-//        [fileManager removeItemAtPath:cachePath error:nil]; // if remove failed, there is nothing we can do.
-//        return NO;
-//    }
-//
-//    return YES;
-//}
 
 @end
