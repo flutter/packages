@@ -50,9 +50,9 @@ void defineTests() {
         final DecoratedBox blockQuoteContainer = tester.widget(
           find.byType(DecoratedBox),
         );
-        final RichText qouteText = tester.widget(find.byType(RichText));
+        final RichText quoteText = tester.widget(find.byType(RichText));
         final List<TextSpan> styledTextParts =
-            (qouteText.text as TextSpan).children!.cast<TextSpan>();
+            (quoteText.text as TextSpan).children!.cast<TextSpan>();
 
         expectTextStrings(
           widgets,
@@ -72,8 +72,8 @@ void defineTests() {
         /// this is a link
         expect(styledTextParts[0].text, 'this is a link: ');
         expect(
-          styledTextParts[0].style!.color,
-          theme.textTheme.bodyMedium!.color,
+          styledTextParts[0].style,
+          theme.textTheme.bodyMedium,
         );
 
         /// Markdown guide
@@ -83,8 +83,8 @@ void defineTests() {
         /// and this is
         expect(styledTextParts[2].text, ' and this is ');
         expect(
-          styledTextParts[2].style!.color,
-          theme.textTheme.bodyMedium!.color,
+          styledTextParts[2].style,
+          theme.textTheme.bodyMedium,
         );
 
         /// bold
