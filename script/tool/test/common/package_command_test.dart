@@ -433,6 +433,21 @@ packages/plugin1/plugin1/plugin1.dart
         expect(command.plugins, unorderedEquals(<String>[package.path]));
       });
 
+      test('runs only app-facing package of a federated plugin', () async {
+        const String pluginName = 'foo';
+        final Directory groupDir = packagesDir.childDirectory(pluginName);
+        final RepositoryPackage package =
+            createFakePlugin(pluginName, groupDir);
+        createFakePlugin('${pluginName}_someplatform', groupDir);
+        createFakePackage('${pluginName}_platform_interface', groupDir);
+        fileSystem.currentDirectory = package.directory;
+
+        await runCapturingPrint(
+            runner, <String>['sample', '--current-package']);
+
+        expect(command.plugins, unorderedEquals(<String>[package.path]));
+      });
+
       test('runs on a package when run from a package example directory',
           () async {
         final RepositoryPackage package = createFakePlugin(

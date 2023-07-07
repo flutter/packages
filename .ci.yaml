@@ -97,7 +97,6 @@ targets:
       version_file: flutter_master.version
 
   - name: Linux repo_checks
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -282,7 +281,6 @@ targets:
       channel: stable
 
   - name: Linux_android android_platform_tests_shard_1 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -293,7 +291,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_2 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -304,7 +301,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_3 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -315,7 +311,6 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_4 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -326,7 +321,6 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_5 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -337,7 +331,6 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_6 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -345,10 +338,9 @@ targets:
       channel: master
       version_file: flutter_master.version
       cores: "32"
-      package_sharding: "--shardIndex 6 --shardCount 6"
+      package_sharding: "--shardIndex 5 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_1 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -360,7 +352,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_2 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -372,7 +363,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_3 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -384,7 +374,6 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_4 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -396,7 +385,6 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_5 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -408,7 +396,6 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_6 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -417,7 +404,7 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       cores: "32"
-      package_sharding: "--shardIndex 6 --shardCount 6"
+      package_sharding: "--shardIndex 5 --shardCount 6"
 
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
@@ -438,7 +425,6 @@ targets:
       channel: stable
 
   - name: Linux_web web_platform_tests_shard_1 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -449,7 +435,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux_web web_platform_tests_shard_2 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -460,7 +445,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux_web web_platform_tests_shard_1 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -471,7 +455,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux_web web_platform_tests_shard_2 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
