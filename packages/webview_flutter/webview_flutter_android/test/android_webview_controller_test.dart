@@ -624,7 +624,7 @@ void main() {
         mockWebChromeClient.setSynchronousReturnValueForOnShowFileChooser(true),
       );
 
-      onShowFileChooserCallback(
+      await onShowFileChooserCallback(
         android_webview.WebView.detached(),
         android_webview.FileChooserParams.detached(
           isCaptureEnabled: false,
@@ -688,7 +688,7 @@ void main() {
       bool isAllow = false;
 
       late final GeolocationPermissionsResponse response;
-      controller.setGeolocationPermissionsPromptCallbacks(
+      await controller.setGeolocationPermissionsPromptCallbacks(
         onShowPrompt: (GeolocationPermissionsRequestParams request) async {
           isAllow = request.origin == allowOrigin;
           response =
@@ -812,7 +812,7 @@ void main() {
       await controller.setOnPlatformPermissionRequest(
         (PlatformWebViewPermissionRequest request) async {
           permissionRequest = request;
-          request.grant();
+          await request.grant();
         },
       );
 

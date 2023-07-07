@@ -465,7 +465,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   XCTAssertTrue(CGRectEqualToRect(webView.frame, CGRectMake(0, 0, 300, 100)));
 }
 
-- (void)testSetInspectable API_AVAILABLE(ios(16.4), macos(13.3), tvos(16.4)) {
+- (void)testSetInspectable API_AVAILABLE(ios(16.4), macos(13.3)) {
   FWFWebView *mockWebView = OCMClassMock([FWFWebView class]);
 
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];

@@ -139,7 +139,7 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
     assert(identifier != null,
         'No ImageCapture has the identifer of that requested to get the resolution information for.');
 
-    setFlashMode(identifier!, flashMode);
+    await setFlashMode(identifier!, flashMode);
   }
 
   /// Takes a picture with the specified [ImageCapture] instance.
