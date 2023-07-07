@@ -7,6 +7,10 @@ tasks:
   - name: lint
     script: script/tool_runner.sh
     args: ["lint-android"]
+  - name: download android deps
+    script: script/tool_runner.sh
+    infra_step: true
+    args: ["fetch-android-deps"]
   # Native unit and native integration are split into two steps to allow for
   # different exclusions.
   # TODO(stuartmorgan): Eliminate the native unit test exclusion, and combine
