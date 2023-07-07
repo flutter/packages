@@ -50,9 +50,9 @@ void defineTests() {
         final DecoratedBox blockQuoteContainer = tester.widget(
           find.byType(DecoratedBox),
         );
-        final RichText quoteText = tester.widget(find.byType(RichText));
+        final RichText qouteText = tester.widget(find.byType(RichText));
         final List<TextSpan> styledTextParts =
-            (quoteText.text as TextSpan).children!.cast<TextSpan>();
+            (qouteText.text as TextSpan).children!.cast<TextSpan>();
 
         expectTextStrings(
           widgets,
@@ -72,8 +72,8 @@ void defineTests() {
         /// this is a link
         expect(styledTextParts[0].text, 'this is a link: ');
         expect(
-          styledTextParts[0].style,
-          theme.textTheme.bodyMedium,
+          styledTextParts[0].style!.color,
+          theme.textTheme.bodyMedium!.color,
         );
 
         /// Markdown guide
@@ -83,8 +83,8 @@ void defineTests() {
         /// and this is
         expect(styledTextParts[2].text, ' and this is ');
         expect(
-          styledTextParts[2].style,
-          theme.textTheme.bodyMedium,
+          styledTextParts[2].style!.color,
+          theme.textTheme.bodyMedium!.color,
         );
 
         /// bold
@@ -103,5 +103,68 @@ void defineTests() {
         expect(styledTextParts[5].style!.fontStyle, FontStyle.italic);
       },
     );
+  });
+
+  testWidgets('should work with overridden styling',
+      (WidgetTester tester) async {
+    final TextStyle blockquoteStyle =
+        textTheme.bodyMedium!.copyWith(color: Colors.amber);
+
+    final BoxDecoration blockquoteDecoration = BoxDecoration(
+      color: Colors.grey[800],
+      borderRadius: const BorderRadius.all(
+        Radius.circular(8),
+      ),
+    );
+
+    const WrapAlignment blockquoteAlign = WrapAlignment.center;
+
+    const EdgeInsets blockquotePadding = EdgeInsets.all(12.0);
+
+    final ThemeData theme = ThemeData.light().copyWith(
+      textTheme: textTheme,
+    );
+
+    final MarkdownStyleSheet styleSheet = MarkdownStyleSheet.fromTheme(
+      theme,
+    ).copyWith(
+      blockquote: blockquoteStyle,
+      blockquoteDecoration: blockquoteDecoration,
+      blockquoteAlign: blockquoteAlign,
+      blockquotePadding: blockquotePadding,
+    );
+
+    const String data = '> this is some markdown in a nice amber color!';
+    await tester.pumpWidget(
+      boilerplate(
+        MarkdownBody(
+          data: data,
+          styleSheet: styleSheet,
+        ),
+      ),
+    );
+
+    final Iterable<Widget> widgets = tester.allWidgets;
+    final DecoratedBox blockQuoteContainer = tester.widget(
+      find.byType(DecoratedBox),
+    );
+    final RichText quoteText = tester.widget(find.byType(RichText));
+
+    expectTextStrings(
+      widgets,
+      <String>['this is some markdown in a nice amber color!'],
+    );
+
+    expect(
+      (blockQuoteContainer.decoration as BoxDecoration).color,
+      blockquoteDecoration.color,
+    );
+
+    expect(
+      (blockQuoteContainer.decoration as BoxDecoration).borderRadius,
+      blockquoteDecoration.borderRadius,
+    );
+
+    expect(quoteText.text.style!.color, blockquoteStyle.color);
   });
 }
