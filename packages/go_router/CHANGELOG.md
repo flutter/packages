@@ -1,3 +1,7 @@
+## 9.0.3
+
+- Adds helpers for go_router_builder for StatefulShellRoute support
+
 ## 9.0.2
 
 - Exposes package-level privates.
