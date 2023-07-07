@@ -66,9 +66,9 @@ class MethodCallHandlerImpl
     private MethodNames() {}
   }
 
-  // TODO(gmackall) Replace uses of deprecated ProrationMode enum values with new
+  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
   // ReplacementMode enum values.
-  // https://github.com/flutter/flutter/issues/128957
+  // https://github.com/flutter/flutter/issues/128957.
   @SuppressWarnings(value = "deprecation")
   private static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
       com.android.billingclient.api.BillingFlowParams.ProrationMode
@@ -329,7 +329,7 @@ class MethodCallHandlerImpl
         BillingFlowParams.SubscriptionUpdateParams.newBuilder();
     if (oldProduct != null && !oldProduct.isEmpty() && purchaseToken != null) {
       subscriptionUpdateParamsBuilder.setOldPurchaseToken(purchaseToken);
-      //Set the prorationMode using a helper to minimize impact of deprecation suppression.
+      // Set the prorationMode using a helper to minimize impact of deprecation suppression.
       setReplaceProrationMode(subscriptionUpdateParamsBuilder, prorationMode);
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
@@ -337,8 +337,8 @@ class MethodCallHandlerImpl
         fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build())));
   }
 
-  // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode
-  // https://github.com/flutter/flutter/issues/128957
+  // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode.
+  // https://github.com/flutter/flutter/issues/128957.
   @SuppressWarnings(value = "deprecation")
   private void setReplaceProrationMode(
       BillingFlowParams.SubscriptionUpdateParams.Builder builder, int prorationMode) {
