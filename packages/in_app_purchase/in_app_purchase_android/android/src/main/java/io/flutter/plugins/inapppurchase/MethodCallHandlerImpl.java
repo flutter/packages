@@ -329,7 +329,7 @@ class MethodCallHandlerImpl
         BillingFlowParams.SubscriptionUpdateParams.newBuilder();
     if (oldProduct != null && !oldProduct.isEmpty() && purchaseToken != null) {
       subscriptionUpdateParamsBuilder.setOldPurchaseToken(purchaseToken);
-      // Set the prorationMode using a helper to minimize impact of deprecation suppression.
+      // Set the prorationMode using a helper to minimize impact of deprecation warning suppression.
       setReplaceProrationMode(subscriptionUpdateParamsBuilder, prorationMode);
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
