@@ -18,6 +18,7 @@ enum AnEnum {
   three,
 }
 
+/// A class containing all supported types.
 class AllTypes {
   AllTypes({
     required this.aBool,
@@ -94,6 +95,7 @@ class AllTypes {
   }
 }
 
+/// A class containing all supported nullable types.
 class AllNullableTypes {
   AllNullableTypes({
     this.aNullableBool,
@@ -188,23 +190,35 @@ class AllNullableTypes {
   }
 }
 
-class AllNullableTypesWrapper {
-  AllNullableTypesWrapper({
-    required this.values,
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `AllTypes` when testing doesn't require both (ie. testing null classes).
+class AllClassesWrapper {
+  AllClassesWrapper({
+    required this.allNullableTypes,
+    this.allTypes,
   });
 
-  AllNullableTypes values;
+  AllNullableTypes allNullableTypes;
+
+  AllTypes? allTypes;
 
   Object encode() {
     return <Object?>[
-      values.encode(),
+      allNullableTypes.encode(),
+      allTypes?.encode(),
     ];
   }
 
-  static AllNullableTypesWrapper decode(Object result) {
+  static AllClassesWrapper decode(Object result) {
     result as List<Object?>;
-    return AllNullableTypesWrapper(
-      values: AllNullableTypes.decode(result[0]! as List<Object?>),
+    return AllClassesWrapper(
+      allNullableTypes: AllNullableTypes.decode(result[0]! as List<Object?>),
+      allTypes: result[1] != null
+          ? AllTypes.decode(result[1]! as List<Object?>)
+          : null,
     );
   }
 }
@@ -235,10 +249,10 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   const _HostIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllNullableTypes) {
+    if (value is AllClassesWrapper) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWrapper) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is AllTypes) {
@@ -256,9 +270,9 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        return AllClassesWrapper.decode(readValue(buffer)!);
       case 129:
-        return AllNullableTypesWrapper.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
       case 130:
         return AllTypes.decode(readValue(buffer)!);
       case 131:
@@ -622,6 +636,35 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed map to test nested class serialization and deserialization.
+  Future<AllClassesWrapper> echoClassWrapper(
+      AllClassesWrapper arg_wrapper) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.HostIntegrationCoreApi.echoClassWrapper', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_wrapper]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as AllClassesWrapper?)!;
+    }
+  }
+
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllNullableTypes?> echoAllNullableTypes(
       AllNullableTypes? arg_everything) async {
@@ -649,7 +692,7 @@ class HostIntegrationCoreApi {
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   Future<String?> extractNestedNullableString(
-      AllNullableTypesWrapper arg_wrapper) async {
+      AllClassesWrapper arg_wrapper) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedNullableString',
         codec,
@@ -674,7 +717,7 @@ class HostIntegrationCoreApi {
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  Future<AllNullableTypesWrapper> createNestedNullableString(
+  Future<AllClassesWrapper> createNestedNullableString(
       String? arg_nullableString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.HostIntegrationCoreApi.createNestedNullableString',
@@ -699,7 +742,7 @@ class HostIntegrationCoreApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as AllNullableTypesWrapper?)!;
+      return (replyList[0] as AllClassesWrapper?)!;
     }
   }
 
@@ -1970,10 +2013,10 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
   const _FlutterIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllNullableTypes) {
+    if (value is AllClassesWrapper) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWrapper) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is AllTypes) {
@@ -1991,9 +2034,9 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        return AllClassesWrapper.decode(readValue(buffer)!);
       case 129:
-        return AllNullableTypesWrapper.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
       case 130:
         return AllTypes.decode(readValue(buffer)!);
       case 131:

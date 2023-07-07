@@ -4,8 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/misc/errors.dart';
+import 'package:go_router/go_router.dart';
 
 import 'test_helpers.dart';
 
