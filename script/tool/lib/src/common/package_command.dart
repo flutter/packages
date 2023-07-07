@@ -595,7 +595,15 @@ abstract class PackageCommand extends Command<void> {
     // ... and then check whether it has an enclosing package.
     final RepositoryPackage package = RepositoryPackage(currentDir);
     final RepositoryPackage? enclosingPackage = package.getEnclosingPackage();
-    return (enclosingPackage ?? package).directory.basename;
+    final RepositoryPackage rootPackage = enclosingPackage ?? package;
+    final String name = rootPackage.directory.basename;
+    // For an app-facing package in a federated plugin, return the fully
+    // qualified name, since returning just the name will cause the entire
+    // group to run.
+    if (rootPackage.directory.parent.basename == name) {
+      return '$name/$name';
+    }
+    return name;
   }
 
   // Returns true if the current checkout is on an ancestor of [branch].
