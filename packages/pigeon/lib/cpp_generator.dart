@@ -670,7 +670,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                 .contains(field.type.baseName)) {
           return '${hostDatatype.datatype}::FromEncodableList(std::get<EncodableList>($encodable))';
         } else if (field.type.baseName == 'Object') {
-          return 'std::get($encodable)';
+          return encodable;
         } else {
           return 'std::get<${hostDatatype.datatype}>($encodable)';
         }

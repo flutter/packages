@@ -150,7 +150,7 @@ AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
       std::get<std::vector<int64_t>>(list[6]),
       std::get<std::vector<double>>(list[7]), std::get<EncodableList>(list[8]),
       std::get<EncodableMap>(list[9]), (AnEnum)(std::get<int32_t>(list[10])),
-      std::get<std::string>(list[11]), std::get(list[12]));
+      std::get<std::string>(list[11]), list[12]);
   return decoded;
 }
 
@@ -569,7 +569,7 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   }
   auto& encodable_a_nullable_object = list[15];
   if (!encodable_a_nullable_object.IsNull()) {
-    decoded.set_a_nullable_object(std::get(encodable_a_nullable_object));
+    decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
   return decoded;
 }
