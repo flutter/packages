@@ -437,6 +437,50 @@ targets:
       target_file: web_build_all_packages.yaml
       channel: stable
 
+  - name: Linux_web web_platform_tests_shard_1 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      cores: "32"
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_platform_tests_shard_2 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      cores: "32"
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_platform_tests_shard_1 stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      cores: "32"
+      version_file: flutter_stable.version
+      channel: stable
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_platform_tests_shard_2 stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      cores: "32"
+      version_file: flutter_stable.version
+      channel: stable
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
   ### Linux desktop tasks
   - name: Linux_desktop build_all_packages master
     recipe: packages/packages
