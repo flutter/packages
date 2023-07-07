@@ -28,7 +28,7 @@ class WasmImplementation extends Wasm {
   }
 
   @override
-  dynamic call(String name, [List<Object?>? arguments]) {
+  T callFunction<T>(String name, [List<Object?>? arguments]) {
     final WasmFunction function = _wasmInstance.lookupFunction(name);
     return function.apply(arguments ?? const <Object>[]);
   }

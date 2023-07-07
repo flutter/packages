@@ -76,7 +76,7 @@ class _ExampleState extends State<Example> {
 
   void _updateData() {
     // Retrieve the calculator value from Wasm.
-    final int value = _wasm.call('value', null).toInt();
+    final int value = _wasm.callFunction<int>('value', null);
     // Push the calculator value to RFW.
     _rfwData.update(
       'value',
@@ -99,7 +99,7 @@ class _ExampleState extends State<Example> {
       onEvent: (String name, DynamicMap arguments) {
         final Object? rfwArguments = arguments['arguments'];
         // Call Wasm calculator function.
-        _wasm.call(name, rfwArguments == null
+        _wasm.callFunction(name, rfwArguments == null
             ? const <Object>[]
             : rfwArguments as List<Object?>);
         _updateData();

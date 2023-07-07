@@ -38,7 +38,7 @@ Then you can host the website in `/build/web_wasm` your preferred way, such as
 via the dhttp package.
 
 ## Conventions
-;
+
 The application renders the remote widget named `root` defined in the
 `logic/calculator.rfw` file, and loads the Wasm module defined in the
 `logic/calculator.wasm` file.

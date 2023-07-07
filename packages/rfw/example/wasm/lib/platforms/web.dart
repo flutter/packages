@@ -39,9 +39,18 @@ class WasmImplementation extends Wasm {
   }
 
   @override
-  dynamic call(String name, [List<Object?>? arguments]) {
-    // The wasm exports object contains the JSFunction objects that can be
+  T callFunction<T>(String name, [List<Object?>? arguments]) {
+    // The Wasm exports object contains the JSFunction objects that can be
     // called directly via the js_util helper function.
-    return callMethod(_wasmExports, name, arguments ?? const <Object>[]);
+    Object? result = callMethod(_wasmExports, name, arguments ?? const <Object>[]);
+
+    // On web, even if the Wasm function returns an int, JS interop will turn
+    // it into a double, which makes cross-platform APIs inconsistent. Convert
+    // it back to an expected int if that's the caller expectation.
+    if (T == int) {
+      return (result as num).toInt() as T;
+    }
+
+    return result as T;
   }
 }

@@ -16,7 +16,7 @@ class WasmImplementation extends Wasm {
   }
 
   @override
-  dynamic call(String name, [List<Object?>? arguments]) {
+  T callFunction<T>(String name, [List<Object?>? arguments]) {
     throw UnimplementedError();
   }
 }
