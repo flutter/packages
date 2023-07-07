@@ -520,6 +520,54 @@ void main() {
           ]));
     });
 
+    test('runs chromedriver when requested', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/plugin_test.dart',
+          'example/test_driver/integration_test.dart',
+          'example/web/index.html',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['drive-examples', '--web', '--run-chromedriver']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            const ProcessCall('chromedriver', <String>['--port=4444'], null),
+            ProcessCall(
+                getFlutterCommand(mockPlatform),
+                const <String>[
+                  'drive',
+                  '-d',
+                  'web-server',
+                  '--web-port=7357',
+                  '--browser-name=chrome',
+                  '--driver',
+                  'test_driver/integration_test.dart',
+                  '--target',
+                  'integration_test/plugin_test.dart',
+                ],
+                pluginExampleDirectory.path),
+          ]));
+    });
+
     test('drives a web plugin with CHROME_EXECUTABLE', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
