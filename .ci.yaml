@@ -245,11 +245,9 @@ targets:
       channel: master
 
   - name: Linux_android custom_package_tests stable
-    bringup: true # Blocked on https://github.com/flutter/flutter/issues/130071
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       cores: "32"
