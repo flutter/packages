@@ -1,5 +1,20 @@
 ## NEXT
 
+* Fixes unawaited_futures violations.
+
+## 2.2.3
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.2.2
+
+* Sets an upper bound on the `GoogleMaps` SDK version that can be used, to
+  avoid future breakage.
+
+## 2.2.1
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.2.0

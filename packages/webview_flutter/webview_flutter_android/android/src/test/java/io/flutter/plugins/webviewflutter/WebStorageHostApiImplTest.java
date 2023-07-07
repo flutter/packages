@@ -28,7 +28,7 @@ public class WebStorageHostApiImplTest {
 
   @Before
   public void setUp() {
-    testInstanceManager = InstanceManager.open(identifier -> {});
+    testInstanceManager = InstanceManager.create(identifier -> {});
 
     when(mockWebStorageCreator.createWebStorage()).thenReturn(mockWebStorage);
     testHostApiImpl = new WebStorageHostApiImpl(testInstanceManager, mockWebStorageCreator);
@@ -37,7 +37,7 @@ public class WebStorageHostApiImplTest {
 
   @After
   public void tearDown() {
-    testInstanceManager.close();
+    testInstanceManager.stopFinalizationListener();
   }
 
   @Test

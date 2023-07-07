@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import 'shared_preferences_platform_interface.dart';
+import 'types.dart';
 
 const MethodChannel _kChannel =
     MethodChannel('plugins.flutter.io/shared_preferences');
@@ -39,13 +40,58 @@ class MethodChannelSharedPreferencesStore
   }
 
   @override
-  Future<Map<String, Object>> getAll() async {
-    final Map<String, Object>? preferences =
-        await _kChannel.invokeMapMethod<String, Object>('getAll');
+  @Deprecated('Use clearWithParameters instead')
+  Future<bool> clearWithPrefix(String prefix) async {
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: prefix),
+      ),
+    );
+  }
 
-    if (preferences == null) {
-      return <String, Object>{};
-    }
-    return preferences;
+  @override
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    return (await _kChannel.invokeMethod<bool>(
+      'clearWithParameters',
+      <String, dynamic>{
+        'prefix': filter.prefix,
+        'allowList': filter.allowList?.toList(),
+      },
+    ))!;
+  }
+
+  @override
+  Future<Map<String, Object>> getAll() async {
+    return await _kChannel.invokeMapMethod<String, Object>('getAll') ??
+        <String, Object>{};
+  }
+
+  @override
+  @Deprecated('Use getAllWithParameters instead')
+  Future<Map<String, Object>> getAllWithPrefix(
+    String prefix, {
+    Set<String>? allowList,
+  }) async {
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: prefix),
+      ),
+    );
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    final List<String>? allowListAsList = filter.allowList?.toList();
+    return await _kChannel.invokeMapMethod<String, Object>(
+          'getAllWithParameters',
+          <String, dynamic>{
+            'prefix': filter.prefix,
+            'allowList': allowListAsList
+          },
+        ) ??
+        <String, Object>{};
   }
 }

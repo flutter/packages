@@ -2,11 +2,11 @@ name: image_picker_for_web
 description: Web platform implementation of image_picker
 repository: https://github.com/flutter/packages/tree/main/packages/image_picker/image_picker_for_web
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+image_picker%22
-version: 2.1.11
+version: 2.2.0
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 flutter:
   plugin:
@@ -21,7 +21,8 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  image_picker_platform_interface: ^2.2.0
+  image_picker_platform_interface: ^2.8.0
+  mime: ^1.0.4
 
 dev_dependencies:
   flutter_test:

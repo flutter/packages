@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(goderbauer): Remove this ignore when this package requires Flutter 3.8 or later.
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 
@@ -27,12 +24,22 @@ class MyApp extends StatelessWidget {
 
 /// Creates a basic adaptive page with navigational elements and a body using
 /// [AdaptiveLayout].
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   /// Creates a const [MyHomePage].
   const MyHomePage({super.key});
 
   @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int selectedNavigation = 0;
+
+  @override
   Widget build(BuildContext context) {
+    final NavigationRailThemeData navRailTheme =
+        Theme.of(context).navigationRailTheme;
+
     // Define the children to display within the body.
     final List<Widget> children = List<Widget>.generate(10, (int index) {
       return Padding(
@@ -48,11 +55,9 @@ class MyHomePage extends StatelessWidget {
       children: <Widget>[
         const Divider(color: Colors.black),
         const SizedBox(height: 10),
-        Row(
-          children: const <Widget>[
-            SizedBox(
-              width: 27,
-            ),
+        const Row(
+          children: <Widget>[
+            SizedBox(width: 27),
             Text('Folders', style: TextStyle(fontSize: 16)),
           ],
         ),
@@ -61,36 +66,17 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
-            const SizedBox(width: 21),
-            const Text('Freelance'),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: <Widget>[
-            const SizedBox(width: 16),
-            IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
-            const SizedBox(width: 21),
-            const Text('Mortgage'),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: <Widget>[
-            const SizedBox(width: 16),
-            IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Flexible(
-                child: Text('Taxes', overflow: TextOverflow.ellipsis)),
+              child: Text(
+                'Freelance',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -98,12 +84,47 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             const SizedBox(width: 16),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.folder_copy_outlined),
-                iconSize: 21),
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
             const SizedBox(width: 21),
             const Flexible(
-                child: Text('Receipts', overflow: TextOverflow.ellipsis)),
+              child: Text(
+                'Mortgage',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
+            const SizedBox(width: 21),
+            const Flexible(
+              child: Text('Taxes', overflow: TextOverflow.ellipsis),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 16),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.folder_copy_outlined),
+              iconSize: 21,
+            ),
+            const SizedBox(width: 21),
+            const Flexible(
+              child: Text('Receipts', overflow: TextOverflow.ellipsis),
+            ),
           ],
         ),
       ],
@@ -113,19 +134,23 @@ class MyHomePage extends StatelessWidget {
     const List<NavigationDestination> destinations = <NavigationDestination>[
       NavigationDestination(
         label: 'Inbox',
-        icon: Icon(Icons.inbox, color: Colors.black),
+        icon: Icon(Icons.inbox_outlined),
+        selectedIcon: Icon(Icons.inbox),
       ),
       NavigationDestination(
         label: 'Articles',
-        icon: Icon(Icons.article_outlined, color: Colors.black),
+        icon: Icon(Icons.article_outlined),
+        selectedIcon: Icon(Icons.article),
       ),
       NavigationDestination(
         label: 'Chat',
-        icon: Icon(Icons.chat_bubble_outline, color: Colors.black),
+        icon: Icon(Icons.chat_outlined),
+        selectedIcon: Icon(Icons.chat),
       ),
       NavigationDestination(
         label: 'Video',
-        icon: Icon(Icons.video_call_outlined, color: Colors.black),
+        icon: Icon(Icons.video_call_outlined),
+        selectedIcon: Icon(Icons.video_call),
       ),
     ];
 
@@ -142,20 +167,37 @@ class MyHomePage extends StatelessWidget {
             inAnimation: AdaptiveScaffold.leftOutIn,
             key: const Key('Primary Navigation Medium'),
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              selectedIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
+              },
               leading: const Icon(Icons.menu),
               destinations: destinations
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('Primary Navigation Large'),
             inAnimation: AdaptiveScaffold.leftOutIn,
             builder: (_) => AdaptiveScaffold.standardNavigationRail(
+              selectedIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
+              },
               extended: true,
-              leading: Row(
+              leading: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const <Widget>[
+                children: <Widget>[
                   Text(
                     'REPLY',
                     style: TextStyle(color: Color.fromARGB(255, 255, 201, 197)),
@@ -167,6 +209,11 @@ class MyHomePage extends StatelessWidget {
                   .map((_) => AdaptiveScaffold.toRailDestination(_))
                   .toList(),
               trailing: trailingNavRail,
+              backgroundColor: navRailTheme.backgroundColor,
+              selectedIconTheme: navRailTheme.selectedIconTheme,
+              unselectedIconTheme: navRailTheme.unselectedIconTheme,
+              selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
+              unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
             ),
           ),
         },
@@ -197,16 +244,19 @@ class MyHomePage extends StatelessWidget {
             key: const Key('Bottom Navigation Small'),
             inAnimation: AdaptiveScaffold.bottomToTop,
             outAnimation: AdaptiveScaffold.topToBottom,
-            builder: (_) => BottomNavigationBarTheme(
-              data: const BottomNavigationBarThemeData(
-                  selectedItemColor: Colors.black),
-              child: AdaptiveScaffold.standardBottomNavigationBar(
-                  destinations: destinations),
+            builder: (_) => AdaptiveScaffold.standardBottomNavigationBar(
+              destinations: destinations,
+              currentIndex: selectedNavigation,
+              onDestinationSelected: (int newIndex) {
+                setState(() {
+                  selectedNavigation = newIndex;
+                });
+              },
             ),
           )
         },
       ),
     );
-    // #enddocregion
+    // #enddocregion Example
   }
 }

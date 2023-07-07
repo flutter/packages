@@ -31,6 +31,7 @@ class ShellRouteExampleApp extends StatelessWidget {
   final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/a',
+    debugLogDiagnostics: true,
     routes: <RouteBase>[
       /// Application shell
       ShellRoute(

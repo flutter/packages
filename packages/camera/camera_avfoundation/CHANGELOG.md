@@ -1,5 +1,19 @@
 ## NEXT
 
+* Fixes unawaited_futures violations.
+
+## 0.9.13+2
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.9.13+1
+
+* Clarifies explanation of endorsement in README.
+
+## 0.9.13
+
+* Allows camera to be switched while video recording.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.9.12

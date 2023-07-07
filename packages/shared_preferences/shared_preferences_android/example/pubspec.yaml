@@ -3,8 +3,8 @@ description: Demonstrates how to use the shared_preferences plugin.
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
@@ -16,11 +16,9 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  shared_preferences_platform_interface: ^2.0.0
+  shared_preferences_platform_interface: ^2.3.0
 
 dev_dependencies:
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:

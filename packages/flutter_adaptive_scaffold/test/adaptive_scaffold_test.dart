@@ -33,7 +33,7 @@ void main() {
 
     expect(tester.getTopLeft(smallBody), Offset.zero);
     expect(tester.getTopLeft(smallSBody), const Offset(200, 0));
-    expect(tester.getTopLeft(bottomNav), const Offset(0, 744));
+    expect(tester.getTopLeft(bottomNav), const Offset(0, 720));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
     await tester.pumpWidget(SimulatedLayout.medium.app());
@@ -83,22 +83,22 @@ void main() {
 
     expect(tester.getTopLeft(b), const Offset(17.6, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(778.2, 755.2), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(778.2, 736), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(1178.2, 755.2), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(1178.2, 736), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(tester.getTopLeft(b), const Offset(70.4, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(416.0, 788.8), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(416.0, 784), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(816, 788.8), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(816, 784), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -237,6 +237,347 @@ void main() {
         await tester.pumpWidget(app);
         await tester.pumpAndSettle();
       });
+    },
+  );
+
+  testWidgets(
+    'when destinations passed with all data, it shall not be null',
+    (WidgetTester tester) async {
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.inbox_outlined),
+          selectedIcon: Icon(Icons.inbox),
+          label: 'Inbox',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.video_call_outlined),
+          selectedIcon: Icon(Icons.video_call),
+          label: 'Video',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(size: Size(700, 900)),
+            child: AdaptiveScaffold(
+              destinations: destinations,
+            ),
+          ),
+        ),
+      );
+
+      final Finder fNavigationRail = find.descendant(
+        of: find.byType(AdaptiveScaffold),
+        matching: find.byType(NavigationRail),
+      );
+      final NavigationRail navigationRail = tester.firstWidget(fNavigationRail);
+      expect(
+        navigationRail.destinations,
+        isA<List<NavigationRailDestination>>(),
+      );
+      expect(
+        navigationRail.destinations.length,
+        destinations.length,
+      );
+
+      for (final NavigationRailDestination destination
+          in navigationRail.destinations) {
+        expect(destination.label, isNotNull);
+        expect(destination.icon, isA<Icon>());
+        expect(destination.icon, isNotNull);
+        expect(destination.selectedIcon, isA<Icon?>());
+        expect(destination.selectedIcon, isNotNull);
+      }
+
+      final NavigationDestination firstDestinationFromListPassed =
+          destinations.first;
+      final NavigationRailDestination firstDestinationFromFinderView =
+          navigationRail.destinations.first;
+
+      expect(firstDestinationFromListPassed, isNotNull);
+      expect(firstDestinationFromFinderView, isNotNull);
+
+      expect(
+        firstDestinationFromListPassed.icon,
+        equals(firstDestinationFromFinderView.icon),
+      );
+      expect(
+        firstDestinationFromListPassed.selectedIcon,
+        equals(firstDestinationFromFinderView.selectedIcon),
+      );
+    },
+  );
+
+  testWidgets(
+    'when tap happens on any destination, its selected icon shall be visible',
+    (WidgetTester tester) async {
+      //region Keys
+      const ValueKey<String> firstDestinationIconKey = ValueKey<String>(
+        'first-normal-icon',
+      );
+      const ValueKey<String> firstDestinationSelectedIconKey = ValueKey<String>(
+        'first-selected-icon',
+      );
+      const ValueKey<String> lastDestinationIconKey = ValueKey<String>(
+        'last-normal-icon',
+      );
+      const ValueKey<String> lastDestinationSelectedIconKey = ValueKey<String>(
+        'last-selected-icon',
+      );
+      //endregion
+
+      //region Finder for destinations as per its icon.
+      final Finder firstDestinationWithSelectedIcon = find.byKey(
+        firstDestinationSelectedIconKey,
+      );
+      final Finder lastDestinationWithIcon = find.byKey(
+        lastDestinationIconKey,
+      );
+
+      final Finder firstDestinationWithIcon = find.byKey(
+        firstDestinationIconKey,
+      );
+      final Finder lastDestinationWithSelectedIcon = find.byKey(
+        lastDestinationSelectedIconKey,
+      );
+      //endregion
+
+      int selectedDestination = 0;
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(
+            Icons.inbox_outlined,
+            key: firstDestinationIconKey,
+          ),
+          selectedIcon: Icon(
+            Icons.inbox,
+            key: firstDestinationSelectedIconKey,
+          ),
+          label: 'Inbox',
+        ),
+        NavigationDestination(
+          icon: Icon(
+            Icons.video_call_outlined,
+            key: lastDestinationIconKey,
+          ),
+          selectedIcon: Icon(
+            Icons.video_call,
+            key: lastDestinationSelectedIconKey,
+          ),
+          label: 'Video',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(700, 900)),
+            child: StatefulBuilder(
+              builder: (BuildContext context, Function(Function()) setState) {
+                return AdaptiveScaffold(
+                  destinations: destinations,
+                  selectedIndex: selectedDestination,
+                  onSelectedIndexChange: (int value) {
+                    setState(() {
+                      selectedDestination = value;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(selectedDestination, 0);
+      expect(firstDestinationWithSelectedIcon, findsOneWidget);
+      expect(lastDestinationWithIcon, findsOneWidget);
+      expect(firstDestinationWithIcon, findsNothing);
+      expect(lastDestinationWithSelectedIcon, findsNothing);
+
+      await tester.ensureVisible(lastDestinationWithIcon);
+      await tester.tap(lastDestinationWithIcon);
+      await tester.pumpAndSettle();
+      expect(selectedDestination, 1);
+
+      expect(firstDestinationWithSelectedIcon, findsNothing);
+      expect(lastDestinationWithIcon, findsNothing);
+      expect(firstDestinationWithIcon, findsOneWidget);
+      expect(lastDestinationWithSelectedIcon, findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'when view in medium screen, navigation rail must be visible as per theme data values.',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
+      await tester.pumpWidget(SimulatedLayout.medium.app());
+      await tester.pumpAndSettle();
+
+      final Finder primaryNavigationMedium = find.byKey(
+        const Key('primaryNavigation'),
+      );
+      expect(primaryNavigationMedium, findsOneWidget);
+
+      final Finder navigationRailFinder = find.descendant(
+        of: primaryNavigationMedium,
+        matching: find.byType(NavigationRail),
+      );
+      expect(navigationRailFinder, findsOneWidget);
+
+      final NavigationRail navigationRailView = tester.firstWidget(
+        navigationRailFinder,
+      );
+      expect(navigationRailView, isNotNull);
+
+      expect(
+        navigationRailView.backgroundColor,
+        SimulatedLayout.navigationRailThemeBgColor,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.color,
+        SimulatedLayout.selectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.size,
+        SimulatedLayout.selectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.color,
+        SimulatedLayout.unSelectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.size,
+        SimulatedLayout.unSelectedIconThemeData.size,
+      );
+    },
+  );
+
+  testWidgets(
+    'when view in large screen, navigation rail must be visible as per theme data values.',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
+      await tester.pumpWidget(SimulatedLayout.large.app());
+      await tester.pumpAndSettle();
+
+      final Finder primaryNavigationLarge = find.byKey(
+        const Key('primaryNavigation1'),
+      );
+      expect(primaryNavigationLarge, findsOneWidget);
+
+      final Finder navigationRailFinder = find.descendant(
+        of: primaryNavigationLarge,
+        matching: find.byType(NavigationRail),
+      );
+      expect(navigationRailFinder, findsOneWidget);
+
+      final NavigationRail navigationRailView = tester.firstWidget(
+        navigationRailFinder,
+      );
+      expect(navigationRailView, isNotNull);
+
+      expect(
+        navigationRailView.backgroundColor,
+        SimulatedLayout.navigationRailThemeBgColor,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.color,
+        SimulatedLayout.selectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.selectedIconTheme?.size,
+        SimulatedLayout.selectedIconThemeData.size,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.color,
+        SimulatedLayout.unSelectedIconThemeData.color,
+      );
+      expect(
+        navigationRailView.unselectedIconTheme?.size,
+        SimulatedLayout.unSelectedIconThemeData.size,
+      );
+    },
+  );
+
+  // This test checks whether AdaptiveScaffold.standardNavigationRail function
+  // creates a NavigationRail widget as expected with groupAlignment provided,
+  // and checks whether the NavigationRail's groupAlignment matches the expected value.
+  testWidgets(
+      'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
+      (WidgetTester tester) async {
+    const List<NavigationRailDestination> destinations =
+        <NavigationRailDestination>[
+      NavigationRailDestination(
+        icon: Icon(Icons.home),
+        label: Text('Home'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.account_circle),
+        label: Text('Profile'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.settings),
+        label: Text('Settings'),
+      ),
+    ];
+
+    // Align to bottom.
+    const double groupAlignment = 1.0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return AdaptiveScaffold.standardNavigationRail(
+                destinations: destinations,
+                groupAlignment: groupAlignment,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    final NavigationRail rail =
+        tester.widget<NavigationRail>(find.byType(NavigationRail));
+    expect(rail.groupAlignment, equals(groupAlignment));
+  });
+
+  testWidgets(
+    "doesn't override Directionality",
+    (WidgetTester tester) async {
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.account_circle),
+          label: 'Profile',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Directionality(
+              textDirection: TextDirection.rtl,
+              child: AdaptiveScaffold(
+                destinations: destinations,
+                body: (BuildContext context) {
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Finder body = find.byKey(const Key('body'));
+      expect(body, findsOneWidget);
+      final TextDirection dir = Directionality.of(body.evaluate().first);
+      expect(dir, TextDirection.rtl);
     },
   );
 }

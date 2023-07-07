@@ -81,7 +81,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
       '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
@@ -296,6 +296,10 @@ $resultAt != null
 
     indent.write('abstract class ${api.name} ');
     indent.addScoped('{', '}', () {
+      if (isMockHandler) {
+        indent.writeln(
+            'static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;');
+      }
       indent
           .writeln('static const MessageCodec<Object?> codec = $codecName();');
       indent.newln();
@@ -332,16 +336,18 @@ $resultAt != null
                 'binaryMessenger: binaryMessenger);',
               );
             });
-            final String messageHandlerSetter =
-                isMockHandler ? 'setMockMessageHandler' : 'setMessageHandler';
+            final String messageHandlerSetterWithOpeningParentheses = isMockHandler
+                ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, '
+                : 'channel.setMessageHandler(';
             indent.write('if (api == null) ');
             indent.addScoped('{', '}', () {
-              indent.writeln('channel.$messageHandlerSetter(null);');
+              indent.writeln(
+                  '${messageHandlerSetterWithOpeningParentheses}null);');
             }, addTrailingNewline: false);
             indent.add(' else ');
             indent.addScoped('{', '}', () {
               indent.write(
-                'channel.$messageHandlerSetter((Object? message) async ',
+                '$messageHandlerSetterWithOpeningParentheses(Object? message) async ',
               );
               indent.addScoped('{', '});', () {
                 final String returnType =
@@ -431,7 +437,7 @@ $resultAt != null
   ///
   /// Messages will be sent and received in a list.
   ///
-  /// If the message recieved was succesful,
+  /// If the message received was successful,
   /// the result will be contained at the 0'th index.
   ///
   /// If the message was a failure, the list will contain 3 items:
@@ -601,7 +607,7 @@ if (replyList == null) {
     if (opt.copyrightHeader != null) {
       addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
       '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import',

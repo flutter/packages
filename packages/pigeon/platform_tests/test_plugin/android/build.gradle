@@ -2,14 +2,14 @@ group 'com.example.test_plugin'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.8.10'
+    ext.kotlin_version = '1.8.22'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,6 +25,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.example.test_plugin'
+    }
     compileSdkVersion 33
 
     compileOptions {
@@ -57,8 +61,14 @@ android {
         }
     }
 
+    lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+    }
+
     dependencies {
         testImplementation 'junit:junit:4.+'
-        testImplementation "io.mockk:mockk:1.13.4"
+        testImplementation "io.mockk:mockk:1.13.5"
     }
 }

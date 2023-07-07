@@ -69,12 +69,15 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
         YamlEditor(package.pubspecFile.readAsStringSync());
     if (dartRange != null &&
         (dartRange.min ?? Version.none) < _dartMinVersion) {
+      Version upperBound = _dartMinVersion.nextMajor;
+      // pub special-cases 3.0.0 as an upper bound to be treated as 4.0.0, and
+      // using 3.0.0 is now an error at upload time, so special case it here.
+      if (upperBound.major == 3) {
+        upperBound = upperBound.nextMajor;
+      }
       editablePubspec.update(
           <String>[environmentKey, dartSdkKey],
-          VersionRange(
-                  min: _dartMinVersion,
-                  includeMin: true,
-                  max: _dartMinVersion.nextMajor)
+          VersionRange(min: _dartMinVersion, includeMin: true, max: upperBound)
               .toString());
       print('${indentation}Updating Dart minimum to $_dartMinVersion');
     }

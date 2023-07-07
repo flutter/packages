@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_wkwebview/src/common/instance_manager.dart';
 import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart';
 import 'package:webview_flutter_wkwebview/src/web_kit/web_kit.dart';
@@ -13,7 +14,7 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'webkit_webview_widget_test.mocks.dart';
 
-@GenerateMocks(<Type>[WKWebViewConfiguration])
+@GenerateMocks(<Type>[WKUIDelegate, WKWebViewConfiguration])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -25,27 +26,33 @@ void main() {
 
       final WebKitWebViewController controller = WebKitWebViewController(
         WebKitWebViewControllerCreationParams(
-          webKitProxy: WebKitProxy(
-            createWebView: (
-              WKWebViewConfiguration configuration, {
-              void Function(
-                String keyPath,
-                NSObject object,
-                Map<NSKeyValueChangeKey, Object?> change,
-              )?
-                  observeValue,
-              InstanceManager? instanceManager,
-            }) {
-              final WKWebView webView = WKWebView.detached(
-                instanceManager: testInstanceManager,
-              );
-              testInstanceManager.addDartCreatedInstance(webView);
-              return webView;
-            },
-            createWebViewConfiguration: ({InstanceManager? instanceManager}) {
-              return MockWKWebViewConfiguration();
-            },
-          ),
+          webKitProxy: WebKitProxy(createWebView: (
+            WKWebViewConfiguration configuration, {
+            void Function(
+              String keyPath,
+              NSObject object,
+              Map<NSKeyValueChangeKey, Object?> change,
+            )? observeValue,
+            InstanceManager? instanceManager,
+          }) {
+            final WKWebView webView = WKWebView.detached(
+              instanceManager: testInstanceManager,
+            );
+            testInstanceManager.addDartCreatedInstance(webView);
+            return webView;
+          }, createWebViewConfiguration: ({InstanceManager? instanceManager}) {
+            return MockWKWebViewConfiguration();
+          }, createUIDelegate: ({
+            dynamic onCreateWebView,
+            dynamic requestMediaCapturePermission,
+            InstanceManager? instanceManager,
+          }) {
+            final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();
+            when(mockWKUIDelegate.copy()).thenReturn(MockWKUIDelegate());
+
+            testInstanceManager.addDartCreatedInstance(mockWKUIDelegate);
+            return mockWKUIDelegate;
+          }),
         ),
       );
 

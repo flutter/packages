@@ -140,6 +140,30 @@ void defineTests() {
       expect(widgetSpan.child, isInstanceOf<Container>());
     },
   );
+
+  testWidgets(
+    'Custom rendering of tags without children',
+    (WidgetTester tester) async {
+      const String data = '![alt](/assets/images/logo.png)';
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: data,
+            builders: <String, MarkdownElementBuilder>{
+              'img': ImgBuilder(),
+            },
+          ),
+        ),
+      );
+
+      final Finder imageFinder = find.byType(Image);
+      expect(imageFinder, findsNothing);
+      final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      final Text textWidget = tester.widget(find.byType(Text));
+      expect(textWidget.data, 'foo');
+    },
+  );
 }
 
 class SubscriptSyntax extends md.InlineSyntax {
@@ -281,11 +305,11 @@ class InlineTextColorSyntax extends md.InlineSyntax {
 class InlineTextColorElementBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfterWithContext(
-      BuildContext context,
-      md.Element element,
-      TextStyle? preferredStyle,
-      TextStyle? parentStyle,
-      ) {
+    BuildContext context,
+    md.Element element,
+    TextStyle? preferredStyle,
+    TextStyle? parentStyle,
+  ) {
     final String innerText = element.textContent;
     final String color = element.attributes['color'] ?? '';
 
@@ -302,5 +326,12 @@ class InlineTextColorElementBuilder extends MarkdownElementBuilder {
         style: parentStyle?.copyWith(color: contentColor),
       ),
     );
+  }
+}
+
+class ImgBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    return Text('foo', style: preferredStyle);
   }
 }

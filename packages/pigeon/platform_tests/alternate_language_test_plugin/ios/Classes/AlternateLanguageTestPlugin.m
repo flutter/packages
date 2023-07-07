@@ -45,6 +45,11 @@
   *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
 }
 
+- (nullable id)throwFlutterErrorWithError:(FlutterError *_Nullable *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"code" message:@"message" details:@"details"];
+  return nil;
+}
+
 - (nullable NSNumber *)echoInt:(NSNumber *)anInt error:(FlutterError *_Nullable *_Nonnull)error {
   return anInt;
 }
@@ -82,17 +87,22 @@
   return aMap;
 }
 
-- (nullable NSString *)extractNestedNullableStringFrom:(AllNullableTypesWrapper *)wrapper
-                                                 error:(FlutterError *_Nullable *_Nonnull)error {
-  return wrapper.values.aNullableString;
+- (nullable AllClassesWrapper *)echoClassWrapper:(AllClassesWrapper *)wrapper
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return wrapper;
 }
 
-- (nullable AllNullableTypesWrapper *)
+- (nullable NSString *)extractNestedNullableStringFrom:(AllClassesWrapper *)wrapper
+                                                 error:(FlutterError *_Nullable *_Nonnull)error {
+  return wrapper.allNullableTypes.aNullableString;
+}
+
+- (nullable AllClassesWrapper *)
     createNestedObjectWithNullableString:(nullable NSString *)nullableString
                                    error:(FlutterError *_Nullable *_Nonnull)error {
   AllNullableTypes *innerObject = [[AllNullableTypes alloc] init];
   innerObject.aNullableString = nullableString;
-  return [AllNullableTypesWrapper makeWithValues:innerObject];
+  return [AllClassesWrapper makeWithAllNullableTypes:innerObject allTypes:nil];
 }
 
 - (nullable AllNullableTypes *)sendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
@@ -159,6 +169,11 @@
 
 - (void)throwAsyncErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion([FlutterError errorWithCode:@"An error" message:nil details:nil]);
+}
+
+- (void)throwAsyncFlutterErrorWithCompletion:(void (^)(id _Nullable,
+                                                       FlutterError *_Nullable))completion {
+  completion(nil, [FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
 }
 
 - (void)echoAsyncAllTypes:(AllTypes *)everything

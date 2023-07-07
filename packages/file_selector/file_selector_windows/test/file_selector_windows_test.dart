@@ -30,9 +30,10 @@ void main() {
     expect(FileSelectorPlatform.instance, isA<FileSelectorWindows>());
   });
 
-  group('#openFile', () {
+  group('openFile', () {
     setUp(() {
-      when(mockApi.showOpenDialog(any, any, any)).thenReturn(<String?>['foo']);
+      when(mockApi.showOpenDialog(any, any, any))
+          .thenReturn(FileDialogResult(paths: <String?>['foo']));
     });
 
     test('simple call works', () async {
@@ -51,14 +52,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -106,10 +106,10 @@ void main() {
     });
   });
 
-  group('#openFiles', () {
+  group('openFiles', () {
     setUp(() {
       when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(<String?>['foo', 'bar']);
+          .thenReturn(FileDialogResult(paths: <String?>['foo', 'bar']));
     });
 
     test('simple call works', () async {
@@ -129,14 +129,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -184,9 +183,10 @@ void main() {
     });
   });
 
-  group('#getDirectoryPath', () {
+  group('getDirectoryPath', () {
     setUp(() {
-      when(mockApi.showOpenDialog(any, any, any)).thenReturn(<String?>['foo']);
+      when(mockApi.showOpenDialog(any, any, any))
+          .thenReturn(FileDialogResult(paths: <String?>['foo']));
     });
 
     test('simple call works', () async {
@@ -213,10 +213,153 @@ void main() {
     });
   });
 
-  group('#getSavePath', () {
+  group('getDirectoryPaths', () {
+    setUp(() {
+      when(mockApi.showOpenDialog(any, any, any))
+          .thenReturn(FileDialogResult(paths: <String?>['foo', 'bar']));
+    });
+
+    test('simple call works', () async {
+      final List<String?> paths = await plugin.getDirectoryPaths();
+
+      expect(paths[0], 'foo');
+      expect(paths[1], 'bar');
+      final VerificationResult result =
+          verify(mockApi.showOpenDialog(captureAny, null, null));
+      final SelectionOptions options = result.captured[0] as SelectionOptions;
+      expect(options.allowMultiple, true);
+      expect(options.selectFolders, true);
+    });
+
+    test('passes initialDirectory correctly', () async {
+      await plugin.getDirectoryPath(initialDirectory: '/example/directory');
+
+      verify(mockApi.showOpenDialog(any, '/example/directory', null));
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      await plugin.getDirectoryPath(confirmButtonText: 'Open Directory');
+
+      verify(mockApi.showOpenDialog(any, null, 'Open Directory'));
+    });
+  });
+
+  group('getSaveLocation', () {
     setUp(() {
       when(mockApi.showSaveDialog(any, any, any, any))
-          .thenReturn(<String?>['foo']);
+          .thenReturn(FileDialogResult(paths: <String?>['foo']));
+    });
+
+    test('simple call works', () async {
+      final FileSaveLocation? location = await plugin.getSaveLocation();
+
+      expect(location?.path, 'foo');
+      expect(location?.activeFilter, null);
+      final VerificationResult result =
+          verify(mockApi.showSaveDialog(captureAny, null, null, null));
+      final SelectionOptions options = result.captured[0] as SelectionOptions;
+      expect(options.allowMultiple, false);
+      expect(options.selectFolders, false);
+    });
+
+    test('passes the accepted type groups correctly', () async {
+      const XTypeGroup group = XTypeGroup(
+        label: 'text',
+        extensions: <String>['txt'],
+        mimeTypes: <String>['text/plain'],
+      );
+
+      const XTypeGroup groupTwo = XTypeGroup(
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
+
+      await plugin
+          .getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+
+      final VerificationResult result =
+          verify(mockApi.showSaveDialog(captureAny, null, null, null));
+      final SelectionOptions options = result.captured[0] as SelectionOptions;
+      expect(
+          _typeGroupListsMatch(options.allowedTypes, <TypeGroup>[
+            TypeGroup(label: 'text', extensions: <String>['txt']),
+            TypeGroup(label: 'image', extensions: <String>['jpg']),
+          ]),
+          true);
+    });
+
+    test('returns the selected type group correctly', () async {
+      when(mockApi.showSaveDialog(any, any, any, any)).thenReturn(
+          FileDialogResult(paths: <String?>['foo'], typeGroupIndex: 1));
+      const XTypeGroup group = XTypeGroup(
+        label: 'text',
+        extensions: <String>['txt'],
+        mimeTypes: <String>['text/plain'],
+      );
+
+      const XTypeGroup groupTwo = XTypeGroup(
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
+
+      final FileSaveLocation? result = await plugin
+          .getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+
+      verify(mockApi.showSaveDialog(captureAny, null, null, null));
+
+      expect(result?.activeFilter, groupTwo);
+    });
+
+    test('passes initialDirectory correctly', () async {
+      await plugin.getSaveLocation(
+          options:
+              const SaveDialogOptions(initialDirectory: '/example/directory'));
+
+      verify(mockApi.showSaveDialog(any, '/example/directory', null, null));
+    });
+
+    test('passes suggestedName correctly', () async {
+      await plugin.getSaveLocation(
+          options: const SaveDialogOptions(suggestedName: 'baz.txt'));
+
+      verify(mockApi.showSaveDialog(any, null, 'baz.txt', null));
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      await plugin.getSaveLocation(
+          options: const SaveDialogOptions(confirmButtonText: 'Save File'));
+
+      verify(mockApi.showSaveDialog(any, null, null, 'Save File'));
+    });
+
+    test('throws for a type group that does not support Windows', () async {
+      const XTypeGroup group = XTypeGroup(
+        label: 'text',
+        mimeTypes: <String>['text/plain'],
+      );
+
+      await expectLater(
+          plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
+          throwsArgumentError);
+    });
+
+    test('allows a wildcard group', () async {
+      const XTypeGroup group = XTypeGroup(
+        label: 'text',
+      );
+
+      await expectLater(
+          plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
+          completes);
+    });
+  });
+
+  group('getSavePath (deprecated)', () {
+    setUp(() {
+      when(mockApi.showSaveDialog(any, any, any, any))
+          .thenReturn(FileDialogResult(paths: <String?>['foo']));
     });
 
     test('simple call works', () async {
@@ -235,14 +378,13 @@ void main() {
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
-        macUTIs: <String>['public.text'],
       );
 
       const XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+      );
 
       await plugin
           .getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);

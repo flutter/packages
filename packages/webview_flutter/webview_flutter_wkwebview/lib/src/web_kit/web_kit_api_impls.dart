@@ -10,7 +10,8 @@ import '../common/web_kit.g.dart';
 import '../foundation/foundation.dart';
 import 'web_kit.dart';
 
-export '../common/web_kit.g.dart' show WKNavigationType;
+export '../common/web_kit.g.dart'
+    show WKNavigationType, WKPermissionDecision, WKMediaCaptureType;
 
 Iterable<WKWebsiteDataTypeEnumData> _toWKWebsiteDataTypeEnumData(
     Iterable<WKWebsiteDataType> types) {
@@ -227,6 +228,12 @@ extension _NSUrlRequestConverter on NSUrlRequest {
       httpBody: httpBody,
       allHttpHeaderFields: allHttpHeaderFields,
     );
+  }
+}
+
+extension _WKSecurityOriginConverter on WKSecurityOriginData {
+  WKSecurityOrigin toWKSecurityOrigin() {
+    return WKSecurityOrigin(host: host, port: port, protocol: protocol);
   }
 }
 
@@ -622,6 +629,17 @@ class WKWebViewConfigurationHostApiImpl extends WKWebViewConfigurationHostApi {
     );
   }
 
+  /// Calls [setLimitsNavigationsToAppBoundDomains] with the ids of the provided object instances.
+  Future<void> setLimitsNavigationsToAppBoundDomainsForInstances(
+    WKWebViewConfiguration instance,
+    bool limit,
+  ) {
+    return setLimitsNavigationsToAppBoundDomains(
+      instanceManager.getIdentifier(instance)!,
+      limit,
+    );
+  }
+
   /// Calls [setMediaTypesRequiringUserActionForPlayback] with the ids of the provided object instances.
   Future<void> setMediaTypesRequiringUserActionForPlaybackForInstances(
     WKWebViewConfiguration instance,
@@ -718,6 +736,36 @@ class WKUIDelegateFlutterApiImpl extends WKUIDelegateFlutterApi {
           as WKWebViewConfiguration,
       navigationAction.toNavigationAction(),
     );
+  }
+
+  @override
+  Future<WKPermissionDecisionData> requestMediaCapturePermission(
+    int identifier,
+    int webViewIdentifier,
+    WKSecurityOriginData origin,
+    WKFrameInfoData frame,
+    WKMediaCaptureTypeData type,
+  ) async {
+    final WKUIDelegate instance =
+        instanceManager.getInstanceWithWeakReference(identifier)!;
+
+    late final WKPermissionDecision decision;
+    if (instance.requestMediaCapturePermission != null) {
+      decision = await instance.requestMediaCapturePermission!(
+        instance,
+        instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
+            as WKWebView,
+        origin.toWKSecurityOrigin(),
+        frame.toWKFrameInfo(),
+        type.value,
+      );
+    } else {
+      // The default response for iOS is to prompt. See
+      // https://developer.apple.com/documentation/webkit/wkuidelegate/3763087-webview?language=objc
+      decision = WKPermissionDecision.prompt;
+    }
+
+    return WKPermissionDecisionData(value: decision);
   }
 }
 
@@ -1017,6 +1065,17 @@ class WKWebViewHostApiImpl extends WKWebViewHostApi {
         details: (exception.details as NSErrorData).toNSError(),
       );
     }
+  }
+
+  /// Calls [setInspectable] with the ids of the provided object instances.
+  Future<void> setInspectableForInstances(
+    WKWebView instance,
+    bool inspectable,
+  ) async {
+    return setInspectable(
+      instanceManager.getIdentifier(instance)!,
+      inspectable,
+    );
   }
 
   /// Calls [setNavigationDelegate] with the ids of the provided object instances.

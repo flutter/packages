@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.0.0'
     }
 }
 
@@ -22,6 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.example.alternate_language_test_plugin'
+    }
     compileSdkVersion 33
 
     compileOptions {
@@ -45,12 +49,14 @@ android {
         }
     }
 
-    dependencies {
-        testImplementation 'junit:junit:4.+'
-        testImplementation "org.mockito:mockito-core:5.+"
+    lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
     }
-}
 
-project.getTasks().withType(JavaCompile){
-    options.compilerArgs.addAll(["-Xlint:all", "-Werror"])
+    dependencies {
+        testImplementation 'junit:junit:4.13.2'
+        testImplementation "org.mockito:mockito-core:5.1.1"
+    }
 }

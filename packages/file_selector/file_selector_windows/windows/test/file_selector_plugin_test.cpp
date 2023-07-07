@@ -28,36 +28,7 @@ namespace {
 
 using flutter::CustomEncodableValue;
 using flutter::EncodableList;
-using flutter::EncodableMap;
 using flutter::EncodableValue;
-
-// These structs and classes are a workaround for
-// https://github.com/flutter/flutter/issues/104286 and
-// https://github.com/flutter/flutter/issues/104653.
-struct AllowMultipleArg {
-  bool value = false;
-  AllowMultipleArg(bool val) : value(val) {}
-};
-struct SelectFoldersArg {
-  bool value = false;
-  SelectFoldersArg(bool val) : value(val) {}
-};
-SelectionOptions CreateOptions(AllowMultipleArg allow_multiple,
-                               SelectFoldersArg select_folders,
-                               const EncodableList& allowed_types) {
-  SelectionOptions options;
-  options.set_allow_multiple(allow_multiple.value);
-  options.set_select_folders(select_folders.value);
-  options.set_allowed_types(allowed_types);
-  return options;
-}
-TypeGroup CreateTypeGroup(std::string_view label,
-                          const EncodableList& extensions) {
-  TypeGroup group;
-  group.set_label(label);
-  group.set_extensions(extensions);
-  return group;
-}
 
 }  // namespace
 
@@ -87,17 +58,18 @@ TEST(FileSelectorPlugin, TestOpenSimple) {
   FileSelectorPlugin plugin(
       [fake_window] { return fake_window; },
       std::make_unique<TestFileDialogControllerFactory>(show_validator));
-  ErrorOr<EncodableList> result = plugin.ShowOpenDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(false),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowOpenDialog(
+      SelectionOptions(/* allow multiple = */ false,
+                       /* select folders = */ false, EncodableList()),
       nullptr, nullptr);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
-  EXPECT_EQ(paths.size(), 1);
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
 
 TEST(FileSelectorPlugin, TestOpenWithArguments) {
@@ -129,17 +101,18 @@ TEST(FileSelectorPlugin, TestOpenWithArguments) {
   // This directory must exist.
   std::string initial_directory("C:\\Program Files");
   std::string confirm_button("Open it!");
-  ErrorOr<EncodableList> result = plugin.ShowOpenDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(false),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowOpenDialog(
+      SelectionOptions(/* allow multiple = */ false,
+                       /* select folders = */ false, EncodableList()),
       &initial_directory, &confirm_button);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
-  EXPECT_EQ(paths.size(), 1);
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
 
 TEST(FileSelectorPlugin, TestOpenMultiple) {
@@ -173,19 +146,20 @@ TEST(FileSelectorPlugin, TestOpenMultiple) {
   FileSelectorPlugin plugin(
       [fake_window] { return fake_window; },
       std::make_unique<TestFileDialogControllerFactory>(show_validator));
-  ErrorOr<EncodableList> result = plugin.ShowOpenDialog(
-      CreateOptions(AllowMultipleArg(true), SelectFoldersArg(false),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowOpenDialog(
+      SelectionOptions(/* allow multiple = */ true,
+                       /* select folders = */ false, EncodableList()),
       nullptr, nullptr);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
-  EXPECT_EQ(paths.size(), 2);
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 2);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file_1.path()));
   EXPECT_EQ(std::get<std::string>(paths[1]),
             Utf8FromUtf16(fake_selected_file_2.path()));
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
 
 TEST(FileSelectorPlugin, TestOpenWithFilter) {
@@ -196,18 +170,18 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
                                         IID_PPV_ARGS(&fake_result_array));
 
   const EncodableValue text_group =
-      CustomEncodableValue(CreateTypeGroup("Text", EncodableList({
-                                                       EncodableValue("txt"),
-                                                       EncodableValue("json"),
-                                                   })));
+      CustomEncodableValue(TypeGroup("Text", EncodableList({
+                                                 EncodableValue("txt"),
+                                                 EncodableValue("json"),
+                                             })));
   const EncodableValue image_group =
-      CustomEncodableValue(CreateTypeGroup("Images", EncodableList({
-                                                         EncodableValue("png"),
-                                                         EncodableValue("gif"),
-                                                         EncodableValue("jpeg"),
-                                                     })));
+      CustomEncodableValue(TypeGroup("Images", EncodableList({
+                                                   EncodableValue("png"),
+                                                   EncodableValue("gif"),
+                                                   EncodableValue("jpeg"),
+                                               })));
   const EncodableValue any_group =
-      CustomEncodableValue(CreateTypeGroup("Any", EncodableList()));
+      CustomEncodableValue(TypeGroup("Any", EncodableList()));
 
   bool shown = false;
   MockShow show_validator = [&shown, fake_result_array, fake_window](
@@ -234,21 +208,26 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
   FileSelectorPlugin plugin(
       [fake_window] { return fake_window; },
       std::make_unique<TestFileDialogControllerFactory>(show_validator));
-  ErrorOr<EncodableList> result = plugin.ShowOpenDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(false),
-                    EncodableList({
-                        text_group,
-                        image_group,
-                        any_group,
-                    })),
-      nullptr, nullptr);
+  ErrorOr<FileDialogResult> result =
+      plugin.ShowOpenDialog(SelectionOptions(/* allow multiple = */ false,
+                                             /* select folders = */ false,
+                                             EncodableList({
+                                                 text_group,
+                                                 image_group,
+                                                 any_group,
+                                             })),
+                            nullptr, nullptr);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
-  EXPECT_EQ(paths.size(), 1);
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
+  // The test dialog controller always reports the last group as
+  // selected, so that should be what the plugin returns.
+  ASSERT_NE(result.value().type_group_index(), nullptr);
+  EXPECT_EQ(*(result.value().type_group_index()), 2);
 }
 
 TEST(FileSelectorPlugin, TestOpenCancel) {
@@ -265,15 +244,16 @@ TEST(FileSelectorPlugin, TestOpenCancel) {
   FileSelectorPlugin plugin(
       [fake_window] { return fake_window; },
       std::make_unique<TestFileDialogControllerFactory>(show_validator));
-  ErrorOr<EncodableList> result = plugin.ShowOpenDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(false),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowOpenDialog(
+      SelectionOptions(/* allow multiple = */ false,
+                       /* select folders = */ false, EncodableList()),
       nullptr, nullptr);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
+  const EncodableList& paths = result.value().paths();
   EXPECT_EQ(paths.size(), 0);
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
 
 TEST(FileSelectorPlugin, TestSaveSimple) {
@@ -299,17 +279,18 @@ TEST(FileSelectorPlugin, TestSaveSimple) {
   FileSelectorPlugin plugin(
       [fake_window] { return fake_window; },
       std::make_unique<TestFileDialogControllerFactory>(show_validator));
-  ErrorOr<EncodableList> result = plugin.ShowSaveDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(false),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowSaveDialog(
+      SelectionOptions(/* allow multiple = */ false,
+                       /* select folders = */ false, EncodableList()),
       nullptr, nullptr, nullptr);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
-  EXPECT_EQ(paths.size(), 1);
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
 
 TEST(FileSelectorPlugin, TestSaveWithArguments) {
@@ -341,17 +322,78 @@ TEST(FileSelectorPlugin, TestSaveWithArguments) {
   std::string initial_directory("C:\\Program Files");
   std::string suggested_name("a name");
   std::string confirm_button("Save it!");
-  ErrorOr<EncodableList> result = plugin.ShowSaveDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(false),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowSaveDialog(
+      SelectionOptions(/* allow multiple = */ false,
+                       /* select folders = */ false, EncodableList()),
       &initial_directory, &suggested_name, &confirm_button);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
-  EXPECT_EQ(paths.size(), 1);
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]),
             Utf8FromUtf16(fake_selected_file.path()));
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
+}
+
+TEST(FileSelectorPlugin, TestSaveWithFilter) {
+  const HWND fake_window = reinterpret_cast<HWND>(1337);
+  ScopedTestShellItem fake_selected_file;
+
+  const EncodableValue text_group =
+      CustomEncodableValue(TypeGroup("Text", EncodableList({
+                                                 EncodableValue("txt"),
+                                                 EncodableValue("json"),
+                                             })));
+  const EncodableValue image_group =
+      CustomEncodableValue(TypeGroup("Images", EncodableList({
+                                                   EncodableValue("png"),
+                                                   EncodableValue("gif"),
+                                                   EncodableValue("jpeg"),
+                                               })));
+
+  bool shown = false;
+  MockShow show_validator =
+      [&shown, fake_result = fake_selected_file.file(), fake_window](
+          const TestFileDialogController& dialog, HWND parent) {
+        shown = true;
+        EXPECT_EQ(parent, fake_window);
+
+        // Validate filter.
+        const std::vector<DialogFilter>& filters = dialog.GetFileTypes();
+        EXPECT_EQ(filters.size(), 2U);
+        if (filters.size() == 2U) {
+          EXPECT_EQ(filters[0].name, L"Text");
+          EXPECT_EQ(filters[0].spec, L"*.txt;*.json");
+          EXPECT_EQ(filters[1].name, L"Images");
+          EXPECT_EQ(filters[1].spec, L"*.png;*.gif;*.jpeg");
+        }
+
+        return MockShowResult(fake_result);
+      };
+
+  FileSelectorPlugin plugin(
+      [fake_window] { return fake_window; },
+      std::make_unique<TestFileDialogControllerFactory>(show_validator));
+  ErrorOr<FileDialogResult> result =
+      plugin.ShowSaveDialog(SelectionOptions(/* allow multiple = */ false,
+                                             /* select folders = */ false,
+                                             EncodableList({
+                                                 text_group,
+                                                 image_group,
+                                             })),
+                            nullptr, nullptr, nullptr);
+
+  EXPECT_TRUE(shown);
+  ASSERT_FALSE(result.has_error());
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 1);
+  EXPECT_EQ(std::get<std::string>(paths[0]),
+            Utf8FromUtf16(fake_selected_file.path()));
+  // The test dialog controller always reports the last group as
+  // selected, so that should be what the plugin returns.
+  ASSERT_NE(result.value().type_group_index(), nullptr);
+  EXPECT_EQ(*(result.value().type_group_index()), 1);
 }
 
 TEST(FileSelectorPlugin, TestSaveCancel) {
@@ -368,15 +410,16 @@ TEST(FileSelectorPlugin, TestSaveCancel) {
   FileSelectorPlugin plugin(
       [fake_window] { return fake_window; },
       std::make_unique<TestFileDialogControllerFactory>(show_validator));
-  ErrorOr<EncodableList> result = plugin.ShowSaveDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(false),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowSaveDialog(
+      SelectionOptions(/* allow multiple = */ false,
+                       /* select folders = */ false, EncodableList()),
       nullptr, nullptr, nullptr);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
+  const EncodableList& paths = result.value().paths();
   EXPECT_EQ(paths.size(), 0);
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
 
 TEST(FileSelectorPlugin, TestGetDirectorySimple) {
@@ -408,16 +451,67 @@ TEST(FileSelectorPlugin, TestGetDirectorySimple) {
   FileSelectorPlugin plugin(
       [fake_window] { return fake_window; },
       std::make_unique<TestFileDialogControllerFactory>(show_validator));
-  ErrorOr<EncodableList> result = plugin.ShowOpenDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(true),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowOpenDialog(
+      SelectionOptions(/* allow multiple = */ false,
+                       /* select folders = */ true, EncodableList()),
       nullptr, nullptr);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
-  EXPECT_EQ(paths.size(), 1);
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 1);
   EXPECT_EQ(std::get<std::string>(paths[0]), "C:\\Program Files");
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
+}
+
+TEST(FileSelectorPlugin, TestGetDirectoryMultiple) {
+  const HWND fake_window = reinterpret_cast<HWND>(1337);
+  // These are actual files, but since the plugin implementation doesn't
+  // validate the types of items returned from the system dialog, they are fine
+  // to use for unit tests.
+  ScopedTestFileIdList fake_selected_dir_1;
+  ScopedTestFileIdList fake_selected_dir_2;
+  LPCITEMIDLIST fake_selected_dirs[] = {
+      fake_selected_dir_1.file(),
+      fake_selected_dir_2.file(),
+  };
+  IShellItemArrayPtr fake_result_array;
+  ::SHCreateShellItemArrayFromIDLists(2, fake_selected_dirs,
+                                      &fake_result_array);
+
+  bool shown = false;
+  MockShow show_validator = [&shown, fake_result_array, fake_window](
+                                const TestFileDialogController& dialog,
+                                HWND parent) {
+    shown = true;
+    EXPECT_EQ(parent, fake_window);
+
+    // Validate options.
+    FILEOPENDIALOGOPTIONS options;
+    dialog.GetOptions(&options);
+    EXPECT_NE(options & FOS_ALLOWMULTISELECT, 0U);
+    EXPECT_NE(options & FOS_PICKFOLDERS, 0U);
+
+    return MockShowResult(fake_result_array);
+  };
+
+  FileSelectorPlugin plugin(
+      [fake_window] { return fake_window; },
+      std::make_unique<TestFileDialogControllerFactory>(show_validator));
+  ErrorOr<FileDialogResult> result = plugin.ShowOpenDialog(
+      SelectionOptions(/* allow multiple = */ true, /* select folders = */ true,
+                       EncodableList()),
+      nullptr, nullptr);
+
+  EXPECT_TRUE(shown);
+  ASSERT_FALSE(result.has_error());
+  const EncodableList& paths = result.value().paths();
+  ASSERT_EQ(paths.size(), 2);
+  EXPECT_EQ(std::get<std::string>(paths[0]),
+            Utf8FromUtf16(fake_selected_dir_1.path()));
+  EXPECT_EQ(std::get<std::string>(paths[1]),
+            Utf8FromUtf16(fake_selected_dir_2.path()));
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
 
 TEST(FileSelectorPlugin, TestGetDirectoryCancel) {
@@ -434,15 +528,16 @@ TEST(FileSelectorPlugin, TestGetDirectoryCancel) {
   FileSelectorPlugin plugin(
       [fake_window] { return fake_window; },
       std::make_unique<TestFileDialogControllerFactory>(show_validator));
-  ErrorOr<EncodableList> result = plugin.ShowOpenDialog(
-      CreateOptions(AllowMultipleArg(false), SelectFoldersArg(true),
-                    EncodableList()),
+  ErrorOr<FileDialogResult> result = plugin.ShowOpenDialog(
+      SelectionOptions(/* allow multiple = */ false,
+                       /* select folders = */ true, EncodableList()),
       nullptr, nullptr);
 
   EXPECT_TRUE(shown);
   ASSERT_FALSE(result.has_error());
-  const EncodableList& paths = result.value();
+  const EncodableList& paths = result.value().paths();
   EXPECT_EQ(paths.size(), 0);
+  EXPECT_EQ(result.value().type_group_index(), nullptr);
 }
 
 }  // namespace test

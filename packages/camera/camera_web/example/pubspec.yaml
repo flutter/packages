@@ -2,8 +2,8 @@ name: camera_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
@@ -15,10 +15,8 @@ dev_dependencies:
   camera_web:
     path: ../
   cross_file: ^0.3.1
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mocktail: ^0.3.0
+  mocktail: 0.3.0

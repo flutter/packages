@@ -6,8 +6,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'types/types.dart';
 
-import 'webview_platform.dart';
+import 'webview_platform.dart' show WebViewPlatform;
 
 /// Signature for callbacks that report a pending navigation request.
 typedef NavigationRequestCallback = FutureOr<NavigationDecision> Function(
@@ -19,8 +20,15 @@ typedef PageEventCallback = void Function(String url);
 /// Signature for callbacks that report loading progress of a page.
 typedef ProgressCallback = void Function(int progress);
 
+/// Signature for callbacks that report http errors during loading a page.
+typedef HttpResponseErrorCallback = void Function(HttpResponseError error);
+
 /// Signature for callbacks that report a resource loading error.
 typedef WebResourceErrorCallback = void Function(WebResourceError error);
+
+/// Signature for callbacks that notify the host application of a change to the
+/// url of the web view.
+typedef UrlChangeCallback = void Function(UrlChange change);
 
 /// An interface defining navigation events that occur on the native platform.
 ///
@@ -86,6 +94,16 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
         'setOnPageFinished is not implemented on the current platform.');
   }
 
+  /// Invoked when an HTTP error has occurred during loading.
+  ///
+  /// See [PlatformWebViewController.setPlatformNavigationDelegate].
+  Future<void> setOnHttpError(
+    HttpResponseErrorCallback onHttpError,
+  ) {
+    throw UnimplementedError(
+        'setOnHttpError is not implemented on the current platform.');
+  }
+
   /// Invoked when a page is loading to report the progress.
   ///
   /// See [PlatformWebViewController.setPlatformNavigationDelegate].
@@ -104,5 +122,14 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
   ) {
     throw UnimplementedError(
         'setOnWebResourceError is not implemented on the current platform.');
+  }
+
+  /// Invoked when the underlying web view changes to a new url.
+  ///
+  /// See [PlatformWebViewController.setPlatformNavigationDelegate].
+  Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) {
+    throw UnimplementedError(
+      'setOnUrlChange is not implemented on the current platform.',
+    );
   }
 }

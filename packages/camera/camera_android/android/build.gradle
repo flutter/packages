@@ -27,27 +27,31 @@ project.getTasks().withType(JavaCompile){
 apply plugin: 'com.android.library'
 
 android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'io.flutter.plugins.camera'
+    }
     compileSdkVersion 33
 
     defaultConfig {
-        targetSdkVersion 31
         minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
-        baseline file("lint-baseline.xml")
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.returnDefaultValues = true
         unitTests.all {
+            jvmArgs "-Xmx1g"
             testLogging {
                events "passed", "skipped", "failed", "standardOut", "standardError"
                outputs.upToDateWhen {false}
@@ -62,5 +66,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-inline:5.0.0'
     testImplementation 'androidx.test:core:1.4.0'
-    testImplementation 'org.robolectric:robolectric:4.5'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
 }

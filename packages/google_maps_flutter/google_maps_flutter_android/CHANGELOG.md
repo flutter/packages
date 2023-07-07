@@ -1,5 +1,35 @@
 ## NEXT
 
+* Fixes unawaited_futures violations.
+
+## 2.4.15
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.4.14
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 2.4.13
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.4.12
+
+* Fixes Java warnings.
+
+## 2.4.11
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 2.4.10
+
+* Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+
+## 2.4.9
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.4.8

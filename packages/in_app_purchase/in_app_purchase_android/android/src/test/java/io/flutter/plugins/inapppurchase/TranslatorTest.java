@@ -14,9 +14,11 @@ import androidx.annotation.NonNull;
 import com.android.billingclient.api.AccountIdentifiers;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.SkuDetails;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,35 +30,55 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TranslatorTest {
-  private static final String SKU_DETAIL_EXAMPLE_JSON =
-      "{\"productId\":\"example\",\"type\":\"inapp\",\"price\":\"$0.99\",\"price_amount_micros\":990000,\"price_currency_code\":\"USD\",\"title\":\"Example title\",\"description\":\"Example description.\",\"original_price\":\"$0.99\",\"original_price_micros\":990000}";
   private static final String PURCHASE_EXAMPLE_JSON =
-      "{\"orderId\":\"foo\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy payload\",\"isAcknowledged\":\"true\", \"obfuscatedAccountId\":\"Account101\", \"obfuscatedProfileId\": \"Profile105\"}";
+      "{\"orderId\":\"foo\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy payload\",\"isAcknowledged\":\"true\", \"obfuscatedAccountId\":\"Account101\", \"obfuscatedProfileId\":\"Profile105\"}";
+  private static final String IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON =
+      "{\"title\":\"Example title\",\"description\":\"Example description\",\"productId\":\"Example id\",\"type\":\"inapp\",\"name\":\"Example name\",\"oneTimePurchaseOfferDetails\":{\"priceAmountMicros\":990000,\"priceCurrencyCode\":\"USD\",\"formattedPrice\":\"$0.99\"}}";
+  private static final String SUBS_PRODUCT_DETAIL_EXAMPLE_JSON =
+      "{\"title\":\"Example title 2\",\"description\":\"Example description 2\",\"productId\":\"Example id 2\",\"type\":\"subs\",\"name\":\"Example name 2\",\"subscriptionOfferDetails\":[{\"offerId\":\"Example offer id\",\"basePlanId\":\"Example base plan id\",\"offerTags\":[\"Example offer tag\"],\"offerIdToken\":\"Example offer token\",\"pricingPhases\":[{\"formattedPrice\":\"$0.99\",\"priceCurrencyCode\":\"USD\",\"priceAmountMicros\":990000,\"billingCycleCount\":4,\"billingPeriod\":\"Example billing period\",\"recurrenceMode\":0}]}]}";
+
+  Constructor<ProductDetails> productDetailsConstructor;
 
   @Before
-  public void setup() {
+  public void setup() throws NoSuchMethodException {
     Locale locale = new Locale("en", "us");
     Locale.setDefault(locale);
+
+    productDetailsConstructor = ProductDetails.class.getDeclaredConstructor(String.class);
+    productDetailsConstructor.setAccessible(true);
   }
 
   @Test
-  public void fromSkuDetail() throws JSONException {
-    final SkuDetails expected = new SkuDetails(SKU_DETAIL_EXAMPLE_JSON);
+  public void fromInAppProductDetail()
+      throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    final ProductDetails expected =
+        productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON);
 
-    Map<String, Object> serialized = Translator.fromSkuDetail(expected);
+    Map<String, Object> serialized = Translator.fromProductDetail(expected);
 
     assertSerialized(expected, serialized);
   }
 
   @Test
-  public void fromSkuDetailsList() throws JSONException {
-    final String SKU_DETAIL_EXAMPLE_2_JSON =
-        "{\"productId\":\"example2\",\"type\":\"inapp\",\"price\":\"$0.99\",\"price_amount_micros\":990000,\"price_currency_code\":\"USD\",\"title\":\"Example title\",\"description\":\"Example description.\",\"original_price\":\"$0.99\",\"original_price_micros\":990000}";
-    final List<SkuDetails> expected =
-        Arrays.asList(
-            new SkuDetails(SKU_DETAIL_EXAMPLE_JSON), new SkuDetails(SKU_DETAIL_EXAMPLE_2_JSON));
+  public void fromSubsProductDetail()
+      throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    final ProductDetails expected =
+        productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON);
 
-    final List<HashMap<String, Object>> serialized = Translator.fromSkuDetailsList(expected);
+    Map<String, Object> serialized = Translator.fromProductDetail(expected);
+
+    assertSerialized(expected, serialized);
+  }
+
+  @Test
+  public void fromProductDetailsList()
+      throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    final List<ProductDetails> expected =
+        Arrays.asList(
+            productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON),
+            productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON));
+
+    final List<HashMap<String, Object>> serialized = Translator.fromProductDetailsList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -64,8 +86,8 @@ public class TranslatorTest {
   }
 
   @Test
-  public void fromSkuDetailsList_null() {
-    assertEquals(Collections.emptyList(), Translator.fromSkuDetailsList(null));
+  public void fromProductDetailsList_null() {
+    assertEquals(Collections.emptyList(), Translator.fromProductDetailsList(null));
   }
 
   @Test
@@ -136,7 +158,7 @@ public class TranslatorTest {
   }
 
   @Test
-  public void fromBillingResult() throws JSONException {
+  public void fromBillingResult() {
     BillingResult newBillingResult =
         BillingResult.newBuilder()
             .setDebugMessage("dummy debug message")
@@ -149,7 +171,7 @@ public class TranslatorTest {
   }
 
   @Test
-  public void fromBillingResult_debugMessageNull() throws JSONException {
+  public void fromBillingResult_debugMessageNull() {
     BillingResult newBillingResult =
         BillingResult.newBuilder().setResponseCode(BillingClient.BillingResponseCode.OK).build();
     Map<String, Object> billingResultMap = Translator.fromBillingResult(newBillingResult);
@@ -169,26 +191,88 @@ public class TranslatorTest {
     }
   }
 
-  private void assertSerialized(SkuDetails expected, Map<String, Object> serialized) {
+  private void assertSerialized(ProductDetails expected, Map<String, Object> serialized) {
     assertEquals(expected.getDescription(), serialized.get("description"));
-    assertEquals(expected.getFreeTrialPeriod(), serialized.get("freeTrialPeriod"));
-    assertEquals(expected.getIntroductoryPrice(), serialized.get("introductoryPrice"));
+    assertEquals(expected.getTitle(), serialized.get("title"));
+    assertEquals(expected.getName(), serialized.get("name"));
+    assertEquals(expected.getProductId(), serialized.get("productId"));
+    assertEquals(expected.getProductType(), serialized.get("productType"));
+
+    ProductDetails.OneTimePurchaseOfferDetails expectedOneTimePurchaseOfferDetails =
+        expected.getOneTimePurchaseOfferDetails();
+    Object oneTimePurchaseOfferDetailsObject = serialized.get("oneTimePurchaseOfferDetails");
     assertEquals(
-        expected.getIntroductoryPriceAmountMicros(),
-        serialized.get("introductoryPriceAmountMicros"));
-    assertEquals(expected.getIntroductoryPriceCycles(), serialized.get("introductoryPriceCycles"));
-    assertEquals(expected.getIntroductoryPricePeriod(), serialized.get("introductoryPricePeriod"));
-    assertEquals(expected.getPrice(), serialized.get("price"));
+        expectedOneTimePurchaseOfferDetails == null, oneTimePurchaseOfferDetailsObject == null);
+    if (expectedOneTimePurchaseOfferDetails != null && oneTimePurchaseOfferDetailsObject != null) {
+      @SuppressWarnings(value = "unchecked")
+      Map<String, Object> oneTimePurchaseOfferDetailsMap =
+          (Map<String, Object>) oneTimePurchaseOfferDetailsObject;
+      assertSerialized(expectedOneTimePurchaseOfferDetails, oneTimePurchaseOfferDetailsMap);
+    }
+
+    List<ProductDetails.SubscriptionOfferDetails> expectedSubscriptionOfferDetailsList =
+        expected.getSubscriptionOfferDetails();
+    Object subscriptionOfferDetailsListObject = serialized.get("subscriptionOfferDetails");
+    assertEquals(
+        expectedSubscriptionOfferDetailsList == null, subscriptionOfferDetailsListObject == null);
+    if (expectedSubscriptionOfferDetailsList != null
+        && subscriptionOfferDetailsListObject != null) {
+      @SuppressWarnings(value = "unchecked")
+      List<Object> subscriptionOfferDetailsListList =
+          (List<Object>) subscriptionOfferDetailsListObject;
+      assertSerialized(expectedSubscriptionOfferDetailsList, subscriptionOfferDetailsListList);
+    }
+  }
+
+  private void assertSerialized(
+      ProductDetails.OneTimePurchaseOfferDetails expected, Map<String, Object> serialized) {
     assertEquals(expected.getPriceAmountMicros(), serialized.get("priceAmountMicros"));
     assertEquals(expected.getPriceCurrencyCode(), serialized.get("priceCurrencyCode"));
-    assertEquals("$", serialized.get("priceCurrencySymbol"));
-    assertEquals(expected.getSku(), serialized.get("sku"));
-    assertEquals(expected.getSubscriptionPeriod(), serialized.get("subscriptionPeriod"));
-    assertEquals(expected.getTitle(), serialized.get("title"));
-    assertEquals(expected.getType(), serialized.get("type"));
-    assertEquals(expected.getOriginalPrice(), serialized.get("originalPrice"));
-    assertEquals(
-        expected.getOriginalPriceAmountMicros(), serialized.get("originalPriceAmountMicros"));
+    assertEquals(expected.getFormattedPrice(), serialized.get("formattedPrice"));
+  }
+
+  private void assertSerialized(
+      List<ProductDetails.SubscriptionOfferDetails> expected, List<Object> serialized) {
+    assertEquals(expected.size(), serialized.size());
+    for (int i = 0; i < expected.size(); i++) {
+      @SuppressWarnings(value = "unchecked")
+      Map<String, Object> serializedMap = (Map<String, Object>) serialized.get(i);
+      assertSerialized(expected.get(i), serializedMap);
+    }
+  }
+
+  private void assertSerialized(
+      ProductDetails.SubscriptionOfferDetails expected, Map<String, Object> serialized) {
+    assertEquals(expected.getBasePlanId(), serialized.get("basePlanId"));
+    assertEquals(expected.getOfferId(), serialized.get("offerId"));
+    assertEquals(expected.getOfferTags(), serialized.get("offerTags"));
+    assertEquals(expected.getOfferToken(), serialized.get("offerIdToken"));
+
+    @SuppressWarnings(value = "unchecked")
+    List<Object> serializedPricingPhases = (List<Object>) serialized.get("pricingPhases");
+    assertNotNull(serializedPricingPhases);
+    assertSerialized(expected.getPricingPhases(), serializedPricingPhases);
+  }
+
+  private void assertSerialized(ProductDetails.PricingPhases expected, List<Object> serialized) {
+    List<ProductDetails.PricingPhase> expectedPhases = expected.getPricingPhaseList();
+    assertEquals(expectedPhases.size(), serialized.size());
+    for (int i = 0; i < serialized.size(); i++) {
+      @SuppressWarnings(value = "unchecked")
+      Map<String, Object> pricingPhaseMap = (Map<String, Object>) serialized.get(i);
+      assertSerialized(expectedPhases.get(i), pricingPhaseMap);
+    }
+    expected.getPricingPhaseList();
+  }
+
+  private void assertSerialized(
+      ProductDetails.PricingPhase expected, Map<String, Object> serialized) {
+    assertEquals(expected.getFormattedPrice(), serialized.get("formattedPrice"));
+    assertEquals(expected.getPriceCurrencyCode(), serialized.get("priceCurrencyCode"));
+    assertEquals(expected.getPriceAmountMicros(), serialized.get("priceAmountMicros"));
+    assertEquals(expected.getBillingCycleCount(), serialized.get("billingCycleCount"));
+    assertEquals(expected.getBillingPeriod(), serialized.get("billingPeriod"));
+    assertEquals(expected.getRecurrenceMode(), serialized.get("recurrenceMode"));
   }
 
   private void assertSerialized(Purchase expected, Map<String, Object> serialized) {
@@ -198,7 +282,7 @@ public class TranslatorTest {
     assertEquals(expected.getPurchaseToken(), serialized.get("purchaseToken"));
     assertEquals(expected.getSignature(), serialized.get("signature"));
     assertEquals(expected.getOriginalJson(), serialized.get("originalJson"));
-    assertEquals(expected.getSkus(), serialized.get("skus"));
+    assertEquals(expected.getProducts(), serialized.get("products"));
     assertEquals(expected.getDeveloperPayload(), serialized.get("developerPayload"));
     assertEquals(expected.isAcknowledged(), serialized.get("isAcknowledged"));
     assertEquals(expected.getPurchaseState(), serialized.get("purchaseState"));
@@ -217,7 +301,7 @@ public class TranslatorTest {
     assertEquals(expected.getPurchaseToken(), serialized.get("purchaseToken"));
     assertEquals(expected.getSignature(), serialized.get("signature"));
     assertEquals(expected.getOriginalJson(), serialized.get("originalJson"));
-    assertEquals(expected.getSkus(), serialized.get("skus"));
+    assertEquals(expected.getProducts(), serialized.get("products"));
     assertEquals(expected.getDeveloperPayload(), serialized.get("developerPayload"));
   }
 }

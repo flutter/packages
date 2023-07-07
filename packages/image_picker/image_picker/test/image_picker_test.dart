@@ -13,16 +13,17 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'image_picker_test.mocks.dart' as base_mock;
 
 // Add the mixin to make the platform interface accept the mock.
-class MockImagePickerPlatform extends base_mock.MockImagePickerPlatform
+class _MockImagePickerPlatform extends base_mock.MockImagePickerPlatform
     with MockPlatformInterfaceMixin {}
 
-@GenerateMocks(<Type>[ImagePickerPlatform])
+@GenerateMocks(<Type>[],
+    customMocks: <MockSpec<dynamic>>[MockSpec<ImagePickerPlatform>()])
 void main() {
   group('ImagePicker', () {
-    late MockImagePickerPlatform mockPlatform;
+    late _MockImagePickerPlatform mockPlatform;
 
     setUp(() {
-      mockPlatform = MockImagePickerPlatform();
+      mockPlatform = _MockImagePickerPlatform();
       ImagePickerPlatform.instance = mockPlatform;
     });
 
@@ -584,6 +585,371 @@ void main() {
             ),
           ));
         });
+      });
+    });
+
+    group('#Media', () {
+      setUp(() {
+        when(
+          mockPlatform.getMedia(
+            options: anyNamed('options'),
+          ),
+        ).thenAnswer((Invocation _) async => <XFile>[]);
+      });
+
+      group('#pickMedia', () {
+        test('passes the width and height arguments correctly', () async {
+          final ImagePicker picker = ImagePicker();
+          await picker.pickMedia();
+          await picker.pickMedia(
+            maxWidth: 10.0,
+          );
+          await picker.pickMedia(
+            maxHeight: 10.0,
+          );
+          await picker.pickMedia(
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+          );
+          await picker.pickMedia(
+            maxWidth: 10.0,
+            imageQuality: 70,
+          );
+          await picker.pickMedia(
+            maxHeight: 10.0,
+            imageQuality: 70,
+          );
+          await picker.pickMedia(
+              maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
+
+          verifyInOrder(<Object>[
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>(),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>().having(
+                    (MediaOptions options) => options.imageOptions.maxWidth,
+                    'maxWidth',
+                    equals(10.0)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>().having(
+                    (MediaOptions options) => options.imageOptions.maxHeight,
+                    'maxHeight',
+                    equals(10.0)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxWidth',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.maxHeight,
+                        'maxHeight',
+                        equals(20.0)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxWidth',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.imageQuality,
+                        'imageQuality',
+                        equals(70)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.maxHeight,
+                        'maxHeight',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.imageQuality,
+                        'imageQuality',
+                        equals(70)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxWidth',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxHeight',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.imageQuality,
+                        'imageQuality',
+                        equals(70)),
+                named: 'options',
+              ),
+            ),
+          ]);
+        });
+
+        test('does not accept a negative width or height argument', () {
+          final ImagePicker picker = ImagePicker();
+          expect(
+            () => picker.pickMedia(maxWidth: -1.0),
+            throwsArgumentError,
+          );
+
+          expect(
+            () => picker.pickMedia(maxHeight: -1.0),
+            throwsArgumentError,
+          );
+        });
+
+        test('handles an empty image file response gracefully', () async {
+          final ImagePicker picker = ImagePicker();
+
+          expect(await picker.pickMedia(), isNull);
+          expect(await picker.pickMedia(), isNull);
+        });
+
+        test('full metadata argument defaults to true', () async {
+          final ImagePicker picker = ImagePicker();
+          await picker.pickMedia();
+
+          verify(mockPlatform.getMedia(
+            options: argThat(
+              isInstanceOf<MediaOptions>().having(
+                  (MediaOptions options) =>
+                      options.imageOptions.requestFullMetadata,
+                  'requestFullMetadata',
+                  isTrue),
+              named: 'options',
+            ),
+          ));
+        });
+
+        test('passes the full metadata argument correctly', () async {
+          final ImagePicker picker = ImagePicker();
+          await picker.pickMedia(
+            requestFullMetadata: false,
+          );
+
+          verify(mockPlatform.getMedia(
+            options: argThat(
+              isInstanceOf<MediaOptions>().having(
+                  (MediaOptions options) =>
+                      options.imageOptions.requestFullMetadata,
+                  'requestFullMetadata',
+                  isFalse),
+              named: 'options',
+            ),
+          ));
+        });
+      });
+
+      group('#pickMultipleMedia', () {
+        test('passes the width and height arguments correctly', () async {
+          final ImagePicker picker = ImagePicker();
+          await picker.pickMultipleMedia();
+          await picker.pickMultipleMedia(
+            maxWidth: 10.0,
+          );
+          await picker.pickMultipleMedia(
+            maxHeight: 10.0,
+          );
+          await picker.pickMultipleMedia(
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+          );
+          await picker.pickMultipleMedia(
+            maxWidth: 10.0,
+            imageQuality: 70,
+          );
+          await picker.pickMultipleMedia(
+            maxHeight: 10.0,
+            imageQuality: 70,
+          );
+          await picker.pickMultipleMedia(
+              maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
+
+          verifyInOrder(<Object>[
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>(),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>().having(
+                    (MediaOptions options) => options.imageOptions.maxWidth,
+                    'maxWidth',
+                    equals(10.0)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>().having(
+                    (MediaOptions options) => options.imageOptions.maxHeight,
+                    'maxHeight',
+                    equals(10.0)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxWidth',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.maxHeight,
+                        'maxHeight',
+                        equals(20.0)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxWidth',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.imageQuality,
+                        'imageQuality',
+                        equals(70)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.maxHeight,
+                        'maxHeight',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.imageQuality,
+                        'imageQuality',
+                        equals(70)),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxWidth',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxHeight',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.imageQuality,
+                        'imageQuality',
+                        equals(70)),
+                named: 'options',
+              ),
+            ),
+          ]);
+        });
+
+        test('does not accept a negative width or height argument', () {
+          final ImagePicker picker = ImagePicker();
+          expect(
+            () => picker.pickMultipleMedia(maxWidth: -1.0),
+            throwsArgumentError,
+          );
+
+          expect(
+            () => picker.pickMultipleMedia(maxHeight: -1.0),
+            throwsArgumentError,
+          );
+        });
+
+        test('handles an empty image file response gracefully', () async {
+          final ImagePicker picker = ImagePicker();
+
+          expect(await picker.pickMultipleMedia(), isEmpty);
+          expect(await picker.pickMultipleMedia(), isEmpty);
+        });
+
+        test('full metadata argument defaults to true', () async {
+          final ImagePicker picker = ImagePicker();
+          await picker.pickMultipleMedia();
+
+          verify(mockPlatform.getMedia(
+            options: argThat(
+              isInstanceOf<MediaOptions>().having(
+                  (MediaOptions options) =>
+                      options.imageOptions.requestFullMetadata,
+                  'requestFullMetadata',
+                  isTrue),
+              named: 'options',
+            ),
+          ));
+        });
+
+        test('passes the full metadata argument correctly', () async {
+          final ImagePicker picker = ImagePicker();
+          await picker.pickMultipleMedia(
+            requestFullMetadata: false,
+          );
+
+          verify(mockPlatform.getMedia(
+            options: argThat(
+              isInstanceOf<MediaOptions>().having(
+                  (MediaOptions options) =>
+                      options.imageOptions.requestFullMetadata,
+                  'requestFullMetadata',
+                  isFalse),
+              named: 'options',
+            ),
+          ));
+        });
+      });
+      test('supportsImageSource calls through to platform', () async {
+        final ImagePicker picker = ImagePicker();
+        when(mockPlatform.supportsImageSource(any)).thenReturn(true);
+
+        final bool supported = picker.supportsImageSource(ImageSource.camera);
+
+        expect(supported, true);
+        verify(mockPlatform.supportsImageSource(ImageSource.camera));
       });
     });
   });

@@ -2,11 +2,11 @@ name: rfw
 description: "Remote Flutter widgets: a library for rendering declarative widget description files at runtime."
 repository: https://github.com/flutter/packages/tree/main/packages/rfw
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+rfw%22
-version: 1.0.8
+version: 1.0.10
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
@@ -16,4 +16,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  lcov_parser: ^0.1.2
+  lcov_parser: 0.1.2

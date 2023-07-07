@@ -1,12 +1,150 @@
-## NEXT
+## 9.0.2
+
+- Exposes package-level privates.
+
+## 9.0.1
+
+- Allows redirect only GoRoute to be part of RouteMatchList.
+
+## 9.0.0
+
+- **BREAKING CHANGE**:
+  - Removes GoRouter.location. Use GoRouterState.of().location instead.
+  - GoRouter does not `extends` ChangeNotifier.
+  - [Migration guide](https://flutter.dev/go/go-router-v9-breaking-changes)
+- Reduces excessive rebuilds due to inherited look up.
+
+## 8.2.0
+
+- Adds onException to GoRouter constructor.
+
+## 8.1.0
+
+- Adds parent navigator key to ShellRoute and StatefulShellRoute.
+
+## 8.0.5
+
+- Fixes a bug that GoRouterState in top level redirect doesn't contain complete data.
+
+## 8.0.4
+
+- Updates documentations around `GoRouter.of`, `GoRouter.maybeOf`, and `BuildContext` extension.
+
+## 8.0.3
+
+- Makes namedLocation and route name related APIs case sensitive.
+
+## 8.0.2 
+
+- Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
+
+## 8.0.1
+
+- Fixes a link for an example in `path` documentation.
+  documentation.
+
+## 8.0.0
+
+- **BREAKING CHANGE**:
+  - Imperatively pushed GoRoute no longer change URL.
+  - Browser backward and forward button respects imperative route operations.
+- Refactors the route parsing pipeline.
+
+## 7.1.1
+
+- Removes obsolete null checks on non-nullable values.
+
+## 7.1.0
+
+- Introduces `StatefulShellRoute` to support using separate navigators for child routes as well as preserving state in each navigation tree (flutter/flutter#99124).
+- Updates documentation for `pageBuilder` and `builder` fields of `ShellRoute`, to more correctly
+  describe the meaning of the child argument in the builder functions.
+- Adds support for restorationId to ShellRoute (and StatefulShellRoute).
+
+## 7.0.2
+
+- Fixes `BuildContext` extension method `replaceNamed` to correctly pass `pathParameters` and `queryParameters`.
+
+## 7.0.1
+
+- Adds a workaround for the `dart fix --apply` issue, https://github.com/dart-lang/sdk/issues/52233.
+
+## 7.0.0
+
+- **BREAKING CHANGE**:
+  - For the below changes, run `dart fix --apply` to automatically migrate your code.
+    - `GoRouteState.subloc` has been renamed to `GoRouteState.matchedLocation`.
+    - `GoRouteState.params` has been renamed to `GoRouteState.pathParameters`.
+    - `GoRouteState.fullpath` has been renamed to `GoRouteState.fullPath`.
+    - `GoRouteState.queryParams` has been renamed to `GoRouteState.queryParameters`.
+    - `params` and `queryParams` in `GoRouteState.namedLocation` have been renamed to `pathParameters` and `queryParameters`.
+    - `params` and `queryParams` in `GoRouter`'s `namedLocation`, `pushNamed`, `pushReplacementNamed`
+      `replaceNamed` have been renamed to `pathParameters` and `queryParameters`.
+  - For the below changes, please follow the [migration guide](https://docs.google.com/document/d/10Xbpifbs4E-zh6YE5akIO8raJq_m3FIXs6nUGdOspOg).
+    - `params` and `queryParams` in `BuildContext`'s `namedLocation`, `pushNamed`, `pushReplacementNamed`
+      `replaceNamed` have been renamed to `pathParameters` and `queryParameters`.
+- Cleans up API and makes RouteMatchList immutable.
+
+## 6.5.9
+
+- Removes navigator keys from `GoRouteData` and `ShellRouteData`.
+
+## 6.5.8
+
+- Adds name parameter to `TypedGoRoute`
+
+## 6.5.7
+
+- Fixes a bug that go_router would crash if `GoRoute.pageBuilder` depends on `InheritedWidget`s.
+
+## 6.5.6
+
+- Fixes an issue where ShellRoute routes were not logged when debugLogDiagnostic was enabled.
+
+## 6.5.5
+
+- Fixes an issue when popping pageless route would accidentally complete imperative page.
+
+## 6.5.4
+
+- Removes navigator keys from `TypedGoRoute` and `TypedShellRoute`.
+
+## 6.5.3
+
+- Fixes redirect being called with an empty location for unknown routes.
+
+## 6.5.2
+
+- NoTransitionPage now has an instant reverse transition.
+
+## 6.5.1
+
+- Fixes an issue where the params are removed after popping.
+
+## 6.5.0
+
+- Supports returning values on pop.
+
+## 6.4.1
+
+- Adds `initialExtra` to **GoRouter** to pass extra data alongside `initialRoute`.
+
+## 6.4.0
+
+- Adds `replace` method to that replaces the current route with a new one and keeps the same page key. This is useful for when you want to update the query params without changing the page key ([#115902](https://github.com/flutter/flutter/issues/115902)).
+
+## 6.3.0
 
 - Aligns Dart and Flutter SDK constraints.
 - Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
+- Adds `navigatorKey` to `TypedShellRoute`
+- Adds `parentNavigatorKey` to `TypedGoRoute`
+- Updates documentation in matching methods.
 
 ## 6.2.0
 
-- Export supertypes in route_data.dart library
+- Exports supertypes in route_data.dart library.
 
 ## 6.1.0
 
@@ -22,7 +160,7 @@
 
 ## 6.0.8
 
-* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+- Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
 
 ## 6.0.7
 
@@ -35,7 +173,7 @@
 
 ## 6.0.5
 
-- Fixes [unnecessary_null_comparison](https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html) lint warnings.
+- Fixes [unnecessary_null_comparison](https://dart.dev/lints/unnecessary_null_checks) lint warnings.
 
 ## 6.0.4
 
@@ -195,8 +333,8 @@
 
 ## 4.2.9
 
-* Updates text theme parameters to avoid deprecation issues.
-* Fixes lint warnings.
+- Updates text theme parameters to avoid deprecation issues.
+- Fixes lint warnings.
 
 ## 4.2.8
 
@@ -533,7 +671,7 @@
 - enable case-insensitive path matching while still preserving path and query
   parameter cases
 - change a lifetime of habit to sort constructors first as per
-  [sort_constructors_first](https://dart-lang.github.io/linter/lints/sort_constructors_first.html).
+  [sort_constructors_first](https://dart.dev/lints/sort_constructors_first).
   Thanks for the PR, [Abhishek01039](https://github.com/Abhishek01039)!
 - set the initial transition example route to `/none` to make pushing the 'fade
   transition' button on the first run through more fun

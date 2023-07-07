@@ -13,6 +13,8 @@ import androidx.test.espresso.EspressoException;
 public final class AmbiguousWidgetMatcherException extends RuntimeException
     implements EspressoException {
 
+  private static final long serialVersionUID = 0L;
+
   public AmbiguousWidgetMatcherException(String message) {
     super(message);
   }

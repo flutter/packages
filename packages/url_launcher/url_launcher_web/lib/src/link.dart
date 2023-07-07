@@ -85,8 +85,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
                 (BuildContext context, PlatformViewController controller) {
               return PlatformViewSurface(
                 controller: controller,
-                gestureRecognizers: const <
-                    Factory<OneSequenceGestureRecognizer>>{},
+                gestureRecognizers: const <Factory<
+                    OneSequenceGestureRecognizer>>{},
                 hitTestBehavior: PlatformViewHitTestBehavior.transparent,
               );
             },
@@ -166,8 +166,6 @@ class LinkViewController extends PlatformViewController {
 
   late html.Element _element;
 
-  bool get _isInitialized => _element != null;
-
   Future<void> _initialize() async {
     _element = html.Element.tag('a');
     setProperty(_element, linkViewIdProperty, viewId);
@@ -219,7 +217,6 @@ class LinkViewController extends PlatformViewController {
   ///
   /// When Uri is null, the `href` attribute of the link is removed.
   void setUri(Uri? uri) {
-    assert(_isInitialized);
     _uri = uri;
     if (uri == null) {
       _element.removeAttribute('href');
@@ -236,7 +233,6 @@ class LinkViewController extends PlatformViewController {
 
   /// Set the [LinkTarget] value for this link.
   void setTarget(LinkTarget target) {
-    assert(_isInitialized);
     _element.setAttribute('target', _getHtmlTarget(target));
   }
 
@@ -270,14 +266,12 @@ class LinkViewController extends PlatformViewController {
 
   @override
   Future<void> dispose() async {
-    if (_isInitialized) {
-      assert(_instances[viewId] == this);
-      _instances.remove(viewId);
-      if (_instances.isEmpty) {
-        await _clickSubscription.cancel();
-      }
-      await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
+    assert(_instances[viewId] == this);
+    _instances.remove(viewId);
+    if (_instances.isEmpty) {
+      await _clickSubscription.cancel();
     }
+    await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
   }
 }
 

@@ -47,6 +47,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     throw Exception("An error");
   }
 
+  override fun throwFlutterError(): Any? {
+    throw FlutterError("code", "message", "details");
+  }
+
   override fun echoInt(anInt: Long): Long {
     return anInt
   }
@@ -79,12 +83,16 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return aMap
   }
 
-  override fun extractNestedNullableString(wrapper: AllNullableTypesWrapper): String? {
-    return wrapper.values.aNullableString
+  override fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper {
+    return wrapper
   }
 
-  override fun createNestedNullableString(nullableString: String?): AllNullableTypesWrapper {
-    return AllNullableTypesWrapper(AllNullableTypes(aNullableString = nullableString))
+  override fun extractNestedNullableString(wrapper: AllClassesWrapper): String? {
+    return wrapper.allNullableTypes.aNullableString
+  }
+
+  override fun createNestedNullableString(nullableString: String?): AllClassesWrapper {
+    return AllClassesWrapper(AllNullableTypes(aNullableString = nullableString))
   }
 
   override fun sendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): AllNullableTypes {
@@ -132,6 +140,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
 
   override fun throwAsyncErrorFromVoid(callback: (Result<Unit>) -> Unit) {
     callback(Result.failure(Exception("except")))
+  }
+
+  override fun throwAsyncFlutterError(callback: (Result<Any?>) -> Unit) {
+    callback(Result.failure(FlutterError("code", "message", "details")))
   }
 
   override fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {

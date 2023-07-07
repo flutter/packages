@@ -169,6 +169,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<_TableElement> _tables = <_TableElement>[];
   final List<_InlineElement> _inlines = <_InlineElement>[];
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
+  final ScrollController _preScrollController = ScrollController();
   String? _currentBlockTag;
   String? _lastVisitedTag;
   bool _isInBlockquote = false;
@@ -335,7 +336,9 @@ class MarkdownBuilder implements md.NodeVisitor {
           .visitText(text, styleSheet.styles[_blocks.last.tag!]);
     } else if (_blocks.last.tag == 'pre') {
       child = Scrollbar(
+        controller: _preScrollController,
         child: SingleChildScrollView(
+          controller: _preScrollController,
           scrollDirection: Axis.horizontal,
           padding: styleSheet.codeblockPadding,
           child: _buildRichText(delegate.formatText(styleSheet, text.text)),
@@ -425,7 +428,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       } else if (tag == 'table') {
         child = Table(
           defaultColumnWidth: styleSheet.tableColumnWidth!,
-          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          defaultVerticalAlignment: styleSheet.tableVerticalAlignment,
           border: styleSheet.tableBorder,
           children: _tables.removeLast().rows,
         );
@@ -465,7 +468,11 @@ class MarkdownBuilder implements md.NodeVisitor {
           parent.style,
         );
         if (child != null) {
-          current.children[0] = child;
+          if (current.children.isEmpty) {
+            current.children.add(child);
+          } else {
+            current.children[0] = child;
+          }
         }
       } else if (tag == 'img') {
         // create an image widget for this image
@@ -836,6 +843,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (selectable) {
       return SelectableText.rich(
         text!,
+        // ignore: deprecated_member_use
         textScaleFactor: styleSheet.textScaleFactor,
         textAlign: textAlign ?? TextAlign.start,
         onTap: onTapText,
@@ -844,6 +852,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       return RichText(
         text: text!,
+        // ignore: deprecated_member_use
         textScaleFactor: styleSheet.textScaleFactor!,
         textAlign: textAlign ?? TextAlign.start,
         key: k,

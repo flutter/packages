@@ -4,6 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 import 'messages.g.dart';
 
 typedef _Setter = Future<void> Function(String key, Object value);
@@ -11,6 +12,9 @@ typedef _Setter = Future<void> Function(String key, Object value);
 /// iOS and macOS implementation of shared_preferences.
 class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   final UserDefaultsApi _api = UserDefaultsApi();
+
+  static const String _defaultPrefix = 'flutter.';
+
   late final Map<String, _Setter> _setters = <String, _Setter>{
     'Bool': (String key, Object value) {
       return _api.setBool(key, value as bool);
@@ -37,14 +41,50 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
-    await _api.clear();
-    return true;
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    return clearWithParameters(
+        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    return _api.clear(
+      filter.prefix,
+      filter.allowList?.toList(),
+    );
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    final Map<String?, Object?> result = await _api.getAll();
-    return result.cast<String, Object>();
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    return getAllWithParameters(
+        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    final Map<String?, Object?> data =
+        await _api.getAll(filter.prefix, filter.allowList?.toList());
+    return data.cast<String, Object>();
   }
 
   @override

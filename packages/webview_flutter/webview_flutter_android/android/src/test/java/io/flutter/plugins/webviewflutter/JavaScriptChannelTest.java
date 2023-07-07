@@ -30,7 +30,7 @@ public class JavaScriptChannelTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
 
     final JavaScriptChannelCreator javaScriptChannelCreator =
         new JavaScriptChannelCreator() {
@@ -57,7 +57,7 @@ public class JavaScriptChannelTest {
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test

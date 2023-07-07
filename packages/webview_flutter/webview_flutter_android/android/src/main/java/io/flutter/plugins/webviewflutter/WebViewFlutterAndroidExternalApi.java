@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.webkit.WebView;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.FlutterEngine;
 
@@ -34,7 +35,7 @@ public interface WebViewFlutterAndroidExternalApi {
    *     with `identifier` could not be found.
    */
   @Nullable
-  static WebView getWebView(FlutterEngine engine, long identifier) {
+  static WebView getWebView(@NonNull FlutterEngine engine, long identifier) {
     final WebViewFlutterPlugin webViewPlugin =
         (WebViewFlutterPlugin) engine.getPlugins().get(WebViewFlutterPlugin.class);
 

@@ -1,5 +1,15 @@
-## NEXT
+## 0.9.2
 
+* Adds `getSaveLocation` and deprecates `getSavePath`.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.9.1+3
+
+* Sets a cmake_policy compatibility version to fix build warnings.
+
+## 0.9.1+2
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.9.1+1

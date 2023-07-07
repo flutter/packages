@@ -1,5 +1,11 @@
-## NEXT
+## 0.3.1+4
 
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.3.1+3
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.3.1+2

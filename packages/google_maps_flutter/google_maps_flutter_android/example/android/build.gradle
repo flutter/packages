@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.1'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 
@@ -24,7 +24,7 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
 
@@ -35,9 +35,17 @@ task clean(type: Delete) {
 gradle.projectsEvaluated {
     project(":google_maps_flutter_android") {
         tasks.withType(JavaCompile) {
-            // TODO(stuartmorgan): Enable this. See
-            // https://github.com/flutter/flutter/issues/91868
-            //options.compilerArgs << "-Xlint:all" << "-Werror"
+            // Ignore classfile warnings due to https://bugs.openjdk.org/browse/JDK-8190452
+            // TODO(stuartmorgan): Remove that ignore once the build uses Java 11+.
+            options.compilerArgs << "-Xlint:all" << "-Werror" << "-Xlint:-classfile"
+            // Workaround for a warning when building that the above turns into
+            // an error, coming from jetified-play-services-maps-18.1.0:
+            //   warning: Cannot find annotation method 'value()' in type
+            //   'GuardedBy': class file for
+            //   javax.annotation.concurrent.GuardedBy not found
+            dependencies {
+                implementation "com.google.code.findbugs:jsr305:3.0.2"
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.1'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 
@@ -24,7 +24,7 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
 
@@ -35,9 +35,7 @@ task clean(type: Delete) {
 gradle.projectsEvaluated {
     project(":camera_android") {
         tasks.withType(JavaCompile) {
-            // TODO(stuartmorgan): Enable this. See
-            // https://github.com/flutter/flutter/issues/91868
-            //options.compilerArgs << "-Xlint:all" << "-Werror"
+            options.compilerArgs << "-Xlint:all" << "-Werror"
         }
     }
 }

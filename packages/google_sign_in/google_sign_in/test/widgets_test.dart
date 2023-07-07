@@ -100,6 +100,9 @@ void main() {
       id: 'userId',
       photoUrl: 'photoUrl',
     );
+
+    // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
+    // ignore: deprecated_member_use
     tester.binding.window.physicalSizeTestValue = const Size(100, 100);
 
     await HttpOverrides.runZoned(

@@ -2,11 +2,11 @@ name: in_app_purchase
 description: A Flutter plugin for in-app purchases. Exposes APIs for making in-app purchases through the App Store and Google Play.
 repository: https://github.com/flutter/packages/tree/main/packages/in_app_purchase/in_app_purchase
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+in_app_purchase%22
-version: 3.1.5
+version: 3.1.7
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 flutter:
   plugin:
@@ -21,13 +21,11 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  in_app_purchase_android: ^0.2.3
+  in_app_purchase_android: ^0.3.0
   in_app_purchase_platform_interface: ^1.0.0
   in_app_purchase_storekit: ^0.3.4
 
 dev_dependencies:
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:

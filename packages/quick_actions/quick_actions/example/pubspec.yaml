@@ -3,8 +3,8 @@ description: Demonstrates how to use the quick_actions plugin.
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
@@ -19,8 +19,6 @@ dependencies:
 
 dev_dependencies:
   espresso: ^0.2.0
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:

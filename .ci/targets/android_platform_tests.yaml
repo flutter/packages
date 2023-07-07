@@ -1,0 +1,25 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+  - name: build examples
+    script: script/tool_runner.sh
+    args: ["build-examples", "--apk"]
+  - name: lint
+    script: script/tool_runner.sh
+    args: ["lint-android"]
+  # Native unit and native integration are split into two steps to allow for
+  # different exclusions.
+  # TODO(stuartmorgan): Eliminate the native unit test exclusion, and combine
+  # these steps.
+  - name: native unit tests
+    script: script/tool_runner.sh
+    args: ["native-test", "--android", "--no-integration", "--exclude=script/configs/exclude_native_unit_android.yaml"]
+  # TODO(stuartmorgan): Enable these once
+  # https://github.com/flutter/flutter/issues/120736 is implemented.
+  # See also https://github.com/flutter/flutter/issues/114373
+  #- name: native integration tests
+  #  script: script/tool_runner.sh
+  #  args: ["native-test", "--android", "--no-unit"]
+  #- name: drive examples
+  #  script: script/tool_runner.sh
+  #  args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml"]

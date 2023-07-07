@@ -21,7 +21,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@5c7539237e04b714afd8ad9b4aed733815b9fab4
+      - uses: actions/labeler@9fcb2c2f5584144ca754f8bfe8c6f81e77753375
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           sync-labels: true

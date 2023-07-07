@@ -57,9 +57,7 @@ void main() {
         isNotNull);
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of loadFile should throw unimplemented error',
+  test('Default implementation of loadFile should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -72,7 +70,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of loadFlutterAsset should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -86,7 +83,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of loadHtmlString should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -99,9 +95,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of loadRequest should throw unimplemented error',
+  test('Default implementation of loadRequest should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -113,9 +107,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of currentUrl should throw unimplemented error',
+  test('Default implementation of currentUrl should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -127,9 +119,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of canGoBack should throw unimplemented error',
+  test('Default implementation of canGoBack should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -142,7 +132,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of canGoForward should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -155,9 +144,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of goBack should throw unimplemented error', () {
+  test('Default implementation of goBack should throw unimplemented error', () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
             const PlatformWebViewControllerCreationParams());
@@ -168,9 +155,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of goForward should throw unimplemented error',
+  test('Default implementation of goForward should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -182,9 +167,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of reload should throw unimplemented error', () {
+  test('Default implementation of reload should throw unimplemented error', () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
             const PlatformWebViewControllerCreationParams());
@@ -195,9 +178,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of clearCache should throw unimplemented error',
+  test('Default implementation of clearCache should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -210,7 +191,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of clearLocalStorage should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -239,7 +219,6 @@ void main() {
   );
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of runJavaScript should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -253,7 +232,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of runJavaScriptReturningResult should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -267,7 +245,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of addJavaScriptChannel should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -286,7 +263,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of removeJavaScriptChannel should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -299,9 +275,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of getTitle should throw unimplemented error',
+  test('Default implementation of getTitle should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -313,9 +287,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of scrollTo should throw unimplemented error',
+  test('Default implementation of scrollTo should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -327,9 +299,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of scrollBy should throw unimplemented error',
+  test('Default implementation of scrollBy should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -342,7 +312,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of getScrollPosition should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -355,9 +324,7 @@ void main() {
     );
   });
 
-  test(
-      // ignore: lines_longer_than_80_chars
-      'Default implementation of enableZoom should throw unimplemented error',
+  test('Default implementation of enableZoom should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -370,7 +337,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of setBackgroundColor should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -384,7 +350,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of setJavaScriptMode should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -398,7 +363,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of setUserAgent should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -407,6 +371,19 @@ void main() {
 
     expect(
       () => controller.setUserAgent(null),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+      'Default implementation of setOnPermissionRequest should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setOnPlatformPermissionRequest((_) {}),
       throwsUnimplementedError,
     );
   });

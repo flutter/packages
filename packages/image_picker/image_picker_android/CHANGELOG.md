@@ -1,5 +1,108 @@
-## NEXT
+## 0.8.7+3
 
+* Bumps androidx.activity:activity from 1.7.1 to 1.7.2.
+
+## 0.8.7+2
+
+* Fixes a crash case when picking an image with a display name that does not contain a period.
+
+## 0.8.7+1
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.21 to 1.8.22.
+
+## 0.8.7
+
+* Adds `getMedia` method.
+
+## 0.8.6+20
+
+* Bumps androidx.activity:activity from 1.7.0 to 1.7.1.
+
+## 0.8.6+19
+
+* Bumps androidx.core:core from 1.9.0 to 1.10.1.
+
+## 0.8.6+18
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.10 to 1.8.21.
+
+## 0.8.6+17
+
+* Moves disk accesses to background thread.
+
+## 0.8.6+16
+
+* Fixes crashes caused by `SecurityException` when calling `getPathFromUri()`.
+
+## 0.8.6+15
+
+* Bumps androidx.activity:activity from 1.6.1 to 1.7.0.
+
+## 0.8.6+14
+
+* Fixes Java warnings.
+
+## 0.8.6+13
+
+* Fixes `BuildContext` handling in example.
+
+## 0.8.6+12
+
+* Improves image resizing performance by decoding Bitmap only when needed.
+
+## 0.8.6+11
+
+* Updates gradle to 7.6.1.
+* Updates gradle, AGP and fixes some lint errors.
+
+## 0.8.6+10
+
+* Offloads picker result handling to separate thread.
+
+## 0.8.6+9
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.8.6+8
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 0.8.6+7
+
+* Fixes handling of non-bitmap image types.
+* Updates minimum Flutter version to 3.3.
+
+## 0.8.6+6
+
+* Bumps androidx.core:core from 1.8.0 to 1.9.0.
+
+## 0.8.6+5
+
+* Fixes case when file extension returned from the OS does not match its real mime type.
+
+## 0.8.6+4
+
+* Bumps androidx.exifinterface:exifinterface from 1.3.3 to 1.3.6.
+
+## 0.8.6+3
+
+* Switches to Pigeon for internal implementation.
+
+## 0.8.6+2
+
+* Fixes null pointer exception in `saveResult`.
+
+## 0.8.6+1
+
+* Refactors code in preparation for adopting Pigeon.
+
+## 0.8.6
+
+* Adds `usePhotoPickerAndroid` options.
+
+## 0.8.5+10
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.8.5+9

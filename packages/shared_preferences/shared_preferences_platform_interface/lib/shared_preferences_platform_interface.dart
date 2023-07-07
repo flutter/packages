@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'method_channel_shared_preferences.dart';
+import 'types.dart';
 
 /// The interface that implementations of shared_preferences must implement.
 ///
@@ -62,11 +63,42 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   /// * Value type "StringList" must be passed if the value is of type `List<String>`.
   Future<bool> setValue(String valueType, String key, Object value);
 
-  /// Removes all keys and values in the store.
+  /// Removes all keys and values in the store where the key starts with 'flutter.'.
+  ///
+  /// This default behavior is for backwards compatibility with older versions of this
+  /// plugin, which did not support custom prefixes, and instead always used the
+  /// prefix 'flutter.'.
   Future<bool> clear();
 
-  /// Returns all key/value pairs persisted in this store.
+  /// Removes all keys and values in the store with given [prefix].
+  @Deprecated('Use clearWithParameters instead')
+  Future<bool> clearWithPrefix(String prefix) {
+    throw UnimplementedError('clearWithPrefix is not implemented.');
+  }
+
+  /// Removes all keys and values in the store that match [options].
+  Future<bool> clearWithParameters(ClearParameters parameters) {
+    throw UnimplementedError('clearWithParameters is not implemented.');
+  }
+
+  /// Returns all key/value pairs persisted in this store where the key starts with 'flutter.'.
+  ///
+  /// This default behavior is for backwards compatibility with older versions of this
+  /// plugin, which did not support custom prefixes, and instead always used the
+  /// prefix 'flutter.'.
   Future<Map<String, Object>> getAll();
+
+  /// Returns all key/value pairs persisting in this store that have given [prefix].
+  @Deprecated('Use getAllWithParameters instead')
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+    throw UnimplementedError('getAllWithPrefix is not implemented.');
+  }
+
+  /// Returns all key/value pairs persisting in this store that match [options].
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) {
+    throw UnimplementedError('getAllWithParameters is not implemented.');
+  }
 }
 
 /// Stores data in memory.
@@ -81,16 +113,65 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
       : _data = Map<String, Object>.from(data);
 
   final Map<String, Object> _data;
+  static const String _defaultPrefix = 'flutter.';
 
   @override
   Future<bool> clear() async {
-    _data.clear();
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<bool> clearWithPrefix(String prefix) async {
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: prefix),
+      ),
+    );
+  }
+
+  @override
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    if (filter.allowList != null) {
+      _data.removeWhere((String key, _) =>
+          key.startsWith(filter.prefix) && filter.allowList!.contains(key));
+    } else {
+      _data.removeWhere((String key, _) => key.startsWith(filter.prefix));
+    }
     return true;
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
-    return Map<String, Object>.from(_data);
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: prefix),
+      ),
+    );
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    final Map<String, Object> preferences = Map<String, Object>.from(_data);
+    preferences.removeWhere((String key, _) =>
+        !key.startsWith(filter.prefix) ||
+        (filter.allowList != null && !filter.allowList!.contains(key)));
+    return preferences;
   }
 
   @override

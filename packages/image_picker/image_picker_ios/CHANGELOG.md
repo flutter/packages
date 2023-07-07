@@ -1,5 +1,24 @@
-## NEXT
+## 0.8.8
 
+* Adds `getMedia` and `getMultipleMedia` methods.
+
+## 0.8.7+4
+
+* Fixes `BuildContext` handling in example.
+* Updates metadata unit test to work on iOS 16.2.
+
+## 0.8.7+3
+
+* Updates pigeon to fix warnings with clang 15.
+* Updates minimum Flutter version to 3.3.
+
+## 0.8.7+2
+
+* Updates to `pigeon` version 9.
+
+## 0.8.7+1
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.8.7

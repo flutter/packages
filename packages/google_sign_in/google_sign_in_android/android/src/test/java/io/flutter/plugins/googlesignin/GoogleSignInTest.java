@@ -23,11 +23,10 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Task;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
+import io.flutter.plugins.googlesignin.Messages.FlutterError;
+import io.flutter.plugins.googlesignin.Messages.InitParams;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
@@ -43,7 +42,9 @@ public class GoogleSignInTest {
   @Mock Resources mockResources;
   @Mock Activity mockActivity;
   @Mock BinaryMessenger mockMessenger;
-  @Spy MethodChannel.Result result;
+  @Spy Messages.Result<Void> voidResult;
+  @Spy Messages.Result<Boolean> boolResult;
+  @Spy Messages.Result<Messages.UserData> userDataResult;
   @Mock GoogleSignInWrapper mockGoogleSignIn;
   @Mock GoogleSignInAccount account;
   @Mock GoogleSignInClient mockClient;
@@ -53,7 +54,7 @@ public class GoogleSignInTest {
   @Mock
   PluginRegistry.Registrar mockRegistrar;
 
-  private GoogleSignInPlugin plugin;
+  private GoogleSignInPlugin.Delegate plugin;
   private AutoCloseable mockCloseable;
 
   @Before
@@ -63,8 +64,7 @@ public class GoogleSignInTest {
     when(mockRegistrar.context()).thenReturn(mockContext);
     when(mockRegistrar.activity()).thenReturn(mockActivity);
     when(mockContext.getResources()).thenReturn(mockResources);
-    plugin = new GoogleSignInPlugin();
-    plugin.initInstance(mockRegistrar.messenger(), mockRegistrar.context(), mockGoogleSignIn);
+    plugin = new GoogleSignInPlugin.Delegate(mockRegistrar.context(), mockGoogleSignIn);
     plugin.setUpRegistrar(mockRegistrar);
   }
 
@@ -75,39 +75,37 @@ public class GoogleSignInTest {
 
   @Test
   public void requestScopes_ResultErrorIfAccountIsNull() {
-    MethodCall methodCall = new MethodCall("requestScopes", null);
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(null);
-    plugin.onMethodCall(methodCall, result);
-    verify(result).error("sign_in_required", "No account to grant scopes.", null);
+
+    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
+
+    ArgumentCaptor<Throwable> resultCaptor = ArgumentCaptor.forClass(Throwable.class);
+    verify(boolResult).error(resultCaptor.capture());
+    FlutterError error = (FlutterError) resultCaptor.getValue();
+    Assert.assertEquals("sign_in_required", error.code);
+    Assert.assertEquals("No account to grant scopes.", error.getMessage());
   }
 
   @Test
   public void requestScopes_ResultTrueIfAlreadyGranted() {
-    HashMap<String, List<String>> arguments = new HashMap<>();
-    arguments.put("scopes", Collections.singletonList("requestedScope"));
-
-    MethodCall methodCall = new MethodCall("requestScopes", arguments);
     Scope requestedScope = new Scope("requestedScope");
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(true);
 
-    plugin.onMethodCall(methodCall, result);
-    verify(result).success(true);
+    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
+
+    verify(boolResult).success(true);
   }
 
   @Test
   public void requestScopes_RequestsPermissionIfNotGranted() {
-    HashMap<String, List<String>> arguments = new HashMap<>();
-    arguments.put("scopes", Collections.singletonList("requestedScope"));
-    MethodCall methodCall = new MethodCall("requestScopes", arguments);
     Scope requestedScope = new Scope("requestedScope");
-
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
 
-    plugin.onMethodCall(methodCall, result);
+    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
 
     verify(mockGoogleSignIn)
         .requestPermissions(mockActivity, 53295, account, new Scope[] {requestedScope});
@@ -115,11 +113,7 @@ public class GoogleSignInTest {
 
   @Test
   public void requestScopes_ReturnsFalseIfPermissionDenied() {
-    HashMap<String, List<String>> arguments = new HashMap<>();
-    arguments.put("scopes", Collections.singletonList("requestedScope"));
-    MethodCall methodCall = new MethodCall("requestScopes", arguments);
     Scope requestedScope = new Scope("requestedScope");
-
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
     verify(mockRegistrar).addActivityResultListener(captor.capture());
@@ -129,22 +123,18 @@ public class GoogleSignInTest {
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
 
-    plugin.onMethodCall(methodCall, result);
+    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
     listener.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE,
         Activity.RESULT_CANCELED,
         new Intent());
 
-    verify(result).success(false);
+    verify(boolResult).success(false);
   }
 
   @Test
   public void requestScopes_ReturnsTrueIfPermissionGranted() {
-    HashMap<String, List<String>> arguments = new HashMap<>();
-    arguments.put("scopes", Collections.singletonList("requestedScope"));
-    MethodCall methodCall = new MethodCall("requestScopes", arguments);
     Scope requestedScope = new Scope("requestedScope");
-
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
     verify(mockRegistrar).addActivityResultListener(captor.capture());
@@ -154,20 +144,17 @@ public class GoogleSignInTest {
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
 
-    plugin.onMethodCall(methodCall, result);
+    plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
     listener.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
-    verify(result).success(true);
+    verify(boolResult).success(true);
   }
 
   @Test
   public void requestScopes_mayBeCalledRepeatedly_ifAlreadyGranted() {
-    HashMap<String, List<String>> arguments = new HashMap<>();
-    arguments.put("scopes", Collections.singletonList("requestedScope"));
-    MethodCall methodCall = new MethodCall("requestScopes", arguments);
+    List<String> requestedScopes = Collections.singletonList("requestedScope");
     Scope requestedScope = new Scope("requestedScope");
-
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
     verify(mockRegistrar).addActivityResultListener(captor.capture());
@@ -177,23 +164,19 @@ public class GoogleSignInTest {
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
 
-    plugin.onMethodCall(methodCall, result);
+    plugin.requestScopes(requestedScopes, boolResult);
     listener.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
-    plugin.onMethodCall(methodCall, result);
+    plugin.requestScopes(requestedScopes, boolResult);
     listener.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
-    verify(result, times(2)).success(true);
+    verify(boolResult, times(2)).success(true);
   }
 
   @Test
   public void requestScopes_mayBeCalledRepeatedly_ifNotSignedIn() {
-    HashMap<String, List<String>> arguments = new HashMap<>();
-    arguments.put("scopes", Collections.singletonList("requestedScope"));
-    MethodCall methodCall = new MethodCall("requestScopes", arguments);
-    Scope requestedScope = new Scope("requestedScope");
-
+    List<String> requestedScopes = Collections.singletonList("requestedScope");
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
     verify(mockRegistrar).addActivityResultListener(captor.capture());
@@ -201,31 +184,39 @@ public class GoogleSignInTest {
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(null);
 
-    plugin.onMethodCall(methodCall, result);
+    plugin.requestScopes(requestedScopes, boolResult);
     listener.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
-    plugin.onMethodCall(methodCall, result);
+    plugin.requestScopes(requestedScopes, boolResult);
     listener.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
-    verify(result, times(2)).error("sign_in_required", "No account to grant scopes.", null);
+    ArgumentCaptor<Throwable> resultCaptor = ArgumentCaptor.forClass(Throwable.class);
+    verify(boolResult, times(2)).error(resultCaptor.capture());
+    List<Throwable> errors = resultCaptor.getAllValues();
+    Assert.assertEquals(2, errors.size());
+    FlutterError error = (FlutterError) errors.get(0);
+    Assert.assertEquals("sign_in_required", error.code);
+    Assert.assertEquals("No account to grant scopes.", error.getMessage());
+    error = (FlutterError) errors.get(1);
+    Assert.assertEquals("sign_in_required", error.code);
+    Assert.assertEquals("No account to grant scopes.", error.getMessage());
   }
 
   @Test(expected = IllegalStateException.class)
   public void signInThrowsWithoutActivity() {
-    final GoogleSignInPlugin plugin = new GoogleSignInPlugin();
-    plugin.initInstance(
-        mock(BinaryMessenger.class), mock(Context.class), mock(GoogleSignInWrapper.class));
+    final GoogleSignInPlugin.Delegate plugin =
+        new GoogleSignInPlugin.Delegate(mock(Context.class), mock(GoogleSignInWrapper.class));
 
-    plugin.onMethodCall(new MethodCall("signIn", null), null);
+    plugin.signIn(userDataResult);
   }
 
   @Test
   public void signInSilentlyThatImmediatelyCompletesWithoutResultFinishesWithError()
       throws ApiException {
     final String clientId = "fakeClientId";
-    MethodCall methodCall = buildInitMethodCall(clientId, null);
-    initAndAssertServerClientId(methodCall, clientId);
+    InitParams params = buildInitParams(clientId, null);
+    initAndAssertServerClientId(params, clientId);
 
     ApiException exception =
         new ApiException(new Status(CommonStatusCodes.SIGN_IN_REQUIRED, "Error text"));
@@ -233,12 +224,13 @@ public class GoogleSignInTest {
     when(mockSignInTask.isComplete()).thenReturn(true);
     when(mockSignInTask.getResult(ApiException.class)).thenThrow(exception);
 
-    plugin.onMethodCall(new MethodCall("signInSilently", null), result);
-    verify(result)
-        .error(
-            "sign_in_required",
-            "com.google.android.gms.common.api.ApiException: 4: Error text",
-            null);
+    plugin.signInSilently(userDataResult);
+    ArgumentCaptor<Throwable> resultCaptor = ArgumentCaptor.forClass(Throwable.class);
+    verify(userDataResult).error(resultCaptor.capture());
+    FlutterError error = (FlutterError) resultCaptor.getValue();
+    Assert.assertEquals("sign_in_required", error.code);
+    Assert.assertEquals(
+        "com.google.android.gms.common.api.ApiException: 4: Error text", error.getMessage());
   }
 
   @Test
@@ -246,48 +238,48 @@ public class GoogleSignInTest {
     final String packageName = "fakePackageName";
     final String serverClientId = "fakeServerClientId";
     final int resourceId = 1;
-    MethodCall methodCall = buildInitMethodCall(null, null);
+    InitParams params = buildInitParams(null, null);
     when(mockContext.getPackageName()).thenReturn(packageName);
     when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
         .thenReturn(resourceId);
     when(mockContext.getString(resourceId)).thenReturn(serverClientId);
-    initAndAssertServerClientId(methodCall, serverClientId);
+    initAndAssertServerClientId(params, serverClientId);
   }
 
   @Test
   public void init_InterpretsClientIdAsServerClientId() {
     final String clientId = "fakeClientId";
-    MethodCall methodCall = buildInitMethodCall(clientId, null);
-    initAndAssertServerClientId(methodCall, clientId);
+    InitParams params = buildInitParams(clientId, null);
+    initAndAssertServerClientId(params, clientId);
   }
 
   @Test
   public void init_ForwardsServerClientId() {
     final String serverClientId = "fakeServerClientId";
-    MethodCall methodCall = buildInitMethodCall(null, serverClientId);
-    initAndAssertServerClientId(methodCall, serverClientId);
+    InitParams params = buildInitParams(null, serverClientId);
+    initAndAssertServerClientId(params, serverClientId);
   }
 
   @Test
   public void init_IgnoresClientIdIfServerClientIdIsProvided() {
     final String clientId = "fakeClientId";
     final String serverClientId = "fakeServerClientId";
-    MethodCall methodCall = buildInitMethodCall(clientId, serverClientId);
-    initAndAssertServerClientId(methodCall, serverClientId);
+    InitParams params = buildInitParams(clientId, serverClientId);
+    initAndAssertServerClientId(params, serverClientId);
   }
 
   @Test
   public void init_PassesForceCodeForRefreshTokenFalseWithServerClientIdParameter() {
-    MethodCall methodCall = buildInitMethodCall("fakeClientId", "fakeServerClientId", false);
+    InitParams params = buildInitParams("fakeClientId", "fakeServerClientId", false);
 
-    initAndAssertForceCodeForRefreshToken(methodCall, false);
+    initAndAssertForceCodeForRefreshToken(params, false);
   }
 
   @Test
   public void init_PassesForceCodeForRefreshTokenTrueWithServerClientIdParameter() {
-    MethodCall methodCall = buildInitMethodCall("fakeClientId", "fakeServerClientId", true);
+    InitParams params = buildInitParams("fakeClientId", "fakeServerClientId", true);
 
-    initAndAssertForceCodeForRefreshToken(methodCall, true);
+    initAndAssertForceCodeForRefreshToken(params, true);
   }
 
   @Test
@@ -295,13 +287,13 @@ public class GoogleSignInTest {
     final String packageName = "fakePackageName";
     final String serverClientId = "fakeServerClientId";
     final int resourceId = 1;
-    MethodCall methodCall = buildInitMethodCall(null, null, false);
+    InitParams params = buildInitParams(null, null, false);
     when(mockContext.getPackageName()).thenReturn(packageName);
     when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
         .thenReturn(resourceId);
     when(mockContext.getString(resourceId)).thenReturn(serverClientId);
 
-    initAndAssertForceCodeForRefreshToken(methodCall, false);
+    initAndAssertForceCodeForRefreshToken(params, false);
   }
 
   @Test
@@ -309,68 +301,66 @@ public class GoogleSignInTest {
     final String packageName = "fakePackageName";
     final String serverClientId = "fakeServerClientId";
     final int resourceId = 1;
-    MethodCall methodCall = buildInitMethodCall(null, null, true);
+    InitParams params = buildInitParams(null, null, true);
     when(mockContext.getPackageName()).thenReturn(packageName);
     when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
         .thenReturn(resourceId);
     when(mockContext.getString(resourceId)).thenReturn(serverClientId);
 
-    initAndAssertForceCodeForRefreshToken(methodCall, true);
+    initAndAssertForceCodeForRefreshToken(params, true);
   }
 
-  public void initAndAssertServerClientId(MethodCall methodCall, String serverClientId) {
+  public void initAndAssertServerClientId(InitParams params, String serverClientId) {
     ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
         ArgumentCaptor.forClass(GoogleSignInOptions.class);
     when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
         .thenReturn(mockClient);
-    plugin.onMethodCall(methodCall, result);
-    verify(result).success(null);
+    plugin.init(params);
     Assert.assertEquals(serverClientId, optionsCaptor.getValue().getServerClientId());
   }
 
   public void initAndAssertForceCodeForRefreshToken(
-      MethodCall methodCall, boolean forceCodeForRefreshToken) {
+      InitParams params, boolean forceCodeForRefreshToken) {
     ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
         ArgumentCaptor.forClass(GoogleSignInOptions.class);
     when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
         .thenReturn(mockClient);
-    plugin.onMethodCall(methodCall, result);
-    verify(result).success(null);
+    plugin.init(params);
     Assert.assertEquals(
         forceCodeForRefreshToken, optionsCaptor.getValue().isForceCodeForRefreshToken());
   }
 
-  private static MethodCall buildInitMethodCall(String clientId, String serverClientId) {
-    return buildInitMethodCall(
-        "SignInOption.standard", Collections.<String>emptyList(), clientId, serverClientId, false);
+  private static InitParams buildInitParams(String clientId, String serverClientId) {
+    return buildInitParams(
+        Messages.SignInType.STANDARD, Collections.emptyList(), clientId, serverClientId, false);
   }
 
-  private static MethodCall buildInitMethodCall(
+  private static InitParams buildInitParams(
       String clientId, String serverClientId, boolean forceCodeForRefreshToken) {
-    return buildInitMethodCall(
-        "SignInOption.standard",
-        Collections.<String>emptyList(),
+    return buildInitParams(
+        Messages.SignInType.STANDARD,
+        Collections.emptyList(),
         clientId,
         serverClientId,
         forceCodeForRefreshToken);
   }
 
-  private static MethodCall buildInitMethodCall(
-      String signInOption,
+  private static InitParams buildInitParams(
+      Messages.SignInType signInType,
       List<String> scopes,
       String clientId,
       String serverClientId,
       boolean forceCodeForRefreshToken) {
-    HashMap<String, Object> arguments = new HashMap<>();
-    arguments.put("signInOption", signInOption);
-    arguments.put("scopes", scopes);
+    InitParams.Builder builder = new InitParams.Builder();
+    builder.setSignInType(signInType);
+    builder.setScopes(scopes);
     if (clientId != null) {
-      arguments.put("clientId", clientId);
+      builder.setClientId(clientId);
     }
     if (serverClientId != null) {
-      arguments.put("serverClientId", serverClientId);
+      builder.setServerClientId(serverClientId);
     }
-    arguments.put("forceCodeForRefreshToken", forceCodeForRefreshToken);
-    return new MethodCall("init", arguments);
+    builder.setForceCodeForRefreshToken(forceCodeForRefreshToken);
+    return builder.build();
   }
 }

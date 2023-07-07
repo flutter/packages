@@ -5,7 +5,11 @@ The Android implementation of [`webview_flutter`][1].
 ## Usage
 
 This package is [endorsed][2], which means you can simply use `webview_flutter`
-normally. This package will be automatically included in your app when you do.
+normally. This package will be automatically included in your app when you do,
+so you do not need to add it to your `pubspec.yaml`.
+
+However, if you `import` this package to use any of its APIs directly, you
+should add it to your `pubspec.yaml` as usual.
 
 ## Display Mode
 
@@ -53,12 +57,12 @@ import io.flutter.plugins.webviewflutter.WebViewFlutterAndroidExternalApi;
 This package uses [pigeon][3] to generate the communication layer between Flutter and the host
 platform (Android). The communication interface is defined in the `pigeons/android_webview.dart`
 file. After editing the communication interface regenerate the communication layer by running
-`flutter pub run pigeon --input pigeons/android_webview.dart`.
+`dart run pigeon --input pigeons/android_webview.dart`.
 
 Besides [pigeon][3] this package also uses [mockito][4] to generate mock objects for testing
 purposes. To generate the mock objects run the following command:
 ```bash
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 If you would like to contribute to the plugin, check out our [contribution guide][5].

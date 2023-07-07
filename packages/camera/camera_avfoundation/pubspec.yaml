@@ -2,10 +2,10 @@ name: camera_avfoundation
 description: iOS implementation of the camera plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/camera/camera_avfoundation
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+camera%22
-version: 0.9.12
+version: 0.9.13+2
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
+  sdk: ">=2.18.0 <4.0.0"
   flutter: ">=3.3.0"
 
 flutter:
@@ -17,14 +17,12 @@ flutter:
         dartPluginClass: AVFoundationCamera
 
 dependencies:
-  camera_platform_interface: ^2.3.1
+  camera_platform_interface: ^2.4.0
   flutter:
     sdk: flutter
   stream_transform: ^2.0.0
 
 dev_dependencies:
   async: ^2.5.0
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter

@@ -1,6 +1,8 @@
-## NEXT
+## 2.1.3
 
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
+* Removes deprecated API calls.
 
 ## 2.1.2
 

@@ -4,21 +4,24 @@
 
 package io.flutter.plugins.imagepicker;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.SizeFCompat;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 class ImageResizer {
-  private final File externalFilesDirectory;
+  private final Context context;
   private final ExifDataCopier exifDataCopier;
 
-  ImageResizer(File externalFilesDirectory, ExifDataCopier exifDataCopier) {
-    this.externalFilesDirectory = externalFilesDirectory;
+  ImageResizer(final @NonNull Context context, final @NonNull ExifDataCopier exifDataCopier) {
+    this.context = context;
     this.exifDataCopier = exifDataCopier;
   }
 
@@ -29,23 +32,38 @@ class ImageResizer {
    * <p>If no resizing is needed, returns the path for the original image.
    */
   String resizeImageIfNeeded(
-      String imagePath,
-      @Nullable Double maxWidth,
-      @Nullable Double maxHeight,
-      @Nullable Integer imageQuality) {
-    Bitmap bmp = decodeFile(imagePath);
-    if (bmp == null) {
-      return null;
+      String imagePath, @Nullable Double maxWidth, @Nullable Double maxHeight, int imageQuality) {
+    SizeFCompat originalSize = readFileDimensions(imagePath);
+    if (originalSize.getWidth() == -1 || originalSize.getHeight() == -1) {
+      return imagePath;
     }
-    boolean shouldScale =
-        maxWidth != null || maxHeight != null || isImageQualityValid(imageQuality);
+    boolean shouldScale = maxWidth != null || maxHeight != null || imageQuality < 100;
     if (!shouldScale) {
       return imagePath;
     }
     try {
       String[] pathParts = imagePath.split("/");
       String imageName = pathParts[pathParts.length - 1];
-      File file = resizedImage(bmp, maxWidth, maxHeight, imageQuality, imageName);
+      SizeFCompat targetSize =
+          calculateTargetSize(
+              (double) originalSize.getWidth(),
+              (double) originalSize.getHeight(),
+              maxWidth,
+              maxHeight);
+      BitmapFactory.Options options = new BitmapFactory.Options();
+      options.inSampleSize =
+          calculateSampleSize(options, (int) targetSize.getWidth(), (int) targetSize.getHeight());
+      Bitmap bmp = decodeFile(imagePath, options);
+      if (bmp == null) {
+        return imagePath;
+      }
+      File file =
+          resizedImage(
+              bmp,
+              (double) targetSize.getWidth(),
+              (double) targetSize.getHeight(),
+              imageQuality,
+              imageName);
       copyExif(imagePath, file.getPath());
       return file.getPath();
     } catch (IOException e) {
@@ -54,14 +72,19 @@ class ImageResizer {
   }
 
   private File resizedImage(
-      Bitmap bmp, Double maxWidth, Double maxHeight, Integer imageQuality, String outputImageName)
+      Bitmap bmp, Double width, Double height, int imageQuality, String outputImageName)
       throws IOException {
-    double originalWidth = bmp.getWidth() * 1.0;
-    double originalHeight = bmp.getHeight() * 1.0;
+    Bitmap scaledBmp = createScaledBitmap(bmp, width.intValue(), height.intValue(), false);
+    File file =
+        createImageOnExternalDirectory("/scaled_" + outputImageName, scaledBmp, imageQuality);
+    return file;
+  }
 
-    if (!isImageQualityValid(imageQuality)) {
-      imageQuality = 100;
-    }
+  private SizeFCompat calculateTargetSize(
+      @NonNull Double originalWidth,
+      @NonNull Double originalHeight,
+      @Nullable Double maxWidth,
+      @Nullable Double maxHeight) {
 
     boolean hasMaxWidth = maxWidth != null;
     boolean hasMaxHeight = maxHeight != null;
@@ -98,10 +121,7 @@ class ImageResizer {
       }
     }
 
-    Bitmap scaledBmp = createScaledBitmap(bmp, width.intValue(), height.intValue(), false);
-    File file =
-        createImageOnExternalDirectory("/scaled_" + outputImageName, scaledBmp, imageQuality);
-    return file;
+    return new SizeFCompat(width.floatValue(), height.floatValue());
   }
 
   private File createFile(File externalFilesDirectory, String child) {
@@ -120,16 +140,45 @@ class ImageResizer {
     exifDataCopier.copyExif(filePathOri, filePathDest);
   }
 
-  private Bitmap decodeFile(String path) {
-    return BitmapFactory.decodeFile(path);
+  private SizeFCompat readFileDimensions(String path) {
+    BitmapFactory.Options options = new BitmapFactory.Options();
+    options.inJustDecodeBounds = true;
+    decodeFile(path, options);
+    return new SizeFCompat(options.outWidth, options.outHeight);
+  }
+
+  private Bitmap decodeFile(String path, @Nullable BitmapFactory.Options opts) {
+    return BitmapFactory.decodeFile(path, opts);
   }
 
   private Bitmap createScaledBitmap(Bitmap bmp, int width, int height, boolean filter) {
     return Bitmap.createScaledBitmap(bmp, width, height, filter);
   }
 
-  private boolean isImageQualityValid(Integer imageQuality) {
-    return imageQuality != null && imageQuality > 0 && imageQuality < 100;
+  /**
+   * Calculates the largest sample size value that is a power of two based on a target width and
+   * height.
+   *
+   * <p>This value is necessary to tell the Bitmap decoder to subsample the original image,
+   * returning a smaller image to save memory.
+   *
+   * @see <a
+   *     href="https://developer.android.com/topic/performance/graphics/load-bitmap#load-bitmap">
+   *     Loading Large Bitmaps Efficiently</a>
+   */
+  private int calculateSampleSize(
+      BitmapFactory.Options options, int targetWidth, int targetHeight) {
+    final int height = options.outHeight;
+    final int width = options.outWidth;
+    int sampleSize = 1;
+    if (height > targetHeight || width > targetWidth) {
+      final int halfHeight = height / 2;
+      final int halfWidth = width / 2;
+      while ((halfHeight / sampleSize) >= targetHeight && (halfWidth / sampleSize) >= targetWidth) {
+        sampleSize *= 2;
+      }
+    }
+    return sampleSize;
   }
 
   private File createImageOnExternalDirectory(String name, Bitmap bitmap, int imageQuality)
@@ -145,7 +194,9 @@ class ImageResizer {
         saveAsPNG ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,
         imageQuality,
         outputStream);
-    File imageFile = createFile(externalFilesDirectory, name);
+
+    File cacheDirectory = context.getCacheDir();
+    File imageFile = createFile(cacheDirectory, name);
     FileOutputStream fileOutput = createOutputStream(imageFile);
     fileOutput.write(outputStream.toByteArray());
     fileOutput.close();

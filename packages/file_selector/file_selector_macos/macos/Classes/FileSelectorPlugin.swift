@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Cocoa
 import FlutterMacOS
-import Foundation
+import UniformTypeIdentifiers
 
 /// Protocol for showing panels, allowing for depenedency injection in tests.
 protocol PanelController {
@@ -16,7 +17,7 @@ protocol PanelController {
   func display(
     _ panel: NSSavePanel,
     for window: NSWindow?,
-    completionHandler: @escaping (URL?) -> Void);
+    completionHandler: @escaping (URL?) -> Void)
 
   /// Displays the given open panel, and provides the selected URLs, or nil if the panel is
   /// cancelled, to the handler.
@@ -27,7 +28,7 @@ protocol PanelController {
   func display(
     _ panel: NSOpenPanel,
     for window: NSWindow?,
-    completionHandler: @escaping ([URL]?) -> Void);
+    completionHandler: @escaping ([URL]?) -> Void)
 }
 
 /// Protocol to provide access to the Flutter view, allowing for dependency injection in tests.
@@ -48,6 +49,8 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
   private let openDirectoryMethod = "getDirectoryPath"
   private let saveMethod = "getSavePath"
 
+  var forceLegacyTypes = false
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = FileSelectorPlugin(
       viewProvider: DefaultViewProvider(registrar: registrar),
@@ -60,20 +63,23 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     self.panelController = panelController
   }
 
-  func displayOpenPanel(options: OpenPanelOptions, completion: @escaping ([String?]) -> Void) {
-
+  func displayOpenPanel(
+    options: OpenPanelOptions, completion: @escaping (Result<[String?], Error>) -> Void
+  ) {
     let panel = NSOpenPanel()
     configure(openPanel: panel, with: options)
     panelController.display(panel, for: viewProvider.view?.window) { (selection: [URL]?) in
-      completion(selection?.map({ item in item.path }) ?? [])
+      completion(.success(selection?.map({ item in item.path }) ?? []))
     }
   }
 
-  func displaySavePanel(options: SavePanelOptions, completion: @escaping (String?) -> Void) {
+  func displaySavePanel(
+    options: SavePanelOptions, completion: @escaping (Result<String?, Error>) -> Void
+  ) {
     let panel = NSSavePanel()
     configure(panel: panel, with: options)
     panelController.display(panel, for: viewProvider.view?.window) { (selection: URL?) in
-      completion(selection?.path)
+      completion(.success(selection?.path))
     }
   }
 
@@ -93,16 +99,31 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     }
 
     if let acceptedTypes = options.allowedFileTypes {
-      var allowedTypes: [String] = []
-      // The array values are non-null by convention even though Pigeon can't currently express
-      // that via the types; see messages.dart.
-      allowedTypes.append(contentsOf: acceptedTypes.extensions.map({ $0! }))
-      allowedTypes.append(contentsOf: acceptedTypes.utis.map({ $0! }))
-      // TODO: Add support for mimeTypes in macOS 11+. See
-      // https://github.com/flutter/flutter/issues/117843
-
-      if !allowedTypes.isEmpty {
-        panel.allowedFileTypes = allowedTypes
+      if #available(macOS 11, *), !forceLegacyTypes {
+        var allowedTypes: [UTType] = []
+        // The array values are non-null by convention even though Pigeon can't currently express
+        // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
+        allowedTypes.append(contentsOf: acceptedTypes.utis.compactMap({ UTType($0!) }))
+        allowedTypes.append(
+          contentsOf: acceptedTypes.extensions.flatMap({
+            UTType.types(tag: $0!, tagClass: UTTagClass.filenameExtension, conformingTo: nil)
+          }))
+        allowedTypes.append(
+          contentsOf: acceptedTypes.mimeTypes.flatMap({
+            UTType.types(tag: $0!, tagClass: UTTagClass.mimeType, conformingTo: nil)
+          }))
+        if !allowedTypes.isEmpty {
+          panel.allowedContentTypes = allowedTypes
+        }
+      } else {
+        var allowedTypes: [String] = []
+        // The array values are non-null by convention even though Pigeon can't currently express
+        // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
+        allowedTypes.append(contentsOf: acceptedTypes.extensions.map({ $0! }))
+        allowedTypes.append(contentsOf: acceptedTypes.utis.map({ $0! }))
+        if !allowedTypes.isEmpty {
+          panel.allowedFileTypes = allowedTypes
+        }
       }
     }
   }
@@ -118,8 +139,8 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
   ) {
     configure(panel: panel, with: options.baseOptions)
     panel.allowsMultipleSelection = options.allowsMultipleSelection
-    panel.canChooseDirectories = options.canChooseDirectories;
-    panel.canChooseFiles = options.canChooseFiles;
+    panel.canChooseDirectories = options.canChooseDirectories
+    panel.canChooseFiles = options.canChooseFiles
   }
 }
 
@@ -166,8 +187,6 @@ private class DefaultViewProvider: ViewProvider {
   }
 
   var view: NSView? {
-    get {
-      registrar.view
-    }
+    registrar.view
   }
 }

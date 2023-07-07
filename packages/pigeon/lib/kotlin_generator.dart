@@ -28,10 +28,8 @@ const DocumentCommentSpecification _docCommentSpec =
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
   /// Creates a [KotlinOptions] object
-  const KotlinOptions({
-    this.package,
-    this.copyrightHeader,
-  });
+  const KotlinOptions(
+      {this.package, this.copyrightHeader, this.errorClassName});
 
   /// The package where the generated class will live.
   final String? package;
@@ -39,12 +37,16 @@ class KotlinOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
+  /// The name of the error class used for passing custom error parameters.
+  final String? errorClassName;
+
   /// Creates a [KotlinOptions] from a Map representation where:
   /// `x = KotlinOptions.fromMap(x.toMap())`.
   static KotlinOptions fromMap(Map<String, Object> map) {
     return KotlinOptions(
       package: map['package'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      errorClassName: map['errorClassName'] as String?,
     );
   }
 
@@ -54,6 +56,7 @@ class KotlinOptions {
     final Map<String, Object> result = <String, Object>{
       if (package != null) 'package': package!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (errorClassName != null) 'errorClassName': errorClassName!,
     };
     return result;
   }
@@ -76,7 +79,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('// $generatedCodeWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
   }
 
@@ -242,11 +245,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               });
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
-              indent.addln(
-                  '.let { if (it is Int) it.toLong() else it as Long? }');
+              indent.addln('.let { ${_cast(listValue, type: field.type)} }');
             } else {
               indent.writeln(
-                  'val ${field.name} = ${_cast(listValue, kotlinType: '$fieldType?')}');
+                  'val ${field.name} = ${_cast(listValue, type: field.type)}');
             }
           } else {
             if (!hostDatatype.isBuiltin &&
@@ -259,11 +261,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
-              indent
-                  .addln('.let { if (it is Int) it.toLong() else it as Long }');
+              indent.addln('.let { ${_cast(listValue, type: field.type)} }');
             } else {
               indent.writeln(
-                  'val ${field.name} = ${_cast(listValue, kotlinType: fieldType)}');
+                  'val ${field.name} = ${_cast(listValue, type: field.type)}');
             }
           }
         });
@@ -384,15 +385,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             });
           } else {
             indent.addScoped('{', '}', () {
-              if (func.returnType.baseName == 'int') {
-                final String forceUnwrap =
-                    func.returnType.isNullable ? '?' : '';
-                indent.writeln(
-                    'val result = if (it is Int) it.toLong() else it as$forceUnwrap Long');
-              } else {
-                indent.writeln(
-                    'val result = ${_cast('it', kotlinType: returnType, safeCast: func.returnType.isNullable)}');
-              }
+              indent.writeln(
+                  'val result = ${_cast('it', type: func.returnType)}');
               indent.writeln('callback(result)');
             });
           }
@@ -409,6 +403,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   ///     fun setUp(binaryMessenger: BinaryMessenger, api: Api) {...}
   ///   }
   /// }
+  ///
   @override
   void writeHostApi(
     KotlinOptions generatorOptions,
@@ -557,7 +552,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         indent.writeln('wrapped = listOf<Any?>($call)');
                       }
                     }, addTrailingNewline: false);
-                    indent.add(' catch (exception: Error) ');
+                    indent.add(' catch (exception: Throwable) ');
                     indent.addScoped('{', '}', () {
                       indent.writeln('wrapped = wrapError(exception)');
                     });
@@ -630,25 +625,57 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     });
   }
 
-  void _writeWrapError(Indent indent) {
+  void _writeWrapError(KotlinOptions generatorOptions, Indent indent) {
     indent.newln();
-    indent.write('private fun wrapError(exception: Throwable): List<Any> ');
+    indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
-      indent.write('return ');
-      indent.addScoped('listOf<Any>(', ')', () {
-        indent.writeln('exception.javaClass.simpleName,');
-        indent.writeln('exception.toString(),');
-        indent.writeln(
-            '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
+      indent.write(
+          'if (exception is ${generatorOptions.errorClassName ?? "FlutterError"}) ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('listOf(', ')', () {
+          indent.writeln('exception.code,');
+          indent.writeln('exception.message,');
+          indent.writeln('exception.details');
+        });
+      }, addTrailingNewline: false);
+      indent.addScoped(' else {', '}', () {
+        indent.write('return ');
+        indent.addScoped('listOf(', ')', () {
+          indent.writeln('exception.javaClass.simpleName,');
+          indent.writeln('exception.toString(),');
+          indent.writeln(
+              '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)');
+        });
       });
     });
+  }
+
+  void _writeErrorClass(KotlinOptions generatorOptions, Indent indent) {
+    indent.newln();
+    indent.writeln('/**');
+    indent.writeln(
+        ' * Error class for passing custom error details to Flutter via a thrown PlatformException.');
+    indent.writeln(' * @property code The error code.');
+    indent.writeln(' * @property message The error message.');
+    indent.writeln(
+        ' * @property details The error details. Must be a datatype supported by the api codec.');
+    indent.writeln(' */');
+    indent.write('class ${generatorOptions.errorClassName ?? "FlutterError"} ');
+    indent.addScoped('(', ')', () {
+      indent.writeln('val code: String,');
+      indent.writeln('override val message: String? = null,');
+      indent.writeln('val details: Any? = null');
+    }, addTrailingNewline: false);
+    indent.addln(' : Throwable()');
   }
 
   @override
   void writeGeneralUtilities(
       KotlinOptions generatorOptions, Root root, Indent indent) {
     _writeWrapResult(indent);
-    _writeWrapError(indent);
+    _writeWrapError(generatorOptions, indent);
+    _writeErrorClass(generatorOptions, indent);
   }
 }
 
@@ -678,11 +705,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // a Dart 'int'.  To keep things simple we just use 64bit
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
-      final String castUnwrap = type.isNullable ? '?' : '';
-      return '$value.let { if (it is Int) it.toLong() else it as$castUnwrap Long }';
+      return '$value.let { ${_cast(value, type: type)} }';
     } else {
-      return _cast(value,
-          kotlinType: _kotlinTypeForDartType(type), safeCast: type.isNullable);
+      return _cast(value, type: type);
     }
   }
 }
@@ -748,11 +773,19 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
 }
 
 /// Returns an expression to cast [variable] to [kotlinType].
-String _cast(String variable,
-    {required String kotlinType, bool safeCast = false}) {
+String _cast(String variable, {required TypeDeclaration type}) {
   // Special-case Any, since no-op casts cause warnings.
-  if (kotlinType == 'Any?' || (safeCast && kotlinType == 'Any')) {
+  final String typeString = _kotlinTypeForDartType(type);
+  if (type.isNullable && typeString == 'Any') {
     return variable;
   }
-  return '$variable as${safeCast ? '?' : ''} $kotlinType';
+  if (typeString == 'Int' || typeString == 'Long') {
+    return _castInt(type.isNullable);
+  }
+  return '$variable as ${_nullsafeKotlinTypeForDartType(type)}';
+}
+
+String _castInt(bool isNullable) {
+  final String nullability = isNullable ? '?' : '';
+  return 'if (it is Int) it.toLong() else it as Long$nullability';
 }

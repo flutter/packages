@@ -1,5 +1,16 @@
-## NEXT
+## 2.7.0
 
+* Adds an `Uri` typed factory method `VideoPlayerController.networkUrl` to avoid common mistakes with `String` URIs. The method
+receives an`Uri` instead of a `String` url.
+* Deprecates `VideoPlayerController.network` factory method.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+## 2.6.1
+
+* Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
+
+## 2.6.0
+
+* Adds option to configure HTTP headers via `VideoPlayerController` to fix access to M3U8 files on Android.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.5.3

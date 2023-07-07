@@ -52,7 +52,7 @@
                                 keyPath:keyPath
                                  object:object
                                  change:change
-                             completion:^(NSError *error) {
+                             completion:^(FlutterError *error) {
                                NSAssert(!error, @"%@", error);
                              }];
 }
@@ -124,7 +124,7 @@
                                     request:(nonnull FWFNSUrlRequestData *)request
                                       error:
                                           (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  NSURLRequest *urlRequest = FWFNSURLRequestFromRequestData(request);
+  NSURLRequest *urlRequest = FWFNativeNSURLRequestFromRequestData(request);
   if (!urlRequest) {
     *error = [FlutterError errorWithCode:@"FWFURLRequestParsingError"
                                  message:@"Failed instantiating an NSURLRequest."
@@ -190,11 +190,25 @@
          } else {
            flutterError = [FlutterError errorWithCode:@"FWFEvaluateJavaScriptError"
                                               message:@"Failed evaluating JavaScript."
-                                              details:FWFNSErrorDataFromNSError(error)];
+                                              details:FWFNSErrorDataFromNativeNSError(error)];
          }
 
          completion(returnValue, flutterError);
        }];
+}
+
+- (void)setInspectableForWebViewWithIdentifier:(NSNumber *)identifier
+                                   inspectable:(NSNumber *)inspectable
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(macOS 13.3, iOS 16.4, tvOS 16.4, *)) {
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130300 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400
+    [[self webViewForIdentifier:identifier] setInspectable:inspectable.boolValue];
+#endif
+  } else {
+    *error = [FlutterError errorWithCode:@"FWFUnsupportedVersionError"
+                                 message:@"setInspectable is only supported on versions 16.4+."
+                                 details:nil];
+  }
 }
 
 - (void)goBackForWebViewWithIdentifier:(nonnull NSNumber *)identifier

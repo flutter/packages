@@ -104,7 +104,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of createCookieManagerDelegate should throw unimplemented error',
       () {
     final WebViewPlatform webViewPlatform = ExtendsWebViewPlatform();
@@ -117,7 +116,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of createNavigationCallbackHandlerDelegate should throw unimplemented error',
       () {
     final WebViewPlatform webViewPlatform = ExtendsWebViewPlatform();
@@ -130,7 +128,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of createWebViewControllerDelegate should throw unimplemented error',
       () {
     final WebViewPlatform webViewPlatform = ExtendsWebViewPlatform();
@@ -143,7 +140,6 @@ void main() {
   });
 
   test(
-      // ignore: lines_longer_than_80_chars
       'Default implementation of createWebViewWidgetDelegate should throw unimplemented error',
       () {
     final WebViewPlatform webViewPlatform = ExtendsWebViewPlatform();

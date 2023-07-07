@@ -7,9 +7,8 @@ package io.flutter.plugins.imagepicker;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
@@ -19,14 +18,21 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
-import java.io.File;
+import io.flutter.plugins.imagepicker.Messages.CacheRetrievalResult;
+import io.flutter.plugins.imagepicker.Messages.FlutterError;
+import io.flutter.plugins.imagepicker.Messages.GeneralOptions;
+import io.flutter.plugins.imagepicker.Messages.ImagePickerApi;
+import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
+import io.flutter.plugins.imagepicker.Messages.MediaSelectionOptions;
+import io.flutter.plugins.imagepicker.Messages.Result;
+import io.flutter.plugins.imagepicker.Messages.SourceCamera;
+import io.flutter.plugins.imagepicker.Messages.SourceSpecification;
+import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class ImagePickerPlugin
-    implements MethodChannel.MethodCallHandler, FlutterPlugin, ActivityAware {
+public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePickerApi {
 
   private class LifeCycleObserver
       implements Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
@@ -98,9 +104,9 @@ public class ImagePickerPlugin
     private Application application;
     private Activity activity;
     private ImagePickerDelegate delegate;
-    private MethodChannel channel;
     private LifeCycleObserver observer;
     private ActivityPluginBinding activityBinding;
+    private BinaryMessenger messenger;
 
     // This is null when not using v2 embedding;
     private Lifecycle lifecycle;
@@ -110,16 +116,16 @@ public class ImagePickerPlugin
         final Application application,
         final Activity activity,
         final BinaryMessenger messenger,
-        final MethodChannel.MethodCallHandler handler,
+        final ImagePickerApi handler,
         final PluginRegistry.Registrar registrar,
         final ActivityPluginBinding activityBinding) {
       this.application = application;
       this.activity = activity;
       this.activityBinding = activityBinding;
+      this.messenger = messenger;
 
       delegate = constructDelegate(activity);
-      channel = new MethodChannel(messenger, CHANNEL);
-      channel.setMethodCallHandler(handler);
+      ImagePickerApi.setup(messenger, handler);
       observer = new LifeCycleObserver(activity);
       if (registrar != null) {
         // V1 embedding setup for activity listeners.
@@ -153,10 +159,7 @@ public class ImagePickerPlugin
         lifecycle = null;
       }
 
-      if (channel != null) {
-        channel.setMethodCallHandler(null);
-        channel = null;
-      }
+      ImagePickerApi.setup(messenger, null);
 
       if (application != null) {
         application.unregisterActivityLifecycleCallbacks(observer);
@@ -177,32 +180,19 @@ public class ImagePickerPlugin
     }
   }
 
-  static final String METHOD_CALL_IMAGE = "pickImage";
-  static final String METHOD_CALL_MULTI_IMAGE = "pickMultiImage";
-  static final String METHOD_CALL_VIDEO = "pickVideo";
-  private static final String METHOD_CALL_RETRIEVE = "retrieve";
-  private static final int CAMERA_DEVICE_FRONT = 1;
-  private static final int CAMERA_DEVICE_REAR = 0;
-  private static final String CHANNEL = "plugins.flutter.io/image_picker_android";
-
-  private static final int SOURCE_CAMERA = 0;
-  private static final int SOURCE_GALLERY = 1;
-
   private FlutterPluginBinding pluginBinding;
-  private ActivityState activityState;
+  ActivityState activityState;
 
   @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+  public static void registerWith(
+      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     if (registrar.activity() == null) {
       // If a background flutter view tries to register the plugin, there will be no activity from the registrar,
       // we stop the registering process immediately because the ImagePicker requires an activity.
       return;
     }
     Activity activity = registrar.activity();
-    Application application = null;
-    if (registrar.context() != null) {
-      application = (Application) (registrar.context().getApplicationContext());
-    }
+    Application application = (Application) (registrar.context().getApplicationContext());
     ImagePickerPlugin plugin = new ImagePickerPlugin();
     plugin.setup(registrar.messenger(), application, activity, registrar, null);
   }
@@ -226,17 +216,17 @@ public class ImagePickerPlugin
   }
 
   @Override
-  public void onAttachedToEngine(FlutterPluginBinding binding) {
+  public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     pluginBinding = binding;
   }
 
   @Override
-  public void onDetachedFromEngine(FlutterPluginBinding binding) {
+  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     pluginBinding = null;
   }
 
   @Override
-  public void onAttachedToActivity(ActivityPluginBinding binding) {
+  public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
     setup(
         pluginBinding.getBinaryMessenger(),
         (Application) pluginBinding.getApplicationContext(),
@@ -256,7 +246,7 @@ public class ImagePickerPlugin
   }
 
   @Override
-  public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
+  public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
     onAttachedToActivity(binding);
   }
 
@@ -281,111 +271,117 @@ public class ImagePickerPlugin
   final ImagePickerDelegate constructDelegate(final Activity setupActivity) {
     final ImagePickerCache cache = new ImagePickerCache(setupActivity);
 
-    final File externalFilesDirectory = setupActivity.getCacheDir();
     final ExifDataCopier exifDataCopier = new ExifDataCopier();
-    final ImageResizer imageResizer = new ImageResizer(externalFilesDirectory, exifDataCopier);
-    return new ImagePickerDelegate(setupActivity, externalFilesDirectory, imageResizer, cache);
+    final ImageResizer imageResizer = new ImageResizer(setupActivity, exifDataCopier);
+    return new ImagePickerDelegate(setupActivity, imageResizer, cache);
   }
 
-  // MethodChannel.Result wrapper that responds on the platform thread.
-  private static class MethodResultWrapper implements MethodChannel.Result {
-    private MethodChannel.Result methodResult;
-    private Handler handler;
-
-    MethodResultWrapper(MethodChannel.Result result) {
-      methodResult = result;
-      handler = new Handler(Looper.getMainLooper());
+  private @Nullable ImagePickerDelegate getImagePickerDelegate() {
+    if (activityState == null || activityState.getActivity() == null) {
+      return null;
     }
+    return activityState.getDelegate();
+  }
 
-    @Override
-    public void success(final Object result) {
-      handler.post(
-          new Runnable() {
-            @Override
-            public void run() {
-              methodResult.success(result);
-            }
-          });
-    }
-
-    @Override
-    public void error(
-        final String errorCode, final String errorMessage, final Object errorDetails) {
-      handler.post(
-          new Runnable() {
-            @Override
-            public void run() {
-              methodResult.error(errorCode, errorMessage, errorDetails);
-            }
-          });
-    }
-
-    @Override
-    public void notImplemented() {
-      handler.post(
-          new Runnable() {
-            @Override
-            public void run() {
-              methodResult.notImplemented();
-            }
-          });
+  private void setCameraDevice(
+      @NonNull ImagePickerDelegate delegate, @NonNull SourceSpecification source) {
+    SourceCamera camera = source.getCamera();
+    if (camera != null) {
+      ImagePickerDelegate.CameraDevice device;
+      switch (camera) {
+        case FRONT:
+          device = ImagePickerDelegate.CameraDevice.FRONT;
+          break;
+        case REAR:
+        default:
+          device = ImagePickerDelegate.CameraDevice.REAR;
+          break;
+      }
+      delegate.setCameraDevice(device);
     }
   }
 
   @Override
-  public void onMethodCall(MethodCall call, MethodChannel.Result rawResult) {
-    if (activityState == null || activityState.getActivity() == null) {
-      rawResult.error("no_activity", "image_picker plugin requires a foreground activity.", null);
+  public void pickImages(
+      @NonNull SourceSpecification source,
+      @NonNull ImageSelectionOptions options,
+      @NonNull GeneralOptions generalOptions,
+      @NonNull Result<List<String>> result) {
+    ImagePickerDelegate delegate = getImagePickerDelegate();
+    if (delegate == null) {
+      result.error(
+          new FlutterError(
+              "no_activity", "image_picker plugin requires a foreground activity.", null));
       return;
     }
-    MethodChannel.Result result = new MethodResultWrapper(rawResult);
-    int imageSource;
-    ImagePickerDelegate delegate = activityState.getDelegate();
-    if (call.argument("cameraDevice") != null) {
-      ImagePickerDelegate.CameraDevice device;
-      int deviceIntValue = call.argument("cameraDevice");
-      if (deviceIntValue == CAMERA_DEVICE_FRONT) {
-        device = ImagePickerDelegate.CameraDevice.FRONT;
-      } else {
-        device = ImagePickerDelegate.CameraDevice.REAR;
+
+    setCameraDevice(delegate, source);
+    if (generalOptions.getAllowMultiple()) {
+      delegate.chooseMultiImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
+    } else {
+      switch (source.getType()) {
+        case GALLERY:
+          delegate.chooseImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
+          break;
+        case CAMERA:
+          delegate.takeImageWithCamera(options, result);
+          break;
       }
-      delegate.setCameraDevice(device);
     }
-    switch (call.method) {
-      case METHOD_CALL_IMAGE:
-        imageSource = call.argument("source");
-        switch (imageSource) {
-          case SOURCE_GALLERY:
-            delegate.chooseImageFromGallery(call, result);
-            break;
-          case SOURCE_CAMERA:
-            delegate.takeImageWithCamera(call, result);
-            break;
-          default:
-            throw new IllegalArgumentException("Invalid image source: " + imageSource);
-        }
-        break;
-      case METHOD_CALL_MULTI_IMAGE:
-        delegate.chooseMultiImageFromGallery(call, result);
-        break;
-      case METHOD_CALL_VIDEO:
-        imageSource = call.argument("source");
-        switch (imageSource) {
-          case SOURCE_GALLERY:
-            delegate.chooseVideoFromGallery(call, result);
-            break;
-          case SOURCE_CAMERA:
-            delegate.takeVideoWithCamera(call, result);
-            break;
-          default:
-            throw new IllegalArgumentException("Invalid video source: " + imageSource);
-        }
-        break;
-      case METHOD_CALL_RETRIEVE:
-        delegate.retrieveLostImage(result);
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown method " + call.method);
+  }
+
+  @Override
+  public void pickMedia(
+      @NonNull MediaSelectionOptions mediaSelectionOptions,
+      @NonNull GeneralOptions generalOptions,
+      @NonNull Result<List<String>> result) {
+    ImagePickerDelegate delegate = getImagePickerDelegate();
+    if (delegate == null) {
+      result.error(
+          new FlutterError(
+              "no_activity", "image_picker plugin requires a foreground activity.", null));
+      return;
     }
+    delegate.chooseMediaFromGallery(mediaSelectionOptions, generalOptions, result);
+  }
+
+  @Override
+  public void pickVideos(
+      @NonNull SourceSpecification source,
+      @NonNull VideoSelectionOptions options,
+      @NonNull GeneralOptions generalOptions,
+      @NonNull Result<List<String>> result) {
+    ImagePickerDelegate delegate = getImagePickerDelegate();
+    if (delegate == null) {
+      result.error(
+          new FlutterError(
+              "no_activity", "image_picker plugin requires a foreground activity.", null));
+      return;
+    }
+
+    setCameraDevice(delegate, source);
+    if (generalOptions.getAllowMultiple()) {
+      result.error(new RuntimeException("Multi-video selection is not implemented"));
+    } else {
+      switch (source.getType()) {
+        case GALLERY:
+          delegate.chooseVideoFromGallery(options, generalOptions.getUsePhotoPicker(), result);
+          break;
+        case CAMERA:
+          delegate.takeVideoWithCamera(options, result);
+          break;
+      }
+    }
+  }
+
+  @Nullable
+  @Override
+  public CacheRetrievalResult retrieveLostResults() {
+    ImagePickerDelegate delegate = getImagePickerDelegate();
+    if (delegate == null) {
+      throw new FlutterError(
+          "no_activity", "image_picker plugin requires a foreground activity.", null);
+    }
+    return delegate.retrieveLostImage();
   }
 }

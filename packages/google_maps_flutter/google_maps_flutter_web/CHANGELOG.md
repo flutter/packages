@@ -1,5 +1,31 @@
-## NEXT
+## 0.5.1
 
+* Adds padding support to `CameraUpdate.newLatLngBounds`. Issue [#122192](https://github.com/flutter/flutter/issues/122192).
+
+## 0.5.0+1
+
+* Updates the README to mention that this package is the endorsed implementation
+  of `google_maps_flutter` for the web platform.
+
+## 0.5.0
+
+* **BREAKING CHANGE:** Fires a `MapStyleException` when an invalid JSON is used
+  in `setMapStyle` (was `FormatException` previously).
+* Implements a `GoogleMapsInspectorPlatform` to allow integration tests to inspect
+  parts of the internal state of a map.
+
+## 0.4.0+9
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.4.0+8
+
+* Updates minimum Flutter version to 3.3.
+* Allows marker position updates. Issue [#83467](https://github.com/flutter/flutter/issues/83467).
+
+## 0.4.0+7
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.4.0+6

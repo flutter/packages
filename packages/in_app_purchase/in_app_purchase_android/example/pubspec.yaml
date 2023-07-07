@@ -3,8 +3,8 @@ description: Demonstrates how to use the in_app_purchase_android plugin.
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
@@ -20,8 +20,7 @@ dependencies:
   shared_preferences: ^2.0.0
 
 dev_dependencies:
-  flutter_driver:
-    sdk: flutter
+  build_runner: ^2.4.5
   flutter_test:
     sdk: flutter
   integration_test:

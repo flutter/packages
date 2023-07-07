@@ -10,6 +10,8 @@ import androidx.test.espresso.EspressoException;
 public final class InvalidFlutterViewException extends RuntimeException
     implements EspressoException {
 
+  private static final long serialVersionUID = 0L;
+
   /** Constructs with an error message. */
   public InvalidFlutterViewException(String message) {
     super(message);

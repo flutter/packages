@@ -15,7 +15,7 @@ packages/flutter_adaptive_scaffold/**                    @gspencergoog
 packages/flutter_image/**                                @stuartmorgan
 packages/flutter_lints/**                                @goderbauer
 packages/flutter_markdown/**                             @domesticmouse
-packages/flutter_migrate/**                              @GaryQian
+packages/flutter_migrate/**                              @stuartmorgan
 packages/flutter_template_images/**                      @stuartmorgan
 packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai
@@ -41,7 +41,7 @@ packages/video_player/**                                 @tarrinneal
 packages/web_benchmarks/**                               @yjbanov
 packages/webview_flutter/**                              @bparrishMines
 packages/xdg_directories/**                              @stuartmorgan
-third_party/packages/cupertino_icons/**                  @jmagman
+third_party/packages/cupertino_icons/**                  @MitchellGoodwin
 
 # Plugin platform implementation rules. These should stay last, since the last
 # matching entry takes precedence.
@@ -53,6 +53,7 @@ packages/**/*_web/**                                     @ditman
 packages/camera/camera_android/**                        @camsim99
 packages/camera/camera_android_camerax/**                @camsim99
 packages/espresso/**                                     @reidbaker
+packages/file_selector/file_selector_android/**          @gmackall
 packages/flutter_plugin_android_lifecycle/**             @reidbaker
 packages/google_maps_flutter/google_maps_flutter_android/**  @reidbaker
 packages/google_sign_in/google_sign_in_android/**        @camsim99
@@ -67,28 +68,30 @@ packages/video_player/video_player_android/**            @camsim99
 
 # - iOS
 packages/camera/camera_avfoundation/**                   @hellohuanlin
-packages/file_selector/file_selector_ios/**              @jmagman
+packages/file_selector/file_selector_ios/**              @stuartmorgan
 packages/google_maps_flutter/google_maps_flutter_ios/**  @cyanglaz
 packages/google_sign_in/google_sign_in_ios/**            @vashworth
 packages/image_picker/image_picker_ios/**                @vashworth
 packages/in_app_purchase/in_app_purchase_storekit/**     @cyanglaz
-packages/ios_platform_images/ios/**                      @jmagman
+packages/ios_platform_images/ios/**                      @stuartmorgan
 packages/local_auth/local_auth_ios/**                    @louisehsu
-packages/path_provider/path_provider_foundation/**       @jmagman
+packages/path_provider/path_provider_foundation/**       @stuartmorgan
 packages/quick_actions/quick_actions_ios/**              @hellohuanlin
 packages/shared_preferences/shared_preferences_foundation/**  @cyanglaz
-packages/url_launcher/url_launcher_ios/**                @jmagman
+packages/url_launcher/url_launcher_ios/**                @stuartmorgan
 packages/video_player/video_player_avfoundation/**       @hellohuanlin
 packages/webview_flutter/webview_flutter_wkwebview/**    @cyanglaz
 
 # - Linux
 packages/file_selector/file_selector_linux/**            @cbracken
+packages/image_picker/image_picker_linux/**              @cbracken
 packages/path_provider/path_provider_linux/**            @cbracken
 packages/shared_preferences/shared_preferences_linux/**  @cbracken
 packages/url_launcher/url_launcher_linux/**              @cbracken
 
 # - macOS
 packages/file_selector/file_selector_macos/**            @cbracken
+packages/image_picker/image_picker_macos/**              @cbracken
 packages/url_launcher/url_launcher_macos/**              @cbracken
 
 # - Windows

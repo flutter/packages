@@ -1,5 +1,47 @@
-## NEXT
+## 2.4.9
 
+* Bumps ExoPlayer version to 2.18.7.
+
+## 2.4.8
+
+* Bumps ExoPlayer version to 2.18.6.
+
+## 2.4.7
+
+* Fixes Java warnings.
+
+## 2.4.6
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.4.5
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 2.4.4
+
+* Synchronizes `VideoPlayerValue.isPlaying` with `ExoPlayer`.
+* Updates minimum Flutter version to 3.3.
+
+## 2.4.3
+
+* Bumps ExoPlayer version to 2.18.5.
+
+## 2.4.2
+
+* Bumps ExoPlayer version to 2.18.4.
+
+## 2.4.1
+
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
+
+## 2.4.0
+
+* Allows setting the ExoPlayer user agent by passing a User-Agent HTTP header.
+
+## 2.3.12
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 * Updates compileSdkVersion to 33.
 

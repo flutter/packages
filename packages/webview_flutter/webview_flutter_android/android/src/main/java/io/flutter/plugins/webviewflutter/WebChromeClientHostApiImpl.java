@@ -7,6 +7,8 @@ package io.flutter.plugins.webviewflutter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
+import android.webkit.GeolocationPermissions;
+import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -46,16 +48,28 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     }
 
     @Override
-    public void onProgressChanged(WebView view, int progress) {
+    public void onProgressChanged(@NonNull WebView view, int progress) {
       flutterApi.onProgressChanged(this, view, (long) progress, reply -> {});
     }
 
+    @Override
+    public void onGeolocationPermissionsShowPrompt(
+        @NonNull String origin, @NonNull GeolocationPermissions.Callback callback) {
+      flutterApi.onGeolocationPermissionsShowPrompt(this, origin, callback, reply -> {});
+    }
+
+    @Override
+    public void onGeolocationPermissionsHidePrompt() {
+      flutterApi.onGeolocationPermissionsHidePrompt(this, reply -> {});
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @SuppressWarnings("LambdaLast")
     @Override
     public boolean onShowFileChooser(
-        WebView webView,
-        ValueCallback<Uri[]> filePathCallback,
-        FileChooserParams fileChooserParams) {
+        @NonNull WebView webView,
+        @NonNull ValueCallback<Uri[]> filePathCallback,
+        @NonNull FileChooserParams fileChooserParams) {
       final boolean currentReturnValueForOnShowFileChooser = returnValueForOnShowFileChooser;
       flutterApi.onShowFileChooser(
           this,
@@ -75,6 +89,12 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
       return currentReturnValueForOnShowFileChooser;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onPermissionRequest(@NonNull PermissionRequest request) {
+      flutterApi.onPermissionRequest(this, request, reply -> {});
+    }
+
     /** Sets return value for {@link #onShowFileChooser}. */
     public void setReturnValueForOnShowFileChooser(boolean value) {
       returnValueForOnShowFileChooser = value;
@@ -86,11 +106,14 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
    * window.
    */
   public static class SecureWebChromeClient extends WebChromeClient {
-    @Nullable private WebViewClient webViewClient;
+    @Nullable WebViewClient webViewClient;
 
     @Override
     public boolean onCreateWindow(
-        final WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+        @NonNull final WebView view,
+        boolean isDialog,
+        boolean isUserGesture,
+        @NonNull Message resultMsg) {
       return onCreateWindow(view, resultMsg, new WebView(view.getContext()));
     }
 
@@ -109,7 +132,9 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
      */
     @VisibleForTesting
     boolean onCreateWindow(
-        final WebView view, Message resultMsg, @Nullable WebView onCreateWindowWebView) {
+        @NonNull final WebView view,
+        @NonNull Message resultMsg,
+        @Nullable WebView onCreateWindowWebView) {
       // WebChromeClient requires a WebViewClient because of a bug fix that makes
       // calls to WebViewClient.requestLoading/WebViewClient.urlLoading when a new
       // window is opened. This is to make sure a url opened by `Window.open` has
@@ -131,8 +156,8 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
             }
 
             // Legacy codepath for < N.
-            @SuppressWarnings("deprecation")
             @Override
+            @SuppressWarnings({"deprecation", "RedundantSuppression"})
             public boolean shouldOverrideUrlLoading(WebView windowWebView, String url) {
               if (!webViewClient.shouldOverrideUrlLoading(view, url)) {
                 view.loadUrl(url);
@@ -167,12 +192,14 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   /** Handles creating {@link WebChromeClient}s for a {@link WebChromeClientHostApiImpl}. */
   public static class WebChromeClientCreator {
     /**
-     * Creates a {@link DownloadListenerHostApiImpl.DownloadListenerImpl}.
+     * Creates a {@link WebChromeClientHostApiImpl.WebChromeClientImpl}.
      *
      * @param flutterApi handles sending messages to Dart
      * @return the created {@link WebChromeClientHostApiImpl.WebChromeClientImpl}
      */
-    public WebChromeClientImpl createWebChromeClient(WebChromeClientFlutterApiImpl flutterApi) {
+    @NonNull
+    public WebChromeClientImpl createWebChromeClient(
+        @NonNull WebChromeClientFlutterApiImpl flutterApi) {
       return new WebChromeClientImpl(flutterApi);
     }
   }
@@ -185,16 +212,16 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
    * @param flutterApi handles sending messages to Dart
    */
   public WebChromeClientHostApiImpl(
-      InstanceManager instanceManager,
-      WebChromeClientCreator webChromeClientCreator,
-      WebChromeClientFlutterApiImpl flutterApi) {
+      @NonNull InstanceManager instanceManager,
+      @NonNull WebChromeClientCreator webChromeClientCreator,
+      @NonNull WebChromeClientFlutterApiImpl flutterApi) {
     this.instanceManager = instanceManager;
     this.webChromeClientCreator = webChromeClientCreator;
     this.flutterApi = flutterApi;
   }
 
   @Override
-  public void create(Long instanceId) {
+  public void create(@NonNull Long instanceId) {
     final WebChromeClient webChromeClient =
         webChromeClientCreator.createWebChromeClient(flutterApi);
     instanceManager.addDartCreatedInstance(webChromeClient, instanceId);

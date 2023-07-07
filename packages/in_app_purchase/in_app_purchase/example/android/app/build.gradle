@@ -54,6 +54,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace 'io.flutter.plugins.inapppurchaseexample'
     signingConfigs {
         release {
             storeFile project.KEYSTORE_STORE_FILE
@@ -65,13 +66,10 @@ android {
 
     compileSdkVersion flutter.compileSdkVersion
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId project.APP_ID
-        minSdkVersion 16
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 28
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
@@ -99,6 +97,9 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    lint {
+        disable 'InvalidPackage'
+    }
 }
 
 flutter {
@@ -109,7 +110,7 @@ dependencies {
     implementation 'com.android.billingclient:billing:3.0.2'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.0.0'
-    testImplementation 'org.json:json:20220924'
+    testImplementation 'org.json:json:20230618'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }

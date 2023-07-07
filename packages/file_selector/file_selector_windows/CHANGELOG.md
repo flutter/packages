@@ -1,5 +1,23 @@
-## NEXT
+## 0.9.3
 
+* Adds `getSaveLocation` and deprecates `getSavePath`.
+
+## 0.9.2
+
+* Adds `getDirectoryPaths` implementation.
+
+## 0.9.1+8
+
+* Sets a cmake_policy compatibility version to fix build warnings.
+* Updates minimum Flutter version to 3.3.
+
+## 0.9.1+7
+
+* Updates to `pigeon` version 9.
+
+## 0.9.1+6
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.9.1+5

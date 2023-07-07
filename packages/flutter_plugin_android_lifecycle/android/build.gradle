@@ -22,6 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'io.flutter.plugins.flutter_plugin_android_lifecycle'
+    }
     compileSdkVersion 33
 
     defaultConfig {
@@ -29,7 +33,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'proguard.txt'
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
     }
 
@@ -55,4 +67,3 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.1.1'
 }
-

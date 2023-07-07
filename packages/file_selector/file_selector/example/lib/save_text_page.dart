@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(tarrinneal): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,11 +24,11 @@ class SaveTextPage extends StatelessWidget {
     // file will be saved. In most cases, this parameter should not be provided.
     final String initialDirectory =
         (await getApplicationDocumentsDirectory()).path;
-    final String? path = await getSavePath(
+    final FileSaveLocation? result = await getSaveLocation(
       initialDirectory: initialDirectory,
       suggestedName: fileName,
     );
-    if (path == null) {
+    if (result == null) {
       // Operation was canceled by the user.
       return;
     }
@@ -43,7 +39,7 @@ class SaveTextPage extends StatelessWidget {
     final XFile textFile =
         XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
 
-    await textFile.saveTo(path);
+    await textFile.saveTo(result.path);
   }
 
   @override
@@ -89,7 +85,7 @@ class SaveTextPage extends StatelessWidget {
               ),
               onPressed: _isIOS ? null : () => _saveFile(),
               child: const Text(
-                'Press to save a text file (not supported on iOS).',
+                'Press to save a text file.',
               ),
             ),
           ],

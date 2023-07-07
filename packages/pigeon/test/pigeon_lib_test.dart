@@ -100,25 +100,25 @@ void main() {
 
   test('parse args - swift_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_swift_out', 'Foo.swift']);
+        Pigeon.parseArgs(<String>['--swift_out', 'Foo.swift']);
     expect(opts.swiftOut, equals('Foo.swift'));
   });
 
   test('parse args - kotlin_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_kotlin_out', 'Foo.kt']);
+        Pigeon.parseArgs(<String>['--kotlin_out', 'Foo.kt']);
     expect(opts.kotlinOut, equals('Foo.kt'));
   });
 
   test('parse args - kotlin_package', () {
-    final PigeonOptions opts = Pigeon.parseArgs(
-        <String>['--experimental_kotlin_package', 'com.google.foo']);
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--kotlin_package', 'com.google.foo']);
     expect(opts.kotlinOptions?.package, equals('com.google.foo'));
   });
 
-  test('parse args - experimental_cpp_header_out', () {
+  test('parse args - cpp_header_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_cpp_header_out', 'foo.h']);
+        Pigeon.parseArgs(<String>['--cpp_header_out', 'foo.h']);
     expect(opts.cppHeaderOut, equals('foo.h'));
   });
 
@@ -128,9 +128,9 @@ void main() {
     expect(opts.javaOptions!.useGeneratedAnnotation, isTrue);
   });
 
-  test('parse args - experimental_cpp_source_out', () {
+  test('parse args - cpp_source_out', () {
     final PigeonOptions opts =
-        Pigeon.parseArgs(<String>['--experimental_cpp_source_out', 'foo.cpp']);
+        Pigeon.parseArgs(<String>['--cpp_source_out', 'foo.cpp']);
     expect(opts.cppSourceOut, equals('foo.cpp'));
   });
 
@@ -143,6 +143,12 @@ void main() {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--ast_out', 'stdout']);
     expect(opts.astOut, equals('stdout'));
+  });
+
+  test('parse args - base_path', () {
+    final PigeonOptions opts =
+        Pigeon.parseArgs(<String>['--base_path', './foo/']);
+    expect(opts.basePath, equals('./foo/'));
   });
 
   test('simple parse api', () {
@@ -399,7 +405,7 @@ abstract class NestorApi {
     expect(results.copyrightHeader, 'foobar.txt');
   });
 
-  test('Dart generater copyright flag', () {
+  test('Dart generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
@@ -409,7 +415,7 @@ abstract class NestorApi {
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
-  test('Java generater copyright flag', () {
+  test('Java generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         javaOut: 'Foo.java', copyrightHeader: './copyright_header.txt');
@@ -419,7 +425,7 @@ abstract class NestorApi {
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
-  test('Objc header generater copyright flag', () {
+  test('Objc header generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
@@ -430,7 +436,7 @@ abstract class NestorApi {
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
-  test('Objc source generater copyright flag', () {
+  test('Objc source generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
@@ -441,7 +447,7 @@ abstract class NestorApi {
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
-  test('Swift generater copyright flag', () {
+  test('Swift generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         swiftOut: 'Foo.swift', copyrightHeader: './copyright_header.txt');
@@ -451,7 +457,7 @@ abstract class NestorApi {
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
-  test('C++ header generater copyright flag', () {
+  test('C++ header generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options = PigeonOptions(
         cppHeaderOut: 'Foo.h', copyrightHeader: './copyright_header.txt');
@@ -461,7 +467,7 @@ abstract class NestorApi {
     expect(buffer.toString(), startsWith('// Copyright 2013'));
   });
 
-  test('C++ source generater copyright flag', () {
+  test('C++ source generator copyright flag', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     const PigeonOptions options =
         PigeonOptions(copyrightHeader: './copyright_header.txt');
@@ -770,6 +776,51 @@ enum Foo {
 @FlutterApi()
 abstract class Api {
   void doit(Foo foo);
+}
+''';
+    final ParseResults parseResult = parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('enums list argument', () {
+    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+enum Foo { one, two }
+
+@HostApi()
+abstract class Api {
+  void doit(List<Foo> foo);
+}
+''';
+    final ParseResults parseResult = parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('enums map argument key', () {
+    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+enum Foo { one, two }
+
+@HostApi()
+abstract class Api {
+  void doit(Map<Foo, Object> foo);
+}
+''';
+    final ParseResults parseResult = parseSource(code);
+    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors[0].message, contains('Enums'));
+  });
+
+  test('enums map argument value', () {
+    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
+    const String code = '''
+enum Foo { one, two }
+
+@HostApi()
+abstract class Api {
+  void doit(Map<Foo, Object> foo);
 }
 ''';
     final ParseResults parseResult = parseSource(code);

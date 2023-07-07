@@ -13,100 +13,124 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
+import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
+import java.util.Map;
 
-/** Launches components for URLs. */
-class UrlLauncher {
+/** Implements the Pigeon-defined interface for calls from Dart. */
+final class UrlLauncher implements UrlLauncherApi {
+  @VisibleForTesting
+  interface IntentResolver {
+    String getHandlerComponentName(@NonNull Intent intent);
+  }
+
   private static final String TAG = "UrlLauncher";
-  private final Context applicationContext;
 
-  @Nullable private Activity activity;
+  private final @NonNull Context applicationContext;
+
+  private final @NonNull IntentResolver intentResolver;
+
+  private @Nullable Activity activity;
 
   /**
-   * Uses the given {@code applicationContext} for launching intents.
-   *
-   * <p>It may be null initially, but should be set before calling {@link #launch}.
+   * Creates an instance that uses {@code intentResolver} to look up the handler for intents. This
+   * is to allow injecting an alternate resolver for unit testing.
    */
-  UrlLauncher(Context applicationContext, @Nullable Activity activity) {
-    this.applicationContext = applicationContext;
-    this.activity = activity;
+  @VisibleForTesting
+  UrlLauncher(@NonNull Context context, @NonNull IntentResolver intentResolver) {
+    this.applicationContext = context;
+    this.intentResolver = intentResolver;
+  }
+
+  UrlLauncher(@NonNull Context context) {
+    this(
+        context,
+        intent -> {
+          ComponentName componentName = intent.resolveActivity(context.getPackageManager());
+          return componentName == null ? null : componentName.toShortString();
+        });
   }
 
   void setActivity(@Nullable Activity activity) {
     this.activity = activity;
   }
 
-  /** Returns whether the given {@code url} resolves into an existing component. */
-  boolean canLaunch(String url) {
+  @Override
+  public @NonNull Boolean canLaunchUrl(@NonNull String url) {
     Intent launchIntent = new Intent(Intent.ACTION_VIEW);
     launchIntent.setData(Uri.parse(url));
-    ComponentName componentName =
-        launchIntent.resolveActivity(applicationContext.getPackageManager());
-
+    String componentName = intentResolver.getHandlerComponentName(launchIntent);
+    if (BuildConfig.DEBUG) {
+      Log.i(TAG, "component name for " + url + " is " + componentName);
+    }
     if (componentName == null) {
-      Log.i(TAG, "component name for " + url + " is null");
       return false;
     } else {
-      Log.i(TAG, "component name for " + url + " is " + componentName.toShortString());
-      return !"{com.android.fallback/com.android.fallback.Fallback}"
-          .equals(componentName.toShortString());
+      // Ignore the emulator fallback activity.
+      return !"{com.android.fallback/com.android.fallback.Fallback}".equals(componentName);
     }
   }
 
-  /**
-   * Attempts to launch the given {@code url}.
-   *
-   * @param headersBundle forwarded to the intent as {@code Browser.EXTRA_HEADERS}.
-   * @param useWebView when true, the URL is launched inside of {@link WebViewActivity}.
-   * @param enableJavaScript Only used if {@param useWebView} is true. Enables JS in the WebView.
-   * @param enableDomStorage Only used if {@param useWebView} is true. Enables DOM storage in the
-   * @return {@link LaunchStatus#NO_ACTIVITY} if there's no available {@code applicationContext}.
-   *     {@link LaunchStatus#ACTIVITY_NOT_FOUND} if there's no activity found to handle {@code
-   *     launchIntent}. {@link LaunchStatus#OK} otherwise.
-   */
-  LaunchStatus launch(
-      String url,
-      Bundle headersBundle,
-      boolean useWebView,
-      boolean enableJavaScript,
-      boolean enableDomStorage) {
-    if (activity == null) {
-      return LaunchStatus.NO_ACTIVITY;
-    }
+  @Override
+  public @NonNull Boolean launchUrl(@NonNull String url, @NonNull Map<String, String> headers) {
+    ensureActivity();
+    assert activity != null;
 
-    Intent launchIntent;
-    if (useWebView) {
-      launchIntent =
-          WebViewActivity.createIntent(
-              activity, url, enableJavaScript, enableDomStorage, headersBundle);
-    } else {
-      launchIntent =
-          new Intent(Intent.ACTION_VIEW)
-              .setData(Uri.parse(url))
-              .putExtra(Browser.EXTRA_HEADERS, headersBundle);
-    }
-
+    Intent launchIntent =
+        new Intent(Intent.ACTION_VIEW)
+            .setData(Uri.parse(url))
+            .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
     try {
       activity.startActivity(launchIntent);
     } catch (ActivityNotFoundException e) {
-      return LaunchStatus.ACTIVITY_NOT_FOUND;
+      return false;
     }
 
-    return LaunchStatus.OK;
+    return true;
   }
 
-  /** Closes any activities started with {@link #launch} {@code useWebView=true}. */
-  void closeWebView() {
+  @Override
+  public @NonNull Boolean openUrlInWebView(@NonNull String url, @NonNull WebViewOptions options) {
+    ensureActivity();
+    assert activity != null;
+
+    Intent launchIntent =
+        WebViewActivity.createIntent(
+            activity,
+            url,
+            options.getEnableJavaScript(),
+            options.getEnableDomStorage(),
+            extractBundle(options.getHeaders()));
+    try {
+      activity.startActivity(launchIntent);
+    } catch (ActivityNotFoundException e) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public void closeWebView() {
     applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
   }
 
-  /** Result of a {@link #launch} call. */
-  enum LaunchStatus {
-    /** The intent was well formed. */
-    OK,
-    /** No activity was found to launch. */
-    NO_ACTIVITY,
-    /** No Activity found that can handle given intent. */
-    ACTIVITY_NOT_FOUND,
+  private static @NonNull Bundle extractBundle(Map<String, String> headersMap) {
+    final Bundle headersBundle = new Bundle();
+    for (String key : headersMap.keySet()) {
+      final String value = headersMap.get(key);
+      headersBundle.putString(key, value);
+    }
+    return headersBundle;
+  }
+
+  private void ensureActivity() {
+    if (activity == null) {
+      throw new Messages.FlutterError(
+          "NO_ACTIVITY", "Launching a URL requires a foreground activity.", null);
+    }
   }
 }

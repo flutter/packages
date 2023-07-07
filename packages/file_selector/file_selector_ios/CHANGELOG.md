@@ -1,5 +1,19 @@
-## NEXT
+## 0.5.1+4
 
+* Updates references to the deprecated `macUTIs`.
+
+## 0.5.1+3
+
+* Updates pigeon to fix warnings with clang 15.
+* Updates minimum Flutter version to 3.3.
+
+## 0.5.1+2
+
+* Updates to `pigeon` version 9.
+
+## 0.5.1+1
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.5.1

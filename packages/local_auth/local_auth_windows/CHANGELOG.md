@@ -1,5 +1,16 @@
-## NEXT
+## 1.0.9
 
+* Updates to Pigeon 10.0.
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 1.0.8
+
+* Sets a cmake_policy compatibility version to fix build warnings.
+
+## 1.0.7
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 1.0.6

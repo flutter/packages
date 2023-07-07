@@ -1,5 +1,15 @@
-## NEXT
+## 1.0.6
 
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 1.0.5
+
+* Updates minimum iOS version to 11 and Flutter version to 3.3.
+
+## 1.0.4
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 1.0.3
@@ -14,7 +24,7 @@
 
 ## 1.0.1
 
-* Removes custom modulemap file with "Test" submodule and private headers for Swift migration. 
+* Removes custom modulemap file with "Test" submodule and private headers for Swift migration.
 * Migrates `FLTQuickActionsPlugin` class to Swift.
 
 ## 1.0.0

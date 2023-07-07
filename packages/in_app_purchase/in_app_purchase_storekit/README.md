@@ -6,9 +6,11 @@ The iOS and macOS implementation of [`in_app_purchase`][1].
 
 This package has been [endorsed][2], meaning that you only need to add `in_app_purchase`
 as a dependency in your `pubspec.yaml`. This package will be automatically included in your app
-when you do.
+when you do,
+so you do not need to add it to your `pubspec.yaml`.
 
-If you wish to use this package only, you can [add  `in_app_purchase_storekit` directly][3].
+However, if you `import` this package to use any of its APIs directly, you
+should [add it to your `pubspec.yaml` as usual][3].
 
 ## Contributing
 

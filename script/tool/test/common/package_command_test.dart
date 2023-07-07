@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -211,10 +209,10 @@ void main() {
     test(
         'explicitly specifying the plugin (group) name of a federated plugin '
         'should include all plugins in the group', () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: '''
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin1/plugin1/plugin1.dart
-'''),
+''')),
       ];
       final Directory pluginGroup = packagesDir.childDirectory('plugin1');
       final RepositoryPackage appFacingPackage =
@@ -239,10 +237,10 @@ packages/plugin1/plugin1/plugin1.dart
     test(
         'specifying the app-facing package of a federated plugin using its '
         'fully qualified name should include only that package', () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: '''
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin1/plugin1/plugin1.dart
-'''),
+''')),
       ];
       final Directory pluginGroup = packagesDir.childDirectory('plugin1');
       final RepositoryPackage appFacingPackage =
@@ -259,10 +257,10 @@ packages/plugin1/plugin1/plugin1.dart
     test(
         'specifying a package of a federated plugin by its name should '
         'include only that package', () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: '''
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin1/plugin1/plugin1.dart
-'''),
+''')),
       ];
       final Directory pluginGroup = packagesDir.childDirectory('plugin1');
 
@@ -321,8 +319,7 @@ packages/plugin1/plugin1/plugin1.dart
         expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('Only one of --packages, --run-on-changed-packages, or '
-                  '--packages-for-branch can be provided.')
+              contains('Only one of the package selection arguments')
             ]));
       });
 
@@ -340,8 +337,25 @@ packages/plugin1/plugin1/plugin1.dart
         expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('Only one of --packages, --run-on-changed-packages, or '
-                  '--packages-for-branch can be provided.')
+              contains('Only one of the package selection arguments')
+            ]));
+      });
+
+      test('does not allow --packages with --current-package', () async {
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--current-package',
+          '--packages=plugin1',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Only one of the package selection arguments')
             ]));
       });
 
@@ -361,9 +375,93 @@ packages/plugin1/plugin1/plugin1.dart
         expect(
             output,
             containsAllInOrder(<Matcher>[
-              contains('Only one of --packages, --run-on-changed-packages, or '
-                  '--packages-for-branch can be provided.')
+              contains('Only one of the package selection arguments')
             ]));
+      });
+    });
+
+    group('current-package', () {
+      test('throws when run from outside of the packages directory', () async {
+        fileSystem.currentDirectory = packagesDir.parent;
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--current-package',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('--current-package can only be used within a repository '
+                  'package or package group')
+            ]));
+      });
+
+      test('throws when run directly in the packages directory', () async {
+        fileSystem.currentDirectory = packagesDir;
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--current-package',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('--current-package can only be used within a repository '
+                  'package or package group')
+            ]));
+      });
+
+      test('runs on a package when run from the package directory', () async {
+        final RepositoryPackage package =
+            createFakePlugin('a_package', packagesDir);
+        createFakePlugin('another_package', packagesDir);
+        fileSystem.currentDirectory = package.directory;
+
+        await runCapturingPrint(
+            runner, <String>['sample', '--current-package']);
+
+        expect(command.plugins, unorderedEquals(<String>[package.path]));
+      });
+
+      test('runs on a package when run from a package example directory',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'a_package', packagesDir,
+            examples: <String>['a', 'b', 'c']);
+        createFakePlugin('another_package', packagesDir);
+        fileSystem.currentDirectory = package.getExamples().first.directory;
+
+        await runCapturingPrint(
+            runner, <String>['sample', '--current-package']);
+
+        expect(command.plugins, unorderedEquals(<String>[package.path]));
+      });
+
+      test('runs on a package group when run from the group directory',
+          () async {
+        final Directory pluginGroup = packagesDir.childDirectory('a_plugin');
+        final RepositoryPackage plugin1 =
+            createFakePlugin('a_plugin_foo', pluginGroup);
+        final RepositoryPackage plugin2 =
+            createFakePlugin('a_plugin_bar', pluginGroup);
+        createFakePlugin('unrelated_plugin', packagesDir);
+        fileSystem.currentDirectory = pluginGroup;
+
+        await runCapturingPrint(
+            runner, <String>['sample', '--current-package']);
+
+        expect(command.plugins,
+            unorderedEquals(<String>[plugin1.path, plugin2.path]));
       });
     });
 
@@ -383,8 +481,9 @@ packages/plugin1/plugin1/plugin1.dart
       test(
           'all plugins should be tested if there are no plugin related changes.',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: 'AUTHORS'),
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'AUTHORS')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -398,11 +497,12 @@ packages/plugin1/plugin1/plugin1.dart
       });
 
       test('all plugins should be tested if .cirrus.yml changes.', () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 .cirrus.yml
 packages/plugin1/CHANGELOG
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -423,11 +523,12 @@ packages/plugin1/CHANGELOG
       });
 
       test('all plugins should be tested if .ci.yaml changes', () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 .ci.yaml
 packages/plugin1/CHANGELOG
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -448,11 +549,12 @@ packages/plugin1/CHANGELOG
 
       test('all plugins should be tested if anything in .ci/ changes',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 .ci/Dockerfile
 packages/plugin1/CHANGELOG
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -473,11 +575,12 @@ packages/plugin1/CHANGELOG
 
       test('all plugins should be tested if anything in script/ changes.',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 script/tool_runner.sh
 packages/plugin1/CHANGELOG
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -498,11 +601,12 @@ packages/plugin1/CHANGELOG
 
       test('all plugins should be tested if the root analysis options change.',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 analysis_options.yaml
 packages/plugin1/CHANGELOG
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -523,11 +627,12 @@ packages/plugin1/CHANGELOG
 
       test('all plugins should be tested if formatting options change.',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 .clang-format
 packages/plugin1/CHANGELOG
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -547,8 +652,9 @@ packages/plugin1/CHANGELOG
       });
 
       test('Only changed plugin should be tested.', () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: 'packages/plugin1/plugin1.dart'),
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -568,11 +674,12 @@ packages/plugin1/CHANGELOG
 
       test('multiple files in one plugin should also test the plugin',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin1/plugin1.dart
 packages/plugin1/ios/plugin1.m
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -585,11 +692,12 @@ packages/plugin1/ios/plugin1.m
 
       test('multiple plugins changed should test all the changed plugins',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin1/plugin1.dart
 packages/plugin2/ios/plugin2.m
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir);
@@ -606,12 +714,13 @@ packages/plugin2/ios/plugin2.m
       test(
           'multiple plugins inside the same plugin group changed should output the plugin group name',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin1/plugin1/plugin1.dart
 packages/plugin1/plugin1_platform_interface/plugin1_platform_interface.dart
 packages/plugin1/plugin1_web/plugin1_web.dart
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
@@ -626,10 +735,11 @@ packages/plugin1/plugin1_web/plugin1_web.dart
       test(
           'changing one plugin in a federated group should only include that plugin',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin1/plugin1/plugin1.dart
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
@@ -643,12 +753,13 @@ packages/plugin1/plugin1/plugin1.dart
       });
 
       test('--exclude flag works with --run-on-changed-packages', () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin1/plugin1.dart
 packages/plugin2/ios/plugin2.m
 packages/plugin3/plugin3.dart
-'''),
+''')),
         ];
         final RepositoryPackage plugin1 =
             createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
@@ -677,8 +788,9 @@ packages/plugin3/plugin3.dart
       test(
           'no packages should be tested if there are no plugin related changes.',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: 'AUTHORS'),
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'AUTHORS')),
         ];
         createFakePackage('a_package', packagesDir);
         await runCapturingPrint(
@@ -689,15 +801,16 @@ packages/plugin3/plugin3.dart
 
       test('no packages should be tested even if special repo files change.',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 .cirrus.yml
 .ci.yaml
 .ci/Dockerfile
 .clang-format
 analysis_options.yaml
 script/tool_runner.sh
-'''),
+''')),
         ];
         createFakePackage('a_package', packagesDir);
         await runCapturingPrint(
@@ -707,8 +820,10 @@ script/tool_runner.sh
       });
 
       test('Only changed packages should be tested.', () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: 'packages/a_package/lib/a_package.dart'),
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(
+              MockProcess(stdout: 'packages/a_package/lib/a_package.dart')),
         ];
         final RepositoryPackage packageA =
             createFakePackage('a_package', packagesDir);
@@ -728,11 +843,12 @@ script/tool_runner.sh
 
       test('multiple packages changed should test all the changed packages',
           () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/a_package/lib/a_package.dart
 packages/b_package/lib/src/foo.dart
-'''),
+''')),
         ];
         final RepositoryPackage packageA =
             createFakePackage('a_package', packagesDir);
@@ -747,11 +863,12 @@ packages/b_package/lib/src/foo.dart
       });
 
       test('honors --exclude flag', () async {
-        processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-          MockProcess(stdout: '''
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
 packages/a_package/lib/a_package.dart
 packages/b_package/lib/src/foo.dart
-'''),
+''')),
         ];
         final RepositoryPackage packageA =
             createFakePackage('a_package', packagesDir);
@@ -771,15 +888,18 @@ packages/b_package/lib/src/foo.dart
   group('--packages-for-branch', () {
     test('only tests changed packages relative to the merge base on a branch',
         () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: 'packages/plugin1/plugin1.dart'),
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      processRunner.mockProcessesForExecutable['git-rev-parse'] = <Process>[
-        MockProcess(stdout: 'a-branch'),
+      processRunner.mockProcessesForExecutable['git-rev-parse'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'a-branch')),
       ];
-      processRunner.mockProcessesForExecutable['git-merge-base'] = <Process>[
-        MockProcess(exitCode: 1), // --is-ancestor check
-        MockProcess(stdout: 'abc123'), // finding merge base
+      processRunner.mockProcessesForExecutable['git-merge-base'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['--is-ancestor']),
+        FakeProcessInfo(MockProcess(stdout: 'abc123'),
+            <String>['--fork-point']), // finding merge base
       ];
       final RepositoryPackage plugin1 =
           createFakePlugin('plugin1', packagesDir);
@@ -807,11 +927,12 @@ packages/b_package/lib/src/foo.dart
 
     test('only tests changed packages relative to the previous commit on main',
         () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: 'packages/plugin1/plugin1.dart'),
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      processRunner.mockProcessesForExecutable['git-rev-parse'] = <Process>[
-        MockProcess(stdout: 'main'),
+      processRunner.mockProcessesForExecutable['git-rev-parse'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'main')),
       ];
       final RepositoryPackage plugin1 =
           createFakePlugin('plugin1', packagesDir);
@@ -842,11 +963,12 @@ packages/b_package/lib/src/foo.dart
     test(
         'only tests changed packages relative to the previous commit if '
         'running on a specific hash from main', () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: 'packages/plugin1/plugin1.dart'),
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      processRunner.mockProcessesForExecutable['git-rev-parse'] = <Process>[
-        MockProcess(stdout: 'HEAD'),
+      processRunner.mockProcessesForExecutable['git-rev-parse'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'HEAD')),
       ];
       final RepositoryPackage plugin1 =
           createFakePlugin('plugin1', packagesDir);
@@ -878,15 +1000,25 @@ packages/b_package/lib/src/foo.dart
     test(
         'only tests changed packages relative to the previous commit if '
         'running on a specific hash from origin/main', () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: 'packages/plugin1/plugin1.dart'),
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      processRunner.mockProcessesForExecutable['git-rev-parse'] = <Process>[
-        MockProcess(stdout: 'HEAD'),
+      processRunner.mockProcessesForExecutable['git-rev-parse'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'HEAD')),
       ];
-      processRunner.mockProcessesForExecutable['git-merge-base'] = <Process>[
-        MockProcess(exitCode: 128), // Fail with a non-1 exit code for 'main'
-        MockProcess(), // Succeed for the variant.
+      processRunner.mockProcessesForExecutable['git-merge-base'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 128), <String>[
+          '--is-ancestor',
+          'HEAD',
+          'main'
+        ]), // Fail with a non-1 exit code for 'main'
+        FakeProcessInfo(MockProcess(), <String>[
+          '--is-ancestor',
+          'HEAD',
+          'origin/main'
+        ]), // Succeed for the variant.
       ];
       final RepositoryPackage plugin1 =
           createFakePlugin('plugin1', packagesDir);
@@ -918,11 +1050,12 @@ packages/b_package/lib/src/foo.dart
     test(
         'only tests changed packages relative to the previous commit on master',
         () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: 'packages/plugin1/plugin1.dart'),
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      processRunner.mockProcessesForExecutable['git-rev-parse'] = <Process>[
-        MockProcess(stdout: 'master'),
+      processRunner.mockProcessesForExecutable['git-rev-parse'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'master')),
       ];
       final RepositoryPackage plugin1 =
           createFakePlugin('plugin1', packagesDir);
@@ -951,11 +1084,12 @@ packages/b_package/lib/src/foo.dart
     });
 
     test('throws if getting the branch fails', () async {
-      processRunner.mockProcessesForExecutable['git-diff'] = <Process>[
-        MockProcess(stdout: 'packages/plugin1/plugin1.dart'),
+      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      processRunner.mockProcessesForExecutable['git-rev-parse'] = <Process>[
-        MockProcess(exitCode: 1),
+      processRunner.mockProcessesForExecutable['git-rev-parse'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;

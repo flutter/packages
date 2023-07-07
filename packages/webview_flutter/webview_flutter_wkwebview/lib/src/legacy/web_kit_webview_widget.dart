@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -130,7 +129,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
   /// Methods for handling navigation changes and tracking navigation requests.
   @visibleForTesting
-  late final WKNavigationDelegate navigationDelegate = withWeakRefenceTo(
+  late final WKNavigationDelegate navigationDelegate = withWeakReferenceTo(
     this,
     (WeakReference<WebKitWebViewPlatformController> weakReference) {
       return webViewProxy.createNavigationDelegate(
@@ -199,7 +198,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
     webView = webViewProxy.createWebView(
       configuration,
-      observeValue: withWeakRefenceTo(
+      observeValue: withWeakReferenceTo(
         callbacksHandler,
         (WeakReference<WebViewPlatformCallbacksHandler> weakReference) {
           return (
@@ -215,24 +214,24 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
       ),
     );
 
-    webView.setUIDelegate(uiDelegate);
+    unawaited(webView.setUIDelegate(uiDelegate));
 
     await addJavascriptChannels(params.javascriptChannelNames);
 
-    webView.setNavigationDelegate(navigationDelegate);
+    unawaited(webView.setNavigationDelegate(navigationDelegate));
 
     if (params.userAgent != null) {
-      webView.setCustomUserAgent(params.userAgent);
+      unawaited(webView.setCustomUserAgent(params.userAgent));
     }
 
     if (params.webSettings != null) {
-      updateSettings(params.webSettings!);
+      unawaited(updateSettings(params.webSettings!));
     }
 
     if (params.backgroundColor != null) {
-      webView.setOpaque(false);
-      webView.setBackgroundColor(Colors.transparent);
-      webView.scrollView.setBackgroundColor(params.backgroundColor);
+      unawaited(webView.setOpaque(false));
+      unawaited(webView.setBackgroundColor(Colors.transparent));
+      unawaited(webView.scrollView.setBackgroundColor(params.backgroundColor));
     }
 
     if (params.initialUrl != null) {
@@ -316,7 +315,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     final NSUrlRequest urlRequest = NSUrlRequest(
       url: request.uri.toString(),
       allHttpHeaderFields: request.headers,
-      httpMethod: describeEnum(request.method),
+      httpMethod: request.method.name,
       httpBody: request.body,
     );
 
@@ -380,8 +379,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<String?> currentUrl() => webView.getUrl();
 
   @override
-  Future<void> scrollTo(int x, int y) async {
-    webView.scrollView.setContentOffset(Point<double>(
+  Future<void> scrollTo(int x, int y) {
+    return webView.scrollView.setContentOffset(Point<double>(
       x.toDouble(),
       y.toDouble(),
     ));
@@ -437,7 +436,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
         (String channelName) {
           final WKScriptMessageHandler handler =
               webViewProxy.createScriptMessageHandler(
-            didReceiveScriptMessage: withWeakRefenceTo(
+            didReceiveScriptMessage: withWeakReferenceTo(
               javascriptChannelRegistry,
               (WeakReference<JavascriptChannelRegistry> weakReference) {
                 return (
@@ -551,7 +550,9 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<void> _resetUserScripts({
     Set<String> removedJavaScriptChannels = const <String>{},
   }) async {
-    webView.configuration.userContentController.removeAllUserScripts();
+    unawaited(
+      webView.configuration.userContentController.removeAllUserScripts(),
+    );
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -655,8 +656,7 @@ class WebViewWidgetProxy {
       String keyPath,
       NSObject object,
       Map<NSKeyValueChangeKey, Object?> change,
-    )?
-        observeValue,
+    )? observeValue,
   }) {
     return WKWebView(configuration, observeValue: observeValue);
   }
@@ -666,8 +666,7 @@ class WebViewWidgetProxy {
     required void Function(
       WKUserContentController userContentController,
       WKScriptMessage message,
-    )
-        didReceiveScriptMessage,
+    ) didReceiveScriptMessage,
   }) {
     return WKScriptMessageHandler(
       didReceiveScriptMessage: didReceiveScriptMessage,
@@ -680,8 +679,7 @@ class WebViewWidgetProxy {
       WKWebView webView,
       WKWebViewConfiguration configuration,
       WKNavigationAction navigationAction,
-    )?
-        onCreateWebView,
+    )? onCreateWebView,
   }) {
     return WKUIDelegate(onCreateWebView: onCreateWebView);
   }
@@ -694,8 +692,7 @@ class WebViewWidgetProxy {
     Future<WKNavigationActionPolicy> Function(
       WKWebView webView,
       WKNavigationAction navigationAction,
-    )?
-        decidePolicyForNavigationAction,
+    )? decidePolicyForNavigationAction,
     void Function(WKWebView webView, NSError error)? didFailNavigation,
     void Function(WKWebView webView, NSError error)?
         didFailProvisionalNavigation,

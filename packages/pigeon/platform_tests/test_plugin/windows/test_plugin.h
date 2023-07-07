@@ -43,6 +43,8 @@ class TestPlugin : public flutter::Plugin,
   ThrowError() override;
   std::optional<core_tests_pigeontest::FlutterError> ThrowErrorFromVoid()
       override;
+  core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+  ThrowFlutterError() override;
   core_tests_pigeontest::ErrorOr<int64_t> EchoInt(int64_t an_int) override;
   core_tests_pigeontest::ErrorOr<double> EchoDouble(double a_double) override;
   core_tests_pigeontest::ErrorOr<bool> EchoBool(bool a_bool) override;
@@ -56,10 +58,13 @@ class TestPlugin : public flutter::Plugin,
       const flutter::EncodableList& a_list) override;
   core_tests_pigeontest::ErrorOr<flutter::EncodableMap> EchoMap(
       const flutter::EncodableMap& a_map) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllClassesWrapper>
+  EchoClassWrapper(
+      const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
   ExtractNestedNullableString(
-      const core_tests_pigeontest::AllNullableTypesWrapper& wrapper) override;
-  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllNullableTypesWrapper>
+      const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllClassesWrapper>
   CreateNestedNullableString(const std::string* nullable_string) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllNullableTypes>
   SendMultipleNullableTypes(const bool* a_nullable_bool,
@@ -93,6 +98,11 @@ class TestPlugin : public flutter::Plugin,
   void ThrowAsyncErrorFromVoid(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
+  void ThrowAsyncFlutterError(
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+              reply)>
           result) override;
   void EchoAsyncAllTypes(
       const core_tests_pigeontest::AllTypes& everything,

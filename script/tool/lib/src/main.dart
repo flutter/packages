@@ -13,12 +13,14 @@ import 'build_examples_command.dart';
 import 'common/core.dart';
 import 'create_all_packages_app_command.dart';
 import 'custom_test_command.dart';
+import 'dart_test_command.dart';
 import 'dependabot_check_command.dart';
 import 'drive_examples_command.dart';
 import 'federation_safety_check_command.dart';
 import 'firebase_test_lab_command.dart';
 import 'fix_command.dart';
 import 'format_command.dart';
+import 'gradle_check_command.dart';
 import 'license_check_command.dart';
 import 'lint_android_command.dart';
 import 'list_command.dart';
@@ -30,7 +32,7 @@ import 'publish_command.dart';
 import 'pubspec_check_command.dart';
 import 'readme_check_command.dart';
 import 'remove_dev_dependencies_command.dart';
-import 'test_command.dart';
+import 'update_dependency_command.dart';
 import 'update_excerpts_command.dart';
 import 'update_min_sdk_command.dart';
 import 'update_release_info_command.dart';
@@ -39,17 +41,18 @@ import 'xcode_analyze_command.dart';
 
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
-
-  Directory packagesDir =
-      fileSystem.currentDirectory.childDirectory('packages');
+  final Directory scriptDir =
+      fileSystem.file(io.Platform.script.toFilePath()).parent;
+  // Support running either via directly invoking main.dart, or the wrapper in
+  // bin/.
+  final Directory toolsDir =
+      scriptDir.basename == 'bin' ? scriptDir.parent : scriptDir.parent.parent;
+  final Directory root = toolsDir.parent.parent;
+  final Directory packagesDir = root.childDirectory('packages');
 
   if (!packagesDir.existsSync()) {
-    if (fileSystem.currentDirectory.basename == 'packages') {
-      packagesDir = fileSystem.currentDirectory;
-    } else {
-      print('Error: Cannot find a "packages" sub-directory');
-      io.exit(1);
-    }
+    print('Error: Cannot find a "packages" sub-directory');
+    io.exit(1);
   }
 
   final CommandRunner<void> commandRunner = CommandRunner<void>(
@@ -65,6 +68,7 @@ void main(List<String> args) {
     ..addCommand(FirebaseTestLabCommand(packagesDir))
     ..addCommand(FixCommand(packagesDir))
     ..addCommand(FormatCommand(packagesDir))
+    ..addCommand(GradleCheckCommand(packagesDir))
     ..addCommand(LicenseCheckCommand(packagesDir))
     ..addCommand(LintAndroidCommand(packagesDir))
     ..addCommand(PodspecCheckCommand(packagesDir))
@@ -76,7 +80,8 @@ void main(List<String> args) {
     ..addCommand(PubspecCheckCommand(packagesDir))
     ..addCommand(ReadmeCheckCommand(packagesDir))
     ..addCommand(RemoveDevDependenciesCommand(packagesDir))
-    ..addCommand(TestCommand(packagesDir))
+    ..addCommand(DartTestCommand(packagesDir))
+    ..addCommand(UpdateDependencyCommand(packagesDir))
     ..addCommand(UpdateExcerptsCommand(packagesDir))
     ..addCommand(UpdateMinSdkCommand(packagesDir))
     ..addCommand(UpdateReleaseInfoCommand(packagesDir))

@@ -107,6 +107,16 @@ enum SimulatedLayout {
   final double _height = 800;
   final String navSlotKey;
 
+  static const Color navigationRailThemeBgColor = Colors.white;
+  static const IconThemeData selectedIconThemeData = IconThemeData(
+    color: Colors.red,
+    size: 32.0,
+  );
+  static const IconThemeData unSelectedIconThemeData = IconThemeData(
+    color: Colors.black,
+    size: 24.0,
+  );
+
   Size get size => Size(_width, _height);
 
   MaterialApp app({
@@ -114,6 +124,13 @@ enum SimulatedLayout {
     bool animations = true,
   }) {
     return MaterialApp(
+      theme: ThemeData.light().copyWith(
+        navigationRailTheme: const NavigationRailThemeData(
+          backgroundColor: navigationRailThemeBgColor,
+          selectedIconTheme: selectedIconThemeData,
+          unselectedIconTheme: unSelectedIconThemeData,
+        ),
+      ),
       home: MediaQuery(
         data: MediaQueryData(size: size),
         child: TestScaffold(

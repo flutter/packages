@@ -38,8 +38,7 @@ class WebKitProxy {
       String keyPath,
       NSObject object,
       Map<NSKeyValueChangeKey, Object?> change,
-    )?
-        observeValue,
+    )? observeValue,
     InstanceManager? instanceManager,
   }) createWebView;
 
@@ -53,8 +52,7 @@ class WebKitProxy {
     required void Function(
       WKUserContentController userContentController,
       WKScriptMessage message,
-    )
-        didReceiveScriptMessage,
+    ) didReceiveScriptMessage,
   }) createScriptMessageHandler;
 
   /// The default [WKWebsiteDataStore].
@@ -68,8 +66,7 @@ class WebKitProxy {
     Future<WKNavigationActionPolicy> Function(
       WKWebView webView,
       WKNavigationAction navigationAction,
-    )?
-        decidePolicyForNavigationAction,
+    )? decidePolicyForNavigationAction,
     void Function(WKWebView webView, NSError error)? didFailNavigation,
     void Function(WKWebView webView, NSError error)?
         didFailProvisionalNavigation,
@@ -82,7 +79,14 @@ class WebKitProxy {
       WKWebView webView,
       WKWebViewConfiguration configuration,
       WKNavigationAction navigationAction,
-    )?
-        onCreateWebView,
+    )? onCreateWebView,
+    Future<WKPermissionDecision> Function(
+      WKUIDelegate instance,
+      WKWebView webView,
+      WKSecurityOrigin origin,
+      WKFrameInfo frame,
+      WKMediaCaptureType type,
+    )? requestMediaCapturePermission,
+    InstanceManager? instanceManager,
   }) createUIDelegate;
 }

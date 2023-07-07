@@ -1,0 +1,75 @@
+# The list of external dependencies that are allowed as pinned dependencies.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
+#
+# All entries here should have an explanation for why they are here, either
+# via being part of one of the default-allowed groups, or a specific reason.
+
+## Legacy allowances, for dependencies that predate the tooling.
+# TODO(stuartmorgan): Audit these. See
+# https://github.com/flutter/flutter/issues/122713
+- equatable
+- xml
+
+## Explicit allowances
+
+# Owned by individual Flutter Team members.
+# Ideally we would not do this, since there's no clear plan for what
+# would happen if the individuals left the Flutter Team, and the
+# repositories may or may not meet Flutter's security standards. Be
+# cautious about adding to this list.
+- build_verify
+- google_maps
+- path_to_regexp
+- source_gen_test
+- win32
+
+## Allowed by default
+
+# Dart-team-owned packages
+- analyzer
+- args
+- async
+- build
+- build_config
+- build_runner
+- collection
+- convert
+- crypto
+- fake_async
+- ffi
+- gcloud
+- html
+- http
+- intl
+- io
+- js
+- json_serializable
+- lints
+- logging
+- markdown
+- meta
+- mime
+- path
+- shelf
+- shelf_static
+- source_gen
+- stream_transform
+- test
+- test_api
+- vm_service
+- wasm
+- yaml
+# Google-owned packages
+- _discoveryapis_commons
+- adaptive_navigation
+- file
+- googleapis
+- googleapis_auth
+- json_annotation
+- platform
+- process
+- quiver
+- sanitize_html
+- source_helper
+- vector_math
+- webkit_inspection_protocol

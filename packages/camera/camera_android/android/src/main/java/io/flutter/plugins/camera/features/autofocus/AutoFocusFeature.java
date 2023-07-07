@@ -4,14 +4,16 @@
 
 package io.flutter.plugins.camera.features.autofocus;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureRequest;
+import androidx.annotation.NonNull;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
 
 /** Controls the auto focus configuration on the {@see anddroid.hardware.camera2} API. */
 public class AutoFocusFeature extends CameraFeature<FocusMode> {
-  private FocusMode currentSetting = FocusMode.auto;
+  @NonNull private FocusMode currentSetting = FocusMode.auto;
 
   // When switching recording modes this feature is re-created with the appropriate setting here.
   private final boolean recordingVideo;
@@ -22,23 +24,26 @@ public class AutoFocusFeature extends CameraFeature<FocusMode> {
    * @param cameraProperties Collection of the characteristics for the current camera device.
    * @param recordingVideo Indicates whether the camera is currently recording video.
    */
-  public AutoFocusFeature(CameraProperties cameraProperties, boolean recordingVideo) {
+  public AutoFocusFeature(@NonNull CameraProperties cameraProperties, boolean recordingVideo) {
     super(cameraProperties);
     this.recordingVideo = recordingVideo;
   }
 
+  @NonNull
   @Override
   public String getDebugName() {
     return "AutoFocusFeature";
   }
 
+  @NonNull
+  @SuppressLint("KotlinPropertyAccess")
   @Override
   public FocusMode getValue() {
     return currentSetting;
   }
 
   @Override
-  public void setValue(FocusMode value) {
+  public void setValue(@NonNull FocusMode value) {
     this.currentSetting = value;
   }
 
@@ -58,7 +63,7 @@ public class AutoFocusFeature extends CameraFeature<FocusMode> {
   }
 
   @Override
-  public void updateBuilder(CaptureRequest.Builder requestBuilder) {
+  public void updateBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
     if (!checkIsSupported()) {
       return;
     }
@@ -76,6 +81,7 @@ public class AutoFocusFeature extends CameraFeature<FocusMode> {
             recordingVideo
                 ? CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO
                 : CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+        break;
       default:
         break;
     }

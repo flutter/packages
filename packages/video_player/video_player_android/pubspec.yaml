@@ -2,11 +2,11 @@ name: video_player_android
 description: Android implementation of the video_player plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/video_player/video_player_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+video_player%22
-version: 2.3.11
+version: 2.4.9
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 flutter:
   plugin:
@@ -20,9 +20,9 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  video_player_platform_interface: ">=5.1.1 <7.0.0"
+  video_player_platform_interface: ">=6.1.0 <7.0.0"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^2.0.1
+  pigeon: ^9.2.5

@@ -150,10 +150,7 @@ public class FocusPointFeatureTest {
     FocusPointFeature focusPointFeature =
         new FocusPointFeature(mockCameraProperties, mockSensorOrientationFeature);
 
-    try (MockedStatic<CameraRegionUtils> mockedCameraRegionUtils =
-        Mockito.mockStatic(CameraRegionUtils.class)) {
-      focusPointFeature.setValue(new Point(0.5, 0.5));
-    }
+    focusPointFeature.setValue(new Point(0.5, 0.5));
   }
 
   @Test

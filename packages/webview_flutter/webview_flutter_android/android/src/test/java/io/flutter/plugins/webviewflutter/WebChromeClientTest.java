@@ -15,10 +15,13 @@ import static org.mockito.Mockito.when;
 
 import android.net.Uri;
 import android.os.Message;
+import android.webkit.GeolocationPermissions;
+import android.webkit.PermissionRequest;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebView.WebViewTransport;
 import android.webkit.WebViewClient;
+import androidx.annotation.NonNull;
 import io.flutter.plugins.webviewflutter.WebChromeClientHostApiImpl.WebChromeClientCreator;
 import io.flutter.plugins.webviewflutter.WebChromeClientHostApiImpl.WebChromeClientImpl;
 import org.junit.After;
@@ -45,15 +48,14 @@ public class WebChromeClientTest {
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
-
-    instanceManager.addDartCreatedInstance(mockWebView, 0L);
+    instanceManager = InstanceManager.create(identifier -> {});
 
     final WebChromeClientCreator webChromeClientCreator =
         new WebChromeClientCreator() {
           @Override
+          @NonNull
           public WebChromeClientImpl createWebChromeClient(
-              WebChromeClientFlutterApiImpl flutterApi) {
+              @NonNull WebChromeClientFlutterApiImpl flutterApi) {
             webChromeClient = super.createWebChromeClient(flutterApi);
             return webChromeClient;
           }
@@ -66,7 +68,7 @@ public class WebChromeClientTest {
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
@@ -113,5 +115,30 @@ public class WebChromeClientTest {
         onCreateWindowWebViewClient.shouldOverrideUrlLoading(
             mockOnCreateWindowWebView, mockRequest));
     verify(mockWebView).loadUrl("https://www.google.com");
+  }
+
+  @Test
+  public void onPermissionRequest() {
+    final PermissionRequest mockRequest = mock(PermissionRequest.class);
+    instanceManager.addDartCreatedInstance(mockRequest, 10);
+    webChromeClient.onPermissionRequest(mockRequest);
+    verify(mockFlutterApi).onPermissionRequest(eq(webChromeClient), eq(mockRequest), any());
+  }
+
+  @Test
+  public void onGeolocationPermissionsShowPrompt() {
+    final GeolocationPermissions.Callback mockCallback =
+        mock(GeolocationPermissions.Callback.class);
+    webChromeClient.onGeolocationPermissionsShowPrompt("https://flutter.dev", mockCallback);
+
+    verify(mockFlutterApi)
+        .onGeolocationPermissionsShowPrompt(
+            eq(webChromeClient), eq("https://flutter.dev"), eq(mockCallback), any());
+  }
+
+  @Test
+  public void onGeolocationPermissionsHidePrompt() {
+    webChromeClient.onGeolocationPermissionsHidePrompt();
+    verify(mockFlutterApi).onGeolocationPermissionsHidePrompt(eq(webChromeClient), any());
   }
 }

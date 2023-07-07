@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
@@ -18,33 +19,28 @@ public class CameraSelectorHostApiImpl implements CameraSelectorHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
+  @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
 
   public CameraSelectorHostApiImpl(
-      BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
   }
 
   @Override
-  public void create(@NonNull Long identifier, Long lensFacing) {
+  public void create(@NonNull Long identifier, @Nullable Long lensFacing) {
     CameraSelector.Builder cameraSelectorBuilder = cameraXProxy.createCameraSelectorBuilder();
-    CameraSelector cameraSelector;
-
     if (lensFacing != null) {
-      cameraSelector = cameraSelectorBuilder.requireLensFacing(Math.toIntExact(lensFacing)).build();
-    } else {
-      cameraSelector = cameraSelectorBuilder.build();
+      cameraSelectorBuilder = cameraSelectorBuilder.requireLensFacing(lensFacing.intValue());
     }
-
-    instanceManager.addDartCreatedInstance(cameraSelector, identifier);
+    instanceManager.addDartCreatedInstance(cameraSelectorBuilder.build(), identifier);
   }
 
   @Override
-  public List<Long> filter(@NonNull Long identifier, @NonNull List<Long> cameraInfoIds) {
+  public @NonNull List<Long> filter(@NonNull Long identifier, @NonNull List<Long> cameraInfoIds) {
     CameraSelector cameraSelector =
         (CameraSelector) Objects.requireNonNull(instanceManager.getInstance(identifier));
-    List<CameraInfo> cameraInfosForFilter = new ArrayList<CameraInfo>();
+    List<CameraInfo> cameraInfosForFilter = new ArrayList<>();
 
     for (Number cameraInfoAsNumber : cameraInfoIds) {
       Long cameraInfoId = cameraInfoAsNumber.longValue();
@@ -55,7 +51,7 @@ public class CameraSelectorHostApiImpl implements CameraSelectorHostApi {
     }
 
     List<CameraInfo> filteredCameraInfos = cameraSelector.filter(cameraInfosForFilter);
-    List<Long> filteredCameraInfosIds = new ArrayList<Long>();
+    List<Long> filteredCameraInfosIds = new ArrayList<>();
 
     for (CameraInfo cameraInfo : filteredCameraInfos) {
       Long filteredCameraInfoId = instanceManager.getIdentifierForStrongReference(cameraInfo);

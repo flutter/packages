@@ -1,5 +1,15 @@
-## NEXT
+## 2.1.7
 
+* Adds compatibility with `win32` 5.x.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.1.6
+
+* Adds compatibility with `win32` 4.x.
+
+## 2.1.5
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.1.4

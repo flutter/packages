@@ -1,10 +1,10 @@
 name: shared_test_plugin_code
-description: Common code for test_plugin and altenate_language_test_plugin
+description: Common code for test_plugin and alternate_language_test_plugin
 version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
+  sdk: ">=2.18.0 <4.0.0"
   flutter: ">=3.3.0"
 
 dependencies:

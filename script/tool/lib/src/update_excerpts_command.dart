@@ -6,6 +6,7 @@ import 'dart:io' as io;
 
 import 'package:file/file.dart';
 import 'package:git/git.dart';
+import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
@@ -15,7 +16,7 @@ import 'common/package_looping_command.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
-/// A command to update README code excerpts from code files.
+/// A command to update .md code excerpts from code files.
 class UpdateExcerptsCommand extends PackageLoopingCommand {
   /// Creates a excerpt updater command instance.
   UpdateExcerptsCommand(
@@ -30,9 +31,14 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           gitDir: gitDir,
         ) {
     argParser.addFlag(_failOnChangeFlag, hide: true);
+    argParser.addFlag(_noCleanupFlag,
+        help: 'Skips the step of cleaning up the excerpt extraction output. '
+            'This can be useful when debugging extraction or checking paths to '
+            'reference in snippets.');
   }
 
   static const String _failOnChangeFlag = 'fail-on-change';
+  static const String _noCleanupFlag = 'no-cleanup';
 
   static const String _buildRunnerConfigName = 'excerpt';
   // The name of the build_runner configuration file that will be in an example
@@ -40,8 +46,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   static const String _buildRunnerConfigFile =
       'build.$_buildRunnerConfigName.yaml';
 
-  // The relative directory path to put the extracted excerpt yaml files.
-  static const String _excerptOutputDir = 'excerpts';
+  /// The relative directory path to put the extracted excerpt yaml files.
+  @visibleForTesting
+  static const String excerptOutputDir = 'excerpts';
 
   // The filename to store the pre-modification copy of the pubspec.
   static const String _originalPubspecFilename =
@@ -51,7 +58,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   final String name = 'update-excerpts';
 
   @override
-  final String description = 'Updates code excerpts in README.md files, based '
+  final String description = 'Updates code excerpts in .md files, based '
       'on code from code files, via code-excerpt';
 
   @override
@@ -89,25 +96,39 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         if (!await _injectSnippets(example, targetPackage: package)) {
           return PackageResult.fail(<String>['Unable to inject excerpts']);
         }
+        if (!await _injectSnippets(example, targetPackage: example)) {
+          return PackageResult.fail(
+              <String>['Unable to inject example excerpts']);
+        }
       } finally {
         // Clean up the pubspec changes and extracted excerpts directory.
         _undoPubspecChanges(example);
         final Directory excerptDirectory =
-            example.directory.childDirectory(_excerptOutputDir);
+            example.directory.childDirectory(excerptOutputDir);
         if (excerptDirectory.existsSync()) {
-          excerptDirectory.deleteSync(recursive: true);
+          if (getBoolArg(_noCleanupFlag)) {
+            final String relativeDir =
+                getRelativePosixPath(excerptDirectory, from: package.directory);
+            print(
+                '\n\nSKIPPING CLEANUP: Extraction output is in $relativeDir/');
+          } else {
+            excerptDirectory.deleteSync(recursive: true);
+          }
         }
       }
     }
 
     if (getBoolArg(_failOnChangeFlag)) {
-      final String? stateError = await _validateRepositoryState();
+      final String? stateError = await _validateRepositoryState(package);
       if (stateError != null) {
-        printError('README.md is out of sync with its source excerpts.\n\n'
-            'If you edited code in README.md directly, you should instead edit '
-            'the example source files. If you edited source files, run the '
-            'repository tooling\'s "$name" command on this package, and update '
-            'your PR with the resulting changes.');
+        printError('One or more .md files are out of sync with their source '
+            'excerpts.\n\n'
+            'If you edited code in a .md file directly, you should instead '
+            'edit the example source files. If you edited source files, run '
+            'the repository tooling\'s "$name" command on this package, and '
+            'update your PR with the resulting changes.\n\n'
+            'For more information, see '
+            'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#readme-code');
         return PackageResult.fail(<String>[stateError]);
       }
     }
@@ -127,21 +148,31 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           '--config',
           _buildRunnerConfigName,
           '--output',
-          _excerptOutputDir,
+          excerptOutputDir,
           '--delete-conflicting-outputs',
         ],
         workingDir: example.directory);
     return exitCode == 0;
   }
 
-  /// Runs the injection step to update [targetPackage]'s README with the latest
-  /// excerpts from [example], returning true on success.
+  /// Runs the injection step to update [targetPackage]'s top-level .md files
+  /// with the latest excerpts from [example], returning true on success.
   Future<bool> _injectSnippets(
     RepositoryPackage example, {
     required RepositoryPackage targetPackage,
   }) async {
-    final String relativeReadmePath =
-        getRelativePosixPath(targetPackage.readmeFile, from: example.directory);
+    final List<String> relativeMdPaths = targetPackage.directory
+        .listSync()
+        .whereType<File>()
+        .where((File f) =>
+            f.basename.toLowerCase().endsWith('.md') &&
+            // Exclude CHANGELOG since it should never have excerpts.
+            f.basename != 'CHANGELOG.md')
+        .map((File f) => getRelativePosixPath(f, from: example.directory))
+        .toList();
+    if (relativeMdPaths.isEmpty) {
+      return true;
+    }
     final int exitCode = await processRunner.runAndStream(
         'dart',
         <String>[
@@ -150,7 +181,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           '--write-in-place',
           '--yaml',
           '--no-escape-ng-interpolation',
-          relativeReadmePath,
+          ...relativeMdPaths,
         ],
         workingDir: example.directory);
     return exitCode == 0;
@@ -208,11 +239,11 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
 
   /// Checks the git state, returning an error string if any .md files have
   /// changed.
-  Future<String?> _validateRepositoryState() async {
+  Future<String?> _validateRepositoryState(RepositoryPackage package) async {
     final io.ProcessResult checkFiles = await processRunner.run(
       'git',
       <String>['ls-files', '--modified'],
-      workingDir: packagesDir,
+      workingDir: package.directory,
       logOnError: true,
     );
     if (checkFiles.exitCode != 0) {

@@ -1,5 +1,28 @@
-## NEXT
+## 0.3.0+5
 
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Bumps okhttp version to 4.11.0.
+
+## 0.3.0+4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 0.3.0+3
+
+* Adds `targetCompatibilty` matching `sourceCompatibility` for older toolchains.
+
+## 0.3.0+2
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 0.3.0+1
+
+* Sets an explicit Java compatibility version.
+
+## 0.3.0
+
+* **BREAKING CHANGE**: Migrates uses of the deprecated `@Beta` annotation to the new `@ExperimentalApi` annotation.
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.2.1

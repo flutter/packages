@@ -4,7 +4,7 @@ description: A project that showcases how to enable the recommended lints for Fl
 publish_to: none
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: ">=2.18.0 <4.0.0"
 
 # Add the latest version of `package:flutter_lints` as a dev_dependency. The
 # lint set provided by this package is activated in the `analysis_options.yaml`

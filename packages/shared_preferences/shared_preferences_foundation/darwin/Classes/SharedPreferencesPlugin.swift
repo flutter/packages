@@ -22,8 +22,8 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
     UserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
-  func getAll() -> [String? : Any?] {
-    return getAllPrefs();
+  func getAll(prefix: String, allowList: [String]?) -> [String? : Any?] {
+    return getAllPrefs(prefix: prefix, allowList: allowList)
   }
 
   func setBool(key: String, value: Bool) {
@@ -42,23 +42,29 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
     UserDefaults.standard.removeObject(forKey: key)
   }
 
-  func clear() {
+  func clear(prefix: String, allowList: [String]?) -> Bool {
     let defaults = UserDefaults.standard
-    for (key, _) in getAllPrefs() {
+    for (key, _) in getAllPrefs(prefix: prefix, allowList: allowList) {
       defaults.removeObject(forKey: key)
     }
+      return true
   }
-}
 
-/// Returns all preferences stored by this plugin.
-private func getAllPrefs() -> [String: Any] {
-  var filteredPrefs: [String: Any] = [:]
-  if let appDomain = Bundle.main.bundleIdentifier,
-    let prefs = UserDefaults.standard.persistentDomain(forName: appDomain)
-  {
-    for (key, value) in prefs where key.hasPrefix("flutter.") {
-      filteredPrefs[key] = value
+  /// Returns all preferences stored with specified prefix.
+  /// If [allowList] is included, only items included will be returned.
+  func getAllPrefs(prefix: String, allowList: [String]?) -> [String: Any] {
+    var filteredPrefs: [String: Any] = [:]
+    var allowSet: Set<String>?;
+    if let allowList {
+      allowSet = Set(allowList)
     }
+    if let appDomain = Bundle.main.bundleIdentifier,
+      let prefs = UserDefaults.standard.persistentDomain(forName: appDomain)
+    {
+      for (key, value) in prefs where (key.hasPrefix(prefix) && (allowSet == nil || allowSet!.contains(key))) {
+        filteredPrefs[key] = value
+      }
+    }
+    return filteredPrefs
   }
-  return filteredPrefs
 }

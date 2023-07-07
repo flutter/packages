@@ -1,5 +1,23 @@
-## NEXT
+## 1.0.6
 
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 1.0.5
+
+* Fixes Java warnings.
+
+## 1.0.4
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 1.0.3
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 1.0.2
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 * Updates compileSdkVersion to 33.
 

@@ -8,12 +8,12 @@ part of 'main.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<GoRoute> get $appRoutes => [
+List<RouteBase> get $appRoutes => [
       $homeRoute,
       $loginRoute,
     ];
 
-GoRoute get $homeRoute => GoRouteData.$route(
+RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
       factory: $HomeRouteExtension._fromState,
       routes: [
@@ -33,6 +33,10 @@ GoRoute get $homeRoute => GoRouteData.$route(
             ),
           ],
         ),
+        GoRouteData.$route(
+          path: 'family-count/:count',
+          factory: $FamilyCountRouteExtension._fromState,
+        ),
       ],
     );
 
@@ -45,15 +49,17 @@ extension $HomeRouteExtension on HomeRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        state.params['fid']!,
+        state.pathParameters['fid']!,
       );
 
   String get location => GoRouteData.$location(
@@ -62,16 +68,18 @@ extension $FamilyRouteExtension on FamilyRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $PersonRouteExtension on PersonRoute {
   static PersonRoute _fromState(GoRouterState state) => PersonRoute(
-        state.params['fid']!,
-        int.parse(state.params['pid']!),
+        state.pathParameters['fid']!,
+        int.parse(state.pathParameters['pid']!),
       );
 
   String get location => GoRouteData.$location(
@@ -80,18 +88,20 @@ extension $PersonRouteExtension on PersonRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
   static PersonDetailsRoute _fromState(GoRouterState state) =>
       PersonDetailsRoute(
-        state.params['fid']!,
-        int.parse(state.params['pid']!),
-        _$PersonDetailsEnumMap._$fromName(state.params['details']!),
+        state.pathParameters['fid']!,
+        int.parse(state.pathParameters['pid']!),
+        _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!),
         $extra: state.extra as int?,
       );
 
@@ -101,10 +111,33 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
 
   void go(BuildContext context) => context.go(location, extra: $extra);
 
-  void push(BuildContext context) => context.push(location, extra: $extra);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
+extension $FamilyCountRouteExtension on FamilyCountRoute {
+  static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
+        int.parse(state.pathParameters['count']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/family-count/${Uri.encodeComponent(count.toString())}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -118,14 +151,14 @@ extension<T extends Enum> on Map<T, String> {
       entries.singleWhere((element) => element.value == value).key;
 }
 
-GoRoute get $loginRoute => GoRouteData.$route(
+RouteBase get $loginRoute => GoRouteData.$route(
       path: '/login',
       factory: $LoginRouteExtension._fromState,
     );
 
 extension $LoginRouteExtension on LoginRoute {
   static LoginRoute _fromState(GoRouterState state) => LoginRoute(
-        fromPage: state.queryParams['from-page'],
+        fromPage: state.queryParameters['from-page'],
       );
 
   String get location => GoRouteData.$location(
@@ -137,8 +170,10 @@ extension $LoginRouteExtension on LoginRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

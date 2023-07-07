@@ -175,10 +175,10 @@ for more details.
 
 ### PlatformView Implementation on Android
 
-The PlatformView implementation for Android is currently no longer configurable. It uses Texture
-Layer Hybrid Composition on versions 23+ and automatically fallbacks to Hybrid Composition for
-version 19-23. See https://github.com/flutter/flutter/issues/108106 for progress on manually
-switching to Hybrid Composition on versions 23+.
+The PlatformView implementation for Android uses Texture Layer Hybrid Composition on versions 23+
+and automatically fallbacks to Hybrid Composition for version 19-23. See section
+`Platform-Specific Features` and [AndroidWebViewWidgetCreationParams.displayWithHybridComposition](https://pub.dev/documentation/webview_flutter_android/latest/webview_flutter_android/AndroidWebViewWidgetCreationParams/displayWithHybridComposition.html)
+to manually switch to Hybrid Composition on versions 23+.
 
 ### API Changes
 
@@ -194,6 +194,8 @@ Below is a non-exhaustive list of changes to the API:
   been replaced by `WebViewController.getScrollPosition`.
 * `WebViewController.runJavaScriptReturningResult` now returns an `Object` and not a `String`. This
   will attempt to return a `bool` or `num` if the return value can be parsed.
+* `WebView.initialCookies` has been removed. Use `WebViewCookieManager.setCookie` before calling
+  `WebViewController.loadRequest`.
 * `CookieManager` is replaced by `WebViewCookieManager`.
 * `NavigationDelegate.onWebResourceError` callback includes errors that are not from the main frame.
    Use the `WebResourceError.isForMainFrame` field to filter errors.

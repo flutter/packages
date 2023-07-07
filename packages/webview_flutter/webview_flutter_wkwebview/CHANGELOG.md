@@ -1,5 +1,65 @@
-## NEXT
+## 3.6.2 
 
+* Fixes unawaited_futures violations.
+
+## 3.6.1
+
+* Fixes bug where a native `NSURL` could be removed from an `InstanceManager` if it is equal to an
+  already present `NSURL`.
+* Fixes compile-time error from using `WKWebView.inspectable` on unsupported Xcode versions.
+
+## 3.6.0
+
+* Adds support to enable debugging of web contents on the latest versions of WebKit. See
+  `WebKitWebViewController.setInspectable`.
+  
+## 3.5.0
+
+* Adds support to limit navigation to pages within the app’s domain. See
+  `WebKitWebViewControllerCreationParams.limitsNavigationsToAppBoundDomains`.
+
+## 3.4.4
+
+* Removes obsolete null checks on non-nullable values.
+
+## 3.4.3
+
+* Replace `describeEnum` with the `name` getter.
+
+## 3.4.2
+
+* Fixes an exception caused by the `onUrlChange` callback passing a null `NSUrl`.
+
+## 3.4.1
+
+* Fixes internal type conversion error.
+* Adds internal unknown enum values to handle api updates.
+
+## 3.4.0
+
+* Adds support for `PlatformWebViewController.setOnPlatformPermissionRequest`.
+
+## 3.3.0
+
+* Adds support for `PlatformNavigationDelegate.onUrlChange`.
+
+## 3.2.4
+
+* Updates pigeon to fix warnings with clang 15.
+* Updates minimum Flutter version to 3.3.
+* Fixes common typos in tests and documentation.
+
+## 3.2.3
+
+* Updates to `pigeon` version 7.
+
+## 3.2.2
+
+* Changes Objective-C to use relative imports.
+
+## 3.2.1
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 3.2.0

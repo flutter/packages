@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'fake_maps_controllers.dart';
+import 'fake_google_maps_flutter_platform.dart';
 
 Widget _mapWithCircles(Set<Circle> circles) {
   return Directionality(
@@ -20,36 +20,24 @@ Widget _mapWithCircles(Set<Circle> circles) {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  final FakePlatformViewsController fakePlatformViewsController =
-      FakePlatformViewsController();
-
-  setUpAll(() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(
-          SystemChannels.platform_views,
-          fakePlatformViewsController.fakePlatformViewsMethodHandler,
-        );
-  });
+  late FakeGoogleMapsFlutterPlatform platform;
 
   setUp(() {
-    fakePlatformViewsController.reset();
+    platform = FakeGoogleMapsFlutterPlatform();
+    GoogleMapsFlutterPlatform.instance = platform;
   });
 
   testWidgets('Initializing a circle', (WidgetTester tester) async {
     const Circle c1 = Circle(circleId: CircleId('circle_1'));
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.circlesToAdd.length, 1);
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.circleUpdates.last.circlesToAdd.length, 1);
 
-    final Circle initializedCircle = platformGoogleMap.circlesToAdd.first;
+    final Circle initializedCircle = map.circleUpdates.last.circlesToAdd.first;
     expect(initializedCircle, equals(c1));
-    expect(platformGoogleMap.circleIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.circlesToChange.isEmpty, true);
+    expect(map.circleUpdates.last.circleIdsToRemove.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToChange.isEmpty, true);
   });
 
   testWidgets('Adding a circle', (WidgetTester tester) async {
@@ -59,16 +47,15 @@ void main() {
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c2}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.circlesToAdd.length, 1);
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.circleUpdates.last.circlesToAdd.length, 1);
 
-    final Circle addedCircle = platformGoogleMap.circlesToAdd.first;
+    final Circle addedCircle = map.circleUpdates.last.circlesToAdd.first;
     expect(addedCircle, equals(c2));
 
-    expect(platformGoogleMap.circleIdsToRemove.isEmpty, true);
+    expect(map.circleUpdates.last.circleIdsToRemove.isEmpty, true);
 
-    expect(platformGoogleMap.circlesToChange.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToChange.isEmpty, true);
   });
 
   testWidgets('Removing a circle', (WidgetTester tester) async {
@@ -77,13 +64,12 @@ void main() {
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
     await tester.pumpWidget(_mapWithCircles(<Circle>{}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.circleIdsToRemove.length, 1);
-    expect(platformGoogleMap.circleIdsToRemove.first, equals(c1.circleId));
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.circleUpdates.last.circleIdsToRemove.length, 1);
+    expect(map.circleUpdates.last.circleIdsToRemove.first, equals(c1.circleId));
 
-    expect(platformGoogleMap.circlesToChange.isEmpty, true);
-    expect(platformGoogleMap.circlesToAdd.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToChange.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToAdd.isEmpty, true);
   });
 
   testWidgets('Updating a circle', (WidgetTester tester) async {
@@ -93,13 +79,12 @@ void main() {
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
     await tester.pumpWidget(_mapWithCircles(<Circle>{c2}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.circlesToChange.length, 1);
-    expect(platformGoogleMap.circlesToChange.first, equals(c2));
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.circleUpdates.last.circlesToChange.length, 1);
+    expect(map.circleUpdates.last.circlesToChange.first, equals(c2));
 
-    expect(platformGoogleMap.circleIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.circlesToAdd.isEmpty, true);
+    expect(map.circleUpdates.last.circleIdsToRemove.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToAdd.isEmpty, true);
   });
 
   testWidgets('Updating a circle', (WidgetTester tester) async {
@@ -109,11 +94,10 @@ void main() {
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
     await tester.pumpWidget(_mapWithCircles(<Circle>{c2}));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
-    expect(platformGoogleMap.circlesToChange.length, 1);
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.circleUpdates.last.circlesToChange.length, 1);
 
-    final Circle update = platformGoogleMap.circlesToChange.first;
+    final Circle update = map.circleUpdates.last.circlesToChange.first;
     expect(update, equals(c2));
     expect(update.radius, 10);
   });
@@ -129,12 +113,11 @@ void main() {
     await tester.pumpWidget(_mapWithCircles(prev));
     await tester.pumpWidget(_mapWithCircles(cur));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.circlesToChange, cur);
-    expect(platformGoogleMap.circleIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.circlesToAdd.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToChange, cur);
+    expect(map.circleUpdates.last.circleIdsToRemove.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToAdd.isEmpty, true);
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
@@ -150,16 +133,15 @@ void main() {
     await tester.pumpWidget(_mapWithCircles(prev));
     await tester.pumpWidget(_mapWithCircles(cur));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.circlesToChange.length, 1);
-    expect(platformGoogleMap.circlesToAdd.length, 1);
-    expect(platformGoogleMap.circleIdsToRemove.length, 1);
+    expect(map.circleUpdates.last.circlesToChange.length, 1);
+    expect(map.circleUpdates.last.circlesToAdd.length, 1);
+    expect(map.circleUpdates.last.circleIdsToRemove.length, 1);
 
-    expect(platformGoogleMap.circlesToChange.first, equals(c2));
-    expect(platformGoogleMap.circlesToAdd.first, equals(c1));
-    expect(platformGoogleMap.circleIdsToRemove.first, equals(c3.circleId));
+    expect(map.circleUpdates.last.circlesToChange.first, equals(c2));
+    expect(map.circleUpdates.last.circlesToAdd.first, equals(c1));
+    expect(map.circleUpdates.last.circleIdsToRemove.first, equals(c3.circleId));
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
@@ -173,12 +155,11 @@ void main() {
     await tester.pumpWidget(_mapWithCircles(prev));
     await tester.pumpWidget(_mapWithCircles(cur));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.circlesToChange, <Circle>{c3});
-    expect(platformGoogleMap.circleIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.circlesToAdd.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToChange, <Circle>{c3});
+    expect(map.circleUpdates.last.circleIdsToRemove.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToAdd.isEmpty, true);
   });
 
   testWidgets('Update non platform related attr', (WidgetTester tester) async {
@@ -190,17 +171,42 @@ void main() {
     await tester.pumpWidget(_mapWithCircles(prev));
     await tester.pumpWidget(_mapWithCircles(cur));
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.circlesToChange.isEmpty, true);
-    expect(platformGoogleMap.circleIdsToRemove.isEmpty, true);
-    expect(platformGoogleMap.circlesToAdd.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToChange.isEmpty, true);
+    expect(map.circleUpdates.last.circleIdsToRemove.isEmpty, true);
+    expect(map.circleUpdates.last.circlesToAdd.isEmpty, true);
+  });
+
+  testWidgets('multi-update with delays', (WidgetTester tester) async {
+    platform.simulatePlatformDelay = true;
+
+    const Circle c1 = Circle(circleId: CircleId('circle_1'));
+    const Circle c2 = Circle(circleId: CircleId('circle_2'));
+    const Circle c3 = Circle(circleId: CircleId('circle_3'), radius: 1);
+    const Circle c3updated = Circle(circleId: CircleId('circle_3'), radius: 10);
+
+    // First remove one and add another, then update the new one.
+    await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c2}));
+    await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c3}));
+    await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c3updated}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.circleUpdates.length, 3);
+
+    expect(map.circleUpdates[0].circlesToChange.isEmpty, true);
+    expect(map.circleUpdates[0].circlesToAdd, <Circle>{c1, c2});
+    expect(map.circleUpdates[0].circleIdsToRemove.isEmpty, true);
+
+    expect(map.circleUpdates[1].circlesToChange.isEmpty, true);
+    expect(map.circleUpdates[1].circlesToAdd, <Circle>{c3});
+    expect(map.circleUpdates[1].circleIdsToRemove, <CircleId>{c2.circleId});
+
+    expect(map.circleUpdates[2].circlesToChange, <Circle>{c3updated});
+    expect(map.circleUpdates[2].circlesToAdd.isEmpty, true);
+    expect(map.circleUpdates[2].circleIdsToRemove.isEmpty, true);
+
+    await tester.pumpAndSettle();
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

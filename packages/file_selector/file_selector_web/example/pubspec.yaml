@@ -2,19 +2,17 @@ name: file_selector_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
-  file_selector_platform_interface: ^2.2.0
+  file_selector_platform_interface: ^2.6.0
   file_selector_web:
     path: ../
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:

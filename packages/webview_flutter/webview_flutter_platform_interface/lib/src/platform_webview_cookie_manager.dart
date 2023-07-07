@@ -5,7 +5,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'webview_platform.dart';
+import 'types/types.dart';
+import 'webview_platform.dart' show WebViewPlatform;
 
 /// Interface for a platform implementation of a cookie manager.
 ///

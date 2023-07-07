@@ -8,12 +8,13 @@ part of 'simple_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<GoRoute> get $appRoutes => [
+List<RouteBase> get $appRoutes => [
       $homeRoute,
     ];
 
-GoRoute get $homeRoute => GoRouteData.$route(
+RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
+      name: 'Home',
       factory: $HomeRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
@@ -32,15 +33,17 @@ extension $HomeRouteExtension on HomeRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        state.params['familyId']!,
+        state.pathParameters['familyId']!,
       );
 
   String get location => GoRouteData.$location(
@@ -49,8 +52,10 @@ extension $FamilyRouteExtension on FamilyRoute {
 
   void go(BuildContext context) => context.go(location);
 
-  void push(BuildContext context) => context.push(location);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

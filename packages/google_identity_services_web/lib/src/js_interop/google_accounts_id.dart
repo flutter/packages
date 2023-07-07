@@ -14,7 +14,6 @@ library google_accounts_id;
 
 import 'package:js/js.dart';
 
-import 'dom.dart';
 import 'shared.dart';
 
 /// Binding to the `google.accounts.id` JS global.
@@ -93,7 +92,7 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   /// Method: google.accounts.id.renderButton
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.renderButton
   external void renderButton(
-    DomHtmlElement parent, [
+    Object parent, [
     GsiButtonConfiguration options,
   ]);
 

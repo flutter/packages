@@ -1,5 +1,15 @@
-## NEXT
+## 2.0.18
 
+* Removes nested third_party Safari check.
+
+## 2.0.17
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum Flutter version to 3.3.
+
+## 2.0.16
+
+* Clarifies explanation of endorsement in README.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.0.15

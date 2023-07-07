@@ -5,6 +5,7 @@
 import 'dart:io' show Platform;
 
 import 'package:path/path.dart' as p;
+import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart';
 
 import 'process_utils.dart';
@@ -44,7 +45,15 @@ String _javaFilenameForName(String inputName) {
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
 }
 
-Future<int> generatePigeons({required String baseDir}) async {
+Future<int> generateExamplePigeons() async {
+  return runPigeon(
+    input: './example/app/pigeons/messages.dart',
+    basePath: './example/app',
+    suppressVersion: true,
+  );
+}
+
+Future<int> generateTestPigeons({required String baseDir}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const List<String> inputs = <String>[
@@ -79,6 +88,8 @@ Future<int> generatePigeons({required String baseDir}) async {
           ? null
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
+      kotlinErrorClassName:
+          input == 'core_tests' ? null : '${pascalCaseName}Error',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguages.swift)
           ? null
@@ -91,6 +102,7 @@ Future<int> generatePigeons({required String baseDir}) async {
           ? null
           : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
+      suppressVersion: true,
     );
     if (generateCode != 0) {
       return generateCode;
@@ -104,6 +116,7 @@ Future<int> generatePigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguages.swift)
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
+      suppressVersion: true,
     );
     if (generateCode != 0) {
       return generateCode;
@@ -127,6 +140,24 @@ Future<int> generatePigeons({required String baseDir}) async {
       objcSourceOut: skipLanguages.contains(GeneratorLanguages.objc)
           ? null
           : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
+      suppressVersion: true,
+    );
+    if (generateCode != 0) {
+      return generateCode;
+    }
+
+    // macOS has to be run as a separate generation, since currently Pigeon
+    // doesn't have a way to output separate macOS and iOS Swift output in a
+    // single invocation.
+    generateCode = await runPigeon(
+      input: './pigeons/$input.dart',
+      objcHeaderOut: skipLanguages.contains(GeneratorLanguages.objc)
+          ? null
+          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.h',
+      objcSourceOut: skipLanguages.contains(GeneratorLanguages.objc)
+          ? null
+          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
+      suppressVersion: true,
     );
     if (generateCode != 0) {
       return generateCode;
@@ -139,6 +170,7 @@ Future<int> runPigeon({
   required String input,
   String? kotlinOut,
   String? kotlinPackage,
+  String? kotlinErrorClassName,
   String? swiftOut,
   String? cppHeaderOut,
   String? cppSourceOut,
@@ -149,10 +181,26 @@ Future<int> runPigeon({
   String? javaPackage,
   String? objcHeaderOut,
   String? objcSourceOut,
+  String objcPrefix = '',
+  bool suppressVersion = false,
+  String copyrightHeader = './copyright_header.txt',
+  String? basePath,
 }) async {
-  return Pigeon.runWithOptions(PigeonOptions(
+  // Temporarily suppress the version output via the global flag if requested.
+  // This is done because having the version in all the generated test output
+  // means every version bump updates every test file, which is problematic in
+  // review. For files where CI validates that this generation is up to date,
+  // having the version in these files isn't useful.
+  // TODO(stuartmorgan): Remove the option and do this unconditionally once
+  // all the checked in files are being validated; currently only
+  // generatePigeons is being checked in CI.
+  final bool originalWarningSetting = includeVersionInGeneratedWarning;
+  if (suppressVersion) {
+    includeVersionInGeneratedWarning = false;
+  }
+  final int result = await Pigeon.runWithOptions(PigeonOptions(
     input: input,
-    copyrightHeader: './copyright_header.txt',
+    copyrightHeader: copyrightHeader,
     dartOut: dartOut,
     dartTestOut: dartTestOut,
     dartOptions: const DartOptions(),
@@ -162,18 +210,22 @@ Future<int> runPigeon({
     javaOut: javaOut,
     javaOptions: JavaOptions(package: javaPackage),
     kotlinOut: kotlinOut,
-    kotlinOptions: KotlinOptions(package: kotlinPackage),
+    kotlinOptions: KotlinOptions(
+        package: kotlinPackage, errorClassName: kotlinErrorClassName),
     objcHeaderOut: objcHeaderOut,
     objcSourceOut: objcSourceOut,
-    objcOptions: const ObjcOptions(),
+    objcOptions: ObjcOptions(prefix: objcPrefix),
     swiftOut: swiftOut,
     swiftOptions: const SwiftOptions(),
+    basePath: basePath,
   ));
+  includeVersionInGeneratedWarning = originalWarningSetting;
+  return result;
 }
 
 /// Runs the repository tooling's format command on this package.
 ///
-/// This is intended for formatting generated autoput, but since there's no
+/// This is intended for formatting generated output, but since there's no
 /// way to filter to specific files in with the repo tooling it runs over the
 /// entire package.
 Future<int> formatAllFiles({required String repositoryRoot}) {

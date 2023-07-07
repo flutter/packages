@@ -25,24 +25,25 @@ class AndroidWebViewProxy {
   });
 
   /// Constructs a [android_webview.WebView].
-  ///
-  /// Due to changes in Flutter 3.0 the [useHybridComposition] doesn't have
-  /// any effect and should not be exposed publicly. More info here:
-  /// https://github.com/flutter/flutter/issues/108106
-  final android_webview.WebView Function({
-    required bool useHybridComposition,
-  }) createAndroidWebView;
+  final android_webview.WebView Function() createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
-  final android_webview.WebChromeClient Function({
-    void Function(android_webview.WebView webView, int progress)?
-        onProgressChanged,
-    Future<List<String>> Function(
-      android_webview.WebView webView,
-      android_webview.FileChooserParams params,
-    )?
-        onShowFileChooser,
-  }) createAndroidWebChromeClient;
+  final android_webview.WebChromeClient Function(
+      {void Function(android_webview.WebView webView, int progress)?
+          onProgressChanged,
+      Future<List<String>> Function(
+        android_webview.WebView webView,
+        android_webview.FileChooserParams params,
+      )? onShowFileChooser,
+      void Function(
+        android_webview.WebChromeClient instance,
+        android_webview.PermissionRequest request,
+      )? onPermissionRequest,
+      Future<void> Function(String origin,
+              android_webview.GeolocationPermissionsCallback callback)?
+          onGeolocationPermissionsShowPrompt,
+      void Function(android_webview.WebChromeClient instance)?
+          onGeolocationPermissionsHidePrompt}) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
   final android_webview.WebViewClient Function({
@@ -52,22 +53,21 @@ class AndroidWebViewProxy {
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
       android_webview.WebResourceError error,
-    )?
-        onReceivedRequestError,
+    )? onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.')
-        void Function(
+    void Function(
       android_webview.WebView webView,
       int errorCode,
       String description,
       String failingUrl,
-    )?
-            onReceivedError,
+    )? onReceivedError,
     void Function(
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
-    )?
-        requestLoading,
+    )? requestLoading,
     void Function(android_webview.WebView webView, String url)? urlLoading,
+    void Function(android_webview.WebView webView, String url, bool isReload)?
+        doUpdateVisitedHistory,
   }) createAndroidWebViewClient;
 
   /// Constructs a [android_webview.FlutterAssetManager].
@@ -88,8 +88,7 @@ class AndroidWebViewProxy {
       String contentDisposition,
       String mimetype,
       int contentLength,
-    )
-        onDownloadStart,
+    ) onDownloadStart,
   }) createDownloadListener;
 
   /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.

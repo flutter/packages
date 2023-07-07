@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
@@ -39,40 +37,6 @@ void main() {
       runner.addCommand(command);
     });
 
-    void writeFakeBuildGradle(RepositoryPackage example, String pluginName,
-        {bool warningsConfigured = true}) {
-      final String warningConfig = '''
-gradle.projectsEvaluated {
-    project(":$pluginName") {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:all" << "-Werror"
-        }
-    }
-}
-''';
-      example
-          .platformDirectory(FlutterPlatform.android)
-          .childFile('build.gradle')
-          .writeAsStringSync('''
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.1'
-    }
-}
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-${warningsConfigured ? warningConfig : ''}
-''');
-    }
-
     test('runs gradle lint', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
@@ -80,7 +44,6 @@ ${warningsConfigured ? warningConfig : ''}
       ], platformSupport: <String, PlatformDetails>{
         platformAndroid: const PlatformDetails(PlatformSupport.inline)
       });
-      writeFakeBuildGradle(plugin.getExamples().first, 'plugin1');
 
       final Directory androidDir =
           plugin.getExamples().first.platformDirectory(FlutterPlatform.android);
@@ -118,9 +81,6 @@ ${warningsConfigured ? warningConfig : ''}
           platformSupport: <String, PlatformDetails>{
             platformAndroid: const PlatformDetails(PlatformSupport.inline)
           });
-      for (final RepositoryPackage example in plugin.getExamples()) {
-        writeFakeBuildGradle(example, 'plugin1');
-      }
 
       final Iterable<Directory> exampleAndroidDirs = plugin.getExamples().map(
           (RepositoryPackage example) =>
@@ -149,45 +109,52 @@ ${warningsConfigured ? warningConfig : ''}
           ]));
     });
 
-    test('fails if gradlew is missing', () async {
+    test('runs --config-only build if gradlew is missing', () async {
+      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformAndroid: const PlatformDetails(PlatformSupport.inline)
+          });
+
+      final Directory androidDir =
+          plugin.getExamples().first.platformDirectory(FlutterPlatform.android);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['lint-android']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+            getFlutterCommand(mockPlatform),
+            const <String>['build', 'apk', '--config-only'],
+            plugin.getExamples().first.directory.path,
+          ),
+          ProcessCall(
+            androidDir.childFile('gradlew').path,
+            const <String>['plugin1:lintDebug'],
+            androidDir.path,
+          ),
+        ]),
+      );
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin1'),
+            contains('No issues found!'),
+          ]));
+    });
+
+    test('fails if gradlew generation fails', () async {
       createFakePlugin('plugin1', packagesDir,
           platformSupport: <String, PlatformDetails>{
             platformAndroid: const PlatformDetails(PlatformSupport.inline)
           });
 
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['lint-android'], errorHandler: (Error e) {
-        commandError = e;
-      });
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-          output,
-          containsAllInOrder(
-            <Matcher>[
-              contains('Build examples before linting'),
-            ],
-          ));
-    });
-
-    test('fails if linting finds issues', () async {
-      final RepositoryPackage plugin =
-          createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
-        'example/android/gradlew',
-      ], platformSupport: <String, PlatformDetails>{
-        platformAndroid: const PlatformDetails(PlatformSupport.inline)
-      });
-      writeFakeBuildGradle(plugin.getExamples().first, 'plugin1');
-
-      final String gradlewPath = plugin
-          .getExamples()
-          .first
-          .platformDirectory(FlutterPlatform.android)
-          .childFile('gradlew')
-          .path;
-      processRunner.mockProcessesForExecutable[gradlewPath] = <io.Process>[
-        MockProcess(exitCode: 1),
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;
@@ -201,20 +168,28 @@ ${warningsConfigured ? warningConfig : ''}
           output,
           containsAllInOrder(
             <Matcher>[
-              contains('The following packages had errors:'),
+              contains('Unable to configure Gradle project'),
             ],
           ));
     });
 
-    test('fails if javac lint-warnings-as-errors is missing', () async {
+    test('fails if linting finds issues', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
         'example/android/gradlew',
       ], platformSupport: <String, PlatformDetails>{
         platformAndroid: const PlatformDetails(PlatformSupport.inline)
       });
-      writeFakeBuildGradle(plugin.getExamples().first, 'plugin1',
-          warningsConfigured: false);
+
+      final String gradlewPath = plugin
+          .getExamples()
+          .first
+          .platformDirectory(FlutterPlatform.android)
+          .childFile('gradlew')
+          .path;
+      processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
+      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -227,8 +202,6 @@ ${warningsConfigured ? warningConfig : ''}
           output,
           containsAllInOrder(
             <Matcher>[
-              contains('The example example is not configured to treat javac '
-                  'lints and warnings as errors.'),
               contains('The following packages had errors:'),
             ],
           ));

@@ -1,5 +1,13 @@
 ## NEXT
 
+* Updates minimum supported macOS version to 10.14.
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 6.1.11
+
+* Fixes some url_launcher docs that were missing the null operator (?).
+* Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 6.1.10

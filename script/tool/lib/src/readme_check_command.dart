@@ -49,6 +49,9 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
   final String name = 'readme-check';
 
   @override
+  List<String> get aliases => <String>['check-readme'];
+
+  @override
   final String description =
       'Checks that READMEs follow repository conventions.';
 
@@ -337,8 +340,11 @@ ${indentation * 2}Please use standard capitalizations: ${sortedListString(expect
   /// Returns true if the README contains the repository-standard explanation of
   /// the purpose of a federated plugin implementation's example.
   bool _containsImplementationExampleExplanation(List<String> readmeLines) {
-    return readmeLines.contains('# Platform Implementation Test App') &&
-        readmeLines
-            .any((String line) => line.contains('This is a test app for'));
+    return (readmeLines.contains('# Platform Implementation Test App') &&
+            readmeLines.any(
+                (String line) => line.contains('This is a test app for'))) ||
+        (readmeLines.contains('# Platform Implementation Test Apps') &&
+            readmeLines.any(
+                (String line) => line.contains('These are test apps for')));
   }
 }
