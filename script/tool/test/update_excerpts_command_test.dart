@@ -8,7 +8,6 @@ import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/update_excerpts_command.dart';
 import 'package:mockito/mockito.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'common/package_command_test.mocks.dart';
