@@ -7,7 +7,7 @@
 
 static NSInteger const kPackageLength = 512 * 1024; // 512 kb per package
 static NSString *kMCMediaCacheResponseKey = @"kContentCacheResponseKey";
-static NSString *MediaCacheErrorDoamin = @"com.contentcache";
+static NSString *MediaCacheErrorDomain = @"video_player_cache";
 
 @interface ContentCacheWorker ()
 
@@ -89,7 +89,7 @@ static NSString *MediaCacheErrorDoamin = @"com.contentcache";
     @synchronized(self.readFileHandle) {
         @try {
             [self.readFileHandle seekToFileOffset:range.location];
-            NSData *data = [self.readFileHandle readDataOfLength:range.length]; // 空数据也会返回，所以如果 range 错误，会导致播放失效
+            NSData *data = [self.readFileHandle readDataOfLength:range.length];
             return data;
         } @catch (NSException *exception) {
             NSLog(@"read cached data error %@",exception);

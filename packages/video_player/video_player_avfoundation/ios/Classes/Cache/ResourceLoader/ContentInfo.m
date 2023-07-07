@@ -6,11 +6,6 @@ static NSString *kContentTypeKey = @"kContentTypeKey";
 static NSString *kByteRangeAccessSupported = @"kByteRangeAccessSupported";
 
 @implementation ContentInfo
-
-- (NSString *)debugDescription {
-    return [NSString stringWithFormat:@"%@\ncontentLength: %lld\ncontentType: %@\nbyteRangeAccessSupported:%@", NSStringFromClass([self class]), self.contentLength, self.contentType, @(self.byteRangeAccessSupported)];
-}
-
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:@(self.contentLength) forKey:kContentLengthKey];
     [aCoder encodeObject:self.contentType forKey:kContentTypeKey];

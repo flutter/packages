@@ -23,7 +23,7 @@
     self = [super init];
     if (self) {
         NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-        queue.name = @"video_player.download.cache.queue";
+        queue.name = @"video_player.download_cache_queue";
         _downloadQueue = queue;
     }
     return self;

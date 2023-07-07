@@ -58,7 +58,7 @@
 }
 
 - (NSError *)loaderCancelledError{
-    NSError *error = [[NSError alloc] initWithDomain:@"com.resourceloader"
+    NSError *error = [[NSError alloc] initWithDomain:@"video_player"
                                                 code:-3
                                             userInfo:@{NSLocalizedDescriptionKey:@"Resource loader cancelled"}];
     return error;

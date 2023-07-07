@@ -9,8 +9,7 @@
 - (instancetype)initWithURL:(NSURL *)url;
 
 @property (nonatomic, strong, readonly) CacheConfiguration *cacheConfiguration;
-@property (nonatomic, strong, readonly) NSError *setupError; // Create fileHandler error, can't save/use cache
-
+@property (nonatomic, strong, readonly) NSError *setupError;
 - (void)cacheData:(NSData *)data forRange:(NSRange)range error:(NSError **)error;
 - (NSArray<CacheAction *> *)cachedDataActionsForRange:(NSRange)range;
 - (NSData *)cachedDataForRange:(NSRange)range error:(NSError **)error;
