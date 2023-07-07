@@ -55,7 +55,7 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   func getAllPrefs(prefix: String, allowList: [String]?) -> [String: Any] {
     var filteredPrefs: [String: Any] = [:]
     var allowSet: Set<String>?;
-    if let allowList {
+    if let allowList = allowList {
       allowSet = Set(allowList)
     }
     if let appDomain = Bundle.main.bundleIdentifier,
