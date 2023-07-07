@@ -3,22 +3,20 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// A command to run Dart unit tests for packages.
 class DartTestCommand extends PackageLoopingCommand {
   /// Creates an instance of the test command.
   DartTestCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',
