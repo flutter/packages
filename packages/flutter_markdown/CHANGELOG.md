@@ -1,7 +1,12 @@
-## 0.6.17
+## 0.6.18
 
 * Fixes issue where `blockquote` property didn't affect the text style of block quotes.
 
+## 0.6.17
+
+* Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
+  the parent text's `TextStyle`.
+  
 ## 0.6.16
 
 * Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
