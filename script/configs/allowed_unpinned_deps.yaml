@@ -1,4 +1,4 @@
-# The list of external dependencies that are allowed as pinned dependencies.
+# The list of external dependencies that are allowed as unpinned dependencies.
 # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
 #
 # All entries here should have an explanation for why they are here, either
@@ -35,7 +35,6 @@
 - collection
 - convert
 - crypto
-- dart_style
 - fake_async
 - ffi
 - gcloud
