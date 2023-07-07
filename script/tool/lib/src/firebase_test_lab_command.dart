@@ -251,6 +251,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
           <String>[
             'build',
             'apk',
+            '--config-only',
             if (experiment.isNotEmpty) '--enable-experiment=$experiment',
           ],
           workingDir: project.androidDirectory);

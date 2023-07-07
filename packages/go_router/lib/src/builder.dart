@@ -5,16 +5,23 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
-import '../go_router.dart';
 import 'configuration.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/error_screen.dart';
 import 'misc/errors.dart';
 import 'pages/cupertino.dart';
+import 'pages/custom_transition_page.dart';
 import 'pages/material.dart';
+import 'route.dart';
 import 'route_data.dart';
-import 'typedefs.dart';
+import 'state.dart';
+
+/// Signature of a go router builder function with navigator.
+typedef GoRouterBuilderWithNav = Widget Function(
+  BuildContext context,
+  Widget child,
+);
 
 /// Signature for a function that takes in a `route` to be popped with
 /// the `result` and returns a boolean decision on whether the pop
