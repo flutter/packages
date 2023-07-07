@@ -1,3 +1,8 @@
+## 0.6.17
+
+* Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
+  the parent text's `TextStyle`.
+  
 ## 0.6.16
 
 * Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
