@@ -1114,7 +1114,8 @@ packages/plugin/android/build.gradle
         );
       });
 
-      test('allows missing CHANGELOG and version change for dev-only changes',
+      test(
+          'allows missing CHANGELOG and version change for dev-only-file changes',
           () async {
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
@@ -1144,6 +1145,86 @@ packages/plugin/run_tests.sh
           output,
           containsAllInOrder(<Matcher>[
             contains('Running for plugin'),
+          ]),
+        );
+      });
+
+      test(
+          'allows missing CHANGELOG and version change for dev-only line-level '
+          'changes in production files', () async {
+        final RepositoryPackage plugin =
+            createFakePlugin('plugin', packagesDir, version: '1.0.0');
+
+        const String changelog = '''
+## 1.0.0
+* Some changes.
+''';
+        plugin.changelogFile.writeAsStringSync(changelog);
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+        ];
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          // File list.
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/plugin/lib/plugin.dart
+''')),
+          // Dart file diff.
+          FakeProcessInfo(MockProcess(stdout: '''
++   // TODO(someone): Fix this.
++   // ignore: some_lint
+'''), <String>['main', 'HEAD', '--', 'packages/plugin/lib/plugin.dart']),
+        ];
+
+        final List<String> output =
+            await runWithMissingChangeDetection(<String>[]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+          ]),
+        );
+      });
+
+      test('documentation comments are not exempt', () async {
+        final RepositoryPackage plugin =
+            createFakePlugin('plugin', packagesDir, version: '1.0.0');
+
+        const String changelog = '''
+## 1.0.0
+* Some changes.
+''';
+        plugin.changelogFile.writeAsStringSync(changelog);
+        processRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+        ];
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/plugin/lib/plugin.dart
+''')),
+          // Dart file diff.
+          FakeProcessInfo(MockProcess(stdout: '''
++   /// Important new information for API clients!
+'''), <String>['main', 'HEAD', '--', 'packages/plugin/lib/plugin.dart']),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runWithMissingChangeDetection(
+            <String>[], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('No version change found'),
+            contains('plugin:\n'
+                '    Missing version change'),
           ]),
         );
       });

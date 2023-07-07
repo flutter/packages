@@ -447,14 +447,14 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
       final List<Object?> latLng2 = asJsonList(latLngPair[1]);
+      final double padding = json[2] as double;
       map.fitBounds(
         gmaps.LatLngBounds(
           gmaps.LatLng(latLng1[0] as num?, latLng1[1] as num?),
           gmaps.LatLng(latLng2[0] as num?, latLng2[1] as num?),
         ),
+        padding,
       );
-      // padding = json[2];
-      // Needs package:google_maps ^4.0.0 to adjust the padding in fitBounds
       break;
     case 'scrollBy':
       map.panBy(json[1] as num?, json[2] as num?);

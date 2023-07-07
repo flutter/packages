@@ -74,6 +74,9 @@ class NativeTestCommand extends PackageLoopingCommand {
   final String name = 'native-test';
 
   @override
+  List<String> get aliases => <String>['test-native'];
+
+  @override
   final String description = '''
 Runs native unit tests and native integration tests.
 
@@ -273,7 +276,6 @@ this command.
     bool ranUnitTests = false;
     bool ranAnyTests = false;
     bool failed = false;
-    bool hasMissingBuild = false;
     bool hasMisconfiguredIntegrationTest = false;
     // Iterate through all examples (in the rare case that there is more than
     // one example); running any tests found for each one. Requirements on what
@@ -308,12 +310,16 @@ this command.
         platform: platform,
       );
       if (!project.isConfigured()) {
-        printError('ERROR: Run "flutter build apk" on $exampleName, or run '
-            'this tool\'s "build-examples --apk" command, '
-            'before executing tests.');
-        failed = true;
-        hasMissingBuild = true;
-        continue;
+        final int exitCode = await processRunner.runAndStream(
+          flutterCommand,
+          <String>['build', 'apk', '--config-only'],
+          workingDir: example.directory,
+        );
+        if (exitCode != 0) {
+          printError('Unable to configure Gradle project.');
+          failed = true;
+          continue;
+        }
       }
 
       if (runUnitTests) {
@@ -376,10 +382,7 @@ this command.
     }
 
     if (failed) {
-      return _PlatformResult(RunState.failed,
-          error: hasMissingBuild
-              ? 'Examples must be built before testing.'
-              : null);
+      return _PlatformResult(RunState.failed);
     }
     if (hasMisconfiguredIntegrationTest) {
       return _PlatformResult(RunState.failed,

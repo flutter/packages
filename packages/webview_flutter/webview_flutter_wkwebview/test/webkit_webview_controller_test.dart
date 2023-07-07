@@ -608,7 +608,7 @@ void main() {
         mockScrollView: mockScrollView,
       );
 
-      controller.setBackgroundColor(Colors.red);
+      await controller.setBackgroundColor(Colors.red);
 
       // UIScrollView.setBackgroundColor must be called last.
       verifyInOrder(<Object>[
@@ -894,7 +894,7 @@ void main() {
       );
 
       late final int callbackProgress;
-      navigationDelegate.setOnProgress(
+      await navigationDelegate.setOnProgress(
         (int progress) => callbackProgress = progress,
       );
 
@@ -1031,7 +1031,7 @@ void main() {
       );
 
       final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
-      navigationDelegate.setOnUrlChange(
+      await navigationDelegate.setOnUrlChange(
         (UrlChange change) => urlChangeCompleter.complete(change),
       );
 
@@ -1085,7 +1085,7 @@ void main() {
       );
 
       final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
-      navigationDelegate.setOnUrlChange(
+      await navigationDelegate.setOnUrlChange(
         (UrlChange change) => urlChangeCompleter.complete(change),
       );
 
@@ -1127,7 +1127,7 @@ void main() {
       await controller.setOnPlatformPermissionRequest(
         (PlatformWebViewPermissionRequest request) async {
           permissionRequest = request;
-          request.grant();
+          await request.grant();
         },
       );
 
@@ -1152,6 +1152,17 @@ void main() {
         WebViewPermissionResourceType.microphone,
       ]);
       expect(decision, WKPermissionDecision.grant);
+    });
+
+    test('inspectable', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.setInspectable(true);
+      verify(mockWebView.setInspectable(true));
     });
   });
 
@@ -1204,6 +1215,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
+
   static CapturingNavigationDelegate lastCreatedDelegate =
       CapturingNavigationDelegate();
 }
@@ -1217,5 +1229,6 @@ class CapturingUIDelegate extends WKUIDelegate {
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
+
   static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();
 }

@@ -694,6 +694,9 @@ abstract class WKWebViewHostApi {
   @ObjCSelector('evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:')
   @async
   Object? evaluateJavaScript(int identifier, String javaScriptString);
+
+  @ObjCSelector('setInspectableForWebViewWithIdentifier:inspectable:')
+  void setInspectable(int identifier, bool inspectable);
 }
 
 /// Mirror of WKUIDelegate.
