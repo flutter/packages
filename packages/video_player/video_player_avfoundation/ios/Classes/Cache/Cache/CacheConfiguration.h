@@ -14,21 +14,12 @@
 
 - (NSArray<NSValue *> *)cacheFragments;
 
-/**
- *  cached progress
- */
 @property (nonatomic, readonly) float progress;
-@property (nonatomic, readonly) long long downloadedBytes;
-@property (nonatomic, readonly) float downloadSpeed; // kb/s
 
 #pragma mark - update API
 
 - (void)save;
 - (void)addCacheFragment:(NSRange)fragment;
-
-/**
- *  Record the download speed
- */
 - (void)addDownloadedBytes:(long long)bytes spent:(NSTimeInterval)time;
 
 @end

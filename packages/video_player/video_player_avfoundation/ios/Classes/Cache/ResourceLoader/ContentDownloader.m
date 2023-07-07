@@ -229,36 +229,6 @@ didCompleteWithError:(nullable NSError *)error {
     return nil;
 }
 
-#pragma mark - Notify
-
-- (void)notifyDownloadProgressWithFlush:(BOOL)flush finished:(BOOL)finished {
-    double currentTime = CFAbsoluteTimeGetCurrent();
-    double interval = [CacheManager cacheUpdateNotifyInterval];
-    if ((self.notifyTime < currentTime - interval) || flush) {
-        self.notifyTime = currentTime;
-        CacheConfiguration *configuration = [self.cacheWorker.cacheConfiguration copy];
-        [[NSNotificationCenter defaultCenter] postNotificationName:CacheManagerDidUpdateCacheNotification
-                                                            object:self
-                                                          userInfo:@{
-                                                                     CacheConfigurationKey: configuration,
-                                                                     }];
-            
-        if (finished && configuration.progress >= 1.0) {
-            [self notifyDownloadFinishedWithError:nil];
-        }
-    }
-}
-
-- (void)notifyDownloadFinishedWithError:(NSError *)error {
-    CacheConfiguration *configuration = [self.cacheWorker.cacheConfiguration copy];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setValue:configuration forKey:CacheConfigurationKey];
-    [userInfo setValue:error forKey:CacheFinishedErrorKey];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:CacheManagerDidFinishCacheNotification
-                                                        object:self
-                                                      userInfo:userInfo];
-}
 
 #pragma mark - URLSessionDelegateObjectDelegate
 
@@ -312,7 +282,7 @@ didReceiveResponse:(NSURLResponse *)response
         [self.delegate actionWorker:self didReceiveData:data isLocal:NO];
     }
     
-    [self notifyDownloadProgressWithFlush:NO finished:NO];
+//    [self notifyDownloadProgressWithFlush:NO finished:NO];
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -326,9 +296,9 @@ didCompleteWithError:(nullable NSError *)error {
         if ([self.delegate respondsToSelector:@selector(actionWorker:didFinishWithError:)]) {
             [self.delegate actionWorker:self didFinishWithError:error];
         }
-        [self notifyDownloadFinishedWithError:error];
+//        [self notifyDownloadFinishedWithError:error];
     } else {
-        [self notifyDownloadProgressWithFlush:YES finished:YES];
+//        [self notifyDownloadProgressWithFlush:YES finished:YES];
         [self processActions];
     }
 }

@@ -23,12 +23,4 @@
     return YES;
 }
 
-- (NSUInteger)hash {
-    return [[NSString stringWithFormat:@"%@%@", NSStringFromRange(self.range), @(self.actionType)] hash];
-}
-
-- (NSString *)description {
-    return [NSString stringWithFormat:@"actionType %@, range: %@", @(self.actionType), NSStringFromRange(self.range)];
-}
-
 @end
