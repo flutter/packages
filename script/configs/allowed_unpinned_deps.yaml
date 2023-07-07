@@ -20,7 +20,6 @@
 - build_verify
 - google_maps
 - path_to_regexp
-- source_gen_test
 - win32
 
 ## Allowed by default
@@ -32,9 +31,11 @@
 - build
 - build_config
 - build_runner
+- build_test
 - collection
 - convert
 - crypto
+- dart_style
 - fake_async
 - ffi
 - gcloud
