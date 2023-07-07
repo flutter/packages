@@ -49,8 +49,7 @@ void main() {
     expect(
         processRunner.recordedCalls,
         containsAll(<ProcessCall>[
-          ProcessCall(getFlutterCommand(const LocalPlatform()),
-              const <String>['pub', 'get'], example.path),
+          ProcessCall('flutter', const <String>['pub', 'get'], example.path),
           ProcessCall(
               'dart',
               const <String>[
@@ -220,8 +219,7 @@ void main() {
     final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable[
-        getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
@@ -252,8 +250,7 @@ void main() {
     createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable[
-        getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
