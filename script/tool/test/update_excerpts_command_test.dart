@@ -8,6 +8,7 @@ import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/update_excerpts_command.dart';
 import 'package:mockito/mockito.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'common/package_command_test.mocks.dart';
@@ -48,7 +49,8 @@ void main() {
     expect(
         processRunner.recordedCalls,
         containsAll(<ProcessCall>[
-          ProcessCall('dart', const <String>['pub', 'get'], example.path),
+          ProcessCall(getFlutterCommand(const LocalPlatform()),
+              const <String>['pub', 'get'], example.path),
           ProcessCall(
               'dart',
               const <String>[
@@ -218,7 +220,8 @@ void main() {
     final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+    processRunner.mockProcessesForExecutable[
+        getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
@@ -249,7 +252,8 @@ void main() {
     createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+    processRunner.mockProcessesForExecutable[
+        getFlutterCommand(const LocalPlatform())] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
@@ -274,7 +278,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'build_runner'])
     ];
 
@@ -299,7 +302,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
       FakeProcessInfo(
           MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
@@ -326,7 +328,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath, 'example/README.md']);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
       FakeProcessInfo(MockProcess(), <String>['run', 'code_excerpt_updater']),
       FakeProcessInfo(

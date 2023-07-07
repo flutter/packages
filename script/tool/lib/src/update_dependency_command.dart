@@ -13,6 +13,7 @@ import 'package:yaml_edit/yaml_edit.dart';
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
 import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -239,11 +240,9 @@ ${response.httpResponse.body}
     }
 
     print('${indentation}Running pub get...');
-    final io.ProcessResult getResult = await processRunner
-        .run('dart', <String>['pub', 'get'], workingDir: package.directory);
-    if (getResult.exitCode != 0) {
-      printError('dart pub get failed (${getResult.exitCode}):\n'
-          '${getResult.stdout}\n${getResult.stderr}\n');
+    if (!await runPubGet(package, processRunner, platform,
+        streamOutput: false)) {
+      printError('${indentation}Fetching dependencies failed');
       return false;
     }
 
@@ -273,11 +272,9 @@ ${response.httpResponse.body}
     }
 
     print('${indentation}Running pub get...');
-    final io.ProcessResult getResult = await processRunner
-        .run('dart', <String>['pub', 'get'], workingDir: package.directory);
-    if (getResult.exitCode != 0) {
-      printError('dart pub get failed (${getResult.exitCode}):\n'
-          '${getResult.stdout}\n${getResult.stderr}\n');
+    if (!await runPubGet(package, processRunner, platform,
+        streamOutput: false)) {
+      printError('${indentation}Fetching dependencies failed');
       return false;
     }
 
