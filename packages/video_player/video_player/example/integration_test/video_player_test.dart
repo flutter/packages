@@ -142,6 +142,8 @@ void main() {
         expect(controller.value.isPlaying, false);
         expect(controller.value.position, tenMillisBeforeEnd);
       },
+      // Flaky on web: https://github.com/flutter/flutter/issues/130147
+      skip: kIsWeb,
     );
 
     testWidgets(
