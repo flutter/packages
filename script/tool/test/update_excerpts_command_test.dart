@@ -48,7 +48,7 @@ void main() {
     expect(
         processRunner.recordedCalls,
         containsAll(<ProcessCall>[
-          ProcessCall('dart', const <String>['pub', 'get'], example.path),
+          ProcessCall('flutter', const <String>['pub', 'get'], example.path),
           ProcessCall(
               'dart',
               const <String>[
@@ -58,7 +58,7 @@ void main() {
                 '--config',
                 'excerpt',
                 '--output',
-                'excerpts',
+                UpdateExcerptsCommand.excerptOutputDir,
                 '--delete-conflicting-outputs',
               ],
               example.path),
@@ -85,7 +85,7 @@ void main() {
                 '--config',
                 'excerpt',
                 '--output',
-                'excerpts',
+                UpdateExcerptsCommand.excerptOutputDir,
                 '--delete-conflicting-outputs',
               ],
               example.path),
@@ -129,7 +129,7 @@ void main() {
                 '--config',
                 'excerpt',
                 '--output',
-                'excerpts',
+                UpdateExcerptsCommand.excerptOutputDir,
                 '--delete-conflicting-outputs',
               ],
               example.path),
@@ -174,7 +174,7 @@ void main() {
                 '--config',
                 'excerpt',
                 '--output',
-                'excerpts',
+                UpdateExcerptsCommand.excerptOutputDir,
                 '--delete-conflicting-outputs',
               ],
               example.path),
@@ -218,7 +218,7 @@ void main() {
     final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
@@ -249,7 +249,7 @@ void main() {
     createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
@@ -274,7 +274,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'build_runner'])
     ];
 
@@ -299,7 +298,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
       FakeProcessInfo(
           MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
@@ -326,7 +324,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath, 'example/README.md']);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
       FakeProcessInfo(MockProcess(), <String>['run', 'code_excerpt_updater']),
       FakeProcessInfo(
@@ -415,5 +412,53 @@ void main() {
         containsAllInOrder(<Matcher>[
           contains('Unable to determine local file state'),
         ]));
+  });
+
+  test('cleans up excerpt output by default', () async {
+    final RepositoryPackage package = createFakePackage(
+        'a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+    // Simulate the creation of the output directory.
+    final Directory excerptOutputDir = package
+        .getExamples()
+        .first
+        .directory
+        .childDirectory(UpdateExcerptsCommand.excerptOutputDir);
+    excerptOutputDir.createSync(recursive: true);
+
+    const String changedFilePath = 'packages/a_plugin/linux/CMakeLists.txt';
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
+    ];
+
+    await runCapturingPrint(runner, <String>['update-excerpts']);
+
+    expect(excerptOutputDir.existsSync(), false);
+  });
+
+  test('cleans up excerpt output by default', () async {
+    final RepositoryPackage package = createFakePackage(
+        'a_package', packagesDir,
+        extraFiles: <String>[kReadmeExcerptConfigPath]);
+    // Simulate the creation of the output directory.
+    const String outputDirName = UpdateExcerptsCommand.excerptOutputDir;
+    final Directory excerptOutputDir =
+        package.getExamples().first.directory.childDirectory(outputDirName);
+    excerptOutputDir.createSync(recursive: true);
+
+    const String changedFilePath = 'packages/a_plugin/linux/CMakeLists.txt';
+    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
+    ];
+
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['update-excerpts', '--no-cleanup']);
+
+    expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Extraction output is in example/$outputDirName/'),
+        ]));
+    expect(excerptOutputDir.existsSync(), true);
   });
 }

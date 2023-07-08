@@ -12,7 +12,8 @@ import 'match.dart';
 import 'misc/errors.dart';
 import 'misc/inherited_router.dart';
 import 'parser.dart';
-import 'typedefs.dart';
+import 'route.dart';
+import 'state.dart';
 
 /// The function signature of [GoRouter.onException].
 ///
@@ -139,7 +140,6 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
     routerDelegate = GoRouterDelegate(
       configuration: configuration,
-      onException: onException,
       errorPageBuilder: errorPageBuilder,
       errorBuilder: errorBuilder,
       routerNeglect: routerNeglect,

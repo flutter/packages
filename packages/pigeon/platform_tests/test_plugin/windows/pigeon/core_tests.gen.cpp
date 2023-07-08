@@ -543,30 +543,56 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   return decoded;
 }
 
-// AllNullableTypesWrapper
+// AllClassesWrapper
 
-AllNullableTypesWrapper::AllNullableTypesWrapper(const AllNullableTypes& values)
-    : values_(values) {}
+AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types)
+    : all_nullable_types_(all_nullable_types) {}
 
-const AllNullableTypes& AllNullableTypesWrapper::values() const {
-  return values_;
+AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types,
+                                     const AllTypes* all_types)
+    : all_nullable_types_(all_nullable_types),
+      all_types_(all_types ? std::optional<AllTypes>(*all_types)
+                           : std::nullopt) {}
+
+const AllNullableTypes& AllClassesWrapper::all_nullable_types() const {
+  return all_nullable_types_;
 }
 
-void AllNullableTypesWrapper::set_values(const AllNullableTypes& value_arg) {
-  values_ = value_arg;
+void AllClassesWrapper::set_all_nullable_types(
+    const AllNullableTypes& value_arg) {
+  all_nullable_types_ = value_arg;
 }
 
-EncodableList AllNullableTypesWrapper::ToEncodableList() const {
+const AllTypes* AllClassesWrapper::all_types() const {
+  return all_types_ ? &(*all_types_) : nullptr;
+}
+
+void AllClassesWrapper::set_all_types(const AllTypes* value_arg) {
+  all_types_ = value_arg ? std::optional<AllTypes>(*value_arg) : std::nullopt;
+}
+
+void AllClassesWrapper::set_all_types(const AllTypes& value_arg) {
+  all_types_ = value_arg;
+}
+
+EncodableList AllClassesWrapper::ToEncodableList() const {
   EncodableList list;
-  list.reserve(1);
-  list.push_back(EncodableValue(values_.ToEncodableList()));
+  list.reserve(2);
+  list.push_back(EncodableValue(all_nullable_types_.ToEncodableList()));
+  list.push_back(all_types_ ? EncodableValue(all_types_->ToEncodableList())
+                            : EncodableValue());
   return list;
 }
 
-AllNullableTypesWrapper AllNullableTypesWrapper::FromEncodableList(
+AllClassesWrapper AllClassesWrapper::FromEncodableList(
     const EncodableList& list) {
-  AllNullableTypesWrapper decoded(
+  AllClassesWrapper decoded(
       AllNullableTypes::FromEncodableList(std::get<EncodableList>(list[0])));
+  auto& encodable_all_types = list[1];
+  if (!encodable_all_types.IsNull()) {
+    decoded.set_all_types(AllTypes::FromEncodableList(
+        std::get<EncodableList>(encodable_all_types)));
+  }
   return decoded;
 }
 
@@ -614,10 +640,10 @@ EncodableValue HostIntegrationCoreApiCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 128:
-      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     case 129:
-      return CustomEncodableValue(AllNullableTypesWrapper::FromEncodableList(
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     case 130:
       return CustomEncodableValue(AllTypes::FromEncodableList(
@@ -634,19 +660,18 @@ void HostIntegrationCoreApiCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(AllNullableTypes)) {
+    if (custom_value->type() == typeid(AllClassesWrapper)) {
       stream->WriteByte(128);
+      WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
+                                    .ToEncodableList()),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllNullableTypes)) {
+      stream->WriteByte(129);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AllNullableTypesWrapper)) {
-      stream->WriteByte(129);
-      WriteValue(
-          EncodableValue(std::any_cast<AllNullableTypesWrapper>(*custom_value)
-                             .ToEncodableList()),
           stream);
       return;
     }
@@ -1093,6 +1118,42 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
+        "dev.flutter.pigeon.HostIntegrationCoreApi.echoClassWrapper",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_wrapper_arg = args.at(0);
+              if (encodable_wrapper_arg.IsNull()) {
+                reply(WrapError("wrapper_arg unexpectedly null."));
+                return;
+              }
+              const auto& wrapper_arg = std::any_cast<const AllClassesWrapper&>(
+                  std::get<CustomEncodableValue>(encodable_wrapper_arg));
+              ErrorOr<AllClassesWrapper> output =
+                  api->EchoClassWrapper(wrapper_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  CustomEncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
         "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes",
         &GetCodec());
     if (api != nullptr) {
@@ -1145,9 +1206,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 reply(WrapError("wrapper_arg unexpectedly null."));
                 return;
               }
-              const auto& wrapper_arg =
-                  std::any_cast<const AllNullableTypesWrapper&>(
-                      std::get<CustomEncodableValue>(encodable_wrapper_arg));
+              const auto& wrapper_arg = std::any_cast<const AllClassesWrapper&>(
+                  std::get<CustomEncodableValue>(encodable_wrapper_arg));
               ErrorOr<std::optional<std::string>> output =
                   api->ExtractNestedNullableString(wrapper_arg);
               if (output.has_error()) {
@@ -1185,7 +1245,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& encodable_nullable_string_arg = args.at(0);
               const auto* nullable_string_arg =
                   std::get_if<std::string>(&encodable_nullable_string_arg);
-              ErrorOr<AllNullableTypesWrapper> output =
+              ErrorOr<AllClassesWrapper> output =
                   api->CreateNestedNullableString(nullable_string_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
@@ -3088,10 +3148,10 @@ EncodableValue FlutterIntegrationCoreApiCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 128:
-      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     case 129:
-      return CustomEncodableValue(AllNullableTypesWrapper::FromEncodableList(
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     case 130:
       return CustomEncodableValue(AllTypes::FromEncodableList(
@@ -3108,19 +3168,18 @@ void FlutterIntegrationCoreApiCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(AllNullableTypes)) {
+    if (custom_value->type() == typeid(AllClassesWrapper)) {
       stream->WriteByte(128);
+      WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
+                                    .ToEncodableList()),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllNullableTypes)) {
+      stream->WriteByte(129);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AllNullableTypesWrapper)) {
-      stream->WriteByte(129);
-      WriteValue(
-          EncodableValue(std::any_cast<AllNullableTypesWrapper>(*custom_value)
-                             .ToEncodableList()),
           stream);
       return;
     }

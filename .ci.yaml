@@ -14,6 +14,10 @@ platform_properties:
       os: Ubuntu
       cores: "8"
       device_type: none
+      dependencies: >-
+        [
+          {"dependency": "curl", "version": "version:7.64.0"}
+        ]
   linux_android:
     properties:
       os: Ubuntu
@@ -65,7 +69,7 @@ platform_properties:
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e222b"
+          "sdk_version": "14e300c"
         }
   mac_x64:
     properties:
@@ -78,7 +82,7 @@ platform_properties:
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e222b"
+          "sdk_version": "14e300c"
         }
 
 targets:
@@ -91,6 +95,104 @@ targets:
       target_file: repo_tools_tests.yaml
       channel: master
       version_file: flutter_master.version
+
+  - name: Linux repo_checks
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: repo_checks.yaml
+      channel: master
+      version_file: flutter_master.version
+      # The format check requires clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
+
+  - name: Linux dart_unit_test_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_1 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux dart_unit_test_shard_2 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: web_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: web_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_1 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_dart_unit_test_shard_2 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux analyze master
     recipe: packages/packages
@@ -126,6 +228,37 @@ targets:
       channel: stable
       version_file: flutter_stable.version
 
+  - name: Linux_android custom_package_tests master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: linux_custom_package_tests.yaml
+      cores: "32"
+      # Pigeon tests need Andoid deps (thus the Linux_android base) and
+      # clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
+      channel: master
+
+  - name: Linux_android custom_package_tests stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      target_file: linux_custom_package_tests.yaml
+      cores: "32"
+      # Pigeon tests need Android deps (thus the Linux_android base) and
+      # clang-format.
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+        ]
+      channel: stable
+
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
     recipe: packages/packages
@@ -145,6 +278,132 @@ targets:
       target_file: android_build_all_packages.yaml
       channel: stable
 
+  - name: Linux_android android_platform_tests_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_3 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 2 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_4 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 3 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_5 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 4 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_6 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      cores: "32"
+      package_sharding: "--shardIndex 5 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_1 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 0 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_2 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 1 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_3 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 2 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_4 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 3 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_5 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 4 --shardCount 6"
+
+  - name: Linux_android android_platform_tests_shard_6 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      cores: "32"
+      package_sharding: "--shardIndex 5 --shardCount 6"
+
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
     recipe: packages/packages
@@ -162,6 +421,46 @@ targets:
       version_file: flutter_stable.version
       target_file: web_build_all_packages.yaml
       channel: stable
+
+  - name: Linux_web web_platform_tests_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      cores: "32"
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_platform_tests_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      cores: "32"
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_platform_tests_shard_1 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      cores: "32"
+      version_file: flutter_stable.version
+      channel: stable
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Linux_web web_platform_tests_shard_2 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      cores: "32"
+      version_file: flutter_stable.version
+      channel: stable
+      package_sharding: "--shardIndex 1 --shardCount 2"
 
   ### Linux desktop tasks
   - name: Linux_desktop build_all_packages master

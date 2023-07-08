@@ -773,7 +773,44 @@ public class FlutterActivityTest {
         );
       });
 
-      test('fails when the app needs to be built', () async {
+      test('runs a config-only build when the app needs to be built', () async {
+        final RepositoryPackage package = createFakePlugin(
+          'plugin',
+          packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformAndroid: const PlatformDetails(PlatformSupport.inline)
+          },
+          extraFiles: <String>[
+            'example/android/app/src/test/example_test.java',
+          ],
+        );
+        final RepositoryPackage example = package.getExamples().first;
+        final Directory androidFolder =
+            example.platformDirectory(FlutterPlatform.android);
+
+        await runCapturingPrint(runner, <String>['native-test', '--android']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>['build', 'apk', '--config-only'],
+              example.path,
+            ),
+            ProcessCall(
+              androidFolder.childFile('gradlew').path,
+              const <String>[
+                'app:testDebugUnitTest',
+                'plugin:testDebugUnitTest',
+              ],
+              androidFolder.path,
+            ),
+          ]),
+        );
+      });
+
+      test('fails when the gradlew generation fails', () async {
         createFakePlugin(
           'plugin',
           packagesDir,
@@ -784,6 +821,10 @@ public class FlutterActivityTest {
             'example/android/app/src/test/example_test.java',
           ],
         );
+
+        processRunner
+                .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+            <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -797,9 +838,7 @@ public class FlutterActivityTest {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('ERROR: Run "flutter build apk" on plugin/example'),
-            contains('plugin:\n'
-                '    Examples must be built before testing.')
+            contains('Unable to configure Gradle project'),
           ]),
         );
       });

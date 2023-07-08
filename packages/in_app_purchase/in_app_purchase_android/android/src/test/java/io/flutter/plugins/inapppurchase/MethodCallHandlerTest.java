@@ -416,7 +416,11 @@ public class MethodCallHandlerTest {
     verify(result, times(1)).success(fromBillingResult(billingResult));
   }
 
+  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
+  // ReplacementMode enum values.
+  // https://github.com/flutter/flutter/issues/128957.
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Proration() {
     // Fetch the product details first and query the method call
     String productId = "foo";
@@ -453,7 +457,11 @@ public class MethodCallHandlerTest {
     verify(result, times(1)).success(fromBillingResult(billingResult));
   }
 
+  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
+  // ReplacementMode enum values.
+  // https://github.com/flutter/flutter/issues/128957.
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Proration_with_null_OldProduct() {
     // Fetch the product details first and query the method call
     String productId = "foo";
@@ -487,7 +495,11 @@ public class MethodCallHandlerTest {
     verify(result, never()).success(any());
   }
 
+  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
+  // ReplacementMode enum values.
+  // https://github.com/flutter/flutter/issues/128957.
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Full() {
     // Fetch the product details first and query the method call
     String productId = "foo";
