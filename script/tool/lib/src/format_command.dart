@@ -8,11 +8,9 @@ import 'dart:io' as io;
 import 'package:file/file.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
-import 'package:platform/platform.dart';
 
 import 'common/core.dart';
 import 'common/package_command.dart';
-import 'common/process_runner.dart';
 
 /// In theory this should be 8191, but in practice that was still resulting in
 /// "The input line is too long" errors. This was chosen as a value that worked
@@ -40,10 +38,10 @@ final Uri _googleFormatterUrl = Uri.https('github.com',
 class FormatCommand extends PackageCommand {
   /// Creates an instance of the format command.
   FormatCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addFlag('fail-on-change', hide: true);
     argParser.addOption('clang-format',
         defaultsTo: 'clang-format', help: 'Path to "clang-format" executable.');
