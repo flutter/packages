@@ -3,30 +3,35 @@ import 'package:flutter_image/flutter_image.dart';
 
 void main() => runApp(const MyApp());
 
+/// The main app
 class MyApp extends StatelessWidget {
+  /// Contructs main app
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'flutter_image example app',
-      home: RetryNetworkImage(imageUrl: 'https://picsum.photos/250?image=9'),
+      home: HomeScreen(imageUrl: 'https://picsum.photos/250?image=9'),
     );
   }
 }
 
-class RetryNetworkImage extends StatelessWidget {
-  final String imageUrl;
-
-  const RetryNetworkImage({
+/// The home screen
+class HomeScreen extends StatelessWidget {
+  /// Contructs a [HomeScreen]
+  const HomeScreen({
     super.key,
     required this.imageUrl,
   });
 
+  /// URL of the network image
+  final String imageUrl;
+
   @override
   Widget build(BuildContext context) {
-    int maxAttempt = 3;
-    Duration attemptTimeout = const Duration(seconds: 2);
+    const int maxAttempt = 3;
+    const Duration attemptTimeout = Duration(seconds: 2);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,8 +42,9 @@ class RetryNetworkImage extends StatelessWidget {
           image: NetworkImageWithRetry(
             imageUrl,
             scale: 0.8,
-            fetchStrategy: (uri, failure) async {
-              final fetchInstruction = FetchInstructions.attempt(
+            fetchStrategy: (Uri uri, FetchFailure? failure) async {
+              final FetchInstructions fetchInstruction =
+                  FetchInstructions.attempt(
                 uri: uri,
                 timeout: attemptTimeout,
               );
