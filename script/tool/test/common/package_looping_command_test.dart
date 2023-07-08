@@ -10,10 +10,7 @@ import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/package_looping_command.dart';
-import 'package:flutter_plugin_tools/src/common/process_runner.dart';
-import 'package:git/git.dart';
 import 'package:mockito/mockito.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import '../mocks.dart';
@@ -852,8 +849,8 @@ void main() {
 
 class TestPackageLoopingCommand extends PackageLoopingCommand {
   TestPackageLoopingCommand(
-    Directory packagesDir, {
-    required Platform platform,
+    super.packagesDir, {
+    required super.platform,
     this.hasLongOutput = true,
     this.packageLoopingType = PackageLoopingType.topLevelOnly,
     this.customFailureListHeader,
@@ -862,10 +859,9 @@ class TestPackageLoopingCommand extends PackageLoopingCommand {
     this.warnsDuringInit = false,
     this.warnsDuringCleanup = false,
     this.captureOutput = false,
-    ProcessRunner processRunner = const ProcessRunner(),
-    GitDir? gitDir,
-  }) : super(packagesDir,
-            processRunner: processRunner, platform: platform, gitDir: gitDir);
+    super.processRunner,
+    super.gitDir,
+  });
 
   final List<String> checkedPackages = <String>[];
   final List<String> capturedOutput = <String>[];

@@ -20,7 +20,6 @@ import 'common/file_utils.dart';
 import 'common/git_version_finder.dart';
 import 'common/package_command.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -49,17 +48,15 @@ class _RemoteInfo {
 class PublishCommand extends PackageLoopingCommand {
   /// Creates an instance of the publish command.
   PublishCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
     io.Stdin? stdinput,
-    GitDir? gitDir,
+    super.gitDir,
     http.Client? httpClient,
   })  : _pubVersionFinder =
             PubVersionFinder(httpClient: httpClient ?? http.Client()),
-        _stdin = stdinput ?? io.stdin,
-        super(packagesDir,
-            platform: platform, processRunner: processRunner, gitDir: gitDir) {
+        _stdin = stdinput ?? io.stdin {
     argParser.addMultiOption(_pubFlagsOption,
         help:
             'A list of options that will be forwarded on to pub. Separate multiple flags with commas.');

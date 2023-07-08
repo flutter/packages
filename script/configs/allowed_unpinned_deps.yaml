@@ -60,6 +60,7 @@
 - wasm
 - yaml
 # Google-owned packages
+- _discoveryapis_commons
 - adaptive_navigation
 - file
 - googleapis

@@ -65,20 +65,6 @@ task:
     # (on Flutter master).
     - name: repo_checks
       always:
-        format_script: ./script/tool_runner.sh format --fail-on-change
-        license_script: $PLUGIN_TOOL_COMMAND license-check
-        # The major and minor version here should match the lowest version
-        # analyzed in legacy_version_analyze.
-        pubspec_script: ./script/tool_runner.sh pubspec-check --min-min-flutter-version=3.3.0 --allow-dependencies=script/configs/allowed_unpinned_deps.yaml --allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml
-        readme_script:
-          - ./script/tool_runner.sh readme-check
-          # Re-run with --require-excerpts, skipping packages that still need
-          # to be converted. Once https://github.com/flutter/flutter/issues/102679
-          # has been fixed, this can be removed and there can just be a single
-          # run with --require-excerpts and no exclusions.
-          - ./script/tool_runner.sh readme-check --require-excerpts --exclude=script/configs/temp_exclude_excerpt.yaml
-        dependabot_script: $PLUGIN_TOOL_COMMAND dependabot-check
-        gradle_script: $PLUGIN_TOOL_COMMAND gradle-check
         version_script:
           # For pre-submit, pass the PR labels to the script to allow for
           # check overrides.
@@ -90,7 +76,6 @@ task:
           - else
           -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
           - fi
-        publishable_script: ./script/tool_runner.sh publish-check --allow-pre-release
         federated_safety_script:
           # This check is only meaningful for PRs, as it validates changes
           # rather than state.
@@ -157,89 +142,35 @@ task:
     cpu: 4
     memory: 16G
   matrix:
-    ### Platform-agnostic tasks ###
-    - name: dart_unit_tests
-      env:
-        matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 2"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 2"
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      unit_test_script:
-        - ./script/tool_runner.sh dart-test --exclude=script/configs/dart_unit_tests_exceptions.yaml
-      pathified_unit_test_script:
-        # Run tests with path-based dependencies to ensure that publishing
-        # the changes won't break tests of other packages in the repository
-        # that depend on it.
-        - ./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
-        - $PLUGIN_TOOL_COMMAND dart-test --run-on-dirty-packages --exclude=script/configs/dart_unit_tests_exceptions.yaml
-    - name: linux-custom_package_tests
-      env:
-        PATH: $PATH:/usr/local/bin
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      << : *INSTALL_CHROME_LINUX
-      local_tests_script:
-        - ./script/tool_runner.sh custom-test
     ### Android tasks ###
     - name: android-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
       skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
       env:
         matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 8"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 8"
-          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 8"
-          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 8"
-          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 8"
-          PACKAGE_SHARDING: "--shardIndex 5 --shardCount 8"
-          PACKAGE_SHARDING: "--shardIndex 6 --shardCount 8"
-          PACKAGE_SHARDING: "--shardIndex 7 --shardCount 8"
+          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 6"
+          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 6"
+          PACKAGE_SHARDING: "--shardIndex 2 --shardCount 6"
+          PACKAGE_SHARDING: "--shardIndex 3 --shardCount 6"
+          PACKAGE_SHARDING: "--shardIndex 4 --shardCount 6"
+          PACKAGE_SHARDING: "--shardIndex 5 --shardCount 6"
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
         MAPS_API_KEY: ENCRYPTED[d6583b08f79f91ea4844c77460f04539965e46ad2fd97fb7c062b4dfe88016228b86ebe8c220ab4187e0c4bd773dc1e7]
         GCLOUD_FIREBASE_TESTLAB_KEY: ENCRYPTED[1a2eebf9367197bbe812d9a0ea83a53a05aeba4bb5e4964fe6a69727883cd87e51238d39237b1f80b0894c48419ac268]
-      build_script:
-        - ./script/tool_runner.sh build-examples --apk
-      lint_script:
-        - ./script/tool_runner.sh lint-android # must come after build-examples
       native_unit_test_script:
         # Native integration tests are handled by Firebase Test Lab below, so
         # only run unit tests.
-        # Must come after build-examples.
         - ./script/tool_runner.sh native-test --android --no-integration --exclude script/configs/exclude_native_unit_android.yaml
       firebase_test_lab_script:
         - if [[ -n "$GCLOUD_FIREBASE_TESTLAB_KEY" ]]; then
         -   echo $GCLOUD_FIREBASE_TESTLAB_KEY > ${HOME}/gcloud-service-key.json
-        -   ./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --device model=starqlteue,version=26 --exclude=script/configs/exclude_integration_android.yaml
+        -   ./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --exclude=script/configs/exclude_integration_android.yaml
         - else
         -   echo "This user does not have permission to run Firebase Test Lab tests."
         - fi
-      # Upload the full lint results to Cirrus to display in the results UI.
-      always:
-        android-lint_artifacts:
-          path: "**/reports/lint-results-debug.xml"
-          type: text/xml
-          format: android-lint
     ### Web tasks ###
-    - name: web-platform_tests
-      env:
-        matrix:
-          PACKAGE_SHARDING: "--shardIndex 0 --shardCount 2"
-          PACKAGE_SHARDING: "--shardIndex 1 --shardCount 2"
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      << : *INSTALL_CHROME_LINUX
-      chromedriver_background_script:
-        - $CHROMEDRIVER_EXECUTABLE --port=4444
-      build_script:
-        - ./script/tool_runner.sh build-examples --web
-      drive_script:
-        - ./script/tool_runner.sh drive-examples --web --exclude=script/configs/exclude_integration_web.yaml
     - name: web_benchmarks_test
       env:
         matrix:

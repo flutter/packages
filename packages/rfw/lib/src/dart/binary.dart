@@ -521,7 +521,7 @@ class _BlobEncoder {
   }
 
   void _writeString(String value) {
-    final Uint8List buffer = utf8.encode(value) as Uint8List;
+    final Uint8List buffer = const Utf8Encoder().convert(value);
     _writeInt64(buffer.length);
     bytes.add(buffer);
   }
