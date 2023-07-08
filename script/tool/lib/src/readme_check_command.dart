@@ -3,13 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 const String _instructionWikiUrl =
@@ -19,16 +16,11 @@ const String _instructionWikiUrl =
 class ReadmeCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the README check command.
   ReadmeCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        ) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addFlag(_requireExcerptsArg,
         help: 'Require that Dart code blocks be managed by code-excerpt.');
   }
