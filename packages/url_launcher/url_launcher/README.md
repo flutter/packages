@@ -17,7 +17,7 @@ To use this plugin, add `url_launcher` as a [dependency in your pubspec.yaml fil
 ### Example
 
 <?code-excerpt "basic.dart (basic-example)"?>
-``` dart
+```dart
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -72,7 +72,7 @@ element must be added to your manifest as a child of the root element.
 Example:
 
 <?code-excerpt "../../android/app/src/main/AndroidManifest.xml (android-queries)" plaster="none"?>
-``` xml
+```xml
 <!-- Provide required visibility configuration for API level 30 and above -->
 <queries>
   <!-- If your app checks for SMS support -->
