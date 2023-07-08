@@ -1,6 +1,6 @@
 # google\_maps\_flutter\_android
 
-<?code-excerpt path-base="excerpts/packages/google_maps_flutter_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 The Android implementation of [`google_maps_flutter`][1].
 

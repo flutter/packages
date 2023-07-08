@@ -1,5 +1,5 @@
 # Shared preferences plugin
-<?code-excerpt path-base="excerpts/packages/shared_preferences_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/shared_preferences.svg)](https://pub.dev/packages/shared_preferences)
 
