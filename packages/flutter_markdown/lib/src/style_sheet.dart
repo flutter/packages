@@ -462,6 +462,8 @@ class MarkdownStyleSheet {
       em: em!.merge(other.em),
       strong: strong!.merge(other.strong),
       del: del!.merge(other.del),
+      // `blockquote` is created null in factories to avoid unintentionally cascading
+      // style to its inline children, so extra work to merge it is required.
       blockquote: blockquote == null
           ? other.blockquote
           : blockquote!.merge(other.blockquote),

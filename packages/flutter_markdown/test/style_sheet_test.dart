@@ -111,7 +111,7 @@ void defineTests() {
         expect(style.del!.decoration, TextDecoration.lineThrough);
 
         // blockqoute
-        expect(style.blockquote, cTheme.textTheme.textStyle);
+        expect(style.blockquote, isNull);
 
         // img
         expect(style.img, cTheme.textTheme.textStyle);
@@ -185,7 +185,7 @@ void defineTests() {
         expect(style.del!.color, theme.textTheme.bodyMedium!.color);
 
         // blockqoute
-        expect(style.blockquote, theme.textTheme.bodyMedium);
+        expect(style.blockquote, isNull);
 
         // img
         expect(style.img, theme.textTheme.bodyMedium);
@@ -210,13 +210,17 @@ void defineTests() {
         final MarkdownStyleSheet style1 = MarkdownStyleSheet.fromTheme(theme);
         final MarkdownStyleSheet style2 = MarkdownStyleSheet(
           p: const TextStyle(color: Colors.red),
-          blockquote: const TextStyle(fontSize: 16),
+          a: const TextStyle(fontSize: 16),
+          blockquote: const TextStyle(color: Colors.amber),
         );
 
         final MarkdownStyleSheet merged = style1.merge(style2);
         expect(merged.p!.color, Colors.red);
-        expect(merged.blockquote!.fontSize, 16);
-        expect(merged.blockquote!.color, theme.textTheme.bodyMedium!.color);
+        expect(merged.a!.fontSize, 16);
+
+        // As `.fromTheme()` returns null `blockquote`, only color should be set.
+        expect(merged.blockquote!.color, Colors.amber);
+        expect(merged.blockquote!.fontSize, isNull);
       },
     );
 
