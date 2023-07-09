@@ -110,7 +110,6 @@ class MarkdownStyleSheet {
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: theme.textTheme.bodyMedium,
       img: theme.textTheme.bodyMedium,
       checkbox: theme.textTheme.bodyMedium!.copyWith(
         color: theme.primaryColor,
@@ -205,7 +204,6 @@ class MarkdownStyleSheet {
       del: theme.textTheme.textStyle.copyWith(
         decoration: TextDecoration.lineThrough,
       ),
-      blockquote: theme.textTheme.textStyle,
       img: theme.textTheme.textStyle,
       checkbox: theme.textTheme.textStyle.copyWith(
         color: theme.primaryColor,
@@ -288,7 +286,6 @@ class MarkdownStyleSheet {
       em: const TextStyle(fontStyle: FontStyle.italic),
       strong: const TextStyle(fontWeight: FontWeight.bold),
       del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: theme.textTheme.bodyMedium,
       img: theme.textTheme.bodyMedium,
       checkbox: theme.textTheme.bodyMedium!.copyWith(
         color: theme.primaryColor,
@@ -465,7 +462,9 @@ class MarkdownStyleSheet {
       em: em!.merge(other.em),
       strong: strong!.merge(other.strong),
       del: del!.merge(other.del),
-      blockquote: blockquote!.merge(other.blockquote),
+      blockquote: blockquote == null
+          ? other.blockquote
+          : blockquote!.merge(other.blockquote),
       img: img!.merge(other.img),
       checkbox: checkbox!.merge(other.checkbox),
       blockSpacing: other.blockSpacing,

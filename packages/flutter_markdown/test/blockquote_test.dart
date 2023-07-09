@@ -73,23 +73,29 @@ void defineTests() {
         expect(styledTextParts[0].text, 'this is a link: ');
         expect(
           styledTextParts[0].style!.color,
-          theme.textTheme.bodyMedium!.color,
+          styleSheet.p!.color,
         );
 
         /// Markdown guide
         expect(styledTextParts[1].text, 'Markdown guide');
-        expect(styledTextParts[1].style!.color, Colors.blue);
+        expect(
+          styledTextParts[1].style!.color,
+          styleSheet.a!.color,
+        );
 
         /// and this is
         expect(styledTextParts[2].text, ' and this is ');
         expect(
           styledTextParts[2].style!.color,
-          theme.textTheme.bodyMedium!.color,
+          styleSheet.p!.color,
         );
 
         /// bold
         expect(styledTextParts[3].text, 'bold');
-        expect(styledTextParts[3].style!.fontWeight, FontWeight.bold);
+        expect(
+          styledTextParts[3].style!.fontWeight,
+          styleSheet.strong!.fontWeight,
+        );
 
         /// and
         expect(styledTextParts[4].text, ' and ');
@@ -100,7 +106,10 @@ void defineTests() {
 
         /// italic
         expect(styledTextParts[5].text, 'italic');
-        expect(styledTextParts[5].style!.fontStyle, FontStyle.italic);
+        expect(
+          styledTextParts[5].style!.fontStyle,
+          styleSheet.em!.fontStyle,
+        );
       },
     );
   });
@@ -165,6 +174,9 @@ void defineTests() {
       blockquoteDecoration.borderRadius,
     );
 
-    expect(quoteText.text.style!.color, blockquoteStyle.color);
+    expect(
+      quoteText.text.style!.color,
+      blockquoteStyle.color,
+    );
   });
 }
