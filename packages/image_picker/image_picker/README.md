@@ -186,15 +186,13 @@ final XFile? media = await picker.pickMedia();
 final List<XFile> medias = await picker.pickMultipleMedia();
 ```
 
-## Migrating to 0.8.2+
+## Migrating to 1.0
 
-Starting with version **0.8.2** of the image_picker plugin, new methods have
-been added for picking files that return `XFile` instances (from the
+Starting with version 0.8.2 of the image_picker plugin, new methods were
+added that return `XFile` instances (from the
 [cross_file](https://pub.dev/packages/cross_file) package) rather than the
-plugin's own `PickedFile` instances. While the previous methods still exist, it
-is already recommended to start migrating over to their new equivalents.
-Eventually, `PickedFile` and the methods that return instances of it will be
-deprecated and removed.
+plugin's own `PickedFile` instances. The previous methods were supported through
+0.8.9, and removed in 1.0.0.
 
 #### Call the new methods
 

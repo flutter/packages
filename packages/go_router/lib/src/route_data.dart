@@ -11,13 +11,14 @@ import 'package:meta/meta_meta.dart';
 import 'route.dart';
 import 'state.dart';
 
-/// A superclass for each route data
+/// Baseclass for supporting
+/// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 abstract class RouteData {
-  /// Default const constructor
+  /// Allows subclasses to have `const` constructors.
   const RouteData();
 }
 
-/// Baseclass for supporting
+/// A class to represent a [GoRoute] in
 /// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 ///
 /// Subclasses must override one of [build], [buildPage], or
@@ -123,10 +124,12 @@ abstract class GoRouteData extends RouteData {
   );
 }
 
-/// Base class for supporting
-/// [nested navigation](https://pub.dev/packages/go_router#nested-navigation)
+/// A class to represent a [ShellRoute] in
+/// [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).
 abstract class ShellRouteData extends RouteData {
-  /// Default const constructor
+  /// Allows subclasses to have `const` constructors.
+  ///
+  /// [ShellRouteData] is abstract and cannot be instantiated directly.
   const ShellRouteData();
 
   /// [pageBuilder] is used to build the page
@@ -154,6 +157,8 @@ abstract class ShellRouteData extends RouteData {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? navigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    List<NavigatorObserver>? observers,
+    String? restorationScopeId,
   }) {
     T factoryImpl(GoRouterState state) {
       return (_stateObjectExpando[state] ??= factory(state)) as T;
@@ -186,6 +191,8 @@ abstract class ShellRouteData extends RouteData {
       pageBuilder: pageBuilder,
       routes: routes,
       navigatorKey: navigatorKey,
+      observers: observers,
+      restorationScopeId: restorationScopeId,
     );
   }
 
@@ -262,6 +269,7 @@ abstract class StatefulShellRouteData extends RouteData {
         builder: builder,
         pageBuilder: pageBuilder,
         navigatorContainerBuilder: navigatorContainerBuilder,
+        restorationScopeId: restorationScopeId,
       );
     }
     return StatefulShellRoute.indexedStack(
@@ -292,10 +300,16 @@ abstract class StatefulShellBranchData {
   static StatefulShellBranch $branch<T extends StatefulShellBranchData>({
     GlobalKey<NavigatorState>? navigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    List<NavigatorObserver>? observers,
+    String? initialLocation,
+    String? restorationScopeId,
   }) {
     return StatefulShellBranch(
       routes: routes,
       navigatorKey: navigatorKey,
+      observers: observers,
+      initialLocation: initialLocation,
+      restorationScopeId: restorationScopeId,
     );
   }
 }

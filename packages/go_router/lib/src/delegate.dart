@@ -11,7 +11,7 @@ import 'builder.dart';
 import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
-import 'typedefs.dart';
+import 'route.dart';
 
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
@@ -131,9 +131,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
-    currentConfiguration = configuration;
+    if (currentConfiguration != configuration) {
+      currentConfiguration = configuration;
+      notifyListeners();
+    }
     assert(currentConfiguration.isNotEmpty || currentConfiguration.isError);
-    notifyListeners();
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);
@@ -148,73 +150,61 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 /// pageless route, such as a dialog or bottom sheet.
 class _NavigatorStateIterator extends Iterator<NavigatorState> {
   _NavigatorStateIterator(this.matchList, this.root)
-      : index = matchList.matches.length;
+      : index = matchList.matches.length - 1;
 
   final RouteMatchList matchList;
-  int index = 0;
+  int index;
+
   final NavigatorState root;
   @override
   late NavigatorState current;
+
+  RouteBase _getRouteAtIndex(int index) => matchList.matches[index].route;
+
+  void _findsNextIndex() {
+    final GlobalKey<NavigatorState>? parentNavigatorKey =
+        _getRouteAtIndex(index).parentNavigatorKey;
+    if (parentNavigatorKey == null) {
+      index -= 1;
+      return;
+    }
+
+    for (index -= 1; index >= 0; index -= 1) {
+      final RouteBase route = _getRouteAtIndex(index);
+      if (route is ShellRouteBase) {
+        if (route.navigatorKeyForSubRoute(_getRouteAtIndex(index + 1)) ==
+            parentNavigatorKey) {
+          return;
+        }
+      }
+    }
+    assert(root == parentNavigatorKey.currentState);
+  }
 
   @override
   bool moveNext() {
     if (index < 0) {
       return false;
     }
-    late RouteBase subRoute;
-    for (index -= 1; index >= 0; index -= 1) {
-      final RouteMatch match = matchList.matches[index];
-      final RouteBase route = match.route;
-      if (route is GoRoute && route.parentNavigatorKey != null) {
-        final GlobalKey<NavigatorState> parentNavigatorKey =
-            route.parentNavigatorKey!;
-        final ModalRoute<Object?>? parentModalRoute =
-            ModalRoute.of(parentNavigatorKey.currentContext!);
-        // The ModalRoute can be null if the parentNavigatorKey references the
-        // root navigator.
-        if (parentModalRoute == null) {
-          index = -1;
-          assert(root == parentNavigatorKey.currentState);
-          current = root;
-          return true;
-        }
-        // It must be a ShellRoute that holds this parentNavigatorKey;
-        // otherwise, parentModalRoute would have been null. Updates the index
-        // to the ShellRoute
-        for (index -= 1; index >= 0; index -= 1) {
-          final RouteBase route = matchList.matches[index].route;
-          if (route is ShellRoute) {
-            if (route.navigatorKey == parentNavigatorKey) {
-              break;
-            }
-          }
-        }
-        // There may be a pageless route on top of ModalRoute that the
-        // NavigatorState of parentNavigatorKey is in. For example, an open
-        // dialog. In that case we want to find the navigator that host the
-        // pageless route.
-        if (parentModalRoute.isCurrent == false) {
-          continue;
-        }
+    _findsNextIndex();
 
-        current = parentNavigatorKey.currentState!;
-        return true;
-      } else if (route is ShellRouteBase) {
+    while (index >= 0) {
+      final RouteBase route = _getRouteAtIndex(index);
+      if (route is ShellRouteBase) {
+        final GlobalKey<NavigatorState> navigatorKey =
+            route.navigatorKeyForSubRoute(_getRouteAtIndex(index + 1));
         // Must have a ModalRoute parent because the navigator ShellRoute
         // created must not be the root navigator.
-        final GlobalKey<NavigatorState> navigatorKey =
-            route.navigatorKeyForSubRoute(subRoute);
         final ModalRoute<Object?> parentModalRoute =
             ModalRoute.of(navigatorKey.currentContext!)!;
         // There may be pageless route on top of ModalRoute that the
         // parentNavigatorKey is in. For example an open dialog.
-        if (parentModalRoute.isCurrent == false) {
-          continue;
+        if (parentModalRoute.isCurrent) {
+          current = navigatorKey.currentState!;
+          return true;
         }
-        current = navigatorKey.currentState!;
-        return true;
       }
-      subRoute = route;
+      _findsNextIndex();
     }
     assert(index == -1);
     current = root;

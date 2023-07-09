@@ -74,6 +74,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -88,6 +89,7 @@ public class MethodCallHandlerTest {
   @Mock Activity activity;
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
+  @Captor ArgumentCaptor<HashMap<String, Object>> resultCaptor;
 
   @Before
   public void setUp() {
@@ -240,8 +242,6 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
-    @SuppressWarnings("unchecked")
-    ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
     verify(result).success(resultCaptor.capture());
     HashMap<String, Object> resultData = resultCaptor.getValue();
     assertEquals(resultData.get("billingResult"), fromBillingResult(billingResult));
@@ -416,7 +416,11 @@ public class MethodCallHandlerTest {
     verify(result, times(1)).success(fromBillingResult(billingResult));
   }
 
+  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
+  // ReplacementMode enum values.
+  // https://github.com/flutter/flutter/issues/128957.
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Proration() {
     // Fetch the product details first and query the method call
     String productId = "foo";
@@ -453,7 +457,11 @@ public class MethodCallHandlerTest {
     verify(result, times(1)).success(fromBillingResult(billingResult));
   }
 
+  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
+  // ReplacementMode enum values.
+  // https://github.com/flutter/flutter/issues/128957.
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Proration_with_null_OldProduct() {
     // Fetch the product details first and query the method call
     String productId = "foo";
@@ -487,7 +495,11 @@ public class MethodCallHandlerTest {
     verify(result, never()).success(any());
   }
 
+  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
+  // ReplacementMode enum values.
+  // https://github.com/flutter/flutter/issues/128957.
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Full() {
     // Fetch the product details first and query the method call
     String productId = "foo";
@@ -652,8 +664,6 @@ public class MethodCallHandlerTest {
   public void queryPurchaseHistoryAsync() {
     // Set up an established billing client and all our mocked responses
     establishConnectedBillingClient(null, null);
-    @SuppressWarnings("unchecked")
-    ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -704,8 +714,6 @@ public class MethodCallHandlerTest {
             .setDebugMessage("dummy debug message")
             .build();
     List<Purchase> purchasesList = asList(buildPurchase("foo"));
-    @SuppressWarnings("unchecked")
-    ArgumentCaptor<HashMap<String, Object>> resultCaptor = ArgumentCaptor.forClass(HashMap.class);
     doNothing()
         .when(mockMethodChannel)
         .invokeMethod(eq(ON_PURCHASES_UPDATED), resultCaptor.capture());
@@ -719,7 +727,6 @@ public class MethodCallHandlerTest {
   @Test
   public void consumeAsync() {
     establishConnectedBillingClient(null, null);
-    ArgumentCaptor<BillingResult> resultCaptor = ArgumentCaptor.forClass(BillingResult.class);
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
@@ -749,7 +756,6 @@ public class MethodCallHandlerTest {
   @Test
   public void acknowledgePurchase() {
     establishConnectedBillingClient(null, null);
-    ArgumentCaptor<BillingResult> resultCaptor = ArgumentCaptor.forClass(BillingResult.class);
     BillingResult billingResult =
         BillingResult.newBuilder()
             .setResponseCode(100)
