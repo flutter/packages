@@ -6,11 +6,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 const int _exitUnsupportedPlatform = 2;
@@ -22,10 +20,10 @@ const int _exitPodNotInstalled = 3;
 class PodspecCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the linter command.
   PodspecCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform);
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  });
 
   @override
   final String name = 'podspec-check';

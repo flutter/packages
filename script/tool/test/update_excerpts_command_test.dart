@@ -48,7 +48,7 @@ void main() {
     expect(
         processRunner.recordedCalls,
         containsAll(<ProcessCall>[
-          ProcessCall('dart', const <String>['pub', 'get'], example.path),
+          ProcessCall('flutter', const <String>['pub', 'get'], example.path),
           ProcessCall(
               'dart',
               const <String>[
@@ -218,7 +218,7 @@ void main() {
     final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
@@ -249,7 +249,7 @@ void main() {
     createFakePlugin('a_package', packagesDir,
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
     ];
 
@@ -274,7 +274,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'build_runner'])
     ];
 
@@ -299,7 +298,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath]);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
       FakeProcessInfo(
           MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
@@ -326,7 +324,6 @@ void main() {
         extraFiles: <String>[kReadmeExcerptConfigPath, 'example/README.md']);
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
       FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
       FakeProcessInfo(MockProcess(), <String>['run', 'code_excerpt_updater']),
       FakeProcessInfo(

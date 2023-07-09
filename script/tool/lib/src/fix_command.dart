@@ -2,24 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
-import 'package:file/file.dart';
-import 'package:platform/platform.dart';
-
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// A command to run Dart's "fix" command on packages.
 class FixCommand extends PackageLoopingCommand {
   /// Creates a fix command instance.
   FixCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform);
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  });
 
   @override
   final String name = 'fix';

@@ -3,9 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
@@ -13,7 +11,6 @@ import 'common/file_utils.dart';
 import 'common/git_version_finder.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// A command to check that PRs don't violate repository best practices that
@@ -22,16 +19,11 @@ import 'common/repository_package.dart';
 class FederationSafetyCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the safety check command.
   FederationSafetyCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        );
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  });
 
   // A map of package name (as defined by the directory name of the package)
   // to a list of changed Dart files in that package, as Posix paths relative to
