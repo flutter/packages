@@ -17,6 +17,15 @@ class XFile extends XFileBase {
   /// [bytes] is ignored; the parameter exists only to match the web version of
   /// the constructor. To construct a dart:io XFile from bytes, use
   /// [XFile.fromData].
+  ///
+  /// [name] is ignored; the parameter exists only to match the web version of
+  /// the constructor. **You should avoid using this parameter because it will
+  /// be likely removed in the future releases.**
+  ///
+  /// [length] is ignored; the parameter exists only to match the web version of
+  /// the constructor. **You should avoid using this parameter because it will
+  /// be likely removed in the future releases.**
+  ///
   // ignore: use_super_parameters
   XFile(
     String path, {
@@ -32,6 +41,10 @@ class XFile extends XFileBase {
         super(path);
 
   /// Construct an CrossFile from its data
+  ///
+  /// [name] is ignored; the parameter exists only to match the web version of
+  /// the constructor. **You should avoid using this parameter because it will
+  /// be likely removed in the future releases.**
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,
@@ -82,9 +95,17 @@ class XFile extends XFileBase {
   @override
   String get path => _file.path;
 
+  /// the name extracted from [path].
+  ///
+  /// **Be aware**, the name here is not the one
+  /// you may have passed in the constructor/factory.
   @override
   String get name => _file.path.split(Platform.pathSeparator).last;
 
+  /// the length of the file.
+  ///
+  /// **Be aware**, the length here is not the one
+  /// you may have passed in the constructor/factory.
   @override
   Future<int> length() {
     if (_length != null) {
