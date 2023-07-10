@@ -2,13 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:file/file.dart';
-import 'package:platform/platform.dart';
-
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 import 'common/xcode.dart';
 
@@ -16,11 +12,10 @@ import 'common/xcode.dart';
 class XcodeAnalyzeCommand extends PackageLoopingCommand {
   /// Creates an instance of the test command.
   XcodeAnalyzeCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  })  : _xcode = Xcode(processRunner: processRunner, log: true),
-        super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) : _xcode = Xcode(processRunner: processRunner, log: true) {
     argParser.addFlag(platformIOS, help: 'Analyze iOS');
     argParser.addFlag(platformMacOS, help: 'Analyze macOS');
     argParser.addOption(_minIOSVersionArg,

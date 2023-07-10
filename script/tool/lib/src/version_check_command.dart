@@ -3,18 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
 import 'common/git_version_finder.dart';
 import 'common/package_looping_command.dart';
 import 'common/package_state_utils.dart';
-import 'common/process_runner.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -98,19 +95,13 @@ Map<Version, NextVersionType> getAllowedNextVersions(
 class VersionCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
   VersionCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
     http.Client? httpClient,
-  })  : _pubVersionFinder =
-            PubVersionFinder(httpClient: httpClient ?? http.Client()),
-        super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        ) {
+  }) : _pubVersionFinder =
+            PubVersionFinder(httpClient: httpClient ?? http.Client()) {
     argParser.addFlag(
       _againstPubFlag,
       help: 'Whether the version check should run against the version on pub.\n'

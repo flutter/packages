@@ -4,14 +4,12 @@
 
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
-import 'package:platform/platform.dart';
 
 import 'common/cmake.dart';
 import 'common/core.dart';
 import 'common/gradle.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 import 'common/xcode.dart';
 
@@ -39,11 +37,10 @@ const String misconfiguredJavaIntegrationTestErrorExplanation =
 class NativeTestCommand extends PackageLoopingCommand {
   /// Creates an instance of the test command.
   NativeTestCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  })  : _xcode = Xcode(processRunner: processRunner, log: true),
-        super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) : _xcode = Xcode(processRunner: processRunner, log: true) {
     argParser.addOption(
       _iOSDestinationFlag,
       help: 'Specify the destination when running iOS tests.\n'
