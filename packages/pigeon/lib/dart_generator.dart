@@ -204,7 +204,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   ) {
     void writeValueDecode(NamedType field, int index) {
       final String resultAt = 'result[$index]';
-      String castCallPrefix = field.type.isNullable ? '?' : '!';
+      final String castCallPrefix = field.type.isNullable ? '?' : '!';
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
       final String nullableTag = field.type.isNullable ? '?' : '';
@@ -235,13 +235,13 @@ $resultAt != null
           '($resultAt as $genericType?)$castCallPrefix$castCall',
         );
       } else {
-        castCallPrefix = field.type.isNullable ? '' : '!';
+        final String castCallForcePrefix = field.type.isNullable ? '' : '!';
         final String castString = field.type.baseName == 'Object'
             ? ''
             : ' as $genericType$nullableTag';
 
         indent.add(
-          '$resultAt$castCallPrefix$castString',
+          '$resultAt$castCallForcePrefix$castString',
         );
       }
     }
