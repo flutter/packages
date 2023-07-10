@@ -96,10 +96,8 @@ task:
         # Change the arguments to pubspec-check when changing these values.
         env:
           CHANNEL: "3.7.12"
-          DART_VERSION: "2.17.6"
         env:
           CHANNEL: "3.3.10"
-          DART_VERSION: "2.18.6"
       package_prep_script:
         # Allow analyzing packages that use a dev dependency with a higher
         # minimum Flutter/Dart version than the package itself.
@@ -107,7 +105,7 @@ task:
       analyze_script:
         # Only analyze lib/; non-client code doesn't need to work on
         # all supported legacy version.
-        - ./script/tool_runner.sh analyze --lib-only --skip-if-not-supporting-flutter-version="$CHANNEL" --skip-if-not-supporting-dart-version="$DART_VERSION" --custom-analysis=script/configs/custom_analysis.yaml
+        - ./script/tool_runner.sh analyze --lib-only --skip-if-not-supporting-flutter-version="$CHANNEL" --custom-analysis=script/configs/custom_analysis.yaml
     - name: readme_excerpts
       env:
         CIRRUS_CLONE_SUBMODULES: true
