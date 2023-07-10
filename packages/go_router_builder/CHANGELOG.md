@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Adds Support for StatefulShellRoute
+
 ## 2.2.0
 
 * Adds replace methods to the generated routes.

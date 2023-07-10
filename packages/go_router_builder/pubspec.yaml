@@ -23,7 +23,6 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.0.0
-  go_router: 
-   path: /Users/jinhangyu/Documents/GitHub/packages/packages/go_router
+  go_router: ^9.0.3
   source_gen_test: ^1.0.0
   test: ^1.20.0

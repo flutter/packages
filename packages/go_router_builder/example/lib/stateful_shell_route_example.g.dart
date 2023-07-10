@@ -58,6 +58,8 @@ extension $DetailsARouteDataExtension on DetailsARouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $BranchBDataExtension on BranchBData {
@@ -78,4 +80,6 @@ extension $DetailsBRouteDataExtension on DetailsBRouteData {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

@@ -8,8 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  go_router: 
-     path: /Users/jinhangyu/Documents/GitHub/packages/packages/go_router
+  go_router: ^9.0.3
   provider: 6.0.5
 
 dev_dependencies:
