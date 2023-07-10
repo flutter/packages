@@ -56,13 +56,6 @@ class FetchGradleDeps extends PackageLoopingCommand {
 
       final String packageName = package.directory.basename;
 
-      // Only lint one build mode to avoid extra work.
-      // Only lint the plugin project itself, to avoid failing due to errors in
-      // dependencies.
-      //
-      // TODO(stuartmorgan): Consider adding an XML parser to read and summarize
-      // all results. Currently, only the first three errors will be shown
-      // inline, and the rest have to be checked via the CI-uploaded artifact.
       final int exitCode = await project.runCommand('$packageName:dependencies');
       if (exitCode != 0) {
         return PackageResult.fail();
