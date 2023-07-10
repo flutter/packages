@@ -11,6 +11,7 @@ import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/process_runner.dart';
 

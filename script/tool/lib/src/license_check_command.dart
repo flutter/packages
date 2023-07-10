@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_command.dart';
 
 const Set<String> _codeFileExtensions = <String>{

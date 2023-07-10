@@ -11,7 +11,7 @@ import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
-import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/process_runner.dart';
 import 'common/repository_package.dart';

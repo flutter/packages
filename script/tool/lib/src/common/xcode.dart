@@ -7,7 +7,7 @@ import 'dart:io' as io;
 
 import 'package:file/file.dart';
 
-import 'core.dart';
+import 'output_utils.dart';
 import 'process_runner.dart';
 
 const String _xcodeBuildCommand = 'xcodebuild';
