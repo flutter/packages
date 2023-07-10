@@ -1,3 +1,7 @@
+## NEXT
+
+- Fixes a typo in docs for `StatefulShellRoute.indexedStack(...)`.
+
 ## 9.0.4
 
 - Fixes link of Error Handling Documentation in comment.

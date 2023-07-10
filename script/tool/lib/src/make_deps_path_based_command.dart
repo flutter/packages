@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -28,9 +27,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   /// Creates an instance of the command to convert selected dependencies to
   /// path-based.
   MakeDepsPathBasedCommand(
-    Directory packagesDir, {
-    GitDir? gitDir,
-  }) : super(packagesDir, gitDir: gitDir) {
+    super.packagesDir, {
+    super.gitDir,
+  }) {
     argParser.addMultiOption(_targetDependenciesArg,
         help:
             'The names of the packages to convert to path-based dependencies.\n'

@@ -2,18 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 import 'package:uuid/uuid.dart';
 
 import 'common/core.dart';
 import 'common/gradle.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 const int _exitGcloudAuthFailed = 2;
@@ -22,10 +19,10 @@ const int _exitGcloudAuthFailed = 2;
 class FirebaseTestLabCommand extends PackageLoopingCommand {
   /// Creates an instance of the test runner command.
   FirebaseTestLabCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addOption(
       'project',
       defaultsTo: 'flutter-cirrus',
