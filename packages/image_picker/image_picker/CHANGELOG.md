@@ -1,3 +1,7 @@
+## 1.0.1
+
+* Rolls platform implementations to avoid `UnimplementedError`.
+
 ## 1.0.0
 
 * **BREAKING CHANGE**: Removes the deprecated `get*` methods. Clients who have
