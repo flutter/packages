@@ -73,7 +73,6 @@ class RouteConfig {
     // TODO(stuartmorgan): Remove this ignore once 'analyze' can be set to
     // 5.2+ (when Flutter 3.4+ is on stable).
     // ignore: deprecated_member_use
-
     final String typeName = type.element.name;
 
     String? path;
