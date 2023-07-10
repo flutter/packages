@@ -66,7 +66,7 @@ void main(List<String> args) {
     ..addCommand(DependabotCheckCommand(packagesDir))
     ..addCommand(DriveExamplesCommand(packagesDir))
     ..addCommand(FederationSafetyCheckCommand(packagesDir))
-    ..addCommand(FetchDeps(packagesDir))
+    ..addCommand(FetchDepsCommand(packagesDir))
     ..addCommand(FirebaseTestLabCommand(packagesDir))
     ..addCommand(FixCommand(packagesDir))
     ..addCommand(FormatCommand(packagesDir))
