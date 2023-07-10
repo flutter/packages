@@ -1,6 +1,7 @@
 ## 1.0.1
 
-* Rolls platform implementations to avoid `UnimplementedError`.
+* Rolls platform implementations to ensure that `pickMedia` and
+  `pickMultipleMedia` have platform implementations.
 
 ## 1.0.0
 
