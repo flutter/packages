@@ -757,7 +757,7 @@ class StatefulShellRoute extends ShellRouteBase {
   ///
   /// This constructor provides an IndexedStack based implementation for the
   /// container ([navigatorContainerBuilder]) used to manage the Widgets
-  /// representing the branch Navigators. A part from that, this constructor
+  /// representing the branch Navigators. Apart from that, this constructor
   /// works the same way as the default constructor.
   ///
   /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
