@@ -238,9 +238,11 @@ targets:
       cores: "32"
       # Pigeon tests need Andoid deps (thus the Linux_android base) and
       # clang-format.
+      # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
       channel: master
 
@@ -251,11 +253,11 @@ targets:
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       cores: "32"
-      # Pigeon tests need Android deps (thus the Linux_android base) and
-      # clang-format.
+      # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
       channel: stable
 
