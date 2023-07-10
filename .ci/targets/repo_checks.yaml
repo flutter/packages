@@ -10,7 +10,7 @@ tasks:
     args: ["license-check"]
     always: true
     # The major and minor version here should match the lowest version analyzed
-    # in legacy version analysis (currently .cirrus.yaml legacy_version_analyze).
+    # in legacy version analysis (.ci.yaml analyze_legacy).
   - name: pubspec validation
     script: script/tool_runner.sh
     args:
