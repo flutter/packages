@@ -7,5 +7,5 @@ tasks:
   # (which we don't commit to supporting, but don't want to actively break)
   # without updating the constraints.
   # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#supported-flutter-versions
-  - name: analyze - downgraded
+  - name: analyze - legacy
     script: .ci/scripts/analyze_legacy.sh
