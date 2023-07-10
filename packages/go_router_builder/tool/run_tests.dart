@@ -51,8 +51,11 @@ Future<void> main() async {
         return;
       }
 
-      final String generated = formatter.format(results.join('\n\n')).trim();
-      expect(generated, equals(expectResult));
+      final String generated = formatter
+          .format(results.join('\n\n'))
+          .trim()
+          .replaceAll('\r\n', '\n');
+      expect(generated, equals(expectResult.replaceAll('\r\n', '\n')));
     });
   }
 }
