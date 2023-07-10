@@ -2,25 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// A command to run Dart analysis on packages.
 class AnalyzeCommand extends PackageLoopingCommand {
   /// Creates a analysis command instance.
   AnalyzeCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addMultiOption(_customAnalysisFlag,
         help:
             'Directories (comma separated) that are allowed to have their own '

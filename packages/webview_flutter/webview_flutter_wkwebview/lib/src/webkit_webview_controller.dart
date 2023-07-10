@@ -518,7 +518,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   // workaround could interfere with exposing support for custom scripts from
   // applications.
   Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
-    _webView.configuration.userContentController.removeAllUserScripts();
+    unawaited(
+      _webView.configuration.userContentController.removeAllUserScripts(),
+    );
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)

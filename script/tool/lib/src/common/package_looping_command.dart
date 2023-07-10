@@ -6,14 +6,11 @@ import 'dart:async';
 
 import 'package:colorize/colorize.dart';
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'core.dart';
 import 'package_command.dart';
-import 'process_runner.dart';
 import 'repository_package.dart';
 
 /// Enumeration options for package looping commands.
@@ -85,12 +82,11 @@ class PackageResult {
 abstract class PackageLoopingCommand extends PackageCommand {
   /// Creates a command to operate on [packagesDir] with the given environment.
   PackageLoopingCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(packagesDir,
-            processRunner: processRunner, platform: platform, gitDir: gitDir) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addOption(
       _skipByFlutterVersionArg,
       help: 'Skip any packages that require a Flutter version newer than '

@@ -429,7 +429,7 @@ dev_dependencies:
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('dart pub get failed'),
+          contains('Fetching dependencies failed'),
           contains('Failed to update pigeon files'),
         ]),
       );
@@ -545,7 +545,7 @@ dev_dependencies:
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('dart pub get failed'),
+          contains('Fetching dependencies failed'),
           contains('Failed to update mocks'),
         ]),
       );

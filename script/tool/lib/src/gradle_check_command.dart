@@ -18,7 +18,7 @@ final Version minKotlinVersion = Version(1, 7, 10);
 /// A command to enforce gradle file conventions and best practices.
 class GradleCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the gradle check command.
-  GradleCheckCommand(Directory packagesDir) : super(packagesDir);
+  GradleCheckCommand(super.packagesDir);
 
   @override
   final String name = 'gradle-check';
