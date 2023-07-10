@@ -16,6 +16,8 @@ import 'package:path/path.dart' as p;
 
 Future<void> main(List<String> args) async {
   if (!Platform.isLinux) {
+    // The test was migrated from a Linux-only task, so this preserves behavior.
+    // If desired, it can be enabled for other platforms in the future.
     print('Skipping for non-Linux host');
     exit(0);
   }
