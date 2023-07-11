@@ -60,6 +60,7 @@ struct AllTypes {
   var aMap: [AnyHashable: Any?]
   var anEnum: AnEnum
   var aString: String
+  var anObject: Any
 
   static func fromList(_ list: [Any?]) -> AllTypes? {
     let aBool = list[0] as! Bool
@@ -74,6 +75,7 @@ struct AllTypes {
     let aMap = list[9] as! [AnyHashable: Any?]
     let anEnum = AnEnum(rawValue: list[10] as! Int)!
     let aString = list[11] as! String
+    let anObject = list[12]!
 
     return AllTypes(
       aBool: aBool,
@@ -87,7 +89,8 @@ struct AllTypes {
       aList: aList,
       aMap: aMap,
       anEnum: anEnum,
-      aString: aString
+      aString: aString,
+      anObject: anObject
     )
   }
   func toList() -> [Any?] {
@@ -104,6 +107,7 @@ struct AllTypes {
       aMap,
       anEnum.rawValue,
       aString,
+      anObject,
     ]
   }
 }
@@ -127,6 +131,7 @@ struct AllNullableTypes {
   var nullableMapWithObject: [String?: Any?]? = nil
   var aNullableEnum: AnEnum? = nil
   var aNullableString: String? = nil
+  var aNullableObject: Any? = nil
 
   static func fromList(_ list: [Any?]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
@@ -148,6 +153,7 @@ struct AllNullableTypes {
       aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)!
     }
     let aNullableString: String? = nilOrValue(list[14])
+    let aNullableObject: Any? = list[15]
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -164,7 +170,8 @@ struct AllNullableTypes {
       nullableMapWithAnnotations: nullableMapWithAnnotations,
       nullableMapWithObject: nullableMapWithObject,
       aNullableEnum: aNullableEnum,
-      aNullableString: aNullableString
+      aNullableString: aNullableString,
+      aNullableObject: aNullableObject
     )
   }
   func toList() -> [Any?] {
@@ -184,6 +191,7 @@ struct AllNullableTypes {
       nullableMapWithObject,
       aNullableEnum?.rawValue,
       aNullableString,
+      aNullableObject,
     ]
   }
 }

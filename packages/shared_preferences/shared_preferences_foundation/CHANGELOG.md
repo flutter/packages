@@ -1,3 +1,7 @@
+## 2.3.1
+
+* Fixes variable binding bug on older versions of Xcode.
+
 ## 2.3.0
 
 * Adds `clearWithParameters` and `getAllWithParameters` methods.

@@ -3,23 +3,22 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 
 import 'common/core.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to run Dart unit tests for packages.
 class DartTestCommand extends PackageLoopingCommand {
   /// Creates an instance of the test command.
   DartTestCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',
@@ -131,21 +130,16 @@ class DartTestCommand extends PackageLoopingCommand {
   /// Runs the Dart tests for a non-Flutter package, returning true on success.
   Future<bool> _runDartTests(RepositoryPackage package,
       {String? platform}) async {
-    // Unlike `flutter test`, `pub run test` does not automatically get
+    // Unlike `flutter test`, `dart run test` does not automatically get
     // packages
-    int exitCode = await processRunner.runAndStream(
-      'dart',
-      <String>['pub', 'get'],
-      workingDir: package.directory,
-    );
-    if (exitCode != 0) {
+    if (!await runPubGet(package, processRunner, super.platform)) {
       printError('Unable to fetch dependencies.');
       return false;
     }
 
     final String experiment = getStringArg(kEnableExperiment);
 
-    exitCode = await processRunner.runAndStream(
+    final int exitCode = await processRunner.runAndStream(
       'dart',
       <String>[
         'run',

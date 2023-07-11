@@ -7,11 +7,9 @@ import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/package_command.dart';
-import 'package:flutter_plugin_tools/src/common/process_runner.dart';
 import 'package:git/git.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import '../mocks.dart';
@@ -1270,13 +1268,12 @@ packages/b_package/lib/src/foo.dart
 
 class SamplePackageCommand extends PackageCommand {
   SamplePackageCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
     this.includeSubpackages = false,
-  }) : super(packagesDir,
-            processRunner: processRunner, platform: platform, gitDir: gitDir);
+  });
 
   final List<String> plugins = <String>[];
 
