@@ -37,6 +37,27 @@ class _Api implements TestPathProviderApi {
   String? getTemporaryPath() => kTemporaryPath;
 }
 
+class _ApiNull implements TestPathProviderApi {
+  @override
+  String? getApplicationDocumentsPath() => null;
+
+  @override
+  String? getApplicationSupportPath() => null;
+
+  @override
+  List<String?> getExternalCachePaths() => <String>[];
+
+  @override
+  String? getExternalStoragePath() => null;
+
+  @override
+  List<String?> getExternalStoragePaths(messages.StorageDirectory directory) =>
+      <String>[];
+
+  @override
+  String? getTemporaryPath() => null;
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -94,8 +115,8 @@ void main() {
       expect(path, kExternalStoragePaths);
     });
 
-    //TODO: override externalStoragePaths as empty
     test('getDownloadsPath null', () async {
+      TestPathProviderApi.setup(_ApiNull());
       final String? path = await pathProvider.getDownloadsPath();
       expect(path, null);
     });
