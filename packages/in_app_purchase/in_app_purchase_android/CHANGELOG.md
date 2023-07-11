@@ -1,4 +1,4 @@
-## 0.3.0+9
+## 0.3.0+10
 
 * Bumps com.android.billingclient:billing from 6.0.0 to 6.0.1.
 
