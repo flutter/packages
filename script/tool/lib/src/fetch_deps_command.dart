@@ -9,14 +9,16 @@ import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
-/// Run 'gradlew dependencies' on android.
+/// Download dependencies for the following platforms {android}.
 ///
-/// Support TBD for dart (flutter/flutter/issues/130279)
-/// Support TBD for ios (flutter/flutter/issues/130280)
+/// Specficially each platform runs:
+///   Android: 'gradlew dependencies'.
+///   Dart: TBD (flutter/flutter/issues/130279)
+///   iOS: TBD (flutter/flutter/issues/130280)
 ///
 /// See https://docs.gradle.org/6.4/userguide/core_dependency_management.html#sec:dependency-mgmt-in-gradle.
 class FetchDepsCommand extends PackageLoopingCommand {
-  /// Creates an instance of the linter command.
+  /// Creates an instance of the fetch-deps command.
   FetchDepsCommand(
     super.packagesDir, {
     super.processRunner,
