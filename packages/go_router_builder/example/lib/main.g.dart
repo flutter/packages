@@ -121,6 +121,12 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
       context.replace(location, extra: $extra);
 }
 
+const _$PersonDetailsEnumMap = {
+  PersonDetails.hobbies: 'hobbies',
+  PersonDetails.favoriteFood: 'favorite-food',
+  PersonDetails.favoriteSport: 'favorite-sport',
+};
+
 extension $FamilyCountRouteExtension on FamilyCountRoute {
   static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
         int.parse(state.pathParameters['count']!),
@@ -139,12 +145,6 @@ extension $FamilyCountRouteExtension on FamilyCountRoute {
 
   void replace(BuildContext context) => context.replace(location);
 }
-
-const _$PersonDetailsEnumMap = {
-  PersonDetails.hobbies: 'hobbies',
-  PersonDetails.favoriteFood: 'favorite-food',
-  PersonDetails.favoriteSport: 'favorite-sport',
-};
 
 extension<T extends Enum> on Map<T, String> {
   T _$fromName(String value) =>
