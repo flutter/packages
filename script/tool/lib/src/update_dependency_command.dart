@@ -12,7 +12,6 @@ import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
@@ -29,12 +28,11 @@ const int _exitNoTargetVersion = 4;
 class UpdateDependencyCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
   UpdateDependencyCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
+    super.packagesDir, {
+    super.processRunner,
     http.Client? httpClient,
-  })  : _pubVersionFinder =
-            PubVersionFinder(httpClient: httpClient ?? http.Client()),
-        super(packagesDir, processRunner: processRunner) {
+  }) : _pubVersionFinder =
+            PubVersionFinder(httpClient: httpClient ?? http.Client()) {
     argParser.addOption(
       _pubPackageFlag,
       help: 'A pub package to update.',
