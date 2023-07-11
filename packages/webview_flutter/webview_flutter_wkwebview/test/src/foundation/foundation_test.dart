@@ -246,4 +246,39 @@ void main() {
       });
     });
   });
+
+  test('NSError', () {
+    expect(
+      const NSError(
+        code: 0,
+        domain: 'domain',
+        localizedDescription: 'desc',
+      ).toString(),
+      'desc (domain:0)',
+    );
+    expect(
+      const NSError(
+        code: 0,
+        domain: 'domain',
+        localizedDescription: '',
+      ).toString(),
+      'Error domain:0',
+    );
+    expect(
+      const NSError(
+        code: 255,
+        domain: 'bar',
+        localizedDescription: 'baz',
+      ).toString(),
+      'baz (bar:255)',
+    );
+    expect(
+      const NSError(
+        code: 255,
+        domain: 'bar',
+        localizedDescription: '',
+      ).toString(),
+      'Error bar:255',
+    );
+  });
 }
