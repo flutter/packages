@@ -474,17 +474,17 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
-  _i5.Future<void> setCustomViewCallbacks({
-    _i6.OnShowCustomViewCallback? onShowCustomView,
-    _i6.OnHideCustomViewCallback? onHideCustomView,
+  _i5.Future<void> setCustomWidgetCallbacks({
+    _i6.OnShowCustomWidgetCallback? onShowCustomWidget,
+    _i6.OnHideCustomWidgetCallback? onHideCustomWidget,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setCustomViewCallbacks,
+          #setCustomWidgetCallbacks,
           [],
           {
-            #onShowCustomView: onShowCustomView,
-            #onHideCustomView: onHideCustomView,
+            #onShowCustomWidget: onShowCustomWidget,
+            #onHideCustomWidget: onHideCustomWidget,
           },
         ),
         returnValue: _i5.Future<void>.value(),

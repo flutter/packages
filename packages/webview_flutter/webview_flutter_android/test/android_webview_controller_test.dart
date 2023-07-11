@@ -761,12 +761,12 @@ void main() {
       bool showCustomViewCalled = false;
       bool hideCustomViewCalled = false;
 
-      controller.setCustomViewCallbacks(
-        onShowCustomView: (AndroidCustomViewWidget widget,
-            OnHideCustomViewCallback callback) async {
+      await controller.setCustomWidgetCallbacks(
+        onShowCustomWidget:
+            (Widget widget, OnHideCustomWidgetCallback callback) async {
           showCustomViewCalled = true;
         },
-        onHideCustomView: () {
+        onHideCustomWidget: () {
           hideCustomViewCalled = true;
         },
       );

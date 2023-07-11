@@ -149,8 +149,8 @@ class AndroidWebViewController extends PlatformWebViewController {
           callback.onCustomViewHidden();
           return;
         }
-        final OnShowCustomViewCallback? onShowCallback =
-            webViewController._onShowCustomViewCallback;
+        final OnShowCustomWidgetCallback? onShowCallback =
+            webViewController._onShowCustomWidgetCallback;
         if (onShowCallback == null) {
           callback.onCustomViewHidden();
           return;
@@ -168,8 +168,8 @@ class AndroidWebViewController extends PlatformWebViewController {
     onHideCustomView: withWeakReferenceTo(this,
         (WeakReference<AndroidWebViewController> weakReference) {
       return (android_webview.WebChromeClient instance) {
-        final OnHideCustomViewCallback? onHideCustomViewCallback =
-            weakReference.target?._onHideCustomViewCallback;
+        final OnHideCustomWidgetCallback? onHideCustomViewCallback =
+            weakReference.target?._onHideCustomWidgetCallback;
         if (onHideCustomViewCallback != null) {
           onHideCustomViewCallback();
         }
@@ -250,9 +250,9 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   OnGeolocationPermissionsHidePrompt? _onGeolocationPermissionsHidePrompt;
 
-  OnShowCustomViewCallback? _onShowCustomViewCallback;
+  OnShowCustomWidgetCallback? _onShowCustomWidgetCallback;
 
-  OnHideCustomViewCallback? _onHideCustomViewCallback;
+  OnHideCustomWidgetCallback? _onHideCustomWidgetCallback;
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
@@ -544,17 +544,19 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The most common use case these methods are invoked a video element wants
   /// to be displayed in fullscreen.
   ///
-  /// The [onShowCustomView] notifies the host application that web content
-  /// from the specified origin wants to be displayed in a custom view.
+  /// The [onShowCustomWidget] notifies the host application that web content
+  /// from the specified origin wants to be displayed in a custom view. After
+  /// this call, web content will no longer be rendered in the WebViewWidget,
+  /// but will instead be rendered in the custom widget.
   ///
-  /// The [onHideCustomView] notifies the host application that the custom
+  /// The [onHideCustomWidget] notifies the host application that the custom
   /// view should be hidden.
-  Future<void> setCustomViewCallbacks({
-    OnShowCustomViewCallback? onShowCustomView,
-    OnHideCustomViewCallback? onHideCustomView,
+  Future<void> setCustomWidgetCallbacks({
+    OnShowCustomWidgetCallback? onShowCustomWidget,
+    OnHideCustomWidgetCallback? onHideCustomWidget,
   }) async {
-    _onShowCustomViewCallback = onShowCustomView;
-    _onHideCustomViewCallback = onHideCustomView;
+    _onShowCustomWidgetCallback = onShowCustomWidget;
+    _onHideCustomWidgetCallback = onHideCustomWidget;
   }
 }
 
@@ -602,12 +604,12 @@ typedef OnGeolocationPermissionsShowPrompt
 /// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API is cancel.
 typedef OnGeolocationPermissionsHidePrompt = void Function();
 
-/// Signature for the `setCustomViewCallbacks` callback responsible for showing the custom view.
-typedef OnShowCustomViewCallback = void Function(
-    AndroidCustomViewWidget view, void Function() onCustomViewHidden);
+/// Signature for the `setCustomWidgetCallbacks` callback responsible for showing the custom view.
+typedef OnShowCustomWidgetCallback = void Function(
+    Widget widget, void Function() onCustomWidgetHidden);
 
-/// Signature for the `setCustomViewCallbacks` callback responsible for hiding the custom view.
-typedef OnHideCustomViewCallback = void Function();
+/// Signature for the `setCustomWidgetCallbacks` callback responsible for hiding the custom view.
+typedef OnHideCustomWidgetCallback = void Function();
 
 /// A request params used by the host application to set the Geolocation permission state for an origin.
 @immutable
@@ -865,7 +867,12 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
 ///
 /// When adding additional fields make sure they can be null or have a default
 /// value to avoid breaking changes.
+///
+/// The [AndroidCustomViewWidgetCreationParams] are used internally only to
+/// instantiate the [AndroidCustomViewWidget]. This class is visible for
+/// testing purposes only and should not be used externally.
 @immutable
+@visibleForTesting
 class AndroidCustomViewWidgetCreationParams {
   /// Creates [AndroidCustomViewWidgetCreationParams].
   AndroidCustomViewWidgetCreationParams({
@@ -937,7 +944,12 @@ class AndroidCustomViewWidgetCreationParams {
 ///
 /// The [AndroidCustomViewWidget] cannot be manually instantiated and is
 /// provided to the host application through the callbacks specified using the
-/// [AndroidWebViewController.setCustomViewCallbacks] method.
+/// [AndroidWebViewController.setCustomWidgetCallbacks] method.
+///
+/// The [AndroidCustomViewWidget] is initialized internally and should only be
+/// exposed as a [Widget] externally. The type [AndroidCustomViewWidget] is
+/// visible for testing purposes only and should never be called externally.
+@visibleForTesting
 class AndroidCustomViewWidget extends StatelessWidget {
   /// Creates a [AndroidCustomViewWidget].
   ///

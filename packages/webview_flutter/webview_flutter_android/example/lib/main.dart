@@ -33,19 +33,6 @@ The navigation delegate is set to block navigation to the youtube website.
 </html>
 ''';
 
-const String kVideoExamplePage = '''
-<!DOCTYPE html><html>
-<head><title>Video example</title></head>
-  <body>
-    <video controls width="250">
-      <source id='mp4' src="http://media.w3.org/2010/05/sintel/trailer.mp4" type='video/mp4' />
-      <source id='webm' src="http://media.w3.org/2010/05/sintel/trailer.webm" type='video/webm' />
-      <source id='ogv' src="http://media.w3.org/2010/05/sintel/trailer.ogv" type='video/ogg' />
-    </video>
-  </body>
-</html>
-''';
-
 const String kLocalExamplePage = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -130,7 +117,7 @@ Page resource error:
           ''');
           })
           ..setOnNavigationRequest((NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
+            if (request.url.contains('pub.dev')) {
               debugPrint('blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
@@ -435,18 +422,23 @@ class SampleMenu extends StatelessWidget {
   Future<void> _onVideoExample(BuildContext context) {
     final AndroidWebViewController androidController =
         webViewController as AndroidWebViewController;
-    androidController.setCustomViewCallbacks(
-      onShowCustomView:
-          (AndroidCustomViewWidget widget, OnHideCustomViewCallback callback) {
+    androidController.setCustomWidgetCallbacks(
+      onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
         Navigator.of(context).push(MaterialPageRoute<void>(
           builder: (BuildContext context) => widget,
           fullscreenDialog: true,
         ));
       },
-      onHideCustomView: () {},
+      onHideCustomWidget: () {
+        Navigator.of(context).pop();
+      },
     );
 
-    return androidController.loadHtmlString(kVideoExamplePage);
+    return androidController.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse('https://www.youtube.com/watch?v=4AoFA19gbLo'),
+      ),
+    );
   }
 
   Future<void> _onDoPostRequest() {
