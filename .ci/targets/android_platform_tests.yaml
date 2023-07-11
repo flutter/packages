@@ -5,7 +5,7 @@ tasks:
   - name: download android deps
     script: script/tool_runner.sh
     infra_step: true
-    args: ["fetch-android-deps"]
+    args: ["fetch-deps"]
   - name: build examples
     script: script/tool_runner.sh
     args: ["build-examples", "--apk"]
