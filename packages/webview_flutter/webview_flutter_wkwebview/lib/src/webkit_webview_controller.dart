@@ -518,7 +518,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   // workaround could interfere with exposing support for custom scripts from
   // applications.
   Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
-    _webView.configuration.userContentController.removeAllUserScripts();
+    unawaited(
+      _webView.configuration.userContentController.removeAllUserScripts(),
+    );
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -543,6 +545,18 @@ class WebKitWebViewController extends PlatformWebViewController {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  /// Whether to enable tools for debugging the current WKWebView content.
+  ///
+  /// It needs to be activated in each WKWebView where you want to enable it.
+  ///
+  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
+  /// the default value is set to false.
+  ///
+  /// Defaults to true in previous versions.
+  Future<void> setInspectable(bool inspectable) {
+    return _webView.setInspectable(inspectable);
   }
 }
 

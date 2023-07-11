@@ -6,14 +6,16 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import 'configuration.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
-import 'typedefs.dart';
-export 'route.dart';
-export 'state.dart';
+import 'route.dart';
+import 'state.dart';
+
+/// The signature of the redirect callback.
+typedef GoRouterRedirect = FutureOr<String?> Function(
+    BuildContext context, GoRouterState state);
 
 /// The route configuration for GoRouter configured by the app.
 class RouteConfiguration {
@@ -43,7 +45,9 @@ class RouteConfiguration {
           }
         } else {
           if (route.path.startsWith('/') || route.path.endsWith('/')) {
-            throw GoError('sub-route path may not start or end with /: $route');
+            throw GoError(
+              'sub-route path may not start or end with "/": $route',
+            );
           }
         }
         subRouteIsTopLevel = false;
@@ -184,13 +188,30 @@ class RouteConfiguration {
   }
 
   /// The match used when there is an error during parsing.
-  static RouteMatchList _errorRouteMatchList(Uri uri, String errorMessage) {
-    final Exception error = Exception(errorMessage);
+  static RouteMatchList _errorRouteMatchList(Uri uri, GoException exception) {
     return RouteMatchList(
       matches: const <RouteMatch>[],
-      error: error,
+      error: exception,
       uri: uri,
       pathParameters: const <String, String>{},
+    );
+  }
+
+  /// Builds a [GoRouterState] suitable for top level callback such as
+  /// `GoRouter.redirect` or `GoRouter.onException`.
+  GoRouterState buildTopLevelGoRouterState(RouteMatchList matchList) {
+    return GoRouterState(
+      this,
+      location: matchList.uri.toString(),
+      // No name available at the top level trim the query params off the
+      // sub-location to match route.redirect
+      fullPath: matchList.fullPath,
+      pathParameters: matchList.pathParameters,
+      matchedLocation: matchList.uri.path,
+      queryParameters: matchList.uri.queryParameters,
+      queryParametersAll: matchList.uri.queryParametersAll,
+      extra: matchList.extra,
+      pageKey: const ValueKey<String>('topLevel'),
     );
   }
 
@@ -257,7 +278,8 @@ class RouteConfiguration {
     final List<RouteMatch>? matches = _getLocRouteMatches(uri, pathParameters);
 
     if (matches == null) {
-      return _errorRouteMatchList(uri, 'no routes for location: $uri');
+      return _errorRouteMatchList(
+          uri, GoException('no routes for location: $uri'));
     }
     return RouteMatchList(
         matches: matches,
@@ -411,19 +433,7 @@ class RouteConfiguration {
       // Check for top-level redirect
       final FutureOr<String?> topRedirectResult = topRedirect(
         context,
-        GoRouterState(
-          this,
-          location: prevLocation,
-          // No name available at the top level trim the query params off the
-          // sub-location to match route.redirect
-          fullPath: prevMatchList.fullPath,
-          pathParameters: prevMatchList.pathParameters,
-          matchedLocation: prevMatchList.uri.path,
-          queryParameters: prevMatchList.uri.queryParameters,
-          queryParametersAll: prevMatchList.uri.queryParametersAll,
-          extra: prevMatchList.extra,
-          pageKey: const ValueKey<String>('topLevel'),
-        ),
+        buildTopLevelGoRouterState(prevMatchList),
       );
 
       if (topRedirectResult is String?) {
@@ -485,9 +495,9 @@ class RouteConfiguration {
       final RouteMatchList newMatch = findMatch(newLocation);
       _addRedirect(redirectHistory, newMatch, previousLocation);
       return newMatch;
-    } on RedirectionError catch (e) {
-      log.info('Redirection error: ${e.message}');
-      return _errorRouteMatchList(e.location, e.message);
+    } on GoException catch (e) {
+      log.info('Redirection exception: ${e.message}');
+      return _errorRouteMatchList(previousLocation, e);
     }
   }
 
@@ -500,17 +510,30 @@ class RouteConfiguration {
     Uri prevLocation,
   ) {
     if (redirects.contains(newMatch)) {
-      throw RedirectionError('redirect loop detected',
-          <RouteMatchList>[...redirects, newMatch], prevLocation);
+      throw GoException(
+          'redirect loop detected ${_formatRedirectionHistory(<RouteMatchList>[
+            ...redirects,
+            newMatch
+          ])}');
     }
     if (redirects.length > redirectLimit) {
-      throw RedirectionError('too many redirects',
-          <RouteMatchList>[...redirects, newMatch], prevLocation);
+      throw GoException(
+          'too many redirects ${_formatRedirectionHistory(<RouteMatchList>[
+            ...redirects,
+            newMatch
+          ])}');
     }
 
     redirects.add(newMatch);
 
     log.info('redirecting to $newMatch');
+  }
+
+  String _formatRedirectionHistory(List<RouteMatchList> redirections) {
+    return redirections
+        .map<String>(
+            (RouteMatchList routeMatches) => routeMatches.uri.toString())
+        .join(' => ');
   }
 
   /// Get the location for the provided route.

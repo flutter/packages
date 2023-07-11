@@ -1,4 +1,4 @@
-# The list of external dependencies that are allowed as unpinned dependencies.
+# The list of external dependencies that are allowed as pinned dependencies.
 # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
 #
 # All entries here should have an explanation for why they are here.
@@ -17,6 +17,7 @@
 ## Allowed by default
 
 # Dart-owned
+- dart_style
 - mockito
 
 # Google-owned

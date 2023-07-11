@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -19,8 +20,8 @@ class OpenTextPage extends StatelessWidget {
     // This demonstrates using an initial directory for the prompt, which should
     // only be done in cases where the application can likely predict where the
     // file would be. In most cases, this parameter should not be provided.
-    final String initialDirectory =
-        (await getApplicationDocumentsDirectory()).path;
+    final String? initialDirectory =
+        kIsWeb ? null : (await getApplicationDocumentsDirectory()).path;
     final XFile? file = await openFile(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
       initialDirectory: initialDirectory,

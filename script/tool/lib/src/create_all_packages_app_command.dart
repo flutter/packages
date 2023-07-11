@@ -13,6 +13,7 @@ import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/package_command.dart';
 import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 /// The name of the build-all-packages project, as passed to `flutter create`.
@@ -96,7 +97,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     // further and/or implement https://github.com/flutter/flutter/issues/93407,
     // and remove the need for this conditional.
     if (!platform.isWindows) {
-      if (!await _genNativeBuildFiles()) {
+      if (!await runPubGet(app, processRunner, platform)) {
         printError(
             "Failed to generate native build files via 'flutter pub get'");
         throw ToolExit(_exitGenNativeBuildFilesFailed);
@@ -369,15 +370,6 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
     }
 
     return buffer.toString();
-  }
-
-  Future<bool> _genNativeBuildFiles() async {
-    final int exitCode = await processRunner.runAndStream(
-      flutterCommand,
-      <String>['pub', 'get'],
-      workingDir: _appDirectory,
-    );
-    return exitCode == 0;
   }
 
   Future<void> _updateMacosPodfile() async {

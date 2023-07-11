@@ -1,6 +1,8 @@
-## NEXT
+## 0.10.8+3
 
 * Fixes unawaited_futures violations.
+* Removes duplicate line in `MediaRecorderBuilder.java`.
+* Adds support for concurrently capturing images and image streaming/recording.
 
 ## 0.10.8+2
 

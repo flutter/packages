@@ -5,34 +5,33 @@
 import 'dart:io' as io;
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
-import 'package:platform/platform.dart';
+import 'package:meta/meta.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to update .md code excerpts from code files.
 class UpdateExcerptsCommand extends PackageLoopingCommand {
   /// Creates a excerpt updater command instance.
   UpdateExcerptsCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        ) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addFlag(_failOnChangeFlag, hide: true);
+    argParser.addFlag(_noCleanupFlag,
+        help: 'Skips the step of cleaning up the excerpt extraction output. '
+            'This can be useful when debugging extraction or checking paths to '
+            'reference in snippets.');
   }
 
   static const String _failOnChangeFlag = 'fail-on-change';
+  static const String _noCleanupFlag = 'no-cleanup';
 
   static const String _buildRunnerConfigName = 'excerpt';
   // The name of the build_runner configuration file that will be in an example
@@ -40,8 +39,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   static const String _buildRunnerConfigFile =
       'build.$_buildRunnerConfigName.yaml';
 
-  // The relative directory path to put the extracted excerpt yaml files.
-  static const String _excerptOutputDir = 'excerpts';
+  /// The relative directory path to put the extracted excerpt yaml files.
+  @visibleForTesting
+  static const String excerptOutputDir = 'excerpts';
 
   // The filename to store the pre-modification copy of the pubspec.
   static const String _originalPubspecFilename =
@@ -74,10 +74,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
 
       try {
         // Ensure that dependencies are available.
-        final int pubGetExitCode = await processRunner.runAndStream(
-            'dart', <String>['pub', 'get'],
-            workingDir: example.directory);
-        if (pubGetExitCode != 0) {
+        if (!await runPubGet(example, processRunner, platform)) {
           return PackageResult.fail(
               <String>['Unable to get script dependencies']);
         }
@@ -97,9 +94,16 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         // Clean up the pubspec changes and extracted excerpts directory.
         _undoPubspecChanges(example);
         final Directory excerptDirectory =
-            example.directory.childDirectory(_excerptOutputDir);
+            example.directory.childDirectory(excerptOutputDir);
         if (excerptDirectory.existsSync()) {
-          excerptDirectory.deleteSync(recursive: true);
+          if (getBoolArg(_noCleanupFlag)) {
+            final String relativeDir =
+                getRelativePosixPath(excerptDirectory, from: package.directory);
+            print(
+                '\n\nSKIPPING CLEANUP: Extraction output is in $relativeDir/');
+          } else {
+            excerptDirectory.deleteSync(recursive: true);
+          }
         }
       }
     }
@@ -134,7 +138,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           '--config',
           _buildRunnerConfigName,
           '--output',
-          _excerptOutputDir,
+          excerptOutputDir,
           '--delete-conflicting-outputs',
         ],
         workingDir: example.directory);

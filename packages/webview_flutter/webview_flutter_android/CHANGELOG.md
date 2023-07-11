@@ -2,6 +2,14 @@
 
 * Adds support for `WebResouceError.url`.
 
+## 3.8.2
+
+* Fixes unawaited_futures violations.
+
+## 3.8.1
+
+* Bumps androidx.webkit:webkit from 1.6.0 to 1.7.0.
+
 ## 3.8.0
 
 * Adds support for handling geolocation permissions. See
