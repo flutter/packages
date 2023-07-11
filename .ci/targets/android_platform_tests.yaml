@@ -11,9 +11,11 @@ tasks:
   # different exclusions.
   # TODO(stuartmorgan): Eliminate the native unit test exclusion, and combine
   # these steps.
-  - name: native unit tests
-    script: script/tool_runner.sh
-    args: ["native-test", "--android", "--no-integration", "--exclude=script/configs/exclude_native_unit_android.yaml"]
+  # TODO(stuartmorgan): Enable this once https://github.com/flutter/flutter/issues/130148
+  # is resolved.
+  #- name: native unit tests
+  #  script: script/tool_runner.sh
+  #  args: ["native-test", "--android", "--no-integration", "--exclude=script/configs/exclude_native_unit_android.yaml"]
   # TODO(stuartmorgan): Enable these once
   # https://github.com/flutter/flutter/issues/120736 is implemented.
   # See also https://github.com/flutter/flutter/issues/114373
