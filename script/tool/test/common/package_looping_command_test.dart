@@ -373,15 +373,16 @@ void main() {
     test('skips unsupported Dart versions when requested', () async {
       final RepositoryPackage excluded = createFakePackage(
           'excluded_package', packagesDir,
-          dartConstraint: '>=2.17.0 <4.0.0');
+          dartConstraint: '>=2.18.0 <4.0.0');
       final RepositoryPackage included =
           createFakePackage('a_package', packagesDir);
 
       final TestPackageLoopingCommand command = createTestCommand(
           packageLoopingType: PackageLoopingType.includeAllSubpackages,
           hasLongOutput: false);
-      final List<String> output = await runCommand(command,
-          arguments: <String>['--skip-if-not-supporting-dart-version=2.14.0']);
+      final List<String> output = await runCommand(command, arguments: <String>[
+        '--skip-if-not-supporting-flutter-version=3.0.0' // Flutter 3.0.0 -> Dart 2.17.0
+      ]);
 
       expect(
           command.checkedPackages,
@@ -396,7 +397,7 @@ void main() {
           containsAllInOrder(<String>[
             '${_startHeadingColor}Running for a_package...$_endColor',
             '${_startHeadingColor}Running for excluded_package...$_endColor',
-            '$_startSkipColor  SKIPPING: Does not support Dart 2.14.0$_endColor',
+            '$_startSkipColor  SKIPPING: Does not support Dart 2.17.0$_endColor',
           ]));
     });
   });
