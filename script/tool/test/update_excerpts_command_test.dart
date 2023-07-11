@@ -7,328 +7,92 @@ import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/update_excerpts_command.dart';
-import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
-void main() {
+void runAllTests(MockPlatform platform) {
   late FileSystem fileSystem;
   late Directory packagesDir;
-  late RecordingProcessRunner processRunner;
   late CommandRunner<void> runner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
+    fileSystem = MemoryFileSystem(
+        style: platform.isWindows
+            ? FileSystemStyle.windows
+            : FileSystemStyle.posix);
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-    final MockGitDir gitDir = MockGitDir();
-    when(gitDir.path).thenReturn(packagesDir.parent.path);
-    processRunner = RecordingProcessRunner();
-    final UpdateExcerptsCommand command = UpdateExcerptsCommand(
-      packagesDir,
-      processRunner: processRunner,
-      platform: MockPlatform(),
-      gitDir: gitDir,
+    runner = CommandRunner<void>('', '')
+      ..addCommand(UpdateExcerptsCommand(
+        packagesDir,
+        platform: platform,
+        processRunner: RecordingProcessRunner(),
+        gitDir: MockGitDir(),
+      ));
+  });
+
+  Future<void> testInjection(String before, String source, String after,
+      {bool failOnChange = false}) async {
+    final RepositoryPackage package =
+        createFakePackage('a_package', packagesDir);
+    package.readmeFile.writeAsStringSync(before);
+    package.directory.childFile('main.dart').writeAsStringSync(source);
+    Object? errorObject;
+    final List<String> output = await runCapturingPrint(
+      runner,
+      <String>[
+        'update-excerpts',
+        if (failOnChange) '--fail-on-change',
+      ],
+      errorHandler: (Object error) {
+        errorObject = error;
+      },
     );
+    if (errorObject != null) {
+      fail('Failed: $errorObject\n\nOutput from excerpt command:\n$output');
+    }
+    expect(package.readmeFile.readAsStringSync(), after);
+  }
 
-    runner = CommandRunner<void>(
-        'update_excerpts_command', 'Test for update_excerpts_command');
-    runner.addCommand(command);
-  });
+  test('succeeds when nothing has changed', () async {
+    const String readme = '''
+Example:
 
-  test('runs pub get before running scripts', () async {
-    final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
-    final Directory example = getExampleDir(package);
-
-    await runCapturingPrint(runner, <String>['update-excerpts']);
-
-    expect(
-        processRunner.recordedCalls,
-        containsAll(<ProcessCall>[
-          ProcessCall('flutter', const <String>['pub', 'get'], example.path),
-          ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'build_runner',
-                'build',
-                '--config',
-                'excerpt',
-                '--output',
-                UpdateExcerptsCommand.excerptOutputDir,
-                '--delete-conflicting-outputs',
-              ],
-              example.path),
-        ]));
-  });
-
-  test('runs when config is present', () async {
-    final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
-    final Directory example = getExampleDir(package);
-
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['update-excerpts']);
-
-    expect(
-        processRunner.recordedCalls,
-        containsAll(<ProcessCall>[
-          ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'build_runner',
-                'build',
-                '--config',
-                'excerpt',
-                '--output',
-                UpdateExcerptsCommand.excerptOutputDir,
-                '--delete-conflicting-outputs',
-              ],
-              example.path),
-          ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'code_excerpt_updater',
-                '--write-in-place',
-                '--yaml',
-                '--no-escape-ng-interpolation',
-                '../README.md',
-              ],
-              example.path),
-        ]));
-
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Ran for 1 package(s)'),
-        ]));
-  });
-
-  test('updates example readme when config is present', () async {
-    final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath, 'example/README.md']);
-    final Directory example = getExampleDir(package);
-
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['update-excerpts']);
-
-    expect(
-        processRunner.recordedCalls,
-        containsAll(<ProcessCall>[
-          ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'build_runner',
-                'build',
-                '--config',
-                'excerpt',
-                '--output',
-                UpdateExcerptsCommand.excerptOutputDir,
-                '--delete-conflicting-outputs',
-              ],
-              example.path),
-          ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'code_excerpt_updater',
-                '--write-in-place',
-                '--yaml',
-                '--no-escape-ng-interpolation',
-                'README.md',
-              ],
-              example.path),
-        ]));
-
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Ran for 1 package(s)'),
-        ]));
-  });
-
-  test('includes all top-level .md files', () async {
-    const String otherMdFileName = 'another_file.md';
-    final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath, otherMdFileName]);
-    final Directory example = getExampleDir(package);
-
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['update-excerpts']);
-
-    expect(
-        processRunner.recordedCalls,
-        containsAll(<ProcessCall>[
-          ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'build_runner',
-                'build',
-                '--config',
-                'excerpt',
-                '--output',
-                UpdateExcerptsCommand.excerptOutputDir,
-                '--delete-conflicting-outputs',
-              ],
-              example.path),
-          ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'code_excerpt_updater',
-                '--write-in-place',
-                '--yaml',
-                '--no-escape-ng-interpolation',
-                '../README.md',
-                '../$otherMdFileName',
-              ],
-              example.path),
-        ]));
-
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Ran for 1 package(s)'),
-        ]));
-  });
-
-  test('skips when no config is present', () async {
-    createFakePlugin('a_package', packagesDir);
-
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['update-excerpts']);
-
-    expect(processRunner.recordedCalls, isEmpty);
-
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Skipped 1 package(s)'),
-        ]));
-  });
-
-  test('restores pubspec even if running the script fails', () async {
-    final RepositoryPackage package = createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
-
-    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
-    ];
-
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts'], errorHandler: (Error e) {
-      commandError = e;
-    });
-
-    // Check that it's definitely a failure in a step between making the changes
-    // and restoring the original.
-    expect(commandError, isA<ToolExit>());
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('The following packages had errors:'),
-          contains('a_package:\n'
-              '    Unable to get script dependencies')
-        ]));
-
-    final String examplePubspecContent =
-        package.getExamples().first.pubspecFile.readAsStringSync();
-    expect(examplePubspecContent, isNot(contains('code_excerpter')));
-    expect(examplePubspecContent, isNot(contains('code_excerpt_updater')));
-  });
-
-  test('fails if pub get fails', () async {
-    createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
-
-    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get'])
-    ];
-
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts'], errorHandler: (Error e) {
-      commandError = e;
-    });
-
-    expect(commandError, isA<ToolExit>());
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('The following packages had errors:'),
-          contains('a_package:\n'
-              '    Unable to get script dependencies')
-        ]));
-  });
-
-  test('fails if extraction fails', () async {
-    createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
-
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'build_runner'])
-    ];
-
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts'], errorHandler: (Error e) {
-      commandError = e;
-    });
-
-    expect(commandError, isA<ToolExit>());
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('The following packages had errors:'),
-          contains('a_package:\n'
-              '    Unable to extract excerpts')
-        ]));
-  });
-
-  test('fails if injection fails', () async {
-    createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
-
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
-      FakeProcessInfo(
-          MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
-    ];
-
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts'], errorHandler: (Error e) {
-      commandError = e;
-    });
-
-    expect(commandError, isA<ToolExit>());
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('The following packages had errors:'),
-          contains('a_package:\n'
-              '    Unable to inject excerpts')
-        ]));
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+A B C
+```
+''';
+    const String source = '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''';
+    await testInjection(readme, source, readme);
   });
 
   test('fails if example injection fails', () async {
-    createFakePlugin('a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath, 'example/README.md']);
+    final RepositoryPackage package =
+        createFakePackage('a_package', packagesDir);
+    package.readmeFile.writeAsStringSync('''
+Example:
 
-    processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(), <String>['run', 'build_runner']),
-      FakeProcessInfo(MockProcess(), <String>['run', 'code_excerpt_updater']),
-      FakeProcessInfo(
-          MockProcess(exitCode: 1), <String>['run', 'code_excerpt_updater']),
-    ];
+<?code-excerpt "main.dart (UnknownSection)"?>
+```dart
+A B C
+```
+''');
+    package.directory.childFile('main.dart').writeAsStringSync('''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''');
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -338,22 +102,61 @@ void main() {
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('The following packages had errors:'),
-          contains('a_package:\n'
-              '    Unable to inject example excerpts')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Injecting excerpts failed:'),
+        contains(
+            'main.dart: did not find a "// #docregion UnknownSection" pragma'),
+      ]),
+    );
+  });
+
+  test('updates files', () async {
+    await testInjection(
+      '''
+Example:
+
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+X Y Z
+```
+''',
+      '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''',
+      '''
+Example:
+
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+A B C
+```
+''',
+    );
   });
 
   test('fails if READMEs are changed with --fail-on-change', () async {
-    createFakePlugin('a_plugin', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
+    final RepositoryPackage package =
+        createFakePackage('a_package', packagesDir);
+    package.readmeFile.writeAsStringSync('''
+Example:
 
-    const String changedFilePath = 'README.md';
-    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
-    ];
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+X Y Z
+```
+''');
+    package.directory.childFile('main.dart').writeAsStringSync('''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''');
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
@@ -364,101 +167,259 @@ void main() {
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-              'One or more .md files are out of sync with their source excerpts'),
-          contains('Snippets are out of sync in the following files: '
-              '$changedFilePath'),
-        ]));
+      output.join('\n'),
+      contains('The following files have out of date excerpts:'),
+    );
   });
 
-  test('passes if unrelated files are changed with --fail-on-change', () async {
-    createFakePlugin('a_plugin', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
+  test('does not fail if READMEs are not changed with --fail-on-change',
+      () async {
+    const String readme = '''
+Example:
 
-    const String changedFilePath = 'packages/a_plugin/linux/CMakeLists.txt';
-    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
-    ];
-
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts', '--fail-on-change']);
-
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Ran for 1 package(s)'),
-        ]));
+<?code-excerpt "main.dart (aa)"?>
+```dart
+A
+```
+<?code-excerpt "main.dart (bb)"?>
+```dart
+B
+```
+''';
+    await testInjection(
+      readme,
+      '''
+// #docregion aa
+A
+// #enddocregion aa
+// #docregion bb
+B
+// #enddocregion bb
+''',
+      readme,
+      failOnChange: true,
+    );
   });
 
-  test('fails if git ls-files fails', () async {
-    createFakePlugin('a_plugin', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
+  test('indents the plaster', () async {
+    await testInjection(
+      '''
+Example:
 
-    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(exitCode: 1))
-    ];
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts', '--fail-on-change'],
-        errorHandler: (Error e) {
-      commandError = e;
-    });
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+```
+''',
+      '''
+// #docregion SomeSection
+A
+  // #enddocregion SomeSection
+// #docregion SomeSection
+B
+// #enddocregion SomeSection
+''',
+      '''
+Example:
 
-    expect(commandError, isA<ToolExit>());
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Unable to determine local file state'),
-        ]));
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+A
+  // ···
+B
+```
+''',
+    );
   });
 
-  test('cleans up excerpt output by default', () async {
-    final RepositoryPackage package = createFakePackage(
-        'a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
-    // Simulate the creation of the output directory.
-    final Directory excerptOutputDir = package
-        .getExamples()
-        .first
-        .directory
-        .childDirectory(UpdateExcerptsCommand.excerptOutputDir);
-    excerptOutputDir.createSync(recursive: true);
+  test('does not unindent blocks if plaster will not unindent', () async {
+    await testInjection(
+      '''
+Example:
 
-    const String changedFilePath = 'packages/a_plugin/linux/CMakeLists.txt';
-    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
-    ];
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+```
+''',
+      '''
+// #docregion SomeSection
+  A
+// #enddocregion SomeSection
+// #docregion SomeSection
+    B
+// #enddocregion SomeSection
+''',
+      '''
+Example:
 
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+  A
+// ···
+    B
+```
+''',
+    );
+  });
+
+  test('unindents blocks', () async {
+    await testInjection(
+      '''
+Example:
+
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+```
+''',
+      '''
+  // #docregion SomeSection
+  A
+  // #enddocregion SomeSection
+    // #docregion SomeSection
+    B
+    // #enddocregion SomeSection
+''',
+      '''
+Example:
+
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+A
+// ···
+  B
+```
+''',
+    );
+  });
+
+  test('unindents blocks and plaster', () async {
+    await testInjection(
+      '''
+Example:
+
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+```
+''',
+      '''
+  // #docregion SomeSection
+  A
+    // #enddocregion SomeSection
+    // #docregion SomeSection
+    B
+    // #enddocregion SomeSection
+''',
+      '''
+Example:
+
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+A
+  // ···
+  B
+```
+''',
+    );
+  });
+
+  test('relative path bases', () async {
+    final RepositoryPackage package =
+        createFakePackage('a_package', packagesDir);
+    package.readmeFile.writeAsStringSync('''
+<?code-excerpt "main.dart (a)"?>
+```dart
+```
+<?code-excerpt "test/main.dart (a)"?>
+```dart
+```
+<?code-excerpt "test/test/main.dart (a)"?>
+```dart
+```
+<?code-excerpt path-base="test"?>
+<?code-excerpt "main.dart (a)"?>
+```dart
+```
+<?code-excerpt "../main.dart (a)"?>
+```dart
+```
+<?code-excerpt "test/main.dart (a)"?>
+```dart
+```
+<?code-excerpt path-base="/packages/a_package"?>
+<?code-excerpt "main.dart (a)"?>
+```dart
+```
+<?code-excerpt "test/main.dart (a)"?>
+```dart
+```
+''');
+    package.directory.childFile('main.dart').writeAsStringSync('''
+// #docregion a
+X
+// #enddocregion a
+''');
+    package.directory.childDirectory('test').createSync();
+    package.directory
+        .childDirectory('test')
+        .childFile('main.dart')
+        .writeAsStringSync('''
+// #docregion a
+Y
+// #enddocregion a
+''');
+    package.directory
+        .childDirectory('test')
+        .childDirectory('test')
+        .createSync();
+    package.directory
+        .childDirectory('test')
+        .childDirectory('test')
+        .childFile('main.dart')
+        .writeAsStringSync('''
+// #docregion a
+Z
+// #enddocregion a
+''');
     await runCapturingPrint(runner, <String>['update-excerpts']);
-
-    expect(excerptOutputDir.existsSync(), false);
+    expect(package.readmeFile.readAsStringSync(), '''
+<?code-excerpt "main.dart (a)"?>
+```dart
+X
+```
+<?code-excerpt "test/main.dart (a)"?>
+```dart
+Y
+```
+<?code-excerpt "test/test/main.dart (a)"?>
+```dart
+Z
+```
+<?code-excerpt path-base="test"?>
+<?code-excerpt "main.dart (a)"?>
+```dart
+Y
+```
+<?code-excerpt "../main.dart (a)"?>
+```dart
+X
+```
+<?code-excerpt "test/main.dart (a)"?>
+```dart
+Z
+```
+<?code-excerpt path-base="/packages/a_package"?>
+<?code-excerpt "main.dart (a)"?>
+```dart
+X
+```
+<?code-excerpt "test/main.dart (a)"?>
+```dart
+Y
+```
+''');
   });
+}
 
-  test('cleans up excerpt output by default', () async {
-    final RepositoryPackage package = createFakePackage(
-        'a_package', packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath]);
-    // Simulate the creation of the output directory.
-    const String outputDirName = UpdateExcerptsCommand.excerptOutputDir;
-    final Directory excerptOutputDir =
-        package.getExamples().first.directory.childDirectory(outputDirName);
-    excerptOutputDir.createSync(recursive: true);
-
-    const String changedFilePath = 'packages/a_plugin/linux/CMakeLists.txt';
-    processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFilePath)),
-    ];
-
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts', '--no-cleanup']);
-
-    expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Extraction output is in example/$outputDirName/'),
-        ]));
-    expect(excerptOutputDir.existsSync(), true);
-  });
+void main() {
+  runAllTests(MockPlatform());
+  runAllTests(MockPlatform(isWindows: true));
 }
