@@ -12,4 +12,4 @@ tasks:
     # the changes won't break analysis of other packages in the respository
     # that depend on it.
   - name: analyze - pathified
-    script: .ci/scripts/pathified_analyze.sh
+    script: .ci/scripts/analyze_pathified.sh

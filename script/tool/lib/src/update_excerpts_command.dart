@@ -5,31 +5,24 @@
 import 'dart:io' as io;
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:meta/meta.dart';
-import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
-import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to update .md code excerpts from code files.
 class UpdateExcerptsCommand extends PackageLoopingCommand {
   /// Creates a excerpt updater command instance.
   UpdateExcerptsCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        ) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addFlag(_failOnChangeFlag, hide: true);
     argParser.addFlag(_noCleanupFlag,
         help: 'Skips the step of cleaning up the excerpt extraction output. '
@@ -81,10 +74,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
 
       try {
         // Ensure that dependencies are available.
-        final int pubGetExitCode = await processRunner.runAndStream(
-            'dart', <String>['pub', 'get'],
-            workingDir: example.directory);
-        if (pubGetExitCode != 0) {
+        if (!await runPubGet(example, processRunner, platform)) {
           return PackageResult.fail(
               <String>['Unable to get script dependencies']);
         }
