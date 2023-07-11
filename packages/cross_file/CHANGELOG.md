@@ -1,6 +1,9 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.3.3+5
+
 * Improved documentation about ignored parameters in IO module.
 
 ## 0.3.3+4
