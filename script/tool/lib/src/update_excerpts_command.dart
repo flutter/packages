@@ -9,7 +9,7 @@ import 'package:meta/meta.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
-import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
