@@ -15,6 +15,8 @@ import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+
+import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -38,7 +40,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   // Request code for selecting a directory.
   private static final int OPEN_DIR = 223;
 
-  private final NativeObjectFactory objectFactory;
+  private final @NonNull NativeObjectFactory objectFactory;
+  private final @NonNull AndroidCapabilityChecker capabilityChecker;
   @Nullable ActivityPluginBinding activityPluginBinding;
 
   private abstract static class OnResultListener {
@@ -60,16 +63,25 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
     }
   }
 
+  // Interface for an injectable provider that returns the current SDK version.
+  @VisibleForTesting
+  interface AndroidCapabilityChecker {
+    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.LOLLIPOP)
+    boolean supportsDirectorySelection();
+  }
+
   public FileSelectorApiImpl(@NonNull ActivityPluginBinding activityPluginBinding) {
-    this(activityPluginBinding, new NativeObjectFactory());
+    this(activityPluginBinding, new NativeObjectFactory(), () -> Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
   }
 
   @VisibleForTesting
   FileSelectorApiImpl(
       @NonNull ActivityPluginBinding activityPluginBinding,
-      @NonNull NativeObjectFactory objectFactory) {
+      @NonNull NativeObjectFactory objectFactory,
+      @NonNull AndroidCapabilityChecker capabilityChecker) {
     this.activityPluginBinding = activityPluginBinding;
     this.objectFactory = objectFactory;
+    this.capabilityChecker = capabilityChecker;
   }
 
   @Override
@@ -171,7 +183,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   @Override
   public void getDirectoryPath(
       @Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<String> result) {
-    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+    if (!capabilityChecker.supportsDirectorySelection()) {
       throw new UnsupportedOperationException(
           "Selecting a directory is only supported on versions >= 21");
     }
