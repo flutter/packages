@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/url_launcher_example"?>
+<?code-excerpt path-base="example"?>
 
 # url_launcher
 
@@ -16,8 +16,8 @@ To use this plugin, add `url_launcher` as a [dependency in your pubspec.yaml fil
 
 ### Example
 
-<?code-excerpt "basic.dart (basic-example)"?>
-``` dart
+<?code-excerpt "lib/basic.dart (basic-example)"?>
+```dart
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -71,8 +71,8 @@ element must be added to your manifest as a child of the root element.
 
 Example:
 
-<?code-excerpt "../../android/app/src/main/AndroidManifest.xml (android-queries)" plaster="none"?>
-``` xml
+<?code-excerpt "android/app/src/main/AndroidManifest.xml (android-queries)" plaster="none"?>
+```xml
 <!-- Provide required visibility configuration for API level 30 and above -->
 <queries>
   <!-- If your app checks for SMS support -->
@@ -141,7 +141,7 @@ due to [a bug](https://github.com/dart-lang/sdk/issues/43838) in the way `Uri`
 encodes query parameters. Using `queryParameters` will result in spaces being
 converted to `+` in many cases.
 
-<?code-excerpt "encoding.dart (encode-query-parameters)"?>
+<?code-excerpt "lib/encoding.dart (encode-query-parameters)"?>
 ```dart
 String? encodeQueryParameters(Map<String, String> params) {
   return params.entries
@@ -163,7 +163,7 @@ String? encodeQueryParameters(Map<String, String> params) {
 
 Encoding for `sms` is slightly different:
 
-<?code-excerpt "encoding.dart (sms)"?>
+<?code-excerpt "lib/encoding.dart (sms)"?>
 ```dart
 final Uri smsLaunchUri = Uri(
   scheme: 'sms',
@@ -192,7 +192,7 @@ We recommend checking first whether the directory or file exists before calling 
 
 Example:
 
-<?code-excerpt "files.dart (file)"?>
+<?code-excerpt "lib/files.dart (file)"?>
 ```dart
 final String filePath = testFile.absolute.path;
 final Uri uri = Uri.file(filePath);

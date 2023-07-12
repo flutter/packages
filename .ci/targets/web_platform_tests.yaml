@@ -1,0 +1,9 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+  - name: build examples
+    script: script/tool_runner.sh
+    args: ["build-examples", "--web"]
+  - name: drive examples
+    script: script/tool_runner.sh
+    args: ["drive-examples", "--web", "--run-chromedriver", "--exclude=script/configs/exclude_integration_web.yaml"]

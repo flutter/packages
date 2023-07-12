@@ -215,7 +215,7 @@ class NSError {
 
   /// The error code.
   ///
-  /// Note that errors are domain-specific.
+  /// Error codes are [domain]-specific.
   final int code;
 
   /// A string containing the error domain.
@@ -223,6 +223,14 @@ class NSError {
 
   /// A string containing the localized description of the error.
   final String localizedDescription;
+
+  @override
+  String toString() {
+    if (localizedDescription.isEmpty) {
+      return 'Error $domain:$code';
+    }
+    return '$localizedDescription ($domain:$code)';
+  }
 }
 
 /// A representation of an HTTP cookie.

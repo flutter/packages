@@ -124,5 +124,5 @@ class _MyHomePageState extends State<MyHomePage> {
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
     );
   }
-// #enddocregion
+// #enddocregion Example
 }

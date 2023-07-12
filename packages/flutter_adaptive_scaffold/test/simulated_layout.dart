@@ -34,10 +34,12 @@ class TestScaffold extends StatefulWidget {
     super.key,
     this.initialIndex = 0,
     this.isAnimated = true,
+    this.appBarBreakpoint,
   });
 
   final int? initialIndex;
   final bool isAnimated;
+  final Breakpoint? appBarBreakpoint;
 
   static const List<NavigationDestination> destinations =
       <NavigationDestination>[
@@ -75,6 +77,7 @@ class TestScaffoldState extends State<TestScaffold> {
         });
       },
       drawerBreakpoint: NeverOnBreakpoint(),
+      appBarBreakpoint: widget.appBarBreakpoint,
       internalAnimations: widget.isAnimated,
       smallBreakpoint: TestBreakpoint0(),
       mediumBreakpoint: TestBreakpoint800(),
@@ -122,6 +125,7 @@ enum SimulatedLayout {
   MaterialApp app({
     int? initialIndex,
     bool animations = true,
+    Breakpoint? appBarBreakpoint,
   }) {
     return MaterialApp(
       theme: ThemeData.light().copyWith(
@@ -136,6 +140,7 @@ enum SimulatedLayout {
         child: TestScaffold(
           initialIndex: initialIndex,
           isAnimated: animations,
+          appBarBreakpoint: appBarBreakpoint,
         ),
       ),
     );
