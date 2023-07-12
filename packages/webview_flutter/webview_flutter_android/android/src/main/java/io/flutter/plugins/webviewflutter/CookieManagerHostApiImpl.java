@@ -6,6 +6,8 @@ package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
 import android.webkit.CookieManager;
+
+import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -25,6 +27,14 @@ public class CookieManagerHostApiImpl implements CookieManagerHostApi {
 
   private final InstanceManager instanceManager;
   private final CookieManagerProxy proxy;
+  private final @NonNull AndroidSdkChecker sdkChecker;
+
+    // Interface for an injectable SDK version checker.
+            @VisibleForTesting
+  interface AndroidSdkChecker {
+    @ChecksSdkIntAtLeast(parameter = 0)
+    boolean sdkIsAtLeast(int version);
+  }
 
   /** Proxy for constructors and static method of `CookieManager`. */
   @VisibleForTesting
@@ -58,9 +68,19 @@ public class CookieManagerHostApiImpl implements CookieManagerHostApi {
       @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
       @NonNull CookieManagerProxy proxy) {
+    this(binaryMessenger, instanceManager, proxy, (int version) -> Build.VERSION.SDK_INT >= version);
+  }
+
+  @VisibleForTesting
+  CookieManagerHostApiImpl(
+          @NonNull BinaryMessenger binaryMessenger,
+          @NonNull InstanceManager instanceManager,
+          @NonNull CookieManagerProxy proxy,
+  @NonNull AndroidSdkChecker sdkChecker) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.proxy = proxy;
+    this.sdkChecker = sdkChecker;
   }
 
   @Override
