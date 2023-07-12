@@ -27,9 +27,13 @@ tasks:
     # to be converted. Once https://github.com/flutter/flutter/issues/102679
     # has been fixed, this can be removed --require-excerpts added to the
     # run above.
-  - name: README snippet validation
+  - name: README snippet configuration validation
     script: script/tool_runner.sh
     args: ["readme-check", "--require-excerpts", "--exclude=script/configs/temp_exclude_excerpt.yaml"]
+    always: true
+  - name: README snippet validation
+    script: script/tool_runner.sh
+    args: ["update-excerpts", "--fail-on-change"]
     always: true
   - name: Gradle validation
     script: script/tool_runner.sh
