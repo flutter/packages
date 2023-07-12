@@ -57,6 +57,7 @@ class DomHelper {
       completer.complete(<XFile>[]);
     });
 
+    // TODO(dit): Reimplement this with the showPicker() API, https://github.com/flutter/flutter/issues/130365
     inputElement.click();
 
     return completer.future;
