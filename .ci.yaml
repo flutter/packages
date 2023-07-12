@@ -231,7 +231,6 @@ targets:
   # Analyze with the previous stable (N-1) and the stable before that (N-2). The
   # versions in `channel` should be updated after a new major stable release.
   - name: Linux analyze_legacy N-1
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -239,7 +238,6 @@ targets:
       channel: "3.7.12"
 
   - name: Linux analyze_legacy N-2
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
