@@ -21,10 +21,11 @@ class SaveTextPage extends StatelessWidget {
     final String fileName = _nameController.text;
     // This demonstrates using an initial directory for the prompt, which should
     // only be done in cases where the application can likely predict where the
-    // file will be saved. In most cases, this parameter should not be provided.
-    final String? initialDirectory = !kIsWeb
-        ? (await path_provider.getApplicationDocumentsDirectory()).path
-        : null;
+    // file will be saved. In most cases, this parameter should not be provided,
+    // and in the web, path_provider shouldn't even be called.
+    final String? initialDirectory = kIsWeb
+        ? null
+        : (await path_provider.getApplicationDocumentsDirectory()).path;
     final FileSaveLocation? result = await getSaveLocation(
       initialDirectory: initialDirectory,
       suggestedName: fileName,
