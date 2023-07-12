@@ -417,6 +417,36 @@ Y
 ```
 ''');
   });
+
+  test('logs snippets checked', () async {
+    final RepositoryPackage package =
+        createFakePackage('a_package', packagesDir);
+    package.readmeFile.writeAsStringSync('''
+Example:
+
+<?code-excerpt "main.dart (SomeSection)"?>
+```dart
+A B C
+```
+''');
+    package.directory.childFile('main.dart').writeAsStringSync('''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''');
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['update-excerpts']);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Checked 1 snippet(s) in README.md.'),
+      ]),
+    );
+  });
 }
 
 void main() {
