@@ -7,8 +7,8 @@ package io.flutter.plugins.camera.media;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.media.MediaRecorder;
-import android.os.Build;
 import androidx.annotation.NonNull;
+import io.flutter.plugins.camera.SdkCapabilityChecker;
 import java.io.IOException;
 
 public class MediaRecorderBuilder {
@@ -78,7 +78,7 @@ public class MediaRecorderBuilder {
     if (enableAudio) mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && encoderProfiles != null) {
+    if (SdkCapabilityChecker.supportsEncoderProfiles() && encoderProfiles != null) {
       EncoderProfiles.VideoProfile videoProfile = encoderProfiles.getVideoProfiles().get(0);
       EncoderProfiles.AudioProfile audioProfile = encoderProfiles.getAudioProfiles().get(0);
 

@@ -7,9 +7,9 @@ package io.flutter.plugins.camera.features.zoomlevel;
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.hardware.camera2.CaptureRequest;
-import android.os.Build;
 import androidx.annotation.NonNull;
 import io.flutter.plugins.camera.CameraProperties;
+import io.flutter.plugins.camera.SdkCapabilityChecker;
 import io.flutter.plugins.camera.features.CameraFeature;
 
 /** Controls the zoom configuration on the {@link android.hardware.camera2} API. */
@@ -37,7 +37,7 @@ public class ZoomLevelFeature extends CameraFeature<Float> {
       return;
     }
     // On Android 11+ CONTROL_ZOOM_RATIO_RANGE should be use to get the zoom ratio directly as minimum zoom does not have to be 1.0f.
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    if (SdkCapabilityChecker.supportsZoomRatio()) {
       minimumZoomLevel = cameraProperties.getScalerMinZoomRatio();
       maximumZoomLevel = cameraProperties.getScalerMaxZoomRatio();
     } else {
@@ -83,7 +83,7 @@ public class ZoomLevelFeature extends CameraFeature<Float> {
     // On Android 11+ CONTROL_ZOOM_RATIO can be set to a zoom ratio and the camera feed will compute
     // how to zoom on its own accounting for multiple logical cameras.
     // Prior the image cropping window must be calculated and set manually.
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    if (SdkCapabilityChecker.supportsZoomRatio()) {
       requestBuilder.set(
           CaptureRequest.CONTROL_ZOOM_RATIO,
           ZoomUtils.computeZoomRatio(currentSetting, minimumZoomLevel, maximumZoomLevel));
