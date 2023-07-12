@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/in_app_purchase_android_example"?>
+<?code-excerpt path-base="example/lib"?>
 # Migration Guide from 0.2.x to 0.3.0
 
 Starting November 2023, Android Billing Client V4 is no longer supported,

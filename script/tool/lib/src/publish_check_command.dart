@@ -6,14 +6,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:file/file.dart';
 import 'package:http/http.dart' as http;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -21,13 +19,12 @@ import 'common/repository_package.dart';
 class PublishCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the publish command.
   PublishCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
     http.Client? httpClient,
-  })  : _pubVersionFinder =
-            PubVersionFinder(httpClient: httpClient ?? http.Client()),
-        super(packagesDir, processRunner: processRunner, platform: platform) {
+  }) : _pubVersionFinder =
+            PubVersionFinder(httpClient: httpClient ?? http.Client()) {
     argParser.addFlag(
       _allowPrereleaseFlag,
       help: 'Allows the pre-release SDK warning to pass.\n'
@@ -136,11 +133,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
   // Run `dart pub get` on the examples of [package].
   Future<void> _fetchExampleDeps(RepositoryPackage package) async {
     for (final RepositoryPackage example in package.getExamples()) {
-      await processRunner.runAndStream(
-        'dart',
-        <String>['pub', 'get'],
-        workingDir: example.directory,
-      );
+      await runPubGet(example, processRunner, platform);
     }
   }
 

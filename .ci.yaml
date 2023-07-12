@@ -97,7 +97,6 @@ targets:
       version_file: flutter_master.version
 
   - name: Linux repo_checks
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -229,6 +228,22 @@ targets:
       channel: stable
       version_file: flutter_stable.version
 
+  # Analyze with the previous stable (N-1) and the stable before that (N-2). The
+  # versions in `channel` should be updated after a new major stable release.
+  - name: Linux analyze_legacy N-1
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_legacy.yaml
+      channel: "3.7.12"
+
+  - name: Linux analyze_legacy N-2
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_legacy.yaml
+      channel: "3.3.10"
+
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
     timeout: 30
@@ -239,26 +254,26 @@ targets:
       cores: "32"
       # Pigeon tests need Andoid deps (thus the Linux_android base) and
       # clang-format.
+      # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
       channel: master
 
   - name: Linux_android custom_package_tests stable
-    bringup: true # Blocked on https://github.com/flutter/flutter/issues/130071
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       cores: "32"
-      # Pigeon tests need Android deps (thus the Linux_android base) and
-      # clang-format.
+      # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
       channel: stable
 
@@ -282,7 +297,6 @@ targets:
       channel: stable
 
   - name: Linux_android android_platform_tests_shard_1 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -293,7 +307,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_2 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -304,7 +317,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_3 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -315,7 +327,6 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_4 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -326,7 +337,6 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_5 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -337,7 +347,6 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_6 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -345,10 +354,9 @@ targets:
       channel: master
       version_file: flutter_master.version
       cores: "32"
-      package_sharding: "--shardIndex 6 --shardCount 6"
+      package_sharding: "--shardIndex 5 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_1 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -360,7 +368,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_2 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -372,7 +379,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_3 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -384,7 +390,6 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_4 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -396,7 +401,6 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_5 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -408,7 +412,6 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_6 stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 60
@@ -417,7 +420,7 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       cores: "32"
-      package_sharding: "--shardIndex 6 --shardCount 6"
+      package_sharding: "--shardIndex 5 --shardCount 6"
 
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
@@ -438,7 +441,6 @@ targets:
       channel: stable
 
   - name: Linux_web web_platform_tests_shard_1 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -449,7 +451,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux_web web_platform_tests_shard_2 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -460,7 +461,6 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux_web web_platform_tests_shard_1 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -471,7 +471,6 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux_web web_platform_tests_shard_2 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
