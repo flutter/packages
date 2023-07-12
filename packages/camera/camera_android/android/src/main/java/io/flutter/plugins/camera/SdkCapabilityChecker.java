@@ -9,6 +9,7 @@ import android.os.Build;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.VisibleForTesting;
 
+/** Abstracts SDK version checks, and allows overriding them in unit tests. */
 public class SdkCapabilityChecker {
   /** The current SDK version, overridable for testing. */
   @SuppressLint("AnnotateVersionCheck")
