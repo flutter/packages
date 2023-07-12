@@ -6,13 +6,11 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import 'package:equatable/equatable.dart';
-
 import 'package:googleapis_auth/googleapis_auth.dart';
 import 'package:http/http.dart';
 
 /// Common format of a metric data point.
-class MetricPoint extends Equatable {
+class MetricPoint {
   /// Creates a new data point.
   MetricPoint(
     this.value,
@@ -25,6 +23,7 @@ class MetricPoint extends Equatable {
   /// Test name, unit, timestamp, configs, git revision, ..., in sorted order.
   UnmodifiableMapView<String, String> get tags =>
       UnmodifiableMapView<String, String>(_tags);
+  final SplayTreeMap<String, String> _tags;
 
   /// Unique identifier for updating existing data point.
   ///
@@ -39,11 +38,6 @@ class MetricPoint extends Equatable {
   String toString() {
     return 'MetricPoint(value=$value, tags=$_tags)';
   }
-
-  final SplayTreeMap<String, String> _tags;
-
-  @override
-  List<Object?> get props => <Object?>[value, tags];
 }
 
 /// Interface to write [MetricPoint].
