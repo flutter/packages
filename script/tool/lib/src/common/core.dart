@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:colorize/colorize.dart';
 import 'package:file/file.dart';
 import 'package:pub_semver/pub_semver.dart';
 
@@ -67,16 +66,6 @@ bool isPackage(FileSystemEntity entity) {
   // don't have any source, so this deliberately doesn't check that there's a
   // lib directory.
   return entity.childFile('pubspec.yaml').existsSync();
-}
-
-/// Prints `successMessage` in green.
-void printSuccess(String successMessage) {
-  print(Colorize(successMessage)..green());
-}
-
-/// Prints `errorMessage` in red.
-void printError(String errorMessage) {
-  print(Colorize(errorMessage)..red());
 }
 
 /// Error thrown when a command needs to exit with a non-zero exit code.
