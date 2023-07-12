@@ -9,6 +9,7 @@ import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
+import 'package:flutter_plugin_tools/src/common/output_utils.dart';
 import 'package:flutter_plugin_tools/src/common/package_looping_command.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -82,12 +83,19 @@ void main() {
   late Directory thirdPartyPackagesDir;
 
   setUp(() {
+    // Correct color handling is part of the behavior being tested here.
+    useColorForOutput = true;
     fileSystem = MemoryFileSystem();
     mockPlatform = MockPlatform();
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     thirdPartyPackagesDir = packagesDir.parent
         .childDirectory('third_party')
         .childDirectory('packages');
+  });
+
+  tearDown(() {
+    // Restore the default behavior.
+    useColorForOutput = io.stdout.supportsAnsiEscapes;
   });
 
   /// Creates a TestPackageLoopingCommand instance that uses [gitDiffResponse]
