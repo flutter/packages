@@ -40,10 +40,6 @@ extension $MyShellRouteDataExtension on MyShellRouteData {
       const MyShellRouteData();
 }
 
-extension $BranchADataExtension on BranchAData {
-  static BranchAData _fromState(GoRouterState state) => const BranchAData();
-}
-
 extension $DetailsARouteDataExtension on DetailsARouteData {
   static DetailsARouteData _fromState(GoRouterState state) =>
       const DetailsARouteData();
@@ -60,10 +56,6 @@ extension $DetailsARouteDataExtension on DetailsARouteData {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
-}
-
-extension $BranchBDataExtension on BranchBData {
-  static BranchBData _fromState(GoRouterState state) => const BranchBData();
 }
 
 extension $DetailsBRouteDataExtension on DetailsBRouteData {

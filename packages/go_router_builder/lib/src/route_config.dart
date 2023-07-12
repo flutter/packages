@@ -63,7 +63,7 @@ extension $_extensionName on $_className {
   String get routeDataClassName => 'ShellRouteData';
 }
 
-/// The configuration to generate class declarations for a ShellRouteData.
+/// The configuration to generate class declarations for a StatefulShellRouteData.
 class StatefulShellRouteConfig extends RouteBaseConfig {
   StatefulShellRouteConfig._({
     required this.navigatorKey,
@@ -90,6 +90,29 @@ extension $_extensionName on $_className {
 
   @override
   String get routeDataClassName => 'StatefulShellRouteData';
+}
+
+/// The configuration to generate class declarations for a StatefulShellBranchData.
+class StatefulShellBranchConfig extends RouteBaseConfig {
+  StatefulShellBranchConfig._({
+    required this.navigatorKey,
+    required super.routeDataClass,
+    required super.parent,
+    required super.parentNavigatorKey,
+  }) : super._();
+
+  /// The command for calling the navigator key getter from the ShellRouteData.
+  final String? navigatorKey;
+
+  @override
+  Iterable<String> classDeclarations() => <String>[];
+
+  @override
+  String get routeConstructorParameters =>
+      navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,';
+
+  @override
+  String get routeDataClassName => 'StatefulShellBranchData';
 }
 
 /// The configuration to generate class declarations for a GoRouteData.
@@ -385,58 +408,75 @@ abstract class RouteBaseConfig {
     final InterfaceElement classElement = typeParamType.element;
 
     final RouteBaseConfig value;
-    if (typeName =='TypedShellRoute') {
-      value = ShellRouteConfig._(
-        routeDataClass: classElement,
-        parent: parent,
-        navigatorKey: _generateNavigatorKeyGetterCode(
-          classElement,
-          keyName: r'$navigatorKey',
-        ),
-        parentNavigatorKey: _generateNavigatorKeyGetterCode(
-          classElement,
-          keyName: r'$parentNavigatorKey',
-        ),
-      );
-    }
-    else if(typeName=='TypedStatefulShellRoute'){
-      value = StatefulShellRouteConfig._(
-        routeDataClass: classElement,
-        parent: parent,
-        navigatorKey: _generateNavigatorKeyGetterCode(
-          classElement,
-          keyName: r'$navigatorKey',
-        ),
-        parentNavigatorKey: _generateNavigatorKeyGetterCode(
-          classElement,
-          keyName: r'$parentNavigatorKey',
-        ),
-      );
-    }
-    else {
-      final ConstantReader pathValue = reader.read('path');
-      if (pathValue.isNull) {
-        throw InvalidGenerationSourceError(
-          'Missing `path` value on annotation.',
-          element: element,
+    switch (typeName) {
+      case 'TypedShellRoute':
+        value = ShellRouteConfig._(
+          routeDataClass: classElement,
+          parent: parent,
+          navigatorKey: _generateNavigatorKeyGetterCode(
+            classElement,
+            keyName: r'$navigatorKey',
+          ),
+          parentNavigatorKey: _generateNavigatorKeyGetterCode(
+            classElement,
+            keyName: r'$parentNavigatorKey',
+          ),
         );
-      }
+        break;
+      case 'TypedStatefulShellRoute':
+        value = StatefulShellRouteConfig._(
+          routeDataClass: classElement,
+          parent: parent,
+          navigatorKey: _generateNavigatorKeyGetterCode(
+            classElement,
+            keyName: r'$navigatorKey',
+          ),
+          parentNavigatorKey: _generateNavigatorKeyGetterCode(
+            classElement,
+            keyName: r'$parentNavigatorKey',
+          ),
+        );
+        break;
+      case 'TypedStatefulShellBranch':
+        value = StatefulShellBranchConfig._(
+          routeDataClass: classElement,
+          parent: parent,
+          navigatorKey: _generateNavigatorKeyGetterCode(
+            classElement,
+            keyName: r'$navigatorKey',
+          ),
+          parentNavigatorKey: _generateNavigatorKeyGetterCode(
+            classElement,
+            keyName: r'$parentNavigatorKey',
+          ),
+        );
+        break;
+      default:
+        final ConstantReader pathValue = reader.read('path');
+        if (pathValue.isNull) {
+          throw InvalidGenerationSourceError(
+            'Missing `path` value on annotation.',
+            element: element,
+          );
+        }
 
-      final ConstantReader nameValue = reader.read('name');
-      value = GoRouteConfig._(
-        path: pathValue.stringValue,
-        name: nameValue.isNull ? null : nameValue.stringValue,
-        routeDataClass: classElement,
-        parent: parent,
-        parentNavigatorKey: _generateNavigatorKeyGetterCode(
-          classElement,
-          keyName: r'$parentNavigatorKey',
-        ),
-      );
+        final ConstantReader nameValue = reader.read('name');
+        value = GoRouteConfig._(
+          path: pathValue.stringValue,
+          name: nameValue.isNull ? null : nameValue.stringValue,
+          routeDataClass: classElement,
+          parent: parent,
+          parentNavigatorKey: _generateNavigatorKeyGetterCode(
+            classElement,
+            keyName: r'$parentNavigatorKey',
+          ),
+        );
     }
 
-    value._children.addAll(reader.read('routes').listValue.map<RouteBaseConfig>(
-        (DartObject e) => RouteBaseConfig._fromAnnotation(
+    value._children.addAll(reader
+        .read(typeName == 'TypedStatefulShellRoute' ? 'branches' : 'routes')
+        .listValue
+        .map<RouteBaseConfig>((DartObject e) => RouteBaseConfig._fromAnnotation(
             ConstantReader(e), element, value)));
 
     return value;
@@ -537,11 +577,21 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
     final String routesBit = _children.isEmpty
         ? ''
         : '''
-routes: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
+${routeDataClassName == 'StatefulShellRouteData' ? 'branches' : 'routes'}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
 ''';
     final String parentNavigatorKeyParameter = parentNavigatorKey == null
         ? ''
         : 'parentNavigatorKey: $parentNavigatorKey,';
+
+    if (routeDataClassName == 'StatefulShellBranchData') {
+      return '''
+$routeDataClassName.\$branch(
+    $routeConstructorParameters
+    $routesBit
+  )
+''';
+    }
+
     return '''
 $routeDataClassName.\$route(
     $routeConstructorParameters
