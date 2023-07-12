@@ -1,3 +1,7 @@
+## 1.0.11
+
+* Removes the dependency on `package:equatable`.
+
 ## 1.0.10
 
 * Adds retry logic when removing a `GcsLock` file lock in case of failure.
