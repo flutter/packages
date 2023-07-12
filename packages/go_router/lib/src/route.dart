@@ -1264,6 +1264,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
                 _branchNavigators[b.navigatorKey]))
         .toList();
 
+    for(StatefulShellBranch branch in route.branches){
+      _branchLocation(branch);
+    }
+
     return widget.containerBuilder(context, widget, children);
   }
 }
