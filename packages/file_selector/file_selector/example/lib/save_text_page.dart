@@ -5,7 +5,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 /// Page for showing an example of saving with file_selector
 class SaveTextPage extends StatelessWidget {
@@ -22,8 +22,9 @@ class SaveTextPage extends StatelessWidget {
     // This demonstrates using an initial directory for the prompt, which should
     // only be done in cases where the application can likely predict where the
     // file will be saved. In most cases, this parameter should not be provided.
-    final String initialDirectory =
-        (await getApplicationDocumentsDirectory()).path;
+    final String? initialDirectory = !kIsWeb
+        ? (await path_provider.getApplicationDocumentsDirectory()).path
+        : null;
     final FileSaveLocation? result = await getSaveLocation(
       initialDirectory: initialDirectory,
       suggestedName: fileName,
