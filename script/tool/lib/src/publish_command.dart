@@ -18,6 +18,7 @@ import 'package:yaml/yaml.dart';
 import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/git_version_finder.dart';
+import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/package_looping_command.dart';
 import 'common/pub_version_finder.dart';

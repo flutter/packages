@@ -1,3 +1,8 @@
+## 1.0.1
+
+* Rolls platform implementations to ensure that `pickMedia` and
+  `pickMultipleMedia` have platform implementations.
+
 ## 1.0.0
 
 * **BREAKING CHANGE**: Removes the deprecated `get*` methods. Clients who have
