@@ -9,7 +9,7 @@ import 'dart:io' as io;
 import 'package:http/http.dart' as http;
 import 'package:pub_semver/pub_semver.dart';
 
-import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';

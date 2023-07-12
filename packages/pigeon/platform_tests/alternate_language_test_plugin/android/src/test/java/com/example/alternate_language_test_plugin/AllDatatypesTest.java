@@ -39,7 +39,7 @@ public class AllDatatypesTest {
     assertArrayEquals(
         firstTypes.getAMap().values().toArray(), secondTypes.getAMap().values().toArray());
     assertEquals(firstTypes.getAnEnum(), secondTypes.getAnEnum());
-    assertEquals(firstTypes.getAString(), secondTypes.getAString());
+    assertEquals(firstTypes.getAnObject(), secondTypes.getAnObject());
   }
 
   void compareAllNullableTypes(AllNullableTypes firstTypes, AllNullableTypes secondTypes) {
@@ -68,6 +68,7 @@ public class AllDatatypesTest {
     assertArrayEquals(
         firstTypes.getNullableMapWithObject().values().toArray(),
         secondTypes.getNullableMapWithObject().values().toArray());
+    assertEquals(firstTypes.getANullableObject(), secondTypes.getANullableObject());
   }
 
   @Test
@@ -151,6 +152,7 @@ public class AllDatatypesTest {
             .setAList(Arrays.asList(new int[] {1, 2, 3}))
             .setAMap(makeMap("hello", 1234))
             .setAnEnum(CoreTests.AnEnum.ONE)
+            .setAnObject(0)
             .build();
 
     AllNullableTypes everything =
@@ -166,6 +168,7 @@ public class AllDatatypesTest {
             .setANullableList(Arrays.asList(new int[] {1, 2, 3}))
             .setANullableMap(makeMap("hello", 1234))
             .setNullableMapWithObject(makeStringMap("hello", 1234))
+            .setANullableObject(0)
             .build();
 
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);

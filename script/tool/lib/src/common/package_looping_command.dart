@@ -4,12 +4,12 @@
 
 import 'dart:async';
 
-import 'package:colorize/colorize.dart';
 import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 
 import 'core.dart';
+import 'output_utils.dart';
 import 'package_command.dart';
 import 'repository_package.dart';
 
@@ -90,19 +90,13 @@ abstract class PackageLoopingCommand extends PackageCommand {
     argParser.addOption(
       _skipByFlutterVersionArg,
       help: 'Skip any packages that require a Flutter version newer than '
-          'the provided version.',
-    );
-    argParser.addOption(
-      _skipByDartVersionArg,
-      help: 'Skip any packages that require a Dart version newer than '
-          'the provided version.',
+          'the provided version, or a Dart version newer than the '
+          'corresponding Dart version.',
     );
   }
 
   static const String _skipByFlutterVersionArg =
       'skip-if-not-supporting-flutter-version';
-  static const String _skipByDartVersionArg =
-      'skip-if-not-supporting-dart-version';
 
   /// Packages that had at least one [logWarning] call.
   final Set<PackageEnumerationEntry> _packagesWithWarnings =
@@ -214,7 +208,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
   /// messages. DO NOT RELY on someone noticing a warning; instead, use it for
   /// things that might be useful to someone debugging an unexpected result.
   void logWarning(String warningMessage) {
-    _printColorized(warningMessage, Styles.YELLOW);
+    printWarning(warningMessage);
     if (_currentPackageEntry != null) {
       _packagesWithWarnings.add(_currentPackageEntry!);
     } else {
@@ -267,9 +261,9 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final Version? minFlutterVersion = minFlutterVersionArg.isEmpty
         ? null
         : Version.parse(minFlutterVersionArg);
-    final String minDartVersionArg = getStringArg(_skipByDartVersionArg);
-    final Version? minDartVersion =
-        minDartVersionArg.isEmpty ? null : Version.parse(minDartVersionArg);
+    final Version? minDartVersion = minFlutterVersion == null
+        ? null
+        : getDartSdkForFlutterSdk(minFlutterVersion);
 
     final DateTime runStart = DateTime.now();
 
@@ -473,7 +467,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
       }
 
       if (!captureOutput) {
-        summary = (Colorize(summary)..apply(style)).toString();
+        summary = colorizeString(summary, style);
       }
       print('  ${entry.package.displayName} - $summary');
     }
@@ -506,7 +500,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
     if (captureOutput) {
       print(message);
     } else {
-      print(Colorize(message)..apply(color));
+      print(colorizeString(message, color));
     }
   }
 
