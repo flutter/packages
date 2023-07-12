@@ -155,12 +155,11 @@ class AndroidWebViewController extends PlatformWebViewController {
           callback.onCustomViewHidden();
           return;
         }
-        final AndroidCustomViewWidgetCreationParams creationParams =
-            AndroidCustomViewWidgetCreationParams(
-                controller: webViewController, customView: view);
-
         onShowCallback(
-          AndroidCustomViewWidget.private(creationParams: creationParams),
+          AndroidCustomViewWidget.private(
+            controller: webViewController,
+            customView: view,
+          ),
           () => callback.onCustomViewHidden(),
         );
       };
@@ -863,81 +862,6 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
   }
 }
 
-/// Object specifying creation parameters for creating a [AndroidCustomViewWidget].
-///
-/// When adding additional fields make sure they can be null or have a default
-/// value to avoid breaking changes.
-///
-/// The [AndroidCustomViewWidgetCreationParams] are used internally only to
-/// instantiate the [AndroidCustomViewWidget]. This class is visible for
-/// testing purposes only and should not be used externally.
-@immutable
-@visibleForTesting
-class AndroidCustomViewWidgetCreationParams {
-  /// Creates [AndroidCustomViewWidgetCreationParams].
-  AndroidCustomViewWidgetCreationParams({
-    required this.controller,
-    required this.customView,
-    this.layoutDirection = TextDirection.ltr,
-    this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
-    this.displayWithHybridComposition = false,
-    @visibleForTesting InstanceManager? instanceManager,
-    @visibleForTesting
-    this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
-  }) : instanceManager =
-            instanceManager ?? android_webview.JavaObject.globalInstanceManager;
-
-  /// The reference to the Android native view that should be shown.
-  final android_webview.View customView;
-
-  /// The [PlatformWebViewController] that allows controlling the native web
-  /// view.
-  final PlatformWebViewController controller;
-
-  /// The layout direction to use for the embedded WebView.
-  final TextDirection layoutDirection;
-
-  /// The `gestureRecognizers` specifies which gestures should be consumed by the
-  /// web view.
-  ///
-  /// It is possible for other gesture recognizers to be competing with the web
-  /// view on pointer events, e.g. if the web view is inside a [ListView] the
-  /// [ListView] will want to handle vertical drags. The web view will claim
-  /// gestures that are recognized by any of the recognizers on this list.
-  ///
-  /// When `gestureRecognizers` is empty (default), the web view will only handle
-  /// pointer events for gestures that were not claimed by any other gesture
-  /// recognizer.
-  final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers;
-
-  /// Maintains instances used to communicate with the native objects they
-  /// represent.
-  ///
-  /// This field is exposed for testing purposes only and should not be used
-  /// outside of tests.
-  @visibleForTesting
-  final InstanceManager instanceManager;
-
-  /// Proxy that provides access to the platform views service.
-  ///
-  /// This service allows creating and controlling platform-specific views.
-  @visibleForTesting
-  final PlatformViewsServiceProxy platformViewsServiceProxy;
-
-  /// Whether the [WebView] will be displayed using the Hybrid Composition
-  /// PlatformView implementation.
-  ///
-  /// For most use cases, this flag should be set to false. Hybrid Composition
-  /// can have performance costs but doesn't have the limitation of rendering to
-  /// an Android SurfaceTexture. See
-  /// * https://flutter.dev/docs/development/platform-integration/platform-views#performance
-  /// * https://github.com/flutter/flutter/issues/104889
-  /// * https://github.com/flutter/flutter/issues/116954
-  ///
-  /// Defaults to false.
-  final bool displayWithHybridComposition;
-}
-
 /// Represents a Flutter implementation of the Android [View](https://developer.android.com/reference/android/view/View)
 /// that is created by the host platform when web content needs to be displayed
 /// in fullscreen mode.
@@ -957,12 +881,36 @@ class AndroidCustomViewWidget extends StatelessWidget {
   /// This constructor is visible for testing purposes only and should
   /// never be called externally.
   @visibleForTesting
-  const AndroidCustomViewWidget.private({
+  AndroidCustomViewWidget.private({
     super.key,
-    required AndroidCustomViewWidgetCreationParams creationParams,
-  }) : _creationParams = creationParams;
+    required this.controller,
+    required this.customView,
+    @visibleForTesting InstanceManager? instanceManager,
+    @visibleForTesting
+    this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
+  }) : instanceManager =
+            instanceManager ?? android_webview.JavaObject.globalInstanceManager;
 
-  final AndroidCustomViewWidgetCreationParams _creationParams;
+  /// The reference to the Android native view that should be shown.
+  final android_webview.View customView;
+
+  /// The [PlatformWebViewController] that allows controlling the native web
+  /// view.
+  final PlatformWebViewController controller;
+
+  /// Maintains instances used to communicate with the native objects they
+  /// represent.
+  ///
+  /// This field is exposed for testing purposes only and should not be used
+  /// outside of tests.
+  @visibleForTesting
+  final InstanceManager instanceManager;
+
+  /// Proxy that provides access to the platform views service.
+  ///
+  /// This service allows creating and controlling platform-specific views.
+  @visibleForTesting
+  final PlatformViewsServiceProxy platformViewsServiceProxy;
 
   @override
   Widget build(BuildContext context) {
@@ -976,18 +924,16 @@ class AndroidCustomViewWidget extends StatelessWidget {
         return AndroidViewSurface(
           controller: controller as AndroidViewController,
           hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          gestureRecognizers: _creationParams.gestureRecognizers,
+          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
         );
       },
       onCreatePlatformView: (PlatformViewCreationParams params) {
         return _initAndroidView(
           params,
-          displayWithHybridComposition:
-              _creationParams.displayWithHybridComposition,
-          platformViewsServiceProxy: _creationParams.platformViewsServiceProxy,
-          view: _creationParams.customView,
-          instanceManager: _creationParams.instanceManager,
-          layoutDirection: _creationParams.layoutDirection,
+          displayWithHybridComposition: false,
+          platformViewsServiceProxy: platformViewsServiceProxy,
+          view: customView,
+          instanceManager: instanceManager,
         )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
           ..create();

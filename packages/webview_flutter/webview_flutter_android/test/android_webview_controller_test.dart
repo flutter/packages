@@ -1320,10 +1320,8 @@ void main() {
       final AndroidCustomViewWidget customViewWidget =
           AndroidCustomViewWidget.private(
         key: const Key('test_custom_view'),
-        creationParams: AndroidCustomViewWidgetCreationParams(
-          customView: android_webview.View.detached(),
-          controller: controller,
-        ),
+        customView: android_webview.View.detached(),
+        controller: controller,
       );
 
       await tester.pumpWidget(Builder(
@@ -1334,7 +1332,7 @@ void main() {
       expect(find.byKey(const Key('test_custom_view')), findsOneWidget);
     });
 
-    testWidgets('displayWithHybridComposition is false',
+    testWidgets('displayWithHybridComposition should be false',
         (WidgetTester tester) async {
       final AndroidWebViewController controller = createControllerWithMocks();
 
@@ -1354,11 +1352,9 @@ void main() {
 
       final AndroidCustomViewWidget customViewWidget =
           AndroidCustomViewWidget.private(
-        creationParams: AndroidCustomViewWidgetCreationParams(
-          controller: controller,
-          customView: android_webview.View.detached(),
-          platformViewsServiceProxy: mockPlatformViewsService,
-        ),
+        controller: controller,
+        customView: android_webview.View.detached(),
+        platformViewsServiceProxy: mockPlatformViewsService,
       );
 
       await tester.pumpWidget(Builder(
@@ -1368,51 +1364,6 @@ void main() {
 
       verify(
         mockPlatformViewsService.initSurfaceAndroidView(
-          id: anyNamed('id'),
-          viewType: anyNamed('viewType'),
-          layoutDirection: anyNamed('layoutDirection'),
-          creationParams: anyNamed('creationParams'),
-          creationParamsCodec: anyNamed('creationParamsCodec'),
-          onFocus: anyNamed('onFocus'),
-        ),
-      );
-    });
-
-    testWidgets('displayWithHybridComposition is true',
-        (WidgetTester tester) async {
-      final AndroidWebViewController controller = createControllerWithMocks();
-
-      final MockPlatformViewsServiceProxy mockPlatformViewsService =
-          MockPlatformViewsServiceProxy();
-
-      when(
-        mockPlatformViewsService.initExpensiveAndroidView(
-          id: anyNamed('id'),
-          viewType: anyNamed('viewType'),
-          layoutDirection: anyNamed('layoutDirection'),
-          creationParams: anyNamed('creationParams'),
-          creationParamsCodec: anyNamed('creationParamsCodec'),
-          onFocus: anyNamed('onFocus'),
-        ),
-      ).thenReturn(MockExpensiveAndroidViewController());
-
-      final AndroidCustomViewWidget webViewWidget =
-          AndroidCustomViewWidget.private(
-        creationParams: AndroidCustomViewWidgetCreationParams(
-          controller: controller,
-          customView: android_webview.View.detached(),
-          platformViewsServiceProxy: mockPlatformViewsService,
-          displayWithHybridComposition: true,
-        ),
-      );
-
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) => webViewWidget.build(context),
-      ));
-      await tester.pumpAndSettle();
-
-      verify(
-        mockPlatformViewsService.initExpensiveAndroidView(
           id: anyNamed('id'),
           viewType: anyNamed('viewType'),
           layoutDirection: anyNamed('layoutDirection'),
