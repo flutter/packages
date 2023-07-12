@@ -4,6 +4,10 @@
 * Updates the documentation to go_router v9.0.3
 * Bumps go_router version in example folder to v9.0.3
 
+## 2.2.1
+
+* Cleans up go_router_builder code.
+
 ## 2.2.0
 
 * Adds replace methods to the generated routes.

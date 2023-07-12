@@ -77,7 +77,7 @@ class RouteMatch {
   /// for example:
   ///
   /// uri = '/family/f2/person/p2'
-  /// route = GoRoute('/family/:id)
+  /// route = GoRoute('/family/:id')
   ///
   /// matchedLocation = '/family/f2'
   final String matchedLocation;

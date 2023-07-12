@@ -1,3 +1,0 @@
-# TODO(stuartmorgan): Adjust the tests not to require dart:io
-# See https://github.com/flutter/flutter/issues/129839
-test_on: vm

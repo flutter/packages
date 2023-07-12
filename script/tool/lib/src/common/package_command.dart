@@ -14,6 +14,7 @@ import 'package:yaml/yaml.dart';
 
 import 'core.dart';
 import 'git_version_finder.dart';
+import 'output_utils.dart';
 import 'process_runner.dart';
 import 'repository_package.dart';
 

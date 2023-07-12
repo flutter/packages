@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/video_player_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 # Video Player plugin for Flutter
 

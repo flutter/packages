@@ -154,7 +154,7 @@ WEBVTT
 00:05.200 --> 00:06.000 align:start size:50%
 <v Roger Bingham><i>You know I'm so excited my glasses are falling off here.</i>
 
-00:00:06.050 --> 00:00:06.150 
+00:00:06.050 --> 00:00:06.150
 <v Roger Bingham><i>I have a different time!</i>
 
 00:06.200 --> 00:06.900
