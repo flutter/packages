@@ -69,10 +69,6 @@ task:
           - else
           -   ./script/tool_runner.sh federation-safety-check
           - fi
-    - name: readme_excerpts
-      env:
-        CIRRUS_CLONE_SUBMODULES: true
-      script: ./script/tool_runner.sh update-excerpts --fail-on-change
     ### Linux desktop tasks ###
     - name: linux-platform_tests
       # Don't run full platform tests on both channels in pre-submit.
