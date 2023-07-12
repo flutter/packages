@@ -63,7 +63,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       if (result.snippetCount > 0) {
         final String displayPath =
             getRelativePosixPath(file, from: package.directory);
-        print('${indentation}Checked ${result.snippetCount} snippets in '
+        print('${indentation}Checked ${result.snippetCount} snippet(s) in '
             '$displayPath.');
       }
       if (result.changed) {
