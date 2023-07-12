@@ -3,6 +3,10 @@
 * Removes `process` dependency.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
+## 1.0.0+1
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.19.6
+  
 ## 1.0.0
 
 * Updates version to 1.0 to reflect the level of API stability.
