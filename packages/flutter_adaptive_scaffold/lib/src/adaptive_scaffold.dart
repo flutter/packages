@@ -216,11 +216,11 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Defaults to [Breakpoints.smallDesktop].
   final Breakpoint drawerBreakpoint;
 
-  /// Option to override the appBarBreakpoint for the usage of an AppBar when
-  /// needed that not depend on the drawer visibility
+  /// An optional [Breakpoint] which overrides the [appBar] breakpoint to display
+  /// an [AppBar] without depending on the drawer visibility.
   ///
-  /// By not providing a [Breakpoint] by default an [AppBar] will show on
-  /// [Breakpoints.smallDesktop] if the useDrawer is set to true
+  /// By default, an [AppBar] will show on [Breakpoints.smallDesktop] if [useDrawer] is set
+  /// to true.
   final Breakpoint? appBarBreakpoint;
 
   /// Option to override the default [AppBar] when using drawer in desktop
