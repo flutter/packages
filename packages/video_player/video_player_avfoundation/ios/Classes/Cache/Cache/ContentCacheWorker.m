@@ -57,7 +57,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
       _readFileHandle = [NSFileHandle fileHandleForReadingFromURL:fileURL error:&error];
       if (!error) {
         _writeFileHandle = [NSFileHandle fileHandleForWritingToURL:fileURL error:&error];
-        _internalCacheConfiguration = [CacheConfiguration configurationWithFilePath:path];
+          _internalCacheConfiguration = [CacheConfiguration configurationWithFilePath:path error:&error];
         _internalCacheConfiguration.url = url;
       }
     }

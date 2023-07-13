@@ -30,9 +30,9 @@ static NSString *kMContentCacheDirectory;
   return [[self cacheDirectory] stringByAppendingPathComponent:pathComponent];
 }
 
-+ (CacheConfiguration *)cacheConfigurationForURL:(NSURL *)url {
++ (CacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error {
   NSString *filePath = [self cachedFilePathForURL:url];
-  CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath];
+    CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath error:error];
   return configuration;
 }
 

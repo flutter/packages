@@ -20,9 +20,11 @@ static NSString *kURLKey = @"kURLKey";
 
 @implementation CacheConfiguration
 
-+ (instancetype)configurationWithFilePath:(NSString *)filePath {
++ (instancetype)configurationWithFilePath:(NSString *)filePath error:(NSError **)error {
   filePath = [self configurationFilePathForFilePath:filePath];
-  CacheConfiguration *configuration = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    CacheConfiguration *configuration = [NSKeyedUnarchiver unarchivedObjectOfClass:[CacheConfiguration class] fromData:data error:error];
+    
 
   if (!configuration) {
     configuration = [[CacheConfiguration alloc] init];
@@ -105,7 +107,16 @@ static NSString *kURLKey = @"kURLKey";
 
 - (void)archiveData {
   @synchronized(self.internalCacheFragments) {
-    [NSKeyedArchiver archiveRootObject:self toFile:self.filePath];
+      NSError *error;
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self requiringSecureCoding:NO error:&error];
+      
+      if (error) {
+          NSLog(@"%@", error);
+      }
+    [data writeToFile:self.filePath options:NSDataWritingAtomic error:&error];
+      if (error) {
+          NSLog(@"%@", error);
+      }
   }
 }
 
@@ -201,7 +212,7 @@ static NSString *kURLKey = @"kURLKey";
   NSUInteger fileSize = (NSUInteger)attributes.fileSize;
   NSRange range = NSMakeRange(0, fileSize);
 
-  CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath];
+    CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath error:error];
   configuration.url = url;
 
   ContentInfo *contentInfo = [ContentInfo new];
