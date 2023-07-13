@@ -6,7 +6,6 @@ package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
 import android.webkit.CookieManager;
-
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -29,8 +28,8 @@ public class CookieManagerHostApiImpl implements CookieManagerHostApi {
   private final CookieManagerProxy proxy;
   private final @NonNull AndroidSdkChecker sdkChecker;
 
-    // Interface for an injectable SDK version checker.
-            @VisibleForTesting
+  // Interface for an injectable SDK version checker.
+  @VisibleForTesting
   interface AndroidSdkChecker {
     @ChecksSdkIntAtLeast(parameter = 0)
     boolean sdkIsAtLeast(int version);
@@ -57,26 +56,21 @@ public class CookieManagerHostApiImpl implements CookieManagerHostApi {
     this(binaryMessenger, instanceManager, new CookieManagerProxy());
   }
 
-  /**
-   * Constructs a {@link CookieManagerHostApiImpl}.
-   *
-   * @param binaryMessenger used to communicate with Dart over asynchronous messages
-   * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static methods of `CookieManager`
-   */
-  public CookieManagerHostApiImpl(
+  @VisibleForTesting
+  CookieManagerHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
       @NonNull CookieManagerProxy proxy) {
-    this(binaryMessenger, instanceManager, proxy, (int version) -> Build.VERSION.SDK_INT >= version);
+    this(
+        binaryMessenger, instanceManager, proxy, (int version) -> Build.VERSION.SDK_INT >= version);
   }
 
   @VisibleForTesting
   CookieManagerHostApiImpl(
-          @NonNull BinaryMessenger binaryMessenger,
-          @NonNull InstanceManager instanceManager,
-          @NonNull CookieManagerProxy proxy,
-  @NonNull AndroidSdkChecker sdkChecker) {
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull InstanceManager instanceManager,
+      @NonNull CookieManagerProxy proxy,
+      @NonNull AndroidSdkChecker sdkChecker) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.proxy = proxy;
@@ -96,7 +90,7 @@ public class CookieManagerHostApiImpl implements CookieManagerHostApi {
   @Override
   public void removeAllCookies(
       @NonNull Long identifier, @NonNull GeneratedAndroidWebView.Result<Boolean> result) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    if (sdkChecker.sdkIsAtLeast(Build.VERSION_CODES.LOLLIPOP)) {
       getCookieManagerInstance(identifier).removeAllCookies(result::success);
     } else {
       result.success(removeCookiesPreL(getCookieManagerInstance(identifier)));
@@ -106,7 +100,7 @@ public class CookieManagerHostApiImpl implements CookieManagerHostApi {
   @Override
   public void setAcceptThirdPartyCookies(
       @NonNull Long identifier, @NonNull Long webViewIdentifier, @NonNull Boolean accept) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    if (sdkChecker.sdkIsAtLeast(Build.VERSION_CODES.LOLLIPOP)) {
       getCookieManagerInstance(identifier)
           .setAcceptThirdPartyCookies(
               Objects.requireNonNull(instanceManager.getInstance(webViewIdentifier)), accept);
