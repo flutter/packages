@@ -9,3 +9,4 @@ tasks:
     # that depend on it.
   - name: Dart unit tests - pathified
     script: .ci/scripts/dart_unit_tests_pathified.sh
+    args: ["--platform=vm"]
