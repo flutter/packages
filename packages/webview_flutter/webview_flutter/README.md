@@ -1,6 +1,6 @@
 # WebView for Flutter
 
-<?code-excerpt path-base="excerpts/packages/webview_flutter_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/webview_flutter.svg)](https://pub.dev/packages/webview_flutter)
 

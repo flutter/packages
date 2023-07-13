@@ -1,3 +1,11 @@
+## 3.6.3
+
+* Introduces `NSError.toString` for better diagnostics.
+
+## 3.6.2 
+
+* Fixes unawaited_futures violations.
+
 ## 3.6.1
 
 * Fixes bug where a native `NSURL` could be removed from an `InstanceManager` if it is equal to an

@@ -7,11 +7,55 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import '../go_router.dart';
 import 'configuration.dart';
 import 'match.dart';
 import 'path_utils.dart';
-import 'typedefs.dart';
+import 'router.dart';
+import 'state.dart';
+
+/// The page builder for [GoRoute].
+typedef GoRouterPageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+);
+
+/// The widget builder for [GoRoute].
+typedef GoRouterWidgetBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+);
+
+/// The widget builder for [ShellRoute].
+typedef ShellRouteBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+);
+
+/// The page builder for [ShellRoute].
+typedef ShellRoutePageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+);
+
+/// The widget builder for [StatefulShellRoute].
+typedef StatefulShellRouteBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  StatefulNavigationShell navigationShell,
+);
+
+/// The page builder for [StatefulShellRoute].
+typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+  StatefulNavigationShell navigationShell,
+);
+
+/// Signature for functions used to build Navigators
+typedef NavigatorBuilder = Widget Function(
+    List<NavigatorObserver>? observers, String? restorationScopeId);
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
@@ -700,8 +744,8 @@ class StatefulShellRoute extends ShellRouteBase {
     super.parentNavigatorKey,
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
-        assert((pageBuilder != null) ^ (builder != null),
-            'One of builder or pageBuilder must be provided, but not both'),
+        assert((pageBuilder != null) || (builder != null),
+            'One of builder or pageBuilder must be provided'),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
         assert(_debugValidateParentNavigatorKeys(branches)),
@@ -713,7 +757,7 @@ class StatefulShellRoute extends ShellRouteBase {
   ///
   /// This constructor provides an IndexedStack based implementation for the
   /// container ([navigatorContainerBuilder]) used to manage the Widgets
-  /// representing the branch Navigators. A part from that, this constructor
+  /// representing the branch Navigators. Apart from that, this constructor
   /// works the same way as the default constructor.
   ///
   /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)

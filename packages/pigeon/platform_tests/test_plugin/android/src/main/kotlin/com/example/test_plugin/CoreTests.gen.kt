@@ -76,7 +76,8 @@ data class AllTypes (
   val aList: List<Any?>,
   val aMap: Map<Any, Any?>,
   val anEnum: AnEnum,
-  val aString: String
+  val aString: String,
+  val anObject: Any
 
 ) {
   companion object {
@@ -94,7 +95,8 @@ data class AllTypes (
       val aMap = list[9] as Map<Any, Any?>
       val anEnum = AnEnum.ofRaw(list[10] as Int)!!
       val aString = list[11] as String
-      return AllTypes(aBool, anInt, anInt64, aDouble, aByteArray, a4ByteArray, a8ByteArray, aFloatArray, aList, aMap, anEnum, aString)
+      val anObject = list[12] as Any
+      return AllTypes(aBool, anInt, anInt64, aDouble, aByteArray, a4ByteArray, a8ByteArray, aFloatArray, aList, aMap, anEnum, aString, anObject)
     }
   }
   fun toList(): List<Any?> {
@@ -111,6 +113,7 @@ data class AllTypes (
       aMap,
       anEnum.raw,
       aString,
+      anObject,
     )
   }
 }
@@ -135,7 +138,8 @@ data class AllNullableTypes (
   val nullableMapWithAnnotations: Map<String?, String?>? = null,
   val nullableMapWithObject: Map<String?, Any?>? = null,
   val aNullableEnum: AnEnum? = null,
-  val aNullableString: String? = null
+  val aNullableString: String? = null,
+  val aNullableObject: Any? = null
 
 ) {
   companion object {
@@ -158,7 +162,8 @@ data class AllNullableTypes (
         AnEnum.ofRaw(it)
       }
       val aNullableString = list[14] as String?
-      return AllNullableTypes(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableList, aNullableMap, nullableNestedList, nullableMapWithAnnotations, nullableMapWithObject, aNullableEnum, aNullableString)
+      val aNullableObject = list[15]
+      return AllNullableTypes(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableList, aNullableMap, nullableNestedList, nullableMapWithAnnotations, nullableMapWithObject, aNullableEnum, aNullableString, aNullableObject)
     }
   }
   fun toList(): List<Any?> {
@@ -178,6 +183,7 @@ data class AllNullableTypes (
       nullableMapWithObject,
       aNullableEnum?.raw,
       aNullableString,
+      aNullableObject,
     )
   }
 }

@@ -1,3 +1,7 @@
+## 2.2.1
+
+* Cleans up go_router_builder code.
+
 ## 2.2.0
 
 * Adds replace methods to the generated routes.

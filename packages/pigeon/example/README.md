@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/pigeon_example"?>
+<?code-excerpt path-base="app"?>
 # Pigeon Examples
 
 The examples here will cover basic usage. For a more thorough set of examples,
@@ -11,7 +11,7 @@ Begin by configuring pigeon at the top of the `.dart` input file.
 In actual use, you would include only the languages
 needed for your project.
 
-<?code-excerpt "../../app/pigeons/messages.dart (config)"?>
+<?code-excerpt "pigeons/messages.dart (config)"?>
 ```dart
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
@@ -49,7 +49,7 @@ host platform from Flutter.
 This is the Pigeon file that describes the interface that will be used to call
 from Flutter to the host-platform.
 
-<?code-excerpt "../../app/pigeons/messages.dart (host-definitions)"?>
+<?code-excerpt "pigeons/messages.dart (host-definitions)"?>
 ```dart
 enum Code { one, two }
 
@@ -80,8 +80,8 @@ abstract class ExampleHostApi {
 This is the code that will use the generated Dart code to make calls from Flutter to 
 the host platform.
 
-<?code-excerpt "../../app/lib/main.dart (main-dart)"?>
-```dart 
+<?code-excerpt "lib/main.dart (main-dart)"?>
+```dart
 final ExampleHostApi _api = ExampleHostApi();
 
 /// Calls host method `add` with provided arguments.
@@ -115,7 +115,7 @@ Future<bool> sendMessage(String messageText) {
 
 This is the code that will use the generated Swift code to receive calls from Flutter.
 packages/pigeon/example/app/ios/Runner/AppDelegate.swift
-<?code-excerpt "../../app/ios/Runner/AppDelegate.swift (swift-class)"?>
+<?code-excerpt "ios/Runner/AppDelegate.swift (swift-class)"?>
 ```swift
 // This extension of Error is required to do use FlutterError in any Swift code.
 extension FlutterError: Error {}
@@ -143,7 +143,7 @@ private class PigeonApiImplementation: ExampleHostApi {
 ```
 
 ### Kotlin
-<?code-excerpt "../../app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class)"?>
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class)"?>
 ```kotlin
 private class PigeonApiImplementation: ExampleHostApi {
   override fun getHostLanguage(): String {
@@ -168,7 +168,7 @@ private class PigeonApiImplementation: ExampleHostApi {
 ```
 
 ### C++
-<?code-excerpt "../../app/windows/runner/flutter_window.cpp (cpp-class)"?>
+<?code-excerpt "windows/runner/flutter_window.cpp (cpp-class)"?>
 ```c++
 class PigeonApiImplementation : public ExampleHostApi {
  public:
@@ -200,7 +200,7 @@ app from the host platform.
 
 ### Dart input
 
-<?code-excerpt "../../app/pigeons/messages.dart (flutter-definitions)"?>
+<?code-excerpt "pigeons/messages.dart (flutter-definitions)"?>
 ```dart
 @FlutterApi()
 abstract class MessageFlutterApi {
@@ -213,8 +213,8 @@ abstract class MessageFlutterApi {
 This is the code that will use the generated Dart code to handle calls made to 
 Flutter from the host platform.
 
-<?code-excerpt "../../app/lib/main.dart (main-dart-flutter)"?>
-```dart 
+<?code-excerpt "lib/main.dart (main-dart-flutter)"?>
+```dart
 class _ExampleFlutterApi implements MessageFlutterApi {
   @override
   String flutterMethod(String? aString) {
@@ -227,7 +227,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
 
 ### Swift
 
-<?code-excerpt "../../app/ios/Runner/AppDelegate.swift (swift-class-flutter)"?>
+<?code-excerpt "ios/Runner/AppDelegate.swift (swift-class-flutter)"?>
 ```swift
 private class PigeonFlutterApi {
   var flutterAPI: MessageFlutterApi
@@ -246,7 +246,7 @@ private class PigeonFlutterApi {
 
 ### Kotlin
 
-<?code-excerpt "../../app/android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-flutter)"?>
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-flutter)"?>
 ```kotlin
 private class PigeonFlutterApi {
 
@@ -266,7 +266,7 @@ private class PigeonFlutterApi {
 
 ### C++
 
-<?code-excerpt "../../app/windows/runner/flutter_window.cpp (cpp-method-flutter)"?>
+<?code-excerpt "windows/runner/flutter_window.cpp (cpp-method-flutter)"?>
 ```c++
 void TestPlugin::CallFlutterMethod(
     String aString, std::function<void(ErrorOr<int64_t> reply)> result) {

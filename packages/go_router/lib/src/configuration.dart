@@ -6,14 +6,16 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import 'configuration.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
-import 'typedefs.dart';
-export 'route.dart';
-export 'state.dart';
+import 'route.dart';
+import 'state.dart';
+
+/// The signature of the redirect callback.
+typedef GoRouterRedirect = FutureOr<String?> Function(
+    BuildContext context, GoRouterState state);
 
 /// The route configuration for GoRouter configured by the app.
 class RouteConfiguration {
@@ -43,7 +45,9 @@ class RouteConfiguration {
           }
         } else {
           if (route.path.startsWith('/') || route.path.endsWith('/')) {
-            throw GoError('sub-route path may not start or end with /: $route');
+            throw GoError(
+              'sub-route path may not start or end with "/": $route',
+            );
           }
         }
         subRouteIsTopLevel = false;

@@ -6,25 +6,27 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 const int _exitNoPlatformFlags = 2;
 const int _exitNoAvailableDevice = 3;
 
+// From https://docs.flutter.dev/testing/integration-tests#running-in-a-browser
+const int _chromeDriverPort = 4444;
+
 /// A command to run the integration tests for a package's example applications.
 class DriveExamplesCommand extends PackageLoopingCommand {
   /// Creates an instance of the drive command.
   DriveExamplesCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addFlag(platformAndroid,
         help: 'Runs the Android implementation of the examples',
         aliases: const <String>[platformAndroidAlias]);
@@ -44,7 +46,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       help:
           'Runs the driver tests in Dart VM with the given experiments enabled.',
     );
+    argParser.addFlag(_chromeDriverFlag,
+        help: 'Runs chromedriver for the duration of the test.\n\n'
+            'Requires the correct version of chromedriver to be in your path.');
   }
+
+  static const String _chromeDriverFlag = 'run-chromedriver';
 
   @override
   final String name = 'drive-examples';
@@ -197,6 +204,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
       testsRan = true;
       if (useFlutterDrive) {
+        Process? chromedriver;
+        if (getBoolArg(_chromeDriverFlag)) {
+          print('Starting chromedriver on port $_chromeDriverPort');
+          chromedriver = await processRunner
+              .start('chromedriver', <String>['--port=$_chromeDriverPort']);
+        }
         for (final File driver in drivers) {
           final List<File> failingTargets = await _driveTests(
               example, driver, testTargets,
@@ -205,6 +218,10 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             errors.add(
                 getRelativePosixPath(failingTarget, from: package.directory));
           }
+        }
+        if (chromedriver != null) {
+          print('Stopping chromedriver');
+          chromedriver.kill();
         }
       } else {
         if (!await _runTests(example, deviceFlags: deviceFlags)) {

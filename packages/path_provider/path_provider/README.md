@@ -1,5 +1,5 @@
 # path_provider
-<?code-excerpt path-base="excerpts/packages/path_provider_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/path_provider.svg)](https://pub.dev/packages/path_provider)
 

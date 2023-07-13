@@ -533,7 +533,7 @@ DynamicMap parseDataFile(String file) {
 /// event "..." { }
 /// ```
 ///
-/// Tthe string is the name of the event, and the arguments map is the data to
+/// The string is the name of the event, and the arguments map is the data to
 /// send with the event.
 ///
 /// For example, the event handler in the following sequence sends the event
