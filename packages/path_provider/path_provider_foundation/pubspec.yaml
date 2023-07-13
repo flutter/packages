@@ -32,4 +32,4 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.1
   path: ^1.8.0
-  pigeon: ^9.2.4
+  pigeon: ^10.1.3
