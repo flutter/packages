@@ -114,6 +114,8 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late MiniController _controller;
+  String networkMediaUrl =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
 
   @override
   void initState() {
@@ -154,6 +156,12 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
+          TextButton(
+            onPressed: () {
+              _controller.clearCache();
+            },
+            child: const Text('Clear cache'),
+          )
         ],
       ),
     );
@@ -207,12 +215,6 @@ class _BumbleBeeEncryptedLiveStreamState
                   )
                 : const Text('loading...'),
           ),
-          TextButton(
-            onPressed: () {
-              _controller.clearCache();
-            },
-            child: Text('Clear cache'),
-          )
         ],
       ),
     );
