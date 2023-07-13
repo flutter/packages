@@ -6,10 +6,10 @@ set -e
 
 # Set up a .desktop file pointing to the CIPD-installed Chrome.
 readonly LOCAL_DESKTOP_FILE_DIR=~/.local/share/applications
-mkdir -p "$LOCAL_DESKTOP_FILE_DIR"
+mkdir -p "${LOCAL_DESKTOP_FILE_DIR}"
 readonly DESKTOP_FILE_NAME=cipd-chrome.desktop
 readonly CIPD_CHROME_DESKTOP_FILE="${LOCAL_DESKTOP_FILE_DIR}/${DESKTOP_FILE_NAME}"
-cat << EOF > "$CIPD_CHROME_DESKTOP_FILE"
+cat << EOF > "${CIPD_CHROME_DESKTOP_FILE}"
 [Desktop Entry]
 Version=1.0
 Name=Google Chrome
@@ -29,5 +29,5 @@ export DESKTOP_SESSION=gnome
 
 # Set Chrome as the default handler for http, https, and file, for url_launcher
 # tests that expect handlers for those schemes.
-xdg-mime default $DESKTOP_FILE_NAME inode/directory
-xdg-settings set default-web-browser $DESKTOP_FILE_NAME
+xdg-mime default "${DESKTOP_FILE_NAME}" inode/directory
+xdg-settings set default-web-browser "${DESKTOP_FILE_NAME}"
