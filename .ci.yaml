@@ -487,14 +487,8 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
-      # DO NOT LAND: For testing
-      target_file: linux_platform_tests.yaml
+      target_file: linux_build_all_packages.yaml
       channel: master
-      # DO NOT LAND: For testing
-      dependencies: >-
-        [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
-        ]
 
   - name: Linux_desktop build_all_packages stable
     recipe: packages/packages
@@ -512,6 +506,11 @@ targets:
       version_file: flutter_master.version
       target_file: linux_platform_tests.yaml
       channel: master
+      # Install Chrome as a default handler for schemes for url_launcher.
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+        ]
 
   - name: Linux_desktop platform_tests stable
     bringup: true # New target
@@ -522,6 +521,11 @@ targets:
       version_file: flutter_stable.version
       target_file: linux_platform_tests.yaml
       channel: stable
+      # Install Chrome as a default handler for schemes for url_launcher.
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+        ]
 
   ### iOS+macOS tasks ###
   # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
