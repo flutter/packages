@@ -8,13 +8,13 @@
 
 + (instancetype)configurationWithFilePath:(NSString *)filePath;
 
-@property (nonatomic, copy, readonly) NSString *filePath;
-@property (nonatomic, strong) ContentInfo *contentInfo;
-@property (nonatomic, strong) NSURL *url;
+@property(nonatomic, copy, readonly) NSString *filePath;
+@property(nonatomic, strong) ContentInfo *contentInfo;
+@property(nonatomic, strong) NSURL *url;
 
 - (NSArray<NSValue *> *)cacheFragments;
 
-@property (nonatomic, readonly) float progress;
+@property(nonatomic, readonly) float progress;
 
 #pragma mark - update API
 

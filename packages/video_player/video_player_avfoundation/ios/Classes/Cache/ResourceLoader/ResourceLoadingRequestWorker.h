@@ -7,11 +7,12 @@
 
 @interface ResourceLoadingRequestWorker : NSObject
 
-- (instancetype)initWithContentDownloader:(ContentDownloader *)contentDownloader resourceLoadingRequest:(AVAssetResourceLoadingRequest *)request;
+- (instancetype)initWithContentDownloader:(ContentDownloader *)contentDownloader
+                   resourceLoadingRequest:(AVAssetResourceLoadingRequest *)request;
 
-@property (nonatomic, weak) id<ResourceLoadingRequestWorkerDelegate> delegate;
+@property(nonatomic, weak) id<ResourceLoadingRequestWorkerDelegate> delegate;
 
-@property (nonatomic, strong, readonly) AVAssetResourceLoadingRequest *request;
+@property(nonatomic, strong, readonly) AVAssetResourceLoadingRequest *request;
 
 - (void)startWork;
 - (void)cancel;
@@ -21,6 +22,7 @@
 
 @protocol ResourceLoadingRequestWorkerDelegate <NSObject>
 
-- (void)resourceLoadingRequestWorker:(ResourceLoadingRequestWorker *)requestWorker didCompleteWithError:(NSError *)error;
+- (void)resourceLoadingRequestWorker:(ResourceLoadingRequestWorker *)requestWorker
+                didCompleteWithError:(NSError *)error;
 
 @end

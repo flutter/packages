@@ -4,8 +4,8 @@
 
 @interface ResourceLoader : NSObject
 
-@property (nonatomic, strong, readonly) NSURL *url;
-@property (nonatomic, weak) id<ResourceLoaderDelegate> delegate;
+@property(nonatomic, strong, readonly) NSURL *url;
+@property(nonatomic, weak) id<ResourceLoaderDelegate> delegate;
 
 - (instancetype)initWithURL:(NSURL *)url;
 

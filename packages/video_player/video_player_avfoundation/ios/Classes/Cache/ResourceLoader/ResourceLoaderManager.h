@@ -1,13 +1,12 @@
 
-#import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
 
 @protocol ResourceLoaderManagerDelegate;
 
 @interface ResourceLoaderManager : NSObject <AVAssetResourceLoaderDelegate>
 
-
-@property (nonatomic, weak) id<ResourceLoaderManagerDelegate> delegate;
+@property(nonatomic, weak) id<ResourceLoaderManagerDelegate> delegate;
 
 - (void)cleanCache;
 
