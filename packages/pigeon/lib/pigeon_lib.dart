@@ -453,7 +453,7 @@ class AstGeneratorAdapter implements GeneratorAdapter {
 
   @override
   Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
-      await _openSink(options.astOut, basePath: options.basePath ?? '');
+      _openSink(options.astOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -487,7 +487,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
 
   @override
   Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
-      await _openSink(options.dartOut, basePath: options.basePath ?? '');
+      _openSink(options.dartOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -528,8 +528,7 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
   @override
   Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async {
     if (options.dartTestOut != null) {
-      return await _openSink(options.dartTestOut,
-          basePath: options.basePath ?? '');
+      return _openSink(options.dartTestOut, basePath: options.basePath ?? '');
     } else {
       return null;
     }
@@ -574,11 +573,9 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   Future<IOSink?> shouldGenerate(
       PigeonOptions options, FileType fileType) async {
     if (fileType == FileType.source) {
-      return await _openSink(options.objcSourceOut,
-          basePath: options.basePath ?? '');
+      return _openSink(options.objcSourceOut, basePath: options.basePath ?? '');
     } else {
-      return await _openSink(options.objcHeaderOut,
-          basePath: options.basePath ?? '');
+      return _openSink(options.objcHeaderOut, basePath: options.basePath ?? '');
     }
   }
 
@@ -617,7 +614,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
 
   @override
   Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
-      await _openSink(options.javaOut, basePath: options.basePath ?? '');
+      _openSink(options.javaOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -652,7 +649,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
 
   @override
   Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
-      await _openSink(options.swiftOut, basePath: options.basePath ?? '');
+      _openSink(options.swiftOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
@@ -693,11 +690,9 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   Future<IOSink?> shouldGenerate(
       PigeonOptions options, FileType fileType) async {
     if (fileType == FileType.source) {
-      return await _openSink(options.cppSourceOut,
-          basePath: options.basePath ?? '');
+      return _openSink(options.cppSourceOut, basePath: options.basePath ?? '');
     } else {
-      return await _openSink(options.cppHeaderOut,
-          basePath: options.basePath ?? '');
+      return _openSink(options.cppHeaderOut, basePath: options.basePath ?? '');
     }
   }
 
@@ -736,7 +731,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
 
   @override
   Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
-      await _openSink(options.kotlinOut, basePath: options.basePath ?? '');
+      _openSink(options.kotlinOut, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
