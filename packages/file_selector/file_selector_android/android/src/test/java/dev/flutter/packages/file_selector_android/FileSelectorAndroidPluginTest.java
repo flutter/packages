@@ -16,6 +16,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.OpenableColumns;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -79,7 +80,8 @@ public class FileSelectorAndroidPluginTest {
     when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory, () -> true);
+        new FileSelectorApiImpl(
+            mockActivityBinding, mockObjectFactory, (version) -> Build.VERSION.SDK_INT >= version);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
     fileSelectorApi.openFile(
@@ -131,7 +133,8 @@ public class FileSelectorAndroidPluginTest {
     when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory, () -> true);
+        new FileSelectorApiImpl(
+            mockActivityBinding, mockObjectFactory, (version) -> Build.VERSION.SDK_INT >= version);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
     fileSelectorApi.openFiles(
@@ -192,7 +195,10 @@ public class FileSelectorAndroidPluginTest {
     when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE)).thenReturn(mockIntent);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory, () -> true);
+        new FileSelectorApiImpl(
+            mockActivityBinding,
+            mockObjectFactory,
+            (version) -> Build.VERSION_CODES.LOLLIPOP >= version);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
     fileSelectorApi.getDirectoryPath(null, mockResult);
@@ -208,5 +214,36 @@ public class FileSelectorAndroidPluginTest {
     listenerArgumentCaptor.getValue().onActivityResult(223, Activity.RESULT_OK, resultMockIntent);
 
     verify(mockResult).success("some/path/");
+  }
+
+  @Test
+  public void getDirectoryPath_errorsForUnsupportedVersion() {
+    final Uri mockUri = mock(Uri.class);
+    when(mockUri.toString()).thenReturn("some/path/");
+
+    when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE)).thenReturn(mockIntent);
+    when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
+    final FileSelectorApiImpl fileSelectorApi =
+        new FileSelectorApiImpl(
+            mockActivityBinding,
+            mockObjectFactory,
+            (version) -> Build.VERSION_CODES.KITKAT >= version);
+
+    @SuppressWarnings("unchecked")
+    final GeneratedFileSelectorApi.Result<String> mockResult =
+        mock(GeneratedFileSelectorApi.Result.class);
+    fileSelectorApi.getDirectoryPath(null, mockResult);
+
+    verify(mockActivity).startActivityForResult(mockIntent, 223);
+
+    final ArgumentCaptor<PluginRegistry.ActivityResultListener> listenerArgumentCaptor =
+        ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+    verify(mockActivityBinding).addActivityResultListener(listenerArgumentCaptor.capture());
+
+    final Intent resultMockIntent = mock(Intent.class);
+    when(resultMockIntent.getData()).thenReturn(mockUri);
+    listenerArgumentCaptor.getValue().onActivityResult(223, Activity.RESULT_OK, resultMockIntent);
+
+    verify(mockResult).error(any());
   }
 }

@@ -26,22 +26,22 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
   private MethodChannel channel;
   private MethodCallHandlerImpl handler;
   private Activity activity;
-  private final @NonNull AndroidCapabilityChecker capabilityChecker;
+  private final @NonNull AndroidSdkChecker sdkChecker;
 
-  // Interface for an injectable provider that returns the current SDK version.
+  // Interface for an injectable SDK version checker.
   @VisibleForTesting
-  interface AndroidCapabilityChecker {
-    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.N_MR1)
-    boolean supportsShortcutManager();
+  interface AndroidSdkChecker {
+    @ChecksSdkIntAtLeast(parameter = 0)
+    boolean sdkIsAtLeast(int version);
   }
 
   public QuickActionsPlugin() {
-    this(() -> Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1);
+    this((int version) -> Build.VERSION.SDK_INT >= version);
   }
 
   @VisibleForTesting
-  QuickActionsPlugin(@NonNull AndroidCapabilityChecker capabilityChecker) {
-    this.capabilityChecker = capabilityChecker;
+  QuickActionsPlugin(@NonNull AndroidSdkChecker capabilityChecker) {
+    this.sdkChecker = capabilityChecker;
   }
 
   /**
@@ -93,7 +93,7 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
   @Override
   public boolean onNewIntent(@NonNull Intent intent) {
     // Do nothing for anything lower than API 25 as the functionality isn't supported.
-    if (!capabilityChecker.supportsShortcutManager()) {
+    if (!sdkChecker.sdkIsAtLeast(Build.VERSION_CODES.N_MR1)) {
       return false;
     }
     // Notify the Dart side if the launch intent has the intent extra relevant to quick actions.

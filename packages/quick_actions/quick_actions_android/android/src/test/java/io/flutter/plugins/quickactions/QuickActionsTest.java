@@ -53,6 +53,8 @@ public class QuickActionsTest {
     }
   }
 
+  static final int SUPPORTED_BUILD = 25;
+  static final int UNSUPPORTED_BUILD = 24;
   static final String SHORTCUT_TYPE = "action_one";
 
   @Test
@@ -70,7 +72,7 @@ public class QuickActionsTest {
       throws NoSuchFieldException, IllegalAccessException {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin(() -> true);
+    final QuickActionsPlugin plugin = new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
     Field handler = plugin.getClass().getDeclaredField("handler");
     handler.setAccessible(true);
@@ -99,7 +101,7 @@ public class QuickActionsTest {
   public void onNewIntent_buildVersionUnsupported_doesNotInvokeMethod() {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin(() -> false);
+    final QuickActionsPlugin plugin = new QuickActionsPlugin((version) -> UNSUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
 
@@ -115,7 +117,7 @@ public class QuickActionsTest {
   public void onNewIntent_buildVersionSupported_invokesLaunchMethod() {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin(() -> true);
+    final QuickActionsPlugin plugin = new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
     final Activity mockMainActivity = mock(Activity.class);
