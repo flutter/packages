@@ -4,23 +4,9 @@ A web implementation of [`image_picker`][1].
 
 ## Limitations on the web platform
 
-Since Web Browsers don't offer direct access to their users' file system,
-this plugin provides a `PickedFile` abstraction to make access uniform
-across platforms.
+This plugin uses `XFile` objects to abstract files picked/created by the user.
 
-The web version of the plugin puts network-accessible URIs as the `path`
-in the returned `PickedFile`.
-
-### URL.createObjectURL()
-
-The `PickedFile` object in web is backed by [`URL.createObjectUrl` Web API](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL),
-which is reasonably well supported across all browsers:
-
-![Data on support for the bloburls feature across the major browsers from caniuse.com](https://caniuse.bitsofco.de/image/bloburls.png)
-
-However, the returned `path` attribute of the `PickedFile` points to a `network` resource, and not a
-local path in your users' drive. See **Use the plugin** below for some examples on how to use this
-return value in a cross-platform way.
+Read more about `XFile` on the web in [`package:cross_file`'s README](https://pub.dev/packages/cross_file)
 
 ### input file "accept"
 
@@ -41,6 +27,12 @@ In order to "take a photo", some mobile browsers offer a [`capture` attribute](h
 
 Each browser may implement `capture` any way they please, so it may (or may not) make a
 difference in your users' experience.
+
+### input file "cancel"
+
+The [`cancel` event](https://caniuse.com/mdn-api_htmlinputelement_cancel_event)
+used by the plugin to detect when users close the file selector without picking
+a file is relatively new, and will only work in recent browsers.
 
 ### pickImage()
 The arguments `maxWidth`, `maxHeight` and `imageQuality` are not supported for gif images.
@@ -65,8 +57,8 @@ should add it to your `pubspec.yaml` as usual.
 
 You should be able to use `package:image_picker` _almost_ as normal.
 
-Once the user has picked a file, the returned `PickedFile` instance will contain a
-`network`-accessible URL (pointing to a location within the browser).
+Once the user has picked a file, the returned `XFile` instance will contain a
+`network`-accessible Blob URL (pointing to a location within the browser).
 
 The instance will also let you retrieve the bytes of the selected file across all platforms.
 

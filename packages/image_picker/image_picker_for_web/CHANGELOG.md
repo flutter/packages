@@ -1,3 +1,11 @@
+## 2.3.0
+
+* Listens to `cancel` event on file selection. When the selection is canceled:
+  * `Future<XFile?>` methods return `null`
+  * `Future<List<XFile>>` methods return an empty list.
+* Removes all code and tests mentioning `PickedFile`.
+* Updates README to mention `XFile`.
+
 ## 2.2.0
 
 * Adds `getMedia` method.

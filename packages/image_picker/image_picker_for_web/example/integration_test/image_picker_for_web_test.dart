@@ -33,28 +33,6 @@ void main() {
     plugin = ImagePickerPlugin();
   });
 
-  testWidgets('Can select a file (Deprecated)', (WidgetTester tester) async {
-    final html.FileUploadInputElement mockInput = html.FileUploadInputElement();
-
-    final ImagePickerPluginTestOverrides overrides =
-        ImagePickerPluginTestOverrides()
-          ..createInputElement = ((_, __) => mockInput)
-          ..getMultipleFilesFromInput = ((_) => <html.File>[textFile]);
-
-    final ImagePickerPlugin plugin = ImagePickerPlugin(overrides: overrides);
-
-    // Init the pick file dialog...
-    final Future<PickedFile> file = plugin.pickFile();
-
-    // Mock the browser behavior of selecting a file...
-    mockInput.dispatchEvent(html.Event('change'));
-
-    // Now the file should be available
-    expect(file, completes);
-    // And readable
-    expect((await file).readAsBytes(), completion(isNotEmpty));
-  });
-
   testWidgets('Can select a file', (WidgetTester tester) async {
     final html.FileUploadInputElement mockInput = html.FileUploadInputElement();
 
@@ -66,7 +44,7 @@ void main() {
     final ImagePickerPlugin plugin = ImagePickerPlugin(overrides: overrides);
 
     // Init the pick file dialog...
-    final Future<XFile> image = plugin.getImage(source: ImageSource.camera);
+    final Future<XFile?> image = plugin.getImage(source: ImageSource.camera);
 
     // Mock the browser behavior of selecting a file...
     mockInput.dispatchEvent(html.Event('change'));
@@ -75,8 +53,9 @@ void main() {
     expect(image, completes);
 
     // And readable
-    final XFile file = await image;
-    expect(file.readAsBytes(), completion(isNotEmpty));
+    final XFile? file = await image;
+    expect(file, isNotNull);
+    expect(file!.readAsBytes(), completion(isNotEmpty));
     expect(file.name, textFile.name);
     expect(file.length(), completion(textFile.size));
     expect(file.mimeType, textFile.type);
@@ -150,7 +129,70 @@ void main() {
     expect(secondFile.length(), completion(secondTextFile.size));
   });
 
-  // There's no good way of detecting when the user has "aborted" the selection.
+  group('cancel event', () {
+    late html.FileUploadInputElement mockInput;
+    late ImagePickerPluginTestOverrides overrides;
+    late ImagePickerPlugin plugin;
+
+    setUp(() {
+      mockInput = html.FileUploadInputElement();
+      overrides = ImagePickerPluginTestOverrides()
+        ..createInputElement = ((_, __) => mockInput)
+        ..getMultipleFilesFromInput = ((_) => <html.File>[textFile]);
+      plugin = ImagePickerPlugin(overrides: overrides);
+    });
+
+    void mockCancel() {
+      mockInput.dispatchEvent(html.Event('cancel'));
+    }
+
+    testWidgets('getFiles - returns empty list', (WidgetTester _) async {
+      final Future<List<XFile>> files = plugin.getFiles();
+      mockCancel();
+
+      expect(files, completes);
+      expect(await files, isEmpty);
+    });
+
+    testWidgets('getMedia - returns empty list', (WidgetTester _) async {
+      final Future<List<XFile>?> files = plugin.getMedia(
+          options: const MediaOptions(
+        allowMultiple: true,
+      ));
+      mockCancel();
+
+      expect(files, completes);
+      expect(await files, isEmpty);
+    });
+
+    testWidgets('getMultiImage - returns empty list', (WidgetTester _) async {
+      final Future<List<XFile>?> files = plugin.getMultiImage();
+      mockCancel();
+
+      expect(files, completes);
+      expect(await files, isEmpty);
+    });
+
+    testWidgets('getImage - returns null', (WidgetTester _) async {
+      final Future<XFile?> file = plugin.getImage(
+        source: ImageSource.gallery,
+      );
+      mockCancel();
+
+      expect(file, completes);
+      expect(await file, isNull);
+    });
+
+    testWidgets('getVideo - returns null', (WidgetTester _) async {
+      final Future<XFile?> file = plugin.getVideo(
+        source: ImageSource.gallery,
+      );
+      mockCancel();
+
+      expect(file, completes);
+      expect(await file, isNull);
+    });
+  });
 
   testWidgets('computeCaptureAttribute', (WidgetTester tester) async {
     expect(
