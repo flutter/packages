@@ -238,10 +238,6 @@ class NSError {
   /// A string containing the error domain.
   final String domain;
 
-  /// A string containing the localized description of the error.
-  String? get localizedDescription =>
-      userInfo[NSErrorUserInfoKey.NSLocalizedDescription] as String?;
-
   /// Map of arbitrary data.
   ///
   /// See [NSErrorUserInfoKey] for possible keys (non-exhaustive).
@@ -249,12 +245,16 @@ class NSError {
   /// This currently only supports values that are a String.
   final Map<String, Object?> userInfo;
 
+  /// A string containing the localized description of the error.
+  String? get localizedDescription =>
+      userInfo[NSErrorUserInfoKey.NSLocalizedDescription] as String?;
+
   @override
   String toString() {
     if (localizedDescription?.isEmpty ?? true) {
-      return 'Error $domain:$code';
+      return 'Error $domain:$code:$userInfo';
     }
-    return '$localizedDescription ($domain:$code)';
+    return '$localizedDescription ($domain:$code:$userInfo)';
   }
 }
 
