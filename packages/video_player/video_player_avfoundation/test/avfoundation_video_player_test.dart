@@ -135,7 +135,7 @@ void main() {
       expect(textureId, 3);
     });
 
-    test('create with incorrect asset', () async {
+    test('create with incorrect asset throws exception', () async {
       try {
         await player.create(DataSource(
           sourceType: DataSourceType.asset,
