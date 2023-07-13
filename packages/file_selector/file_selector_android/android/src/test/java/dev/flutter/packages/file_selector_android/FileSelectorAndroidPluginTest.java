@@ -218,11 +218,6 @@ public class FileSelectorAndroidPluginTest {
 
   @Test
   public void getDirectoryPath_errorsForUnsupportedVersion() {
-    final Uri mockUri = mock(Uri.class);
-    when(mockUri.toString()).thenReturn("some/path/");
-
-    when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE)).thenReturn(mockIntent);
-    when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
         new FileSelectorApiImpl(
             mockActivityBinding,
@@ -233,16 +228,6 @@ public class FileSelectorAndroidPluginTest {
     final GeneratedFileSelectorApi.Result<String> mockResult =
         mock(GeneratedFileSelectorApi.Result.class);
     fileSelectorApi.getDirectoryPath(null, mockResult);
-
-    verify(mockActivity).startActivityForResult(mockIntent, 223);
-
-    final ArgumentCaptor<PluginRegistry.ActivityResultListener> listenerArgumentCaptor =
-        ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    verify(mockActivityBinding).addActivityResultListener(listenerArgumentCaptor.capture());
-
-    final Intent resultMockIntent = mock(Intent.class);
-    when(resultMockIntent.getData()).thenReturn(mockUri);
-    listenerArgumentCaptor.getValue().onActivityResult(223, Activity.RESULT_OK, resultMockIntent);
 
     verify(mockResult).error(any());
   }
