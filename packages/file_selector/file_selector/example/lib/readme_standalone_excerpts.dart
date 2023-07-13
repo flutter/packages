@@ -7,8 +7,6 @@
 
 // ignore_for_file: public_member_api_docs
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
@@ -41,8 +39,9 @@ class _MyAppState extends State<MyApp> {
   Future<void> saveFile() async {
     // #docregion Save
     const String fileName = 'suggested_name.txt';
-    final String? path = await getSavePath(suggestedName: fileName);
-    if (path == null) {
+    final FileSaveLocation? result =
+        await getSaveLocation(suggestedName: fileName);
+    if (result == null) {
       // Operation was canceled by the user.
       return;
     }
@@ -51,7 +50,7 @@ class _MyAppState extends State<MyApp> {
     const String mimeType = 'text/plain';
     final XFile textFile =
         XFile.fromData(fileData, mimeType: mimeType, name: fileName);
-    await textFile.saveTo(path);
+    await textFile.saveTo(result.path);
     // #enddocregion Save
   }
 

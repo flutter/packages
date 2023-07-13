@@ -18,9 +18,9 @@ class TileProviderController implements TileProvider {
 
   private static final String TAG = "TileProviderController";
 
-  private final String tileOverlayId;
-  private final MethodChannel methodChannel;
-  private final Handler handler = new Handler(Looper.getMainLooper());
+  protected final String tileOverlayId;
+  protected final MethodChannel methodChannel;
+  protected final Handler handler = new Handler(Looper.getMainLooper());
 
   TileProviderController(MethodChannel methodChannel, String tileOverlayId) {
     this.tileOverlayId = tileOverlayId;
@@ -84,9 +84,12 @@ class TileProviderController implements TileProvider {
     public void error(String errorCode, String errorMessage, Object data) {
       Log.e(
           TAG,
-          String.format(
-              "Can't get tile: errorCode = %s, errorMessage = %s, date = %s",
-              errorCode, errorCode, data));
+          "Can't get tile: errorCode = "
+              + errorCode
+              + ", errorMessage = "
+              + errorCode
+              + ", date = "
+              + data);
       result = null;
       countDownLatch.countDown();
     }

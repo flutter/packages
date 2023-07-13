@@ -18,8 +18,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: _appTitle,
       );
 
@@ -28,6 +27,7 @@ class App extends StatelessWidget {
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
+  name: 'Home',
   routes: <TypedGoRoute<GoRouteData>>[
     TypedGoRoute<FamilyRoute>(path: 'family/:familyId')
   ],

@@ -3,17 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/git_version_finder.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// A command to check that PRs don't violate repository best practices that
@@ -22,16 +19,11 @@ import 'common/repository_package.dart';
 class FederationSafetyCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the safety check command.
   FederationSafetyCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        );
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  });
 
   // A map of package name (as defined by the directory name of the package)
   // to a list of changed Dart files in that package, as Posix paths relative to
@@ -51,6 +43,9 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
 
   @override
   final String name = 'federation-safety-check';
+
+  @override
+  List<String> get aliases => <String>['check-federation-safety'];
 
   @override
   final String description =
@@ -85,7 +80,8 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
         packageName = relativeComponents.removeAt(0);
       }
 
-      if (relativeComponents.last.endsWith('.dart')) {
+      if (relativeComponents.last.endsWith('.dart') &&
+          !await _changeIsCommentOnly(gitVersionFinder, path)) {
         _changedDartFiles[packageName] ??= <String>[];
         _changedDartFiles[packageName]!
             .add(p.posix.joinAll(relativeComponents));
@@ -195,5 +191,29 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       return true;
     }
     return pubspec.version != previousVersion;
+  }
+
+  Future<bool> _changeIsCommentOnly(
+      GitVersionFinder git, String repoPath) async {
+    final List<String> diff = await git.getDiffContents(targetPath: repoPath);
+    final RegExp changeLine = RegExp(r'^[+-] ');
+    // This will not catch /**/-style comments, but false negatives are fine
+    // (and in practice, we almost never use that comment style in Dart code).
+    final RegExp commentLine = RegExp(r'^[+-]\s*//');
+    bool foundComment = false;
+    for (final String line in diff) {
+      if (!changeLine.hasMatch(line) ||
+          line.startsWith('--- ') ||
+          line.startsWith('+++ ')) {
+        continue;
+      }
+      if (!commentLine.hasMatch(line)) {
+        return false;
+      }
+      foundComment = true;
+    }
+    // Only return true if a comment change was found, as a fail-safe against
+    // against having the wrong (e.g., incorrectly empty) diff output.
+    return foundComment;
   }
 }

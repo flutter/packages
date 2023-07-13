@@ -88,7 +88,7 @@ void main() {
       final Iterable<ProcessCall> pubGetCalls =
           plugin1.getExamples().map((RepositoryPackage example) {
         return ProcessCall(
-          'dart',
+          getFlutterCommand(mockPlatform),
           const <String>['pub', 'get'],
           example.path,
         );
@@ -117,6 +117,7 @@ void main() {
       createFakePlugin('plugin_tools_test_package_a', packagesDir);
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
         FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
             <String>['pub', 'publish'])
       ];
@@ -159,7 +160,7 @@ void main() {
     test('fails if AUTHORS is missing', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
-      package.authorsFile.delete();
+      package.authorsFile.deleteSync();
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -183,7 +184,7 @@ void main() {
           packagesDir.parent
               .childDirectory('third_party')
               .childDirectory('packages'));
-      package.authorsFile.delete();
+      package.authorsFile.deleteSync();
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['publish-check']);
@@ -205,7 +206,8 @@ void main() {
               'Packages with an SDK constraint on a pre-release of the Dart '
               'SDK should themselves be published as a pre-release version.');
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
-        FakeProcessInfo(process, <String>['pub', 'publish'])
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(process, <String>['pub', 'publish']),
       ];
 
       expect(
@@ -223,7 +225,8 @@ void main() {
               'Packages with an SDK constraint on a pre-release of the Dart '
               'SDK should themselves be published as a pre-release version.');
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
-        FakeProcessInfo(process, <String>['pub', 'publish'])
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(process, <String>['pub', 'publish']),
       ];
 
       Error? commandError;
@@ -247,6 +250,7 @@ void main() {
       createFakePlugin('d', packagesDir);
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
         FakeProcessInfo(MockProcess(stdout: 'Package has 0 warnings.'),
             <String>['pub', 'publish']),
       ];
@@ -283,7 +287,9 @@ void main() {
         'Test for publish-check command.',
       );
       runner.addCommand(PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient));
+          platform: mockPlatform,
+          processRunner: processRunner,
+          httpClient: mockClient));
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
@@ -339,7 +345,9 @@ void main() {
         'Test for publish-check command.',
       );
       runner.addCommand(PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient));
+          platform: mockPlatform,
+          processRunner: processRunner,
+          httpClient: mockClient));
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['publish-check']);

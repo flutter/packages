@@ -1,3 +1,11 @@
+## 2.4.0
+
+* Adds support to retrieve the url from a web resource loading error. See `WebResourceError.url`.
+
+## 2.3.1
+
+* Removes obsolete null checks on non-nullable values.
+
 ## 2.3.0
 
 * Adds support to receive permission requests. See

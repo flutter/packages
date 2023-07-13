@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -83,6 +83,34 @@ void defineTests() {
         expect(widgetSpan.child, isInstanceOf<Container>());
       },
     );
+
+    testWidgets(
+      'visitElementAfterWithContext is handled correctly',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          boilerplate(
+            Markdown(
+              data: r'# This is a header with some \color1{color} in it',
+              extensionSet: md.ExtensionSet.none,
+              inlineSyntaxes: <md.InlineSyntax>[InlineTextColorSyntax()],
+              builders: <String, MarkdownElementBuilder>{
+                'inlineTextColor': InlineTextColorElementBuilder(),
+              },
+            ),
+          ),
+        );
+
+        final RichText textWidget = tester.widget(find.byType(RichText));
+        final TextSpan rootSpan = textWidget.text as TextSpan;
+        final TextSpan firstSpan = rootSpan.children![0] as TextSpan;
+        final TextSpan secondSpan = rootSpan.children![1] as TextSpan;
+        final TextSpan thirdSpan = rootSpan.children![2] as TextSpan;
+
+        expect(secondSpan.style!.color, Colors.red);
+        expect(secondSpan.style!.fontSize, firstSpan.style!.fontSize);
+        expect(secondSpan.style!.fontSize, thirdSpan.style!.fontSize);
+      },
+    );
   });
 
   testWidgets(
@@ -110,6 +138,30 @@ void defineTests() {
       expect(foo.text, 'foo');
       final WidgetSpan widgetSpan = end.children![1] as WidgetSpan;
       expect(widgetSpan.child, isInstanceOf<Container>());
+    },
+  );
+
+  testWidgets(
+    'Custom rendering of tags without children',
+    (WidgetTester tester) async {
+      const String data = '![alt](/assets/images/logo.png)';
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(
+            data: data,
+            builders: <String, MarkdownElementBuilder>{
+              'img': ImgBuilder(),
+            },
+          ),
+        ),
+      );
+
+      final Finder imageFinder = find.byType(Image);
+      expect(imageFinder, findsNothing);
+      final Finder textFinder = find.byType(Text);
+      expect(textFinder, findsOneWidget);
+      final Text textWidget = tester.widget(find.byType(Text));
+      expect(textWidget.data, 'foo');
     },
   );
 }
@@ -223,5 +275,63 @@ class ContainerBuilder2 extends MarkdownElementBuilder {
         ],
       ),
     );
+  }
+}
+
+// Note: The implementation of inline span is incomplete, it does not handle
+// bold, italic, ... text with a colored block.
+// This would not work: `\color1{Text with *bold* text}`
+class InlineTextColorSyntax extends md.InlineSyntax {
+  InlineTextColorSyntax() : super(r'\\color([1-9]){(.*?)}');
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final String colorId = match.group(1)!;
+    final String textContent = match.group(2)!;
+    final md.Element node = md.Element.text(
+      'inlineTextColor',
+      textContent,
+    )..attributes['color'] = colorId;
+
+    parser.addNode(node);
+
+    parser.addNode(
+      md.Text(''),
+    );
+    return true;
+  }
+}
+
+class InlineTextColorElementBuilder extends MarkdownElementBuilder {
+  @override
+  Widget visitElementAfterWithContext(
+    BuildContext context,
+    md.Element element,
+    TextStyle? preferredStyle,
+    TextStyle? parentStyle,
+  ) {
+    final String innerText = element.textContent;
+    final String color = element.attributes['color'] ?? '';
+
+    final Map<String, Color> contentColors = <String, Color>{
+      '1': Colors.red,
+      '2': Colors.green,
+      '3': Colors.blue,
+    };
+    final Color? contentColor = contentColors[color];
+
+    return RichText(
+      text: TextSpan(
+        text: innerText,
+        style: parentStyle?.copyWith(color: contentColor),
+      ),
+    );
+  }
+}
+
+class ImgBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    return Text('foo', style: preferredStyle);
   }
 }

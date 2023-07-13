@@ -43,9 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const QuickActions quickActions = QuickActions();
     quickActions.initialize((String shortcutType) {
       setState(() {
-        if (shortcutType != null) {
-          shortcut = shortcutType;
-        }
+        shortcut = shortcutType;
       });
     });
 

@@ -29,14 +29,14 @@ class FileSelectorWeb extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile> openFile({
+  Future<XFile?> openFile({
     List<XTypeGroup>? acceptedTypeGroups,
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
     final List<XFile> files =
         await _openFiles(acceptedTypeGroups: acceptedTypeGroups);
-    return files.first;
+    return files.isNotEmpty ? files.first : null;
   }
 
   @override
@@ -59,6 +59,16 @@ class FileSelectorWeb extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async =>
       '';
+
+  @override
+  Future<FileSaveLocation?> getSaveLocation({
+    List<XTypeGroup>? acceptedTypeGroups,
+    SaveDialogOptions options = const SaveDialogOptions(),
+  }) async {
+    // This is intended to be passed to XFile, which ignores the path, so
+    // provide a non-null dummy value.
+    return const FileSaveLocation('');
+  }
 
   @override
   Future<String?> getDirectoryPath({

@@ -75,7 +75,7 @@ class App extends StatelessWidget {
     redirect: (BuildContext context, GoRouterState state) {
       // if the user is not logged in, they need to login
       final bool loggedIn = _loginInfo.loggedIn;
-      final bool loggingIn = state.subloc == '/login';
+      final bool loggingIn = state.matchedLocation == '/login';
       if (!loggedIn) {
         return '/login';
       }
@@ -104,20 +104,15 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text(App.title)),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  // log a user in, letting all the listeners know
-                  context.read<LoginInfo>().login('test-user');
+          child: ElevatedButton(
+            onPressed: () {
+              // log a user in, letting all the listeners know
+              context.read<LoginInfo>().login('test-user');
 
-                  // router will automatically redirect from /login to / using
-                  // refreshListenable
-                },
-                child: const Text('Login'),
-              ),
-            ],
+              // router will automatically redirect from /login to / using
+              // refreshListenable
+            },
+            child: const Text('Login'),
           ),
         ),
       );

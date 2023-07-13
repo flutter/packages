@@ -1,7 +1,25 @@
-## NEXT
+## 0.6.17
 
+* Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
+  the parent text's `TextStyle`.
+  
+## 0.6.16
+
+* Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
+
+## 0.6.15+1
+
+* Fixes 'The Scrollbar's ScrollController has no ScrollPosition attached' exception when scrolling scrollable code blocks.
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.6.15
+
+* Fixes unawaited_futures violations.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
+* Replace `describeEnum` with the `name` getter.
+* Supports custom rendering of tags without children.
 
 ## 0.6.14
 

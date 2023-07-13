@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 
 export 'package:file_selector_platform_interface/file_selector_platform_interface.dart'
-    show XFile, XTypeGroup;
+    show FileSaveLocation, XFile, XTypeGroup;
 
 /// Opens a file selection dialog and returns the path chosen by the user.
 ///
@@ -92,20 +92,22 @@ Future<List<XFile>> openFiles({
 /// When not provided, the default OS label is used (for example, "Save").
 ///
 /// Returns `null` if the user cancels the operation.
-Future<String?> getSavePath({
+Future<FileSaveLocation?> getSaveLocation({
   List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
   String? initialDirectory,
   String? suggestedName,
   String? confirmButtonText,
 }) async {
-  return FileSelectorPlatform.instance.getSavePath(
+  return FileSelectorPlatform.instance.getSaveLocation(
       acceptedTypeGroups: acceptedTypeGroups,
-      initialDirectory: initialDirectory,
-      suggestedName: suggestedName,
-      confirmButtonText: confirmButtonText);
+      options: SaveDialogOptions(
+          initialDirectory: initialDirectory,
+          suggestedName: suggestedName,
+          confirmButtonText: confirmButtonText));
 }
 
 /// Opens a directory selection dialog and returns the path chosen by the user.
+///
 /// This always returns `null` on the web.
 ///
 /// [initialDirectory] is the full path to the directory that will be displayed
@@ -121,5 +123,26 @@ Future<String?> getDirectoryPath({
   String? confirmButtonText,
 }) async {
   return FileSelectorPlatform.instance.getDirectoryPath(
+      initialDirectory: initialDirectory, confirmButtonText: confirmButtonText);
+}
+
+/// Opens a directory selection dialog and returns a list of the paths chosen
+/// by the user.
+///
+/// This always returns an empty array on the web.
+///
+/// [initialDirectory] is the full path to the directory that will be displayed
+/// when the dialog is opened. When not provided, the platform will pick an
+/// initial location.
+///
+/// [confirmButtonText] is the text in the confirmation button of the dialog.
+/// When not provided, the default OS label is used (for example, "Open").
+///
+/// Returns an empty array if the user cancels the operation.
+Future<List<String?>> getDirectoryPaths({
+  String? initialDirectory,
+  String? confirmButtonText,
+}) async {
+  return FileSelectorPlatform.instance.getDirectoryPaths(
       initialDirectory: initialDirectory, confirmButtonText: confirmButtonText);
 }
