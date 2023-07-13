@@ -2,6 +2,10 @@
 
 * Adds support for `WebResouceError.url`.
 
+## 3.6.3
+
+* Introduces `NSError.toString` for better diagnostics.
+
 ## 3.6.2 
 
 * Fixes unawaited_futures violations.

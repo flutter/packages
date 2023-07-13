@@ -13,3 +13,15 @@ should add it to your `pubspec.yaml` as usual.
 
 [1]: https://pub.dev/packages/file_selector
 [2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+
+## Limitations on the Web platform
+
+### `cancel` event
+
+The `cancel` event used by the web plugin to detect when users close the file
+selector without picking a file is relatively new, and will only work in
+recent browsers.
+
+See:
+
+* https://caniuse.com/mdn-api_htmlinputelement_cancel_event
