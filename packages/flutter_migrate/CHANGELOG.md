@@ -1,3 +1,7 @@
+## 0.0.1+4
+
+* Use any version of intl package to avoid conflicts with localized apps.
+
 ## 0.0.1+3
 
 * Removes obsolete null checks on non-nullable values.
