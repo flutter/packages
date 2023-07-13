@@ -35,7 +35,7 @@ Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
 
 ### Flash mode configuration \[[Issue #120715][120715]\]
 
-`setFlashMode` is unimplemented.
+Calling `setFlashMode` with mode `FlashMode.torch` currently does nothing.
 
 ### Exposure mode, point, & offset configuration \[[Issue #120468][120468]\]
 
