@@ -1,5 +1,9 @@
 # CHANGES
 
+## 2.0.8
+
+- Adds back `DefaultSvgTheme`.
+
 ## 2.0.7
 
 - Fix broken `matchTextDirection`.

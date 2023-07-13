@@ -12,6 +12,7 @@ export 'package:vector_graphics/vector_graphics.dart'
     show BytesLoader, vg, VectorGraphicUtilities, PictureInfo;
 
 export 'src/cache.dart';
+export 'src/default_theme.dart';
 export 'src/loaders.dart';
 
 /// Instance for [Svg]'s utility methods, which can produce a [DrawableRoot]
@@ -84,7 +85,6 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
-    this.theme = const SvgTheme(),
     @deprecated bool cacheColorFilter = false,
   }) : super(key: key);
 
@@ -179,7 +179,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
-    this.theme = const SvgTheme(),
+    SvgTheme? theme,
     ui.ColorFilter? colorFilter,
     @deprecated ui.Color? color,
     @deprecated ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
@@ -243,7 +243,7 @@ class SvgPicture extends StatelessWidget {
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
     @deprecated bool cacheColorFilter = false,
-    this.theme = const SvgTheme(),
+    SvgTheme? theme,
   })  : bytesLoader = SvgNetworkLoader(url, headers: headers, theme: theme),
         colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
         super(key: key);
@@ -294,7 +294,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
-    this.theme = const SvgTheme(),
+    SvgTheme? theme,
     @deprecated bool cacheColorFilter = false,
   })  : bytesLoader = SvgFileLoader(file, theme: theme),
         colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
@@ -343,7 +343,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
-    this.theme = const SvgTheme(),
+    SvgTheme? theme,
     @deprecated bool cacheColorFilter = false,
   })  : bytesLoader = SvgBytesLoader(bytes, theme: theme),
         colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
@@ -392,7 +392,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
-    this.theme = const SvgTheme(),
+    SvgTheme? theme,
     @deprecated bool cacheColorFilter = false,
   })  : bytesLoader = SvgStringLoader(string, theme: theme),
         colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode),
@@ -478,9 +478,6 @@ class SvgPicture extends StatelessWidget {
 
   /// The color filter, if any, to apply to this widget.
   final ColorFilter? colorFilter;
-
-  /// The theme used when parsing SVG elements.
-  final SvgTheme theme;
 
   @override
   Widget build(BuildContext context) {

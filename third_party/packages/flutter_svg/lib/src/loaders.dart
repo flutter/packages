@@ -3,13 +3,14 @@ import 'dart:convert' show utf8;
 import 'package:flutter/foundation.dart' hide compute;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/src/utilities/http.dart';
 import 'package:vector_graphics/vector_graphics.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart' as vg;
 
 import '../svg.dart' show svg;
+import 'default_theme.dart';
 import 'utilities/compute.dart';
 import 'utilities/file.dart';
+import 'utilities/http.dart';
 
 /// A theme used when decoding an SVG picture.
 @immutable
@@ -111,12 +112,12 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
 abstract class SvgLoader<T> extends BytesLoader {
   /// See class doc.
   const SvgLoader({
-    this.theme = const SvgTheme(),
+    this.theme,
     this.colorMapper,
   });
 
   /// The theme to determine currentColor and font sizing attributes.
-  final SvgTheme theme;
+  final SvgTheme? theme;
 
   /// The [ColorMapper] used to transform colors from the SVG, if any.
   final ColorMapper? colorMapper;
@@ -130,7 +131,24 @@ abstract class SvgLoader<T> extends BytesLoader {
   Future<T?> prepareMessage(BuildContext? context) =>
       SynchronousFuture<T?>(null);
 
+  /// Returns the svg theme.
+  @visibleForTesting
+  @protected
+  SvgTheme getTheme(BuildContext? context) {
+    if (theme != null) {
+      return theme!;
+    }
+    if (context != null) {
+      final SvgTheme? defaultTheme = DefaultSvgTheme.of(context)?.theme;
+      if (defaultTheme != null) {
+        return defaultTheme;
+      }
+    }
+    return const SvgTheme();
+  }
+
   Future<ByteData> _load(BuildContext? context) {
+    final SvgTheme theme = getTheme(context);
     return prepareMessage(context).then((T? message) {
       return compute((T? message) {
         return vg
@@ -160,6 +178,7 @@ abstract class SvgLoader<T> extends BytesLoader {
 
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
+    final SvgTheme theme = getTheme(context);
     return SvgCacheKey(keyData: this, theme: theme, colorMapper: colorMapper);
   }
 }
@@ -172,13 +191,13 @@ abstract class SvgLoader<T> extends BytesLoader {
 class SvgCacheKey {
   /// See [SvgCacheKey].
   const SvgCacheKey({
-    required this.theme,
     required this.keyData,
     required this.colorMapper,
+    this.theme,
   });
 
   /// The theme for this cached SVG.
-  final SvgTheme theme;
+  final SvgTheme? theme;
 
   /// The other key data for the SVG.
   ///
@@ -365,6 +384,7 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
+    final SvgTheme theme = getTheme(context);
     return SvgCacheKey(
       theme: theme,
       colorMapper: colorMapper,
