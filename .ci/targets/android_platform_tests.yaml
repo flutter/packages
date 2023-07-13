@@ -23,5 +23,5 @@ tasks:
   #  script: script/tool_runner.sh
   #  args: ["native-test", "--android", "--no-unit"]
   - name: drive examples
-   script: script/tool_runner.sh
-   args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml"]
+    script: script/tool_runner.sh
+    args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml"]
