@@ -1,6 +1,6 @@
 ## 0.5.0+9
 
-* Implements on, off, and auto flash mode configurations for image capture.
+* Implements off, auto, and always flash mode configurations for image capture.
 
 ## 0.5.0+8
 
