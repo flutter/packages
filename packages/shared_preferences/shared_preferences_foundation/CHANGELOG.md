@@ -1,5 +1,10 @@
-## NEXT
+## 2.3.1
 
+* Fixes variable binding bug on older versions of Xcode.
+
+## 2.3.0
+
+* Adds `clearWithParameters` and `getAllWithParameters` methods.
 * Updates minimum supported macOS version to 10.14.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 

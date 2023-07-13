@@ -3,16 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// A command to enforce pubspec conventions across the repository.
@@ -23,16 +21,11 @@ import 'common/repository_package.dart';
 class PubspecCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
   PubspecCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        ) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addOption(
       _minMinFlutterVersionFlag,
       help:
@@ -90,6 +83,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   final String name = 'pubspec-check';
 
   @override
+  List<String> get aliases => <String>['check-pubspec'];
+
+  @override
   final String description =
       'Checks that pubspecs follow repository conventions.';
 
@@ -104,8 +100,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   Future<void> initializeRun() async {
     // Find all local, published packages.
     for (final File pubspecFile in (await packagesDir.parent
-        .list(recursive: true, followLinks: false)
-        .toList())
+            .list(recursive: true, followLinks: false)
+            .toList())
         .whereType<File>()
         .where((File entity) => p.basename(entity.path) == 'pubspec.yaml')) {
       final Pubspec? pubspec = _tryParsePubspec(pubspecFile.readAsStringSync());

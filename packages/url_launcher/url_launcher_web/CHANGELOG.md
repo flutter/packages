@@ -1,3 +1,7 @@
+## 2.0.18
+
+* Removes nested third_party Safari check.
+
 ## 2.0.17
 
 * Removes obsolete null checks on non-nullable values.

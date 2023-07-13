@@ -67,9 +67,17 @@ static long const FWFMinHostCreatedIdentifier = 65536;
     _deallocCallback = _deallocCallback ? _deallocCallback : ^(long identifier) {
     };
     _lockQueue = dispatch_queue_create("FWFInstanceManager", DISPATCH_QUEUE_SERIAL);
-    _identifiers = [NSMapTable weakToStrongObjectsMapTable];
-    _weakInstances = [NSMapTable strongToWeakObjectsMapTable];
-    _strongInstances = [NSMapTable strongToStrongObjectsMapTable];
+    // Pointer equality is used to prevent collisions of objects that override the `isEqualTo:`
+    // method.
+    _identifiers =
+        [NSMapTable mapTableWithKeyOptions:NSMapTableWeakMemory | NSMapTableObjectPointerPersonality
+                              valueOptions:NSMapTableStrongMemory];
+    _weakInstances = [NSMapTable
+        mapTableWithKeyOptions:NSMapTableStrongMemory
+                  valueOptions:NSMapTableWeakMemory | NSMapTableObjectPointerPersonality];
+    _strongInstances = [NSMapTable
+        mapTableWithKeyOptions:NSMapTableStrongMemory
+                  valueOptions:NSMapTableStrongMemory | NSMapTableObjectPointerPersonality];
     _nextIdentifier = FWFMinHostCreatedIdentifier;
   }
   return self;

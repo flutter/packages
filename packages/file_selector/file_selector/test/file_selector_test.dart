@@ -144,33 +144,36 @@ void main() {
     });
   });
 
-  group('getSavePath', () {
+  group('getSaveLocation', () {
     const String expectedSavePath = '/example/path';
 
     test('works', () async {
+      const int expectedActiveFilter = 1;
       fakePlatformImplementation
         ..setExpectations(
             initialDirectory: initialDirectory,
             confirmButtonText: confirmButtonText,
             acceptedTypeGroups: acceptedTypeGroups,
             suggestedName: suggestedName)
-        ..setPathsResponse(<String>[expectedSavePath]);
+        ..setPathsResponse(<String>[expectedSavePath],
+            activeFilter: expectedActiveFilter);
 
-      final String? savePath = await getSavePath(
+      final FileSaveLocation? location = await getSaveLocation(
         initialDirectory: initialDirectory,
         confirmButtonText: confirmButtonText,
         acceptedTypeGroups: acceptedTypeGroups,
         suggestedName: suggestedName,
       );
 
-      expect(savePath, expectedSavePath);
+      expect(location?.path, expectedSavePath);
+      expect(location?.activeFilter, acceptedTypeGroups[expectedActiveFilter]);
     });
 
     test('works with no arguments', () async {
       fakePlatformImplementation.setPathsResponse(<String>[expectedSavePath]);
 
-      final String? savePath = await getSavePath();
-      expect(savePath, expectedSavePath);
+      final FileSaveLocation? location = await getSaveLocation();
+      expect(location?.path, expectedSavePath);
     });
 
     test('sets the initial directory', () async {
@@ -178,9 +181,9 @@ void main() {
         ..setExpectations(initialDirectory: initialDirectory)
         ..setPathsResponse(<String>[expectedSavePath]);
 
-      final String? savePath =
-          await getSavePath(initialDirectory: initialDirectory);
-      expect(savePath, expectedSavePath);
+      final FileSaveLocation? location =
+          await getSaveLocation(initialDirectory: initialDirectory);
+      expect(location?.path, expectedSavePath);
     });
 
     test('sets the button confirmation label', () async {
@@ -188,9 +191,9 @@ void main() {
         ..setExpectations(confirmButtonText: confirmButtonText)
         ..setPathsResponse(<String>[expectedSavePath]);
 
-      final String? savePath =
-          await getSavePath(confirmButtonText: confirmButtonText);
-      expect(savePath, expectedSavePath);
+      final FileSaveLocation? location =
+          await getSaveLocation(confirmButtonText: confirmButtonText);
+      expect(location?.path, expectedSavePath);
     });
 
     test('sets the accepted type groups', () async {
@@ -198,9 +201,9 @@ void main() {
         ..setExpectations(acceptedTypeGroups: acceptedTypeGroups)
         ..setPathsResponse(<String>[expectedSavePath]);
 
-      final String? savePath =
-          await getSavePath(acceptedTypeGroups: acceptedTypeGroups);
-      expect(savePath, expectedSavePath);
+      final FileSaveLocation? location =
+          await getSaveLocation(acceptedTypeGroups: acceptedTypeGroups);
+      expect(location?.path, expectedSavePath);
     });
 
     test('sets the suggested name', () async {
@@ -208,8 +211,9 @@ void main() {
         ..setExpectations(suggestedName: suggestedName)
         ..setPathsResponse(<String>[expectedSavePath]);
 
-      final String? savePath = await getSavePath(suggestedName: suggestedName);
-      expect(savePath, expectedSavePath);
+      final FileSaveLocation? location =
+          await getSaveLocation(suggestedName: suggestedName);
+      expect(location?.path, expectedSavePath);
     });
   });
 
@@ -321,6 +325,7 @@ class FakeFileSelector extends Fake
   // Return values.
   List<XFile>? files;
   List<String>? paths;
+  int? activeFilter;
 
   void setExpectations({
     List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
@@ -339,9 +344,9 @@ class FakeFileSelector extends Fake
     this.files = files;
   }
 
-  // ignore: use_setters_to_change_properties
-  void setPathsResponse(List<String> paths) {
+  void setPathsResponse(List<String> paths, {int? activeFilter}) {
     this.paths = paths;
+    this.activeFilter = activeFilter;
   }
 
   @override
@@ -375,11 +380,34 @@ class FakeFileSelector extends Fake
     String? suggestedName,
     String? confirmButtonText,
   }) async {
+    final FileSaveLocation? result = await getSaveLocation(
+      acceptedTypeGroups: acceptedTypeGroups,
+      options: SaveDialogOptions(
+        initialDirectory: initialDirectory,
+        suggestedName: suggestedName,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+    return result?.path;
+  }
+
+  @override
+  Future<FileSaveLocation?> getSaveLocation({
+    List<XTypeGroup>? acceptedTypeGroups,
+    SaveDialogOptions options = const SaveDialogOptions(),
+  }) async {
     expect(acceptedTypeGroups, this.acceptedTypeGroups);
-    expect(initialDirectory, this.initialDirectory);
-    expect(suggestedName, this.suggestedName);
-    expect(confirmButtonText, this.confirmButtonText);
-    return paths?[0];
+    expect(options.initialDirectory, initialDirectory);
+    expect(options.suggestedName, suggestedName);
+    expect(options.confirmButtonText, confirmButtonText);
+    final String? path = paths?[0];
+    final int? activeFilterIndex = activeFilter;
+    return path == null
+        ? null
+        : FileSaveLocation(path,
+            activeFilter: activeFilterIndex == null
+                ? null
+                : acceptedTypeGroups?[activeFilterIndex]);
   }
 
   @override

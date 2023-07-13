@@ -1,3 +1,11 @@
+## 0.5.0+8
+
+* Fixes unawaited_futures violations.
+
+## 0.5.0+7
+
+* Updates Guava version to 32.0.1.
+
 ## 0.5.0+6
 
 * Updates Guava version to 32.0.0.

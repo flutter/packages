@@ -543,6 +543,66 @@ void main() {
         tester.widget<NavigationRail>(find.byType(NavigationRail));
     expect(rail.groupAlignment, equals(groupAlignment));
   });
+
+  testWidgets(
+    "doesn't override Directionality",
+    (WidgetTester tester) async {
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.account_circle),
+          label: 'Profile',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Directionality(
+              textDirection: TextDirection.rtl,
+              child: AdaptiveScaffold(
+                destinations: destinations,
+                body: (BuildContext context) {
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Finder body = find.byKey(const Key('body'));
+      expect(body, findsOneWidget);
+      final TextDirection dir = Directionality.of(body.evaluate().first);
+      expect(dir, TextDirection.rtl);
+    },
+  );
+
+  testWidgets(
+    'when appBarBreakpoint is provided validate an AppBar is showing without Drawer on larger than mobile',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
+      await tester.pumpWidget(SimulatedLayout.medium
+          .app(appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
+      await tester.pumpAndSettle();
+
+      final Finder appBar = find.byType(AppBar);
+      final Finder drawer = find.byType(Drawer);
+      expect(appBar, findsOneWidget);
+      expect(drawer, findsNothing);
+
+      await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
+      await tester.pumpWidget(SimulatedLayout.large
+          .app(appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
+      expect(drawer, findsNothing);
+      await tester.pumpAndSettle();
+
+      expect(appBar, findsOneWidget);
+    },
+  );
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that

@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -219,7 +215,7 @@ class NSError {
 
   /// The error code.
   ///
-  /// Note that errors are domain-specific.
+  /// Error codes are [domain]-specific.
   final int code;
 
   /// A string containing the error domain.
@@ -227,6 +223,14 @@ class NSError {
 
   /// A string containing the localized description of the error.
   final String localizedDescription;
+
+  @override
+  String toString() {
+    if (localizedDescription.isEmpty) {
+      return 'Error $domain:$code';
+    }
+    return '$localizedDescription ($domain:$code)';
+  }
 }
 
 /// A representation of an HTTP cookie.
