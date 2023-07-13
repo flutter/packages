@@ -1,3 +1,7 @@
+## 3.8.3
+
+* Adjusts SDK checks for better testability.
+
 ## 3.8.2
 
 * Fixes unawaited_futures violations.
