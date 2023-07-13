@@ -107,6 +107,7 @@ class WebResourceError {
     required this.description,
     this.errorType,
     this.isForMainFrame,
+    this.url,
   });
 
   /// Raw code of the error from the respective platform.
@@ -120,4 +121,7 @@ class WebResourceError {
 
   /// Whether the error originated from the main frame.
   final bool? isForMainFrame;
+
+  /// The URL for which the failing resource request was made.
+  final String? url;
 }
