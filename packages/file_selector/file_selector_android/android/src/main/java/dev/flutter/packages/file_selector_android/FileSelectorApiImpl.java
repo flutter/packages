@@ -189,6 +189,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       result.error(
           new UnsupportedOperationException(
               "Selecting a directory is only supported on versions >= 21"));
+      return;
     }
 
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE);
