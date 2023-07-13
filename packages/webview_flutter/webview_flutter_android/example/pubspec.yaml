@@ -17,7 +17,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  webview_flutter_platform_interface: ^2.3.0
+  webview_flutter_platform_interface: ^2.4.0
 
 dev_dependencies:
   espresso: ^0.2.0
@@ -33,8 +33,3 @@ flutter:
     - assets/sample_video.mp4
     - assets/www/index.html
     - assets/www/styles/style.css
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {webview_flutter_platform_interface: {path: ../../../webview_flutter/webview_flutter_platform_interface}}
