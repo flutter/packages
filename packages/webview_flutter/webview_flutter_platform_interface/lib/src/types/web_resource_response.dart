@@ -4,12 +4,13 @@
 
 import 'package:flutter/foundation.dart';
 
-/// Contains information about the response for the request.
+import 'web_resource_request.dart';
+
+/// Contains information about the response for a request.
 ///
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [WebResourceResponse] to
 /// provide additional platform specific parameters.
 ///
@@ -21,8 +22,8 @@ import 'package:flutter/foundation.dart';
 ///   WebResourceResponse._({
 ///     required WebResourceResponse response,
 ///   }) : super(
-///     uri: response.uri,
-///     headers: params.headers,
+///     request: response.request,
+///     headers: response.headers,
 ///   );
 ///
 ///   factory AndroidWebResourceResponse.fromWebResourceResponse(
@@ -35,17 +36,16 @@ import 'package:flutter/foundation.dart';
 ///   final Uri? historyUrl;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class WebResourceResponse {
   /// Used by the platform implementation to create a new [WebResourceResponse].
   const WebResourceResponse({
-    required this.uri,
+    required this.request,
     this.headers = const <String, String>{},
   });
 
-  /// URI for the request.
-  final Uri uri;
+  /// The request
+  final WebResourceRequest request;
 
   /// Headers for the request.
   final Map<String, String> headers;
