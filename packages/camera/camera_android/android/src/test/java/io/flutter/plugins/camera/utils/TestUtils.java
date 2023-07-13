@@ -5,7 +5,6 @@
 package io.flutter.plugins.camera.utils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import org.junit.Assert;
 
 public class TestUtils {
