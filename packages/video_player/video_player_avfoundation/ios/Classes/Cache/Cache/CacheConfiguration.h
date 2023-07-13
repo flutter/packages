@@ -6,7 +6,7 @@
 
 + (NSString *)configurationFilePathForFilePath:(NSString *)filePath;
 
-+ (instancetype)configurationWithFilePath:(NSString *)filePath;
++ (instancetype)configurationWithFilePath:(NSString *)filePath error:(NSError **)error;
 
 @property(nonatomic, copy, readonly) NSString *filePath;
 @property(nonatomic, strong) ContentInfo *contentInfo;
