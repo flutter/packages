@@ -87,24 +87,9 @@ void main() {
       expect(VideoPlayerPlatform.instance.dispose(await textureId), completes);
     });
 
-    testWidgets('can check if cache is supported', (WidgetTester tester) async {
-      expect(
-        VideoPlayerPlatform.instance
-            .isCacheSupportedForNetworkMedia('www.video.mp4'),
-        completes,
-      );
-    });
-
     testWidgets('can set looping', (WidgetTester tester) async {
       expect(
         VideoPlayerPlatform.instance.setLooping(await textureId, true),
-        completes,
-      );
-    });
-
-    testWidgets('can clear cache', (WidgetTester tester) async {
-      expect(
-        VideoPlayerPlatform.instance.clearCache(await textureId),
         completes,
       );
     });

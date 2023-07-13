@@ -236,24 +236,25 @@ NS_INLINE UIViewController *rootViewController(void) {
   }
   AVPlayerItem *item;
   if (cacheEnabled.boolValue) {
-      NSLog(@"cache enabled %@", url);
-      ResourceLoaderManager *resourceLoaderManager = [ResourceLoaderManager new];
-      self.resourceLoaderManager = resourceLoaderManager;
-      item = [resourceLoaderManager playerItemWithURL:url];
+    NSLog(@"cache enabled %@", url);
+    ResourceLoaderManager *resourceLoaderManager = [ResourceLoaderManager new];
+    self.resourceLoaderManager = resourceLoaderManager;
+    item = [resourceLoaderManager playerItemWithURL:url];
   } else {
     AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
     item = [AVPlayerItem playerItemWithAsset:urlAsset];
   }
-   
+
   return [self initWithPlayerItem:item frameUpdater:frameUpdater playerFactory:playerFactory];
 }
 
-- (void)string:(NSMutableString *)string appendString:(NSString *)appendString muti:(NSInteger)muti {
-    for (NSInteger i = 0; i < muti; i++) {
-        [string appendString:appendString];
-    }
+- (void)string:(NSMutableString *)string
+    appendString:(NSString *)appendString
+            muti:(NSInteger)muti {
+  for (NSInteger i = 0; i < muti; i++) {
+    [string appendString:appendString];
+  }
 }
-
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FLTFrameUpdater *)frameUpdater
@@ -718,16 +719,16 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (void)clearCache:(FLTClearCacheMessage *)input error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
-    NSLog(@"Clean cache");
-    [player.resourceLoaderManager cleanCache];
-//    unsigned long long fileSize = [CacheManager calculateCachedSizeWithError:nil];
-//    NSLog(@"file cache size: %@", @(fileSize));
-    NSError *error2;
-    [CacheManager cleanAllCacheWithError:&error2];
-    if (error2) {
-        NSLog(@"clean cache failure: %@", error2);
-    }
-    [CacheManager cleanAllCacheWithError:&error2];
+  NSLog(@"Clean cache");
+  [player.resourceLoaderManager cleanCache];
+  //    unsigned long long fileSize = [CacheManager calculateCachedSizeWithError:nil];
+  //    NSLog(@"file cache size: %@", @(fileSize));
+  NSError *error2;
+  [CacheManager cleanAllCacheWithError:&error2];
+  if (error2) {
+    NSLog(@"clean cache failure: %@", error2);
+  }
+  [CacheManager cleanAllCacheWithError:&error2];
 }
 
 - (void)setVolume:(FLTVolumeMessage *)input error:(FlutterError **)error {

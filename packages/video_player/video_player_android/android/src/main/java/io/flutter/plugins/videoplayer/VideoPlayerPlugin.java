@@ -11,9 +11,7 @@ import android.util.LongSparseArray;
 import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.util.MimeTypes;
-
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -275,6 +273,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     String mimeType = getMimeType(uri.toString());
     return MimeTypes.VIDEO_MP4.equals(mimeType);
   }
+
   @Nullable
   public static String getMimeType(@NonNull String url) {
     String type = null;

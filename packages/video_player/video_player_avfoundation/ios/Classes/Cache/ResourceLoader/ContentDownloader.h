@@ -23,10 +23,10 @@
 @interface ContentDownloader : NSObject
 
 - (instancetype)initWithURL:(NSURL *)url cacheWorker:(ContentCacheWorker *)cacheWorker;
-@property (nonatomic, strong, readonly) NSURL *url;
-@property (nonatomic, weak) id<ContentDownloaderDelegate> delegate;
-@property (nonatomic, strong) ContentInfo *info;
-@property (nonatomic, assign) BOOL saveToCache;
+@property(nonatomic, strong, readonly) NSURL *url;
+@property(nonatomic, weak) id<ContentDownloaderDelegate> delegate;
+@property(nonatomic, strong) ContentInfo *info;
+@property(nonatomic, assign) BOOL saveToCache;
 
 - (void)downloadTaskFromOffset:(unsigned long long)fromOffset
                         length:(NSUInteger)length
@@ -40,7 +40,8 @@
 @protocol ContentDownloaderDelegate <NSObject>
 
 @optional
-- (void)contentDownloader:(ContentDownloader *)downloader didReceiveResponse:(NSURLResponse *)response;
+- (void)contentDownloader:(ContentDownloader *)downloader
+       didReceiveResponse:(NSURLResponse *)response;
 - (void)contentDownloader:(ContentDownloader *)downloader didReceiveData:(NSData *)data;
 - (void)contentDownloader:(ContentDownloader *)downloader didFinishedWithError:(NSError *)error;
 

@@ -126,7 +126,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-              cache:nil
+              enableCache:nil
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
@@ -158,7 +158,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
         packageName:nil
          formatHint:nil
-              cache:nil
+              enableCache:nil
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -437,7 +437,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-              cache:nil
+              enableCache:nil
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
@@ -534,7 +534,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-              cache:nil
+              enableCache:nil
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -573,7 +573,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-              cache:nil
+              enableCache:nil
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -601,7 +601,7 @@
                                                          uri:uri
                                                  packageName:nil
                                                   formatHint:nil
-                                                       cache:nil
+                                                       enableCache:nil
                                                  httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
 

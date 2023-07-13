@@ -3,7 +3,7 @@
 
 @interface CacheSessionManager : NSObject
 
-@property (nonatomic, strong, readonly) NSOperationQueue *downloadQueue;
+@property(nonatomic, strong, readonly) NSOperationQueue *downloadQueue;
 
 + (instancetype)shared;
 
