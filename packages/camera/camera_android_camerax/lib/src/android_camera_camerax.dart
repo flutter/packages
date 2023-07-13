@@ -104,6 +104,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   ImageCapture? imageCapture;
 
+  /// The flash mode currently configured for [imageCapture].
+  int? _currentFlashMode;
+
   /// The [ImageAnalysis] instance that can be configured to analyze individual
   /// frames.
   ImageAnalysis? imageAnalysis;
@@ -459,6 +462,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<XFile> takePicture(int cameraId) async {
+    if (_currentFlashMode != null) {
+      await imageCapture!.setFlashMode(_currentFlashMode!);
+    }
     final String picturePath = await imageCapture!.takePicture();
     return XFile(picturePath);
   }
@@ -468,16 +474,16 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
     switch (mode) {
       case FlashMode.off:
-        await imageCapture!.setFlashMode(ImageCapture.flashModeOff);
+        _currentFlashMode = ImageCapture.flashModeOff;
         break;
       case FlashMode.auto:
-        await imageCapture!.setFlashMode(ImageCapture.flashModeAuto);
+        _currentFlashMode = ImageCapture.flashModeAuto;
         break;
       case FlashMode.always:
-        await imageCapture!.setFlashMode(ImageCapture.flashModeOn);
+        _currentFlashMode = ImageCapture.flashModeOn;
         break;
       case FlashMode.torch:
-        // TODO(camsim99): Implement torch mode.
+        // TODO(camsim99): Implement torch mode when CameraControl is wrapped.
         break;
     }
   }
