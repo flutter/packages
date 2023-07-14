@@ -14,6 +14,8 @@
 @property(readonly, nonatomic) AVPlayer *player;
 @property(readonly, nonatomic) AVPlayerLayer *playerLayer;
 @property(readonly, nonatomic) int64_t position;
+
+- (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture;
 @end
 
 @interface FLTVideoPlayerPlugin (Test) <FLTAVFoundationVideoPlayerApi>
@@ -396,6 +398,112 @@
   return initializationEvent;
 }
 
+// Checks whether [AVPlayer rate] KVO observations are correctly detached.
+// - https://github.com/flutter/flutter/issues/124937
+//
+// Failing to de-register results in a crash in [AVPlayer willChangeValueForKey:].
+- (void)testDoesNotCrashOnRateObservationAfterDisposal {
+  NSObject<FlutterPluginRegistry> *registry =
+      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [registry registrarForPlugin:@"testDoesNotCrashOnRateObservationAfterDisposal"];
+
+  AVPlayer *avPlayer = nil;
+  __weak FLTVideoPlayer *player = nil;
+
+  // Autoreleasepool is needed to simulate conditions of FLTVideoPlayer deallocation.
+  @autoreleasepool {
+    FLTVideoPlayerPlugin *videoPlayerPlugin =
+        (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+    FlutterError *error;
+    [videoPlayerPlugin initialize:&error];
+    XCTAssertNil(error);
+
+    FLTCreateMessage *create = [FLTCreateMessage
+        makeWithAsset:nil
+                  uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+          packageName:nil
+           formatHint:nil
+          httpHeaders:@{}];
+    FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(textureMessage);
+
+    player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
+    XCTAssertNotNil(player);
+    avPlayer = player.player;
+
+    [videoPlayerPlugin dispose:textureMessage error:&error];
+    XCTAssertNil(error);
+  }
+
+  // [FLTVideoPlayerPlugin dispose:error:] selector is dispatching the [FLTVideoPlayer dispose] call
+  // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
+  // was truly deallocated.
+  [self
+      waitForCondition:^BOOL() {
+        return player == nil;
+      }
+           withTimeout:10.0];
+
+  [avPlayer willChangeValueForKey:@"rate"];  // No assertions needed. Lack of crash is a success.
+}
+
+// During the hot reload:
+//  1. `[FLTVideoPlayer onTextureUnregistered:]` gets called.
+//  2. `[FLTVideoPlayerPlugin initialize:]` gets called.
+//
+// Both of these methods dispatch [FLTVideoPlayer dispose] on the main thread
+// leading to a possible crash when de-registering observers twice.
+- (void)testHotReloadDoesNotCrash {
+  NSObject<FlutterPluginRegistry> *registry =
+      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [registry registrarForPlugin:@"testHotReloadDoesNotCrash"];
+
+  __weak FLTVideoPlayer *player = nil;
+
+  // Autoreleasepool is needed to simulate conditions of FLTVideoPlayer deallocation.
+  @autoreleasepool {
+    FLTVideoPlayerPlugin *videoPlayerPlugin =
+        (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+    FlutterError *error;
+    [videoPlayerPlugin initialize:&error];
+    XCTAssertNil(error);
+
+    FLTCreateMessage *create = [FLTCreateMessage
+        makeWithAsset:nil
+                  uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+          packageName:nil
+           formatHint:nil
+          httpHeaders:@{}];
+    FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(textureMessage);
+
+    player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
+    XCTAssertNotNil(player);
+
+    [player onTextureUnregistered:nil];
+    XCTAssertNil(error);
+
+    [videoPlayerPlugin initialize:&error];
+    XCTAssertNil(error);
+  }
+
+  // [FLTVideoPlayerPlugin dispose:error:] selector is dispatching the [FLTVideoPlayer dispose] call
+  // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
+  // was truly deallocated.
+  //
+  [self
+      waitForCondition:^BOOL() {
+        return player == nil;
+      }
+           withTimeout:10.0];  // No assertions needed. Lack of crash is a success.
+}
+
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
   AVAssetTrack *track = [[FakeAVAssetTrack alloc] initWithOrientation:orientation];
   CGAffineTransform t = FLTGetStandardizedTransformForTrack(track);
@@ -437,6 +545,24 @@
   }
   XCTAssertEqual(t.tx, expectX);
   XCTAssertEqual(t.ty, expectY);
+}
+
+- (void)waitForCondition:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout {
+  NSDate *end = [[NSDate date] dateByAddingTimeInterval:timeout];
+
+  do {
+    if (condition()) {
+      return;
+    }
+
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.002]];
+  } while ([[NSDate date] timeIntervalSinceNow] < [end timeIntervalSinceNow]);
+
+  if (condition()) {
+    return;
+  }
+
+  XCTFail(@"Failed to fullfil the condition before timeout %f was exceeded", timeout);
 }
 
 @end
