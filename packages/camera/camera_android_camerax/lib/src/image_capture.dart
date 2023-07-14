@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:meta/meta.dart' show immutable;
 
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
@@ -12,6 +13,7 @@ import 'use_case.dart';
 /// Use case for picture taking.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture.
+@immutable
 class ImageCapture extends UseCase {
   /// Creates an [ImageCapture].
   ImageCapture({

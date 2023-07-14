@@ -14,6 +14,7 @@ import 'live_data.dart';
 /// Callback that can receive from [LiveData].
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/Observer.
+@immutable
 class Observer<T> extends JavaObject {
   /// Constructor for [Observer].
   Observer(
