@@ -6,7 +6,7 @@ import android.os.Build;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 public class FlutterWebViewClient extends WebViewClient {
@@ -48,7 +48,8 @@ public class FlutterWebViewClient extends WebViewClient {
     }
     return false;
   }
-  public static boolean resourceShouldOpenDocument(WebView view, String url) {
+
+  public static boolean resourceShouldOpenDocument(@NonNull WebView view, @NonNull String url) {
     // Check if URL is PDF
     if (url.endsWith(".pdf")) {
       Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -59,7 +60,7 @@ public class FlutterWebViewClient extends WebViewClient {
     return false;
   }
 
-  public static boolean urlShouldRunActivity(WebView view, String url) {
+  public static boolean urlShouldRunActivity(@NonNull WebView view, @NonNull String url) {
     // Check if URL is not an HTTP(S) request
     // Handles mailto:, sms:, etc.
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
