@@ -496,7 +496,6 @@
   // [FLTVideoPlayerPlugin dispose:error:] selector is dispatching the [FLTVideoPlayer dispose] call
   // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
   // was truly deallocated.
-  //
   [self
       waitForCondition:^BOOL() {
         return player == nil;
