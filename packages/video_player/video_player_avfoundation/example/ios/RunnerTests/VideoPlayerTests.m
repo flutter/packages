@@ -441,11 +441,10 @@
   // [FLTVideoPlayerPlugin dispose:error:] selector is dispatching the [FLTVideoPlayer dispose] call
   // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
   // was truly deallocated.
-  [self
-      waitForCondition:^BOOL() {
-        return player == nil;
-      }
-           withTimeout:10.0];
+  [self expectationForPredicate:[NSPredicate predicateWithFormat:@"self != nil"]
+            evaluatedWithObject:player
+                        handler:nil];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
 
   [avPlayer willChangeValueForKey:@"rate"];  // No assertions needed. Lack of crash is a success.
 }
@@ -496,11 +495,11 @@
   // [FLTVideoPlayerPlugin dispose:error:] selector is dispatching the [FLTVideoPlayer dispose] call
   // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
   // was truly deallocated.
-  [self
-      waitForCondition:^BOOL() {
-        return player == nil;
-      }
-           withTimeout:10.0];  // No assertions needed. Lack of crash is a success.
+  [self expectationForPredicate:[NSPredicate predicateWithFormat:@"self != nil"]
+            evaluatedWithObject:player
+                        handler:nil];
+  [self waitForExpectationsWithTimeout:10.0
+                               handler:nil];  // No assertions needed. Lack of crash is a success.
 }
 
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
@@ -544,24 +543,6 @@
   }
   XCTAssertEqual(t.tx, expectX);
   XCTAssertEqual(t.ty, expectY);
-}
-
-- (void)waitForCondition:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout {
-  NSDate *end = [[NSDate date] dateByAddingTimeInterval:timeout];
-
-  do {
-    if (condition()) {
-      return;
-    }
-
-    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.002]];
-  } while ([[NSDate date] timeIntervalSinceNow] < [end timeIntervalSinceNow]);
-
-  if (condition()) {
-    return;
-  }
-
-  XCTFail(@"Failed to fullfil the condition before timeout %f was exceeded", timeout);
 }
 
 @end

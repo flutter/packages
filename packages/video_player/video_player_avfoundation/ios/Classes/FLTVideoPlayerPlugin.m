@@ -520,9 +520,9 @@ NS_INLINE UIViewController *rootViewController(void) {
 /// so the channel is going to die or is already dead.
 - (void)disposeSansEventChannel {
   // This check prevents the crash caused by removing the KVO observers twice.
-  // When performing a Hot Restart, the leftover players are disposed directly
-  // by [FLTVideoPlayerPlugin initialize:] method and also receive
-  // onTextureUnregistered: callback leading to possible over-release.
+  // When performing a Hot Restart, the leftover players are disposed once directly
+  // by [FLTVideoPlayerPlugin initialize:] method and then disposed again by
+  // [FLTVideoPlayer onTextureUnregistered:] call leading to possible over-release.
   if (_disposed) {
     return;
   }
