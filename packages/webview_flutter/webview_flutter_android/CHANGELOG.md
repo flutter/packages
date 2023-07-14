@@ -1,6 +1,10 @@
-## 3.9.0
+## 3.10.0
 
 * Adds support for `PlatformWebViewController.getUserAgent`.
+
+## 3.9.0
+
+* Adds support for `WebResouceError.url`.
 
 ## 3.8.2
 

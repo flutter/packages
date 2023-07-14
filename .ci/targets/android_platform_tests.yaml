@@ -1,6 +1,11 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: download android deps
+    script: script/tool_runner.sh
+    infra_step: true
+    args: ["fetch-deps"]
   - name: build examples
     script: script/tool_runner.sh
     args: ["build-examples", "--apk"]
