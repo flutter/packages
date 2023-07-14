@@ -10,7 +10,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -20,12 +19,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,72 +43,6 @@ public class WebViewActivity extends Activity {
           if (ACTION_CLOSE.equals(action)) {
             finish();
           }
-        }
-      };
-
-  private final WebViewClient webViewClient =
-      new WebViewClient() {
-        @Override
-        public void onLoadResource(WebView view, String url) {
-          if (!resourceShouldOpenDocument(view, url)) {
-            super.onLoadResource(view, url);
-          }
-        }
-
-        /*
-         * This method is deprecated in API 24. Still overridden to support
-         * earlier Android versions.
-         */
-        @SuppressWarnings("deprecation")
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-          if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            if (urlShouldRunActivity(view, url)) {
-              return true;
-            } else {
-              view.loadUrl(url);
-            }
-            return false;
-          }
-          return super.shouldOverrideUrlLoading(view, url);
-        }
-
-        @RequiresApi(Build.VERSION_CODES.N)
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            String url = request.getUrl().toString();
-            if (urlShouldRunActivity(view, url)) {
-              return true;
-            } else {
-              view.loadUrl(url);
-            }
-          }
-          return false;
-        }
-
-        private boolean resourceShouldOpenDocument(WebView view, String url) {
-          // Check if URL is PDF
-          if (url.endsWith(".pdf")) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.parse(url), "application/pdf");
-            view.getContext().startActivity(intent);
-            return true;
-          }
-          return false;
-        }
-
-        private boolean urlShouldRunActivity(WebView view, String url) {
-          // Check if URL is not an HTTP(S) request
-          // Handles mailto:, sms:, etc.
-          if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            view.getContext().startActivity(intent);
-            return true;
-          }
-
-          // Otherwise, let WebView load URL
-          return false;
         }
       };
 
@@ -178,7 +108,7 @@ public class WebViewActivity extends Activity {
     webview.getSettings().setDomStorageEnabled(enableDomStorage);
 
     // Open new urls inside the webview itself.
-    webview.setWebViewClient(webViewClient);
+    webview.setWebViewClient(new FlutterWebViewClient());
 
     // Multi windows is set with FlutterWebChromeClient by default to handle internal bug: b/159892679.
     webview.getSettings().setSupportMultipleWindows(true);
