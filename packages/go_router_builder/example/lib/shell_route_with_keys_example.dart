@@ -57,7 +57,7 @@ class MyShellRouteScreen extends StatelessWidget {
   final Widget child;
 
   int getCurrentIndex(BuildContext context) {
-    final String location = GoRouter.of(context).location;
+    final String location = GoRouterState.of(context).location;
     if (location.startsWith('/users')) {
       return 1;
     }
