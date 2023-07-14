@@ -28,8 +28,3 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.1
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {webview_flutter_platform_interface: {path: ../../webview_flutter/webview_flutter_platform_interface}}
