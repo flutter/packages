@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
@@ -13,6 +14,7 @@ import 'recording.dart';
 /// Dart wrapping of PendingRecording CameraX class.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/PendingRecording
+@immutable
 class PendingRecording extends JavaObject {
   /// Creates a [PendingRecording] that is not automatically attached to
   /// a native object.

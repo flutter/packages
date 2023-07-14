@@ -48,7 +48,10 @@ an `InstanceManager` (implementation in `InstanceManager.java`).
 
 If CameraX or other Android classes that you need to access do not have a
 duplicately named implementation in `lib/src/`, then follow the same structure
-described above to add them.
+described above to add them. Please note that any Dart-wrapped native Android
+classes that you add should extend `JavaObject`. Additionally, they should be
+annotated as `@immutable` to avoid lint errors with mock objects that are
+generated for them that you may use for testing.
 
 For more information, please see the [design document][2] or feel free
 to ask any questions on the #hackers-ecosystem channel on [Discord][6]. For
