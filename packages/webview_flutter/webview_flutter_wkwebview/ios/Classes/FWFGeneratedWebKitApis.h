@@ -754,6 +754,8 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewHostApiGetCodec(void);
 - (void)setInspectableForWebViewWithIdentifier:(NSNumber *)identifier
                                    inspectable:(NSNumber *)inspectable
                                          error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)userAgentForWebViewWithIdentifier:(NSNumber *)identifier
+                                                   error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void FWFWKWebViewHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,

@@ -2505,6 +2505,27 @@ void FWFWKWebViewHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.WKWebViewHostApi.getCustomUserAgent"
+        binaryMessenger:binaryMessenger
+                  codec:FWFWKWebViewHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(userAgentForWebViewWithIdentifier:error:)],
+                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
+                @"@selector(userAgentForWebViewWithIdentifier:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_identifier = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSString *output = [api userAgentForWebViewWithIdentifier:arg_identifier error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }
 NSObject<FlutterMessageCodec> *FWFWKUIDelegateHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;

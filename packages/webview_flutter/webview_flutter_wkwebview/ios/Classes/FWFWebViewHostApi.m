@@ -299,4 +299,10 @@
                             error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return [[self webViewForIdentifier:identifier] title];
 }
+
+- (nullable NSString *)
+    userAgentForWebViewWithIdentifier:(nonnull NSNumber *)identifier
+                                error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return [[self webViewForIdentifier:identifier] customUserAgent];
+}
 @end

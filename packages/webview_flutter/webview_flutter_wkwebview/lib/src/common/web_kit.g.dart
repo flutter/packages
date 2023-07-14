@@ -675,7 +675,6 @@ class ObjectOrIdentifier {
 
 class _WKWebsiteDataStoreHostApiCodec extends StandardMessageCodec {
   const _WKWebsiteDataStoreHostApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WKWebsiteDataTypeEnumData) {
@@ -962,7 +961,6 @@ class UIScrollViewHostApi {
 
 class _WKWebViewConfigurationHostApiCodec extends StandardMessageCodec {
   const _WKWebViewConfigurationHostApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WKAudiovisualMediaTypeEnumData) {
@@ -1152,7 +1150,6 @@ abstract class WKWebViewConfigurationFlutterApi {
 
 class _WKUserContentControllerHostApiCodec extends StandardMessageCodec {
   const _WKUserContentControllerHostApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WKUserScriptData) {
@@ -1438,7 +1435,6 @@ class WKScriptMessageHandlerHostApi {
 
 class _WKScriptMessageHandlerFlutterApiCodec extends StandardMessageCodec {
   const _WKScriptMessageHandlerFlutterApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WKScriptMessageData) {
@@ -1541,7 +1537,6 @@ class WKNavigationDelegateHostApi {
 
 class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
   const _WKNavigationDelegateFlutterApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSErrorData) {
@@ -1773,7 +1768,6 @@ abstract class WKNavigationDelegateFlutterApi {
 
 class _NSObjectHostApiCodec extends StandardMessageCodec {
   const _NSObjectHostApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSKeyValueObservingOptionsEnumData) {
@@ -1887,7 +1881,6 @@ class NSObjectHostApi {
 
 class _NSObjectFlutterApiCodec extends StandardMessageCodec {
   const _NSObjectFlutterApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSKeyValueChangeKeyEnumData) {
@@ -1989,7 +1982,6 @@ abstract class NSObjectFlutterApi {
 
 class _WKWebViewHostApiCodec extends StandardMessageCodec {
   const _WKWebViewHostApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSErrorData) {
@@ -2557,6 +2549,28 @@ class WKWebViewHostApi {
       return;
     }
   }
+
+  Future<String?> getCustomUserAgent(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.WKWebViewHostApi.getCustomUserAgent', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as String?);
+    }
+  }
 }
 
 /// Mirror of WKUIDelegate.
@@ -2597,7 +2611,6 @@ class WKUIDelegateHostApi {
 
 class _WKUIDelegateFlutterApiCodec extends StandardMessageCodec {
   const _WKUIDelegateFlutterApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSUrlRequestData) {
@@ -2734,7 +2747,6 @@ abstract class WKUIDelegateFlutterApi {
 
 class _WKHttpCookieStoreHostApiCodec extends StandardMessageCodec {
   const _WKHttpCookieStoreHostApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NSHttpCookieData) {

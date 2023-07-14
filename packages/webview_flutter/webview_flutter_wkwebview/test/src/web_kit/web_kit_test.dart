@@ -833,12 +833,19 @@ void main() {
         ));
       });
 
-      test('customUserAgent', () {
+      test('setCustomUserAgent', () {
         webView.setCustomUserAgent('hello');
         verify(mockPlatformHostApi.setCustomUserAgent(
           webViewInstanceId,
           'hello',
         ));
+      });
+
+      test('getCustomUserAgent', () {
+        when(
+          mockPlatformHostApi.getCustomUserAgent(webViewInstanceId),
+        ).thenReturn('str');
+        expect(webView.getCustomUserAgent(), completion('str'));
       });
 
       test('evaluateJavaScript', () {

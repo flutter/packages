@@ -480,4 +480,20 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   OCMVerify([mockWebView setInspectable:YES]);
   XCTAssertNil(error);
 }
+
+- (void)testUserAgentString {
+  FWFWebView *mockWebView = OCMClassMock([FWFWebView class]);
+  OCMStub([mockWebView customUserAgent]).andReturn(@"str");
+
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:0];
+
+  FWFWebViewHostApiImpl *hostAPI = [[FWFWebViewHostApiImpl alloc]
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+
+  FlutterError *error;
+  XCTAssertEqualObjects([hostAPI userAgentForWebViewWithIdentifier:@0 error:&error], @"str");
+  XCTAssertNil(error);
+}
 @end

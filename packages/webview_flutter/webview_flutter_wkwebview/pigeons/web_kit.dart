@@ -697,6 +697,9 @@ abstract class WKWebViewHostApi {
 
   @ObjCSelector('setInspectableForWebViewWithIdentifier:inspectable:')
   void setInspectable(int identifier, bool inspectable);
+
+  @ObjCSelector('userAgentForWebViewWithIdentifier:')
+  String? getCustomUserAgent(int identifier);
 }
 
 /// Mirror of WKUIDelegate.
