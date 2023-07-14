@@ -541,6 +541,11 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
       enabled,
     );
   }
+
+  /// Helper method to convert instances ids to objects.
+  Future<String?> getUserAgentStringFromInstance(WebSettings instance) {
+    return getUserAgentString(instanceManager.getIdentifier(instance)!);
+  }
 }
 
 /// Host api implementation for [JavaScriptChannel].

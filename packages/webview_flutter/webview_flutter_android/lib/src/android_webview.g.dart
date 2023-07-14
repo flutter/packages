@@ -377,7 +377,6 @@ class CookieManagerHostApi {
 
 class _WebViewHostApiCodec extends StandardMessageCodec {
   const _WebViewHostApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WebViewPoint) {
@@ -1403,6 +1402,28 @@ class WebSettingsHostApi {
       return;
     }
   }
+
+  Future<String?> getUserAgentString(int arg_instanceId) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.WebSettingsHostApi.getUserAgentString', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_instanceId]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as String?);
+    }
+  }
 }
 
 class JavaScriptChannelHostApi {
@@ -1529,7 +1550,6 @@ class WebViewClientHostApi {
 
 class _WebViewClientFlutterApiCodec extends StandardMessageCodec {
   const _WebViewClientFlutterApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WebResourceErrorData) {
@@ -2185,7 +2205,6 @@ class WebStorageHostApi {
 
 class _FileChooserParamsFlutterApiCodec extends StandardMessageCodec {
   const _FileChooserParamsFlutterApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is FileChooserModeEnumData) {

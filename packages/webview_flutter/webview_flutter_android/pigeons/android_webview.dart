@@ -259,6 +259,8 @@ abstract class WebSettingsHostApi {
   void setAllowFileAccess(int instanceId, bool enabled);
 
   void setTextZoom(int instanceId, int textZoom);
+
+  String? getUserAgentString(int instanceId);
 }
 
 @HostApi(dartHostTestHandler: 'TestJavaScriptChannelHostApi')

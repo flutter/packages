@@ -1056,6 +1056,17 @@ void main() {
       verify(mockWebView.settings).called(1);
       verify(mockSettings.setUserAgentString('Test Framework')).called(1);
     });
+
+    test('getUserAgent', () async {
+      final MockWebSettings mockSettings = MockWebSettings();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockSettings: mockSettings,
+      );
+      when(mockSettings.getUserAgentString())
+          .thenAnswer((_) => Future<String?>.value('str'));
+
+      expect(await controller.getUserAgent(), 'str');
+    });
   });
 
   test('setMediaPlaybackRequiresUserGesture', () async {

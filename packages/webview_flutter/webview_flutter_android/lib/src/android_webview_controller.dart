@@ -495,6 +495,9 @@ class AndroidWebViewController extends PlatformWebViewController {
     _onGeolocationPermissionsShowPrompt = onShowPrompt;
     _onGeolocationPermissionsHidePrompt = onHidePrompt;
   }
+
+  @override
+  Future<String?> getUserAgent() => _webView.settings.getUserAgentString();
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].

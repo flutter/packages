@@ -694,6 +694,11 @@ class WebSettings extends JavaObject {
     return api.setSetTextZoomFromInstance(this, textZoom);
   }
 
+  /// Gets the WebView's user-agent string.
+  Future<String?> getUserAgentString() {
+    return api.getUserAgentStringFromInstance(this);
+  }
+
   @override
   WebSettings copy() {
     return WebSettings.detached(

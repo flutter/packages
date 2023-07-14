@@ -353,6 +353,11 @@ class WebViewController {
   Future<void> setUserAgent(String? userAgent) {
     return platform.setUserAgent(userAgent);
   }
+
+  /// Gets the value used for the HTTP `User-Agent:` request header.
+  Future<String?> getUserAgent() {
+    return platform.getUserAgent();
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.

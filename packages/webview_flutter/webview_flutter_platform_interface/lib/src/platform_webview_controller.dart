@@ -270,6 +270,13 @@ abstract class PlatformWebViewController extends PlatformInterface {
       'setOnPermissionRequest is not implemented on the current platform',
     );
   }
+
+  /// Gets the value used for the HTTP `User-Agent:` request header.
+  Future<String?> getUserAgent() {
+    throw UnimplementedError(
+      'getUserAgent is not implemented on the current platform',
+    );
+  }
 }
 
 /// Describes the parameters necessary for registering a JavaScript channel.
