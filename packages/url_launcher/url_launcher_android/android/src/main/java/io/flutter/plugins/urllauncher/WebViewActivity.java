@@ -110,7 +110,8 @@ public class WebViewActivity extends Activity {
     // Open new urls inside the webview itself.
     webview.setWebViewClient(new FlutterWebViewClient());
 
-    // Multi windows is set with FlutterWebChromeClient by default to handle internal bug: b/159892679.
+    // Multi windows is set with FlutterWebChromeClient by default to handle internal bug:
+    // b/159892679.
     webview.getSettings().setSupportMultipleWindows(true);
     webview.setWebChromeClient(new FlutterWebChromeClient());
 
@@ -146,14 +147,11 @@ public class WebViewActivity extends Activity {
     return super.onKeyDown(keyCode, event);
   }
 
-  @VisibleForTesting
-  static final String URL_EXTRA = "url";
+  @VisibleForTesting static final String URL_EXTRA = "url";
 
-  @VisibleForTesting
-  static final String ENABLE_JS_EXTRA = "enableJavaScript";
+  @VisibleForTesting static final String ENABLE_JS_EXTRA = "enableJavaScript";
 
-  @VisibleForTesting
-  static final String ENABLE_DOM_EXTRA = "enableDomStorage";
+  @VisibleForTesting static final String ENABLE_DOM_EXTRA = "enableDomStorage";
 
   /* Hides the constants used to forward data to the Activity instance. */
   public static @NonNull Intent createIntent(
