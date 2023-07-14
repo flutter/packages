@@ -60,6 +60,11 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.zoomControl = configuration.zoomControlsEnabled;
   }
 
+  if (configuration.scrollGesturesEnabled == false ||
+      configuration.zoomGesturesEnabled == false) {
+    html.window.console.warn('`scrollGesturesEnabled` and `zoomGesturesEnabled` are now ignored on the web. Use `webGestureHandling: WebGestureHandling.none` instead.');
+  }
+
   if (configuration.webGestureHandling != null) {
     options.gestureHandling = configuration.webGestureHandling!.name;
   } else {
