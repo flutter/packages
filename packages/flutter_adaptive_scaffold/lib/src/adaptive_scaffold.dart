@@ -101,6 +101,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.appBar,
     this.navigationRailWidth = 72,
     this.extendedNavigationRailWidth = 192,
+    this.appBarBreakpoint,
   });
 
   /// The destinations to be used in navigation items. These are converted to
@@ -214,6 +215,13 @@ class AdaptiveScaffold extends StatefulWidget {
   ///
   /// Defaults to [Breakpoints.smallDesktop].
   final Breakpoint drawerBreakpoint;
+
+  /// An optional [Breakpoint] which overrides the [appBar] breakpoint to display
+  /// an [AppBar] without depending on the drawer visibility.
+  ///
+  /// By default, an [AppBar] will show on [Breakpoints.smallDesktop] if [useDrawer] is set
+  /// to true.
+  final Breakpoint? appBarBreakpoint;
 
   /// Option to override the default [AppBar] when using drawer in desktop
   /// small.
@@ -489,7 +497,8 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
         Theme.of(context).navigationRailTheme;
 
     return Scaffold(
-      appBar: widget.drawerBreakpoint.isActive(context) && widget.useDrawer
+      appBar: widget.drawerBreakpoint.isActive(context) && widget.useDrawer ||
+              (widget.appBarBreakpoint?.isActive(context) ?? false)
           ? widget.appBar ?? AppBar()
           : null,
       drawer: widget.drawerBreakpoint.isActive(context) && widget.useDrawer

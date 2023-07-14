@@ -140,6 +140,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.scaffold.png'),
+      skip: !runGoldens,
     );
     await tester.tapAt(const Offset(20.0, 20.0));
     await tester.pump();
@@ -147,6 +148,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.drawer.png'),
+      skip: !runGoldens,
     );
-  }, skip: !runGoldens);
+  });
 }
