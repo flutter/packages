@@ -25,7 +25,6 @@
 
 ## 2.2.6
 
-* Adds support for heatmap layers.
 * Aligns Dart and Flutter SDK constraints.
 * Updates README.md to specify not to use GoogleMaps widget within an unbounded widget.
 
