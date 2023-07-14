@@ -34,6 +34,7 @@ class MapConfiguration {
     this.indoorViewEnabled,
     this.trafficEnabled,
     this.buildingsEnabled,
+    this.cloudMapId,
   });
 
   /// This setting controls how the API handles gestures on the map. Web only.
@@ -103,6 +104,12 @@ class MapConfiguration {
   /// True if 3D building display should be enabled.
   final bool? buildingsEnabled;
 
+  /// Identifier that's associated with a specific cloud-based map style.
+  ///
+  /// See https://developers.google.com/maps/documentation/get-map-id
+  /// for more details.
+  final String? cloudMapId;
+
   /// Returns a new options object containing only the values of this instance
   /// that are different from [other].
   MapConfiguration diffFrom(MapConfiguration other) {
@@ -163,6 +170,7 @@ class MapConfiguration {
           trafficEnabled != other.trafficEnabled ? trafficEnabled : null,
       buildingsEnabled:
           buildingsEnabled != other.buildingsEnabled ? buildingsEnabled : null,
+      cloudMapId: cloudMapId != other.cloudMapId ? cloudMapId : null,
     );
   }
 
@@ -194,6 +202,7 @@ class MapConfiguration {
       indoorViewEnabled: diff.indoorViewEnabled ?? indoorViewEnabled,
       trafficEnabled: diff.trafficEnabled ?? trafficEnabled,
       buildingsEnabled: diff.buildingsEnabled ?? buildingsEnabled,
+      cloudMapId: diff.cloudMapId ?? cloudMapId,
     );
   }
 
@@ -218,7 +227,8 @@ class MapConfiguration {
       padding == null &&
       indoorViewEnabled == null &&
       trafficEnabled == null &&
-      buildingsEnabled == null;
+      buildingsEnabled == null &&
+      cloudMapId == null;
 
   @override
   bool operator ==(Object other) {
@@ -248,7 +258,8 @@ class MapConfiguration {
         padding == other.padding &&
         indoorViewEnabled == other.indoorViewEnabled &&
         trafficEnabled == other.trafficEnabled &&
-        buildingsEnabled == other.buildingsEnabled;
+        buildingsEnabled == other.buildingsEnabled &&
+        cloudMapId == other.cloudMapId;
   }
 
   @override
@@ -273,5 +284,6 @@ class MapConfiguration {
         indoorViewEnabled,
         trafficEnabled,
         buildingsEnabled,
+        cloudMapId,
       );
 }

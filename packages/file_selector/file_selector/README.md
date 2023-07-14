@@ -1,14 +1,14 @@
 # file_selector
 
-<?code-excerpt path-base="excerpts/packages/file_selector_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/file_selector.svg)](https://pub.dartlang.org/packages/file_selector)
 
 A Flutter plugin that manages files and interactions with file dialogs.
 
-|             | iOS     | Linux | macOS  | Web | Windows     |
-|-------------|---------|-------|--------|-----|-------------|
-| **Support** | iOS 11+ | Any   | 10.14+ | Any | Windows 10+ |
+|             | Android | iOS     | Linux | macOS  | Web | Windows     |
+|-------------|---------|---------|-------|--------|-----|-------------|
+| **Support** | SDK 19+ | iOS 11+ | Any   | 10.14+ | Any | Windows 10+ |
 
 ## Usage
 
@@ -36,7 +36,7 @@ Please also take a look at our [example][example] app.
 #### Open a single file
 
 <?code-excerpt "open_image_page.dart (SingleOpen)"?>
-``` dart
+```dart
 const XTypeGroup typeGroup = XTypeGroup(
   label: 'images',
   extensions: <String>['jpg', 'png'],
@@ -48,7 +48,7 @@ final XFile? file =
 #### Open multiple files at once
 
 <?code-excerpt "open_multiple_images_page.dart (MultiOpen)"?>
-``` dart
+```dart
 const XTypeGroup jpgsTypeGroup = XTypeGroup(
   label: 'JPEGs',
   extensions: <String>['jpg', 'jpeg'],
@@ -100,23 +100,25 @@ Different platforms support different type group filter options. To avoid
 filters that cover all platforms you are targeting, or that you conditionally
 pass different `XTypeGroup`s based on `Platform`.
 
-|                          | iOS | Linux | macOS  | Web | Windows     |
-|--------------------------|-----|-------|--------|-----|-------------|
-| `extensions`             |     | ✔️     | ✔️      | ✔️   | ✔️           |
-| `mimeTypes`              |     | ✔️     | ✔️†     | ✔️   |             |
-| `uniformTypeIdentifiers` | ✔️   |       | ✔️      |     |             |
-| `webWildCards`           |     |       |        | ✔️   |             |
+|                          | Andoid | iOS | Linux | macOS  | Web | Windows     |
+|--------------------------|--------|-----|-------|--------|-----|-------------|
+| `extensions`             | ✔️      |     | ✔️     | ✔️      | ✔️   | ✔️           |
+| `mimeTypes`              | ✔️      |     | ✔️     | ✔️†     | ✔️   |             |
+| `uniformTypeIdentifiers` |        | ✔️   |       | ✔️      |     |             |
+| `webWildCards`           |        |     |       |        | ✔️   |             |
 
 † `mimeTypes` are not supported on version of macOS earlier than 11 (Big Sur).
 
 ### Features supported by platform
 
-| Feature                | Description                        | iOS      | Linux      | macOS    | Windows      | Web         |
-| ---------------------- |----------------------------------- |--------- | ---------- | -------- | ------------ | ----------- |
-| Choose a single file   | Pick a file/image                  | ✔️       | ✔️        | ✔️       | ✔️          | ✔️          |
-| Choose multiple files  | Pick multiple files/images         | ✔️       | ✔️        | ✔️       | ✔️          | ✔️          |
-| Choose a save location | Pick a directory to save a file in | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
-| Choose a directory     | Pick a folder and get its path     | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
+| Feature                | Description                        | Android | iOS      | Linux      | macOS    | Windows      | Web         |
+| ---------------------- |----------------------------------- |---------|--------- | ---------- | -------- | ------------ | ----------- |
+| Choose a single file   | Pick a file/image                  | ✔️       | ✔️       | ✔️        | ✔️       | ✔️          | ✔️          |
+| Choose multiple files  | Pick multiple files/images         | ✔️       | ✔️       | ✔️        | ✔️       | ✔️          | ✔️          |
+| Choose a save location | Pick a directory to save a file in | ❌       | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
+| Choose a directory     | Pick a directory and get its path  | ✔️†       | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
+
+† Choosing a directory is no supported on versions of Android before SDK 21 (Lollipop).
 
 [example]:./example
 [entitlement]: https://docs.flutter.dev/desktop#entitlements-and-the-app-sandbox

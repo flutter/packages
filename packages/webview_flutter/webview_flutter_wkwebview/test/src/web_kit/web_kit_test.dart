@@ -346,7 +346,8 @@ void main() {
           instanceManager: instanceManager,
         );
 
-        userContentController.addScriptMessageHandler(handler, 'handlerName');
+        await userContentController.addScriptMessageHandler(
+            handler, 'handlerName');
         verify(mockPlatformHostApi.addScriptMessageHandler(
           instanceManager.getIdentifier(userContentController),
           instanceManager.getIdentifier(handler),
@@ -355,7 +356,7 @@ void main() {
       });
 
       test('removeScriptMessageHandler', () async {
-        userContentController.removeScriptMessageHandler('handlerName');
+        await userContentController.removeScriptMessageHandler('handlerName');
         verify(mockPlatformHostApi.removeScriptMessageHandler(
           instanceManager.getIdentifier(userContentController),
           'handlerName',
@@ -363,7 +364,7 @@ void main() {
       });
 
       test('removeAllScriptMessageHandlers', () async {
-        userContentController.removeAllScriptMessageHandlers();
+        await userContentController.removeAllScriptMessageHandlers();
         verify(mockPlatformHostApi.removeAllScriptMessageHandlers(
           instanceManager.getIdentifier(userContentController),
         ));
@@ -613,7 +614,9 @@ void main() {
           NSErrorData(
             code: 23,
             domain: 'Hello',
-            localizedDescription: 'localiziedDescription',
+            userInfo: <String, Object?>{
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+            },
           ),
         );
 
@@ -645,7 +648,9 @@ void main() {
           NSErrorData(
             code: 23,
             domain: 'Hello',
-            localizedDescription: 'localiziedDescription',
+            userInfo: <String, Object?>{
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+            },
           ),
         );
 
@@ -850,7 +855,9 @@ void main() {
             details: NSErrorData(
               code: 0,
               domain: 'domain',
-              localizedDescription: 'desc',
+              userInfo: <String, Object?>{
+                NSErrorUserInfoKey.NSLocalizedDescription: 'desc',
+              },
             ),
           ),
         );

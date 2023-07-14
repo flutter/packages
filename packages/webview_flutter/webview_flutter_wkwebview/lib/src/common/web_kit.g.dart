@@ -522,20 +522,20 @@ class NSErrorData {
   NSErrorData({
     required this.code,
     required this.domain,
-    required this.localizedDescription,
+    this.userInfo,
   });
 
   int code;
 
   String domain;
 
-  String localizedDescription;
+  Map<String?, Object?>? userInfo;
 
   Object encode() {
     return <Object?>[
       code,
       domain,
-      localizedDescription,
+      userInfo,
     ];
   }
 
@@ -544,7 +544,7 @@ class NSErrorData {
     return NSErrorData(
       code: result[0]! as int,
       domain: result[1]! as String,
-      localizedDescription: result[2]! as String,
+      userInfo: (result[2] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
     );
   }
 }

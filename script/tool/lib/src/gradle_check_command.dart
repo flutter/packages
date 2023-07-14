@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
@@ -18,7 +19,7 @@ final Version minKotlinVersion = Version(1, 7, 10);
 /// A command to enforce gradle file conventions and best practices.
 class GradleCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the gradle check command.
-  GradleCheckCommand(Directory packagesDir) : super(packagesDir);
+  GradleCheckCommand(super.packagesDir);
 
   @override
   final String name = 'gradle-check';

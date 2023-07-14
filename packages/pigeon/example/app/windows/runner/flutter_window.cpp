@@ -14,13 +14,29 @@ namespace {
 using pigeon_example::ErrorOr;
 using pigeon_example::ExampleHostApi;
 
+// #docregion cpp-class
 class PigeonApiImplementation : public ExampleHostApi {
  public:
   PigeonApiImplementation() {}
   virtual ~PigeonApiImplementation() {}
 
   ErrorOr<std::string> GetHostLanguage() override { return "C++"; }
+  ErrorOr<int64_t> Add(int64_t a, int64_t b) {
+    if (a < 0 || b < 0) {
+      return FlutterError("code", "message", "details");
+    }
+    return a + b;
+  }
+  void SendMessage(const MessageData& message,
+                   std::function<void(ErrorOr<bool> reply)> result) {
+    if (message.code == Code.one) {
+      result(FlutterError("code", "message", "details"));
+      return;
+    }
+    result(true);
+  }
 };
+// #enddocregion cpp-class
 }  // namespace
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
@@ -32,6 +48,15 @@ bool FlutterWindow::OnCreate() {
   if (!Win32Window::OnCreate()) {
     return false;
   }
+
+  // #docregion cpp-method-flutter
+  void TestPlugin::CallFlutterMethod(
+      String aString, std::function<void(ErrorOr<int64_t> reply)> result) {
+    MessageFlutterApi->FlutterMethod(
+        aString, [result](String echo) { result(echo); },
+        [result](const FlutterError& error) { result(error); });
+  }
+  // #enddocregion cpp-method-flutter
 
   RECT frame = GetClientArea();
 

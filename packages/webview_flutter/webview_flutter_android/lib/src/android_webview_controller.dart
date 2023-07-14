@@ -120,10 +120,10 @@ class AndroidWebViewController extends PlatformWebViewController {
           final GeolocationPermissionsResponse response = await onShowPrompt(
             GeolocationPermissionsRequestParams(origin: origin),
           );
-          callback.invoke(origin, response.allow, response.retain);
+          return callback.invoke(origin, response.allow, response.retain);
         } else {
           // default don't allow
-          callback.invoke(origin, false, false);
+          return callback.invoke(origin, false, false);
         }
       };
     }),
@@ -338,9 +338,11 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setPlatformNavigationDelegate(
       covariant AndroidNavigationDelegate handler) async {
     _currentNavigationDelegate = handler;
-    handler.setOnLoadRequest(loadRequest);
-    _webView.setWebViewClient(handler.androidWebViewClient);
-    _webView.setDownloadListener(handler.androidDownloadListener);
+    await Future.wait(<Future<void>>[
+      handler.setOnLoadRequest(loadRequest),
+      _webView.setWebViewClient(handler.androidWebViewClient),
+      _webView.setDownloadListener(handler.androidDownloadListener),
+    ]);
   }
 
   @override
@@ -823,12 +825,14 @@ class AndroidWebResourceError extends WebResourceError {
     required super.errorCode,
     required super.description,
     super.isForMainFrame,
-    this.failingUrl,
-  }) : super(
+    super.url,
+  })  : failingUrl = url,
+        super(
           errorType: _errorCodeToErrorType(errorCode),
         );
 
   /// Gets the URL for which the failing resource request was made.
+  @Deprecated('Please use `url`.')
   final String? failingUrl;
 
   static WebResourceErrorType? _errorCodeToErrorType(int errorCode) {
@@ -952,7 +956,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidWebResourceError._(
             errorCode: error.errorCode,
             description: error.description,
-            failingUrl: request.url,
+            url: request.url,
             isForMainFrame: request.isForMainFrame,
           ));
         }
@@ -969,7 +973,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidWebResourceError._(
             errorCode: errorCode,
             description: description,
-            failingUrl: failingUrl,
+            url: failingUrl,
             isForMainFrame: true,
           ));
         }
@@ -1103,7 +1107,8 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     NavigationRequestCallback onNavigationRequest,
   ) async {
     _onNavigationRequest = onNavigationRequest;
-    _webViewClient.setSynchronousReturnValueForShouldOverrideUrlLoading(true);
+    return _webViewClient
+        .setSynchronousReturnValueForShouldOverrideUrlLoading(true);
   }
 
   @override

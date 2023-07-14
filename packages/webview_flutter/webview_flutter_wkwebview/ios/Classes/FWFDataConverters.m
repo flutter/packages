@@ -192,9 +192,19 @@ WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
 }
 
 FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
-  return [FWFNSErrorData makeWithCode:@(error.code)
-                               domain:error.domain
-                 localizedDescription:error.localizedDescription];
+  NSMutableDictionary *userInfo;
+  if (error.userInfo) {
+    userInfo = [NSMutableDictionary dictionary];
+    for (NSErrorUserInfoKey key in error.userInfo.allKeys) {
+      NSObject *value = error.userInfo[key];
+      if ([value isKindOfClass:[NSString class]]) {
+        userInfo[key] = value;
+      } else {
+        userInfo[key] = [NSString stringWithFormat:@"Unsupported Type: %@", value.description];
+      }
+    }
+  }
+  return [FWFNSErrorData makeWithCode:@(error.code) domain:error.domain userInfo:userInfo];
 }
 
 FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(
