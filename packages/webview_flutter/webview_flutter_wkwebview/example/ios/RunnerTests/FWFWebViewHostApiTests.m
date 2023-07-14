@@ -408,7 +408,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   XCTAssertTrue([errorData isKindOfClass:[FWFNSErrorData class]]);
   XCTAssertEqualObjects(errorData.code, @0);
   XCTAssertEqualObjects(errorData.domain, @"errorDomain");
-  XCTAssertEqualObjects(errorData.localizedDescription, @"description");
+  XCTAssertEqualObjects(errorData.userInfo, @{NSLocalizedDescriptionKey : @"description"});
 }
 
 - (void)testWebViewContentInsetBehaviorShouldBeNever {
