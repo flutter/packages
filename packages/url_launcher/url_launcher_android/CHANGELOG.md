@@ -1,3 +1,8 @@
+## 6.0.37
+
+* Enables in-app Android WebView to open non-https urls, e.g. `mailto:`, `sms:`
+* Enables in-app Android WebView to open `.pdf` documents
+
 ## 6.0.36
 
 * Bumps androidx.annotation:annotation from 1.2.0 to 1.6.0.
