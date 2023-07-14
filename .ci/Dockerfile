@@ -4,7 +4,10 @@
 # This is the hash for the 3.0.0 image.
 FROM cirrusci/flutter@sha256:d99b1ba2602240a74722970b5c0cd704bbe60a7eba7557157c784f2f693c393f
 
-RUN apt-get update -y
+RUN apt-get update -y \
+    && apt-get -y upgrade \
+    && apt-get -y autoremove \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set up Firebase Test Lab requirements.
 RUN apt-get install -y --no-install-recommends gnupg
