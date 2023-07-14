@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_platform_interface/src/types/utils/map_configuration_serialization.dart';
 
+const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+
 void main() {
   test('empty serialization', () async {
     const MapConfiguration config = MapConfiguration();
@@ -18,26 +20,26 @@ void main() {
 
   test('complete serialization', () async {
     final MapConfiguration config = MapConfiguration(
-      compassEnabled: false,
-      mapToolbarEnabled: false,
-      cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-          northeast: const LatLng(30, 20), southwest: const LatLng(10, 40))),
-      mapType: MapType.normal,
-      minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
-      rotateGesturesEnabled: false,
-      scrollGesturesEnabled: false,
-      tiltGesturesEnabled: false,
-      trackCameraPosition: false,
-      zoomControlsEnabled: false,
-      zoomGesturesEnabled: false,
-      liteModeEnabled: false,
-      myLocationEnabled: false,
-      myLocationButtonEnabled: false,
-      padding: const EdgeInsets.all(5.0),
-      indoorViewEnabled: false,
-      trafficEnabled: false,
-      buildingsEnabled: false,
-    );
+        compassEnabled: false,
+        mapToolbarEnabled: false,
+        cameraTargetBounds: CameraTargetBounds(LatLngBounds(
+            northeast: const LatLng(30, 20), southwest: const LatLng(10, 40))),
+        mapType: MapType.normal,
+        minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
+        rotateGesturesEnabled: false,
+        scrollGesturesEnabled: false,
+        tiltGesturesEnabled: false,
+        trackCameraPosition: false,
+        zoomControlsEnabled: false,
+        zoomGesturesEnabled: false,
+        liteModeEnabled: false,
+        myLocationEnabled: false,
+        myLocationButtonEnabled: false,
+        padding: const EdgeInsets.all(5.0),
+        indoorViewEnabled: false,
+        trafficEnabled: false,
+        buildingsEnabled: false,
+        cloudMapId: _kCloudMapId);
 
     final Map<String, Object> json = jsonForMapConfiguration(config);
 
@@ -69,7 +71,8 @@ void main() {
       'padding': <double>[5.0, 5.0, 5.0, 5.0],
       'indoorEnabled': false,
       'trafficEnabled': false,
-      'buildingsEnabled': false
+      'buildingsEnabled': false,
+      'cloudMapId': _kCloudMapId
     });
   });
 }
