@@ -509,7 +509,6 @@ targets:
       channel: stable
 
   - name: Linux_desktop platform_tests master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 30
     properties:
@@ -523,7 +522,6 @@ targets:
         ]
 
   - name: Linux_desktop platform_tests stable
-    bringup: true # New target
     recipe: packages/packages
     presubmit: false
     timeout: 30
