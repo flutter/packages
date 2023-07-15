@@ -17,6 +17,7 @@ import 'dart_test_command.dart';
 import 'dependabot_check_command.dart';
 import 'drive_examples_command.dart';
 import 'federation_safety_check_command.dart';
+import 'fetch_deps_command.dart';
 import 'firebase_test_lab_command.dart';
 import 'fix_command.dart';
 import 'format_command.dart';
@@ -65,6 +66,7 @@ void main(List<String> args) {
     ..addCommand(DependabotCheckCommand(packagesDir))
     ..addCommand(DriveExamplesCommand(packagesDir))
     ..addCommand(FederationSafetyCheckCommand(packagesDir))
+    ..addCommand(FetchDepsCommand(packagesDir))
     ..addCommand(FirebaseTestLabCommand(packagesDir))
     ..addCommand(FixCommand(packagesDir))
     ..addCommand(FormatCommand(packagesDir))

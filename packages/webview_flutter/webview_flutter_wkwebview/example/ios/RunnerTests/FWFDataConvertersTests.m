@@ -98,14 +98,20 @@
 }
 
 - (void)testFWFNSErrorDataFromNSError {
+  NSObject *unsupportedType = [[NSObject alloc] init];
   NSError *error = [NSError errorWithDomain:@"domain"
                                        code:23
-                                   userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+                                   userInfo:@{@"a" : @"b", @"c" : unsupportedType}];
 
   FWFNSErrorData *data = FWFNSErrorDataFromNativeNSError(error);
   XCTAssertEqualObjects(data.code, @23);
   XCTAssertEqualObjects(data.domain, @"domain");
-  XCTAssertEqualObjects(data.localizedDescription, @"description");
+
+  NSDictionary *userInfo = @{
+    @"a" : @"b",
+    @"c" : [NSString stringWithFormat:@"Unsupported Type: %@", unsupportedType.description]
+  };
+  XCTAssertEqualObjects(data.userInfo, userInfo);
 }
 
 - (void)testFWFWKScriptMessageDataFromWKScriptMessage {

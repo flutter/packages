@@ -826,9 +826,7 @@ Future<void> main() async {
 
       expect(error.errorType, isNotNull);
       expect(
-        (error as AndroidWebResourceError)
-            .failingUrl
-            ?.startsWith('https://www.notawebsite..com'),
+        error.url?.startsWith('https://www.notawebsite..com'),
         isTrue,
       );
     });

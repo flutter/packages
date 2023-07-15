@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Adds a `cloudMapId` parameter to support cloud-based map styling.
+
 ## 2.2.7
 
 * Removes obsolete null checks on non-nullable values.

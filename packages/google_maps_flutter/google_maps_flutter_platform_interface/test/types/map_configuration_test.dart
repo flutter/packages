@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
+const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+
 void main() {
   group('diffs', () {
     // A options instance with every field set, to test diffs against.
@@ -53,6 +55,7 @@ void main() {
       expect(updated.liteModeEnabled, isNot(null));
       expect(updated.padding, isNot(null));
       expect(updated.trafficEnabled, isNot(null));
+      expect(updated.cloudMapId, null);
     });
 
     test('handle compassEnabled', () async {
@@ -281,6 +284,18 @@ void main() {
       // A diff applied to non-empty options should update that field.
       expect(updated.buildingsEnabled, true);
     });
+
+    test('handle cloudMapId', () async {
+      const MapConfiguration diff = MapConfiguration(cloudMapId: _kCloudMapId);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.cloudMapId, _kCloudMapId);
+    });
   });
 
   group('isEmpty', () {
@@ -405,6 +420,12 @@ void main() {
 
     test('is false with buildingsEnabled', () async {
       const MapConfiguration diff = MapConfiguration(buildingsEnabled: true);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with cloudMapId', () async {
+      const MapConfiguration diff = MapConfiguration(cloudMapId: _kCloudMapId);
 
       expect(diff.isEmpty, false);
     });
