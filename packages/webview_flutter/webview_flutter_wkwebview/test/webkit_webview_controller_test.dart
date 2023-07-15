@@ -502,7 +502,6 @@ void main() {
         details: const NSError(
           code: WKErrorCode.javaScriptResultTypeIsUnsupported,
           domain: '',
-          localizedDescription: '',
         ),
       ));
       expect(

@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:process/process.dart';
 import 'package:test/fake.dart';
 import 'package:test/test.dart';
 import 'package:xdg_directories/xdg_directories.dart' as xdg;
@@ -27,6 +26,8 @@ void main() {
   String testPath(String subdir) => path.join(testRootPath(), subdir);
 
   setUp(() {
+    xdg.xdgProcessRunner =
+        FakeProcessRunner(<String, String>{}, canRunExecutable: false);
     tmpDir = Directory.systemTemp.createTempSync('xdg_test');
     fakeEnv.clear();
     fakeEnv['HOME'] = testRootPath();
@@ -103,24 +104,22 @@ XDG_VIDEOS_DIR="$HOME/Videos"
       'TEMPLATES': testPath('Templates'),
       'VIDEOS': testPath('Videos'),
     };
-    xdg.xdgProcessManager = FakeProcessManager(expected);
+    xdg.xdgProcessRunner = FakeProcessRunner(expected);
     final Set<String> userDirs = xdg.getUserDirectoryNames();
     expect(userDirs, equals(expected.keys.toSet()));
     for (final String key in userDirs) {
       expect(xdg.getUserDirectory(key)!.path, equals(expected[key]),
           reason: 'Path $key value not correct');
     }
-    xdg.xdgProcessManager = const LocalProcessManager();
   });
 
   test('Returns null when xdg-user-dir executable is not present', () {
-    xdg.xdgProcessManager = FakeProcessManager(
+    xdg.xdgProcessRunner = FakeProcessRunner(
       <String, String>{},
       canRunExecutable: false,
     );
     expect(xdg.getUserDirectory('DESKTOP'), isNull,
         reason: 'Found xdg user directory without access to xdg-user-dir');
-    xdg.xdgProcessManager = const LocalProcessManager();
   });
 
   test('Throws StateError when HOME not set', () {
@@ -131,27 +130,22 @@ XDG_VIDEOS_DIR="$HOME/Videos"
   });
 }
 
-class FakeProcessManager extends Fake implements ProcessManager {
-  FakeProcessManager(this.expected, {this.canRunExecutable = true});
+class FakeProcessRunner extends Fake implements xdg.XdgProcessRunner {
+  FakeProcessRunner(this.expected, {this.canRunExecutable = true});
 
   Map<String, String> expected;
   final bool canRunExecutable;
 
   @override
   ProcessResult runSync(
-    List<dynamic> command, {
-    String? workingDirectory,
-    Map<String, String>? environment,
-    bool includeParentEnvironment = true,
-    bool runInShell = false,
-    Encoding stdoutEncoding = systemEncoding,
-    Encoding stderrEncoding = systemEncoding,
+    String executable,
+    List<String> arguments, {
+    Encoding? stdoutEncoding = systemEncoding,
+    Encoding? stderrEncoding = systemEncoding,
   }) {
-    return ProcessResult(0, 0, expected[command[1]], '');
-  }
-
-  @override
-  bool canRun(dynamic executable, {String? workingDirectory}) {
-    return canRunExecutable;
+    if (!canRunExecutable) {
+      throw ProcessException(executable, arguments, 'No such executable', 2);
+    }
+    return ProcessResult(0, 0, expected[arguments.first], '');
   }
 }

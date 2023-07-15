@@ -620,10 +620,15 @@ NS_INLINE UIViewController *rootViewController(void) {
     } else {
       assetPath = [_registrar lookupKeyForAsset:input.asset];
     }
-    player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
-                                      frameUpdater:frameUpdater
-                                     playerFactory:_playerFactory];
-    return [self onPlayerSetup:player frameUpdater:frameUpdater];
+    @try {
+      player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
+                                        frameUpdater:frameUpdater
+                                       playerFactory:_playerFactory];
+      return [self onPlayerSetup:player frameUpdater:frameUpdater];
+    } @catch (NSException *exception) {
+      *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
+      return nil;
+    }
   } else if (input.uri) {
     player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
