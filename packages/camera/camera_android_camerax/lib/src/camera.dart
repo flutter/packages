@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camera_info.dart';
@@ -14,6 +15,7 @@ import 'java_object.dart';
 /// camera, and publich the state of the camera.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/Camera.
+@immutable
 class Camera extends JavaObject {
   /// Constructs a [Camera] that is not automatically attached to a native object.
   Camera.detached(

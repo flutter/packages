@@ -32,7 +32,7 @@ public final class CameraRegionUtils {
   @NonNull
   public static Size getCameraBoundaries(
       @NonNull CameraProperties cameraProperties, @NonNull CaptureRequest.Builder requestBuilder) {
-    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+    if (SdkCapabilityChecker.supportsDistortionCorrection()
         && supportsDistortionCorrection(cameraProperties)) {
       // Get the current distortion correction mode.
       Integer distortionCorrectionMode =
