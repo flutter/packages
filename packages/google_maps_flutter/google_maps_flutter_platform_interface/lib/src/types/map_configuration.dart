@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
+
 import '../../google_maps_flutter_platform_interface.dart';
 
 /// Configuration options for the GoogleMaps user interface.
@@ -68,7 +69,9 @@ class MapConfiguration {
   /// True if tilt gestures should be enabled.
   final bool? tiltGesturesEnabled;
 
-  /// True if 45 degree imagery should be enabled. Web only.
+  /// True if 45 degree imagery should be enabled.
+  ///
+  /// Web only.
   final bool? fortyFiveDegreeImageryEnabled;
 
   /// True if camera position changes should trigger notifications.
