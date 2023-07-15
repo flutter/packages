@@ -12,6 +12,7 @@ void main() {
   group('diffs', () {
     // A options instance with every field set, to test diffs against.
     final MapConfiguration diffBase = MapConfiguration(
+      webGestureHandling: WebGestureHandling.auto,
       compassEnabled: false,
       mapToolbarEnabled: false,
       cameraTargetBounds: CameraTargetBounds(LatLngBounds(
@@ -21,6 +22,7 @@ void main() {
       rotateGesturesEnabled: false,
       scrollGesturesEnabled: false,
       tiltGesturesEnabled: false,
+      fortyFiveDegreeImageryEnabled: false,
       trackCameraPosition: false,
       zoomControlsEnabled: false,
       zoomGesturesEnabled: false,
@@ -56,6 +58,19 @@ void main() {
       expect(updated.padding, isNot(null));
       expect(updated.trafficEnabled, isNot(null));
       expect(updated.cloudMapId, null);
+    });
+
+    test('handle webGestureHandling', () async {
+      const MapConfiguration diff =
+          MapConfiguration(webGestureHandling: WebGestureHandling.none);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.webGestureHandling, WebGestureHandling.none);
     });
 
     test('handle compassEnabled', () async {
@@ -160,6 +175,19 @@ void main() {
       expect(empty.applyDiff(diff), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.tiltGesturesEnabled, true);
+    });
+
+    test('handle fortyFiveDegreeImageryEnabled', () async {
+      const MapConfiguration diff =
+          MapConfiguration(fortyFiveDegreeImageryEnabled: true);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.fortyFiveDegreeImageryEnabled, true);
     });
 
     test('handle trackCameraPosition', () async {

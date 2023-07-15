@@ -263,7 +263,7 @@ class MapConfiguration {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll(<Object?>[
         webGestureHandling,
         compassEnabled,
         mapToolbarEnabled,
@@ -285,5 +285,5 @@ class MapConfiguration {
         trafficEnabled,
         buildingsEnabled,
         cloudMapId,
-      );
+      ]);
 }
