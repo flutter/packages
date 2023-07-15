@@ -26,7 +26,7 @@ platform_properties:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
-          {"dependency": "open_jdk", "version": "version:11"},
+          {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
   linux_desktop:
@@ -286,6 +286,11 @@ targets:
       version_file: flutter_master.version
       target_file: android_build_all_packages.yaml
       channel: master
+      # The legacy project build requires an older JDK.
+      dependencies: >-
+        [
+          {"dependency": "open_jdk", "version": "version:11"}
+        ]
 
   - name: Linux_android android_build_all_packages stable
     recipe: packages/packages
@@ -295,6 +300,11 @@ targets:
       version_file: flutter_stable.version
       target_file: android_build_all_packages.yaml
       channel: stable
+      # The legacy project build requires an older JDK.
+      dependencies: >-
+        [
+          {"dependency": "open_jdk", "version": "version:11"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_1 master
     recipe: packages/packages

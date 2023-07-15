@@ -1,3 +1,7 @@
+## 1.0.7
+
+* Adjusts SDK checks for better testability.
+
 ## 1.0.6
 
 * Removes obsolete null checks on non-nullable values.
