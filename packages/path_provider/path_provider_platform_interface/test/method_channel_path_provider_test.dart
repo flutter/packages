@@ -14,6 +14,7 @@ void main() {
   const String kApplicationSupportPath = 'applicationSupportPath';
   const String kLibraryPath = 'libraryPath';
   const String kApplicationDocumentsPath = 'applicationDocumentsPath';
+  const String kApplicationCachePath = 'applicationCachePath';
   const String kExternalCachePaths = 'externalCachePaths';
   const String kExternalStoragePaths = 'externalStoragePaths';
   const String kDownloadsPath = 'downloadsPath';
@@ -39,6 +40,8 @@ void main() {
             return kLibraryPath;
           case 'getApplicationDocumentsDirectory':
             return kApplicationDocumentsPath;
+          case 'getApplicationCacheDirectory':
+            return kApplicationCachePath;
           case 'getExternalStorageDirectories':
             return <String>[kExternalStoragePaths];
           case 'getExternalCacheDirectories':
@@ -124,6 +127,18 @@ void main() {
         ],
       );
       expect(path, kApplicationDocumentsPath);
+    });
+
+    test('getApplicationCachePath succeeds', () async {
+      final String? result =
+          await methodChannelPathProvider.getApplicationCachePath();
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall('getApplicationCacheDirectory', arguments: null)
+        ],
+      );
+      expect(result, kApplicationCachePath);
     });
 
     test('getExternalCachePaths android succeeds', () async {

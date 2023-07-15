@@ -25,6 +25,7 @@ enum StorageDirectory {
   downloads,
   dcim,
   documents,
+  cache,
 }
 
 @HostApi(dartHostTestHandler: 'TestPathProviderApi')
@@ -35,6 +36,8 @@ abstract class PathProviderApi {
   String? getApplicationSupportPath();
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   String? getApplicationDocumentsPath();
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  String? getApplicationCachePath();
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   String? getExternalStoragePath();
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

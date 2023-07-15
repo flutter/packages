@@ -139,6 +139,26 @@ class PathProviderWindows extends PathProviderPlatform {
       getPath(WindowsKnownFolder.Documents);
 
   @override
+  Future<String?> getApplicationCachePath() async {
+    final String? appDataRoot = await getPath(WindowsKnownFolder.LocalAppData);
+    if (appDataRoot == null) {
+      return null;
+    }
+    final Directory directory = Directory(
+        path.join(appDataRoot, _getApplicationSpecificSubdirectory()));
+    // Ensure that the directory exists if possible, since it will on other
+    // platforms. If the name is longer than MAXPATH, creating will fail, so
+    // skip that step; it's up to the client to decide what to do with the path
+    // in that case (e.g., using a short path).
+    if (directory.path.length <= MAX_PATH) {
+      if (!directory.existsSync()) {
+        await directory.create(recursive: true);
+      }
+    }
+    return directory.path;
+  }
+
+  @override
   Future<String?> getDownloadsPath() => getPath(WindowsKnownFolder.Downloads);
 
   /// Retrieve any known folder from Windows.

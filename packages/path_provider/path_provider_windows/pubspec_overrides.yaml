@@ -1,0 +1,3 @@
+dependency_overrides:
+  path_provider_platform_interface:
+    path: ../path_provider_platform_interface

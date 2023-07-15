@@ -107,8 +107,9 @@ Future<Directory> getLibraryDirectory() async {
 /// Path to a directory where the application may place data that is
 /// user-generated, or that cannot otherwise be recreated by your application.
 ///
-/// Consider using another path, such as [getApplicationSupportDirectory] or
-/// [getExternalStorageDirectory], if the data is not user-generated.
+/// Consider using another path, such as [getApplicationSupportDirectory],
+/// [getApplicationCacheDirectory], or [getExternalStorageDirectory], if the
+/// data is not user-generated.
 ///
 /// Example implementations:
 /// - `NSDocumentDirectory` on iOS and macOS.
@@ -121,6 +122,22 @@ Future<Directory> getApplicationDocumentsDirectory() async {
   if (path == null) {
     throw MissingPlatformDirectoryException(
         'Unable to get application documents directory');
+  }
+  return Directory(path);
+}
+
+/// Path to a directory where the application may place application-specific
+/// cache files.
+///
+/// If this directory does not exist, it is created automatically.
+///
+/// Throws a [MissingPlatformDirectoryException] if the system is unable to
+/// provide the directory.
+Future<Directory> getApplicationCacheDirectory() async {
+  final String? path = await _platform.getApplicationCachePath();
+  if (path == null) {
+    throw MissingPlatformDirectoryException(
+        'Unable to get application cache directory');
   }
   return Directory(path);
 }

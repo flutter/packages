@@ -25,12 +25,12 @@ public class PathProviderPlugin: NSObject, FlutterPlugin, PathProviderApi {
   func getDirectoryPath(type: DirectoryType) -> String? {
     var path = getDirectory(ofType: fileManagerDirectoryForType(type))
   #if os(macOS)
-    // In a non-sandboxed app, this is a shared directory where applications are
+    // In a non-sandboxed app, these are shared directories where applications are
     // expected to use its bundle ID as a subdirectory. (For non-sandboxed apps,
     // adding the extra path is harmless).
     // This is not done for iOS, for compatibility with older versions of the
     // plugin.
-    if type == .applicationSupport {
+    if type == .applicationSupport || type == .applicationCache {
       if let basePath = path {
         let basePathURL = URL.init(fileURLWithPath: basePath)
         path = basePathURL.appendingPathComponent(Bundle.main.bundleIdentifier!).path
@@ -49,6 +49,8 @@ public class PathProviderPlugin: NSObject, FlutterPlugin, PathProviderApi {
 /// Returns the FileManager constant corresponding to the given type.
 private func fileManagerDirectoryForType(_ type: DirectoryType) -> FileManager.SearchPathDirectory {
   switch type {
+    case .applicationCache:
+      return FileManager.SearchPathDirectory.cachesDirectory
     case .applicationDocuments:
       return FileManager.SearchPathDirectory.documentDirectory
     case .applicationSupport:

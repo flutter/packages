@@ -30,6 +30,8 @@ messages.StorageDirectory _convertStorageDirectory(
       return messages.StorageDirectory.dcim;
     case StorageDirectory.documents:
       return messages.StorageDirectory.documents;
+    case StorageDirectory.cache:
+      return messages.StorageDirectory.cache;
   }
 }
 
@@ -60,6 +62,11 @@ class PathProviderAndroid extends PathProviderPlatform {
   @override
   Future<String?> getApplicationDocumentsPath() {
     return _api.getApplicationDocumentsPath();
+  }
+
+  @override
+  Future<String?> getApplicationCachePath() {
+    return _api.getApplicationCachePath();
   }
 
   @override
