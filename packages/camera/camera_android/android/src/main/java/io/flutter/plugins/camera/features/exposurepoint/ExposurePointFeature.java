@@ -25,6 +25,7 @@ public class ExposurePointFeature extends CameraFeature<Point> {
   @Nullable private Point exposurePoint;
   private MeteringRectangle exposureRectangle;
   @NonNull private final SensorOrientationFeature sensorOrientationFeature;
+  private boolean defaultRectangleHasBeenSet = false;
 
   /**
    * Creates a new instance of the {@link ExposurePointFeature}.
@@ -80,16 +81,23 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       return;
     }
 
+    MeteringRectangle[] exposureRegions = null;
+
     if (exposureRectangle != null) {
-      requestBuilder.set(
-          CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
-    } else {
-      try {
-        requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, null);
-      } catch (Exception e) {
-        throw new IllegalArgumentException(
-            "Failed to clear exposure rectangle for the ExposurePointFeature.", e);
-      }
+      exposureRegions = new MeteringRectangle[] {exposureRectangle};
+    } else if (!defaultRectangleHasBeenSet) {
+      exposureRegions =
+          new MeteringRectangle[] {
+            new MeteringRectangle(0, 0, 1, 1, MeteringRectangle.METERING_WEIGHT_MAX)
+          };
+      defaultRectangleHasBeenSet = true;
+    }
+
+    try {
+      requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, exposureRegions);
+    } catch (Exception e) {
+      throw new IllegalArgumentException(
+          "Failed to set exposure rectangle for the ExposurePointFeature.", e);
     }
   }
 
