@@ -7,7 +7,6 @@
 ## Legacy allowances, for dependencies that predate the tooling.
 # TODO(stuartmorgan): Audit these. See
 # https://github.com/flutter/flutter/issues/122713
-- equatable
 - xml
 
 ## Explicit allowances
