@@ -256,7 +256,6 @@ targets:
       # Pigeon tests need Andoid deps (thus the Linux_android base), emulator,
       # and clang-format.
       # web_benchmarks needs Chrome.
-    properties:
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "33"},
