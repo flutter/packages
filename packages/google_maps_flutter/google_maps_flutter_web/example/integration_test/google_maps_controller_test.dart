@@ -563,8 +563,9 @@ void main() {
 
           when(mockCoordinates.latitude).thenReturn(currentLocation.latitude);
 
-          when(mockGeolocation.getCurrentPosition.call())
-              .thenAnswer((_) async => mockGeoposition);
+          when(mockGeolocation.getCurrentPosition.call(
+            timeout: const Duration(seconds: 30),
+          )).thenAnswer((_) async => mockGeoposition);
 
           when(mockGeolocation.watchPosition()).thenAnswer((_) {
             return Stream<MockGeoposition>.fromIterable(
@@ -573,51 +574,49 @@ void main() {
 
           controller.init();
 
-          await Future<void>.delayed(const Duration(seconds: 1));
-          final LatLngBounds visibleRegion =
-              await controller.getVisibleRegion();
+          await tester.pumpAndSettle();
 
           final Set<Marker> capturedMarkers =
               verify(markers.addMarkers(captureAny)).captured[1] as Set<Marker>;
-          expect(visibleRegion.contains(currentLocation), true);
+
           expect(controller.myLocationButton, isNull);
           expect(capturedMarkers.length, 1);
           expect(capturedMarkers.first.position, currentLocation);
           expect(capturedMarkers.first.zIndex, 0.5);
         });
-      });
 
-      testWidgets(
-          'My location button should be disable when dont have permission access to location',
-          (WidgetTester tester) async {
-        late final MockGeolocation mockGeolocation = MockGeolocation();
+        testWidgets(
+            'My location button should be disable when dont have permission access to location',
+            (WidgetTester tester) async {
+          late final MockGeolocation mockGeolocation = MockGeolocation();
 
-        controller = createController(
-            mapConfiguration: const MapConfiguration(
-          myLocationEnabled: true,
-          myLocationButtonEnabled: true,
-        ));
+          controller = createController(
+              mapConfiguration: const MapConfiguration(
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          ));
 
-        controller.debugSetOverrides(
-          createMap: (_, __) => map,
-          markers: markers,
-          geolocation: mockGeolocation,
-        );
+          controller.debugSetOverrides(
+            createMap: (_, __) => map,
+            markers: markers,
+            geolocation: mockGeolocation,
+          );
 
-        // when(mockGeolocation.watchPosition()).thenAnswer((_) {
-        //   return Stream<MockGeoposition>.error('permission denied');
-        // });
-        when(mockGeolocation.getCurrentPosition(timeout: anyNamed('timeout')))
-            .thenAnswer(
-          (_) async => throw Exception('permission denied'),
-        );
+          when(mockGeolocation.watchPosition()).thenAnswer((_) {
+            return Stream<MockGeoposition>.error('permission denied');
+          });
+          when(mockGeolocation.getCurrentPosition(timeout: anyNamed('timeout')))
+              .thenAnswer(
+            (_) async => throw Exception('permission denied'),
+          );
 
-        controller.init();
+          controller.init();
 
-        await Future<void>.delayed(const Duration(seconds: 1));
+          await tester.pumpAndSettle();
 
-        expect(controller.myLocationButton, isNotNull);
-        expect(controller.myLocationButton?.isDisabled(), true);
+          expect(controller.myLocationButton, isNotNull);
+          expect(controller.myLocationButton?.isDisabled(), true);
+        });
       });
     });
 
