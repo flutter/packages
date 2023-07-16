@@ -60,11 +60,6 @@ The following map options are not available in web, because the map doesn't rota
 
 There's no "Map Toolbar" in web, so the `mapToolbarEnabled` option is unused.
 
-There's no "My Location" widget in web ([tracking issue](https://github.com/flutter/flutter/issues/64073)), so the following options are ignored, for now:
-
-* `myLocationButtonEnabled`
-* `myLocationEnabled`
-
 There's no `defaultMarkerWithHue` in web. If you need colored pins/markers, you may need to use your own asset images.
 
 Indoor and building layers are still not available on the web. Traffic is.

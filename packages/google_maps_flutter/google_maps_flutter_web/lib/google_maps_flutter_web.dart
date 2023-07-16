@@ -35,3 +35,4 @@ part 'src/polygon.dart';
 part 'src/polygons.dart';
 part 'src/polyline.dart';
 part 'src/polylines.dart';
+part 'src/my_location.dart';

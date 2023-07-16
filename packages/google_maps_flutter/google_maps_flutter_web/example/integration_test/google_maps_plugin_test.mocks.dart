@@ -6,8 +6,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
+import 'dart:html' as _i5;
 
-import 'package:google_maps/google_maps.dart' as _i5;
+import 'package:google_maps/google_maps.dart' as _i6;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
     as _i2;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as _i4;
@@ -126,6 +127,7 @@ class MockGoogleMapController extends _i1.Mock
     _i4.CirclesController? circles,
     _i4.PolygonsController? polygons,
     _i4.PolylinesController? polylines,
+    _i5.Geolocation? geolocation,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -137,6 +139,7 @@ class MockGoogleMapController extends _i1.Mock
             #circles: circles,
             #polygons: polygons,
             #polylines: polylines,
+            #geolocation: geolocation,
           },
         ),
         returnValueForMissingStub: null,
@@ -159,7 +162,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void updateStyles(List<_i5.MapTypeStyle>? styles) => super.noSuchMethod(
+  void updateStyles(List<_i6.MapTypeStyle>? styles) => super.noSuchMethod(
         Invocation.method(
           #updateStyles,
           [styles],

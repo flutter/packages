@@ -83,6 +83,13 @@ class GoogleMapController {
     return _widget;
   }
 
+  // Get current location
+  MyLocationButton? _myLocationButton;
+
+  /// A getter for the my location button
+  @visibleForTesting
+  MyLocationButton? get myLocationButton => _myLocationButton;
+
   // The currently-enabled traffic layer.
   gmaps.TrafficLayer? _trafficLayer;
 
@@ -122,12 +129,14 @@ class GoogleMapController {
     CirclesController? circles,
     PolygonsController? polygons,
     PolylinesController? polylines,
+    Geolocation? geolocation,
   }) {
     _overrideCreateMap = createMap;
     _markersController = markers ?? _markersController;
     _circlesController = circles ?? _circlesController;
     _polygonsController = polygons ?? _polygonsController;
     _polylinesController = polylines ?? _polylinesController;
+    _geolocation = geolocation ?? _geolocation;
   }
 
   DebugCreateMapFunction? _overrideCreateMap;
@@ -171,6 +180,7 @@ class GoogleMapController {
 
     // Create the map...
     final gmaps.GMap map = _createMap(_div, options);
+
     _googleMap = map;
 
     _attachMapEvents(map);
@@ -185,6 +195,20 @@ class GoogleMapController {
     );
 
     _setTrafficLayer(map, _lastMapConfiguration.trafficEnabled ?? false);
+
+    _renderMyLocation(map, _lastMapConfiguration);
+  }
+
+  // Render my location
+  Future<void> _renderMyLocation(
+      gmaps.GMap map, MapConfiguration mapConfiguration) async {
+    if (mapConfiguration.myLocationEnabled ?? false) {
+      if (mapConfiguration.myLocationButtonEnabled ?? false) {
+        _addMyLocationButton(map, this);
+      }
+      await _displayAndWatchMyLocation(this);
+      await _centerMyCurrentLocation(this);
+    }
   }
 
   // Funnels map gmap events into the plugin's stream controller.
@@ -434,6 +458,7 @@ class GoogleMapController {
     _polygonsController = null;
     _polylinesController = null;
     _markersController = null;
+    _myLocationButton = null;
     _streamController.close();
   }
 }

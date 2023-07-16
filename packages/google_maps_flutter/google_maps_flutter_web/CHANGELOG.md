@@ -1,3 +1,7 @@
+## 0.5.2
+
+* Add "My Location" Widget. Issue [#64073](https://github.com/flutter/flutter/issues/64073)
+
 ## 0.5.1
 
 * Adds padding support to `CameraUpdate.newLatLngBounds`. Issue [#122192](https://github.com/flutter/flutter/issues/122192).
