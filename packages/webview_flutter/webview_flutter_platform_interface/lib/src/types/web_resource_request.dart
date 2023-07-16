@@ -38,9 +38,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class WebResourceRequest {
   /// Used by the platform implementation to create a new [WebResourceRequest].
-  const WebResourceRequest({
-    required this.uri
-  });
+  const WebResourceRequest({required this.uri});
 
   /// URI for the request.
   final Uri uri;
