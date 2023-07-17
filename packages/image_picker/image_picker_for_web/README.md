@@ -4,9 +4,12 @@ A web implementation of [`image_picker`][1].
 
 ## Limitations on the web platform
 
+### `XFile`
+
 This plugin uses `XFile` objects to abstract files picked/created by the user.
 
-Read more about `XFile` on the web in [`package:cross_file`'s README](https://pub.dev/packages/cross_file)
+Read more about `XFile` on the web in
+[`package:cross_file`'s README](https://pub.dev/packages/cross_file).
 
 ### input file "accept"
 
@@ -34,11 +37,19 @@ The [`cancel` event](https://caniuse.com/mdn-api_htmlinputelement_cancel_event)
 used by the plugin to detect when users close the file selector without picking
 a file is relatively new, and will only work in recent browsers.
 
-### pickImage()
-The arguments `maxWidth`, `maxHeight` and `imageQuality` are not supported for gif images.
-The argument `imageQuality` only works for jpeg and webp images.
+### `getImage()` parameters and `MediaOptions`
 
-### pickVideo()
+The `getImage`, `getMultiImage` and `getMedia` methods receive either a
+`MediaOptions` object with `maxWidth`, `maxHeight` and `imageQuality` options,
+or separately as individual parameters.
+
+On the web:
+
+* `maxWidth`, `maxHeight` and `imageQuality` are not supported for `gif` images.
+* `imageQuality` only affects `jpg` and `webp` images.
+
+### `getVideo()`
+
 The argument `maxDuration` is not supported on the web.
 
 ## Usage
