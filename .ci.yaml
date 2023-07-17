@@ -26,7 +26,7 @@ platform_properties:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
-          {"dependency": "open_jdk", "version": "version:11"},
+          {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
   linux_desktop:
@@ -286,6 +286,11 @@ targets:
       version_file: flutter_master.version
       target_file: android_build_all_packages.yaml
       channel: master
+      # The legacy project build requires an older JDK.
+      dependencies: >-
+        [
+          {"dependency": "open_jdk", "version": "version:11"}
+        ]
 
   - name: Linux_android android_build_all_packages stable
     recipe: packages/packages
@@ -295,6 +300,11 @@ targets:
       version_file: flutter_stable.version
       target_file: android_build_all_packages.yaml
       channel: stable
+      # The legacy project build requires an older JDK.
+      dependencies: >-
+        [
+          {"dependency": "open_jdk", "version": "version:11"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_1 master
     recipe: packages/packages
@@ -497,6 +507,35 @@ targets:
       version_file: flutter_stable.version
       target_file: linux_build_all_packages.yaml
       channel: stable
+
+  - name: Linux_desktop platform_tests master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_master.version
+      target_file: linux_platform_tests.yaml
+      channel: master
+      # Install Chrome as a default handler for schemes for url_launcher.
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+        ]
+
+  - name: Linux_desktop platform_tests stable
+    bringup: true # New target
+    recipe: packages/packages
+    presubmit: false
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      target_file: linux_platform_tests.yaml
+      channel: stable
+      # Install Chrome as a default handler for schemes for url_launcher.
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+        ]
 
   ### iOS+macOS tasks ###
   # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM

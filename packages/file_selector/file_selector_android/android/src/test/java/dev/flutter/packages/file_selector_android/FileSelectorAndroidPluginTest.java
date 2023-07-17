@@ -24,11 +24,8 @@ import io.flutter.plugin.common.PluginRegistry;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -69,23 +66,6 @@ public class FileSelectorAndroidPluginTest {
     when(mockResolver.openInputStream(uri)).thenReturn(mock(InputStream.class));
   }
 
-  @SuppressWarnings("JavaReflectionMemberAccess")
-  private static <T> void setFinalStatic(
-      Class<T> classToModify, String fieldName, Object newValue) {
-    try {
-      Field field = classToModify.getField(fieldName);
-      field.setAccessible(true);
-
-      Field modifiersField = Field.class.getDeclaredField("modifiers");
-      modifiersField.setAccessible(true);
-      modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-      field.set(null, newValue);
-    } catch (Exception e) {
-      Assert.fail("Unable to mock static field: " + fieldName);
-    }
-  }
-
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Test
   public void openFileReturnsSuccessfully() throws FileNotFoundException {
@@ -100,7 +80,8 @@ public class FileSelectorAndroidPluginTest {
     when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory);
+        new FileSelectorApiImpl(
+            mockActivityBinding, mockObjectFactory, (version) -> Build.VERSION.SDK_INT >= version);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
     fileSelectorApi.openFile(
@@ -152,7 +133,8 @@ public class FileSelectorAndroidPluginTest {
     when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory);
+        new FileSelectorApiImpl(
+            mockActivityBinding, mockObjectFactory, (version) -> Build.VERSION.SDK_INT >= version);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
     fileSelectorApi.openFiles(
@@ -207,15 +189,16 @@ public class FileSelectorAndroidPluginTest {
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Test
   public void getDirectoryPathReturnsSuccessfully() {
-    setFinalStatic(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.LOLLIPOP);
-
     final Uri mockUri = mock(Uri.class);
     when(mockUri.toString()).thenReturn("some/path/");
 
     when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE)).thenReturn(mockIntent);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     final FileSelectorApiImpl fileSelectorApi =
-        new FileSelectorApiImpl(mockActivityBinding, mockObjectFactory);
+        new FileSelectorApiImpl(
+            mockActivityBinding,
+            mockObjectFactory,
+            (version) -> Build.VERSION_CODES.LOLLIPOP >= version);
 
     final GeneratedFileSelectorApi.Result mockResult = mock(GeneratedFileSelectorApi.Result.class);
     fileSelectorApi.getDirectoryPath(null, mockResult);
@@ -231,5 +214,21 @@ public class FileSelectorAndroidPluginTest {
     listenerArgumentCaptor.getValue().onActivityResult(223, Activity.RESULT_OK, resultMockIntent);
 
     verify(mockResult).success("some/path/");
+  }
+
+  @Test
+  public void getDirectoryPath_errorsForUnsupportedVersion() {
+    final FileSelectorApiImpl fileSelectorApi =
+        new FileSelectorApiImpl(
+            mockActivityBinding,
+            mockObjectFactory,
+            (version) -> Build.VERSION_CODES.KITKAT >= version);
+
+    @SuppressWarnings("unchecked")
+    final GeneratedFileSelectorApi.Result<String> mockResult =
+        mock(GeneratedFileSelectorApi.Result.class);
+    fileSelectorApi.getDirectoryPath(null, mockResult);
+
+    verify(mockResult).error(any());
   }
 }

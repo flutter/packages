@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
@@ -14,6 +15,7 @@ import 'use_case.dart';
 /// Dart wrapping of CameraX VideoCapture class.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/VideoCapture.
+@immutable
 class VideoCapture extends UseCase {
   /// Creates a VideoCapture that is not automatically attached to a native object.
   VideoCapture.detached(

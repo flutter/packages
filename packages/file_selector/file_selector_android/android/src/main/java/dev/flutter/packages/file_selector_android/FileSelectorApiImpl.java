@@ -15,6 +15,7 @@ import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -38,7 +39,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   // Request code for selecting a directory.
   private static final int OPEN_DIR = 223;
 
-  private final NativeObjectFactory objectFactory;
+  private final @NonNull NativeObjectFactory objectFactory;
+  private final @NonNull AndroidSdkChecker sdkChecker;
   @Nullable ActivityPluginBinding activityPluginBinding;
 
   private abstract static class OnResultListener {
@@ -60,16 +62,28 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
     }
   }
 
+  // Interface for an injectable SDK version checker.
+  @VisibleForTesting
+  interface AndroidSdkChecker {
+    @ChecksSdkIntAtLeast(parameter = 0)
+    boolean sdkIsAtLeast(int version);
+  }
+
   public FileSelectorApiImpl(@NonNull ActivityPluginBinding activityPluginBinding) {
-    this(activityPluginBinding, new NativeObjectFactory());
+    this(
+        activityPluginBinding,
+        new NativeObjectFactory(),
+        (int version) -> Build.VERSION.SDK_INT >= version);
   }
 
   @VisibleForTesting
   FileSelectorApiImpl(
       @NonNull ActivityPluginBinding activityPluginBinding,
-      @NonNull NativeObjectFactory objectFactory) {
+      @NonNull NativeObjectFactory objectFactory,
+      @NonNull AndroidSdkChecker sdkChecker) {
     this.activityPluginBinding = activityPluginBinding;
     this.objectFactory = objectFactory;
+    this.sdkChecker = sdkChecker;
   }
 
   @Override
@@ -171,9 +185,11 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   @Override
   public void getDirectoryPath(
       @Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<String> result) {
-    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-      throw new UnsupportedOperationException(
-          "Selecting a directory is only supported on versions >= 21");
+    if (!sdkChecker.sdkIsAtLeast(android.os.Build.VERSION_CODES.LOLLIPOP)) {
+      result.error(
+          new UnsupportedOperationException(
+              "Selecting a directory is only supported on versions >= 21"));
+      return;
     }
 
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE);
