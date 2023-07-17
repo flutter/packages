@@ -1,10 +1,9 @@
-## 2.3.0
+## 3.0.0
 
+* **BREAKING CHANGE:** Removes all code and tests mentioning `PickedFile`.
 * Listens to `cancel` event on file selection. When the selection is canceled:
   * `Future<XFile?>` methods return `null`
   * `Future<List<XFile>>` methods return an empty list.
-* Removes all code and tests mentioning `PickedFile`.
-* Updates README to mention `XFile`.
 
 ## 2.2.0
 
