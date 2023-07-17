@@ -91,7 +91,7 @@ static void *rateContext = &rateContext;
               frameUpdater:frameUpdater
                httpHeaders:@{}
              playerFactory:playerFactory
-               enableCache:nil];
+               enableCache:false];
 }
 
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {

@@ -79,7 +79,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Returns true if caching is supported for the mimetype of the network video url.
-  Future<bool?> isCacheSupportedForNetworkMedia(String url) {
+  Future<bool> isCacheSupportedForNetworkMedia(String url) {
     throw UnimplementedError(
         'isCacheSupportedForNetworkMedia() has not been implemented.');
   }
@@ -142,7 +142,7 @@ class DataSource {
       this.httpHeaders = const <String, String>{},
       this.maxCacheSize,
       this.maxFileSize,
-      this.enableCache});
+      this.enableCache = false});
 
   /// The way in which the video was originally loaded.
   ///
@@ -168,7 +168,7 @@ class DataSource {
   /// the original video.
   final int? maxFileSize;
 
-  /// The URI to the video file.
+  /// Enable cache for media.
   ///
   /// This will be in different formats depending on the [DataSourceType] of
   /// the original video.

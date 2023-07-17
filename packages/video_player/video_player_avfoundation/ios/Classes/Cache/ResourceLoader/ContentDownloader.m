@@ -208,7 +208,7 @@ static NSInteger kBufferSize = 10 * 1024;
     return;
   }
 
-  if (action.actionType == CacheActionTypeLocal) {
+  if (action.cacheType == CacheTypeLocal) {
     NSError *error;
     NSData *data = [self.cacheWorker cachedDataForRange:action.range error:&error];
     if (error) {

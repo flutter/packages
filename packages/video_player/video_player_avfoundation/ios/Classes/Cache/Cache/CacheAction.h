@@ -1,12 +1,12 @@
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSUInteger, CacheActionType) { CacheActionTypeLocal = 0, CacheActionTypeRemote };
+typedef NS_ENUM(NSInteger, CacheType) { CacheTypeLocal = 0, CacheTypeRemote };
 
 @interface CacheAction : NSObject
 
-- (instancetype)initWithActionType:(CacheActionType)actionType range:(NSRange)range;
+- (instancetype)initWithActionType:(CacheType)cacheType range:(NSRange)range;
 
-@property(nonatomic) CacheActionType actionType;
+@property(nonatomic) CacheType cacheType;
 @property(nonatomic) NSRange range;
 
 @end

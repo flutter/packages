@@ -60,7 +60,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       asset: asset,
       packageName: packageName,
       uri: uri,
-      enableCache: enableCache,
+      enableCache: enableCache ?? false,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
     );
@@ -83,7 +83,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<bool?> isCacheSupportedForNetworkMedia(String url) async {
+  Future<bool> isCacheSupportedForNetworkMedia(String url) async {
     final IsSupportedMessage response = await _api
         .isCacheSupportedForNetworkMedia(IsCacheSupportedMessage(url: url));
     return response.isSupported;
