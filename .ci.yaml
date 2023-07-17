@@ -118,7 +118,6 @@ targets:
       target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux dart_unit_test_shard_2 master
@@ -129,7 +128,6 @@ targets:
       target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux dart_unit_test_shard_1 stable
@@ -139,7 +137,6 @@ targets:
       target_file: dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux dart_unit_test_shard_2 stable
@@ -149,7 +146,6 @@ targets:
       target_file: dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux_web web_dart_unit_test_shard_1 master
@@ -160,7 +156,6 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux_web web_dart_unit_test_shard_2 master
@@ -171,7 +166,6 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux_web web_dart_unit_test_shard_1 stable
@@ -181,7 +175,6 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Linux_web web_dart_unit_test_shard_2 stable
@@ -191,7 +184,6 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Linux analyze master
@@ -251,7 +243,6 @@ targets:
       add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: linux_custom_package_tests.yaml
-      cores: "32"
       # Pigeon tests need Andoid deps (thus the Linux_android base) and
       # clang-format.
       # web_benchmarks needs Chrome.
@@ -268,7 +259,6 @@ targets:
     properties:
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
-      cores: "32"
       # See comments on 'master' version above.
       dependencies: >-
         [
@@ -313,7 +303,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_2 master
@@ -323,7 +312,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_3 master
@@ -333,7 +321,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 2 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_4 master
@@ -343,7 +330,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 3 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_5 master
@@ -353,7 +339,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 4 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_6 master
@@ -363,7 +348,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      cores: "32"
       package_sharding: "--shardIndex 5 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_1 stable
@@ -374,7 +358,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 0 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_2 stable
@@ -385,7 +368,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 1 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_3 stable
@@ -396,7 +378,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 2 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_4 stable
@@ -407,7 +388,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 3 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_5 stable
@@ -418,7 +398,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 4 --shardCount 6"
 
   - name: Linux_android android_platform_tests_shard_6 stable
@@ -429,7 +408,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      cores: "32"
       package_sharding: "--shardIndex 5 --shardCount 6"
 
   ### Web tasks ###
@@ -455,7 +433,6 @@ targets:
     timeout: 60
     properties:
       target_file: web_platform_tests.yaml
-      cores: "32"
       version_file: flutter_master.version
       channel: master
       package_sharding: "--shardIndex 0 --shardCount 2"
@@ -465,17 +442,27 @@ targets:
     timeout: 60
     properties:
       target_file: web_platform_tests.yaml
-      cores: "32"
       version_file: flutter_master.version
       channel: master
       package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_platform_tests_shard_3 master
+    # TODO(stuartmorgan): Adjust the shard count for the other targets
+    # when removing this.
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 2 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_1 stable
     recipe: packages/packages
     timeout: 60
     properties:
       target_file: web_platform_tests.yaml
-      cores: "32"
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 0 --shardCount 2"
@@ -485,10 +472,21 @@ targets:
     timeout: 60
     properties:
       target_file: web_platform_tests.yaml
-      cores: "32"
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 1 --shardCount 2"
+
+  - name: Linux_web web_platform_tests_shard_3 stable
+    # TODO(stuartmorgan): Adjust the shard count for the other targets
+    # when removing this.
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      version_file: flutter_stable.version
+      channel: stable
+      package_sharding: "--shardIndex 2 --shardCount 3"
 
   ### Linux desktop tasks
   - name: Linux_desktop build_all_packages master
@@ -760,6 +758,7 @@ targets:
           {"dependency": "open_jdk", "version": "version:11"}
         ]
 
+  # TODO(stuartmorgan): Remove these two when enabling the sharded versions.
   - name: Windows win32-platform_tests master - packages
     recipe: packages/packages
     timeout: 60
@@ -781,6 +780,66 @@ targets:
       target_file: windows_build_and_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
+  - name: Windows win32-platform_tests_shard_1 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_and_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
+  - name: Windows win32-platform_tests_shard_2 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_and_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
+  - name: Windows win32-platform_tests_shard_1 stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_and_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
+  - name: Windows win32-platform_tests_shard_2 stable
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_and_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
