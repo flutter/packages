@@ -10,3 +10,4 @@ tasks:
   - name: remove simulator
     script: .ci/scripts/remove_simulator.sh
     always: true
+    infra_step: true
