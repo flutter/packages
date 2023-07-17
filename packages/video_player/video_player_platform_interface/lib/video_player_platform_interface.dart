@@ -370,7 +370,7 @@ class DurationRange {
 /// [VideoPlayerOptions] can be optionally used to set additional player settings
 @immutable
 class VideoPlayerOptions {
-  /// set additional optional player settings
+  /// Set additional optional player settings
   // TODO(stuartmorgan): Temporarily suppress warnings about not using const
   // in all of the other video player packages, fix this, and then update
   // the other packages to use const.
@@ -406,7 +406,7 @@ class VideoPlayerWebOptions {
     this.allowRemotePlayback = true,
   });
 
-  /// Additional settings how control options are displayed
+  /// Additional settings for how control options are displayed
   final VideoPlayerWebOptionsControls controls;
 
   /// Whether context menu (right click) is allowed
