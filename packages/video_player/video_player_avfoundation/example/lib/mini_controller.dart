@@ -317,9 +317,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
-  /// Clears the cache of the player.
+  /// Clears the media cache of the player.
   void clearCache() {
-    _applyClearCache();
+    _platform.clearCache(textureId);
   }
 
   /// Pauses the video.
@@ -356,11 +356,6 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         value.playbackSpeed,
       );
     }
-  }
-
-  // Clears the media cache
-  void _applyClearCache() {
-    _platform.clearCache(textureId);
   }
 
   /// The position in the current video.

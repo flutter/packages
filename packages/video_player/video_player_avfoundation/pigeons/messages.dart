@@ -64,7 +64,7 @@ class CreateMessage {
   String? uri;
   String? packageName;
   String? formatHint;
-  bool? enableCache;
+  bool enableCache;
   Map<String?, String?> httpHeaders;
 }
 

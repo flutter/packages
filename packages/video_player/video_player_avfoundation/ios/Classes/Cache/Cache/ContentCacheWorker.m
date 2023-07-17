@@ -126,7 +126,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
           NSInteger package = intersectionRange.length / kPackageLength;
           for (NSInteger i = 0; i <= package; i++) {
             CacheAction *action = [CacheAction new];
-            action.actionType = CacheActionTypeLocal;
+            action.cacheType = CacheTypeLocal;
 
             NSInteger offset = i * kPackageLength;
             NSInteger offsetLocation = intersectionRange.location + offset;
@@ -142,10 +142,9 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
           *stop = YES;
         }
       }];
-
   if (actions.count == 0) {
     CacheAction *action = [CacheAction new];
-    action.actionType = CacheActionTypeRemote;
+    action.cacheType = CacheTypeRemote;
     action.range = range;
     [actions addObject:action];
   } else {
@@ -157,7 +156,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
       if (idx == 0) {
         if (range.location < actionRange.location) {
           CacheAction *action = [CacheAction new];
-          action.actionType = CacheActionTypeRemote;
+          action.cacheType = CacheTypeRemote;
           action.range = NSMakeRange(range.location, actionRange.location - range.location);
           [localRemoteActions addObject:action];
         }
@@ -167,7 +166,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
         NSInteger lastOffset = lastAction.range.location + lastAction.range.length;
         if (actionRange.location > lastOffset) {
           CacheAction *action = [CacheAction new];
-          action.actionType = CacheActionTypeRemote;
+          action.cacheType = CacheTypeRemote;
           action.range = NSMakeRange(lastOffset, actionRange.location - lastOffset);
           [localRemoteActions addObject:action];
         }
@@ -178,7 +177,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
         NSInteger localEndOffset = actionRange.location + actionRange.length;
         if (endOffset > localEndOffset) {
           CacheAction *action = [CacheAction new];
-          action.actionType = CacheActionTypeRemote;
+          action.cacheType = CacheTypeRemote;
           action.range = NSMakeRange(localEndOffset, endOffset - localEndOffset);
           [localRemoteActions addObject:action];
         }
