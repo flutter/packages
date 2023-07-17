@@ -288,7 +288,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void updateTileOverlays(Set<_i3.TileOverlay>? newOverlays) =>
+  void updateTileOverlays(Set<_i2.TileOverlay>? newOverlays) =>
       super.noSuchMethod(
         Invocation.method(
           #updateTileOverlays,
@@ -297,7 +297,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void clearTileCache(_i3.TileOverlayId? id) => super.noSuchMethod(
+  void clearTileCache(_i2.TileOverlayId? id) => super.noSuchMethod(
         Invocation.method(
           #clearTileCache,
           [id],
@@ -305,7 +305,7 @@ class MockGoogleMapController extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  void showInfoWindow(_i3.MarkerId? markerId) => super.noSuchMethod(
+  void showInfoWindow(_i2.MarkerId? markerId) => super.noSuchMethod(
         Invocation.method(
           #showInfoWindow,
           [markerId],
