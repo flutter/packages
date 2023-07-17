@@ -1,6 +1,6 @@
-## 0.4.0
+## 0.3.2
 
-* **BREAKING CHANGE**: Changes behavior of the availableCameras method to not ask for the microphone permission anymore
+* Changes `availableCameras` to not ask for the microphone permission.
 
 ## 0.3.1+4
 
