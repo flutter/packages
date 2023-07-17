@@ -157,6 +157,18 @@ void main() {
       expect(textureId, 3);
     });
 
+    test('create with incorrect asset throws exception', () async {
+      try {
+        await player.create(DataSource(
+          sourceType: DataSourceType.asset,
+          asset: '/path/to/incorrect_asset',
+        ));
+        fail('should throw PlatformException');
+      } catch (e) {
+        expect(e, isException);
+      }
+    });
+
     test('create with network', () async {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,

@@ -1,10 +1,8 @@
-## NEXT
+## 2.4.7
 
 * Adds caching functionality for network video.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
-* Adds caching functionality for network video.
-* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
-* Adds caching functionality for network video.
+* Adds iOS exception on incorrect asset path
 
 ## 2.4.6
 

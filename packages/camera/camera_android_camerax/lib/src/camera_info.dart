@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camera_state.dart';
@@ -18,6 +19,7 @@ import 'zoom_state.dart';
 /// The metadata of a camera.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo.
+@immutable
 class CameraInfo extends JavaObject {
   /// Constructs a [CameraInfo] that is not automatically attached to a native object.
   CameraInfo.detached(

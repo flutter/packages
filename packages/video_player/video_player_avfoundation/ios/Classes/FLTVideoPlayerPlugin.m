@@ -645,11 +645,16 @@ NS_INLINE UIViewController *rootViewController(void) {
     } else {
       assetPath = [_registrar lookupKeyForAsset:input.asset];
     }
-    player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
-                                      frameUpdater:frameUpdater
-                                     playerFactory:_playerFactory
+    @try {
+      player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
+                                        frameUpdater:frameUpdater
+                                       playerFactory:_playerFactory
                                        enableCache:false];
-    return [self onPlayerSetup:player frameUpdater:frameUpdater];
+      return [self onPlayerSetup:player frameUpdater:frameUpdater];
+    } @catch (NSException *exception) {
+      *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
+      return nil;
+    }
   } else if (input.uri) {
     BOOL isCacheSupported = NO;
     if (input.enableCache.boolValue) {

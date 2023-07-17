@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camera.dart';
@@ -16,6 +17,7 @@ import 'use_case.dart';
 /// Provides an object to manage the camera.
 ///
 /// See https://developer.android.com/reference/androidx/camera/lifecycle/ProcessCameraProvider.
+@immutable
 class ProcessCameraProvider extends JavaObject {
   /// Creates a detached [ProcessCameraProvider].
   ProcessCameraProvider.detached(
