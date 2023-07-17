@@ -24,7 +24,8 @@ public class ExposurePointFeature extends CameraFeature<Point> {
   @Nullable private Point exposurePoint;
   private MeteringRectangle exposureRectangle;
   @NonNull private final SensorOrientationFeature sensorOrientationFeature;
-  private boolean defaultRectangleHasBeenSet = false;
+  private boolean defaultRegionsHasBeenSet = false;
+  @Nullable private MeteringRectangle[] defaultRegions;
 
   /**
    * Creates a new instance of the {@link ExposurePointFeature}.
@@ -80,24 +81,29 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       return;
     }
 
-    MeteringRectangle[] exposureRegions = null;
-
-    if (exposureRectangle != null) {
-      exposureRegions = new MeteringRectangle[] {exposureRectangle};
-    } else if (!defaultRectangleHasBeenSet) {
-      exposureRegions =
-          new MeteringRectangle[] {
-            new MeteringRectangle(0, 0, 1, 1, MeteringRectangle.METERING_WEIGHT_MAX)
-          };
-      defaultRectangleHasBeenSet = true;
-    }
-
     try {
-      requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, exposureRegions);
+      if (exposureRectangle != null) {
+        requestBuilder.set(
+            CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
+      } else if (defaultRegions != null && defaultRegions.length > 0) {
+        requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultRegions);
+      } else if (!defaultRegionsHasBeenSet) {
+        setDefaultRectangleAndSetBuilder(requestBuilder);
+      } else {
+        requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, null);
+      }
     } catch (Exception e) {
       throw new IllegalArgumentException(
           "Failed to set exposure rectangle for the ExposurePointFeature.", e);
     }
+  }
+
+  private void setDefaultRectangleAndSetBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
+    MeteringRectangle defaultRectangle =
+        new MeteringRectangle(0, 0, 1, 1, MeteringRectangle.METERING_WEIGHT_MAX);
+    defaultRegions = new MeteringRectangle[] {defaultRectangle};
+    requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultRegions);
+    defaultRegionsHasBeenSet = true;
   }
 
   private void buildExposureRectangle() {
