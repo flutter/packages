@@ -1,3 +1,8 @@
+## 0.5.0+9
+
+* Marks all Dart-wrapped Android native classes as `@immutable`.
+* Updates `CONTRIBUTING.md` to note requirements of Dart-wrapped Android native classes.
+
 ## 0.5.0+8
 
 * Fixes unawaited_futures violations.

@@ -1,3 +1,11 @@
+## 3.9.1
+
+* Adjusts SDK checks for better testability.
+
+## 3.9.0
+
+* Adds support for `WebResouceError.url`.
+
 ## 3.8.2
 
 * Fixes unawaited_futures violations.
