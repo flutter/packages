@@ -239,15 +239,18 @@ targets:
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
     timeout: 30
+    dimensions:
+      kvm: "1"
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: linux_custom_package_tests.yaml
-      # Pigeon tests need Andoid deps (thus the Linux_android base) and
-      # clang-format.
+      # Pigeon tests need Andoid deps (thus the Linux_android base), emulator,
+      # and clang-format.
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
+          {"dependency": "android_virtual_device", "version": "33"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -256,12 +259,15 @@ targets:
   - name: Linux_android custom_package_tests stable
     recipe: packages/packages
     timeout: 30
+    dimensions:
+      kvm: "1"
     properties:
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       # See comments on 'master' version above.
       dependencies: >-
         [
+          {"dependency": "android_virtual_device", "version": "33"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
