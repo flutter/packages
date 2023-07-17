@@ -104,6 +104,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   ImageCapture? imageCapture;
 
+  /// The flash mode currently configured for [imageCapture].
+  int? _currentFlashMode;
+
   /// The [ImageAnalysis] instance that can be configured to analyze individual
   /// frames.
   ImageAnalysis? imageAnalysis;
@@ -459,11 +462,30 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<XFile> takePicture(int cameraId) async {
-    // TODO(camsim99): Add support for flash mode configuration.
-    // https://github.com/flutter/flutter/issues/120715
+    if (_currentFlashMode != null) {
+      await imageCapture!.setFlashMode(_currentFlashMode!);
+    }
     final String picturePath = await imageCapture!.takePicture();
-
     return XFile(picturePath);
+  }
+
+  /// Sets the flash mode for the selected camera.
+  @override
+  Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    switch (mode) {
+      case FlashMode.off:
+        _currentFlashMode = ImageCapture.flashModeOff;
+        break;
+      case FlashMode.auto:
+        _currentFlashMode = ImageCapture.flashModeAuto;
+        break;
+      case FlashMode.always:
+        _currentFlashMode = ImageCapture.flashModeOn;
+        break;
+      case FlashMode.torch:
+        // TODO(camsim99): Implement torch mode when CameraControl is wrapped.
+        break;
+    }
   }
 
   /// Configures and starts a video recording. Returns silently without doing
