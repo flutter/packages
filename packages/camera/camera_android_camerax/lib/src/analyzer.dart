@@ -5,7 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
-import 'package:meta/meta.dart' show protected;
+import 'package:meta/meta.dart' show immutable, protected;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
@@ -16,6 +16,7 @@ import 'java_object.dart';
 /// Wrapper of callback for analyzing images.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.Analyzer.
+@immutable
 class Analyzer extends JavaObject {
   /// Creates an [Analyzer].
   Analyzer(
