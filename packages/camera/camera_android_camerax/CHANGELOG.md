@@ -1,3 +1,20 @@
+## 0.5.0+9
+
+* Marks all Dart-wrapped Android native classes as `@immutable`.
+* Updates `CONTRIBUTING.md` to note requirements of Dart-wrapped Android native classes.
+
+## 0.5.0+8
+
+* Fixes unawaited_futures violations.
+
+## 0.5.0+7
+
+* Updates Guava version to 32.0.1.
+
+## 0.5.0+6
+
+* Updates Guava version to 32.0.0.
+
 ## 0.5.0+5
 
 * Updates `README.md` to fully cover unimplemented functionality.

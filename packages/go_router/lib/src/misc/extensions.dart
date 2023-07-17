@@ -10,6 +10,8 @@ import '../router.dart';
 /// context.go('/');
 extension GoRouterHelper on BuildContext {
   /// Get a location from route name and parameters.
+  ///
+  /// This method can't be called during redirects.
   String namedLocation(
     String name, {
     Map<String, String> pathParameters = const <String, String>{},

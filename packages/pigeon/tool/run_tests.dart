@@ -38,8 +38,8 @@ Future<void> _validateGeneratedTestFiles() async {
   final String relativePigeonPath = p.relative(baseDir, from: repositoryRoot);
 
   print('Validating generated files:');
-  print('  Generating output...');
-  final int generateExitCode = await generatePigeons(baseDir: baseDir);
+  print('  Generating test output...');
+  final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
   if (generateExitCode != 0) {
     print('Generation failed; see above for errors.');
     exit(generateExitCode);
@@ -62,6 +62,60 @@ Future<void> _validateGeneratedTestFiles() async {
   }
 
   print('The following files are not updated, or not formatted correctly:');
+  modifiedFiles.map((String line) => '  $line').forEach(print);
+
+  print('\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
+      'directory, or apply the diff with the command below.\n');
+
+  final ProcessResult diffResult = await Process.run(
+    'git',
+    <String>['diff', relativePigeonPath],
+    workingDirectory: repositoryRoot,
+  );
+  if (diffResult.exitCode != 0) {
+    print('Unable to determine diff.');
+    exit(1);
+  }
+  print('patch -p1 <<DONE');
+  print(diffResult.stdout);
+  print('DONE');
+  exit(1);
+}
+
+Future<void> _validateGeneratedExampleFiles() async {
+  final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
+  final String repositoryRoot = p.dirname(p.dirname(baseDir));
+  final String relativePigeonPath = p.relative(baseDir, from: repositoryRoot);
+
+  print('Validating generated files:');
+  print('  Generating example output...');
+
+  final int generateExitCode = await generateExamplePigeons();
+
+  if (generateExitCode != 0) {
+    print('Generation failed; see above for errors.');
+    exit(generateExitCode);
+  }
+
+  print('  Formatting output...');
+  final int formatExitCode =
+      await formatAllFiles(repositoryRoot: repositoryRoot);
+  if (formatExitCode != 0) {
+    print('Formatting failed; see above for errors.');
+    exit(formatExitCode);
+  }
+
+  print('  Checking for changes...');
+  final List<String> modifiedFiles = await _modifiedFiles(
+      repositoryRoot: repositoryRoot, relativePigeonPath: relativePigeonPath);
+
+  if (modifiedFiles.isEmpty) {
+    return;
+  }
+
+  print(
+      'Either messages.dart and messages_test.dart have non-matching definitions or');
+  print('the following files are not updated, or not formatted correctly:');
   modifiedFiles.map((String line) => '  $line').forEach(print);
 
   print('\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
@@ -119,22 +173,16 @@ Future<void> main(List<String> args) async {
     // androidJavaIntegrationTests,
     // androidKotlinIntegrationTests,
   ];
-  // Run macOS and iOS tests on macOS, since that's the only place they can run.
-  // TODO(stuartmorgan): Move everything to LUCI, and eliminate the LUCI/Cirrus
-  // separation. See https://github.com/flutter/flutter/issues/120231.
-  const List<String> macOSHostLuciTests = <String>[
+  const List<String> macOSHostTests = <String>[
     iOSObjCUnitTests,
-    // TODO(stuartmorgan): Enable by default once CI issues are solved; see
-    // https://github.com/flutter/packages/pull/2816.
-    //iOSObjCIntegrationTests,
     // Currently these are testing exactly the same thing as
-    // macOSSwiftIntegrationTests, so we don't need to run both by default. This
+    // macOS*IntegrationTests, so we don't need to run both by default. This
     // should be enabled if any iOS-only tests are added (e.g., for a feature
     // not supported by macOS).
+    // iOSObjCIntegrationTests,
     // iOSSwiftIntegrationTests,
-  ];
-  const List<String> macOSHostCirrusTests = <String>[
     iOSSwiftUnitTests,
+    macOSObjCIntegrationTests,
     macOSSwiftUnitTests,
     macOSSwiftIntegrationTests,
   ];
@@ -146,8 +194,7 @@ Future<void> main(List<String> args) async {
 
   _validateTestCoverage(<List<String>>[
     linuxHostTests,
-    macOSHostLuciTests,
-    macOSHostCirrusTests,
+    macOSHostTests,
     windowsHostTests,
     // Tests that are deliberately not included in CI:
     <String>[
@@ -172,16 +219,13 @@ Future<void> main(List<String> args) async {
       print('Skipping generated file validation on stable.');
     } else {
       await _validateGeneratedTestFiles();
+      await _validateGeneratedExampleFiles();
     }
   }
 
   final List<String> testsToRun;
   if (Platform.isMacOS) {
-    if (Platform.environment['LUCI_CI'] != null) {
-      testsToRun = macOSHostLuciTests;
-    } else {
-      testsToRun = macOSHostCirrusTests;
-    }
+    testsToRun = macOSHostTests;
   } else if (Platform.isWindows) {
     testsToRun = windowsHostTests;
   } else if (Platform.isLinux) {

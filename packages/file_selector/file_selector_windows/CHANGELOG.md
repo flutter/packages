@@ -1,3 +1,7 @@
+## 0.9.3
+
+* Adds `getSaveLocation` and deprecates `getSavePath`.
+
 ## 0.9.2
 
 * Adds `getDirectoryPaths` implementation.

@@ -884,6 +884,7 @@ String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
     'Int32List': 'int[]',
     'Int64List': 'long[]',
     'Float64List': 'double[]',
+    'Object': 'Object',
   };
   if (javaTypeForDartTypeMap.containsKey(type.baseName)) {
     return javaTypeForDartTypeMap[type.baseName];

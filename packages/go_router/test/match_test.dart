@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/match.dart';
 
 void main() {
   group('RouteMatch', () {
@@ -20,7 +19,6 @@ void main() {
         remainingLocation: '/users/123',
         matchedLocation: '',
         pathParameters: pathParameters,
-        extra: const _Extra('foo'),
       );
       if (match == null) {
         fail('Null match');
@@ -28,8 +26,6 @@ void main() {
       expect(match.route, route);
       expect(match.matchedLocation, '/users/123');
       expect(pathParameters['userId'], '123');
-      expect(match.extra, const _Extra('foo'));
-      expect(match.error, isNull);
       expect(match.pageKey, isNotNull);
     });
 
@@ -44,7 +40,6 @@ void main() {
         remainingLocation: 'users/123',
         matchedLocation: '/home',
         pathParameters: pathParameters,
-        extra: const _Extra('foo'),
       );
       if (match == null) {
         fail('Null match');
@@ -52,8 +47,6 @@ void main() {
       expect(match.route, route);
       expect(match.matchedLocation, '/home/users/123');
       expect(pathParameters['userId'], '123');
-      expect(match.extra, const _Extra('foo'));
-      expect(match.error, isNull);
       expect(match.pageKey, isNotNull);
     });
 
@@ -73,7 +66,6 @@ void main() {
         remainingLocation: 'users/123',
         matchedLocation: '/home',
         pathParameters: pathParameters,
-        extra: const _Extra('foo'),
       );
       if (match == null) {
         fail('Null match');
@@ -97,7 +89,6 @@ void main() {
         remainingLocation: 'users/123',
         matchedLocation: '/home',
         pathParameters: pathParameters,
-        extra: const _Extra('foo'),
       );
 
       final RouteMatch? match2 = RouteMatch.match(
@@ -105,7 +96,6 @@ void main() {
         remainingLocation: 'users/1234',
         matchedLocation: '/home',
         pathParameters: pathParameters,
-        extra: const _Extra('foo1'),
       );
 
       expect(match1!.pageKey, match2!.pageKey);
@@ -122,7 +112,6 @@ void main() {
         remainingLocation: 'users/123',
         matchedLocation: '/home',
         pathParameters: pathParameters,
-        extra: const _Extra('foo'),
       );
 
       final RouteMatch? match2 = RouteMatch.match(
@@ -130,27 +119,11 @@ void main() {
         remainingLocation: 'users/1234',
         matchedLocation: '/home',
         pathParameters: pathParameters,
-        extra: const _Extra('foo1'),
       );
 
       expect(match1!.pageKey, match2!.pageKey);
     });
   });
-}
-
-@immutable
-class _Extra {
-  const _Extra(this.value);
-
-  final String value;
-
-  @override
-  bool operator ==(Object other) {
-    return other is _Extra && other.value == value;
-  }
-
-  @override
-  int get hashCode => value.hashCode;
 }
 
 Widget _builder(BuildContext context, GoRouterState state) =>

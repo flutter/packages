@@ -98,9 +98,6 @@ void main() {
     return cameraClosingEventSent && cameraErrorSent;
   }
 
-  // Mocks the call to clear the native InstanceManager.
-  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
-
   test('Should fetch CameraDescription instances for available cameras',
       () async {
     // Arrange
@@ -350,7 +347,7 @@ void main() {
     camera.liveCameraState = MockLiveCameraState();
     camera.imageAnalysis = MockImageAnalysis();
 
-    camera.dispose(3);
+    await camera.dispose(3);
 
     verify(camera.preview!.releaseFlutterSurfaceTexture());
     verify(camera.liveCameraState!.removeObservers());
@@ -692,7 +689,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       camera.recording = recording;
-      camera.pauseVideoRecording(0);
+      await camera.pauseVideoRecording(0);
       verify(recording.pause());
       verifyNoMoreInteractions(recording);
     });
@@ -701,7 +698,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       camera.recording = recording;
-      camera.resumeVideoRecording(0);
+      await camera.resumeVideoRecording(0);
       verify(recording.resume());
       verifyNoMoreInteractions(recording);
     });
@@ -977,7 +974,7 @@ void main() {
     // Verify camera and cameraInfo were properly updated.
     expect(camera.camera, equals(mockCamera));
     expect(camera.cameraInfo, equals(mockCameraInfo));
-    onStreamedFrameAvailableSubscription.cancel();
+    await onStreamedFrameAvailableSubscription.cancel();
   });
 
   test(

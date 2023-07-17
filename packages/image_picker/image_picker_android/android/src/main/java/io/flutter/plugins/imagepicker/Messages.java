@@ -88,6 +88,79 @@ public class Messages {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class GeneralOptions {
+    private @NonNull Boolean allowMultiple;
+
+    public @NonNull Boolean getAllowMultiple() {
+      return allowMultiple;
+    }
+
+    public void setAllowMultiple(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"allowMultiple\" is null.");
+      }
+      this.allowMultiple = setterArg;
+    }
+
+    private @NonNull Boolean usePhotoPicker;
+
+    public @NonNull Boolean getUsePhotoPicker() {
+      return usePhotoPicker;
+    }
+
+    public void setUsePhotoPicker(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"usePhotoPicker\" is null.");
+      }
+      this.usePhotoPicker = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    GeneralOptions() {}
+
+    public static final class Builder {
+
+      private @Nullable Boolean allowMultiple;
+
+      public @NonNull Builder setAllowMultiple(@NonNull Boolean setterArg) {
+        this.allowMultiple = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean usePhotoPicker;
+
+      public @NonNull Builder setUsePhotoPicker(@NonNull Boolean setterArg) {
+        this.usePhotoPicker = setterArg;
+        return this;
+      }
+
+      public @NonNull GeneralOptions build() {
+        GeneralOptions pigeonReturn = new GeneralOptions();
+        pigeonReturn.setAllowMultiple(allowMultiple);
+        pigeonReturn.setUsePhotoPicker(usePhotoPicker);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(allowMultiple);
+      toListResult.add(usePhotoPicker);
+      return toListResult;
+    }
+
+    static @NonNull GeneralOptions fromList(@NonNull ArrayList<Object> list) {
+      GeneralOptions pigeonResult = new GeneralOptions();
+      Object allowMultiple = list.get(0);
+      pigeonResult.setAllowMultiple((Boolean) allowMultiple);
+      Object usePhotoPicker = list.get(1);
+      pigeonResult.setUsePhotoPicker((Boolean) usePhotoPicker);
+      return pigeonResult;
+    }
+  }
+
   /**
    * Options for image selection and output.
    *
@@ -189,6 +262,58 @@ public class Messages {
           (quality == null)
               ? null
               : ((quality instanceof Integer) ? (Integer) quality : (Long) quality));
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class MediaSelectionOptions {
+    private @NonNull ImageSelectionOptions imageSelectionOptions;
+
+    public @NonNull ImageSelectionOptions getImageSelectionOptions() {
+      return imageSelectionOptions;
+    }
+
+    public void setImageSelectionOptions(@NonNull ImageSelectionOptions setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"imageSelectionOptions\" is null.");
+      }
+      this.imageSelectionOptions = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    MediaSelectionOptions() {}
+
+    public static final class Builder {
+
+      private @Nullable ImageSelectionOptions imageSelectionOptions;
+
+      public @NonNull Builder setImageSelectionOptions(@NonNull ImageSelectionOptions setterArg) {
+        this.imageSelectionOptions = setterArg;
+        return this;
+      }
+
+      public @NonNull MediaSelectionOptions build() {
+        MediaSelectionOptions pigeonReturn = new MediaSelectionOptions();
+        pigeonReturn.setImageSelectionOptions(imageSelectionOptions);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add((imageSelectionOptions == null) ? null : imageSelectionOptions.toList());
+      return toListResult;
+    }
+
+    static @NonNull MediaSelectionOptions fromList(@NonNull ArrayList<Object> list) {
+      MediaSelectionOptions pigeonResult = new MediaSelectionOptions();
+      Object imageSelectionOptions = list.get(0);
+      pigeonResult.setImageSelectionOptions(
+          (imageSelectionOptions == null)
+              ? null
+              : ImageSelectionOptions.fromList((ArrayList<Object>) imageSelectionOptions));
       return pigeonResult;
     }
   }
@@ -523,10 +648,14 @@ public class Messages {
         case (byte) 129:
           return CacheRetrievalResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return ImageSelectionOptions.fromList((ArrayList<Object>) readValue(buffer));
+          return GeneralOptions.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return SourceSpecification.fromList((ArrayList<Object>) readValue(buffer));
+          return ImageSelectionOptions.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
+          return MediaSelectionOptions.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return SourceSpecification.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 134:
           return VideoSelectionOptions.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -541,14 +670,20 @@ public class Messages {
       } else if (value instanceof CacheRetrievalResult) {
         stream.write(129);
         writeValue(stream, ((CacheRetrievalResult) value).toList());
-      } else if (value instanceof ImageSelectionOptions) {
+      } else if (value instanceof GeneralOptions) {
         stream.write(130);
-        writeValue(stream, ((ImageSelectionOptions) value).toList());
-      } else if (value instanceof SourceSpecification) {
+        writeValue(stream, ((GeneralOptions) value).toList());
+      } else if (value instanceof ImageSelectionOptions) {
         stream.write(131);
+        writeValue(stream, ((ImageSelectionOptions) value).toList());
+      } else if (value instanceof MediaSelectionOptions) {
+        stream.write(132);
+        writeValue(stream, ((MediaSelectionOptions) value).toList());
+      } else if (value instanceof SourceSpecification) {
+        stream.write(133);
         writeValue(stream, ((SourceSpecification) value).toList());
       } else if (value instanceof VideoSelectionOptions) {
-        stream.write(132);
+        stream.write(134);
         writeValue(stream, ((VideoSelectionOptions) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -567,8 +702,7 @@ public class Messages {
     void pickImages(
         @NonNull SourceSpecification source,
         @NonNull ImageSelectionOptions options,
-        @NonNull Boolean allowMultiple,
-        @NonNull Boolean usePhotoPicker,
+        @NonNull GeneralOptions generalOptions,
         @NonNull Result<List<String>> result);
     /**
      * Selects video and returns their paths.
@@ -579,8 +713,17 @@ public class Messages {
     void pickVideos(
         @NonNull SourceSpecification source,
         @NonNull VideoSelectionOptions options,
-        @NonNull Boolean allowMultiple,
-        @NonNull Boolean usePhotoPicker,
+        @NonNull GeneralOptions generalOptions,
+        @NonNull Result<List<String>> result);
+    /**
+     * Selects images and videos and returns their paths.
+     *
+     * <p>Elements must not be null, by convention. See
+     * https://github.com/flutter/flutter/issues/97848
+     */
+    void pickMedia(
+        @NonNull MediaSelectionOptions mediaSelectionOptions,
+        @NonNull GeneralOptions generalOptions,
         @NonNull Result<List<String>> result);
     /** Returns results from a previous app session, if any. */
     @Nullable
@@ -607,8 +750,7 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 SourceSpecification sourceArg = (SourceSpecification) args.get(0);
                 ImageSelectionOptions optionsArg = (ImageSelectionOptions) args.get(1);
-                Boolean allowMultipleArg = (Boolean) args.get(2);
-                Boolean usePhotoPickerArg = (Boolean) args.get(3);
+                GeneralOptions generalOptionsArg = (GeneralOptions) args.get(2);
                 Result<List<String>> resultCallback =
                     new Result<List<String>>() {
                       public void success(List<String> result) {
@@ -622,8 +764,7 @@ public class Messages {
                       }
                     };
 
-                api.pickImages(
-                    sourceArg, optionsArg, allowMultipleArg, usePhotoPickerArg, resultCallback);
+                api.pickImages(sourceArg, optionsArg, generalOptionsArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -644,8 +785,7 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 SourceSpecification sourceArg = (SourceSpecification) args.get(0);
                 VideoSelectionOptions optionsArg = (VideoSelectionOptions) args.get(1);
-                Boolean allowMultipleArg = (Boolean) args.get(2);
-                Boolean usePhotoPickerArg = (Boolean) args.get(3);
+                GeneralOptions generalOptionsArg = (GeneralOptions) args.get(2);
                 Result<List<String>> resultCallback =
                     new Result<List<String>>() {
                       public void success(List<String> result) {
@@ -659,8 +799,38 @@ public class Messages {
                       }
                     };
 
-                api.pickVideos(
-                    sourceArg, optionsArg, allowMultipleArg, usePhotoPickerArg, resultCallback);
+                api.pickVideos(sourceArg, optionsArg, generalOptionsArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.ImagePickerApi.pickMedia", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                MediaSelectionOptions mediaSelectionOptionsArg =
+                    (MediaSelectionOptions) args.get(0);
+                GeneralOptions generalOptionsArg = (GeneralOptions) args.get(1);
+                Result<List<String>> resultCallback =
+                    new Result<List<String>>() {
+                      public void success(List<String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.pickMedia(mediaSelectionOptionsArg, generalOptionsArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

@@ -69,6 +69,21 @@ class MockTestWKWebViewConfigurationHostApi extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
+  void setLimitsNavigationsToAppBoundDomains(
+    int? identifier,
+    bool? limit,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setLimitsNavigationsToAppBoundDomains,
+          [
+            identifier,
+            limit,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   void setMediaTypesRequiringUserActionForPlayback(
     int? identifier,
     List<_i3.WKAudiovisualMediaTypeEnumData?>? types,
@@ -306,6 +321,21 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValue: _i4.Future<Object?>.value(),
       ) as _i4.Future<Object?>);
+  @override
+  void setInspectable(
+    int? identifier,
+    bool? inspectable,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setInspectable,
+          [
+            identifier,
+            inspectable,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestUIScrollViewHostApi].

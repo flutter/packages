@@ -16,18 +16,19 @@ import 'test_camerax_library.g.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
   group('Analyzer', () {
     setUp(() {});
 
     tearDown(() {
       TestAnalyzerHostApi.setup(null);
-      TestInstanceManagerHostApi.setup(null);
     });
 
     test('HostApi create', () {
       final MockTestAnalyzerHostApi mockApi = MockTestAnalyzerHostApi();
       TestAnalyzerHostApi.setup(mockApi);
-      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
