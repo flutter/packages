@@ -26,6 +26,5 @@
 - plugin_platform_interface
 - pointer_interceptor
 - quick_actions/quick_actions
-- rfw
 - webview_flutter_android
 - webview_flutter_web

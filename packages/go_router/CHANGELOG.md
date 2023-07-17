@@ -1,3 +1,8 @@
+## NEXT
+
+- Fixes a typo in docs for `StatefulShellRoute.indexedStack(...)`.
+- Cleans some typos in the documentation and asserts.
+
 ## 9.0.3
 
 - Adds helpers for go_router_builder for StatefulShellRoute support

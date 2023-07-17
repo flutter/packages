@@ -648,7 +648,6 @@ A B C
       final RepositoryPackage package = createFakePackage(
         'a_package',
         packagesDir,
-        extraFiles: <String>[kReadmeExcerptConfigPath],
       );
 
       package.readmeFile.writeAsStringSync('''
@@ -668,40 +667,6 @@ A B C
         containsAll(<Matcher>[
           contains('Running for a_package...'),
           contains('No issues found!'),
-        ]),
-      );
-    });
-
-    test('fails when excerpts are used but the package is not configured',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
-
-      package.readmeFile.writeAsStringSync('''
-Example:
-
-<?code-excerpt "main.dart (SomeSection)"?>
-```dart
-A B C
-```
-''');
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['readme-check', '--require-excerpts'],
-          errorHandler: (Error e) {
-        commandError = e;
-      });
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('code-excerpt tag found, but the package is not configured '
-              'for excerpting. Follow the instructions at\n'
-              'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages\n'
-              'for setting up a build.excerpt.yaml file.'),
-          contains('Missing code-excerpt configuration'),
         ]),
       );
     });

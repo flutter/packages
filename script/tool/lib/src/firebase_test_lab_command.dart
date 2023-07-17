@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 
 import 'common/core.dart';
 import 'common/gradle.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
