@@ -11,6 +11,7 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
 import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
 
@@ -24,6 +25,13 @@ class CameraCaptureCallback extends CaptureCallback {
   private CameraState cameraState;
   private final CaptureTimeoutsWrapper captureTimeouts;
   private final CameraCaptureProperties captureProps;
+
+  // Lookup keys for state; overrideable for unit tests since Mockito can't mock them.
+  @VisibleForTesting @NonNull
+  CaptureResult.Key<Integer> aeStateKey = CaptureResult.CONTROL_AE_STATE;
+
+  @VisibleForTesting @NonNull
+  CaptureResult.Key<Integer> afStateKey = CaptureResult.CONTROL_AE_STATE;
 
   private CameraCaptureCallback(
       @NonNull CameraCaptureStateListener cameraStateListener,
@@ -69,8 +77,8 @@ class CameraCaptureCallback extends CaptureCallback {
   }
 
   private void process(CaptureResult result) {
-    Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
-    Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
+    Integer aeState = result.get(aeStateKey);
+    Integer afState = result.get(afStateKey);
 
     // Update capture properties
     if (result instanceof TotalCaptureResult) {

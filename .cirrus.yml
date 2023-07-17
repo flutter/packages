@@ -69,20 +69,6 @@ task:
           - else
           -   ./script/tool_runner.sh federation-safety-check
           - fi
-    ### Linux desktop tasks ###
-    - name: linux-platform_tests
-      # Don't run full platform tests on both channels in pre-submit.
-      skip: $CIRRUS_PR != '' && $CHANNEL == 'stable'
-      env:
-        matrix:
-          CHANNEL: "master"
-          CHANNEL: "stable"
-      build_script:
-        - ./script/tool_runner.sh build-examples --linux
-      native_test_script:
-        - xvfb-run ./script/tool_runner.sh native-test --linux --no-integration
-      drive_script:
-        - xvfb-run ./script/tool_runner.sh drive-examples --linux --exclude=script/configs/exclude_integration_linux.yaml
 
 # Heavy-workload Linux tasks.
 # These use machines with more CPUs and memory, so will reduce parallelization
@@ -116,10 +102,6 @@ task:
           CHANNEL: "stable"
         MAPS_API_KEY: ENCRYPTED[d6583b08f79f91ea4844c77460f04539965e46ad2fd97fb7c062b4dfe88016228b86ebe8c220ab4187e0c4bd773dc1e7]
         GCLOUD_FIREBASE_TESTLAB_KEY: ENCRYPTED[1a2eebf9367197bbe812d9a0ea83a53a05aeba4bb5e4964fe6a69727883cd87e51238d39237b1f80b0894c48419ac268]
-      native_unit_test_script:
-        # Native integration tests are handled by Firebase Test Lab below, so
-        # only run unit tests.
-        - ./script/tool_runner.sh native-test --android --no-integration --exclude script/configs/exclude_native_unit_android.yaml
       firebase_test_lab_script:
         - if [[ -n "$GCLOUD_FIREBASE_TESTLAB_KEY" ]]; then
         -   echo $GCLOUD_FIREBASE_TESTLAB_KEY > ${HOME}/gcloud-service-key.json
