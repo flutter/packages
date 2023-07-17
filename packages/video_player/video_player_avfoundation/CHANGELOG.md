@@ -1,6 +1,9 @@
-## 2.4.7
+## 2.4.8
 
 * Fixes missing `isPlaybackLikelyToKeepUp` check for iOS video player `bufferingEnd` event and `bufferingStart` event.
+
+## 2.4.7
+
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Adds iOS exception on incorrect asset path
 
