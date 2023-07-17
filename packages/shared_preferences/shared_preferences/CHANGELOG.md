@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixed the example app to be debuggable on Android.
+
 ## 2.2.0
 
 * Adds `allowList` option to setPrefix.
