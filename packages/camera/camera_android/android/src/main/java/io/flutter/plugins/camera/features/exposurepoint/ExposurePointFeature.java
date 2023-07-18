@@ -81,6 +81,11 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       return;
     }
 
+    if (!defaultRegionsHasBeenSet) {
+      defaultRegions = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
+      defaultRegionsHasBeenSet = true;
+    }
+
     try {
       if (exposureRectangle != null) {
         requestBuilder.set(
