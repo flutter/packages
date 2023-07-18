@@ -72,8 +72,6 @@ static void *statusContext = &statusContext;
 static void *presentationSizeContext = &presentationSizeContext;
 static void *durationContext = &durationContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
-static void *playbackBufferEmptyContext = &playbackBufferEmptyContext;
-static void *playbackBufferFullContext = &playbackBufferFullContext;
 static void *rateContext = &rateContext;
 
 @implementation FLTVideoPlayer
@@ -108,14 +106,6 @@ static void *rateContext = &rateContext;
          forKeyPath:@"playbackLikelyToKeepUp"
             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
             context:playbackLikelyToKeepUpContext];
-  [item addObserver:self
-         forKeyPath:@"playbackBufferEmpty"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:playbackBufferEmptyContext];
-  [item addObserver:self
-         forKeyPath:@"playbackBufferFull"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:playbackBufferFullContext];
 
   // Add observer to AVPlayer instead of AVPlayerItem since the AVPlayerItem does not have a "rate"
   // property
@@ -330,19 +320,15 @@ NS_INLINE UIViewController *rootViewController(void) {
       [self updatePlayingState];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
+    [self updatePlayingState];
     if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
-      [self updatePlayingState];
       if (_eventSink != nil) {
         _eventSink(@{@"event" : @"bufferingEnd"});
       }
-    }
-  } else if (context == playbackBufferEmptyContext) {
-    if (_eventSink != nil) {
-      _eventSink(@{@"event" : @"bufferingStart"});
-    }
-  } else if (context == playbackBufferFullContext) {
-    if (_eventSink != nil) {
-      _eventSink(@{@"event" : @"bufferingEnd"});
+    } else {
+      if (_eventSink != nil) {
+        _eventSink(@{@"event" : @"bufferingStart"});
+      }
     }
   } else if (context == rateContext) {
     // Important: Make sure to cast the object to AVPlayer when observing the rate property,
@@ -528,8 +514,6 @@ NS_INLINE UIViewController *rootViewController(void) {
   [currentItem removeObserver:self forKeyPath:@"presentationSize"];
   [currentItem removeObserver:self forKeyPath:@"duration"];
   [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
-  [currentItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
-  [currentItem removeObserver:self forKeyPath:@"playbackBufferFull"];
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
   [[NSNotificationCenter defaultCenter] removeObserver:self];

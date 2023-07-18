@@ -4,12 +4,6 @@
 # All entries here should have an explanation for why they are here, either
 # via being part of one of the default-allowed groups, or a specific reason.
 
-## Legacy allowances, for dependencies that predate the tooling.
-# TODO(stuartmorgan): Audit these. See
-# https://github.com/flutter/flutter/issues/122713
-- equatable
-- xml
-
 ## Explicit allowances
 
 # Owned by individual Flutter Team members.
