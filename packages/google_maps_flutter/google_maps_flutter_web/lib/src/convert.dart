@@ -62,7 +62,10 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
   if (configuration.scrollGesturesEnabled == false ||
       configuration.zoomGesturesEnabled == false) {
-    html.window.console.warn('`scrollGesturesEnabled` and `zoomGesturesEnabled` are now ignored on the web. Use `webGestureHandling: WebGestureHandling.none` instead.');
+    window.console.warn(
+      '`scrollGesturesEnabled` and `zoomGesturesEnabled` are now ignored on the web.'
+      ' Use `webGestureHandling: WebGestureHandling.none` instead.',
+    );
   }
 
   if (configuration.webGestureHandling != null) {
