@@ -614,12 +614,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Configures the [imageAnalysis] instance for image streaming and binds it
   /// to camera lifecycle controlled by the [processCameraProvider].
   Future<void> _configureAndBindImageAnalysisToLifecycle() async {
-    if (imageAnalysis != null &&
-        await processCameraProvider!.isBound(imageAnalysis!)) {
-      // imageAnalysis already configured and bound to lifecycle.
-      return;
-    }
-
     // Create Analyzer that can read image data for image streaming.
     final WeakReference<AndroidCameraCameraX> weakThis =
         WeakReference<AndroidCameraCameraX>(this);
@@ -659,6 +653,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Defaults to YUV_420_888 image format.
     imageAnalysis = createImageAnalysis();
     unawaited(imageAnalysis!.setAnalyzer(analyzer));
+
+    if (await processCameraProvider!.isBound(imageAnalysis!)) {
+      // No need to bind imageAnalysis to lifecycle again.
+      return;
+    }
 
     // TODO(camsim99): Reset live camera state observers here when
     // https://github.com/flutter/packages/pull/3419 lands.

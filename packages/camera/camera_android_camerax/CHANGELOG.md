@@ -2,6 +2,10 @@
 
 * Implements resolution configuration for live camera preview, image capture, and image analysis use cases.
 
+## 0.5.0+11
+
+* Fixes issue with image data not being emitted after relistening to stream returned by `onStreamedFrameAvailable`.
+
 ## 0.5.0+10
 
 * Implements off, auto, and always flash mode configurations for image capture.
