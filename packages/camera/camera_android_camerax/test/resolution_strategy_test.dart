@@ -43,33 +43,33 @@ void main() {
       Size? boundSize;
       int? fallbackRule = 5;
       expect(
-          ResolutionStrategy(
-            boundSize: boundSize,
-            fallbackRule: fallbackRule,
-            instanceManager: instanceManager,
-          ),
+          () => ResolutionStrategy(
+                boundSize: boundSize,
+                fallbackRule: fallbackRule,
+                instanceManager: instanceManager,
+              ),
           throwsArgumentError);
 
       // Expect no error if boundSize is non-null, but fallbackRule is not.
       boundSize = const Size(3, 5);
       fallbackRule = null;
       expect(
-          ResolutionStrategy(
-            boundSize: boundSize,
-            fallbackRule: fallbackRule,
-            instanceManager: instanceManager,
-          ),
+          () => ResolutionStrategy(
+                boundSize: boundSize,
+                fallbackRule: fallbackRule,
+                instanceManager: instanceManager,
+              ),
           returnsNormally);
 
       // Expect no error if boundSize and fallbackRule are both null.
       boundSize = null;
       fallbackRule = null;
       expect(
-          ResolutionStrategy(
-            boundSize: boundSize,
-            fallbackRule: fallbackRule,
-            instanceManager: instanceManager,
-          ),
+          () => ResolutionStrategy(
+                boundSize: boundSize,
+                fallbackRule: fallbackRule,
+                instanceManager: instanceManager,
+              ),
           returnsNormally);
     });
 

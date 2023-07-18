@@ -25,6 +25,7 @@ import 'package:camera_android_camerax/src/preview.dart';
 import 'package:camera_android_camerax/src/process_camera_provider.dart';
 import 'package:camera_android_camerax/src/recorder.dart';
 import 'package:camera_android_camerax/src/recording.dart';
+import 'package:camera_android_camerax/src/resolution_strategy.dart';
 import 'package:camera_android_camerax/src/system_services.dart';
 import 'package:camera_android_camerax/src/use_case.dart';
 import 'package:camera_android_camerax/src/video_capture.dart';
@@ -262,6 +263,81 @@ void main() {
 
     // Verify the camera's CameraInfo instance got updated.
     expect(camera.cameraInfo, equals(mockCameraInfo));
+  });
+
+  test(
+      'createCamera properly sets preset resolution for non-video capture use cases',
+      () async {
+    final FakeAndroidCameraCameraX camera =
+        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 90;
+    const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation);
+    const bool enableAudio = true;
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    when(mockProcessCameraProvider.bindToLifecycle(
+            camera.mockBackCameraSelector,
+            <UseCase>[camera.testPreview, camera.testImageCapture]))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    // Test non-null resolution presets.
+    for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+      await camera.createCamera(testCameraDescription, resolutionPreset,
+          enableAudio: enableAudio);
+
+      Size? expectedBoundSize;
+      ResolutionStrategy? expectedResolutionStrategy;
+      switch (resolutionPreset) {
+        case ResolutionPreset.low:
+          expectedBoundSize = const Size(320, 240);
+          break;
+        case ResolutionPreset.medium:
+          expectedBoundSize = const Size(720, 480);
+          break;
+        case ResolutionPreset.high:
+          expectedBoundSize = const Size(1280, 720);
+          break;
+        case ResolutionPreset.veryHigh:
+          expectedBoundSize = const Size(1920, 1080);
+          break;
+        case ResolutionPreset.ultraHigh:
+          expectedBoundSize = const Size(3840, 2160);
+          break;
+        case ResolutionPreset.max:
+          expectedResolutionStrategy =
+              ResolutionStrategy.getHighestAvailableStrategy(detached: true);
+          break;
+      }
+
+      // We expect the strategy to be the highest available or correspond to the
+      // expected bound size, with fallback to the closest and highest available
+      // resolution.
+      expectedResolutionStrategy ??= ResolutionStrategy.detached(
+          boundSize: expectedBoundSize,
+          fallbackRule: ResolutionStrategy.fallbackRuleClosestLower);
+
+      expect(camera.presetResolutionSelector!.resolutionStrategy!.boundSize,
+          equals(expectedResolutionStrategy.boundSize));
+      expect(camera.presetResolutionSelector!.resolutionStrategy!.fallbackRule,
+          equals(expectedResolutionStrategy.fallbackRule));
+    }
+
+    // Test null case
+    await camera.createCamera(testCameraDescription, null);
+    expect(camera.presetResolutionSelector, isNull);
   });
 
   test(
@@ -917,6 +993,7 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int cameraId = 22;
 
     camera.processCameraProvider = mockProcessCameraProvider;
@@ -925,7 +1002,9 @@ void main() {
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
     when(mockCamera.getCameraInfo())
-        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
 
     final CameraImageData mockCameraImageData = MockCameraImageData();
     final Stream<CameraImageData> imageStream =
@@ -947,6 +1026,7 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int cameraId = 22;
 
     camera.processCameraProvider = mockProcessCameraProvider;
@@ -955,7 +1035,9 @@ void main() {
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
     when(mockCamera.getCameraInfo())
-        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
 
     final CameraImageData mockCameraImageData = MockCameraImageData();
     final Stream<CameraImageData> imageStream =
@@ -1009,6 +1091,8 @@ void main() {
             mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
     when(mockImageProxy.getPlanes())
         .thenAnswer((_) => Future<List<PlaneProxy>>.value(mockPlanes));
     when(mockPlane.buffer).thenReturn(buffer);
@@ -1127,13 +1211,12 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  Preview createPreview(int targetRotation, ResolutionInfo? targetResolution) {
+  Preview createPreview(int targetRotation) {
     return testPreview;
   }
 
   @override
-  ImageCapture createImageCapture(
-      int? flashMode, ResolutionInfo? targetResolution) {
+  ImageCapture createImageCapture() {
     return testImageCapture;
   }
 
@@ -1148,7 +1231,7 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
+  ImageAnalysis createImageAnalysis() {
     return mockImageAnalysis;
   }
 }

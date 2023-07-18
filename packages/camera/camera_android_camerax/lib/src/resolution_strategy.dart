@@ -37,8 +37,8 @@ class ResolutionStrategy extends JavaObject {
   /// This should only be used outside of tests by subclasses created by this
   /// library or to create a copy for an [InstanceManager].
   ResolutionStrategy.detached({
-    required this.boundSize,
-    required this.fallbackRule,
+    this.boundSize,
+    this.fallbackRule,
     super.binaryMessenger,
     super.instanceManager,
   })  : _api = _ResolutionStrategyHostApiImpl(
@@ -99,7 +99,12 @@ class ResolutionStrategy extends JavaObject {
   static ResolutionStrategy getHighestAvailableStrategy({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
+    bool detached = false,
   }) {
+    if (detached) {
+      return ResolutionStrategy.detached(
+          binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+    }
     return ResolutionStrategy(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
   }

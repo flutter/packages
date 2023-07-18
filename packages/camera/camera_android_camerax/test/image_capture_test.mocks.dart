@@ -74,16 +74,6 @@ class MockTestImageCaptureHostApi extends _i1.Mock
       ) as _i3.Future<String>);
 }
 
-/// A class which mocks [ResolutionSelector].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockResolutionSelector extends _i1.Mock
-    implements _i4.ResolutionSelector {
-  MockResolutionSelector() {
-    _i1.throwOnMissingStub(this);
-  }
-}
-
 /// A class which mocks [TestInstanceManagerHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -101,4 +91,14 @@ class MockTestInstanceManagerHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+}
+
+/// A class which mocks [ResolutionSelector].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockResolutionSelector extends _i1.Mock
+    implements _i4.ResolutionSelector {
+  MockResolutionSelector() {
+    _i1.throwOnMissingStub(this);
+  }
 }

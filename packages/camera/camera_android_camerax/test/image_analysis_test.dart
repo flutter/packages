@@ -30,7 +30,7 @@ void main() {
       TestImageAnalysisHostApi.setup(null);
     });
 
-    test('HostApi create', () {
+    test('create calls create on the Java side', () {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
@@ -42,25 +42,25 @@ void main() {
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
       const int mockResolutionSelectorId = 24;
-      final ImageAnalysis instance = ImageAnalysis(
-        resolutionSelector: mockResolutionSelector,
-        instanceManager: instanceManager,
-      );
 
       instanceManager.addHostCreatedInstance(
           mockResolutionSelector, mockResolutionSelectorId,
           onCopy: (ResolutionSelector original) {
-        return ResolutionSelector(
-            resolutionStrategy: original.resolutionStrategy,
-            aspectRatioStrategy: original.aspectRatioStrategy);
+        return MockResolutionSelector();
       });
+
+      final ImageAnalysis instance = ImageAnalysis(
+        resolutionSelector: mockResolutionSelector,
+        instanceManager: instanceManager,
+      );
 
       verify(mockApi.create(
           argThat(equals(instanceManager.getIdentifier(instance))),
           argThat(equals(mockResolutionSelectorId))));
     });
 
-    test('setAnalyzer', () async {
+    test('setAnalyzer makes call to set analyzer on ImageAnalysis instance',
+        () async {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
@@ -107,7 +107,8 @@ void main() {
       ));
     });
 
-    test('clearAnalyzer', () async {
+    test('clearAnalyzer makes call to clear analyzer on ImageAnalysis instance',
+        () async {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);

@@ -56,9 +56,7 @@ void main() {
       instanceManager.addHostCreatedInstance(
           mockResolutionSelector, mockResolutionSelectorId,
           onCopy: (ResolutionSelector original) {
-        return ResolutionSelector(
-            resolutionStrategy: original.resolutionStrategy,
-            aspectRatioStrategy: original.aspectRatioStrategy);
+        return MockResolutionSelector();
       });
 
       Preview(

@@ -121,7 +121,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The [ResolutionSelector] that represents the resolution preset used to
   /// create a camera that will be used for capturing still images, recording
   /// video, and image analysis.
-  ResolutionSelector? _presetResolutionSelector;
+  @visibleForTesting
+  ResolutionSelector? presetResolutionSelector;
 
   /// The controller we need to broadcast the different camera events.
   ///
@@ -232,7 +233,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, cameraDescription.sensorOrientation);
     // Determine ResolutionSelector based on preset for camera UseCases.
-    _presetResolutionSelector =
+    presetResolutionSelector =
         await _getResolutionSelectorFromPreset(resolutionPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
@@ -246,7 +247,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.
-    imageCapture = createImageCapture(null);
+    imageCapture = createImageCapture();
+
+    // Configure ImageAnalysis instance. Defaults to YUV_420_888 image format.
+    imageAnalysis = createImageAnalysis();
 
     // Configure VideoCapture and Recorder instances.
     // TODO(gmackall): Enable video capture resolution configuration in createRecorder().
@@ -256,10 +260,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
     // instead of here.
-    camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
-    await _updateLiveCameraState(flutterSurfaceTextureId);
-    cameraInfo = await camera!.getCameraInfo();
+    camera = await processCameraProvider!.bindToLifecycle(
+        cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
+    await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -583,7 +586,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
     cameraImageDataStreamController = StreamController<CameraImageData>(
-      onListen: _onFrameStreamListen,
+      onListen: () => _onFrameStreamListen(cameraId),
       onCancel: _onFrameStreamCancel,
     );
     return cameraImageDataStreamController!.stream;
@@ -607,13 +610,12 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
-    await _updateLiveCameraState(cameraId);
-    cameraInfo = await camera!.getCameraInfo();
+    await _updateCameraInfoAndLiveCameraState(cameraId);
   }
 
   /// Configures the [imageAnalysis] instance for image streaming and binds it
   /// to camera lifecycle controlled by the [processCameraProvider].
-  Future<void> _configureAndBindImageAnalysisToLifecycle() async {
+  Future<void> _configureAndBindImageAnalysisToLifecycle(int cameraId) async {
     // Create Analyzer that can read image data for image streaming.
     final WeakReference<AndroidCameraCameraX> weakThis =
         WeakReference<AndroidCameraCameraX>(this);
@@ -649,21 +651,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         ? Analyzer.detached(analyze: analyze)
         : Analyzer(analyze: analyze);
 
-    // TODO(camsim99): Support resolution configuration.
-    // Defaults to YUV_420_888 image format.
-    imageAnalysis = createImageAnalysis();
     unawaited(imageAnalysis!.setAnalyzer(analyzer));
-
-    if (await processCameraProvider!.isBound(imageAnalysis!)) {
-      // No need to bind imageAnalysis to lifecycle again.
-      return;
-    }
-
-    // TODO(camsim99): Reset live camera state observers here when
-    // https://github.com/flutter/packages/pull/3419 lands.
-    camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
-    cameraInfo = await camera!.getCameraInfo();
   }
 
   /// Unbinds [useCase] from camera lifecycle controlled by the
@@ -681,8 +669,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The [onListen] callback for the stream controller used for image
   /// streaming.
-  Future<void> _onFrameStreamListen() async {
-    await _configureAndBindImageAnalysisToLifecycle();
+  Future<void> _onFrameStreamListen(int cameraId) async {
+    await _configureAndBindImageAnalysisToLifecycle(cameraId);
   }
 
   /// The [onCancel] callback for the stream controller used for image
@@ -710,15 +698,16 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods concerning camera state:
 
-  /// Adds observers to the [LiveData] of the [CameraState] of the current
+  /// Updates [cameraInfo] to the information corresponding to [camera] and
+  /// adds observers to the [LiveData] of the [CameraState] of the current
   /// [camera], saved as [liveCameraState].
   ///
   /// If a previous [liveCameraState] was stored, existing observers are
   /// removed, as well.
-  Future<void> _updateLiveCameraState(int cameraId) async {
-    final CameraInfo cameraInfo = await camera!.getCameraInfo();
+  Future<void> _updateCameraInfoAndLiveCameraState(int cameraId) async {
+    cameraInfo = await camera!.getCameraInfo();
     await liveCameraState?.removeObservers();
-    liveCameraState = await cameraInfo.getCameraState();
+    liveCameraState = await cameraInfo!.getCameraState();
     await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
   }
 
@@ -796,42 +785,49 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// closest lower resolution available.
   Future<ResolutionSelector?> _getResolutionSelectorFromPreset(
       ResolutionPreset? preset) async {
+    const int fallbackRule = ResolutionStrategy.fallbackRuleClosestLower;
+
+    Size? boundSize;
     ResolutionStrategy? resolutionStrategy;
-    const int generalFallbackRule = ResolutionStrategy.fallbackRuleClosestLower;
     switch (preset) {
       case ResolutionPreset.low:
-        resolutionStrategy = ResolutionStrategy(
-            boundSize: const Size(320, 240), fallbackRule: generalFallbackRule);
+        boundSize = const Size(320, 240);
         break;
       case ResolutionPreset.medium:
-        resolutionStrategy = ResolutionStrategy(
-            boundSize: const Size(720, 480), fallbackRule: generalFallbackRule);
+        boundSize = const Size(720, 480);
         break;
       case ResolutionPreset.high:
-        resolutionStrategy = ResolutionStrategy(
-            boundSize: const Size(1280, 720),
-            fallbackRule: generalFallbackRule);
+        boundSize = const Size(1280, 720);
         break;
       case ResolutionPreset.veryHigh:
-        resolutionStrategy = ResolutionStrategy(
-            boundSize: const Size(1920, 1080),
-            fallbackRule: generalFallbackRule);
+        boundSize = const Size(1920, 1080);
         break;
       case ResolutionPreset.ultraHigh:
-        resolutionStrategy = ResolutionStrategy(
-            boundSize: const Size(3840, 2160),
-            fallbackRule: generalFallbackRule);
+        boundSize = const Size(3840, 2160);
         break;
       case ResolutionPreset.max:
-        resolutionStrategy = ResolutionStrategy.getHighestAvailableStrategy();
+        // Automatically set strategy to choose highest available.
+        resolutionStrategy = ResolutionStrategy.getHighestAvailableStrategy(
+            detached: _shouldCreateDetachedObjectForTesting);
         break;
       case null:
         // If not preset is specified, default to CameraX's default behvaior
         // for each UseCase.
-        break;
+        return null;
     }
 
-    return ResolutionSelector(resolutionStrategy: resolutionStrategy);
+    if (_shouldCreateDetachedObjectForTesting) {
+      resolutionStrategy ??= ResolutionStrategy.detached(
+          boundSize: boundSize, fallbackRule: fallbackRule);
+      return ResolutionSelector.detached(
+          resolutionStrategy: resolutionStrategy);
+    }
+
+    resolutionStrategy ??=
+        ResolutionStrategy(boundSize: boundSize, fallbackRule: fallbackRule);
+    return ResolutionSelector(
+        resolutionStrategy: ResolutionStrategy(
+            boundSize: boundSize, fallbackRule: fallbackRule));
   }
 
   // Methods for calls that need to be tested:
@@ -869,16 +865,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   Preview createPreview(int targetRotation) {
     return Preview(
         targetRotation: targetRotation,
-        resolutionSelector: _presetResolutionSelector);
+        resolutionSelector: presetResolutionSelector);
   }
 
   /// Returns an [ImageCapture] configured with specified flash mode and
   /// the preset [ResolutionSelector].
   @visibleForTesting
-  ImageCapture createImageCapture(int? flashMode) {
-    return ImageCapture(
-        targetFlashMode: flashMode,
-        resolutionSelector: _presetResolutionSelector);
+  ImageCapture createImageCapture() {
+    return ImageCapture(resolutionSelector: presetResolutionSelector);
   }
 
   /// Returns a [Recorder] for use in video capture.
@@ -896,6 +890,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns an [ImageAnalysis] configured with the preset [ResolutionSelector].
   @visibleForTesting
   ImageAnalysis createImageAnalysis() {
-    return ImageAnalysis(resolutionSelector: _presetResolutionSelector);
+    return ImageAnalysis(resolutionSelector: presetResolutionSelector);
   }
 }

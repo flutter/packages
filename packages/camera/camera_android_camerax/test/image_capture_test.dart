@@ -58,9 +58,7 @@ void main() {
       instanceManager.addHostCreatedInstance(
           mockResolutionSelector, mockResolutionSelectorId,
           onCopy: (ResolutionSelector original) {
-        return ResolutionSelector(
-            resolutionStrategy: original.resolutionStrategy,
-            aspectRatioStrategy: original.aspectRatioStrategy);
+        return MockResolutionSelector();
       });
 
       ImageCapture(
@@ -72,7 +70,7 @@ void main() {
       verify(mockApi.create(
           argThat(isA<int>()),
           argThat(equals(targetFlashMode)),
-          argThat(equals(mockResolutionSelector))));
+          argThat(equals(mockResolutionSelectorId))));
     });
 
     test('setFlashMode makes call to set flash mode for ImageCapture instance',
