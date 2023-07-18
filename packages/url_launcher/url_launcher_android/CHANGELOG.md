@@ -1,3 +1,16 @@
+## 6.0.36
+
+* Bumps androidx.annotation:annotation from 1.2.0 to 1.6.0.
+* Adds a dependency on kotlin-bom to align versions of Kotlin transitive dependencies.
+
+## 6.0.35
+
+* Converts method channels to Pigeon.
+
+## 6.0.34
+
+* Reverts ContextCompat usage that caused flutter/flutter#127014
+
 ## 6.0.33
 
 * Explicitly sets if reciever for close should be exported.

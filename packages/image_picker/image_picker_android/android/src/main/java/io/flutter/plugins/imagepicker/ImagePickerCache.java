@@ -7,6 +7,7 @@ package io.flutter.plugins.imagepicker;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import java.util.ArrayList;
@@ -51,10 +52,10 @@ class ImagePickerCache {
   @VisibleForTesting
   static final String SHARED_PREFERENCES_NAME = "flutter_image_picker_shared_preference";
 
-  private final SharedPreferences prefs;
+  private final @NonNull Context context;
 
-  ImagePickerCache(Context context) {
-    prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+  ImagePickerCache(final @NonNull Context context) {
+    this.context = context;
   }
 
   void saveType(CacheType type) {
@@ -69,10 +70,14 @@ class ImagePickerCache {
   }
 
   private void setType(String type) {
+    final SharedPreferences prefs =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     prefs.edit().putString(SHARED_PREFERENCE_TYPE_KEY, type).apply();
   }
 
   void saveDimensionWithOutputOptions(Messages.ImageSelectionOptions options) {
+    final SharedPreferences prefs =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = prefs.edit();
     if (options.getMaxWidth() != null) {
       editor.putLong(
@@ -87,16 +92,21 @@ class ImagePickerCache {
   }
 
   void savePendingCameraMediaUriPath(Uri uri) {
+    final SharedPreferences prefs =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     prefs.edit().putString(SHARED_PREFERENCE_PENDING_IMAGE_URI_PATH_KEY, uri.getPath()).apply();
   }
 
   String retrievePendingCameraMediaUriPath() {
-
+    final SharedPreferences prefs =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     return prefs.getString(SHARED_PREFERENCE_PENDING_IMAGE_URI_PATH_KEY, "");
   }
 
   void saveResult(
       @Nullable ArrayList<String> path, @Nullable String errorCode, @Nullable String errorMessage) {
+    final SharedPreferences prefs =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
     SharedPreferences.Editor editor = prefs.edit();
     if (path != null) {
@@ -113,12 +123,17 @@ class ImagePickerCache {
   }
 
   void clear() {
+    final SharedPreferences prefs =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     prefs.edit().clear().apply();
   }
 
   Map<String, Object> getCacheMap() {
     Map<String, Object> resultMap = new HashMap<>();
     boolean hasData = false;
+
+    final SharedPreferences prefs =
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
     if (prefs.contains(FLUTTER_IMAGE_PICKER_IMAGE_PATH_KEY)) {
       final Set<String> imagePathList =

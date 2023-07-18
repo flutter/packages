@@ -290,7 +290,7 @@ class GisSdkClient {
 
   /// Revokes the current authentication.
   Future<void> signOut() async {
-    clearAuthCache();
+    await clearAuthCache();
     id.disableAutoSelect();
   }
 
@@ -299,7 +299,7 @@ class GisSdkClient {
     if (_lastTokenResponse != null) {
       oauth2.revoke(_lastTokenResponse!.access_token);
     }
-    signOut();
+    await signOut();
   }
 
   /// Returns true if the client has recognized this user before.

@@ -87,21 +87,13 @@ class _ExampleState extends State<Example> {
         },
       );
     } else {
-      // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-      // ignore: prefer_const_constructors
-      result = Material(
-        // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-        // ignore: prefer_const_constructors
+      result = const Material(
         child: SafeArea(
-          // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-          // ignore: prefer_const_constructors
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-            // ignore: prefer_const_constructors
+            padding: EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const <Widget>[
+              children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 100.0), child: Text('REMOTE', textAlign: TextAlign.center, style: TextStyle(letterSpacing: 12.0))),
                 Expanded(child: DecoratedBox(decoration: FlutterLogoDecoration(style: FlutterLogoStyle.horizontal))),
                 Padding(padding: EdgeInsets.only(left: 100.0), child: Text('WIDGETS', textAlign: TextAlign.center, style: TextStyle(letterSpacing: 12.0))),

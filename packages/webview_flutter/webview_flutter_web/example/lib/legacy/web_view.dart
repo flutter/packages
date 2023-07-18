@@ -129,7 +129,7 @@ class WebViewController {
   WebViewController(
     this._widget,
     this._webViewPlatformController,
-  ) : assert(_webViewPlatformController != null) {
+  ) {
     _settings = _webSettingsFromWidget(_widget);
   }
 
@@ -151,7 +151,6 @@ class WebViewController {
     String url, {
     Map<String, String>? headers,
   }) async {
-    assert(url != null);
     _validateUrlString(url);
     return _webViewPlatformController.loadUrl(url, headers);
   }
@@ -317,11 +316,9 @@ class WebViewController {
     assert(currentValue.hasNavigationDelegate != null);
     assert(currentValue.hasProgressTracking != null);
     assert(currentValue.debuggingEnabled != null);
-    assert(currentValue.userAgent != null);
     assert(newValue.javascriptMode != null);
     assert(newValue.hasNavigationDelegate != null);
     assert(newValue.debuggingEnabled != null);
-    assert(newValue.userAgent != null);
     assert(newValue.zoomEnabled != null);
 
     JavascriptMode? javascriptMode;

@@ -1,5 +1,6 @@
-## NEXT
+## 0.9.2
 
+* Adds `getSaveLocation` and deprecates `getSavePath`.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 0.9.1+3

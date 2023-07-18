@@ -24,3 +24,4 @@ tasks:
     args: ["drive-examples", "--ios", "--exclude=script/configs/exclude_integration_ios.yaml"]
   - name: remove simulator
     script: .ci/scripts/remove_simulator.sh
+    always: true

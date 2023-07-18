@@ -36,6 +36,9 @@ extension $RequiredExtraRouteExtension on RequiredExtraRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $optionalExtraRoute => GoRouteData.$route(
@@ -60,6 +63,9 @@ extension $OptionalExtraRouteExtension on OptionalExtraRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $splashRoute => GoRouteData.$route(
@@ -80,4 +86,6 @@ extension $SplashRouteExtension on SplashRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

@@ -398,7 +398,6 @@ class SKPaymentWrapper {
   /// types of all of the members on this class. The `map` parameter must not be
   /// null.
   factory SKPaymentWrapper.fromJson(Map<String, dynamic> map) {
-    assert(map != null);
     return _$SKPaymentWrapperFromJson(map);
   }
 
@@ -515,7 +514,6 @@ class SKPaymentDiscountWrapper {
   /// The map needs to have named string keys with values matching the names and
   /// types of all of the members on this class.
   factory SKPaymentDiscountWrapper.fromJson(Map<String, dynamic> map) {
-    assert(map != null);
     return _$SKPaymentDiscountWrapperFromJson(map);
   }
 

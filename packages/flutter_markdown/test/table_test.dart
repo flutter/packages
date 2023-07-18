@@ -122,6 +122,66 @@ void defineTests() {
     );
 
     testWidgets(
+      'table cell vertical alignment should default to middle',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme);
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Table table = tester.widget(find.byType(Table));
+
+        expect(
+            table.defaultVerticalAlignment, TableCellVerticalAlignment.middle);
+      },
+    );
+
+    testWidgets(
+      'table cell vertical alignment should follow stylesheet',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        const TableCellVerticalAlignment tableCellVerticalAlignment =
+            TableCellVerticalAlignment.top;
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+            .copyWith(tableVerticalAlignment: tableCellVerticalAlignment);
+
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Table table = tester.widget(find.byType(Table));
+
+        expect(table.defaultVerticalAlignment, tableCellVerticalAlignment);
+      },
+    );
+
+    testWidgets(
+      'table cell vertical alignment should follow stylesheet for different values',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        const TableCellVerticalAlignment tableCellVerticalAlignment =
+            TableCellVerticalAlignment.bottom;
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+            .copyWith(tableVerticalAlignment: tableCellVerticalAlignment);
+
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Table table = tester.widget(find.byType(Table));
+
+        expect(table.defaultVerticalAlignment, tableCellVerticalAlignment);
+      },
+    );
+
+    testWidgets(
       'table with last row of empty table cells',
       (WidgetTester tester) async {
         final ThemeData theme =

@@ -176,6 +176,51 @@ class ImagePickerIOS extends ImagePickerPlatform {
   }
 
   @override
+  Future<List<XFile>> getMedia({
+    required MediaOptions options,
+  }) async {
+    final MediaSelectionOptions mediaSelectionOptions =
+        _mediaOptionsToMediaSelectionOptions(options);
+
+    return (await _hostApi.pickMedia(mediaSelectionOptions))
+        .map((String? path) => XFile(path!))
+        .toList();
+  }
+
+  MaxSize _imageOptionsToMaxSizeWithValidation(ImageOptions imageOptions) {
+    final double? maxHeight = imageOptions.maxHeight;
+    final double? maxWidth = imageOptions.maxWidth;
+    final int? imageQuality = imageOptions.imageQuality;
+
+    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
+      throw ArgumentError.value(
+          imageQuality, 'imageQuality', 'must be between 0 and 100');
+    }
+
+    if (maxWidth != null && maxWidth < 0) {
+      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
+    }
+
+    if (maxHeight != null && maxHeight < 0) {
+      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
+    }
+
+    return MaxSize(width: maxWidth, height: maxHeight);
+  }
+
+  MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(
+      MediaOptions mediaOptions) {
+    final MaxSize maxSize =
+        _imageOptionsToMaxSizeWithValidation(mediaOptions.imageOptions);
+    return MediaSelectionOptions(
+      maxSize: maxSize,
+      imageQuality: mediaOptions.imageOptions.imageQuality,
+      requestFullMetadata: mediaOptions.imageOptions.requestFullMetadata,
+      allowMultiple: mediaOptions.allowMultiple,
+    );
+  }
+
+  @override
   Future<PickedFile?> pickVideo({
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,

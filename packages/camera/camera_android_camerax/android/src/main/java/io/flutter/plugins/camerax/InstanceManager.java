@@ -67,7 +67,7 @@ public class InstanceManager {
    * @return a new `InstanceManager`.
    */
   @NonNull
-  public static InstanceManager create(FinalizationListener finalizationListener) {
+  public static InstanceManager create(@NonNull FinalizationListener finalizationListener) {
     return new InstanceManager(finalizationListener);
   }
 
@@ -109,7 +109,7 @@ public class InstanceManager {
    *     `null` if the manager doesn't contain the value.
    */
   @Nullable
-  public Long getIdentifierForStrongReference(Object instance) {
+  public Long getIdentifierForStrongReference(@Nullable Object instance) {
     logWarningIfFinalizationListenerHasStopped();
 
     final Long identifier = identifiers.get(instance);
@@ -130,7 +130,7 @@ public class InstanceManager {
    * @param identifier the identifier to be paired with instance. This value must be >= 0 and
    *     unique.
    */
-  public void addDartCreatedInstance(Object instance, long identifier) {
+  public void addDartCreatedInstance(@NonNull Object instance, long identifier) {
     logWarningIfFinalizationListenerHasStopped();
     addInstance(instance, identifier);
   }
@@ -141,7 +141,7 @@ public class InstanceManager {
    * @param instance the instance to be stored. This must be unique to all other added instances.
    * @return the unique identifier (>= 0) stored with instance.
    */
-  public long addHostCreatedInstance(Object instance) {
+  public long addHostCreatedInstance(@NonNull Object instance) {
     logWarningIfFinalizationListenerHasStopped();
 
     if (containsInstance(instance)) {
@@ -178,7 +178,7 @@ public class InstanceManager {
    * @param instance the instance whose presence in this manager is to be tested.
    * @return whether this manager contains the given `instance`.
    */
-  public boolean containsInstance(Object instance) {
+  public boolean containsInstance(@Nullable Object instance) {
     logWarningIfFinalizationListenerHasStopped();
     return identifiers.containsKey(instance);
   }

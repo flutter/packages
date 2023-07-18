@@ -229,12 +229,12 @@ class CameraController extends ValueNotifier<CameraValue> {
       enableAudio: enableAudio,
     );
 
-    CameraPlatform.instance
+    unawaited(CameraPlatform.instance
         .onCameraInitialized(_cameraId)
         .first
         .then((CameraInitializedEvent event) {
       initializeCompleter.complete(event);
-    });
+    }));
 
     await CameraPlatform.instance.initializeCamera(
       _cameraId,
@@ -444,8 +444,8 @@ class CameraController extends ValueNotifier<CameraValue> {
     if (_isDisposed) {
       return;
     }
-    _deviceOrientationSubscription?.cancel();
     _isDisposed = true;
+    await _deviceOrientationSubscription?.cancel();
     super.dispose();
     if (_initCalled != null) {
       await _initCalled;

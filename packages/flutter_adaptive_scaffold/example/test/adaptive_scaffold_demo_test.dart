@@ -33,7 +33,7 @@ void main() {
     expect(smallBody, findsOneWidget);
     expect(bnav, findsOneWidget);
     expect(tester.getTopLeft(smallBody), Offset.zero);
-    expect(tester.getTopLeft(bnav), const Offset(0, 744));
+    expect(tester.getTopLeft(bnav), const Offset(0, 720));
     expect(body, findsNothing);
     expect(largeBody, findsNothing);
     expect(pnav, findsNothing);
@@ -73,22 +73,22 @@ void main() {
 
     expect(tester.getTopLeft(b), const Offset(17.6, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(778.2, 755.2), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(778.2, 736), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(1178.2, 755.2), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(1178.2, 736), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(tester.getTopLeft(b), const Offset(70.4, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(416.0, 788.8), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(416.0, 784), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(816, 788.8), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(816, 784), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));

@@ -1,0 +1,10 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+  - name: create all_packages app
+    script: .ci/scripts/create_all_packages_app.sh
+  # No debug version, unlike the other platforms, since web does not support
+  # debug builds.
+  - name: build all_packages app for Web release
+    script: .ci/scripts/build_all_packages_app.sh
+    args: ["web", "release"]

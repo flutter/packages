@@ -79,6 +79,13 @@ class FileUtils {
       // target file was written in full. Flushing the stream merely moves
       // the bytes into the OS, not necessarily to the file.
       return null;
+    } catch (SecurityException e) {
+      // Calling `ContentResolver#openInputStream()` has been reported to throw a
+      // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
+      // return `null`.
+      //
+      // See https://github.com/flutter/flutter/issues/100025 for more details.
+      return null;
     }
   }
 
@@ -130,7 +137,11 @@ class FileUtils {
   }
 
   private static String getBaseName(String fileName) {
+    int lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex < 0) {
+      return fileName;
+    }
     // Basename is everything before the last '.'.
-    return fileName.substring(0, fileName.lastIndexOf('.'));
+    return fileName.substring(0, lastDotIndex);
   }
 }

@@ -4,13 +4,14 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ProcessCameraProviderFlutterApi;
 
 public class ProcessCameraProviderFlutterApiImpl extends ProcessCameraProviderFlutterApi {
   public ProcessCameraProviderFlutterApiImpl(
-      BinaryMessenger binaryMessenger, InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     super(binaryMessenger);
     this.instanceManager = instanceManager;
   }

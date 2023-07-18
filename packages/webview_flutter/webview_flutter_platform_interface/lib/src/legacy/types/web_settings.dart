@@ -85,7 +85,7 @@ class WebSettings {
     this.allowsInlineMediaPlayback,
     this.zoomEnabled,
     required this.userAgent,
-  }) : assert(userAgent != null);
+  });
 
   /// The JavaScript execution mode to be used by the webview.
   final JavascriptMode? javascriptMode;

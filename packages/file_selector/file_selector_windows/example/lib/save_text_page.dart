@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -17,19 +18,39 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final String? path = await FileSelectorPlatform.instance.getSavePath(
-      // Operation was canceled by the user.
-      suggestedName: fileName,
+    final FileSaveLocation? result =
+        await FileSelectorPlatform.instance.getSaveLocation(
+      options: SaveDialogOptions(suggestedName: fileName),
+      acceptedTypeGroups: const <XTypeGroup>[
+        XTypeGroup(
+          label: 'Plain text',
+          extensions: <String>['txt'],
+        ),
+        XTypeGroup(
+          label: 'JSON',
+          extensions: <String>['json'],
+        ),
+      ],
     );
-    if (path == null) {
+    // Operation was canceled by the user.
+    if (result == null) {
       return;
+    }
+    String path = result.path;
+    // Append an extension based on the selected type group if the user didn't
+    // include one.
+    if (!path.split(Platform.pathSeparator).last.contains('.')) {
+      final XTypeGroup? activeGroup = result.activeFilter;
+      if (activeGroup != null) {
+        // The group is one of the groups passed in above, each of which has
+        // exactly one `extensions` entry.
+        path = '$path.${activeGroup.extensions!.first}';
+      }
     }
     final String text = _contentController.text;
     final Uint8List fileData = Uint8List.fromList(text.codeUnits);
-    const String fileMimeType = 'text/plain';
-    final XFile textFile =
-        XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
-    await textFile.saveTo(path);
+    final XFile textFile = XFile.fromData(fileData, name: fileName);
+    await textFile.saveTo(result.path);
   }
 
   @override

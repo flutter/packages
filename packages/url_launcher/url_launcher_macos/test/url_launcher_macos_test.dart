@@ -34,13 +34,13 @@ void main() {
 
       test('invalid URL returns a PlatformException', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
-        expectLater(launcher.canLaunch('invalid://u r l'),
+        await expectLater(launcher.canLaunch('invalid://u r l'),
             throwsA(isA<PlatformException>()));
       });
 
       test('passes unexpected PlatformExceptions through', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
-        expectLater(launcher.canLaunch('unexpectedthrow://someexception'),
+        await expectLater(launcher.canLaunch('unexpectedthrow://someexception'),
             throwsA(isA<PlatformException>()));
       });
     });
@@ -78,7 +78,7 @@ void main() {
 
       test('invalid URL returns a PlatformException', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
-        expectLater(
+        await expectLater(
             launcher.launch(
               'invalid://u r l',
               useSafariVC: false,
@@ -93,7 +93,7 @@ void main() {
 
       test('passes unexpected PlatformExceptions through', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
-        expectLater(
+        await expectLater(
             launcher.launch(
               'unexpectedthrow://someexception',
               useSafariVC: false,

@@ -454,6 +454,23 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> setGeolocationPermissionsPromptCallbacks({
+    _i6.OnGeolocationPermissionsShowPrompt? onShowPrompt,
+    _i6.OnGeolocationPermissionsHidePrompt? onHidePrompt,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setGeolocationPermissionsPromptCallbacks,
+          [],
+          {
+            #onShowPrompt: onShowPrompt,
+            #onHidePrompt: onHidePrompt,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].

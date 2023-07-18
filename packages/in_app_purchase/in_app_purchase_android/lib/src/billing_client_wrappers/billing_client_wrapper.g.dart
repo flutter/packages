@@ -21,9 +21,9 @@ const _$BillingResponseEnumMap = {
   BillingResponse.itemNotOwned: 8,
 };
 
-const _$SkuTypeEnumMap = {
-  SkuType.inapp: 'inapp',
-  SkuType.subs: 'subs',
+const _$ProductTypeEnumMap = {
+  ProductType.inapp: 'inapp',
+  ProductType.subs: 'subs',
 };
 
 const _$ProrationModeEnumMap = {
@@ -38,6 +38,7 @@ const _$ProrationModeEnumMap = {
 const _$BillingClientFeatureEnumMap = {
   BillingClientFeature.inAppItemsOnVR: 'inAppItemsOnVr',
   BillingClientFeature.priceChangeConfirmation: 'priceChangeConfirmation',
+  BillingClientFeature.productDetails: 'fff',
   BillingClientFeature.subscriptions: 'subscriptions',
   BillingClientFeature.subscriptionsOnVR: 'subscriptionsOnVr',
   BillingClientFeature.subscriptionsUpdate: 'subscriptionsUpdate',

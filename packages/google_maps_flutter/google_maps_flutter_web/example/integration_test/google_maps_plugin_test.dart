@@ -197,6 +197,15 @@ void main() {
         expect(style.stylers?.length, 1);
         expect(getProperty<String>(style.stylers![0]!, 'color'), '#6b9a76');
       });
+
+      testWidgets('throws MapStyleException for invalid styles',
+          (WidgetTester tester) async {
+        plugin.debugSetMapById(<int, GoogleMapController>{0: controller});
+
+        expect(() async {
+          await plugin.setMapStyle('invalid_style', mapId: 0);
+        }, throwsA(isA<MapStyleException>()));
+      });
     });
 
     group('Noop methods:', () {

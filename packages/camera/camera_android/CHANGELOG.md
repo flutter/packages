@@ -1,5 +1,20 @@
-## NEXT
+## 0.10.8+4
 
+* Adjusts SDK checks for better testability.
+
+## 0.10.8+3
+
+* Fixes unawaited_futures violations.
+* Removes duplicate line in `MediaRecorderBuilder.java`.
+* Adds support for concurrently capturing images and image streaming/recording.
+
+## 0.10.8+2
+
+* Removes obsolete null checks on non-nullable values.
+
+## 0.10.8+1
+
+* Fixes lint errors.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 0.10.8

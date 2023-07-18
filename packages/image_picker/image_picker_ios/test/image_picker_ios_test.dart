@@ -72,6 +72,19 @@ class _ApiLogger implements TestHostImagePickerApi {
   }
 
   @override
+  Future<List<String?>> pickMedia(
+      MediaSelectionOptions mediaSelectionOptions) async {
+    calls.add(_LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+      'maxWidth': mediaSelectionOptions.maxSize.width,
+      'maxHeight': mediaSelectionOptions.maxSize.height,
+      'imageQuality': mediaSelectionOptions.imageQuality,
+      'requestFullMetadata': mediaSelectionOptions.requestFullMetadata,
+      'allowMultiple': mediaSelectionOptions.allowMultiple,
+    }));
+    return returnValue as List<String?>;
+  }
+
+  @override
   Future<String?> pickVideo(
       SourceSpecification source, int? maxDurationSeconds) async {
     calls.add(_LoggedMethodCall('pickVideo', arguments: <String, dynamic>{
@@ -875,6 +888,227 @@ void main() {
 
       expect(await picker.getMultiImage(), isNull);
       expect(await picker.getMultiImage(), isNull);
+    });
+  });
+
+  group('#getMedia', () {
+    test('calls the method correctly', () async {
+      log.returnValue = <String>['0', '1'];
+      await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+
+      expect(
+        log.calls,
+        <_LoggedMethodCall>[
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': null,
+            'maxHeight': null,
+            'imageQuality': null,
+            'requestFullMetadata': true,
+            'allowMultiple': true
+          }),
+        ],
+      );
+    });
+
+    test('passes the width and height arguments correctly', () async {
+      log.returnValue = <String>['0', '1'];
+      await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+      await picker.getMedia(
+          options: MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions.createAndValidate(
+          maxWidth: 10.0,
+        ),
+      ));
+      await picker.getMedia(
+          options: MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions.createAndValidate(
+          maxHeight: 10.0,
+        ),
+      ));
+      await picker.getMedia(
+          options: MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions.createAndValidate(
+          maxWidth: 10.0,
+          maxHeight: 20.0,
+        ),
+      ));
+      await picker.getMedia(
+          options: MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions.createAndValidate(
+          maxWidth: 10.0,
+          imageQuality: 70,
+        ),
+      ));
+      await picker.getMedia(
+          options: MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions.createAndValidate(
+          maxHeight: 10.0,
+          imageQuality: 70,
+        ),
+      ));
+      await picker.getMedia(
+          options: MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions.createAndValidate(
+          maxWidth: 10.0,
+          maxHeight: 20.0,
+          imageQuality: 70,
+        ),
+      ));
+
+      expect(
+        log.calls,
+        <_LoggedMethodCall>[
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': null,
+            'maxHeight': null,
+            'imageQuality': null,
+            'requestFullMetadata': true,
+            'allowMultiple': true
+          }),
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': 10.0,
+            'maxHeight': null,
+            'imageQuality': null,
+            'requestFullMetadata': true,
+            'allowMultiple': true
+          }),
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': null,
+            'maxHeight': 10.0,
+            'imageQuality': null,
+            'requestFullMetadata': true,
+            'allowMultiple': true
+          }),
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': 10.0,
+            'maxHeight': 20.0,
+            'imageQuality': null,
+            'requestFullMetadata': true,
+            'allowMultiple': true
+          }),
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': 10.0,
+            'maxHeight': null,
+            'imageQuality': 70,
+            'requestFullMetadata': true,
+            'allowMultiple': true
+          }),
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': null,
+            'maxHeight': 10.0,
+            'imageQuality': 70,
+            'requestFullMetadata': true,
+            'allowMultiple': true
+          }),
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': 10.0,
+            'maxHeight': 20.0,
+            'imageQuality': 70,
+            'requestFullMetadata': true,
+            'allowMultiple': true
+          }),
+        ],
+      );
+    });
+
+    test('passes request metadata argument correctly', () async {
+      log.returnValue = <String>['0', '1'];
+      await picker.getMedia(
+          options: const MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions(requestFullMetadata: false),
+      ));
+
+      expect(
+        log.calls,
+        <_LoggedMethodCall>[
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': null,
+            'maxHeight': null,
+            'imageQuality': null,
+            'requestFullMetadata': false,
+            'allowMultiple': true
+          }),
+        ],
+      );
+    });
+
+    test('passes allowMultiple argument correctly', () async {
+      log.returnValue = <String>['0', '1'];
+      await picker.getMedia(
+          options: const MediaOptions(
+        allowMultiple: false,
+      ));
+
+      expect(
+        log.calls,
+        <_LoggedMethodCall>[
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': null,
+            'maxHeight': null,
+            'imageQuality': null,
+            'requestFullMetadata': true,
+            'allowMultiple': false
+          }),
+        ],
+      );
+    });
+
+    test('does not accept a negative width or height argument', () {
+      log.returnValue = <String>['0', '1'];
+      expect(
+        () => picker.getMedia(
+            options: MediaOptions(
+          allowMultiple: true,
+          imageOptions: ImageOptions.createAndValidate(maxWidth: -1.0),
+        )),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+            options: MediaOptions(
+          allowMultiple: true,
+          imageOptions: ImageOptions.createAndValidate(maxHeight: -1.0),
+        )),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept a invalid imageQuality argument', () {
+      log.returnValue = <String>['0', '1'];
+      expect(
+        () => picker.getMedia(
+            options: MediaOptions(
+          allowMultiple: true,
+          imageOptions: ImageOptions.createAndValidate(imageQuality: -1),
+        )),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+            options: MediaOptions(
+          allowMultiple: true,
+          imageOptions: ImageOptions.createAndValidate(imageQuality: 101),
+        )),
+        throwsArgumentError,
+      );
+    });
+
+    test('handles a empty path response gracefully', () async {
+      log.returnValue = <String>[];
+
+      expect(
+          await picker.getMedia(
+              options: const MediaOptions(allowMultiple: true)),
+          <String>[]);
     });
   });
 

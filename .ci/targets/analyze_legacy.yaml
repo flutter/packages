@@ -1,0 +1,11 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+  # Does a sanity check that packages at least pass analysis on the N-1 and N-2
+  # versions of Flutter stable if the package claims to support that version.
+  # This is to minimize accidentally making changes that break old versions
+  # (which we don't commit to supporting, but don't want to actively break)
+  # without updating the constraints.
+  # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#supported-flutter-versions
+  - name: analyze - legacy
+    script: .ci/scripts/analyze_legacy.sh

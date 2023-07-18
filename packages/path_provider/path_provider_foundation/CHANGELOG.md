@@ -1,3 +1,8 @@
+## 2.2.4
+
+* Updates to the latest version of `pigeon`.
+* Updates minimum supported macOS version to 10.14.
+
 ## 2.2.3
 
 * Updates minimum iOS version to 11.

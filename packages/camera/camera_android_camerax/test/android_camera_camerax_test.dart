@@ -98,9 +98,6 @@ void main() {
     return cameraClosingEventSent && cameraErrorSent;
   }
 
-  // Mocks the call to clear the native InstanceManager.
-  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
-
   test('Should fetch CameraDescription instances for available cameras',
       () async {
     // Arrange
@@ -350,7 +347,7 @@ void main() {
     camera.liveCameraState = MockLiveCameraState();
     camera.imageAnalysis = MockImageAnalysis();
 
-    camera.dispose(3);
+    await camera.dispose(3);
 
     verify(camera.preview!.releaseFlutterSurfaceTexture());
     verify(camera.liveCameraState!.removeObservers());
@@ -692,7 +689,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       camera.recording = recording;
-      camera.pauseVideoRecording(0);
+      await camera.pauseVideoRecording(0);
       verify(recording.pause());
       verifyNoMoreInteractions(recording);
     });
@@ -701,7 +698,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       camera.recording = recording;
-      camera.resumeVideoRecording(0);
+      await camera.resumeVideoRecording(0);
       verify(recording.resume());
       verifyNoMoreInteractions(recording);
     });
@@ -782,8 +779,6 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const String testPicturePath = 'test/absolute/path/to/picture';
 
-    camera.processCameraProvider = MockProcessCameraProvider();
-    camera.cameraSelector = MockCameraSelector();
     camera.imageCapture = MockImageCapture();
 
     when(camera.imageCapture!.takePicture())
@@ -792,6 +787,41 @@ void main() {
     final XFile imageFile = await camera.takePicture(3);
 
     expect(imageFile.path, equals(testPicturePath));
+  });
+
+  test('setFlashMode configures ImageCapture with expected flash mode',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 22;
+
+    camera.imageCapture = MockImageCapture();
+
+    for (final FlashMode flashMode in FlashMode.values) {
+      await camera.setFlashMode(cameraId, flashMode);
+
+      int? expectedFlashMode;
+      switch (flashMode) {
+        case FlashMode.off:
+          expectedFlashMode = ImageCapture.flashModeOff;
+          break;
+        case FlashMode.auto:
+          expectedFlashMode = ImageCapture.flashModeAuto;
+          break;
+        case FlashMode.always:
+          expectedFlashMode = ImageCapture.flashModeOn;
+          break;
+        case FlashMode.torch:
+          // TODO(camsim99): Test torch mode when implemented.
+          break;
+      }
+
+      if (expectedFlashMode == null) {
+        continue;
+      }
+
+      await camera.takePicture(cameraId);
+      verify(camera.imageCapture!.setFlashMode(expectedFlashMode));
+    }
   });
 
   test('getMinExposureOffset returns expected exposure offset', () async {
@@ -977,7 +1007,7 @@ void main() {
     // Verify camera and cameraInfo were properly updated.
     expect(camera.camera, equals(mockCamera));
     expect(camera.cameraInfo, equals(mockCameraInfo));
-    onStreamedFrameAvailableSubscription.cancel();
+    await onStreamedFrameAvailableSubscription.cancel();
   });
 
   test(

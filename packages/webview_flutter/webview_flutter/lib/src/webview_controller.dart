@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -155,7 +153,7 @@ class WebViewController {
     return platform.loadHtmlString(html, baseUrl: baseUrl);
   }
 
-  /// Makes a specific HTTP request ands loads the response in the webview.
+  /// Makes a specific HTTP request and loads the response in the webview.
   ///
   /// [method] must be one of the supported HTTP methods in [LoadRequestMethod].
   ///

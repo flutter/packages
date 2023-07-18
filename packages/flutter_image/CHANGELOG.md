@@ -1,5 +1,6 @@
-## NEXT
+## 4.1.6
 
+* Fixes unawaited_futures violations.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Aligns Dart and Flutter SDK constraints.
 

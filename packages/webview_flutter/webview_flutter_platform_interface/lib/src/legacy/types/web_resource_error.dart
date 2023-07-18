@@ -16,8 +16,7 @@ class WebResourceError {
     this.domain,
     this.errorType,
     this.failingUrl,
-  })  : assert(errorCode != null),
-        assert(description != null);
+  });
 
   /// Raw code of the error from the respective platform.
   ///

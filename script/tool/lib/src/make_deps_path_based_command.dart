@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -12,6 +11,7 @@ import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/git_version_finder.dart';
+import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/repository_package.dart';
 
@@ -28,9 +28,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   /// Creates an instance of the command to convert selected dependencies to
   /// path-based.
   MakeDepsPathBasedCommand(
-    Directory packagesDir, {
-    GitDir? gitDir,
-  }) : super(packagesDir, gitDir: gitDir) {
+    super.packagesDir, {
+    super.gitDir,
+  }) {
     argParser.addMultiOption(_targetDependenciesArg,
         help:
             'The names of the packages to convert to path-based dependencies.\n'
@@ -249,7 +249,8 @@ $dependencyOverridesKey:
     // example app doesn't. Since integration tests are run in the example app,
     // it needs the overrides in order for tests to pass.
     for (final RepositoryPackage example in package.getExamples()) {
-      _addDependencyOverridesIfNecessary(example, localDependencies, versions,
+      await _addDependencyOverridesIfNecessary(
+          example, localDependencies, versions,
           additionalPackagesToOverride: packagesToOverride);
     }
 

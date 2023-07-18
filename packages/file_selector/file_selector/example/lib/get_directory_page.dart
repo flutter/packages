@@ -50,7 +50,7 @@ class GetDirectoryPage extends StatelessWidget {
               ),
               onPressed: _isIOS ? null : () => _getDirectoryPath(context),
               child: const Text(
-                'Press to ask user to choose a directory (not supported on iOS).',
+                'Press to ask user to choose a directory.',
               ),
             ),
           ],

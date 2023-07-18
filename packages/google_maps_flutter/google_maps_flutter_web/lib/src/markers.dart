@@ -30,10 +30,6 @@ class MarkersController extends GeometryController {
   }
 
   void _addMarker(Marker marker) {
-    if (marker == null) {
-      return;
-    }
-
     final gmaps.InfoWindowOptions? infoWindowOptions =
         _infoWindowOptionsFromMarker(marker);
     gmaps.InfoWindow? gmInfoWindow;

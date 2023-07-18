@@ -17,12 +17,10 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   google_sign_in_platform_interface: ^2.2.0
-  http: ^0.13.0
+  http: ">=0.13.0 <2.0.0"
 
 dev_dependencies:
   espresso: ^0.2.0
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:

@@ -28,18 +28,22 @@ class AndroidWebViewProxy {
   final android_webview.WebView Function() createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
-  final android_webview.WebChromeClient Function({
-    void Function(android_webview.WebView webView, int progress)?
-        onProgressChanged,
-    Future<List<String>> Function(
-      android_webview.WebView webView,
-      android_webview.FileChooserParams params,
-    )? onShowFileChooser,
-    void Function(
-      android_webview.WebChromeClient instance,
-      android_webview.PermissionRequest request,
-    )? onPermissionRequest,
-  }) createAndroidWebChromeClient;
+  final android_webview.WebChromeClient Function(
+      {void Function(android_webview.WebView webView, int progress)?
+          onProgressChanged,
+      Future<List<String>> Function(
+        android_webview.WebView webView,
+        android_webview.FileChooserParams params,
+      )? onShowFileChooser,
+      void Function(
+        android_webview.WebChromeClient instance,
+        android_webview.PermissionRequest request,
+      )? onPermissionRequest,
+      Future<void> Function(String origin,
+              android_webview.GeolocationPermissionsCallback callback)?
+          onGeolocationPermissionsShowPrompt,
+      void Function(android_webview.WebChromeClient instance)?
+          onGeolocationPermissionsHidePrompt}) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
   final android_webview.WebViewClient Function({
@@ -51,7 +55,7 @@ class AndroidWebViewProxy {
       android_webview.WebResourceError error,
     )? onReceivedRequestError,
     @Deprecated('Only called on Android version < 23.')
-        void Function(
+    void Function(
       android_webview.WebView webView,
       int errorCode,
       String description,

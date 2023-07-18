@@ -12,9 +12,16 @@ import 'package:mockito/mockito.dart';
 import 'image_capture_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestImageCaptureHostApi, ResolutionSelector])
+@GenerateMocks(<Type>[
+  TestImageCaptureHostApi,
+  TestInstanceManagerHostApi,
+  ResolutionSelector
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Mocks the call to clear the native InstanceManager.
+  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ImageCapture', () {
     tearDown(() => TestImageCaptureHostApi.setup(null));

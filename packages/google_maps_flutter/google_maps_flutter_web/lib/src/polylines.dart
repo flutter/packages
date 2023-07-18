@@ -30,10 +30,6 @@ class PolylinesController extends GeometryController {
   }
 
   void _addPolyline(Polyline polyline) {
-    if (polyline == null) {
-      return;
-    }
-
     final gmaps.PolylineOptions polylineOptions =
         _polylineOptionsFromPolyline(googleMap, polyline);
     final gmaps.Polyline gmPolyline = gmaps.Polyline(polylineOptions)

@@ -115,6 +115,7 @@ Page resource error:
   description: ${error.description}
   errorType: ${error.errorType}
   isForMainFrame: ${error.isForMainFrame}
+  url: ${error.url}
           ''');
           })
           ..setOnNavigationRequest((NavigationRequest request) {
@@ -442,7 +443,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Widget _getCookieList(String cookies) {
-    if (cookies == null || cookies == '""') {
+    if (cookies == '""') {
       return Container();
     }
     final List<String> cookieList = cookies.split(';');

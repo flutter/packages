@@ -30,7 +30,7 @@ class DemoScreen extends StatelessWidget {
             indicatorPadding: const EdgeInsets.only(bottom: 8),
             indicatorSize: TabBarIndicatorSize.label,
             tabs: <Widget>[
-              for (String label in _tabLabels) Tab(text: label),
+              for (final String label in _tabLabels) Tab(text: label),
             ],
           ),
         ),
@@ -109,7 +109,7 @@ class DemoNotesView extends StatelessWidget {
     String? href,
     String title,
   ) async {
-    showDialog<Widget>(
+    await showDialog<Widget>(
       context: context,
       builder: (BuildContext context) =>
           _createDialog(context, text, href, title),

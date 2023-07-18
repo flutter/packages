@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camera_info.dart';
@@ -13,6 +14,7 @@ import 'java_object.dart';
 /// Selects a camera for use.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraSelector.
+@immutable
 class CameraSelector extends JavaObject {
   /// Creates a [CameraSelector].
   CameraSelector(

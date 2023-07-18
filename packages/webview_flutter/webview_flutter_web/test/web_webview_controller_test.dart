@@ -4,9 +4,6 @@
 
 import 'dart:convert';
 import 'dart:html';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

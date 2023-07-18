@@ -19,13 +19,11 @@ dependencies:
   url_launcher_platform_interface: ^2.0.3
 
 dev_dependencies:
-  flutter_driver:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.0
+  mockito: 5.4.1
   plugin_platform_interface: ^2.0.0
 
 flutter:

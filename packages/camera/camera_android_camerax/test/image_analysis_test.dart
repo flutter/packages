@@ -28,14 +28,12 @@ void main() {
   group('ImageAnalysis', () {
     tearDown(() {
       TestImageAnalysisHostApi.setup(null);
-      TestInstanceManagerHostApi.setup(null);
     });
 
     test('HostApi create', () {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
       TestImageAnalysisHostApi.setup(mockApi);
-      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
