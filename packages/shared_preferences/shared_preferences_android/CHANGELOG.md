@@ -1,3 +1,7 @@
+## NEXT
+
+* Deletes deprecated splash screen meta-data element.
+
 ## 2.2.0
 
 * Adds `clearWithParameters` and `getAllWithParameters` methods.

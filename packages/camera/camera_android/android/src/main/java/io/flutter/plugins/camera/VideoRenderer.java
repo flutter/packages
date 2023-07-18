@@ -167,7 +167,7 @@ public class VideoRenderer {
             "cannot configure OpenGL. missing EGL_ANDROID_presentation_time");
 
       int[] attribList;
-      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      if (SdkCapabilityChecker.supportsEglRecordableAndroid()) {
         attribList =
             new int[] {
               EGL14.EGL_RED_SIZE, 8,

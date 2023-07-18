@@ -1,3 +1,7 @@
+## NEXT
+
+* Deletes deprecated splash screen meta-data element.
+
 ## 0.6.17
 
 * Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
