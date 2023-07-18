@@ -4,7 +4,6 @@
 
 ## 2.3.0
 
-* Adds options for gesture handling and tilt controls on web.
 * Adds a `cloudMapId` parameter to support cloud-based map styling.
 
 ## 2.2.7
