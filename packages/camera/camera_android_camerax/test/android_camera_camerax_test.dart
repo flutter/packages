@@ -940,7 +940,47 @@ void main() {
   });
 
   test(
-      'onStreamedFrameAvaiable returns stream that responds expectedly to being listened to',
+      'onStreamedFrameAvailable emits CameraImageData when listened to after cancelation',
+      () async {
+    final FakeAndroidCameraCameraX camera =
+        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
+    const int cameraId = 22;
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.cameraSelector = MockCameraSelector();
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
+
+    final CameraImageData mockCameraImageData = MockCameraImageData();
+    final Stream<CameraImageData> imageStream =
+        camera.onStreamedFrameAvailable(cameraId);
+
+    // Listen to image stream.
+    final StreamSubscription<CameraImageData> imageStreamSubscription =
+        imageStream.listen((CameraImageData data) {});
+
+    // Cancel subscription to image stream.
+    await imageStreamSubscription.cancel();
+    final Stream<CameraImageData> imageStream2 =
+        camera.onStreamedFrameAvailable(cameraId);
+
+    // Listen to image stream again.
+    final StreamQueue<CameraImageData> streamQueue =
+        StreamQueue<CameraImageData>(imageStream2);
+    camera.cameraImageDataStreamController!.add(mockCameraImageData);
+
+    expect(await streamQueue.next, equals(mockCameraImageData));
+    await streamQueue.cancel();
+  });
+
+  test(
+      'onStreamedFrameAvailable returns stream that responds expectedly to being listened to',
       () async {
     final FakeAndroidCameraCameraX camera =
         FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
@@ -1011,7 +1051,7 @@ void main() {
   });
 
   test(
-      'onStreamedFrameAvaiable returns stream that responds expectedly to being canceled',
+      'onStreamedFrameAvailable returns stream that responds expectedly to being canceled',
       () async {
     final FakeAndroidCameraCameraX camera =
         FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
