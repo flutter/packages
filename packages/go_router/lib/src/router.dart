@@ -4,6 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
+import 'builder.dart';
 import 'configuration.dart';
 import 'delegate.dart';
 import 'information_provider.dart';
@@ -23,6 +24,41 @@ typedef GoExceptionHandler = void Function(
   GoRouterState state,
   GoRouter router,
 );
+
+/// The function signature of [RootBackButtonDispatcher.new].
+typedef BackButtonDispatcherBuilder = RootBackButtonDispatcher Function();
+
+/// The function signature of [RouteConfiguration.new]
+typedef RouteConfigurationBuilder = RouteConfiguration Function({
+  required List<RouteBase> routes,
+  required int redirectLimit,
+  required GoRouterRedirect topRedirect,
+  required GlobalKey<NavigatorState> navigatorKey,
+});
+
+/// The function signature of [GoRouteInformationParser.new]
+typedef RouteInformationParserBuilder = GoRouteInformationParser Function({
+  required RouteConfiguration configuration,
+  required ParserExceptionHandler? onParserException,
+});
+
+/// The function signature of [GoRouteInformationProvider.new]
+typedef RouteInformationProviderBuilder = GoRouteInformationProvider Function({
+  required String initialLocation,
+  required Object? initialExtra,
+  Listenable? refreshListenable,
+});
+
+/// The function signature of [GoRouterDelegate.new].
+typedef RouterDelegateBuilder = GoRouterDelegate Function({
+  required RouteConfiguration configuration,
+  required GoRouterBuilderWithNav builderWithNav,
+  required GoRouterPageBuilder? errorPageBuilder,
+  required GoRouterWidgetBuilder? errorBuilder,
+  required List<NavigatorObserver> observers,
+  required bool routerNeglect,
+  String? restorationScopeId,
+});
 
 /// The route configuration for the app.
 ///
@@ -83,7 +119,16 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
-  })  : backButtonDispatcher = RootBackButtonDispatcher(),
+    BackButtonDispatcherBuilder backButtonDispatcherBuilder =
+        RootBackButtonDispatcher.new,
+    RouteConfigurationBuilder routeConfigurationBuilder =
+        RouteConfiguration.new,
+    RouteInformationParserBuilder routeInformationParserBuilder =
+        GoRouteInformationParser.new,
+    RouteInformationProviderBuilder routeInformationProviderBuilder =
+        GoRouteInformationProvider.new,
+    RouterDelegateBuilder routerDelegateBuilder = GoRouterDelegate.new,
+  })  : backButtonDispatcher = backButtonDispatcherBuilder(),
         assert(
           initialExtra == null || initialLocation != null,
           'initialLocation must be set in order to use initialExtra',
@@ -107,7 +152,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
     navigatorKey ??= GlobalKey<NavigatorState>();
 
-    configuration = RouteConfiguration(
+    configuration = routeConfigurationBuilder(
       routes: routes,
       topRedirect: redirect ?? (_, __) => null,
       redirectLimit: redirectLimit,
@@ -127,18 +172,18 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       parserExceptionHandler = null;
     }
 
-    routeInformationParser = GoRouteInformationParser(
+    routeInformationParser = routeInformationParserBuilder(
       onParserException: parserExceptionHandler,
       configuration: configuration,
     );
 
-    routeInformationProvider = GoRouteInformationProvider(
+    routeInformationProvider = routeInformationProviderBuilder(
       initialLocation: _effectiveInitialLocation(initialLocation),
       initialExtra: initialExtra,
       refreshListenable: refreshListenable,
     );
 
-    routerDelegate = GoRouterDelegate(
+    routerDelegate = routerDelegateBuilder(
       configuration: configuration,
       errorPageBuilder: errorPageBuilder,
       errorBuilder: errorBuilder,
