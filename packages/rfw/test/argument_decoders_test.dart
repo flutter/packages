@@ -5,16 +5,19 @@
 // This file is hand-formatted.
 
 import 'dart:io' show Platform;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw/rfw.dart';
 
+final bool masterChannel = 
+    !Platform.environment.containsKey('CHANNEL') ||
+        Platform.environment['CHANNEL'] == 'master';
+
 // See Contributing section of README.md file.
-final bool runGoldens = Platform.isLinux &&
-    (!Platform.environment.containsKey('CHANNEL') ||
-        Platform.environment['CHANNEL'] == 'master');
+final bool runGoldens = Platform.isLinux && masterChannel;
 
 void main() {
   testWidgets('String example', (WidgetTester tester) async {
@@ -238,6 +241,7 @@ void main() {
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
     final DynamicContent data = DynamicContent();
+    final List<String> eventLog = <String>[];
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.rtl,
@@ -245,6 +249,9 @@ void main() {
           runtime: runtime,
           data: data,
           widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+          onEvent: (String eventName, DynamicMap eventArguments) {
+            eventLog.add('$eventName $eventArguments');
+          },
         ),
       ),
     );
@@ -254,6 +261,20 @@ void main() {
       return UnderlineTabIndicator(
         borderSide: ArgumentDecoders.borderSide(source, <Object>[...key, 'side']) ?? const BorderSide(width: 2.0, color: Color(0xFFFFFFFF)),
         insets: ArgumentDecoders.edgeInsets(source, <Object>['insets']) ?? EdgeInsets.zero,
+      );
+    };
+    ArgumentDecoders.gradientDecoders['custom'] = (DataSource source, List<Object> key) {
+      return const RadialGradient(
+        center: Alignment(0.7, -0.6),
+        radius: 0.2,
+        colors: <Color>[ Color(0xFFFFFF00), Color(0xFF0099FF) ],
+        stops: <double>[0.4, 1.0],
+      );
+    };
+    ArgumentDecoders.shapeBorderDecoders['custom'] = (DataSource source, List<Object> key) {
+      return StarBorder(
+        side: ArgumentDecoders.borderSide(source, <Object>[...key, 'side']) ?? const BorderSide(width: 2.0, color: Color(0xFFFFFFFF)),
+        points: source.v<double>(<Object>[...key, 'points']) ?? 5.0,
       );
     };
 
@@ -297,6 +318,7 @@ void main() {
               color: 0xFF8811FF,
               blendMode: "xor",
             },
+            onError: event 'image-error-event' { },
           },
           gradient: {
             type: 'linear',
@@ -338,7 +360,7 @@ void main() {
                 { type: 'continuous', borderRadius: [ { x: 60.0 }, { x: 80.0 }, { x: 0.0 }, { x: 20.0, y: 50.0 } ], side: { width: 10.0, color: 0xFFEEFF33 } },
                 { type: 'rounded', borderRadius: [ { x: 20.0 } ], side: { width: 10.0, color: 0xFF00CCFF } },
                 { type: 'stadium', side: { width: 10.0, color: 0xFF00FFFF } },
-                { type: 'custom', side: { width: 100.0, color: 0xFFFF0000 } }, // should not render
+                { type: 'custom', side: { width: 5.0, color: 0xFFFFFF00 }, points: 6 }, // star
               ],
               gradient: {
                 type: 'radial',
@@ -349,10 +371,13 @@ void main() {
       );
     '''));
     await tester.pump();
+    expect(eventLog, hasLength(1));
+    expect(eventLog.first, startsWith('image-error-event {exception: HTTP request failed, statusCode: 400, x-invalid:'));
+    eventLog.clear();
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.containers.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
+      skip: !runGoldens,
     );
     expect(find.byType(DecoratedBox), findsNWidgets(6));
     expect(
@@ -367,6 +392,16 @@ void main() {
       'ColorFilter.mode(Color(0xff8811ff), BlendMode.xor), Alignment.center, scale 1.0, '
       'opacity 1.0, FilterQuality.low)',
     );
+
+    ArgumentDecoders.colorFilterDecoders['custom'] = (DataSource source, List<Object> key) {
+      return const ColorFilter.mode(Color(0x12345678), BlendMode.xor);
+    };
+    ArgumentDecoders.maskFilterDecoders['custom'] = (DataSource source, List<Object> key) {
+      return const MaskFilter.blur(BlurStyle.outer, 0.5);
+    };
+    ArgumentDecoders.shaderDecoders['custom'] = (DataSource source, List<Object> key) {
+      return ui.Gradient.linear(Offset.zero, const Offset(100.0, 100.0), const <Color>[Color(0xFFFFFF00), Color(0xFF00FFFF)]);
+    };
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -428,7 +463,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.text.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
+      skip: !runGoldens,
     );
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
@@ -451,7 +486,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.gridview.fixed.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
+      skip: !runGoldens,
     );
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
@@ -474,7 +509,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.gridview.max.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
+      skip: !runGoldens,
     );
 
     int sawGridDelegateDecoder = 0;
@@ -504,7 +539,9 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.gridview.custom.png'),
-      skip: 'https://github.com/flutter/flutter/issues/106205'
+      skip: !runGoldens,
     );
-  }, skip: !runGoldens);
+
+    expect(eventLog, isEmpty);
+  }, skip: !masterChannel); // https://github.com/flutter/flutter/pull/129851
 }

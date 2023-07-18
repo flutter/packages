@@ -40,7 +40,8 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                         aList:(NSArray *)aList
                          aMap:(NSDictionary *)aMap
                        anEnum:(AnEnum)anEnum
-                      aString:(NSString *)aString;
+                      aString:(NSString *)aString
+                     anObject:(id)anObject;
 @property(nonatomic, strong) NSNumber *aBool;
 @property(nonatomic, strong) NSNumber *anInt;
 @property(nonatomic, strong) NSNumber *anInt64;
@@ -53,6 +54,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong) NSDictionary *aMap;
 @property(nonatomic, assign) AnEnum anEnum;
 @property(nonatomic, copy) NSString *aString;
+@property(nonatomic, strong) id anObject;
 @end
 
 /// A class containing all supported nullable types.
@@ -72,7 +74,8 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(AnEnum)aNullableEnum
-                      aNullableString:(nullable NSString *)aNullableString;
+                      aNullableString:(nullable NSString *)aNullableString
+                      aNullableObject:(id)aNullableObject;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -89,6 +92,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
 @property(nonatomic, assign) AnEnum aNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
+@property(nonatomic, strong) id aNullableObject;
 @end
 
 /// A class for testing nested class handling.

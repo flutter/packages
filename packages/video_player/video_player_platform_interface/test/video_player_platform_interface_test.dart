@@ -9,7 +9,17 @@ void main() {
   // Store the initial instance before any tests change it.
   final VideoPlayerPlatform initialInstance = VideoPlayerPlatform.instance;
 
-  test('default implementation throws uninimpletemented', () async {
+  test('default implementation init throws unimplemented', () async {
     await expectLater(() => initialInstance.init(), throwsUnimplementedError);
+  });
+
+  test('default implementation setWebOptions throws unimplemented', () async {
+    await expectLater(
+      () => initialInstance.setWebOptions(
+        1,
+        const VideoPlayerWebOptions(),
+      ),
+      throwsUnimplementedError,
+    );
   });
 }

@@ -1,6 +1,6 @@
 # Google Maps for Flutter
 
-<?code-excerpt path-base="excerpts/packages/google_maps_flutter_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/google_maps_flutter.svg)](https://pub.dev/packages/google_maps_flutter)
 

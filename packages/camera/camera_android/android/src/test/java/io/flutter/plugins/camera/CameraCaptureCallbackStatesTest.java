@@ -20,7 +20,6 @@ import io.flutter.plugins.camera.CameraCaptureCallback.CameraCaptureStateListene
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
 import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
 import io.flutter.plugins.camera.types.Timeout;
-import io.flutter.plugins.camera.utils.TestUtils;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
@@ -89,17 +88,13 @@ public class CameraCaptureCallbackStatesTest extends TestCase {
     when(mockCaptureTimeouts.getPreCaptureFocusing()).thenReturn(mockTimeout);
     when(mockCaptureTimeouts.getPreCaptureMetering()).thenReturn(mockTimeout);
 
-    Key<Integer> mockAeStateKey = mock(Key.class);
-    Key<Integer> mockAfStateKey = mock(Key.class);
-
-    TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AE_STATE", mockAeStateKey);
-    TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AF_STATE", mockAfStateKey);
-
     mockedStaticTimeout.when(() -> Timeout.create(1000)).thenReturn(mockTimeout);
 
     cameraCaptureCallback =
         CameraCaptureCallback.create(
             mockCaptureStateListener, mockCaptureTimeouts, mockCaptureProps);
+    cameraCaptureCallback.aeStateKey = mock(Key.class);
+    cameraCaptureCallback.afStateKey = mock(Key.class);
   }
 
   @Override
@@ -107,17 +102,14 @@ public class CameraCaptureCallbackStatesTest extends TestCase {
     super.tearDown();
 
     mockedStaticTimeout.close();
-
-    TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AE_STATE", null);
-    TestUtils.setFinalStatic(CaptureResult.class, "CONTROL_AF_STATE", null);
   }
 
   @Override
   protected void runTest() throws Throwable {
-    when(mockPartialCaptureResult.get(CaptureResult.CONTROL_AF_STATE)).thenReturn(afState);
-    when(mockPartialCaptureResult.get(CaptureResult.CONTROL_AE_STATE)).thenReturn(aeState);
-    when(mockTotalCaptureResult.get(CaptureResult.CONTROL_AF_STATE)).thenReturn(afState);
-    when(mockTotalCaptureResult.get(CaptureResult.CONTROL_AE_STATE)).thenReturn(aeState);
+    when(mockPartialCaptureResult.get(cameraCaptureCallback.afStateKey)).thenReturn(afState);
+    when(mockPartialCaptureResult.get(cameraCaptureCallback.aeStateKey)).thenReturn(aeState);
+    when(mockTotalCaptureResult.get(cameraCaptureCallback.afStateKey)).thenReturn(afState);
+    when(mockTotalCaptureResult.get(cameraCaptureCallback.aeStateKey)).thenReturn(aeState);
 
     cameraCaptureCallback.setCameraState(cameraState);
     if (isTimedOut) {

@@ -1,6 +1,6 @@
 # file_selector
 
-<?code-excerpt path-base="excerpts/packages/file_selector_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/file_selector.svg)](https://pub.dartlang.org/packages/file_selector)
 
@@ -36,7 +36,7 @@ Please also take a look at our [example][example] app.
 #### Open a single file
 
 <?code-excerpt "open_image_page.dart (SingleOpen)"?>
-``` dart
+```dart
 const XTypeGroup typeGroup = XTypeGroup(
   label: 'images',
   extensions: <String>['jpg', 'png'],
@@ -48,7 +48,7 @@ final XFile? file =
 #### Open multiple files at once
 
 <?code-excerpt "open_multiple_images_page.dart (MultiOpen)"?>
-``` dart
+```dart
 const XTypeGroup jpgsTypeGroup = XTypeGroup(
   label: 'JPEGs',
   extensions: <String>['jpg', 'jpeg'],

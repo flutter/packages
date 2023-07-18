@@ -9,8 +9,8 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 
-import './base.dart';
 import '../web_helpers/web_helpers.dart';
+import 'base.dart';
 
 // Four Gigabytes, in bytes.
 const int _fourGigabytes = 4 * 1024 * 1024 * 1024;
