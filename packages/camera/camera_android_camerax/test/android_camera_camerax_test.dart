@@ -1021,7 +1021,7 @@ void main() {
     final Completer<CameraImageData> imageDataCompleter =
         Completer<CameraImageData>();
     final StreamSubscription<CameraImageData>
-        onStreamedFrameAvailableSubscription = await camera
+        onStreamedFrameAvailableSubscription = camera
             .onStreamedFrameAvailable(cameraId)
             .listen((CameraImageData imageData) {
       imageDataCompleter.complete(imageData);
@@ -1031,8 +1031,9 @@ void main() {
     final Analyzer capturedAnalyzer =
         verify(camera.mockImageAnalysis.setAnalyzer(captureAny)).captured.single
             as Analyzer;
-    verify(mockProcessCameraProvider.isBound(camera.mockImageAnalysis));
-    verify(mockProcessCameraProvider.bindToLifecycle(
+    await untilCalled(
+        mockProcessCameraProvider.isBound(camera.mockImageAnalysis));
+    await untilCalled(mockProcessCameraProvider.bindToLifecycle(
         mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
 
     await capturedAnalyzer.analyze(mockImageProxy);
