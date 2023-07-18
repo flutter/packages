@@ -441,7 +441,7 @@ targets:
       target_file: web_platform_tests.yaml
       version_file: flutter_master.version
       channel: master
-      package_sharding: "--shardIndex 0 --shardCount 2"
+      package_sharding: "--shardIndex 0 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_2 master
     recipe: packages/packages
@@ -450,12 +450,9 @@ targets:
       target_file: web_platform_tests.yaml
       version_file: flutter_master.version
       channel: master
-      package_sharding: "--shardIndex 1 --shardCount 2"
+      package_sharding: "--shardIndex 1 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_3 master
-    # TODO(stuartmorgan): Adjust the shard count for the other targets
-    # when removing this.
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -471,7 +468,7 @@ targets:
       target_file: web_platform_tests.yaml
       version_file: flutter_stable.version
       channel: stable
-      package_sharding: "--shardIndex 0 --shardCount 2"
+      package_sharding: "--shardIndex 0 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_2 stable
     recipe: packages/packages
@@ -480,12 +477,9 @@ targets:
       target_file: web_platform_tests.yaml
       version_file: flutter_stable.version
       channel: stable
-      package_sharding: "--shardIndex 1 --shardCount 2"
+      package_sharding: "--shardIndex 1 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_3 stable
-    # TODO(stuartmorgan): Adjust the shard count for the other targets
-    # when removing this.
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -762,35 +756,7 @@ targets:
           {"dependency": "open_jdk", "version": "version:11"}
         ]
 
-  # TODO(stuartmorgan): Remove these two when enabling the sharded versions.
-  - name: Windows win32-platform_tests master - packages
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_and_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
-  - name: Windows win32-platform_tests stable - packages
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_and_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
   - name: Windows win32-platform_tests_shard_1 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -805,7 +771,6 @@ targets:
         ]
 
   - name: Windows win32-platform_tests_shard_2 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -820,7 +785,6 @@ targets:
         ]
 
   - name: Windows win32-platform_tests_shard_1 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -835,7 +799,6 @@ targets:
         ]
 
   - name: Windows win32-platform_tests_shard_2 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
