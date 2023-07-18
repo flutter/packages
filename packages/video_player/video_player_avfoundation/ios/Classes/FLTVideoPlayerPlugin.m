@@ -505,6 +505,14 @@ NS_INLINE UIViewController *rootViewController(void) {
 /// is useful for the case where the Engine is in the process of deconstruction
 /// so the channel is going to die or is already dead.
 - (void)disposeSansEventChannel {
+  // This check prevents the crash caused by removing the KVO observers twice.
+  // When performing a Hot Restart, the leftover players are disposed once directly
+  // by [FLTVideoPlayerPlugin initialize:] method and then disposed again by
+  // [FLTVideoPlayer onTextureUnregistered:] call leading to possible over-release.
+  if (_disposed) {
+    return;
+  }
+
   _disposed = YES;
   [_playerLayer removeFromSuperlayer];
   [_displayLink invalidate];
@@ -514,6 +522,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   [currentItem removeObserver:self forKeyPath:@"presentationSize"];
   [currentItem removeObserver:self forKeyPath:@"duration"];
   [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
+  [self.player removeObserver:self forKeyPath:@"rate"];
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
