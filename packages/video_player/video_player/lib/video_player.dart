@@ -446,7 +446,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
-    if (videoPlayerOptions?.webOptions != null) {
+    if (kIsWeb && videoPlayerOptions?.webOptions != null) {
       await _videoPlayerPlatform.setWebOptions(
         _textureId,
         videoPlayerOptions!.webOptions!,
