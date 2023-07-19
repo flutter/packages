@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceRequest;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PreviewHostApi;
 import io.flutter.view.TextureRegistry;
@@ -38,16 +39,17 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   /** Creates a {@link Preview} with the target rotation and resolution if specified. */
   @Override
   public void create(
-      @NonNull Long identifier,
-      @Nullable Long rotation,
-      @Nullable GeneratedCameraXLibrary.ResolutionInfo targetResolution) {
+      @NonNull Long identifier, @Nullable Long rotation, @Nullable Long resolutionSelectorId) {
     Preview.Builder previewBuilder = cameraXProxy.createPreviewBuilder();
+    ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
+
     if (rotation != null) {
       previewBuilder.setTargetRotation(rotation.intValue());
     }
-    if (targetResolution != null) {
-      previewBuilder.setTargetResolution(CameraXProxy.sizeFromResolution(targetResolution));
+    if (resolutionSelector != null) {
+      previewBuilder.setResolutionSelector(resolutionSelector);
     }
+
     Preview preview = previewBuilder.build();
     instanceManager.addDartCreatedInstance(preview, identifier);
   }
