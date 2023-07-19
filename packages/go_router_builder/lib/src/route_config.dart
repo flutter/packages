@@ -14,6 +14,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
+import 'package:go_router/go_router.dart';
 
 import 'type_helpers.dart';
 
@@ -61,19 +62,25 @@ extension $_extensionName on $_className {
 
   @override
   String get routeDataClassName => 'ShellRouteData';
+
+  @override
+  String get childrenGetterName => 'routes';
+
+  @override
+  String get dataConvertionFunctionName => '\$route';
 }
 
 /// The configuration to generate class declarations for a StatefulShellRouteData.
 class StatefulShellRouteConfig extends RouteBaseConfig {
   StatefulShellRouteConfig._({
-    required this.navigatorKey,
     required super.routeDataClass,
     required super.parent,
-    required super.parentNavigatorKey,
+    this.navigatorContainerBuilder,
+    this.restorationScopeId,
   }) : super._();
 
-  /// The command for calling the navigator key getter from the ShellRouteData.
-  final String? navigatorKey;
+  final ShellNavigationContainerBuilder? navigatorContainerBuilder;
+  final String? restorationScopeId;
 
   @override
   Iterable<String> classDeclarations() => <String>[
@@ -86,10 +93,17 @@ extension $_extensionName on $_className {
 
   @override
   String get routeConstructorParameters =>
-      navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,';
+      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
+      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}';
 
   @override
   String get routeDataClassName => 'StatefulShellRouteData';
+
+  @override
+  String get childrenGetterName => 'branches';
+
+  @override
+  String get dataConvertionFunctionName => '\$route';
 }
 
 /// The configuration to generate class declarations for a StatefulShellBranchData.
@@ -98,7 +112,6 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
     required this.navigatorKey,
     required super.routeDataClass,
     required super.parent,
-    required super.parentNavigatorKey,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -113,6 +126,12 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 
   @override
   String get routeDataClassName => 'StatefulShellBranchData';
+
+  @override
+  String get childrenGetterName => 'routes';
+
+  @override
+  String get dataConvertionFunctionName => '\$branch';
 }
 
 /// The configuration to generate class declarations for a GoRouteData.
@@ -352,6 +371,11 @@ extension $_extensionName on $_className {
 
   @override
   String get routeDataClassName => 'GoRouteData';
+
+  @override
+  String get childrenGetterName => 'routes';
+  @override
+  String get dataConvertionFunctionName => '\$route';
 }
 
 /// Represents a `TypedGoRoute` annotation to the builder.
@@ -359,7 +383,7 @@ abstract class RouteBaseConfig {
   RouteBaseConfig._({
     required this.routeDataClass,
     required this.parent,
-    required this.parentNavigatorKey,
+    this.parentNavigatorKey,
   });
 
   /// Creates a new [RouteBaseConfig] represented the annotation data in [reader].
@@ -427,14 +451,6 @@ abstract class RouteBaseConfig {
         value = StatefulShellRouteConfig._(
           routeDataClass: classElement,
           parent: parent,
-          navigatorKey: _generateNavigatorKeyGetterCode(
-            classElement,
-            keyName: r'$navigatorKey',
-          ),
-          parentNavigatorKey: _generateNavigatorKeyGetterCode(
-            classElement,
-            keyName: r'$parentNavigatorKey',
-          ),
         );
         break;
       case 'TypedStatefulShellBranch':
@@ -445,13 +461,9 @@ abstract class RouteBaseConfig {
             classElement,
             keyName: r'$navigatorKey',
           ),
-          parentNavigatorKey: _generateNavigatorKeyGetterCode(
-            classElement,
-            keyName: r'$parentNavigatorKey',
-          ),
         );
         break;
-      default:
+      default://case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
         if (pathValue.isNull) {
           throw InvalidGenerationSourceError(
@@ -459,7 +471,6 @@ abstract class RouteBaseConfig {
             element: element,
           );
         }
-
         final ConstantReader nameValue = reader.read('name');
         value = GoRouteConfig._(
           path: pathValue.stringValue,
@@ -474,7 +485,7 @@ abstract class RouteBaseConfig {
     }
 
     value._children.addAll(reader
-        .read(typeName == 'TypedStatefulShellRoute' ? 'branches' : 'routes')
+        .read(_generateChildrenGetterName(typeName))
         .listValue
         .map<RouteBaseConfig>((DartObject e) => RouteBaseConfig._fromAnnotation(
             ConstantReader(e), element, value)));
@@ -493,6 +504,10 @@ abstract class RouteBaseConfig {
   /// The parent navigator key string that is used for initialize the
   /// `RouteBase` class this config generates.
   final String? parentNavigatorKey;
+
+  static String _generateChildrenGetterName(String name) {
+    return name == 'TypedStatefulShellRoute' ? 'branches' : 'routes';
+  }
 
   static String? _generateNavigatorKeyGetterCode(
     InterfaceElement classElement, {
@@ -577,23 +592,15 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
     final String routesBit = _children.isEmpty
         ? ''
         : '''
-${routeDataClassName == 'StatefulShellRouteData' ? 'branches' : 'routes'}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
+${childrenGetterName}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
 ''';
+
     final String parentNavigatorKeyParameter = parentNavigatorKey == null
         ? ''
         : 'parentNavigatorKey: $parentNavigatorKey,';
 
-    if (routeDataClassName == 'StatefulShellBranchData') {
-      return '''
-$routeDataClassName.\$branch(
-    $routeConstructorParameters
-    $routesBit
-  )
-''';
-    }
-
     return '''
-$routeDataClassName.\$route(
+$routeDataClassName.$dataConvertionFunctionName(
     $routeConstructorParameters
     factory: $_extensionName._fromState,
     $parentNavigatorKeyParameter
@@ -608,6 +615,14 @@ $routeDataClassName.\$route(
   /// The name of `RouteData` subclass this configuration represents.
   @protected
   String get routeDataClassName;
+
+  /// The name to get children.
+  @protected
+  String get childrenGetterName;
+
+  /// The function name of `RouteData` to get Routes or branches.
+  @protected
+  String get dataConvertionFunctionName;
 
   /// Additional constructor parameter for invoking route constructor.
   @protected
