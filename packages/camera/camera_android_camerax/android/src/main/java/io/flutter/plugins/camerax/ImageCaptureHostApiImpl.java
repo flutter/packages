@@ -55,13 +55,13 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   public void create(
       @NonNull Long identifier, @Nullable Long flashMode, @Nullable Long resolutionSelectorId) {
     ImageCapture.Builder imageCaptureBuilder = cameraXProxy.createImageCaptureBuilder();
-    ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
 
     if (flashMode != null) {
       // This sets the requested flash mode, but may fail silently.
       imageCaptureBuilder.setFlashMode(flashMode.intValue());
     }
-    if (resolutionSelector != null) {
+    if (resolutionSelectorId != null) {
+      ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
       imageCaptureBuilder.setResolutionSelector(resolutionSelector);
     }
 

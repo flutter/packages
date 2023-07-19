@@ -41,12 +41,12 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   public void create(
       @NonNull Long identifier, @Nullable Long rotation, @Nullable Long resolutionSelectorId) {
     Preview.Builder previewBuilder = cameraXProxy.createPreviewBuilder();
-    ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
 
     if (rotation != null) {
       previewBuilder.setTargetRotation(rotation.intValue());
     }
-    if (resolutionSelector != null) {
+    if (resolutionSelectorId != null) {
+      ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
       previewBuilder.setResolutionSelector(resolutionSelector);
     }
 

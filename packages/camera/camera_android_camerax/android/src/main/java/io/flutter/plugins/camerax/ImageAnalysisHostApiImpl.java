@@ -40,9 +40,9 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   @Override
   public void create(@NonNull Long identifier, @Nullable Long resolutionSelectorId) {
     ImageAnalysis.Builder imageAnalysisBuilder = cameraXProxy.createImageAnalysisBuilder();
-    ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
 
-    if (resolutionSelector != null) {
+    if (resolutionSelectorId != null) {
+      ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
       imageAnalysisBuilder.setResolutionSelector(resolutionSelector);
     }
 
