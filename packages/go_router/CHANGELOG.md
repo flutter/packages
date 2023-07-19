@@ -1,5 +1,6 @@
-## NEXT
+## 9.1.0
 
+- Adds the parentNavigatorKey parameter to ShellRouteData and StatefulShellRouteData.
 - Fixes a typo in docs for `StatefulShellRoute.indexedStack(...)`.
 - Cleans some typos in the documentation and asserts.
 
