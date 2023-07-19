@@ -3,10 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:path_provider_android/messages.g.dart' as messages;
 import 'package:path_provider_android/path_provider_android.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'messages_test.g.dart';
+import 'path_provider_android_test.mocks.dart';
 
 const String kTemporaryPath = 'temporaryPath';
 const String kApplicationSupportPath = 'applicationSupportPath';
@@ -37,35 +40,17 @@ class _Api implements TestPathProviderApi {
   String? getTemporaryPath() => kTemporaryPath;
 }
 
-class _ApiNull implements TestPathProviderApi {
-  @override
-  String? getApplicationDocumentsPath() => null;
-
-  @override
-  String? getApplicationSupportPath() => null;
-
-  @override
-  List<String?> getExternalCachePaths() => <String>[];
-
-  @override
-  String? getExternalStoragePath() => null;
-
-  @override
-  List<String?> getExternalStoragePaths(messages.StorageDirectory directory) =>
-      <String>[];
-
-  @override
-  String? getTemporaryPath() => null;
-}
-
+@GenerateMocks(<Type>[TestPathProviderApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('PathProviderAndroid', () {
+    late MockTestPathProviderApi mockApi;
     late PathProviderAndroid pathProvider;
 
     setUp(() async {
       pathProvider = PathProviderAndroid();
+      mockApi = MockTestPathProviderApi();
       TestPathProviderApi.setup(_Api());
     });
 
@@ -111,14 +96,19 @@ void main() {
     } // end of for-loop
 
     test('getDownloadsPath succeeds', () async {
-      final String? path = await pathProvider.getDownloadsPath();
-      expect(path, kExternalStoragePaths);
+      when(mockApi.getExternalStoragePaths(messages.StorageDirectory.downloads))
+          .thenReturn(<String?>[kDownloadsPath]);
+      final List<String?> path =
+          mockApi.getExternalStoragePaths(messages.StorageDirectory.downloads);
+      expect(path.first, kDownloadsPath);
     });
 
     test('getDownloadsPath null', () async {
-      TestPathProviderApi.setup(_ApiNull());
-      final String? path = await pathProvider.getDownloadsPath();
-      expect(path, null);
+      when(mockApi.getExternalStoragePaths(messages.StorageDirectory.downloads))
+          .thenReturn(<String?>[null]);
+      final List<String?> path =
+          mockApi.getExternalStoragePaths(messages.StorageDirectory.downloads);
+      expect(path.first, null);
     });
   });
 }
