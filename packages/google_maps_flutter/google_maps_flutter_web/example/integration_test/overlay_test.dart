@@ -61,6 +61,7 @@ void main() {
               as html.ImageElement;
       expect(img.naturalWidth, 0);
       expect(img.naturalHeight, 0);
+      expect(img.hidden, true);
 
       // `onLoad` is fired when `src` is set; then `decode` is fired once the
       // image has been decoded. Some of our assertions test properties set in
@@ -74,6 +75,7 @@ void main() {
       await img.onLoad.first;
       await img.decode();
 
+      expect(img.hidden, false);
       expect(img.naturalWidth, 16);
       expect(img.naturalHeight, 16);
     });

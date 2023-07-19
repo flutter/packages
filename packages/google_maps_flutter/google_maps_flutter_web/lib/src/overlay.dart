@@ -28,6 +28,8 @@ class TileOverlayController {
     final ImageElement img =
         ownerDocument!.createElement('img') as ImageElement;
     img.width = img.height = logicalTileSize;
+    img.hidden = true;
+    img.setAttribute('decoding', 'async');
 
     _tileOverlay.tileProvider!
         .getTile(tileCoord!.x!.toInt(), tileCoord.y!.toInt(), zoom?.toInt())
@@ -39,6 +41,7 @@ class TileOverlayController {
       final String src = Url.createObjectUrl(Blob(<Object?>[tile.data]));
       img.src = src;
       img.addEventListener('load', (_) {
+        img.hidden = false;
         Url.revokeObjectUrl(src);
       });
     });
