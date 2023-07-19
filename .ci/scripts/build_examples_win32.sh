@@ -5,4 +5,4 @@
 set -e
 
 dart ./script/tool/bin/flutter_plugin_tools.dart build-examples --windows \
-   --packages-for-branch --log-timing $PACKAGE_SHARDING
+   --packages-for-branch --log-timing

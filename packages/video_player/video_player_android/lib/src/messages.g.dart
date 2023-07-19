@@ -58,6 +58,69 @@ class LoopingMessage {
   }
 }
 
+class IsSupportedMessage {
+  IsSupportedMessage({
+    required this.isSupported,
+  });
+
+  bool isSupported;
+
+  Object encode() {
+    return <Object?>[
+      isSupported,
+    ];
+  }
+
+  static IsSupportedMessage decode(Object result) {
+    result as List<Object?>;
+    return IsSupportedMessage(
+      isSupported: result[0]! as bool,
+    );
+  }
+}
+
+class IsCacheSupportedMessage {
+  IsCacheSupportedMessage({
+    required this.url,
+  });
+
+  String url;
+
+  Object encode() {
+    return <Object?>[
+      url,
+    ];
+  }
+
+  static IsCacheSupportedMessage decode(Object result) {
+    result as List<Object?>;
+    return IsCacheSupportedMessage(
+      url: result[0]! as String,
+    );
+  }
+}
+
+class ClearCacheMessage {
+  ClearCacheMessage({
+    required this.textureId,
+  });
+
+  int textureId;
+
+  Object encode() {
+    return <Object?>[
+      textureId,
+    ];
+  }
+
+  static ClearCacheMessage decode(Object result) {
+    result as List<Object?>;
+    return ClearCacheMessage(
+      textureId: result[0]! as int,
+    );
+  }
+}
+
 class VolumeMessage {
   VolumeMessage({
     required this.textureId,
@@ -142,6 +205,8 @@ class CreateMessage {
     this.uri,
     this.packageName,
     this.formatHint,
+    this.maxCacheSize,
+    this.maxFileSize,
     required this.httpHeaders,
   });
 
@@ -153,6 +218,10 @@ class CreateMessage {
 
   String? formatHint;
 
+  int? maxCacheSize;
+
+  int? maxFileSize;
+
   Map<String?, String?> httpHeaders;
 
   Object encode() {
@@ -161,6 +230,8 @@ class CreateMessage {
       uri,
       packageName,
       formatHint,
+      maxCacheSize,
+      maxFileSize,
       httpHeaders,
     ];
   }
@@ -172,8 +243,10 @@ class CreateMessage {
       uri: result[1] as String?,
       packageName: result[2] as String?,
       formatHint: result[3] as String?,
+      maxCacheSize: result[4] as int?,
+      maxFileSize: result[5] as int?,
       httpHeaders:
-          (result[4] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+          (result[6] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
 }
@@ -203,26 +276,35 @@ class _AndroidVideoPlayerApiCodec extends StandardMessageCodec {
   const _AndroidVideoPlayerApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is CreateMessage) {
+    if (value is ClearCacheMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is LoopingMessage) {
+    } else if (value is CreateMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is MixWithOthersMessage) {
+    } else if (value is IsCacheSupportedMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlaybackSpeedMessage) {
+    } else if (value is IsSupportedMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PositionMessage) {
+    } else if (value is LoopingMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is TextureMessage) {
+    } else if (value is MixWithOthersMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is VolumeMessage) {
+    } else if (value is PlaybackSpeedMessage) {
       buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is PositionMessage) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is TextureMessage) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is VolumeMessage) {
+      buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -233,18 +315,24 @@ class _AndroidVideoPlayerApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return CreateMessage.decode(readValue(buffer)!);
+        return ClearCacheMessage.decode(readValue(buffer)!);
       case 129:
-        return LoopingMessage.decode(readValue(buffer)!);
+        return CreateMessage.decode(readValue(buffer)!);
       case 130:
-        return MixWithOthersMessage.decode(readValue(buffer)!);
+        return IsCacheSupportedMessage.decode(readValue(buffer)!);
       case 131:
-        return PlaybackSpeedMessage.decode(readValue(buffer)!);
+        return IsSupportedMessage.decode(readValue(buffer)!);
       case 132:
-        return PositionMessage.decode(readValue(buffer)!);
+        return LoopingMessage.decode(readValue(buffer)!);
       case 133:
-        return TextureMessage.decode(readValue(buffer)!);
+        return MixWithOthersMessage.decode(readValue(buffer)!);
       case 134:
+        return PlaybackSpeedMessage.decode(readValue(buffer)!);
+      case 135:
+        return PositionMessage.decode(readValue(buffer)!);
+      case 136:
+        return TextureMessage.decode(readValue(buffer)!);
+      case 137:
         return VolumeMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -357,6 +445,57 @@ class AndroidVideoPlayerApi {
   Future<void> setVolume(VolumeMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.AndroidVideoPlayerApi.setVolume', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_msg]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<IsSupportedMessage> isCacheSupportedForNetworkMedia(
+      IsCacheSupportedMessage arg_msg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.AndroidVideoPlayerApi.isCacheSupportedForNetworkMedia',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_msg]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as IsSupportedMessage?)!;
+    }
+  }
+
+  Future<void> clearCache(ClearCacheMessage arg_msg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.AndroidVideoPlayerApi.clearCache', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;

@@ -1,3 +1,7 @@
+## NEXT
+
+* Adds caching functionality for network video.
+
 ## 2.4.9
 
 * Bumps ExoPlayer version to 2.18.7.

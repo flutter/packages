@@ -173,7 +173,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
+  MiniController.network(this.dataSource, {this.enableCache})
       : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -195,6 +195,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
+
+  /// Adds cache to the video player. Video will be cached. Cache can be cleared manually.
+  bool? enableCache;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -226,6 +229,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       case DataSourceType.network:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
+          enableCache: enableCache,
           uri: dataSource,
         );
         break;
@@ -313,6 +317,11 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// Clears the media cache of the player.
+  void clearCache() {
+    _platform.clearCache(textureId);
+  }
+
   /// Pauses the video.
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
@@ -352,6 +361,15 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The position in the current video.
   Future<Duration?> get position async {
     return _platform.getPosition(_textureId);
+  }
+
+  /// Returns if cache is supported for network media.
+  Future<bool?> isCacheSupportedForNetworkMedia(String url) async {
+    return _applyIsCacheSupported(url);
+  }
+
+  Future<bool?> _applyIsCacheSupported(String url) async {
+    return _platform.isCacheSupportedForNetworkMedia(url);
   }
 
   /// Sets the video's current timestamp to be at [position].

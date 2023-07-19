@@ -264,8 +264,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
-  /// The URI for the video is given by the [dataSource] argument.
-  ///
+  /// The URI for the video is given by the [dataSource] argument and must not be
+  /// null.
+  /// **Android only**: The [maxCacheSize] option allows the caller to override
+  /// **Android only**: The [maxFileSize] option allows the caller to override
+  /// **iOS only**: The [cache] option allows the caller to override
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
   ///
@@ -275,6 +278,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   VideoPlayerController.network(
     this.dataSource, {
     this.formatHint,
+    this.maxCacheSize,
+    this.maxFileSize,
+    this.enableCache,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
@@ -348,6 +354,21 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// detection with whatever is set here.
   final VideoFormat? formatHint;
 
+  /// **iOS only**. Will set is caching is true (enabled) or false (disabled), default (disabled).
+  /// currently only mimetypes: video/mp4 and audio/flac files can be cached. For other mimetypes this setting is ignored.
+  /// detection with whatever is set here.
+  bool? enableCache;
+
+  /// **Android only**. Will set the size of the total cache. Default maxCacheSize is 0 (no cache enabled).
+  /// currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
+  /// detection with whatever is set here.
+  int? maxCacheSize;
+
+  /// **Android only**. Will set the size of a cache for one file. Default maxFileSize is 0 (no cache enabled).
+  /// currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
+  /// detection with whatever is set here.
+  int? maxFileSize;
+
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
   final DataSourceType dataSourceType;
@@ -397,11 +418,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         break;
       case DataSourceType.network:
         dataSourceDescription = DataSource(
-          sourceType: DataSourceType.network,
-          uri: dataSource,
-          formatHint: formatHint,
-          httpHeaders: httpHeaders,
-        );
+            sourceType: DataSourceType.network,
+            uri: dataSource,
+            formatHint: formatHint,
+            httpHeaders: httpHeaders,
+            enableCache: enableCache,
+            maxCacheSize: maxCacheSize,
+            maxFileSize: maxFileSize);
         break;
       case DataSourceType.file:
         dataSourceDescription = DataSource(
@@ -543,6 +566,26 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
     await _videoPlayerPlatform.setLooping(_textureId, value.isLooping);
+  }
+
+  /// Returns if caching is supported for network media.
+  Future<bool> isCacheSupportedForNetworkMedia(String url) async {
+    return _applyIsCacheSupported(url);
+  }
+
+  Future<bool> _applyIsCacheSupported(String url) async {
+    if (_isDisposedOrNotInitialized) {
+      return false;
+    }
+    return _videoPlayerPlatform.isCacheSupportedForNetworkMedia(url);
+  }
+
+  /// Clears the cache of the player.
+  Future<void> clearCache() async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+    await _videoPlayerPlatform.clearCache(_textureId);
   }
 
   Future<void> _applyPlayPause() async {
