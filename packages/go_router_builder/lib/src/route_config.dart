@@ -11,11 +11,11 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
 import 'type_helpers.dart';
+import 'utils/path_token.dart';
 
 /// Custom [Iterable] implementation with extra info.
 class InfoIterable extends IterableBase<String> {
@@ -84,7 +84,7 @@ class GoRouteConfig extends RouteBaseConfig {
       .map((ParameterToken e) => e.name));
 
   late final List<Token> _parsedPath =
-      List<Token>.unmodifiable(parse(_rawJoinedPath));
+      List<Token>.unmodifiable(Token.parse(_rawJoinedPath));
 
   String get _rawJoinedPath {
     final List<String> pathSegments = <String>[];
@@ -111,7 +111,7 @@ class GoRouteConfig extends RouteBaseConfig {
         return '\${Uri.encodeComponent(${_encodeFor(e.name)}${type?.isEnum ?? false ? '!' : ''})}';
       }
       if (e is PathToken) {
-        return e.value;
+        return e.name;
       }
       throw UnsupportedError(
         '$likelyIssueMessage '
