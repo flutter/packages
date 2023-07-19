@@ -182,9 +182,11 @@ void main() {
     when(camera.testPreview.setSurfaceProvider())
         .thenAnswer((_) async => testSurfaceTextureId);
     when(mockProcessCameraProvider.bindToLifecycle(
-            camera.mockBackCameraSelector,
-            <UseCase>[camera.testPreview, camera.testImageCapture]))
-        .thenAnswer((_) async => mockCamera);
+        camera.mockBackCameraSelector, <UseCase>[
+      camera.testPreview,
+      camera.testImageCapture,
+      camera.testImageAnalysis
+    ])).thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => mockLiveCameraState);
@@ -246,9 +248,11 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
 
     when(mockProcessCameraProvider.bindToLifecycle(
-            camera.mockBackCameraSelector,
-            <UseCase>[camera.testPreview, camera.testImageCapture]))
-        .thenAnswer((_) async => mockCamera);
+        camera.mockBackCameraSelector, <UseCase>[
+      camera.testPreview,
+      camera.testImageCapture,
+      camera.testImageAnalysis
+    ])).thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
@@ -258,8 +262,12 @@ void main() {
         enableAudio: enableAudio);
 
     // Verify expected UseCases were bound.
-    verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
-        <UseCase>[camera.testPreview, camera.testImageCapture]));
+    verify(camera.processCameraProvider!.bindToLifecycle(
+        camera.cameraSelector!, <UseCase>[
+      camera.testPreview,
+      camera.testImageCapture,
+      camera.testImageAnalysis
+    ]));
 
     // Verify the camera's CameraInfo instance got updated.
     expect(camera.cameraInfo, equals(mockCameraInfo));
@@ -285,9 +293,11 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
 
     when(mockProcessCameraProvider.bindToLifecycle(
-            camera.mockBackCameraSelector,
-            <UseCase>[camera.testPreview, camera.testImageCapture]))
-        .thenAnswer((_) async => mockCamera);
+        camera.mockBackCameraSelector, <UseCase>[
+      camera.testPreview,
+      camera.testImageCapture,
+      camera.testImageAnalysis
+    ])).thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
@@ -389,9 +399,11 @@ void main() {
         .thenAnswer((_) async => cameraId);
 
     when(camera.processCameraProvider!.bindToLifecycle(
-            camera.mockBackCameraSelector,
-            <UseCase>[camera.testPreview, camera.testImageCapture]))
-        .thenAnswer((_) async => mockCamera);
+        camera.mockBackCameraSelector, <UseCase>[
+      camera.testPreview,
+      camera.testImageCapture,
+      camera.testImageAnalysis
+    ])).thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
@@ -998,6 +1010,7 @@ void main() {
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
+    camera.imageAnalysis = MockImageAnalysis();
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
@@ -1031,6 +1044,7 @@ void main() {
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
+    camera.imageAnalysis = MockImageAnalysis();
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
@@ -1070,6 +1084,7 @@ void main() {
     final ProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final CameraSelector mockCameraSelector = MockCameraSelector();
+    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
     final Camera mockCamera = MockCamera();
     final CameraInfo mockCameraInfo = MockCameraInfo();
     final MockImageProxy mockImageProxy = MockImageProxy();
@@ -1084,11 +1099,12 @@ void main() {
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = mockCameraSelector;
+    camera.imageAnalysis = mockImageAnalysis;
 
-    when(mockProcessCameraProvider.isBound(camera.mockImageAnalysis))
+    when(mockProcessCameraProvider.isBound(mockImageAnalysis))
         .thenAnswer((_) async => Future<bool>.value(false));
-    when(mockProcessCameraProvider.bindToLifecycle(
-            mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
+    when(mockProcessCameraProvider
+            .bindToLifecycle(mockCameraSelector, <UseCase>[mockImageAnalysis]))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
@@ -1113,12 +1129,8 @@ void main() {
 
     // Test ImageAnalysis use case is bound to ProcessCameraProvider.
     final Analyzer capturedAnalyzer =
-        verify(camera.mockImageAnalysis.setAnalyzer(captureAny)).captured.single
+        verify(mockImageAnalysis.setAnalyzer(captureAny)).captured.single
             as Analyzer;
-    await untilCalled(
-        mockProcessCameraProvider.isBound(camera.mockImageAnalysis));
-    await untilCalled(mockProcessCameraProvider.bindToLifecycle(
-        mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
 
     await capturedAnalyzer.analyze(mockImageProxy);
     final CameraImageData imageData = await imageDataCompleter.future;
@@ -1132,9 +1144,6 @@ void main() {
     expect(imageData.height, equals(imageHeight));
     expect(imageData.width, equals(imageWidth));
 
-    // Verify camera and cameraInfo were properly updated.
-    expect(camera.camera, equals(mockCamera));
-    expect(camera.cameraInfo, equals(mockCameraInfo));
     await onStreamedFrameAvailableSubscription.cancel();
   });
 
@@ -1147,26 +1156,19 @@ void main() {
     final ProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final CameraSelector mockCameraSelector = MockCameraSelector();
-    final Camera mockCamera = MockCamera();
+    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = mockCameraSelector;
-
-    when(mockProcessCameraProvider.bindToLifecycle(
-            mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
-        .thenAnswer((_) async => mockCamera);
-    when(mockCamera.getCameraInfo()).thenAnswer((_) async => MockCameraInfo());
+    camera.imageAnalysis = mockImageAnalysis;
 
     final StreamSubscription<CameraImageData> imageStreamSubscription = camera
         .onStreamedFrameAvailable(cameraId)
         .listen((CameraImageData data) {});
 
-    when(mockProcessCameraProvider.isBound(camera.mockImageAnalysis))
-        .thenAnswer((_) async => Future<bool>.value(true));
-
     await imageStreamSubscription.cancel();
 
-    verify(camera.mockImageAnalysis.clearAnalyzer());
+    verify(mockImageAnalysis.clearAnalyzer());
   });
 }
 
@@ -1185,7 +1187,7 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
   final MockRecorder testRecorder = MockRecorder();
   final MockVideoCapture testVideoCapture = MockVideoCapture();
-  final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+  final MockImageAnalysis testImageAnalysis = MockImageAnalysis();
 
   @override
   Future<void> requestCameraPermissions(bool enableAudio) async {
@@ -1232,6 +1234,6 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
 
   @override
   ImageAnalysis createImageAnalysis() {
-    return mockImageAnalysis;
+    return testImageAnalysis;
   }
 }
