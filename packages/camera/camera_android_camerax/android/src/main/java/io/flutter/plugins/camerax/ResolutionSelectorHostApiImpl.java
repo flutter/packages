@@ -76,10 +76,11 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
         proxy.create(
             resolutionStrategyIdentifier == null
                 ? null
-                : instanceManager.getInstance(resolutionStrategyIdentifier),
+                : Objects.requireNonNull(instanceManager.getInstance(resolutionStrategyIdentifier)),
             aspectRatioStrategyIdentifier == null
                 ? null
-                : instanceManager.getInstance(aspectRatioStrategyIdentifier)),
+                : Objects.requireNonNull(
+                    instanceManager.getInstance(aspectRatioStrategyIdentifier))),
         identifier);
   }
 }

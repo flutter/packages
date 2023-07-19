@@ -61,7 +61,8 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
       imageCaptureBuilder.setFlashMode(flashMode.intValue());
     }
     if (resolutionSelectorId != null) {
-      ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
+      ResolutionSelector resolutionSelector =
+          Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
       imageCaptureBuilder.setResolutionSelector(resolutionSelector);
     }
 

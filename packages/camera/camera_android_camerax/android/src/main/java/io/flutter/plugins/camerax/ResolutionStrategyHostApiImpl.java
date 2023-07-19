@@ -65,10 +65,11 @@ public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi 
       @Nullable Long fallbackRule) {
     ResolutionStrategy resolutionStrategy;
     if (boundSize == null && fallbackRule == null) {
+      // Strategy that chooses the highest available resolution does not have a bound size or fallback rule.
       resolutionStrategy = ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY;
     } else if (boundSize == null) {
       throw new IllegalArgumentException(
-          "A bound size must be specified if a fallback rule is specified as non-null to create a valid ResolutionStrategy.");
+          "A bound size must be specified if a non-null fallback rule is specified to create a valid ResolutionStrategy.");
     } else {
       resolutionStrategy =
           proxy.create(

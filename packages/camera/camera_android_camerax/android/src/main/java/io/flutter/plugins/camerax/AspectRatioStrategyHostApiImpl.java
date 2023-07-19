@@ -52,6 +52,10 @@ public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostAp
     this.proxy = proxy;
   }
 
+  /**
+   * Creates a {@link AspectRatioStrategy} instance with the preferred aspect ratio and fallback
+   * rule specified.
+   */
   @Override
   public void create(
       @NonNull Long identifier, @NonNull Long preferredAspectRatio, @NonNull Long fallbackRule) {

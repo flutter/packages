@@ -46,7 +46,8 @@ public class PreviewHostApiImpl implements PreviewHostApi {
       previewBuilder.setTargetRotation(rotation.intValue());
     }
     if (resolutionSelectorId != null) {
-      ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
+      ResolutionSelector resolutionSelector =
+          Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
       previewBuilder.setResolutionSelector(resolutionSelector);
     }
 

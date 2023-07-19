@@ -24,7 +24,9 @@ void main() {
       TestInstanceManagerHostApi.setup(null);
     });
 
-    test('HostApi create', () {
+    test(
+        'HostApi create makes call to create expected AspectRatioStrategy instance',
+        () {
       final MockTestAspectRatioStrategyHostApi mockApi =
           MockTestAspectRatioStrategyHostApi();
       TestAspectRatioStrategyHostApi.setup(mockApi);

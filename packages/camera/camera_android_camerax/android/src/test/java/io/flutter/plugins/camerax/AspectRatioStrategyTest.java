@@ -34,7 +34,7 @@ public class AspectRatioStrategyTest {
   }
 
   @Test
-  public void hostApiCreate() {
+  public void hostApiCreate_createsExpectedAspectRatioStrategyInstance() {
     final Long preferredAspectRatio = 0L;
     final Long fallbackRule = 1L;
 
