@@ -86,29 +86,12 @@ public class ExposurePointFeature extends CameraFeature<Point> {
       defaultRegionsHasBeenSet = true;
     }
 
-    try {
-      if (exposureRectangle != null) {
-        requestBuilder.set(
-            CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
-      } else if (defaultRegions != null && defaultRegions.length > 0) {
-        requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultRegions);
-      } else if (!defaultRegionsHasBeenSet) {
-        setDefaultRectangleAndSetBuilder(requestBuilder);
-      } else {
-        requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, null);
-      }
-    } catch (Exception e) {
-      throw new IllegalArgumentException(
-          "Failed to set exposure rectangle for the ExposurePointFeature.", e);
+    if (exposureRectangle != null) {
+      requestBuilder.set(
+          CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
+    } else {
+      requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultRegions);
     }
-  }
-
-  private void setDefaultRectangleAndSetBuilder(@NonNull CaptureRequest.Builder requestBuilder) {
-    MeteringRectangle defaultRectangle =
-        new MeteringRectangle(0, 0, 1, 1, MeteringRectangle.METERING_WEIGHT_MAX);
-    defaultRegions = new MeteringRectangle[] {defaultRectangle};
-    requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultRegions);
-    defaultRegionsHasBeenSet = true;
   }
 
   private void buildExposureRectangle() {
