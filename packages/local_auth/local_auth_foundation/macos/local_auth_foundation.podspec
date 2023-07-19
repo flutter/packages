@@ -1,0 +1,1 @@
+../darwin/local_auth_foundation.podspec

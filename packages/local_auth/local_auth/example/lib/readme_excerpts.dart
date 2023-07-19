@@ -20,7 +20,7 @@ import 'package:local_auth/local_auth.dart';
 
 // #docregion CustomMessages
 import 'package:local_auth_android/local_auth_android.dart';
-import 'package:local_auth_ios/local_auth_ios.dart';
+import 'package:local_auth_foundation/local_auth_foundation.dart';
 // #enddocregion CustomMessages
 
 void main() {
@@ -156,7 +156,7 @@ class _MyAppState extends State<MyApp> {
             signInTitle: 'Oops! Biometric authentication required!',
             cancelButton: 'No thanks',
           ),
-          IOSAuthMessages(
+          DarwinAuthMessages(
             cancelButton: 'No thanks',
           ),
         ]);

@@ -12,7 +12,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:local_auth_android/local_auth_android.dart';
-import 'package:local_auth_ios/local_auth_ios.dart';
+import 'package:local_auth_foundation/local_auth_foundation.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 import 'package:local_auth_windows/local_auth_windows.dart';
 
@@ -39,7 +39,7 @@ class LocalAuthentication {
   Future<bool> authenticate(
       {required String localizedReason,
       Iterable<AuthMessages> authMessages = const <AuthMessages>[
-        IOSAuthMessages(),
+        DarwinAuthMessages(),
         AndroidAuthMessages(),
         WindowsAuthMessages()
       ],

@@ -1,0 +1,1 @@
+../../darwin/Classes/LocalAuthPlugin_Test.swift
