@@ -28,23 +28,21 @@ class TileOverlayController {
     final ImageElement img =
         ownerDocument!.createElement('img') as ImageElement;
     img.width = img.height = logicalTileSize;
-    img.hidden = true;
+
     _tileOverlay.tileProvider!
         .getTile(tileCoord!.x!.toInt(), tileCoord.y!.toInt(), zoom?.toInt())
-        .then((Tile tile) async {
+        .then((Tile tile) {
       if (tile.data == null) {
         return;
       }
-
       // Using img lets us take advantage of native decoding.
-      final String src = Url.createObjectUrl(Blob(<dynamic>[tile.data]));
-      // Spurious linter warning in legacy analyzer. (google/pedantic#83)
-      // ignore: unsafe_html
+      final String src = Url.createObjectUrl(Blob(<Object?>[tile.data]));
       img.src = src;
-      await img.decode();
-      img.hidden = false;
-      Url.revokeObjectUrl(src);
+      img.addEventListener('load', (_) {
+        Url.revokeObjectUrl(src);
+      });
     });
+
     return img;
   }
 
