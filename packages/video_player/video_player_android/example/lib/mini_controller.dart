@@ -173,7 +173,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
+  MiniController.network(this.dataSource, {this.maxCacheSize, this.maxFileSize})
       : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -195,6 +195,12 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
+
+  /// Only for [network] videos.
+  int? maxCacheSize;
+
+  /// Only for [network] videos.
+  int? maxFileSize;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -227,6 +233,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
           uri: dataSource,
+          maxCacheSize: maxCacheSize,
+          maxFileSize: maxFileSize,
         );
         break;
       case DataSourceType.file:
@@ -313,10 +321,25 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// Clears the cache.
+  Future<void> clearCache() async {
+    value = value.copyWith(isPlaying: true);
+    await _applyClearCache();
+  }
+
   /// Pauses the video.
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
     await _applyPlayPause();
+  }
+
+  /// Returns if caching is supported for network media.
+  Future<bool?> isCacheSupportedForNetworkMedia(String url) async {
+    return _applyIsCacheSupported(url);
+  }
+
+  Future<bool?> _applyIsCacheSupported(String url) async {
+    return _platform.isCacheSupportedForNetworkMedia(url);
   }
 
   Future<void> _applyPlayPause() async {
@@ -338,6 +361,10 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     } else {
       await _platform.pause(_textureId);
     }
+  }
+
+  Future<void> _applyClearCache() async {
+    await _platform.clearCache(_textureId);
   }
 
   Future<void> _applyPlaybackSpeed() async {

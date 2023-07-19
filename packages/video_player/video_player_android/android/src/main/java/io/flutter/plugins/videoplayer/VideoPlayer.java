@@ -83,6 +83,15 @@ final class VideoPlayer {
     DataSource.Factory dataSourceFactory =
         new DefaultDataSource.Factory(context, httpDataSourceFactory);
 
+    if (options.maxCacheSize != null
+        && options.maxCacheSize > 0
+        && options.maxFileSize != null
+        && options.maxFileSize > 0) {
+      dataSourceFactory =
+          new CacheDataSourceFactory(
+              context, options.maxCacheSize, options.maxFileSize, dataSourceFactory);
+    }
+
     MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint);
 
     exoPlayer.setMediaSource(mediaSource);
@@ -261,6 +270,14 @@ final class VideoPlayer {
 
   void play() {
     exoPlayer.setPlayWhenReady(true);
+  }
+
+  void setMaxCacheSize(Long value) {
+    options.maxCacheSize = value;
+  }
+
+  void setMaxFileSize(Long value) {
+    options.maxFileSize = value;
   }
 
   void pause() {

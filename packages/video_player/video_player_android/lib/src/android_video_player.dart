@@ -36,6 +36,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     String? packageName;
     String? uri;
     String? formatHint;
+    int? maxCacheSize;
+    int? maxFileSize;
+
     Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
@@ -44,6 +47,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         break;
       case DataSourceType.network:
         uri = dataSource.uri;
+        maxCacheSize = dataSource.maxCacheSize;
+        maxFileSize = dataSource.maxFileSize;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
         break;
@@ -59,6 +64,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       asset: asset,
       packageName: packageName,
       uri: uri,
+      maxCacheSize: maxCacheSize,
+      maxFileSize: maxFileSize,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
     );
@@ -73,6 +80,18 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       textureId: textureId,
       isLooping: looping,
     ));
+  }
+
+  @override
+  Future<void> clearCache(int textureId) {
+    return _api.clearCache(ClearCacheMessage(textureId: textureId));
+  }
+
+  @override
+  Future<bool> isCacheSupportedForNetworkMedia(String url) async {
+    final IsSupportedMessage response = await _api
+        .isCacheSupportedForNetworkMedia(IsCacheSupportedMessage(url: url));
+    return response.isSupported;
   }
 
   @override

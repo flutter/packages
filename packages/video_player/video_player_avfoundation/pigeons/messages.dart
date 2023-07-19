@@ -25,10 +25,25 @@ class LoopingMessage {
   bool isLooping;
 }
 
+class IsSupportedMessage {
+  IsSupportedMessage(this.isSupported);
+  bool isSupported;
+}
+
+class IsCacheSupportedMessage {
+  IsCacheSupportedMessage(this.url);
+  String url;
+}
+
 class VolumeMessage {
   VolumeMessage(this.textureId, this.volume);
   int textureId;
   double volume;
+}
+
+class ClearCacheMessage {
+  ClearCacheMessage(this.textureId);
+  int textureId;
 }
 
 class PlaybackSpeedMessage {
@@ -44,11 +59,12 @@ class PositionMessage {
 }
 
 class CreateMessage {
-  CreateMessage({required this.httpHeaders});
+  CreateMessage({required this.httpHeaders, required this.enableCache});
   String? asset;
   String? uri;
   String? packageName;
   String? formatHint;
+  bool enableCache;
   Map<String?, String?> httpHeaders;
 }
 
@@ -67,8 +83,13 @@ abstract class AVFoundationVideoPlayerApi {
   void dispose(TextureMessage msg);
   @ObjCSelector('setLooping:')
   void setLooping(LoopingMessage msg);
+  @ObjCSelector('clearCache:')
+  void clearCache(ClearCacheMessage msg);
   @ObjCSelector('setVolume:')
   void setVolume(VolumeMessage msg);
+  @ObjCSelector('isCacheSupportedForNetworkMedia:')
+  IsSupportedMessage isCacheSupportedForNetworkMedia(
+      IsCacheSupportedMessage msg);
   @ObjCSelector('setPlaybackSpeed:')
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
   @ObjCSelector('play:')
