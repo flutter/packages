@@ -11,6 +11,7 @@ import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionSelectorHostApi;
+import java.util.Objects;
 
 /**
  * Host API implementation for {@link ResolutionSelector}.
