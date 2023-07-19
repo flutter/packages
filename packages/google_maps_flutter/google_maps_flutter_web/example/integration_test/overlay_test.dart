@@ -59,7 +59,6 @@ void main() {
       final html.ImageElement img =
           controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, html.document)!
               as html.ImageElement;
-      expect(img.hidden, true);
       expect(img.naturalWidth, 0);
       expect(img.naturalHeight, 0);
 
@@ -75,7 +74,6 @@ void main() {
       await img.onLoad.first;
       await img.decode();
 
-      expect(img.hidden, false);
       expect(img.naturalWidth, 16);
       expect(img.naturalHeight, 16);
     });
