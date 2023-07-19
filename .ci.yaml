@@ -742,6 +742,27 @@ targets:
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
+  - name: Windows dart_unit_tests_shard_1 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: windows_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+
+  - name: Windows dart_unit_tests_shard_2 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: windows_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+
+  # TODO(stuartmorgan): Remove this when enabling the sharded versions.
   - name: Windows dart_unit_tests master - packages
     recipe: packages/packages
     timeout: 60
