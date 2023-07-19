@@ -1,3 +1,7 @@
+## 3.7.0
+
+* Adds support for `WebResouceError.url`.
+
 ## 3.6.3
 
 * Introduces `NSError.toString` for better diagnostics.
@@ -16,7 +20,7 @@
 
 * Adds support to enable debugging of web contents on the latest versions of WebKit. See
   `WebKitWebViewController.setInspectable`.
-  
+
 ## 3.5.0
 
 * Adds support to limit navigation to pages within the app’s domain. See
