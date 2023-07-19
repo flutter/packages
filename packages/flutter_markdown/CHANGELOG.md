@@ -1,3 +1,7 @@
+## NEXT
+
+* Deletes deprecated splash screen meta-data element.
+
 ## 0.6.18
 
 * Fixes issue where `blockquote` property didn't affect the text style of block quotes.

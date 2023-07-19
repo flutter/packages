@@ -36,9 +36,9 @@ enum NavigatingType {
 }
 
 /// The data class to be stored in [RouteInformation.state] to be used by
-/// [GoRouteInformationPrarser].
+/// [GoRouteInformationParser].
 ///
-/// This state class is used internally in go_router and will not be send to
+/// This state class is used internally in go_router and will not be sent to
 /// the engine.
 class RouteInformationState<T> {
   /// Creates an InternalRouteInformationState.
@@ -54,8 +54,8 @@ class RouteInformationState<T> {
   /// The extra object used when navigating with [GoRouter].
   final Object? extra;
 
-  /// The completer that needs to be complete when the newly added route is
-  /// popped off the screen..
+  /// The completer that needs to be completed when the newly added route is
+  /// popped off the screen.
   ///
   /// This is only null if [type] is [NavigatingType.go].
   final Completer<T?>? completer;

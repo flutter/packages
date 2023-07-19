@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
@@ -13,6 +14,7 @@ import 'pending_recording.dart';
 /// A dart wrapping of the CameraX Recorder class.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/Recorder.
+@immutable
 class Recorder extends JavaObject {
   /// Creates a [Recorder].
   Recorder(

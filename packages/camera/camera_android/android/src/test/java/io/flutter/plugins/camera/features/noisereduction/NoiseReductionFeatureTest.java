@@ -15,9 +15,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.hardware.camera2.CaptureRequest;
-import android.os.Build.VERSION;
 import io.flutter.plugins.camera.CameraProperties;
-import io.flutter.plugins.camera.utils.TestUtils;
+import io.flutter.plugins.camera.SdkCapabilityChecker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,15 +24,15 @@ import org.junit.Test;
 public class NoiseReductionFeatureTest {
   @Before
   public void before() {
-    // Make sure the VERSION.SDK_INT field returns 23, to allow using all available
+    // Make sure the SDK_VERSION field returns 23, to allow using all available
     // noise reduction modes in tests.
-    TestUtils.setFinalStatic(VERSION.class, "SDK_INT", 23);
+    SdkCapabilityChecker.SDK_VERSION = 23;
   }
 
   @After
   public void after() {
-    // Make sure we reset the VERSION.SDK_INT field to it's original value.
-    TestUtils.setFinalStatic(VERSION.class, "SDK_INT", 0);
+    // Make sure we reset the SDK_VERSION field to it's original value.
+    SdkCapabilityChecker.SDK_VERSION = 0;
   }
 
   @Test

@@ -45,7 +45,9 @@ class RouteConfiguration {
           }
         } else {
           if (route.path.startsWith('/') || route.path.endsWith('/')) {
-            throw GoError('sub-route path may not start or end with /: $route');
+            throw GoError(
+              'sub-route path may not start or end with "/": $route',
+            );
           }
         }
         subRouteIsTopLevel = false;

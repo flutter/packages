@@ -168,7 +168,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
               'top-level path must start with "/": $route');
         } else {
           assert(!route.path.startsWith('/') && !route.path.endsWith('/'),
-              'sub-route path may not start or end with /: $route');
+              'sub-route path may not start or end with "/": $route');
         }
         subRouteIsTopLevel = false;
       } else if (route is ShellRouteBase) {
@@ -258,7 +258,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// Whether the imperative API affects browser URL bar.
   ///
-  /// The Imperative APIs refer to [push], [pushReplacement], or [Replace].
+  /// The Imperative APIs refer to [push], [pushReplacement], or [replace].
   ///
   /// If this option is set to true. The URL bar reflects the top-most [GoRoute]
   /// regardless the [RouteBase]s underneath.
@@ -320,7 +320,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// Restore the RouteMatchList
   void restore(RouteMatchList matchList) {
-    log.info('going to ${matchList.uri}');
+    log.info('restoring ${matchList.uri}');
     routeInformationProvider.restore(
       matchList.uri.toString(),
       encodedMatchList: RouteMatchListCodec(configuration).encode(matchList),

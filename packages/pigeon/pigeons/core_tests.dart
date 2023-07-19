@@ -25,6 +25,7 @@ class AllTypes {
     this.aMap = const <String?, Object?>{},
     this.anEnum = AnEnum.one,
     this.aString = '',
+    this.anObject = 0,
   });
 
   bool aBool;
@@ -41,6 +42,7 @@ class AllTypes {
   Map aMap;
   AnEnum anEnum;
   String aString;
+  Object anObject;
 }
 
 /// A class containing all supported nullable types.
@@ -61,6 +63,7 @@ class AllNullableTypes {
     this.nullableMapWithObject,
     this.aNullableEnum,
     this.aNullableString,
+    this.aNullableObject,
   );
 
   bool? aNullableBool;
@@ -80,6 +83,7 @@ class AllNullableTypes {
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
   String? aNullableString;
+  Object? aNullableObject;
 }
 
 /// A class for testing nested class handling.
