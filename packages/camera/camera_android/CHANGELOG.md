@@ -1,3 +1,7 @@
+## 0.10.9
+
+* Provides a default exposure point if null.
+
 ## 0.10.8+4
 
 * Adjusts SDK checks for better testability.
@@ -7,10 +11,6 @@
 * Fixes unawaited_futures violations.
 * Removes duplicate line in `MediaRecorderBuilder.java`.
 * Adds support for concurrently capturing images and image streaming/recording.
-
-## 0.10.9
-
-* Provides a default exposure point if null.
 
 ## 0.10.8+2
 

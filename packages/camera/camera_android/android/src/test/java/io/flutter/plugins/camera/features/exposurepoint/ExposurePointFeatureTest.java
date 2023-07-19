@@ -314,7 +314,7 @@ public class ExposurePointFeatureTest {
   }
 
   @Test
-  public void updateBuilder_shouldSetNonNullMeteringRectangleWhenNonNullValueIsSupplied() {
+  public void updateBuilder_shouldSetNonNullMeteringRectangleWhenNullValueIsSupplied() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);
     when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(1);
     CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
