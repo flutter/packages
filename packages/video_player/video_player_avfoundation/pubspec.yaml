@@ -25,3 +25,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   pigeon: ^9.2.4
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {video_player_platform_interface: {path: ../../video_player/video_player_platform_interface}}

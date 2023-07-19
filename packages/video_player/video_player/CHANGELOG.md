@@ -5,8 +5,6 @@ receives an`Uri` instead of a `String` url.
 * Deprecates `VideoPlayerController.network` factory method.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Adds caching functionality for network video.
-* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
-* Adds caching functionality for network video.
 
 ## 2.6.1
 

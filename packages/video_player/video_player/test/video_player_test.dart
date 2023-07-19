@@ -68,7 +68,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setLooping(bool looping) async {}
 
   @override
-  Future<void> clearCache(bool clear) async {}
+  Future<void> clearCache() async {}
 
   @override
   VideoFormat? get formatHint => null;
@@ -97,10 +97,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   int? maxFileSize;
 
   @override
-  Future<void> clearCache() async {}
-
-  @override
-  Future<bool?> isCacheSupportedForNetworkMedia(String url) async => false;
+  Future<bool> isCacheSupportedForNetworkMedia(String url) async => false;
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
