@@ -8,7 +8,7 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
-/// The aspect ratio of a use case.
+/// The aspect ratio of a UseCase.
 ///
 /// Aspect ratio is the ratio of width to height.
 ///
