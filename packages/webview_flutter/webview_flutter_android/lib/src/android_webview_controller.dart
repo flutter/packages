@@ -825,12 +825,14 @@ class AndroidWebResourceError extends WebResourceError {
     required super.errorCode,
     required super.description,
     super.isForMainFrame,
-    this.failingUrl,
-  }) : super(
+    super.url,
+  })  : failingUrl = url,
+        super(
           errorType: _errorCodeToErrorType(errorCode),
         );
 
   /// Gets the URL for which the failing resource request was made.
+  @Deprecated('Please use `url`.')
   final String? failingUrl;
 
   static WebResourceErrorType? _errorCodeToErrorType(int errorCode) {
@@ -954,7 +956,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidWebResourceError._(
             errorCode: error.errorCode,
             description: error.description,
-            failingUrl: request.url,
+            url: request.url,
             isForMainFrame: request.isForMainFrame,
           ));
         }
@@ -971,7 +973,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidWebResourceError._(
             errorCode: errorCode,
             description: description,
-            failingUrl: failingUrl,
+            url: failingUrl,
             isForMainFrame: true,
           ));
         }

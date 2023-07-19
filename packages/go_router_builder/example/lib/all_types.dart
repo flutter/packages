@@ -550,9 +550,7 @@ class AllTypesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
-        routeInformationProvider: _router.routeInformationProvider,
+        routerConfig: _router,
       );
 
   late final GoRouter _router = GoRouter(

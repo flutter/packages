@@ -21,9 +21,17 @@ void main() {
       return dataTransfer.files as FileList?;
     }
 
-    void setFilesAndTriggerChange(List<File> files) {
+    void setFilesAndTriggerEvent(List<File> files, Event event) {
       input.files = createFileList(files);
-      input.dispatchEvent(Event('change'));
+      input.dispatchEvent(event);
+    }
+
+    void setFilesAndTriggerChange(List<File> files) {
+      setFilesAndTriggerEvent(files, Event('change'));
+    }
+
+    void setFilesAndTriggerCancel(List<File> files) {
+      setFilesAndTriggerEvent(files, Event('cancel'));
     }
 
     setUp(() {
@@ -55,6 +63,18 @@ void main() {
         expect(await files[1].length(), 0);
         expect(await files[1].readAsString(), '');
         expect(await files[1].lastModified(), isNotNull);
+      });
+
+      testWidgets('"cancel" returns an empty selection', (_) async {
+        final Future<List<XFile>> futureFiles = domHelper.getFiles(
+          input: input,
+        );
+
+        setFilesAndTriggerCancel(<File>[mockFile1, mockFile2]);
+
+        final List<XFile> files = await futureFiles;
+
+        expect(files.length, 0);
       });
 
       testWidgets('works multiple times', (_) async {

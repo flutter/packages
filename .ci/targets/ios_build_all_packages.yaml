@@ -1,8 +1,10 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
   - name: create all_packages app
     script: .ci/scripts/create_all_packages_app.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
   - name: build all_packages for iOS debug
     script: .ci/scripts/build_all_packages_app.sh
     args: ["ios", "debug", "--no-codesign"]

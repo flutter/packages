@@ -1,3 +1,8 @@
+## NEXT
+
+* Adds more testing to restore coverage to 100%.
+* Removes some dead code.
+
 ## 1.0.11
 
 * Adds more documentation in the README.md file!

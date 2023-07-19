@@ -1,8 +1,10 @@
 ## 2.3.0
 
 * Adds Support for StatefulShellRoute
-* Updates the documentation to go_router v9.0.3
-* Bumps go_router version in example folder to v9.0.3
+
+## 2.2.2
+
+* Bumps example go_router version and migrate example code.
 
 ## 2.2.1
 
