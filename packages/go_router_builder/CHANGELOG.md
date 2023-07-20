@@ -1,4 +1,4 @@
-## 2.3.0
+## 2.2.3
 
 * Removes `path_to_regexp` from the dependencies.
 
