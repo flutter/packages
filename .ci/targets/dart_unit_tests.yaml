@@ -1,6 +1,7 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
   - name: Dart unit tests
     script: script/tool_runner.sh
     args: ["dart-test", "--exclude=script/configs/dart_unit_tests_exceptions.yaml", "--platform=vm"]

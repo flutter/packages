@@ -239,15 +239,18 @@ targets:
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
     timeout: 30
+    dimensions:
+      kvm: "1"
     properties:
       add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: linux_custom_package_tests.yaml
-      # Pigeon tests need Andoid deps (thus the Linux_android base) and
-      # clang-format.
+      # Pigeon tests need Andoid deps (thus the Linux_android base), emulator,
+      # and clang-format.
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
+          {"dependency": "android_virtual_device", "version": "33"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -256,12 +259,15 @@ targets:
   - name: Linux_android custom_package_tests stable
     recipe: packages/packages
     timeout: 30
+    dimensions:
+      kvm: "1"
     properties:
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       # See comments on 'master' version above.
       dependencies: >-
         [
+          {"dependency": "android_virtual_device", "version": "33"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -435,7 +441,7 @@ targets:
       target_file: web_platform_tests.yaml
       version_file: flutter_master.version
       channel: master
-      package_sharding: "--shardIndex 0 --shardCount 2"
+      package_sharding: "--shardIndex 0 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_2 master
     recipe: packages/packages
@@ -444,12 +450,9 @@ targets:
       target_file: web_platform_tests.yaml
       version_file: flutter_master.version
       channel: master
-      package_sharding: "--shardIndex 1 --shardCount 2"
+      package_sharding: "--shardIndex 1 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_3 master
-    # TODO(stuartmorgan): Adjust the shard count for the other targets
-    # when removing this.
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -465,7 +468,7 @@ targets:
       target_file: web_platform_tests.yaml
       version_file: flutter_stable.version
       channel: stable
-      package_sharding: "--shardIndex 0 --shardCount 2"
+      package_sharding: "--shardIndex 0 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_2 stable
     recipe: packages/packages
@@ -474,12 +477,9 @@ targets:
       target_file: web_platform_tests.yaml
       version_file: flutter_stable.version
       channel: stable
-      package_sharding: "--shardIndex 1 --shardCount 2"
+      package_sharding: "--shardIndex 1 --shardCount 3"
 
   - name: Linux_web web_platform_tests_shard_3 stable
-    # TODO(stuartmorgan): Adjust the shard count for the other targets
-    # when removing this.
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -742,49 +742,25 @@ targets:
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
-  - name: Windows dart_unit_tests master - packages
+  - name: Windows dart_unit_tests_shard_1 master
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"},
-          {"dependency": "open_jdk", "version": "version:11"}
-        ]
+      package_sharding: "--shardIndex 0 --shardCount 2"
 
-  # TODO(stuartmorgan): Remove these two when enabling the sharded versions.
-  - name: Windows win32-platform_tests master - packages
+  - name: Windows dart_unit_tests_shard_2 master
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_and_platform_tests.yaml
+      target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
-  - name: Windows win32-platform_tests stable - packages
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_and_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
+      package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Windows win32-platform_tests_shard_1 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -799,7 +775,6 @@ targets:
         ]
 
   - name: Windows win32-platform_tests_shard_2 master
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -814,7 +789,6 @@ targets:
         ]
 
   - name: Windows win32-platform_tests_shard_1 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
@@ -829,7 +803,6 @@ targets:
         ]
 
   - name: Windows win32-platform_tests_shard_2 stable
-    bringup: true # New target
     recipe: packages/packages
     timeout: 60
     properties:
