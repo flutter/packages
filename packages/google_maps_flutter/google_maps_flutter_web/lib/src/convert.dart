@@ -60,23 +60,13 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.zoomControl = configuration.zoomControlsEnabled;
   }
 
-  if (configuration.scrollGesturesEnabled == false ||
-      configuration.zoomGesturesEnabled == false) {
-    window.console.warn(
-      '`scrollGesturesEnabled` and `zoomGesturesEnabled` are now ignored on the web.'
-      ' Use `webGestureHandling: WebGestureHandling.none` instead.',
-    );
-  }
-
   if (configuration.webGestureHandling != null) {
     options.gestureHandling = configuration.webGestureHandling!.name;
   } else if (configuration.scrollGesturesEnabled == false ||
       configuration.zoomGesturesEnabled == false) {
-      // Old behavior
-      options.gestureHandling = 'none';
+    // Old behavior
+    options.gestureHandling = WebGestureHandling.none.name;
   } else {
-    options.gestureHandling = WebGestureHandling.auto.name;
-  }
     options.gestureHandling = WebGestureHandling.auto.name;
   }
 
