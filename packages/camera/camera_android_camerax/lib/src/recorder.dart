@@ -21,7 +21,8 @@ class Recorder extends JavaObject {
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       this.aspectRatio,
-      this.bitRate})
+      this.bitRate,
+      this.qualitySelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -36,7 +37,8 @@ class Recorder extends JavaObject {
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       this.aspectRatio,
-      this.bitRate})
+      this.bitRate,
+      this.qualitySelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {

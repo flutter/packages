@@ -26,6 +26,10 @@ dependencies:
     sdk: flutter
   meta: ^1.7.0
   stream_transform: ^2.1.0
+  simple_ast:
+  git:
+    url: git@github.com:bparrishMines/penguin.git
+    path: packages/simple_ast
 
 dev_dependencies:
   build_runner: ^2.2.0
@@ -33,3 +37,15 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.1
   pigeon: ^9.1.0
+  code_template_processor:
+  git:
+    url: git@github.com:bparrishMines/penguin.git
+    path: packages/code_template_processor
+gen_api_impls:
+  git:
+    url: git@github.com:bparrishMines/penguin.git
+    path: packages/gen_api_impls
+simple_ast_generator:
+  git:
+    url: git@github.com:bparrishMines/penguin.git
+    path: packages/simple_ast_generator
